@@ -22,22 +22,22 @@ module.exports = {
       },
       links: [
         {
-          href: "panos.pan.dev",
+          href: "https://panos.pan.dev",
           label: "PAN-OS",
           position: "left"
         },
         {
-          href: "cortex.pan.dev",
+          href: "https://cortex.pan.dev",
           label: "Cortex",
           position: "left"
         },
         {
-          href: "demisto.pan.dev",
+          href: "https://demisto.pan.dev",
           label: "Demisto",
           position: "left"
         },
         {
-          href: "https://medium.com/palo-alto-networks-developer-blog",
+          to: "medium",
           label: "Blog",
           position: "left"
         },
@@ -83,7 +83,7 @@ module.exports = {
           items: [
             {
               label: "Blog",
-              href: "https://medium.com/palo-alto-networks-developer-blog"
+              to: "medium"
             }
           ]
         }
