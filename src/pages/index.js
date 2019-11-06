@@ -197,7 +197,10 @@ function Home() {
           <div>
             <Particles className="particles" params={particlesOptions} />
           </div>
-          <h1 className="hero__title">Palo Alto Networks for Developers</h1>
+          <img 
+            className={styles.headerLogo}
+            src="img/dev-wave.png">
+          </img>
           <p className="hero__subtitle">
           Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.
           </p>
@@ -240,7 +243,7 @@ function Home() {
                       "button button--primary button--md",
                       styles.panos
                     )}
-                    href="https://www.panos.pan.dev"
+                    href="https://panos.pan.dev"
                   >
                     PAN-OS For Developers
                   </Link>
@@ -268,7 +271,7 @@ function Home() {
                       "button button--primary button--md",
                       styles.demisto
                     )}
-                    href="https://www.demisto.pan.dev"
+                    href="https://demisto.pan.dev"
                   >
                     Demisto For Developers
                   </Link>
@@ -296,7 +299,7 @@ function Home() {
                       "button button--primary button--md",
                       styles.cortex
                     )}
-                    href="https://www.cortex.pan.dev"
+                    href="https://cortex.pan.dev"
                   >
                     Cortex For Developers
                   </Link>
@@ -324,7 +327,7 @@ function Home() {
                       "button button--primary button--md",
                       styles.prisma
                     )}
-                    href="https://www.prisma.pan.dev"
+                    href="https://prisma.pan.dev"
                   >
                     Prisma For Developers
                   </Link>
