@@ -2,6 +2,7 @@ import Layout from "@theme/Layout";
 import React, { blogef } from "react";
 import classnames from "classnames";
 import styles from "./styles.module.css";
+import { SSL_OP_TLS_BLOCK_PADDING_BUG } from "constants";
 
 const ITEMS_PER_ROW = 2; // Sync up the item col width if this is changed.
 
@@ -95,6 +96,7 @@ function chunkArray(array, size) {
   return chunks;
 }
 
+
 function Medium() {
   return (
     <Layout
@@ -121,9 +123,22 @@ function Medium() {
                   <div className="card__body">
                     <div className="avatar">
                       <div className="avatar__intro margin-left--none">
-                        <h4 className="avatar__name">{blog.title}</h4>
+                        <h3 className="avatar__name">{blog.title}</h3>
                       </div>
                     </div>
+                    <div className="avatar">
+                      <div className="avatar__intro margin-left--none">
+                        <h6 className="avatar__name">By {blog.author}</h6>
+                      </div>
+                    </div>
+
+                    <div className="avatar">
+                      <div className="avatar__intro margin-left--none">
+                        <h8 className="avatar__name">Tags: {blog.categories.join(", ")}</h8>
+                      </div>
+                    </div>
+
+
                   </div>
                   <div className="card__footer">
                     <div className="button-group button-group--block">
@@ -133,7 +148,7 @@ function Medium() {
                         target="_blank"
                         rel="noreferrer noopener"
                       >
-                        Read More
+                        Read More on Medium
                       </a>
                     </div>
                   </div>

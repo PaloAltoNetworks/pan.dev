@@ -16,167 +16,115 @@ import ScrollUpButton from "react-scroll-up-button";
 import styles from "./styles.module.css";
 
 const particlesOptions = {
-  "particles": {
-    "number": {
-      "value": 355,
-      "density": {
-        "enable": true,
-        "value_area": 789.1476416322727
+  particles: {
+    number: {
+      value: 355,
+      density: {
+        enable: true,
+        value_area: 789.1476416322727
       }
     },
-    "color": {
-      "value": "#ffffff"
+    color: {
+      value: "#ffffff"
     },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
+    shape: {
+      type: "circle",
+      stroke: {
+        width: 0,
+        color: "#000000"
       },
-      "polygon": {
-        "nb_sides": 5
+      polygon: {
+        nb_sides: 5
       },
-      "image": {
-        "src": "img/github.svg",
-        "width": 100,
-        "height": 100
+      image: {
+        src: "img/github.svg",
+        width: 100,
+        height: 100
       }
     },
-    "opacity": {
-      "value": 0.48927153781200905,
-      "random": false,
-      "anim": {
-        "enable": true,
-        "speed": 0.2,
-        "opacity_min": 0,
-        "sync": false
+    opacity: {
+      value: 0.48927153781200905,
+      random: false,
+      anim: {
+        enable: true,
+        speed: 0.2,
+        opacity_min: 0,
+        sync: false
       }
     },
-    "size": {
-      "value": 2,
-      "random": true,
-      "anim": {
-        "enable": true,
-        "speed": 2,
-        "size_min": 0,
-        "sync": false
+    size: {
+      value: 2,
+      random: true,
+      anim: {
+        enable: true,
+        speed: 2,
+        size_min: 0,
+        sync: false
       }
     },
-    "line_linked": {
-      "enable": false,
-      "distance": 150,
-      "color": "#ffffff",
-      "opacity": 0.4,
-      "width": 1
+    line_linked: {
+      enable: false,
+      distance: 150,
+      color: "#ffffff",
+      opacity: 0.4,
+      width: 1
     },
-    "move": {
-      "enable": true,
-      "speed": 0.2,
-      "direction": "none",
-      "random": true,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 1200
+    move: {
+      enable: true,
+      speed: 0.2,
+      direction: "none",
+      random: true,
+      straight: false,
+      out_mode: "in",
+      bounce: false,
+      attract: {
+        enable: false,
+        rotateX: 600,
+        rotateY: 1200
       }
     }
   },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": true,
-        "mode": "bubble"
+  interactivity: {
+    detect_on: "canvas",
+    events: {
+      onhover: {
+        enable: true,
+        mode: "bubble"
       },
-      "onclick": {
-        "enable": true,
-        "mode": "push"
+      onclick: {
+        enable: true,
+        mode: "push"
       },
-      "resize": true
+      resize: true
     },
-    "modes": {
-      "grab": {
-        "distance": 400,
-        "line_linked": {
-          "opacity": 1
+    modes: {
+      grab: {
+        distance: 400,
+        line_linked: {
+          opacity: 1
         }
       },
-      "bubble": {
-        "distance": 83.91608391608392,
-        "size": 1,
-        "duration": 3,
-        "opacity": 1,
-        "speed": 3
+      bubble: {
+        distance: 83.91608391608392,
+        size: 1,
+        duration: 3,
+        opacity: 1,
+        speed: 3
       },
-      "repulse": {
-        "distance": 200,
-        "duration": 0.4
+      repulse: {
+        distance: 200,
+        duration: 0.4
       },
-      "push": {
-        "particles_nb": 4
+      push: {
+        particles_nb: 4
       },
-      "remove": {
-        "particles_nb": 2
+      remove: {
+        particles_nb: 2
       }
     }
   },
-  "retina_detect": true
+  retina_detect: true
 };
-
-const features = [
-  {
-    title: <>APIs and SDKs</>,
-    imageUrl: "img/panos_apis.svg",
-    description: (
-      <>
-        Our APIs and SDKs provide a collection of open, feature-rich automation
-        opportunities for configuration and management of Palo Alto Networks
-        next-generation firewalls.
-      </>
-    )
-  },
-  {
-    title: <>Infrastructure-as-Code</>,
-    imageUrl: "img/ansible_terraform.png",
-    description: (
-      <>
-        Version control your infrastructure and eliminate human-error from
-        device configuration with infrastructure-as-code tools and techniques.
-        Tell your tools how the configuration should look and let them automate
-        the rest.
-      </>
-    )
-  },
-  {
-    title: <>Cloud-scale Security</>,
-    imageUrl: "img/cloud_security.svg",
-    description: (
-      <>
-        Whether it's auto-scaling a firewall with a cloud application, seamless
-        policy across on-prem and cloud, or a single place to see all your cloud
-        security events, Palo Alto Networks cloud integrations have you covered.
-      </>
-    )
-  }
-];
-
-function Feature({ imageUrl, title, description }) {
-  const imgUrl = useBaseUrl(imageUrl);
-  return (
-    <div className={classnames("col col--4", styles.features)}>
-      {imgUrl && (
-        <div className="text--center">
-          <img className={styles.featureImage} src={imgUrl} alt={title} />
-        </div>
-      )}
-      <h3>{title}</h3>
-      <p>{description}</p>
-    </div>
-  );
-}
 
 function Home() {
   const context = useDocusaurusContext();
@@ -202,7 +150,7 @@ function Home() {
             src="img/dev-wave.png">
           </img>
           <p className="hero__subtitle">
-          Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.
+          Learn how to Developer the Enterprise, Develop the Cloud, and Developer the Future
           </p>
           <div className={styles.buttons}>
             <Link
