@@ -13,6 +13,7 @@ import classnames from "classnames";
 import React, { useRef } from "react";
 import Particles from "react-particles-js";
 import ScrollUpButton from "react-scroll-up-button";
+import ControlledCarousel from "./carousel";
 import styles from "./styles.module.css";
 
 const particlesOptions = {
@@ -207,6 +208,13 @@ function Home() {
         </div>
       </header>
       <main>
+        <section className={styles.features} ref={toolsRef}>
+          <div className="container">
+            <div className="row">
+              <ControlledCarousel />
+            </div>
+          </div>
+        </section>
         <section className={styles.tools} ref={toolsRef}>
           <div className="container">
             <div className="row">
