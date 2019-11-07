@@ -131,7 +131,11 @@ function Medium() {
                         <h6 className="avatar__name">By {blog.author}</h6>
                       </div>
                     </div>
-
+                    <div className="avatar">
+                      <div className="avatar__intro margin-left--none">
+                      <div dangerouslySetInnerHTML={{ __html: blog.description}} />
+                      </div>
+                    </div>
                     <div className="avatar">
                       <div className="avatar__intro margin-left--none">
                         <h8 className="avatar__name">Tags: {blog.categories.join(", ")}</h8>
