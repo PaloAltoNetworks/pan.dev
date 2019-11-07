@@ -128,5 +128,12 @@ module.exports = {
       changefreq: "weekly",
       priority: 0.5
     }
+  ],
+  stylesheets: [
+    {
+      href:
+        "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
+      type: "text/css"
+    }
   ]
 };
