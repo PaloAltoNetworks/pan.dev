@@ -18,10 +18,10 @@ import styles from "./styles.module.css";
 const particlesOptions = {
   particles: {
     number: {
-      value: 355,
+      value: 100,
       density: {
         enable: true,
-        value_area: 789.1476416322727
+        value_area: 900
       }
     },
     color: {
@@ -43,39 +43,39 @@ const particlesOptions = {
       }
     },
     opacity: {
-      value: 0.48927153781200905,
+      value: 0.2,
       random: false,
       anim: {
-        enable: true,
-        speed: 0.2,
-        opacity_min: 0,
+        enable: false,
+        speed: 1,
+        opacity_min: 0.2,
         sync: false
       }
     },
     size: {
-      value: 2,
+      value: 3,
       random: true,
       anim: {
-        enable: true,
-        speed: 2,
-        size_min: 0,
+        enable: false,
+        speed: 40,
+        size_min: 0.1,
         sync: false
       }
     },
     line_linked: {
-      enable: false,
-      distance: 150,
+      enable: true,
+      distance: 250,
       color: "#ffffff",
-      opacity: 0.4,
+      opacity: 0.2,
       width: 1
     },
     move: {
       enable: true,
-      speed: 0.2,
+      speed: 4,
       direction: "none",
-      random: true,
+      random: false,
       straight: false,
-      out_mode: "in",
+      out_mode: "out",
       bounce: false,
       attract: {
         enable: false,
@@ -89,37 +89,16 @@ const particlesOptions = {
     events: {
       onhover: {
         enable: true,
-        mode: "bubble"
-      },
-      onclick: {
-        enable: true,
-        mode: "push"
+        mode: "grab"
       },
       resize: true
     },
     modes: {
       grab: {
-        distance: 400,
-        line_linked: {
-          opacity: 1
-        }
-      },
-      bubble: {
-        distance: 83.91608391608392,
-        size: 1,
-        duration: 3,
-        opacity: 1,
-        speed: 3
-      },
-      repulse: {
         distance: 200,
-        duration: 0.4
-      },
-      push: {
-        particles_nb: 4
-      },
-      remove: {
-        particles_nb: 2
+        line_linked: {
+          opacity: 0.4
+        }
       }
     }
   },
@@ -137,7 +116,7 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.themeConfig.navbar.title}`}
-      description="All things related to automation and development with PAN-OS®"
+      description="Palo Alto Networks for Developers"
     >
       <ScrollUpButton />
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
@@ -145,32 +124,54 @@ function Home() {
           <div>
             <Particles className="particles" params={particlesOptions} />
           </div>
-          <img 
-            className={styles.headerLogo}
-            src="img/dev-wave.png">
-          </img>
-          <p className="hero__subtitle">
-          Learn how to Developer the Enterprise, Develop the Cloud, and Developer the Future
-          </p>
-          <div className={styles.buttons}>
-            <Link
-              className={classnames(
-                "button button--outline button--secondary button--lg",
-                styles.getStarted
-              )}
-              onClick={scrollToTools}
-            >
-              Explore our Products
-            </Link>
+          <div className={styles.hero}>
+            <div className={styles.heroInner}>
+              <h1 className={styles.heroProjectTagline}>
+                <img
+                  alt="Devin the Developer Advocate"
+                  className={styles.heroLogo}
+                  src={useBaseUrl("img/dev-wave.png")}
+                />
+                Develop the{" "}
+                <span className={styles.heroProjectKeywords}>
+                  next generation
+                </span>{" "}
+                of <span className={styles.heroProjectKeywords}>security</span>{" "}
+                with powerful APIs and SDKs
+              </h1>
+              <div className={styles.indexCtas}>
+                <Link
+                  className={classnames(
+                    "button button--outline button--secondary button--lg",
+                    styles.indexCtasGetStartedButton
+                  )}
+                  to="#"
+                >
+                  Explore Products
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </header>
-      <main> 
+      <main>
+      <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img class="d-block w-100" src="img/devin.png" alt="First slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src="..." alt="Second slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src="..." alt="Third slide"/>
+          </div>
+        </div>
+      </div>
+      </main>
+      <main>
         <section className={styles.tools} ref={toolsRef}>
           <div className="container">
-            <div className="text--center">
-                  <h2>Develop with...</h2>
-              </div>
             <div className="row">
               {/* PAN-OS */}
               <div className={classnames("col col--3", styles.tools)}>
@@ -182,8 +183,9 @@ function Home() {
                   />
                 </div>
                 <h3>PAN-OS</h3>
-                <p className="text text--seconday"> 
-                Build next-gen automation with the worlds only next-generation security platform
+                <p className="text text--seconday">
+                  Build next-gen automation with the worlds only next-generation
+                  security platform
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -207,11 +209,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Demisto
-                </h3>
-                <p className="text text--seconday"> 
-                Develop new integrations, automations, playbooks, reports and more
+                <h3>Demisto</h3>
+                <p className="text text--seconday">
+                  Develop new integrations, automations, playbooks, reports and
+                  more
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -235,11 +236,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Cortex
-                </h3>
-                <p className="text text--seconday"> 
-                An open, continuous security platform to integrate rich context from cloud, endpoint and network data.
+                <h3>Cortex</h3>
+                <p className="text text--seconday">
+                  An open, continuous security platform to integrate rich
+                  context from cloud, endpoint and network data.
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -263,11 +263,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Prisma
-                </h3>
-                <p className="text text--seconday"> 
-                Protection for branches, mobile users, SaaS, and apps in private and public clouds
+                <h3>Prisma</h3>
+                <p className="text text--seconday">
+                  Protection for branches, mobile users, SaaS, and apps in
+                  private and public clouds
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -281,7 +280,6 @@ function Home() {
                   </Link>
                 </div>
               </div>
-
             </div>
           </div>
         </section>
