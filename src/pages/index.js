@@ -16,114 +16,93 @@ import ScrollUpButton from "react-scroll-up-button";
 import styles from "./styles.module.css";
 
 const particlesOptions = {
-  "particles": {
-    "number": {
-      "value": 355,
-      "density": {
-        "enable": true,
-        "value_area": 789.1476416322727
+  particles: {
+    number: {
+      value: 100,
+      density: {
+        enable: true,
+        value_area: 900
       }
     },
-    "color": {
-      "value": "#ffffff"
+    color: {
+      value: "#ffffff"
     },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
+    shape: {
+      type: "circle",
+      stroke: {
+        width: 0,
+        color: "#000000"
       },
-      "polygon": {
-        "nb_sides": 5
+      polygon: {
+        nb_sides: 5
       },
-      "image": {
-        "src": "img/github.svg",
-        "width": 100,
-        "height": 100
+      image: {
+        src: "img/github.svg",
+        width: 100,
+        height: 100
       }
     },
-    "opacity": {
-      "value": 0.48927153781200905,
-      "random": false,
-      "anim": {
-        "enable": true,
-        "speed": 0.2,
-        "opacity_min": 0,
-        "sync": false
+    opacity: {
+      value: 0.2,
+      random: false,
+      anim: {
+        enable: false,
+        speed: 1,
+        opacity_min: 0.2,
+        sync: false
       }
     },
-    "size": {
-      "value": 2,
-      "random": true,
-      "anim": {
-        "enable": true,
-        "speed": 2,
-        "size_min": 0,
-        "sync": false
+    size: {
+      value: 3,
+      random: true,
+      anim: {
+        enable: false,
+        speed: 40,
+        size_min: 0.1,
+        sync: false
       }
     },
-    "line_linked": {
-      "enable": false,
-      "distance": 150,
-      "color": "#ffffff",
-      "opacity": 0.4,
-      "width": 1
+    line_linked: {
+      enable: true,
+      distance: 250,
+      color: "#ffffff",
+      opacity: 0.2,
+      width: 1
     },
-    "move": {
-      "enable": true,
-      "speed": 0.2,
-      "direction": "none",
-      "random": true,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 1200
+    move: {
+      enable: true,
+      speed: 4,
+      direction: "none",
+      random: false,
+      straight: false,
+      out_mode: "out",
+      bounce: false,
+      attract: {
+        enable: false,
+        rotateX: 600,
+        rotateY: 1200
       }
     }
   },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": true,
-        "mode": "bubble"
+  interactivity: {
+    detect_on: "canvas",
+    events: {
+      onhover: {
+        enable: true,
+        mode: "grab"
       },
-      "onclick": {
-        "enable": true,
-        "mode": "push"
-      },
-      "resize": true
+      resize: true
     },
-    "modes": {
-      "grab": {
-        "distance": 400,
-        "line_linked": {
-          "opacity": 1
+    modes: {
+      grab: {
+        distance: 200,
+        line_linked: {
+          opacity: 0.4
         }
-      },
-      "bubble": {
-        "distance": 83.91608391608392,
-        "size": 1,
-        "duration": 3,
-        "opacity": 1,
-        "speed": 3
-      },
-      "repulse": {
-        "distance": 200,
-        "duration": 0.4
-      },
-      "push": {
-        "particles_nb": 4
-      },
-      "remove": {
-        "particles_nb": 2
       }
     }
   },
-  "retina_detect": true
+  retina_detect: true
 };
 
 const features = [
@@ -189,7 +168,7 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.themeConfig.navbar.title}`}
-      description="All things related to automation and development with PAN-OS®"
+      description="Palo Alto Networks for Developers"
     >
       <ScrollUpButton />
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
@@ -197,32 +176,39 @@ function Home() {
           <div>
             <Particles className="particles" params={particlesOptions} />
           </div>
-          <img 
-            className={styles.headerLogo}
-            src="img/dev-wave.png">
-          </img>
-          <p className="hero__subtitle">
-          Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.
-          </p>
-          <div className={styles.buttons}>
-            <Link
-              className={classnames(
-                "button button--outline button--secondary button--lg",
-                styles.getStarted
-              )}
-              onClick={scrollToTools}
-            >
-              Explore our Products
-            </Link>
+          <div className={styles.hero}>
+            <div className={styles.heroInner}>
+              <h1 className={styles.heroProjectTagline}>
+                <img
+                  alt="Devin the Developer Advocate"
+                  className={styles.heroLogo}
+                  src={useBaseUrl("img/dev-wave.png")}
+                />
+                Develop the{" "}
+                <span className={styles.heroProjectKeywords}>
+                  next generation
+                </span>{" "}
+                of <span className={styles.heroProjectKeywords}>security</span>{" "}
+                with powerful APIs and SDKs
+              </h1>
+              <div className={styles.indexCtas}>
+                <Link
+                  className={classnames(
+                    "button button--outline button--secondary button--lg",
+                    styles.indexCtasGetStartedButton
+                  )}
+                  to="#"
+                >
+                  Explore Products
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </header>
-      <main> 
+      <main>
         <section className={styles.tools} ref={toolsRef}>
           <div className="container">
-            <div className="text--center">
-                  <h2>Develop with...</h2>
-              </div>
             <div className="row">
               {/* PAN-OS */}
               <div className={classnames("col col--3", styles.tools)}>
@@ -234,8 +220,9 @@ function Home() {
                   />
                 </div>
                 <h3>PAN-OS</h3>
-                <p className="text text--seconday"> 
-                Build next-gen automation with the worlds only next-generation security platform
+                <p className="text text--seconday">
+                  Build next-gen automation with the worlds only next-generation
+                  security platform
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -259,11 +246,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Demisto
-                </h3>
-                <p className="text text--seconday"> 
-                Develop new integrations, automations, playbooks, reports and more
+                <h3>Demisto</h3>
+                <p className="text text--seconday">
+                  Develop new integrations, automations, playbooks, reports and
+                  more
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -287,11 +273,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Cortex
-                </h3>
-                <p className="text text--seconday"> 
-                An open, continuous security platform to integrate rich context from cloud, endpoint and network data.
+                <h3>Cortex</h3>
+                <p className="text text--seconday">
+                  An open, continuous security platform to integrate rich
+                  context from cloud, endpoint and network data.
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -315,11 +300,10 @@ function Home() {
                     alt="PAN-OS"
                   />
                 </div>
-                <h3>
-                  Prisma
-                </h3>
-                <p className="text text--seconday"> 
-                Protection for branches, mobile users, SaaS, and apps in private and public clouds
+                <h3>Prisma</h3>
+                <p className="text text--seconday">
+                  Protection for branches, mobile users, SaaS, and apps in
+                  private and public clouds
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -333,7 +317,6 @@ function Home() {
                   </Link>
                 </div>
               </div>
-
             </div>
           </div>
         </section>
