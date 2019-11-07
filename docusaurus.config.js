@@ -18,8 +18,20 @@ module.exports = {
       title: "",
       logo: {
         alt: "Palo Alto Networks for Developers",
-        src: "img/pandev.png"
+        src: "img/pandev.png",
+        menus: [
+          {
+            src: "img/pandev.png",
+            items: [
+              { to: "https://panos.pan.dev", label: "PAN-OS" },
+              { to: "https://cortex.pan.dev", label: "Cortex" },
+              { to: "https://demisto.pan.dev", label: "Demisto" },
+            ],
+            position: "left"
+          },
+        ],
       },
+    
       links: [
         {
           href: "https://panos.pan.dev",
