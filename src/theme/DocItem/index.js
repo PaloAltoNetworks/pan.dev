@@ -10,17 +10,24 @@ import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import DocPaginator from "@theme/DocPaginator";
+import useTOCHighlight from "@theme/hooks/useTOCHighlight";
 import classnames from "classnames";
 import React from "react";
 import styles from "./styles.module.css";
 
+const LINK_CLASS_NAME = "contents__link";
+const ACTIVE_LINK_CLASS_NAME = "contents__link--active";
+const TOP_OFFSET = 100;
+
 function Headings({ headings, isChild }) {
+  useTOCHighlight(LINK_CLASS_NAME, ACTIVE_LINK_CLASS_NAME, TOP_OFFSET);
+
   if (!headings.length) return null;
   return (
     <ul className={isChild ? "" : "contents contents__left-border"}>
       {headings.map(heading => (
         <li key={heading.id}>
-          <a href={`#${heading.id}`} className="contents__link">
+          <a href={`#${heading.id}`} className={LINK_CLASS_NAME}>
             {heading.value}
           </a>
           <Headings isChild headings={heading.children} />
@@ -45,6 +52,7 @@ function DocItem(props) {
     keywords,
     source
   } = metadata;
+
   const issueTitle = `Issue with "${title}" in ${source}`;
   const issueUrl = `https://github.com/PaloAltoNetworks/panos.pan.dev/issues/new?labels=documentation&template=developer-documentation-issue.md&title=${issueTitle}`;
   const metaImageUrl = siteUrl + useBaseUrl(metaImage);
