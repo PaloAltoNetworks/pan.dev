@@ -13,6 +13,7 @@ import classnames from "classnames";
 import React, { useRef } from "react";
 import Particles from "react-particles-js";
 import ScrollUpButton from "react-scroll-up-button";
+import ControlledCarousel from "./carousel";
 import styles from "./styles.module.css";
 
 const particlesOptions = {
@@ -119,11 +120,8 @@ function Home() {
       description="Palo Alto Networks for Developers"
     >
       <ScrollUpButton />
-      <header className={classnames("hero hero--primary", styles.heroBanner)}>
+      <header className={classnames("hero hero--primary heroTilted", styles.heroBanner)}>
         <div className="container">
-          <div>
-            <Particles className="particles" params={particlesOptions} />
-          </div>
           <div className={styles.hero}>
             <div className={styles.heroInner}>
               <h1 className={styles.heroProjectTagline}>
@@ -155,22 +153,15 @@ function Home() {
         </div>
       </header>
       <main>
-      <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img class="d-block w-100" src="img/devin.png" alt="First slide"/>
+        <section className={styles.carousel} ref={toolsRef}>
+          <div className="container">
+              <h1 className="text--center"> What's Possible? </h1>
+            <div className="row">
+              <ControlledCarousel></ControlledCarousel>
+            </div>
           </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="..." alt="Second slide"/>
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="..." alt="Third slide"/>
-          </div>
-        </div>
-      </div>
-      </main>
-      <main>
-        <section className={styles.tools} ref={toolsRef}>
+        </section>
+        <section className={styles.toolsslant} ref={toolsRef }>
           <div className="container">
             <div className="row">
               {/* PAN-OS */}
