@@ -7,37 +7,51 @@
 
 module.exports = {
   title: "Build Security",
-  tagline: "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
+  tagline:
+    "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
   url: "https://pan.dev",
   baseUrl: "/",
   favicon: "img/panospeelable.png",
   organizationName: "PaloAltoNetworks", // Usually your GitHub org/user name.
   projectName: "pan.dev", // Usually your repo name.
   themeConfig: {
+    sidebarCollapsible: true,
     navbar: {
       title: "",
       logo: {
         alt: "Palo Alto Networks for Developers",
-        src: "img/pandev.png"
+        src: "img/pandev.png",
+        menus: [
+          {
+            src: "img/pandev.png",
+            items: [
+              { to: "https://panos.pan.dev", label: "PAN-OS" },
+              { to: "https://cortex.pan.dev", label: "Cortex" },
+              { to: "https://demisto.pan.dev", label: "Demisto" },
+            ],
+            position: "left"
+          },
+        ],
       },
+    
       links: [
         {
-          href: "panos.pan.dev",
+          href: "https://panos.pan.dev",
           label: "PAN-OS",
           position: "left"
         },
         {
-          href: "cortex.pan.dev",
+          href: "https://cortex.pan.dev",
           label: "Cortex",
           position: "left"
         },
         {
-          href: "demisto.pan.dev",
+          href: "https://demisto.pan.dev",
           label: "Demisto",
           position: "left"
         },
         {
-          href: "https://medium.com/palo-alto-networks-developer-blog",
+          to: "medium",
           label: "Blog",
           position: "left"
         },
@@ -83,7 +97,7 @@ module.exports = {
           items: [
             {
               label: "Blog",
-              href: "https://medium.com/palo-alto-networks-developer-blog"
+              to: "medium"
             }
           ]
         }
@@ -125,6 +139,13 @@ module.exports = {
       cacheTime: 600 * 1000, // 600 sec - cache purge period
       changefreq: "weekly",
       priority: 0.5
+    }
+  ],
+  stylesheets: [
+    {
+      href:
+        "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
+      type: "text/css"
     }
   ]
 };
