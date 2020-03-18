@@ -65,15 +65,15 @@ module.exports = {
           items: [
             {
               label: "Strata",
-              to: "https://strata.pan.dev"
+            href: "https://strata.pan.dev"
             },
             {
               label: "Cortex",
-              to: "https://cortex.pan.dev"
+            href: "https://cortex.pan.dev"
             },
             {
               label: "Cortex XSOAR",
-              to: "https://xsoar.pan.dev"
+            href: "https://xsoar.pan.dev"
             }
           ]
         },
@@ -89,7 +89,7 @@ module.exports = {
       ],
       logo: {
         alt: "Palo Alto Networks for developers",
-        src: "img/PANW_Parent_Brand_Primary_Logo_RGB_KO.svg"
+        src: "img/PANW_Parent_Brand_Primary_Logo_RGB_KO.svg",
       },
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`
     }
