@@ -11,7 +11,7 @@ module.exports = {
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
   url: "https://pan.dev",
   baseUrl: "/",
-  favicon: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
+  favicon: "img/PANW_Parent_Brand_Peelable_RGB_Red.png",
   organizationName: "PaloAltoNetworks", // Usually your GitHub org/user name.
   projectName: "pan.dev", // Usually your repo name.
   themeConfig: {
