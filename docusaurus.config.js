@@ -11,7 +11,7 @@ module.exports = {
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
   url: "https://pan.dev",
   baseUrl: "/",
-  favicon: "img/panospeelable.png",
+  favicon: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
   organizationName: "PaloAltoNetworks", // Usually your GitHub org/user name.
   projectName: "pan.dev", // Usually your repo name.
   themeConfig: {
@@ -20,15 +20,10 @@ module.exports = {
       title: "",
       logo: {
         alt: "Palo Alto Networks for Developers",
-        src: "img/pandev.png",
+        src: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
         menus: [
           {
-            src: "img/pandev.png",
-            items: [
-              { to: "https://panos.pan.dev", label: "PAN-OS" },
-              { to: "https://cortex.pan.dev", label: "Cortex" },
-              { to: "https://demisto.pan.dev", label: "Demisto" },
-            ],
+            src: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
             position: "left"
           },
         ],
@@ -36,8 +31,8 @@ module.exports = {
     
       links: [
         {
-          href: "https://panos.pan.dev",
-          label: "PAN-OS",
+          href: "https://strata.pan.dev",
+          label: "Strata",
           position: "left"
         },
         {
@@ -46,19 +41,19 @@ module.exports = {
           position: "left"
         },
         {
-          href: "https://demisto.pan.dev",
-          label: "Demisto",
+          href: "https://xsoar.pan.dev",
+          label: "XSOAR",
           position: "left"
         },
         {
-          to: "medium",
+          href: "https://medium.com/palo-alto-networks-developer-blog",
           label: "Blog",
-          position: "left"
+          position: "right"
         },
         {
           href: "https://github.com/PaloAltoNetworks",
           label: "GitHub",
-          position: "left"
+          position: "right"
         }
       ]
     },
@@ -66,29 +61,19 @@ module.exports = {
       style: "dark",
       links: [
         {
-          title: "Docs",
+          title: "Products",
           items: [
             {
-              label: "APIs and SDKs",
-              to: "docs/panos_api"
+              label: "Strata",
+              to: "https://strata.pan.dev"
             },
             {
-              label: "Automation",
-              to: "docs/automation"
+              label: "Cortex",
+              to: "https://cortex.pan.dev"
             },
             {
-              label: "Cloud Templates",
-              to: "docs/cloud"
-            }
-          ]
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "Automation and API",
-              href:
-                "https://live.paloaltonetworks.com/t5/Automation-API/ct-p/automation"
+              label: "Cortex XSOAR",
+              to: "https://xsoar.pan.dev"
             }
           ]
         },
@@ -97,14 +82,14 @@ module.exports = {
           items: [
             {
               label: "Blog",
-              to: "medium"
+              href: "https://medium.com/palo-alto-networks-developer-blog"
             }
           ]
         }
       ],
       logo: {
         alt: "Palo Alto Networks for developers",
-        src: "img/pandev.png"
+        src: "img/PANW_Parent_Brand_Primary_Logo_RGB_KO.svg"
       },
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`
     }
