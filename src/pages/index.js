@@ -12,7 +12,6 @@ import Layout from "@theme/Layout";
 import classnames from "classnames";
 import React, { useRef } from "react";
 import ScrollUpButton from "react-scroll-up-button";
-import ControlledCarousel from "./carousel";
 import styles from "./styles.module.css";
 
 
@@ -63,84 +62,24 @@ function Home() {
         </div>
       </header>
       <main>
-        <section className={styles.carousel} ref={toolsRef}>
-          <div className="container">
-              <h1 className="text--center"> What's Possible? </h1>
-            <div className="row">
-              <ControlledCarousel></ControlledCarousel>
-            </div>
-          </div>
-        </section>
+
         <section className={styles.toolsslant} ref={toolsRef }>
           <div className="container">
             <div className="row">
-              {/* PAN-OS */}
-              <div className={classnames("col col--3", styles.tools)}>
-                <div className="text--center">
-                  <img
-                    className={styles.toolImage}
-                    src="img/panospeelable.png"
-                    alt="PAN-OS"
-                  />
-                </div>
-                <h3>PAN-OS</h3>
-                <p className="text text--seconday">
-                  Build next-gen automation with the worlds only next-generation
-                  security platform
-                </p>
-                <div className={styles.buttons}>
-                  <Link
-                    className={classnames(
-                      "button button--primary button--md",
-                      styles.panos
-                    )}
-                    href="https://panos.pan.dev"
-                  >
-                    PAN-OS For Developers
-                  </Link>
-                </div>
-              </div>
-
-              {/* Demisto */}
-              <div className={classnames("col col--3", styles.tools)}>
-                <div className="text--center">
-                  <img
-                    className={styles.toolImage}
-                    src="img/demistopeelable.png"
-                    alt="PAN-OS"
-                  />
-                </div>
-                <h3>Demisto</h3>
-                <p className="text text--seconday">
-                  Develop new integrations, automations, playbooks, reports and
-                  more
-                </p>
-                <div className={styles.buttons}>
-                  <Link
-                    className={classnames(
-                      "button button--primary button--md",
-                      styles.demisto
-                    )}
-                    href="https://demisto.pan.dev"
-                  >
-                    Demisto For Developers
-                  </Link>
-                </div>
-              </div>
 
               {/* Cortex */}
-              <div className={classnames("col col--3", styles.tools)}>
+              <div className={classnames("col col--4", styles.tools)}>
                 <div className="text--center">
                   <img
                     className={styles.toolImage}
-                    src="img/cortexpeelable.png"
-                    alt="PAN-OS"
+                    src="img/Cortex-green.svg"
+                    alt="Cortex"
                   />
                 </div>
                 <h3>Cortex</h3>
                 <p className="text text--seconday">
                   An open, continuous security platform to integrate rich
-                  context from cloud, endpoint and network data.
+                  context from cloud, endpoint and network data
                 </p>
                 <div className={styles.buttons}>
                   <Link
@@ -150,37 +89,65 @@ function Home() {
                     )}
                     href="https://cortex.pan.dev"
                   >
-                    Cortex For Developers
+                    Cortex for Developers
                   </Link>
                 </div>
               </div>
 
-              {/* {Prisma} */}
-              <div className={classnames("col col--3", styles.tools)}>
+              {/* PAN-OS */}
+              <div className={classnames("col col--4", styles.tools)}>
                 <div className="text--center">
                   <img
                     className={styles.toolImage}
-                    src="img/prismapeelable.png"
-                    alt="PAN-OS"
+                    src="img/Strata-yellow.svg"
+                    alt="Strata"
                   />
                 </div>
-                <h3>Prisma</h3>
+                <h3>Strata</h3>
                 <p className="text text--seconday">
-                  Protection for branches, mobile users, SaaS, and apps in
-                  private and public clouds
+                  Build next-gen automation with the worlds only next-generation
+                  security platform
                 </p>
                 <div className={styles.buttons}>
                   <Link
                     className={classnames(
                       "button button--primary button--md",
-                      styles.prisma
+                      styles.strata
                     )}
-                    href="https://prisma.pan.dev"
+                    href="https://strata.pan.dev"
                   >
-                    Prisma For Developers
+                    Strata for Developers
                   </Link>
                 </div>
               </div>
+
+              {/* Cortex XSOAR */}
+              <div className={classnames("col col--4", styles.tools)}>
+                <div className="text--center">
+                  <img
+                    className={styles.toolImage}
+                    src="img/Cortex-XSOAR-product-green.svg"
+                    alt="Cortex XSOAR"
+                  />
+                </div>
+                <h3>Cortex XSOAR</h3>
+                <p className="text text--seconday">
+                  Develop new integrations, automations, playbooks, reports and
+                  more
+                </p>
+                <div className={styles.buttons}>
+                  <Link
+                    className={classnames(
+                      "button button--primary button--md",
+                      styles.cortex
+                    )}
+                    href="https://xsoar.pan.dev"
+                  >
+                    Cortex XSOAR 
+                  </Link>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
