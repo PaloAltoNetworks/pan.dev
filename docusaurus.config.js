@@ -42,7 +42,7 @@ module.exports = {
         },
         {
           href: "https://xsoar.pan.dev",
-          label: "XSOAR",
+          label: "Cortex XSOAR",
           position: "left"
         },
         {
