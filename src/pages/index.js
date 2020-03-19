@@ -152,7 +152,7 @@ function Home() {
                 <img
                   alt="Devin the Developer Advocate"
                   className={styles.heroLogo}
-                  src={useBaseUrl("img/dev-wave.png")}
+                  src={useBaseUrl("img/devin-wave.svg")}
                 />
                 Develop the{" "}
                 <span className={styles.heroProjectKeywords}>
