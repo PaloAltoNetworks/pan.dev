@@ -179,6 +179,7 @@ function Home() {
       <main>
         <section className={styles.toolsslant} ref={vertificalsRef}>
           <div className="container">
+            <h1 className={styles.toolTag}> Develop with... </h1>
             <div className="row">
               {/* Cortex */}
               <div className={classnames("col col--4", styles.tools)}>
