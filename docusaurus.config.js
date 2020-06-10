@@ -46,6 +46,11 @@ module.exports = {
           position: "left"
         },
         {
+          href: "https://gallery.pan.dev",
+          label: "Find Code",
+          position: "left"
+        },
+        {
           href: "https://medium.com/palo-alto-networks-developer-blog",
           label: "Blog",
           position: "right"
