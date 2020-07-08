@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/791dfbf1-c6e8-447d-ac4d-220cb8aa7c6f/deploy-status)](https://app.netlify.com/sites/condescending-mcclintock-5c4d6f/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0eed1efe-d1e4-4a4f-9297-3665c942cc1a/deploy-status)](https://app.netlify.com/sites/pandev/deploys)
 
 # Palo Alto Networks for Developers
 
