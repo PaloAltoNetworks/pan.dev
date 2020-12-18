@@ -46,6 +46,11 @@ module.exports = {
           position: "left"
         },
         {
+          href: "https://prisma.pan.dev",
+          label: "Prisma Cloud",
+          position: "left"
+        },
+        {
           href: "https://gallery.pan.dev",
           label: "Find Code",
           position: "left"
@@ -79,6 +84,10 @@ module.exports = {
             {
               label: "Cortex XSOAR",
             href: "https://xsoar.pan.dev"
+            },
+            {
+              label: "Prisma Cloud",
+            href: "https://prisma.pan.dev"
             }
           ]
         },
