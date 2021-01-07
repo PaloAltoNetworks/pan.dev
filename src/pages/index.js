@@ -182,7 +182,7 @@ function Home() {
             <h1 className={styles.toolTag}> Develop with... </h1>
             <div className="row">
               {/* Cortex */}
-              <div className={classnames("col col--4", styles.tools)}>
+              <div className={classnames("col col--6", styles.tools)}>
                 <div className="text--center">
                   <img
                     className={styles.toolImage}
@@ -209,7 +209,7 @@ function Home() {
               </div>
 
               {/* PAN-OS */}
-              <div className={classnames("col col--4", styles.tools)}>
+              <div className={classnames("col col--6", styles.tools)}>
                 <div className="text--center">
                   <img
                     className={styles.toolImage}
@@ -236,7 +236,7 @@ function Home() {
               </div>
 
               {/* Cortex XSOAR */}
-              <div className={classnames("col col--4", styles.tools)}>
+              <div className={classnames("col col--6", styles.tools)}>
                 <div className="text--center">
                   <img
                     className={styles.toolImage}
@@ -261,6 +261,34 @@ function Home() {
                   </Link>
                 </div>
               </div>
+
+              {/* Prisms */}
+              <div className={classnames("col col--6", styles.tools)}>
+                <div className="text--center">
+                  <img
+                    className={styles.toolImage}
+                    src="img/prismalogo.png"
+                    alt="Prisma"
+                  />
+                </div>
+                <h3>Prisma Cloud</h3>
+                <p className="text text--seconday">
+                Develop for the journey to the cloud with Prisma
+                </p>
+                <div className={styles.buttons}>
+                  <Link
+                    className={classnames(
+                      "button button--primary button--md",
+                      styles.prisma
+                    )}
+                    href="https://prisma.pan.dev/"
+                  >
+                    Prisma Cloud
+                  </Link>
+                </div>
+              </div>
+
+
             </div>
           </div>
         </section>

@@ -21,20 +21,8 @@ module.exports = {
       logo: {
         alt: "Palo Alto Networks for Developers",
         src: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
-        menus: [
-          {
-            src: "img/PANW_Parent_Brand_Peelable_RGB_Red.svg",
-            position: "left"
-          },
-        ],
       },
-    
-      links: [
-        {
-          href: "https://strata.pan.dev",
-          label: "Strata",
-          position: "left"
-        },
+      items: [
         {
           href: "https://cortex.pan.dev",
           label: "Cortex",
@@ -46,8 +34,18 @@ module.exports = {
           position: "left"
         },
         {
+          href: "https://prisma.pan.dev",
+          label: "Prisma",
+          position: "left"
+        },
+        {
+          href: "https://strata.pan.dev",
+          label: "Strata",
+          position: "left"
+        },
+        {
           href: "https://gallery.pan.dev",
-          label: "Find Code",
+          label: "Code Gallery",
           position: "left"
         },
         {
@@ -57,11 +55,13 @@ module.exports = {
         },
         {
           href: "https://github.com/PaloAltoNetworks",
-          label: "GitHub",
-          position: "right"
+          position: "right",
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
         }
-      ]
+      ],
     },
+
     footer: {
       style: "dark",
       links: [
@@ -69,17 +69,26 @@ module.exports = {
           title: "Products",
           items: [
             {
-              label: "Strata",
-            href: "https://strata.pan.dev"
-            },
-            {
               label: "Cortex",
-            href: "https://cortex.pan.dev"
+              href: "https://cortex.pan.dev"
             },
             {
               label: "Cortex XSOAR",
-            href: "https://xsoar.pan.dev"
-            }
+              href: "https://xsoar.pan.dev"
+            },
+            {
+              href: "https://prisma.pan.dev",
+              label: "Prisma",
+              position: "left"
+            },
+            {
+              label: "Strata",
+              href: "https://strata.pan.dev"
+            },
+            {
+              href: "https://gallery.pan.dev",
+              label: "Code Gallery",
+            },
           ]
         },
         {
@@ -99,21 +108,25 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`
     }
   },
-  themes: ["@docusaurus/theme-live-codeblock"],
+  themes: [
+    require.resolve("@docusaurus/theme-live-codeblock"),
+  ],
   presets: [
     [
-      "@docusaurus/preset-classic",
+      require.resolve("@docusaurus/preset-classic"),
       {
         docs: {
+          homePageId: "_index",
           sidebarPath: require.resolve("./sidebars.js"),
-          // editUrl:
-          //   "https://github.com/PaloAltoNetworks/panos.pan.dev/tree/master/docs",
+          editUrl:
+            "https://github.com/PaloAltoNetworks/prisma.pan.dev/tree/master/",
           routeBasePath: "docs",
           include: ["**/*.md", "**/*.mdx"], // Extensions to include.
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/DocItem",
           remarkPlugins: [],
           rehypePlugins: [],
+          path: "docs",
           showLastUpdateAuthor: true,
           showLastUpdateTime: true
         },
@@ -124,18 +137,14 @@ module.exports = {
     ]
   ],
   plugins: [
-    "@docusaurus/plugin-sitemap",
-    {
-      cacheTime: 600 * 1000, // 600 sec - cache purge period
-      changefreq: "weekly",
-      priority: 0.5
-    }
+    [
+      '@docusaurus/plugin-sitemap',
+      {
+        id: "prisma-sitemap",
+        cacheTime: 600 * 1000, // 600 sec - cache purge period
+        changefreq: 'weekly',
+        priority: 0.5,
+      },
+    ],
   ],
-  stylesheets: [
-    {
-      href:
-        "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
-      type: "text/css"
-    }
-  ]
 };
