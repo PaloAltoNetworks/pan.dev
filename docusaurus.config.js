@@ -21,7 +21,6 @@ module.exports = {
       searchParameters: {
         typoTolerance: false,
         facetFilters: [["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"]],
-        maxFacetHits: 5,
       }, // Optional, if provided by Algolia
     },
     sidebarCollapsible: true,
