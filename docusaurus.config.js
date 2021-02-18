@@ -15,6 +15,14 @@ module.exports = {
   organizationName: "PaloAltoNetworks", // Usually your GitHub org/user name.
   projectName: "pan.dev", // Usually your repo name.
   themeConfig: {
+    algolia: {
+      apiKey: "cc0f2da5c80d2fb8dedb7ef9b56b52f2",
+      indexName: "pan",
+      searchParameters: {
+        typoTolerance: false,
+        facetFilters: [["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"]],
+      }, // Optional, if provided by Algolia
+    },
     sidebarCollapsible: true,
     navbar: {
       title: "",
