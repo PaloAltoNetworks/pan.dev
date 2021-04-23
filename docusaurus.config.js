@@ -15,6 +15,10 @@ module.exports = {
   organizationName: "PaloAltoNetworks", // Usually your GitHub org/user name.
   projectName: "pan.dev", // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      defaultMode: "dark",
+      disableSwitch: true,
+    },
     algolia: {
       apiKey: "cc0f2da5c80d2fb8dedb7ef9b56b52f2",
       indexName: "pan",
@@ -71,9 +75,8 @@ module.exports = {
         },
       ],
     },
-
     footer: {
-      style: "dark",
+      style: "light",
       links: [
         {
           title: "Products",
