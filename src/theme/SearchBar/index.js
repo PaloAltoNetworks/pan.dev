@@ -20,6 +20,17 @@ import { createPortal } from 'react-dom';
 let DocSearchModal = null;
 
 function Hit({ hit, children }) {
+  var site = '';
+  var itemh0 = '';
+  console.log(hit);
+  console.log(children);
+  if (hit.url.includes('xsoar.pan.dev')) site = 'XSoar';
+  else if (hit.url.includes('prisma.pan.dev')) site = 'Prisma';
+  else if (hit.url.includes('panos.pan.dev')) site = 'Strata';
+  else if (hit.url.includes('cortex.pan.dev')) site = 'Cortex';
+  else site = '';
+  itemh0 = site + hit.hierarchy.lvl0;
+
   return <Link to={hit.url}>{children}</Link>;
 }
 
@@ -111,15 +122,9 @@ function DocSearch({ contextualSearch, ...props }) {
       var itemh0 = '';
       const a = document.createElement('a');
       a.href = item.url;
-      if (item.url.includes('xsoar.pan.dev')) site = 'xsoar';
-      else if (item.url.includes('prisma.pan.dev')) site = 'prisma';
-      else if (item.url.includes('panos.pan.dev')) site = 'strata';
-      else if (item.url.includes('cortex.pan.dev')) site = 'cortex';
-      else site = '';
       return {
         ...item,
         url: a.href,
-        class: site,
       };
     });
   }).current;
