@@ -5,13 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import Layout from "@theme/Layout";
-import classnames from "classnames";
-import React from "react";
-import ScrollUpButton from "react-scroll-up-button";
-import Featured from "../components/Featured";
-import styles from "./styles.module.css";
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Layout from '@theme/Layout';
+import classnames from 'classnames';
+import React from 'react';
+import ScrollUpButton from 'react-scroll-up-button';
+import Featured from '../components/Featured';
+import styles from './styles.module.css';
+import SearchBar from '../theme/SearchBar';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -24,31 +25,19 @@ function Home() {
       wrapperClassName="homepage"
     >
       <ScrollUpButton />
-      <header className={classnames("hero hero--dark", styles.heroBanner)}>
+      <header className={classnames('hero hero--dark', styles.heroBanner)}>
         <div className="container">
           <div className={styles.hero}>
             <div className={styles.heroInner}>
               <div className="row">
-                <div className={classnames("col col--12")}>
-                  <div className={styles.heroLogo}>
-                    <img src="/img/PANW_Parent_Brand_Peelable_RGB_Red.svg" />
-                  </div>
+                <div className={classnames('col col--12')}>
+                  <h1 className={styles.heroProjectTagline}>
+                    What <span className={styles.heroProjectKeywords}> developer docs </span> can we help you find?{' '}
+                  </h1>
                 </div>
               </div>
               <div className="row">
-                <div className={classnames("col col--12")}>
-                  <h1 className={styles.heroProjectTagline}>
-                    The hub of{" "}
-                    <span className={styles.heroProjectKeywords}>
-                      {" "}
-                      developer docs{" "}
-                    </span>{" "}
-                    for{" "}
-                    <span className={styles.heroProjectKeywords}>
-                      Palo Alto Networks.
-                    </span>
-                  </h1>
-                </div>
+                <SearchBar />
               </div>
             </div>
           </div>

@@ -1,17 +1,49 @@
-import useBaseUrl from "@docusaurus/useBaseUrl";
-import classnames from "classnames";
-import clsx from "clsx";
-import React from "react";
-import { useMediaQuery } from "react-responsive";
-import Button from "../../theme/Button";
-import styles from "./styles.module.css";
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import classnames from 'classnames';
+import clsx from 'clsx';
+import React from 'react';
+import { useMediaQuery } from 'react-responsive';
+import Button from '../../theme/Button';
+import styles from './styles.module.css';
 
 const features = [
   {
+    title: <>XSOAR for Developers</>,
+    imageUrl: '/img/Cortex-XSOAR-product-green.svg',
+    toPage: 'https://xsoar.pan.dev',
+    color: 'cortex',
+    description: (
+      <>
+        <a target="_self" href="https://xsoar.pan.dev/docs/welcome" rel="noopener noreferrer" className={styles.toLink}>
+          Developer Docs
+        </a>
+        <br />
+        <a
+          target="_self"
+          href="https://xsoar.pan.dev/docs/reference/articles-index"
+          rel="noopener noreferrer"
+          className={styles.toLink}
+        >
+          Articles
+        </a>
+        <br />
+        <a
+          target="_self"
+          href="https://xsoar.pan.dev/docs/reference/articles-index"
+          rel="noopener noreferrer"
+          className={styles.toLink}
+        >
+          Reference
+        </a>
+      </>
+    ),
+  },
+  {
     title: <>Prisma Cloud for Developers</>,
-    imageUrl: "/img/prismafavicon.png",
-    toPage: "https://prisma.pan.dev",
-    target: "_self",
+    imageUrl: '/img/prismafavicon.png',
+    toPage: 'https://prisma.pan.dev',
+    target: '_self',
+    color: 'prisma',
     description: (
       <>
         <a
@@ -41,12 +73,7 @@ const features = [
           RQL Library
         </a>
         <br />
-        <a
-          target="_self"
-          href="https://prisma.pan.dev/api/cloud/"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
+        <a target="_self" href="https://prisma.pan.dev/api/cloud/" rel="noopener noreferrer" className={styles.toLink}>
           API Reference
         </a>
       </>
@@ -54,34 +81,25 @@ const features = [
   },
   {
     title: <>PAN-OS for Developers</>,
-    imageUrl: "/img/Strata-yellow.svg",
-    toPage: "https://panos.pan.dev",
+    imageUrl: '/img/Strata-yellow.svg',
+    toPage: 'https://strata.pan.dev',
+    color: 'strata',
     description: (
       <>
-        <a
-          target="_self"
-          href="https://panos.pan.dev/docs/apis"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
+        <a target="_self" href="https://strata.pan.dev/docs/apis" rel="noopener noreferrer" className={styles.toLink}>
           APIs and SDKs
         </a>
         <br />
         <a
           target="_self"
-          href="https://panos.pan.dev/docs/automation"
+          href="https://strata.pan.dev/docs/automation"
           rel="noopener noreferrer"
           className={styles.toLink}
         >
           Automation
         </a>
         <br />
-        <a
-          target="_self"
-          href="https://panos.pan.dev/docs/cloud"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
+        <a target="_self" href="https://panos.pan.dev/docs/cloud" rel="noopener noreferrer" className={styles.toLink}>
           Cloud
         </a>
         <br />
@@ -97,44 +115,10 @@ const features = [
     ),
   },
   {
-    title: <>XSOAR for Developers</>,
-    imageUrl: "/img/Cortex-XSOAR-product-green.svg",
-    toPage: "https://xsoar.pan.dev",
-    description: (
-      <>
-        <a
-          target="_self"
-          href="https://xsoar.pan.dev/docs/welcome"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
-          Developer Docs
-        </a>
-        <br />
-        <a
-          target="_self"
-          href="https://xsoar.pan.dev/docs/reference/articles-index"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
-          Articles
-        </a>
-        <br />
-        <a
-          target="_self"
-          href="https://xsoar.pan.dev/docs/reference/articles-index"
-          rel="noopener noreferrer"
-          className={styles.toLink}
-        >
-          Reference
-        </a>
-      </>
-    ),
-  },
-  {
     title: <>Cortex for Developers</>,
-    imageUrl: "/img/Cortex-green.svg",
-    toPage: "https://cortex.pan.dev",
+    imageUrl: '/img/Cortex-green.svg',
+    toPage: 'https://cortex.pan.dev',
+    color: 'cortex',
     description: (
       <>
         <a
@@ -168,66 +152,39 @@ const features = [
   },
 ];
 
-function Feature({ imageUrl, title, description, toPage }) {
+function Feature({ imageUrl, title, description, toPage, color }) {
   const imgUrl = useBaseUrl(imageUrl);
   const toUrl = toPage ? useBaseUrl(toPage) : null;
-  const isBreakpoint = useMediaQuery({ query: "(max-width: 1200px)" });
+  const isBreakpoint = useMediaQuery({ query: '(max-width: 1200px)' });
 
-  if (toUrl) {
-    return (
-      <div
-        className={
-          isBreakpoint
-            ? "col col--6 margin-bottom--md"
-            : "col col--5 margin-bottom--md"
-        }
+  return (
+    <div className={isBreakpoint ? 'col col--6 margin-bottom--md' : 'col col--5 margin-bottom--md'}>
+      <Button
+        className={clsx(styles.featuredButton)}
+        variant="plain"
+        href={toUrl}
+        target="_self"
+        uppercase={false}
+        newTab={false}
+        color={color}
       >
-        <Button
-          className={clsx(styles.featuredButton)}
-          variant="plain"
-          href={toUrl}
-          target="_self"
-          uppercase={false}
-          newTab={false}
-        >
-          <div className={clsx("card shadow--lw", styles.featured)}>
-            <div className="card__body">
-              {imgUrl && <img className={styles.featuredImage} src={imgUrl} />}
-              <div className={styles.featuredTitle}>{title}</div>
-              <div className={styles.featuredSummary}>{description}</div>
-            </div>
-          </div>
-        </Button>
-      </div>
-    );
-  } else {
-    return (
-      <div
-        className={
-          isBreakpoint
-            ? "col col--6 margin-bottom--md"
-            : "col col--4 margin-bottom--md"
-        }
-      >
-        <div className={styles.featuredLinks}>
-          <div className={clsx("card shadow--lw", styles.featured)}>
-            <div className="card__body">
-              {imgUrl && <img className={styles.featuredImage} src={imgUrl} />}
-              <div className={styles.featuredTitle}>{title}</div>
-              <div className={styles.featuredSummary}>{description}</div>
-            </div>
+        <div className={clsx('card', styles.featured, color)}>
+          <div className="card__body">
+            {imgUrl && <img className={styles.featuredImage} src={imgUrl} />}
+            <div className={styles.featuredTitle}>{title}</div>
+            <div className={styles.featuredSummary}>{description}</div>
           </div>
         </div>
-      </div>
-    );
-  }
+      </Button>
+    </div>
+  );
 }
 
 function Featured() {
   return (
     <div>
       {features && features.length && (
-        <div className={classnames("row centRow")}>
+        <div className={classnames('row centRow')}>
           {features.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
