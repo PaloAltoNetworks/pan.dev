@@ -110,7 +110,8 @@ function DocSearch({ contextualSearch, ...props }) {
 
   const navigator = useRef({
     navigate({ itemUrl }) {
-      history.push(itemUrl);
+      window.open(itemUrl, "_blank");
+      // history.push(itemUrl);
     },
   }).current;
 
