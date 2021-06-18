@@ -5,28 +5,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { DocSearchButton, useDocSearchKeyboardEvents } from '@docsearch/react';
-import Head from '@docusaurus/Head';
-import Link from '@docusaurus/Link';
-import { useHistory } from '@docusaurus/router';
-import { translate } from '@docusaurus/Translate';
-import { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import useAlgoliaContextualFacetFilters from '@theme/hooks/useAlgoliaContextualFacetFilters';
-import useSearchQuery from '@theme/hooks/useSearchQuery';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { DocSearchButton, useDocSearchKeyboardEvents } from "@docsearch/react";
+import Head from "@docusaurus/Head";
+import Link from "@docusaurus/Link";
+import { useHistory } from "@docusaurus/router";
+import { translate } from "@docusaurus/Translate";
+import { useBaseUrlUtils } from "@docusaurus/useBaseUrl";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import useAlgoliaContextualFacetFilters from "@theme/hooks/useAlgoliaContextualFacetFilters";
+import useSearchQuery from "@theme/hooks/useSearchQuery";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 let DocSearchModal = null;
 
 function Hit({ hit, children }) {
-  var site = '';
-  var itemh0 = '';
-  if (hit.url.includes('xsoar.pan.dev')) site = 'XSoar';
-  else if (hit.url.includes('prisma.pan.dev')) site = 'Prisma';
-  else if (hit.url.includes('panos.pan.dev')) site = 'Strata';
-  else if (hit.url.includes('cortex.pan.dev')) site = 'Cortex';
-  else site = '';
+  var site = "";
+  var itemh0 = "";
+  if (hit.url.includes("xsoar.pan.dev")) site = "XSoar";
+  else if (hit.url.includes("prisma.pan.dev")) site = "Prisma";
+  else if (hit.url.includes("panos.pan.dev")) site = "Strata";
+  else if (hit.url.includes("cortex.pan.dev")) site = "Cortex";
+  else site = "";
   itemh0 = site + hit.hierarchy.lvl0;
 
   return <Link to={hit.url}>{children}</Link>;
@@ -74,9 +74,9 @@ function DocSearch({ contextualSearch, ...props }) {
     }
 
     return Promise.all([
-      import('@docsearch/react/modal'),
-      import('@docsearch/react/style'),
-      import('./styles.css'),
+      import("@docsearch/react/modal"),
+      import("@docsearch/react/style"),
+      import("./styles.css"),
     ]).then(([{ DocSearchModal: Modal }]) => {
       DocSearchModal = Modal;
     });
@@ -84,8 +84,11 @@ function DocSearch({ contextualSearch, ...props }) {
 
   const onOpen = useCallback(() => {
     importDocSearchModalIfNeeded().then(() => {
-      searchContainer.current = document.createElement('div');
-      document.body.insertBefore(searchContainer.current, document.body.firstChild);
+      searchContainer.current = document.createElement("div");
+      document.body.insertBefore(
+        searchContainer.current,
+        document.body.firstChild
+      );
       setIsOpen(true);
     });
   }, [importDocSearchModalIfNeeded, setIsOpen]);
@@ -116,7 +119,7 @@ function DocSearch({ contextualSearch, ...props }) {
       // We transform the absolute URL into a relative URL.
       // Alternatively, we can use `new URL(item.url)` but it's not
       // supported in IE.
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = item.url;
       return {
         ...item,
@@ -132,7 +135,10 @@ function DocSearch({ contextualSearch, ...props }) {
 
   const transformSearchClient = useCallback(
     (searchClient) => {
-      searchClient.addAlgoliaAgent('docusaurus', siteMetadata.docusaurusVersion);
+      searchClient.addAlgoliaAgent(
+        "docusaurus",
+        siteMetadata.docusaurusVersion
+      );
 
       return searchClient;
     },
@@ -148,9 +154,9 @@ function DocSearch({ contextualSearch, ...props }) {
   });
 
   const translatedSearchLabel = translate({
-    id: 'theme.SearchBar.label',
-    message: 'Search',
-    description: 'The ARIA label and placeholder for search button',
+    id: "theme.SearchBar.label",
+    message: "Search",
+    description: "The ARIA label and placeholder for search button",
   });
 
   return (
@@ -159,7 +165,11 @@ function DocSearch({ contextualSearch, ...props }) {
         {/* This hints the browser that the website will load data from Algolia,
         and allows it to preconnect to the DocSearch cluster. It makes the first
         query faster, especially on mobile. */}
-        <link rel="preconnect" href={`https://${props.appId}-dsn.algolia.net`} crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href={`https://${props.appId}-dsn.algolia.net`}
+          crossOrigin="anonymous"
+        />
       </Head>
 
       <DocSearchButton
