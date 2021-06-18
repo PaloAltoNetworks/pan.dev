@@ -13,6 +13,7 @@ import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
 import SearchBar from "../theme/SearchBar";
 import styles from "./styles.module.css";
+import Medium from "../components/Medium";
 
 function Home() {
   const context = useDocusaurusContext();
@@ -51,8 +52,16 @@ function Home() {
       <main>
         <section className="featuredContainer">
           <div className="container">
+            <h1 className={styles.heroProjectTaglineDark}>
+              Explore our Developer Docs Sites
+            </h1>
             <Featured />
           </div>
+        </section>
+      </main>
+      <main>
+        <section>
+          <Medium></Medium>
         </section>
       </main>
     </Layout>

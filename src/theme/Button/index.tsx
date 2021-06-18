@@ -1,21 +1,21 @@
-import clsx from "clsx"
-import React, { ReactNode } from "react"
+import clsx from "clsx";
+import React, { ReactNode } from "react";
 
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
 
 type Props = Readonly<{
-  children: ReactNode
-  className?: string
-  icon?: ReactNode
-  href?: string
-  newTab: boolean
-  onClick?: () => void
-  size: "normal" | "small" | "xsmall"
-  to?: string
-  type?: "button" | "submit"
-  uppercase: boolean
-  variant: "primary" | "secondary" | "tertiary" | "plain"
-}>
+  children: ReactNode;
+  className?: string;
+  icon?: ReactNode;
+  href?: string;
+  newTab: boolean;
+  onClick?: () => void;
+  size: "normal" | "small" | "xsmall";
+  to?: string;
+  type?: "button" | "submit";
+  uppercase: boolean;
+  variant: "primary" | "secondary" | "tertiary" | "plain";
+}>;
 
 const Button = ({
   children,
@@ -39,7 +39,7 @@ const Button = ({
     [styles["button--plain"]]: variant === "plain",
     [styles["button--uppercase"]]: uppercase,
     [styles["button--xsmall"]]: size === "xsmall",
-  })
+  });
 
   if (href != null) {
     return (
@@ -57,7 +57,7 @@ const Button = ({
         {icon}
         {children}
       </a>
-    )
+    );
   }
 
   if (to != null) {
@@ -66,7 +66,7 @@ const Button = ({
         {icon}
         {children}
       </a>
-    )
+    );
   }
 
   return (
@@ -74,14 +74,14 @@ const Button = ({
       {icon}
       {children}
     </button>
-  )
-}
+  );
+};
 
 Button.defaultProps = {
   newTab: true,
   size: "normal",
   uppercase: true,
   variant: "primary",
-}
+};
 
-export default Button
+export default Button;
