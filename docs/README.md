@@ -1,12 +1,3 @@
----
-id: contributing
-title: Contributing Guidelines
-sidebar_label: Contributing Guidelines
-description: Contributing guidelines
-keywords:
-  - contributing guidelines
----
-
 # Contributing Guidelines
 
 Thank you for your interest in **Palo Alto Networks** developer documentation!

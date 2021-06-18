@@ -22,8 +22,6 @@ let DocSearchModal = null;
 function Hit({ hit, children }) {
   var site = '';
   var itemh0 = '';
-  console.log(hit);
-  console.log(children);
   if (hit.url.includes('xsoar.pan.dev')) site = 'XSoar';
   else if (hit.url.includes('prisma.pan.dev')) site = 'Prisma';
   else if (hit.url.includes('panos.pan.dev')) site = 'Strata';
@@ -118,8 +116,6 @@ function DocSearch({ contextualSearch, ...props }) {
       // We transform the absolute URL into a relative URL.
       // Alternatively, we can use `new URL(item.url)` but it's not
       // supported in IE.
-      var site = '';
-      var itemh0 = '';
       const a = document.createElement('a');
       a.href = item.url;
       return {

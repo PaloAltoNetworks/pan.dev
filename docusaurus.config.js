@@ -27,6 +27,7 @@ module.exports = {
         facetFilters: [['tags:prisma', 'tags:strata', 'tags:xsoar', 'tags:cortex']],
       }, // Optional, if provided by Algolia
     },
+    hideOnScroll: true,
     sidebarCollapsible: true,
     navbar: {
       title: '',
@@ -44,6 +45,10 @@ module.exports = {
           href: 'https://medium.com/palo-alto-networks-developer-blog',
           label: 'Blog',
           position: 'right',
+        },
+        {
+          type: 'search',
+          position: 'left',
         },
       ],
     },
