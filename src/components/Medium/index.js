@@ -52,11 +52,14 @@ function Medium() {
                   </div>
                   <div className="card__footer">
                     <Link
-                      className={styles.blogFooter}
+                      class="button button--outline button--primary button--block"
+                      variant="plain"
                       href={blog.link}
                       target="_blank"
-                      rel="noreferrer noopener"
+                      uppercase={false}
+                      newTab={false}
                     >
+                      {" "}
                       Read More on Medium
                     </Link>
                   </div>
