@@ -97,4 +97,7 @@ const blogs = (module.exports = {
       },
     ],
   ],
+  gtag: {
+    trackingID: "GTM-PLXD79N",
+  },
 });
