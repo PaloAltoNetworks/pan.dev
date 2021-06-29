@@ -11,14 +11,9 @@ import classnames from "classnames";
 import React from "react";
 import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
-<<<<<<< HEAD
-import styles from "./styles.module.css";
-import SearchBar from "../theme/SearchBar";
-=======
 import Medium from "../components/Medium";
 import SearchBar from "../theme/SearchBar";
 import styles from "./styles.module.css";
->>>>>>> upstream/master
 
 function Home() {
   const context = useDocusaurusContext();
@@ -31,32 +26,19 @@ function Home() {
       wrapperClassName="homepage"
     >
       <ScrollUpButton />
-<<<<<<< HEAD
-      <header className={classnames("hero hero--dark", styles.heroBanner)}>
-=======
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
->>>>>>> upstream/master
         <div className="container">
           <div className={styles.hero}>
             <div className={styles.heroInner}>
               <div className="row">
                 <div className={classnames("col col--12")}>
                   <h1 className={styles.heroProjectTagline}>
-<<<<<<< HEAD
-                    The home of{" "}
-                    <span className={styles.heroProjectKeywords}>
-                      {" "}
-                      Palo Alto Networks{" "}
-                    </span>{" "}
-                    Developers
-=======
                     What{" "}
                     <span className={styles.heroProjectKeywords}>
                       {" "}
                       developer docs{" "}
                     </span>{" "}
                     can we help you find?{" "}
->>>>>>> upstream/master
                   </h1>
                 </div>
               </div>

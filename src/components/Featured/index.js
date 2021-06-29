@@ -8,16 +8,6 @@ import styles from "./styles.module.css";
 
 const features = [
   {
-<<<<<<< HEAD
-    title: <>XSOAR</>,
-    imageUrl: "/img/Cortex_XSoar_Logo.svg",
-    toPage: "https://xsoar.pan.dev",
-    color: "cortex",
-    description: <></>,
-  },
-  {
-    title: <>Prisma Cloud</>,
-=======
     title: <>Threat Intelligence and AI</>,
     imageUrl: "/img/Cortex_Logo.svg",
     toPage: "https://cortex.pan.dev",
@@ -33,28 +23,10 @@ const features = [
   },
   {
     title: <>Cloud Automation and Security</>,
->>>>>>> upstream/master
     imageUrl: "/img/Prisma_Logo.svg",
     toPage: "https://prisma.pan.dev",
     target: "_self",
     color: "prisma",
-<<<<<<< HEAD
-    description: <></>,
-  },
-  {
-    title: <>PAN-OS</>,
-    imageUrl: "/img/Strata_Logo.svg",
-    toPage: "https://strata.pan.dev",
-    color: "strata",
-    description: <></>,
-  },
-  {
-    title: <>Cortex</>,
-    imageUrl: "/img/Cortex_Logo.svg",
-    toPage: "https://cortex.pan.dev",
-    color: "cortex",
-    description: <></>,
-=======
     description: (
       <>
         <p className="text text--secondary">
@@ -90,7 +62,6 @@ const features = [
         </p>
       </>
     ),
->>>>>>> upstream/master
   },
 ];
 
@@ -103,13 +74,8 @@ function Feature({ imageUrl, title, description, toPage, color }) {
     <div
       className={
         isBreakpoint
-<<<<<<< HEAD
-          ? "col col--6 margin-bottom--md"
-          : "col col--3 margin-bottom--md"
-=======
           ? "col col--6 margin-bottom--lg"
           : "col col--3 margin-bottom--lg"
->>>>>>> upstream/master
       }
     >
       <Button

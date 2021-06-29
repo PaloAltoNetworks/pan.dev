@@ -4,12 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-<<<<<<< HEAD
-
-module.exports = {
-=======
 const blogs = (module.exports = {
->>>>>>> upstream/master
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -43,73 +38,19 @@ const blogs = (module.exports = {
       },
       items: [
         {
-<<<<<<< HEAD
-          href: "https://gallery.pan.dev",
-=======
           to: "https://gallery.pan.dev",
->>>>>>> upstream/master
           label: "Code Gallery",
           position: "right",
         },
         {
-<<<<<<< HEAD
-          href: "https://medium.com/palo-alto-networks-developer-blog",
-          label: "Blog",
-          position: "right",
-        },
-        {
-          type: "search",
-          position: "left",
-=======
           to: "https://medium.com/palo-alto-networks-developer-blog",
           label: "Blog",
           position: "right",
->>>>>>> upstream/master
         },
       ],
     },
     footer: {
       style: "light",
-<<<<<<< HEAD
-      links: [
-        {
-          title: "Products",
-          items: [
-            {
-              label: "Cortex",
-              href: "https://cortex.pan.dev",
-            },
-            {
-              label: "Cortex XSOAR",
-              href: "https://xsoar.pan.dev",
-            },
-            {
-              href: "https://prisma.pan.dev",
-              label: "Prisma",
-              position: "left",
-            },
-            {
-              label: "Strata",
-              href: "https://strata.pan.dev",
-            },
-            {
-              href: "https://gallery.pan.dev",
-              label: "Code Gallery",
-            },
-          ],
-        },
-        {
-          title: "Social",
-          items: [
-            {
-              label: "Blog",
-              href: "https://medium.com/palo-alto-networks-developer-blog",
-            },
-          ],
-        },
-      ],
-=======
->>>>>>> upstream/master
       logo: {
         alt: "Palo Alto Networks for developers",
         src: "img/PANW_Parent_Logo_Black.svg",

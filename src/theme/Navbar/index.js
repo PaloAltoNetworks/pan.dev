@@ -4,20 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-<<<<<<< HEAD:src/theme/NavBar/index.js
-import React, { useCallback, useState, useEffect } from "react";
-import clsx from "clsx";
-import SearchBar from "@theme/SearchBar";
-import Toggle from "@theme/Toggle";
-import useThemeContext from "@theme/hooks/useThemeContext";
-import { useThemeConfig } from "@docusaurus/theme-common";
-import useHideableNavbar from "@theme/hooks/useHideableNavbar";
-import useLockBodyScroll from "@theme/hooks/useLockBodyScroll";
-import useWindowSize, { windowSizes } from "@theme/hooks/useWindowSize";
-import NavbarItem from "@theme/NavbarItem";
-import Logo from "@theme/Logo";
-import IconMenu from "@theme/IconMenu";
-=======
 import { useThemeConfig } from "@docusaurus/theme-common";
 import useHideableNavbar from "@theme/hooks/useHideableNavbar";
 import useLockBodyScroll from "@theme/hooks/useLockBodyScroll";
@@ -29,7 +15,6 @@ import NavbarItem from "@theme/NavbarItem";
 import Toggle from "@theme/Toggle";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useState } from "react";
->>>>>>> upstream/master:src/theme/Navbar/index.js
 import styles from "./styles.module.css"; // retrocompatible with v1
 
 const DefaultNavItemPosition = "right"; // If split links by left/right
@@ -108,11 +93,7 @@ function Navbar() {
           <Logo
             className="navbar__brand"
             imageClassName="navbar__logo"
-<<<<<<< HEAD:src/theme/NavBar/index.js
-            titleClassName={clsx("navbar__title")}
-=======
             titleClassName="navbar__title"
->>>>>>> upstream/master:src/theme/Navbar/index.js
           />
           {leftItems.map((item, i) => (
             <NavbarItem {...item} key={i} />
