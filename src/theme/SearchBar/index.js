@@ -20,15 +20,6 @@ import { createPortal } from "react-dom";
 let DocSearchModal = null;
 
 function Hit({ hit, children }) {
-  var site = "";
-  var itemh0 = "";
-  if (hit.url.includes("xsoar.pan.dev")) site = "XSoar";
-  else if (hit.url.includes("prisma.pan.dev")) site = "Prisma";
-  else if (hit.url.includes("panos.pan.dev")) site = "Strata";
-  else if (hit.url.includes("cortex.pan.dev")) site = "Cortex";
-  else site = "";
-  itemh0 = site + hit.hierarchy.lvl0;
-
   return <Link to={hit.url}>{children}</Link>;
 }
 

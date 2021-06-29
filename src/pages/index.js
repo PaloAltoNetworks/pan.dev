@@ -11,9 +11,9 @@ import classnames from "classnames";
 import React from "react";
 import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
+import Medium from "../components/Medium";
 import SearchBar from "../theme/SearchBar";
 import styles from "./styles.module.css";
-import Medium from "../components/Medium";
 
 function Home() {
   const context = useDocusaurusContext();
