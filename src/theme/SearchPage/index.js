@@ -7,7 +7,6 @@
 
 /* eslint-disable jsx-a11y/no-autofocus */
 
-<<<<<<< HEAD
 import React, { useEffect, useState, useReducer, useRef } from "react";
 
 import algoliaSearch from "algoliasearch/lite";
@@ -24,28 +23,10 @@ import useSearchQuery from "@theme/hooks/useSearchQuery";
 import Layout from "@theme/Layout";
 import Translate, { translate } from "@docusaurus/Translate";
 import styles from "./styles.module.css";
-=======
-import React, {useEffect, useState, useReducer, useRef} from 'react';
-
-import algoliaSearch from 'algoliasearch/lite';
-import algoliaSearchHelper from 'algoliasearch-helper';
-import clsx from 'clsx';
-
-import Head from '@docusaurus/Head';
-import Link from '@docusaurus/Link';
-import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
-import {useTitleFormatter, usePluralForm} from '@docusaurus/theme-common';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import {useAllDocsData} from '@theme/hooks/useDocs';
-import useSearchQuery from '@theme/hooks/useSearchQuery';
-import Layout from '@theme/Layout';
-import Translate, {translate} from '@docusaurus/Translate';
-import styles from './styles.module.css';
->>>>>>> upstream/master
 
 // Very simple pluralization: probably good enough for now
 function useDocumentsFoundPlural() {
-  const {selectMessage} = usePluralForm();
+  const { selectMessage } = usePluralForm();
   return (count) =>
     selectMessage(
       count,
@@ -56,8 +37,8 @@ function useDocumentsFoundPlural() {
             'Pluralized label for "{count} documents found". Use as much plural forms (separated by "|") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)',
           message: "One document found|{count} documents found",
         },
-        {count},
-      ),
+        { count }
+      )
     );
 }
 
@@ -68,23 +49,16 @@ function useDocsSearchVersionsHelpers() {
   // docsPluginId -> versionName map
   const [searchVersions, setSearchVersions] = useState(() => {
     return Object.entries(allDocsData).reduce((acc, [pluginId, pluginData]) => {
-      return {...acc, [pluginId]: pluginData.versions[0].name};
+      return { ...acc, [pluginId]: pluginData.versions[0].name };
     }, {});
   });
 
   // Set the value of a single select menu
   const setSearchVersion = (pluginId, searchVersion) =>
-<<<<<<< HEAD
     setSearchVersions((s) => ({ ...s, [pluginId]: searchVersion }));
 
   const versioningEnabled = Object.values(allDocsData).some(
     (docsData) => docsData.versions.length > 1
-=======
-    setSearchVersions((s) => ({...s, [pluginId]: searchVersion}));
-
-  const versioningEnabled = Object.values(allDocsData).some(
-    (docsData) => docsData.versions.length > 1,
->>>>>>> upstream/master
   );
 
   return {
@@ -96,15 +70,9 @@ function useDocsSearchVersionsHelpers() {
 }
 
 // We want to display one select per versioned docs plugin instance
-<<<<<<< HEAD
 const SearchVersionSelectList = ({ docsSearchVersionsHelpers }) => {
   const versionedPluginEntries = Object.entries(
     docsSearchVersionsHelpers.allDocsData
-=======
-const SearchVersionSelectList = ({docsSearchVersionsHelpers}) => {
-  const versionedPluginEntries = Object.entries(
-    docsSearchVersionsHelpers.allDocsData,
->>>>>>> upstream/master
   )
     // Do not show a version select for unversioned docs plugin instances
     .filter(([, docsData]) => docsData.versions.length > 1);
@@ -112,7 +80,6 @@ const SearchVersionSelectList = ({docsSearchVersionsHelpers}) => {
   return (
     <div
       className={clsx(
-<<<<<<< HEAD
         "col",
         "col--3",
         "padding-left--none",
@@ -122,31 +89,18 @@ const SearchVersionSelectList = ({docsSearchVersionsHelpers}) => {
       {versionedPluginEntries.map(([pluginId, docsData]) => {
         const labelPrefix =
           versionedPluginEntries.length > 1 ? `${pluginId}: ` : "";
-=======
-        'col',
-        'col--3',
-        'padding-left--none',
-        styles.searchVersionColumn,
-      )}>
-      {versionedPluginEntries.map(([pluginId, docsData]) => {
-        const labelPrefix =
-          versionedPluginEntries.length > 1 ? `${pluginId}: ` : '';
->>>>>>> upstream/master
         return (
           <select
             key={pluginId}
             onChange={(e) =>
               docsSearchVersionsHelpers.setSearchVersion(
                 pluginId,
-<<<<<<< HEAD
                 e.target.value
-=======
-                e.target.value,
->>>>>>> upstream/master
               )
             }
             defaultValue={docsSearchVersionsHelpers.searchVersions[pluginId]}
-            className={styles.searchVersionInput}>
+            className={styles.searchVersionInput}
+          >
             {docsData.versions.map((version, i) => (
               <option
                 key={i}
@@ -165,15 +119,15 @@ function SearchPage() {
   const {
     siteConfig: {
       themeConfig: {
-        algolia: {appId, apiKey, indexName},
+        algolia: { appId, apiKey, indexName },
       },
     },
-    i18n: {currentLocale},
+    i18n: { currentLocale },
   } = useDocusaurusContext();
   const documentsFoundPlural = useDocumentsFoundPlural();
 
   const docsSearchVersionsHelpers = useDocsSearchVersionsHelpers();
-  const {searchValue, updateSearchPath} = useSearchQuery();
+  const { searchValue, updateSearchPath } = useSearchQuery();
   const [searchQuery, setSearchQuery] = useState(searchValue);
   const initialSearchResultState = {
     items: [],
@@ -185,7 +139,6 @@ function SearchPage() {
     loading: null,
   };
   const [searchResultState, searchResultStateDispatcher] = useReducer(
-<<<<<<< HEAD
     (prevState, { type, value: state }) => {
       switch (type) {
         case "reset": {
@@ -195,17 +148,6 @@ function SearchPage() {
           return { ...prevState, loading: true };
         }
         case "update": {
-=======
-    (prevState, {type, value: state}) => {
-      switch (type) {
-        case 'reset': {
-          return initialSearchResultState;
-        }
-        case 'loading': {
-          return {...prevState, loading: true};
-        }
-        case 'update': {
->>>>>>> upstream/master
           if (searchQuery !== state.query) {
             return prevState;
           }
@@ -218,11 +160,7 @@ function SearchPage() {
                 : prevState.items.concat(state.items),
           };
         }
-<<<<<<< HEAD
         case "advance": {
-=======
-        case 'advance': {
->>>>>>> upstream/master
           const hasMore = prevState.totalPages > prevState.lastPage + 1;
 
           return {
@@ -235,11 +173,7 @@ function SearchPage() {
           return prevState;
       }
     },
-<<<<<<< HEAD
     initialSearchResultState
-=======
-    initialSearchResultState,
->>>>>>> upstream/master
   );
   const algoliaClient = algoliaSearch(appId, apiKey);
   const algoliaHelper = algoliaSearchHelper(algoliaClient, indexName, {
@@ -249,46 +183,34 @@ function SearchPage() {
   });
 
   algoliaHelper.on(
-<<<<<<< HEAD
     "result",
     ({ results: { query, hits, page, nbHits, nbPages } }) => {
       if (query === "" || !(hits instanceof Array)) {
         searchResultStateDispatcher({ type: "reset" });
-=======
-    'result',
-    ({results: {query, hits, page, nbHits, nbPages}}) => {
-      if (query === '' || !(hits instanceof Array)) {
-        searchResultStateDispatcher({type: 'reset'});
->>>>>>> upstream/master
         return;
       }
 
       const sanitizeValue = (value) => {
         return value.replace(
           /algolia-docsearch-suggestion--highlight/g,
-<<<<<<< HEAD
           "search-result-match"
-=======
-          'search-result-match',
->>>>>>> upstream/master
         );
       };
 
       const items = hits.map(
         ({
           url,
-<<<<<<< HEAD
           _highlightResult: { hierarchy },
           _snippetResult: snippet = {},
         }) => {
-          const { href, host } = new URL(url);
+          const { pathname, hash } = new URL(url);
           const titles = Object.keys(hierarchy).map((key) => {
             return sanitizeValue(hierarchy[key].value);
           });
-          titles.unshift(host);
+
           return {
             title: titles.pop(),
-            url: href,
+            url: pathname + hash,
             summary: snippet.content
               ? `${sanitizeValue(snippet.content.value)}...`
               : "",
@@ -299,29 +221,6 @@ function SearchPage() {
 
       searchResultStateDispatcher({
         type: "update",
-=======
-          _highlightResult: {hierarchy},
-          _snippetResult: snippet = {},
-        }) => {
-          const {pathname, hash} = new URL(url);
-          const titles = Object.keys(hierarchy).map((key) => {
-            return sanitizeValue(hierarchy[key].value);
-          });
-
-          return {
-            title: titles.pop(),
-            url: pathname + hash,
-            summary: snippet.content
-              ? `${sanitizeValue(snippet.content.value)}...`
-              : '',
-            breadcrumbs: titles,
-          };
-        },
-      );
-
-      searchResultStateDispatcher({
-        type: 'update',
->>>>>>> upstream/master
         value: {
           items,
           query,
@@ -332,11 +231,7 @@ function SearchPage() {
           loading: false,
         },
       });
-<<<<<<< HEAD
     }
-=======
-    },
->>>>>>> upstream/master
   );
 
   const [loaderRef, setLoaderRef] = useState(null);
@@ -347,21 +242,17 @@ function SearchPage() {
         (entries) => {
           const {
             isIntersecting,
-            boundingClientRect: {y: currentY},
+            boundingClientRect: { y: currentY },
           } = entries[0];
 
           if (isIntersecting && prevY.current > currentY) {
-<<<<<<< HEAD
             searchResultStateDispatcher({ type: "advance" });
-=======
-            searchResultStateDispatcher({type: 'advance'});
->>>>>>> upstream/master
           }
 
           prevY.current = currentY;
         },
-        {threshold: 1},
-      ),
+        { threshold: 1 }
+      )
   );
 
   const getTitle = () =>
@@ -374,7 +265,7 @@ function SearchPage() {
           },
           {
             query: searchQuery,
-          },
+          }
         )
       : translate({
           id: "theme.SearchPage.emptyResultsTitle",
@@ -383,28 +274,16 @@ function SearchPage() {
         });
 
   const makeSearch = (page = 0) => {
-<<<<<<< HEAD
     algoliaHelper.addDisjunctiveFacetRefinement("docusaurus_tag", "default");
     algoliaHelper.addDisjunctiveFacetRefinement("language", currentLocale);
-=======
-    algoliaHelper.addDisjunctiveFacetRefinement('docusaurus_tag', 'default');
-    algoliaHelper.addDisjunctiveFacetRefinement('language', currentLocale);
->>>>>>> upstream/master
 
     Object.entries(docsSearchVersionsHelpers.searchVersions).forEach(
       ([pluginId, searchVersion]) => {
         algoliaHelper.addDisjunctiveFacetRefinement(
-<<<<<<< HEAD
           "docusaurus_tag",
           `docs-${pluginId}-${searchVersion}`
         );
       }
-=======
-          'docusaurus_tag',
-          `docs-${pluginId}-${searchVersion}`,
-        );
-      },
->>>>>>> upstream/master
     );
 
     algoliaHelper.setQuery(searchQuery).setPage(page).search();
@@ -425,17 +304,10 @@ function SearchPage() {
   useEffect(() => {
     updateSearchPath(searchQuery);
 
-<<<<<<< HEAD
     searchResultStateDispatcher({ type: "reset" });
 
     if (searchQuery) {
       searchResultStateDispatcher({ type: "loading" });
-=======
-    searchResultStateDispatcher({type: 'reset'});
-
-    if (searchQuery) {
-      searchResultStateDispatcher({type: 'loading'});
->>>>>>> upstream/master
 
       setTimeout(() => {
         makeSearch();
@@ -473,18 +345,11 @@ function SearchPage() {
 
         <form className="row" onSubmit={(e) => e.preventDefault()}>
           <div
-<<<<<<< HEAD
             className={clsx("col", styles.searchQueryColumn, {
               "col--9": docsSearchVersionsHelpers.versioningEnabled,
               "col--12": !docsSearchVersionsHelpers.versioningEnabled,
             })}
           >
-=======
-            className={clsx('col', styles.searchQueryColumn, {
-              'col--9': docsSearchVersionsHelpers.versioningEnabled,
-              'col--12': !docsSearchVersionsHelpers.versioningEnabled,
-            })}>
->>>>>>> upstream/master
             <input
               type="search"
               name="q"
@@ -513,55 +378,31 @@ function SearchPage() {
           )}
         </form>
 
-<<<<<<< HEAD
-        <div className={clsx("row", "margin-vert--sm")}>
-          <div className={clsx("col", "col--8", styles.searchResultsColumn)}>
-            {!!searchResultState.totalResults && (
-              <strong>
-                {documentsFoundPlural(searchResultState.totalResults)}
-              </strong>
-            )}
-          </div>
-
-          <div className={clsx("col", "col--4", styles.searchLogoColumn)}>
-=======
         <div className="row">
-          <div className={clsx('col', 'col--8', styles.searchResultsColumn)}>
+          <div className={clsx("col", "col--8", styles.searchResultsColumn)}>
             {!!searchResultState.totalResults &&
               documentsFoundPlural(searchResultState.totalResults)}
           </div>
 
           <div
             className={clsx(
-              'col',
-              'col--4',
-              'text--right',
-              styles.searchLogoColumn,
-            )}>
->>>>>>> upstream/master
+              "col",
+              "col--4",
+              "text--right",
+              styles.searchLogoColumn
+            )}
+          >
             <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.algolia.com/"
               aria-label={translate({
-<<<<<<< HEAD
                 id: "theme.SearchPage.algoliaLabel",
                 message: "Search by Algolia",
                 description: "The ARIA label for Algolia mention",
               })}
             >
-              <svg
-                viewBox="0 0 168 24"
-                className={styles.algoliaLogo}
-                xmlns="http://www.w3.org/2000/svg"
-              >
-=======
-                id: 'theme.SearchPage.algoliaLabel',
-                message: 'Search by Algolia',
-                description: 'The ARIA label for Algolia mention',
-              })}>
               <svg viewBox="0 0 168 24" className={styles.algoliaLogo}>
->>>>>>> upstream/master
                 <g fill="none">
                   <path
                     className={styles.algoliaLogoPathFill}
@@ -582,64 +423,36 @@ function SearchPage() {
         </div>
 
         {searchResultState.items.length > 0 ? (
-<<<<<<< HEAD
-          <section>
+          <main>
             {searchResultState.items.map(
               ({ title, url, summary, breadcrumbs }, i) => (
                 <article key={i} className={styles.searchResultItem}>
-                  <Link
-                    to={url}
-                    className={styles.searchResultItemHeading}
-                    dangerouslySetInnerHTML={{ __html: title }}
-                  />
-
-                  {breadcrumbs.length > 0 && (
-                    <span className={styles.searchResultItemPath}>
-                      {breadcrumbs.map((html, index) => (
-                        <React.Fragment key={index}>
-                          {index !== 0 && (
-                            <span
-                              className={styles.searchResultItemPathSeparator}
-                            >
-                              ›
-                            </span>
-                          )}
-                          <span
-                            // Developer provided the HTML, so assume it's safe.
-                            // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: html }}
-                          />
-                        </React.Fragment>
-                      ))}
-                    </span>
-=======
-          <main>
-            {searchResultState.items.map(
-              ({title, url, summary, breadcrumbs}, i) => (
-                <article key={i} className={styles.searchResultItem}>
                   <h2 className={styles.searchResultItemHeading}>
-                    <Link to={url} dangerouslySetInnerHTML={{__html: title}} />
+                    <Link
+                      to={url}
+                      dangerouslySetInnerHTML={{ __html: title }}
+                    />
                   </h2>
 
                   {breadcrumbs.length > 0 && (
                     <nav aria-label="breadcrumbs">
                       <ul
                         className={clsx(
-                          'breadcrumbs',
-                          styles.searchResultItemPath,
-                        )}>
+                          "breadcrumbs",
+                          styles.searchResultItemPath
+                        )}
+                      >
                         {breadcrumbs.map((html, index) => (
                           <li
                             key={index}
                             className="breadcrumbs__item"
                             // Developer provided the HTML, so assume it's safe.
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{__html: html}}
+                            dangerouslySetInnerHTML={{ __html: html }}
                           />
                         ))}
                       </ul>
                     </nav>
->>>>>>> upstream/master
                   )}
 
                   {summary && (
@@ -647,35 +460,21 @@ function SearchPage() {
                       className={styles.searchResultItemSummary}
                       // Developer provided the HTML, so assume it's safe.
                       // eslint-disable-next-line react/no-danger
-<<<<<<< HEAD
                       dangerouslySetInnerHTML={{ __html: summary }}
                     />
                   )}
                 </article>
               )
             )}
-          </section>
-=======
-                      dangerouslySetInnerHTML={{__html: summary}}
-                    />
-                  )}
-                </article>
-              ),
-            )}
           </main>
->>>>>>> upstream/master
         ) : (
           [
             searchQuery && !searchResultState.loading && (
               <p key="no-results">
                 <Translate
                   id="theme.SearchPage.noResultsText"
-<<<<<<< HEAD
                   description="The paragraph for empty search result"
                 >
-=======
-                  description="The paragraph for empty search result">
->>>>>>> upstream/master
                   No results were found
                 </Translate>
               </p>
@@ -690,7 +489,8 @@ function SearchPage() {
           <div className={styles.loader} ref={setLoaderRef}>
             <Translate
               id="theme.SearchPage.fetchingNewResults"
-              description="The paragraph for fetching new search results">
+              description="The paragraph for fetching new search results"
+            >
               Fetching new results...
             </Translate>
           </div>
