@@ -7,7 +7,7 @@ const ITEMS_PER_ROW = 3; // Sync up the item col width if this is changed.
 
 const blog_json = require("./blogs.json");
 
-const blogs = blog_json.items;
+const blogs = blog_json.items.slice(1, 7);
 
 function Medium() {
   return (
@@ -31,12 +31,19 @@ function Medium() {
                   <div className="card__body">
                     <div className="avatar">
                       <div className="avatar__intro margin-left--none">
-                        <h2 className="avatar__name">{blog.title}</h2>
+                        <h3 className="avatar__name">{blog.title}</h3>
                       </div>
                     </div>
                     <div className="avatar">
                       <div className="avatar__intro margin-left--none">
-                        <h6 className="avatar__name">By {blog.author}</h6>
+                        <p
+                          className={classnames(
+                            "text text--secondary",
+                            styles.blogAuthor
+                          )}
+                        >
+                          By: {blog.author}
+                        </p>
                       </div>
                     </div>
                     <br />
@@ -44,7 +51,9 @@ function Medium() {
                       <div className="avatar__intro margin-left--none">
                         <div className={styles.content}>
                           <div
-                            dangerouslySetInnerHTML={{ __html: blog.content }}
+                            dangerouslySetInnerHTML={{
+                              __html: blog.content,
+                            }}
                           />
                         </div>
                       </div>
