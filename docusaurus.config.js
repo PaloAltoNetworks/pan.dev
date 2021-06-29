@@ -4,8 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+<<<<<<< HEAD
 
 module.exports = {
+=======
+const blogs = (module.exports = {
+>>>>>>> upstream/master
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -39,11 +43,16 @@ module.exports = {
       },
       items: [
         {
+<<<<<<< HEAD
           href: "https://gallery.pan.dev",
+=======
+          to: "https://gallery.pan.dev",
+>>>>>>> upstream/master
           label: "Code Gallery",
           position: "right",
         },
         {
+<<<<<<< HEAD
           href: "https://medium.com/palo-alto-networks-developer-blog",
           label: "Blog",
           position: "right",
@@ -51,11 +60,17 @@ module.exports = {
         {
           type: "search",
           position: "left",
+=======
+          to: "https://medium.com/palo-alto-networks-developer-blog",
+          label: "Blog",
+          position: "right",
+>>>>>>> upstream/master
         },
       ],
     },
     footer: {
       style: "light",
+<<<<<<< HEAD
       links: [
         {
           title: "Products",
@@ -93,11 +108,16 @@ module.exports = {
           ],
         },
       ],
+=======
+>>>>>>> upstream/master
       logo: {
         alt: "Palo Alto Networks for developers",
         src: "img/PANW_Parent_Logo_Black.svg",
       },
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
+    },
+    gtag: {
+      trackingID: "GTM-PLXD79N",
     },
   },
   themes: [require.resolve("@docusaurus/theme-live-codeblock")],
@@ -135,4 +155,4 @@ module.exports = {
       },
     ],
   ],
-};
+});

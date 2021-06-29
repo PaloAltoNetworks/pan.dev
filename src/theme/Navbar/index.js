@@ -4,6 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+<<<<<<< HEAD:src/theme/NavBar/index.js
 import React, { useCallback, useState, useEffect } from "react";
 import clsx from "clsx";
 import SearchBar from "@theme/SearchBar";
@@ -16,6 +17,19 @@ import useWindowSize, { windowSizes } from "@theme/hooks/useWindowSize";
 import NavbarItem from "@theme/NavbarItem";
 import Logo from "@theme/Logo";
 import IconMenu from "@theme/IconMenu";
+=======
+import { useThemeConfig } from "@docusaurus/theme-common";
+import useHideableNavbar from "@theme/hooks/useHideableNavbar";
+import useLockBodyScroll from "@theme/hooks/useLockBodyScroll";
+import useThemeContext from "@theme/hooks/useThemeContext";
+import useWindowSize, { windowSizes } from "@theme/hooks/useWindowSize";
+import IconMenu from "@theme/IconMenu";
+import Logo from "@theme/Logo";
+import NavbarItem from "@theme/NavbarItem";
+import Toggle from "@theme/Toggle";
+import clsx from "clsx";
+import React, { useCallback, useEffect, useState } from "react";
+>>>>>>> upstream/master:src/theme/Navbar/index.js
 import styles from "./styles.module.css"; // retrocompatible with v1
 
 const DefaultNavItemPosition = "right"; // If split links by left/right
@@ -39,6 +53,11 @@ function Navbar() {
     navbar: { items, hideOnScroll, style },
     colorMode: { disableSwitch: disableColorModeSwitch },
   } = useThemeConfig();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type === "search") {
+      items.splice(i, 1);
+    }
+  }
   const [sidebarShown, setSidebarShown] = useState(false);
   const { isDarkTheme, setLightTheme, setDarkTheme } = useThemeContext();
   const { navbarRef, isNavbarVisible } = useHideableNavbar(hideOnScroll);
@@ -59,7 +78,7 @@ function Navbar() {
       setSidebarShown(false);
     }
   }, [windowSize]);
-  const hasSearchNavbarItem = false;
+  const hasSearchNavbarItem = items.some((item) => item.type === "search");
   const { leftItems, rightItems } = splitNavItemsByPosition(items);
   return (
     <nav
@@ -77,7 +96,7 @@ function Navbar() {
           {items != null && items.length !== 0 && (
             <button
               aria-label="Navigation bar toggle"
-              className="navbar__toggle"
+              className="navbar__toggle clean-btn"
               type="button"
               tabIndex={0}
               onClick={showSidebar}
@@ -89,7 +108,11 @@ function Navbar() {
           <Logo
             className="navbar__brand"
             imageClassName="navbar__logo"
+<<<<<<< HEAD:src/theme/NavBar/index.js
             titleClassName={clsx("navbar__title")}
+=======
+            titleClassName="navbar__title"
+>>>>>>> upstream/master:src/theme/Navbar/index.js
           />
           {leftItems.map((item, i) => (
             <NavbarItem {...item} key={i} />
@@ -106,7 +129,6 @@ function Navbar() {
               onChange={onToggleChange}
             />
           )}
-          {!hasSearchNavbarItem && <SearchBar />}
         </div>
       </div>
       <div

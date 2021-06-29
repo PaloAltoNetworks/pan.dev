@@ -20,6 +20,7 @@ import { createPortal } from "react-dom";
 let DocSearchModal = null;
 
 function Hit({ hit, children }) {
+<<<<<<< HEAD
   var site = "";
   var itemh0 = "";
   if (hit.url.includes("xsoar.pan.dev")) site = "XSoar";
@@ -29,6 +30,8 @@ function Hit({ hit, children }) {
   else site = "";
   itemh0 = site + hit.hierarchy.lvl0;
 
+=======
+>>>>>>> upstream/master
   return <Link to={hit.url}>{children}</Link>;
 }
 
