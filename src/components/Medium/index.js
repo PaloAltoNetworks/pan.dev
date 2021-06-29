@@ -1,7 +1,7 @@
-import React from "react";
-import classnames from "classnames";
-import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
+import classnames from "classnames";
+import React from "react";
+import styles from "./styles.module.css";
 
 const ITEMS_PER_ROW = 3; // Sync up the item col width if this is changed.
 
@@ -52,12 +52,11 @@ function Medium() {
                   </div>
                   <div className="card__footer">
                     <Link
-                      class="button button--outline button--primary button--block"
+                      className="button button--outline button--primary button--block"
                       variant="plain"
                       href={blog.link}
                       target="_blank"
-                      uppercase={false}
-                      newTab={false}
+                      uppercase="false"
                     >
                       {" "}
                       Read More on Medium
