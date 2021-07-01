@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thank you for your interest in **Palo Alto Networks** developer documentation!
+Thank you for your interest in **Palo Alto Networks** developer docs!
 
 - [Contributing Guidelines](#contributing-guidelines)
   - [Types of contributions](#types-of-contributions)
