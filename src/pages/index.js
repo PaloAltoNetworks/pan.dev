@@ -32,18 +32,6 @@ function Home() {
             <div className={styles.heroInner}>
               <div className="row">
                 <div className={classnames("col col--12")}>
-                  <h1 className={styles.heroProjectTagline}>
-                    What{" "}
-                    <span className={styles.heroProjectKeywords}>
-                      {" "}
-                      developer docs{" "}
-                    </span>{" "}
-                    can we help you find?{" "}
-                  </h1>
-                </div>
-              </div>
-              <div className="row">
-                <div className={classnames("col col--12")}>
                   <h4 className={styles.heroProjectTagline}>
                     What{" "}
                     <span className={styles.heroProjectKeywords}>
