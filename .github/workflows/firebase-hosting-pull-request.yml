@@ -14,23 +14,20 @@ jobs:
 
     steps:
       - name: Download workflow artifact
-        uses: dawidd6/action-download-artifact@v2.11.0
+        uses: actions/download-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: codeql-analysis.yml
-          run_id: ${{ github.event.workflow_run.id }}
+          name: pr_num
+          path: pr_num.txt
 
       - name: Get PR number
-        id: pr_num_reader
-        uses: juliangruber/read-file-action@v1.0.0
-        with:
-          path: ./pr_num/pr_num.txt
+        id: pr_num
+        run: echo ::set-output content=pr::$(cat pr_num.txt)
           
       - name: Verify PR
         id: verify_pr
         uses: zkamvar/actions/check-valid-pr@v0.3
         with:
-          pr: ${{ steps.pr_num_reader.outputs.content }}
+          pr: ${{ steps.pr_num.outputs.content }}
           sha: ${{ github.events.workflow_run.head_commit.sha }}
           
       - name: Checkout repository
@@ -47,7 +44,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'
           projectId: pan-dev-f1b58
-          channelId: 'pr${{ steps.pr_num_reader.outputs.content }}'
+          channelId: 'pr${{ steps.pr_num.outputs.content }}'
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
           
@@ -57,7 +54,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.issues.createComment({
-              issue_number: ${{ steps.pr_num_reader.outputs.content }},
+              issue_number: ${{ steps.pr_num.outputs.content }},
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: '🔥 ${{ steps.deploy_preview.outputs.details_url }} 🦝'
