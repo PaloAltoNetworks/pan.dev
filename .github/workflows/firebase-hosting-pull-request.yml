@@ -1,16 +1,39 @@
 name: Deploy
 
 on:
-  workflow_run:
-    workflows: [CodeQL]
-    types:
-      - completed
+ pull_request_target:
+   branches: [ master ]
 
 jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
+
   build_and_preview:
     name: Preview
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: analyze
 
     steps:
       - name: Checkout repository
