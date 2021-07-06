@@ -13,6 +13,19 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v2.11.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: codeql-analysis.yml
+          run_id: ${{ github.event.workflow_run.id }}
+
+      - name: Read the pr_num file
+        id: pr_num_reader
+        uses: juliangruber/read-file-action@v1.0.0
+        with:
+          path: ./pr_num/pr_num.txt
+          
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -20,6 +33,7 @@ jobs:
         run: yarn install && yarn run build
 
       - name: Deploy to Firebase
+        id: deploy_preview
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
@@ -28,5 +42,17 @@ jobs:
           channelId: 'pr${{ github.event.number }}-${{ github.event.pull_request.head.ref }}'
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+          
+      - name: Post deploy preview URL to PR
+        uses: jungwinter/comment@v1
+        env:
+          MESSAGE: |
+            :fire:
+        with:
+          type: create
+          issue_number: ${{ steps.pr_num_reader.outputs.content }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: >
+            ${{ format(env.MESSAGE, steps.deploy_preview.outputs.*) }}
     environment:
           name: build
