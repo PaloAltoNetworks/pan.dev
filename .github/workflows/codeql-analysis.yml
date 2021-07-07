@@ -26,13 +26,17 @@ jobs:
       id: changed_files
       uses: tj-actions/changed-files@v8.4
       with:
+        separator: ","
         files: |
           .github
           
     - name: Verify changed files
       if: steps.changed_files.outputs.any_changed == 'true'
       run: |
-        echo "::error::Changed files detected in .github directory: ${{ steps.changed_files.outputs.all_changed_files }}"
+        echo "::error::Changes to files in .github directory are not permitted."
+        for file in "${{ steps.changed_files.outputs.changed_files }}"; do
+          echo "::error::$file was changed."
+        done
         exit 1
 
     - name: Initialize CodeQL
