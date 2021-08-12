@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const blogs = (module.exports = {
+module.exports = {
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -29,7 +29,6 @@ const blogs = (module.exports = {
       }, // Optional, if provided by Algolia
     },
     hideOnScroll: true,
-    sidebarCollapsible: true,
     navbar: {
       title: "",
       logo: {
@@ -79,6 +78,7 @@ const blogs = (module.exports = {
           path: "docs",
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
+          sidebarCollapsible: true,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -96,4 +96,4 @@ const blogs = (module.exports = {
       },
     ],
   ],
-});
+};
