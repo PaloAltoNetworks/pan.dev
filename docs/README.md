@@ -1,4 +1,4 @@
-[![Deploy to Firebase Hosting on merge](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/firebase-hosting-merge.yml)
+[![Deploy Live](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml/badge.svg)](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml)
 
 # Contributing Guidelines
 
