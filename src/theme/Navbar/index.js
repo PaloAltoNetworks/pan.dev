@@ -4,11 +4,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { useThemeConfig } from "@docusaurus/theme-common";
+import {
+  useMobileSecondaryMenuRenderer,
+  usePrevious,
+  useThemeConfig,
+} from "@docusaurus/theme-common";
+import Translate from "@docusaurus/Translate";
 import useHideableNavbar from "@theme/hooks/useHideableNavbar";
 import useLockBodyScroll from "@theme/hooks/useLockBodyScroll";
 import useThemeContext from "@theme/hooks/useThemeContext";
-import useWindowSize, { windowSizes } from "@theme/hooks/useWindowSize";
+import useWindowSize from "@theme/hooks/useWindowSize";
 import IconMenu from "@theme/IconMenu";
 import Logo from "@theme/Logo";
 import NavbarItem from "@theme/NavbarItem";
@@ -17,7 +22,12 @@ import clsx from "clsx";
 import React, { useCallback, useEffect, useState } from "react";
 import styles from "./styles.module.css"; // retrocompatible with v1
 
-const DefaultNavItemPosition = "right"; // If split links by left/right
+const DefaultNavItemPosition = "right";
+
+function useNavbarItems() {
+  // TODO temporary casting until ThemeConfig type is improved
+  return useThemeConfig().navbar.items;
+} // If split links by left/right
 // if position is unspecified, fallback to right (as v1)
 
 function splitNavItemsByPosition(items) {
@@ -33,36 +43,151 @@ function splitNavItemsByPosition(items) {
   };
 }
 
-function Navbar() {
-  const {
-    navbar: { items, hideOnScroll, style },
-    colorMode: { disableSwitch: disableColorModeSwitch },
-  } = useThemeConfig();
-  for (var i = 0; i < items.length; i++) {
-    if (items[i].type === "search") {
-      items.splice(i, 1);
+function useMobileSidebar() {
+  const windowSize = useWindowSize(); // Mobile sidebar not visible on hydration: can avoid SSR rendering
+
+  const shouldRender = windowSize === "mobile"; // || windowSize === 'ssr';
+
+  const [shown, setShown] = useState(false);
+  const toggle = useCallback(() => {
+    setShown((s) => !s);
+  }, []);
+  useEffect(() => {
+    if (windowSize === "desktop") {
+      setShown(false);
     }
-  }
-  const [sidebarShown, setSidebarShown] = useState(false);
+  }, [windowSize]);
+  return {
+    shouldRender,
+    toggle,
+    shown,
+  };
+}
+
+function useColorModeToggle() {
+  const {
+    colorMode: { disableSwitch },
+  } = useThemeConfig();
   const { isDarkTheme, setLightTheme, setDarkTheme } = useThemeContext();
-  const { navbarRef, isNavbarVisible } = useHideableNavbar(hideOnScroll);
-  useLockBodyScroll(sidebarShown);
-  const showSidebar = useCallback(() => {
-    setSidebarShown(true);
-  }, [setSidebarShown]);
-  const hideSidebar = useCallback(() => {
-    setSidebarShown(false);
-  }, [setSidebarShown]);
-  const onToggleChange = useCallback(
+  const toggle = useCallback(
     (e) => (e.target.checked ? setDarkTheme() : setLightTheme()),
     [setLightTheme, setDarkTheme]
   );
-  const windowSize = useWindowSize();
+  return {
+    isDarkTheme,
+    toggle,
+    disabled: disableSwitch,
+  };
+}
+
+function useSecondaryMenu({ sidebarShown, toggleSidebar }) {
+  const content = useMobileSecondaryMenuRenderer()?.({
+    toggleSidebar,
+  });
+  const previousContent = usePrevious(content);
+  const [shown, setShown] = useState(() => {
+    // /!\ content is set with useEffect,
+    // so it's not available on mount anyway
+    // "return !!content" => always returns false
+    return false;
+  }); // When content is become available for the first time (set in useEffect)
+  // we set this content to be shown!
+
   useEffect(() => {
-    if (windowSize === windowSizes.desktop) {
-      setSidebarShown(false);
+    const contentBecameAvailable = content && !previousContent;
+
+    if (contentBecameAvailable) {
+      setShown(true);
     }
-  }, [windowSize]);
+  }, [content, previousContent]);
+  const hasContent = !!content; // On sidebar close, secondary menu is set to be shown on next re-opening
+  // (if any secondary menu content available)
+
+  useEffect(() => {
+    if (!hasContent) {
+      setShown(false);
+      return;
+    }
+
+    if (!sidebarShown) {
+      setShown(true);
+    }
+  }, [sidebarShown, hasContent]);
+  const hide = useCallback(() => {
+    setShown(false);
+  }, []);
+  return {
+    shown,
+    hide,
+    content,
+  };
+}
+
+function NavbarMobileSidebar({ sidebarShown, toggleSidebar }) {
+  useLockBodyScroll(sidebarShown);
+  const items = useNavbarItems();
+  const colorModeToggle = useColorModeToggle();
+  const secondaryMenu = useSecondaryMenu({
+    sidebarShown,
+    toggleSidebar,
+  });
+  return (
+    <div className="navbar-sidebar">
+      <div className="navbar-sidebar__brand">
+        <Logo
+          className="navbar__brand"
+          imageClassName="navbar__logo"
+          titleClassName="navbar__title"
+        />
+        {!colorModeToggle.disabled && sidebarShown && (
+          <Toggle
+            checked={colorModeToggle.isDarkTheme}
+            onChange={colorModeToggle.toggle}
+          />
+        )}
+      </div>
+
+      <div
+        className={clsx("navbar-sidebar__items", {
+          "navbar-sidebar__items--show-secondary": secondaryMenu.shown,
+        })}
+      >
+        <div className="navbar-sidebar__item menu">
+          <ul className="menu__list">
+            {items.map((item, i) => (
+              <NavbarItem mobile {...item} onClick={toggleSidebar} key={i} />
+            ))}
+          </ul>
+        </div>
+
+        <div className="navbar-sidebar__item navbar-sidebar__item--secondary menu">
+          <button
+            type="button"
+            className="clean-btn navbar-sidebar__back"
+            onClick={secondaryMenu.hide}
+          >
+            <Translate
+              id="theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel"
+              description="The label of the back button to return to main menu, inside the mobile navbar sidebar secondary menu (notably used to display the docs sidebar)"
+            >
+              ← Back to main menu
+            </Translate>
+          </button>
+          {secondaryMenu.content}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Navbar() {
+  const {
+    navbar: { hideOnScroll, style },
+  } = useThemeConfig();
+  const mobileSidebar = useMobileSidebar();
+  const colorModeToggle = useColorModeToggle();
+  const { navbarRef, isNavbarVisible } = useHideableNavbar(hideOnScroll);
+  const items = useNavbarItems();
   const hasSearchNavbarItem = items.some((item) => item.type === "search");
   const { leftItems, rightItems } = splitNavItemsByPosition(items);
   return (
@@ -71,21 +196,21 @@ function Navbar() {
       className={clsx("navbar", "navbar--fixed-top", {
         "navbar--dark": style === "dark",
         "navbar--primary": style === "primary",
-        "navbar-sidebar--show": sidebarShown,
+        "navbar-sidebar--show": mobileSidebar.shown,
         [styles.navbarHideable]: hideOnScroll,
         [styles.navbarHidden]: hideOnScroll && !isNavbarVisible,
       })}
     >
       <div className="navbar__inner">
         <div className="navbar__items">
-          {items != null && items.length !== 0 && (
+          {items?.length > 0 && (
             <button
               aria-label="Navigation bar toggle"
               className="navbar__toggle clean-btn"
               type="button"
               tabIndex={0}
-              onClick={showSidebar}
-              onKeyDown={showSidebar}
+              onClick={mobileSidebar.toggle}
+              onKeyDown={mobileSidebar.toggle}
             >
               <IconMenu />
             </button>
@@ -103,47 +228,28 @@ function Navbar() {
           {rightItems.map((item, i) => (
             <NavbarItem {...item} key={i} />
           ))}
-          {!disableColorModeSwitch && (
+          {!colorModeToggle.disabled && (
             <Toggle
-              className={styles.displayOnlyInLargeViewport}
-              checked={isDarkTheme}
-              onChange={onToggleChange}
+              className={styles.toggle}
+              checked={colorModeToggle.isDarkTheme}
+              onChange={colorModeToggle.toggle}
             />
           )}
         </div>
       </div>
+
       <div
         role="presentation"
         className="navbar-sidebar__backdrop"
-        onClick={hideSidebar}
+        onClick={mobileSidebar.toggle}
       />
-      <div className="navbar-sidebar">
-        <div className="navbar-sidebar__brand">
-          <Logo
-            className="navbar__brand"
-            imageClassName="navbar__logo"
-            titleClassName="navbar__title"
-            onClick={hideSidebar}
-          />
-          {!disableColorModeSwitch && sidebarShown && (
-            <Toggle checked={isDarkTheme} onChange={onToggleChange} />
-          )}
-        </div>
-        <div className="navbar-sidebar__items">
-          <div className="menu">
-            <ul className="menu__list">
-              {items.map((item, i) => (
-                <NavbarItem
-                  mobile
-                  {...item} // TODO fix typing
-                  onClick={hideSidebar}
-                  key={i}
-                />
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+
+      {mobileSidebar.shouldRender && (
+        <NavbarMobileSidebar
+          sidebarShown={mobileSidebar.shown}
+          toggleSidebar={mobileSidebar.toggle}
+        />
+      )}
     </nav>
   );
 }
