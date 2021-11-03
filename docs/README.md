@@ -1,4 +1,4 @@
-[![Deploy Live](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml/badge.svg)](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml)
+[![Deploy Live](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml/badge.svg)](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/deploy-live.yml) [![CodeQL](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/PaloAltoNetworks/pan.dev/actions/workflows/codeql-analysis.yml)
 
 # Contributing Guidelines
 
