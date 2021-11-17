@@ -52,6 +52,7 @@ jobs:
                     ref: branch
                   });
                   if(statuses.length > 0) {
+                    console.log('Statuses: ' + statuses)
                     const latest_status = statuses[0]['state'];
                     console.log('Validating status: ' + latest_status);
                     if(latest_status != 'success') {
@@ -93,42 +94,42 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Created combined branch
-        env:
-          BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
-          BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
-          COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
-        run: |
-          echo "$BRANCHES_TO_COMBINE"
-          sourcebranches="${BRANCHES_TO_COMBINE%\"}"
-          sourcebranches="${sourcebranches#\"}"
+#       - name: Created combined branch
+#         env:
+#           BASE_BRANCH: ${{ steps.fetch-branch-names.outputs.base-branch }}
+#           BRANCHES_TO_COMBINE: ${{ steps.fetch-branch-names.outputs.result }}
+#           COMBINE_BRANCH_NAME: ${{ github.event.inputs.combineBranchName }}
+#         run: |
+#           echo "$BRANCHES_TO_COMBINE"
+#           sourcebranches="${BRANCHES_TO_COMBINE%\"}"
+#           sourcebranches="${sourcebranches#\"}"
           
-          basebranch="${BASE_BRANCH%\"}"
-          basebranch="${basebranch#\"}"
+#           basebranch="${BASE_BRANCH%\"}"
+#           basebranch="${basebranch#\"}"
           
-          git config pull.rebase false
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+#           git config pull.rebase false
+#           git config user.name github-actions
+#           git config user.email github-actions@github.com
           
-          git branch $COMBINE_BRANCH_NAME $basebranch
-          git checkout $COMBINE_BRANCH_NAME
-          git pull origin $sourcebranches --no-edit
-          git push origin $COMBINE_BRANCH_NAME
+#           git branch $COMBINE_BRANCH_NAME $basebranch
+#           git checkout $COMBINE_BRANCH_NAME
+#           git pull origin $sourcebranches --no-edit
+#           git push origin $COMBINE_BRANCH_NAME
           
-      - uses: actions/github-script@v3
-        name: Create Combined Pull Request
-        env:
-          PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const prString = process.env.PRS_STRING;
-            const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
-            await github.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Combined PR',
-              head: '${{ github.event.inputs.combineBranchName }}',
-              base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
-              body: body
-            });
+#       - uses: actions/github-script@v3
+#         name: Create Combined Pull Request
+#         env:
+#           PRS_STRING: ${{ steps.fetch-branch-names.outputs.prs-string }}
+#         with:
+#           github-token: ${{secrets.GITHUB_TOKEN}}
+#           script: |
+#             const prString = process.env.PRS_STRING;
+#             const body = 'This PR was created by the Combine PRs action by combining the following PRs:\n' + prString;
+#             await github.pulls.create({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               title: 'Combined PR',
+#               head: '${{ github.event.inputs.combineBranchName }}',
+#               base: '${{ steps.fetch-branch-names.outputs.base-branch }}',
+#               body: body
+#             });
