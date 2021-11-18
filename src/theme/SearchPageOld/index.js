@@ -7,25 +7,19 @@
 
 /* eslint-disable jsx-a11y/no-autofocus */
 
-import React, { useEffect, useState, useReducer, useRef } from "react";
-
-import algoliaSearch from "algoliasearch/lite";
-import algoliaSearchHelper from "algoliasearch-helper";
-import clsx from "clsx";
-
+import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import Head from "@docusaurus/Head";
 import Link from "@docusaurus/Link";
-import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
-import {
-  useTitleFormatter,
-  usePluralForm,
-  useDynamicCallback,
-} from "@docusaurus/theme-common";
+import { usePluralForm, useTitleFormatter } from "@docusaurus/theme-common";
+import Translate, { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { useAllDocsData } from "@theme/hooks/useDocs";
 import useSearchQuery from "@theme/hooks/useSearchQuery";
 import Layout from "@theme/Layout";
-import Translate, { translate } from "@docusaurus/Translate";
+import algoliaSearchHelper from "algoliasearch-helper";
+import algoliaSearch from "algoliasearch/lite";
+import clsx from "clsx";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import styles from "./styles.module.css";
 
 // Very simple pluralization: probably good enough for now
@@ -131,7 +125,8 @@ function SearchPage() {
   const documentsFoundPlural = useDocumentsFoundPlural();
 
   const docsSearchVersionsHelpers = useDocsSearchVersionsHelpers();
-  const { searchQuery, setSearchQuery } = useSearchQuery();
+  const { searchValue, updateSearchPath } = useSearchQuery();
+  const [searchQuery, setSearchQuery] = useState(searchValue);
   const initialSearchResultState = {
     items: [],
     query: null,
@@ -178,7 +173,6 @@ function SearchPage() {
     },
     initialSearchResultState
   );
-
   const algoliaClient = algoliaSearch(appId, apiKey);
   const algoliaHelper = algoliaSearchHelper(algoliaClient, indexName, {
     hitsPerPage: 15,
@@ -277,7 +271,7 @@ function SearchPage() {
           description: "The search page title for empty query",
         });
 
-  const makeSearch = useDynamicCallback((page = 0) => {
+  const makeSearch = (page = 0) => {
     algoliaHelper.addDisjunctiveFacetRefinement("docusaurus_tag", "default");
     algoliaHelper.addDisjunctiveFacetRefinement("language", currentLocale);
 
@@ -291,19 +285,23 @@ function SearchPage() {
     );
 
     algoliaHelper.setQuery(searchQuery).setPage(page).search();
-  });
+  };
 
   useEffect(() => {
     if (!loaderRef) {
       return undefined;
     }
-    const currentObserver = observer.current;
 
-    currentObserver.observe(loaderRef);
-    return () => currentObserver.unobserve(loaderRef);
+    observer.current.observe(loaderRef);
+
+    return () => {
+      observer.current.unobserve(loaderRef);
+    };
   }, [loaderRef]);
 
   useEffect(() => {
+    updateSearchPath(searchQuery);
+
     searchResultStateDispatcher({ type: "reset" });
 
     if (searchQuery) {
@@ -313,7 +311,7 @@ function SearchPage() {
         makeSearch();
       }, 300);
     }
-  }, [searchQuery, docsSearchVersionsHelpers.searchVersions, makeSearch]);
+  }, [searchQuery, docsSearchVersionsHelpers.searchVersions]);
 
   useEffect(() => {
     if (!searchResultState.lastPage || searchResultState.lastPage === 0) {
@@ -321,7 +319,13 @@ function SearchPage() {
     }
 
     makeSearch(searchResultState.lastPage);
-  }, [makeSearch, searchResultState.lastPage]);
+  }, [searchResultState.lastPage]);
+
+  useEffect(() => {
+    if (searchValue && searchValue !== searchQuery) {
+      setSearchQuery(searchValue);
+    }
+  }, [searchValue]);
 
   return (
     <Layout wrapperClassName="search-page-wrapper">
