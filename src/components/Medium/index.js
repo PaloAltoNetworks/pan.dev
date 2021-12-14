@@ -7,7 +7,7 @@ const ITEMS_PER_ROW = 3; // Sync up the item col width if this is changed.
 
 const blog_json = require("./blogs.json");
 
-const blogs = blog_json.items.slice(1, 7);
+const blogs = blog_json.items.slice(0, 9);
 
 function Medium() {
   return (
