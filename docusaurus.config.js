@@ -19,7 +19,8 @@ module.exports = {
       disableSwitch: true,
     },
     algolia: {
-      apiKey: "cc0f2da5c80d2fb8dedb7ef9b56b52f2",
+      apiKey: "6869800b232f5f8362e83901d79110ee",
+      appId: "XC7919KOX3",
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
