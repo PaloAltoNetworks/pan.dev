@@ -12,8 +12,8 @@ import React from "react";
 import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
 import Medium from "../components/Medium";
-import SearchBar from "../theme/SearchBar";
 import styles from "./styles.module.css";
+import Link from "@docusaurus/Link";
 
 function Home() {
   const context = useDocusaurusContext();
@@ -33,27 +33,38 @@ function Home() {
               <div className="row">
                 <div className={classnames("col col--12")}>
                   <h1 className={styles.heroProjectTagline}>
-                    What{" "}
+                    The home of{" "}
                     <span className={styles.heroProjectKeywords}>
                       {" "}
                       developer docs{" "}
-                    </span>{" "}
-                    can we help you find?{" "}
+                    </span>
+                    at
                   </h1>
                 </div>
               </div>
               <div className="row">
-                <SearchBar />
+                <div className={classnames("col col--12")}>
+                  <img
+                    className={styles.heroImage}
+                    src="img/PANW_Parent_Logo_White.svg"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </header>
+      <div className={styles.beta}>
+        <h4 className={styles.betaText}>
+          The <Link to="/sase">SASE documentation</Link> is in an early preview
+          state. It is subject to change without notice.
+        </h4>
+      </div>
       <main>
         <section className="featuredContainer">
           <div className="container">
             <h1 className={styles.heroProjectTaglineDark}>
-              Explore our Developer Docs Sites
+              Explore our other Developer Docs Sites
             </h1>
             <Featured />
           </div>
