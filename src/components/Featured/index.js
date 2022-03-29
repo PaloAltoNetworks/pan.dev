@@ -3,7 +3,7 @@ import classnames from "classnames";
 import clsx from "clsx";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
-import Button from "../../theme/Button";
+import Button from "@theme/Button";
 import styles from "./styles.module.css";
 
 const features = [
