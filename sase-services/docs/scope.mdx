@@ -1,0 +1,83 @@
+---
+id: scope
+title: Access Token Scopes
+description: Access token scopes identify the tenant service group that an access token can access.
+hide_title: false
+slug: /docs/scope
+hide_table_of_contents: false
+keywords:
+  - sase
+---
+
+<head>
+  <meta name="robots" content="noindex"/>
+</head>
+
+## Preview Documentation
+
+** This documentation is in an early preview state. It is subject to change without notice. **
+
+## Scopes
+
+You use a [service account](/sase-services/docs/service-accounts) to identify the tenant service
+group (TSG) or tenant to which you want to perform API access. If the TSG or tenant does not have
+a service account, then you cannot perform API access against it.
+This is a 1:1 relationship. That is, if you have a tenant, `Tenant 1A`, with a service
+account named `1A_svc`, then you use that service account to obtain an access token.
+That access token cannot be used to perform API calls against any other tenant.
+All API requests made using that access token are routed to the tenant based on the TSG ID contained
+in the access token.
+
+**Note:** The TSG IDs used here are intentionally fake. Real TSG IDs are 10-digit integers.
+
+![](/sase-services/img/access_token_routing.png)
+
+**Note:** The difference between a tenant and a tenant service group, is a tenant is a leaf node
+in the tenant hierachy. That is, a TSG has children, a tenant does not. But both tenants and TSGs
+have TSG IDs. You use this ID for the scope when you create an access token for that tenant.
+
+## Scope within a TSG hierarchy
+
+When you use multiple tenants, you will organize them in a hierarchy of TSGs and tenants.
+You can, if you want, create a dedicated service account for every TSG and tenant in your hierarchy.
+This is the simplest case, but it isn't necessary. The service account for a TSG can specify
+the TSG ID of any descendent of that TSG when it creates an access token.
+
+Consider the following diagram. `TSG A` is the root tenant service group, and it has two 
+tenants: `Tenant 1A` and `Tenant 2A`. It also has a child TSG, `TSG B`, with two tenants: 
+`Tenant 1B` and `Tenant 2B`:
+
+![](/sase-services/img/tenant_hierarchy.png)
+
+In this scenario:
+
+* TSG A can create an access token specifying any TSG_ID in the heirarchy, because every tenant and
+TSG is a child of TSG A.
+
+* Tenant 1A, Tenant 2A, Tenant 1B, and Tenant 2B cannot create access tokens directly because they
+do not have service accounts.
+
+* TSG B can create access tokens specifying the TSG_ID for itself, plus Tenant 1B and Tenant 2B
+because those are children of TSG B.
+
+* TSG B _cannot_ create access tokens for TSG A, Tenant 1A, or Tenant 2A because they are either
+peers or an ancestor in the hierarchy.
+
+![](/sase-services/img/hierarchy_scope.png)
+
+## Using scope outside of the hierarchy
+
+In the previous scenario, we showed that TSG B was unable to create an access token for API access
+to Tenant 1A. But there might be situations where you need to do this. To work around the TSG
+hierarchy restrictions, you can create an ordinary user account for Tenant 1A using the Client ID
+for the `b_svc` service account. This will allow the b_svc service account to create an access token
+for API access to Tenant 1a. service account.
+
+You can accomplish this task using the multitenant UI, or you can use the Identity and Access
+Management [create an access policy](/sase-services/api/identity-and-access-management/accesspolicies#operation/createaccess_policy) API.
+For example:
+
+    curl -d "role=superuser&resource=prn:18::::&principal=b_svc@15.iam.panserviceaccount.com" \
+    -H "Authorization: Bearer <ACCESS_TOKEN_WITH_TSG_15>" \
+    -H "Content-Type: application/json" \
+    -X POST https://api.sase.paloaltonetworks.com/access_policies
