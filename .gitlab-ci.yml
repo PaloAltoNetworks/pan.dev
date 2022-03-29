@@ -1,0 +1,52 @@
+image: docker.art.code.pan.run/build-tools--image-node:16.ep1
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - 📦 publish
+  - screenshot
+
+pages:
+  stage: 📦 publish
+  script:
+    - yarn install
+    - yarn run build
+    - mv build public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  environment:
+    name: production/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    url: https://${CI_PROJECT_NAMESPACE}.docs.pan.run
+
+🤔 pages:preview:
+  stage: 📦 publish
+  script:
+    - yarn install
+    - yarn run build
+    - mv build public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  environment:
+    name: preview/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    url: https://${CI_PROJECT_NAMESPACE}.docs.pan.run/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/public/index.html
+    on_stop: 😢 pages:preview:stop
+
+😢 pages:preview:stop:
+  stage: 📦 publish
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+      when: manual
+  allow_failure: true
+  environment:
+    name: preview/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    action: stop
+  script:
+    - echo "👋 bye"
