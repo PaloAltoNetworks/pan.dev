@@ -1,0 +1,163 @@
+components:
+  schemas:
+    permission_create:
+      title: Root Type for permission
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          description: service.resource.action
+          type: string
+        description:
+          type: string
+        allowed_apis:
+          description: APIs permission controls
+          type: array
+          items:
+            $ref: '#/components/schemas/allowed_api'
+      example:
+        name: prisma_access.config_mgmt.read
+        description: The ability to read configurations snapshots.
+        allowed_apis:
+        - method: get
+          path: /config/v1/config-versions
+        - method: get
+          path: /config/v1/jobs
+    permission:
+      title: Root Type for permission
+      type: object
+      properties:
+        name:
+          description: service.resource.action
+          type: string
+        description:
+          type: string
+        allowed_apis:
+          description: APIs permission controls
+          type: array
+          items:
+            $ref: '#/components/schemas/allowed_api'
+      example:
+        name: prisma_access.config_mgmt.read
+        description: The ability to read configurations snapshots.
+        allowed_apis:
+        - method: get
+          path: /config/v1/config-versions
+        - method: get
+          path: /config/v1/jobs
+    _pagination:
+      required:
+      - count
+      - items
+      type: object
+      properties:
+        count:
+          description: Total count of the items
+          type: integer
+    allowed_api:
+      title: Root Type for allowed_api
+      description: ''
+      type: object
+      properties:
+        method:
+          description: REST Method
+          type: string
+        path:
+          description: url path
+          type: string
+      example:
+        method: get
+        path: /config/v1/config-versions
+  responses:
+    permissions_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/_pagination'
+            - example:
+                count: 1
+                items:
+                - name: prisma_access.config_mgmt.read
+                  description: The ability to read configurations snapshots.
+                  allowed_apis:
+                  - method: get
+                    path: /config/v1/config-versions
+                  - method: get
+                    path: /config/v1/jobs
+            - type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/permission'
+      description: Successful response.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+openapi: 3.0.2
+paths:
+  /iam/v1/permissions:
+    get:
+      tags:
+      - Permissions
+      parameters:
+      - name: service
+        description: service
+        schema: {}
+        in: query
+      - name: resource
+        description: resource
+        schema: {}
+        in: query
+      - name: action
+        description: action
+        schema: {}
+        in: query
+      responses:
+        '200':
+          $ref: '#/components/responses/permissions_list'
+      operationId: getpermissions
+      summary: List all access permissions
+      description: 'Retrieve a list of all permission entities.
+
+        '
+      security:
+      - Bearer: []
+  /iam/v1/permissions/{name}:
+    get:
+      tags:
+      - Permissions
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/permission_create'
+          description: Successful response - returns a single `permission`.
+      operationId: getpermission
+      summary: List a specific permission
+      description: 'Retrieve a specific permission.
+
+        '
+      parameters:
+      - name: name
+        description: service.resource.action
+        schema:
+          type: string
+        in: path
+        required: true
+      security:
+      - Bearer: []
+info:
+  title: Permissions
+  version: '1.0'
+  description: 'Permissions description.
+
+    '
+  contact: {}
+tags:
+- name: Permissions
