@@ -1,6 +1,6 @@
 ---
 id: prisma-access-config
-title: Prisma Access Configuration APIs
+title: Welcome to Prisma Access Configuration APIs
 description: Prisma Access Configuration APIs
 hide_title: false
 slug: /docs/prisma-access-config/prisma-access-config
@@ -8,15 +8,6 @@ hide_table_of_contents: false
 keywords:
   - sase
 ---
-<head>
-  <meta name="robots" content="noindex"/>
-</head>
-
-## Preview Documentation
-
-** This documentation is in an early preview state. It is subject to change without notice. **
-
-## Welcome to the Prisma Access Configuration APIs
 
 Welcome to the Prisma Access Configuration APIs. To use these APIs, you must be a new Managed
 Security Servie Provider (MSSP) customer as of March 2022 and must have configured your multitenancy 

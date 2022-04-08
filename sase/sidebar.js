@@ -5,8 +5,61 @@ module.exports = {
       id: "docs/home",
     },
     {
-      type: "doc",
-      id: "docs/getstarted",
+        type: "category",
+        label: "Get Started",
+        collapsed: true,
+        items: [
+            {
+              type: "doc",
+              id: "docs/getstarted",
+            },
+            {
+              type: "doc",
+              id: "docs/tenant-service-groups",
+            },
+            {
+              type: "doc",
+              id: "docs/service-accounts",
+            },
+              {
+                  type: "category",
+                  label: "Roles",
+                  collapsed: true,
+                  items: [
+                        {
+                          type: "doc",
+                          id: "docs/roles-overview",
+                        },
+                        {
+                          type: "doc",
+                          id: "docs/roles-assign",
+                        },
+                        {
+                          type: "doc",
+                          id: "docs/all-roles",
+                        },
+                  ]
+              },
+            {
+                  type: "category",
+                  label: "Access Tokens",
+                  collapsed: true,
+                  items: [
+                        {
+                          type: "doc",
+                          id: "docs/access-tokens",
+                        },
+                        {
+                          type: "doc",
+                          id: "docs/scope",
+                        },
+                  ]
+              },
+            {
+              type: "doc",
+              id: "docs/api-call",
+            },
+        ]
     },
     {
       type: "category",
@@ -17,14 +70,18 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Prisma SASE Multitenant Platform",
+      label: "Aggregate Monitoring",
       collapsed: true,
-      items: ["docs/msp/msp",
-              "docs/msp/parameters",      
-              "docs/msp/filters"
+      items: ["docs/mt-monitor/mt-monitor",
+              "docs/mt-monitor/parameters",      
+              "docs/mt-monitor/filters"
       ],
     },
   ],
+  iam_api: require("../static/sase/spec/iam/sidebar_builder").sidebar,
+  tenancy_api: require("../static/sase/spec/tenancy/sidebar_builder").sidebar,
+  auth_api: require("../static/sase/spec/auth/sidebar_builder").sidebar,
   pa_config_api: require("../static/sase/spec/prisma-access-config/sidebar_builder").sidebar,
-  msp_api: require("../static/sase/spec/msp/sidebar_builder").sidebar,
+  msp_api: require("../static/sase/spec/mt-monitor/sidebar_builder").sidebar,
+  subscription_api: require("../static/sase/spec/subscription/sidebar_builder").sidebar,
 };
