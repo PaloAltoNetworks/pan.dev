@@ -8,25 +8,15 @@ keywords:
   - Reference
   - API
 ---
-<head>
-  <meta name="robots" content="noindex"/>
-</head>
 
-## Preview Documentation
-
-** This documentation is in an early preview state. It is subject to change without notice. **
-
-## Early Access Preview ##
-
-Welcome to the Prisma Access Configuration APIs. **These APIs are in an early access
-preview state.** As such, actual usage of these APIs is not yet generally available.
-
-This documentation is subject to change without notice.
+Welcome to the Prisma Access Configuration APIs. To use these APIs, you must be a new Managed
+Security Service Provider (MSSP) customer as of March 2022 and must have configured your multitenant
+hierarchy for a new deployment of Prisma Access.
 
 All of the functionality exposed by these APIs can also be performed using the 
 [Prisma Access user interface](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-admin.html).
 
-These APIs use the [SASE Services](/sase-services/docs) for service access and authorization. 
+These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization. 
 
 To configure your Prisma Access Cloud Managed tenant, use the configuration APIs described here to
 create a _candidate_ configuration. Once you have finished creating your candidate configuration,
