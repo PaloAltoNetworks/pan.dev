@@ -54,12 +54,6 @@ function Home() {
           </div>
         </div>
       </header>
-      <div className={styles.beta}>
-        <h4 className={styles.betaText}>
-          The <Link to="/sase">SASE documentation</Link> is in an early preview
-          state. It is subject to change without notice.
-        </h4>
-      </div>
       <main>
         <section className="featuredContainer">
           <div className="container">

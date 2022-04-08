@@ -57,18 +57,28 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase-services/docs",
-              label: "SASE Services",
-              className: "indent",
-            },
-            {
               to: "#",
               label: "Prisma SASE API Reference",
               className: "section__docs",
             },
             {
-              to: "sase/api/msp",
-              label: "Prisma SASE Multitenant Platform",
+              to: "sase/api/tenancy",
+              label: "Tenancy Service",
+              className: "indent",
+            },
+            {
+              to: "sase/api/iam",
+              label: "Identity and Access Management",
+              className: "indent",
+            },
+            {
+              to: "sase/api/auth",
+              label: "Authentication Service",
+              className: "indent",
+            },
+            {
+              to: "sase/api/subscription",
+              label: "Subscription Service",
               className: "indent",
             },
             {
@@ -77,23 +87,8 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "#",
-              label: "SASE Services API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "sase-services/api/auth-service",
-              label: "Authentication Service",
-              className: "indent",
-            },
-            {
-              to: "sase-services/api/identity-and-access-management",
-              label: "Identity and Access Management",
-              className: "indent",
-            },
-            {
-              to: "sase-services/api/tenancy-service",
-              label: "Tenancy Service",
+              to: "sase/api/mt-monitor",
+              label: "Aggregate Monitoring",
               className: "indent",
             },
           ],
@@ -137,10 +132,12 @@ module.exports = {
         },
       ],
     },
+      /*
     announcementBar: {
-      id: "announcementBar",
-      content: `This documentation is in an early preview state. It is subject to change without notice.`,
-    },
+        id: "announcementBar",
+        content: `This documentation is in an early preview state. It is subject to change without notice.`,
+        },
+        */
     footer: {
       style: "light",
       logo: {
@@ -198,15 +195,6 @@ module.exports = {
         path: "sase",
         routeBasePath: "sase",
         sidebarPath: require.resolve("./sase/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "sase-services",
-        path: "sase-services",
-        routeBasePath: "sase-services",
-        sidebarPath: require.resolve("./sase-services/sidebar.js"),
       },
     ],
   ],
