@@ -24,7 +24,7 @@ const features = [
   },
   {
     title: <>Secure Access Service Edge</>,
-    imageUrl: "/img/PrismaSASE.png",
+    imageUrl: "/img/PrismaSase.png",
     toPage: "https://prisma.pan.dev",
     target: "_self",
     color: "prisma",
