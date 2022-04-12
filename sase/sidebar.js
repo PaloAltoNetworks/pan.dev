@@ -77,6 +77,14 @@ module.exports = {
               "docs/mt-monitor/filters"
       ],
     },
+    {
+      type: "category",
+      label: "Prisma SASE API Release Notes",
+      collapsed: true,
+      items: ["docs/release-notes/release-notes",
+              "docs/release-notes/changelog"
+      ],
+    },
   ],
   iam_api: require("../static/sase/spec/iam/sidebar_builder").sidebar,
   tenancy_api: require("../static/sase/spec/tenancy/sidebar_builder").sidebar,
