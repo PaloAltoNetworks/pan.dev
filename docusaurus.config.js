@@ -38,8 +38,8 @@ module.exports = {
       title: "",
       logo: {
         alt: "Palo Alto Networks for Developers",
-        src: "img/pan_dev_black.png",
-        srcDark: "img/pan_dev_white.png",
+        src: "img/pan_dev_black.svg",
+        srcDark: "img/pan_dev_white.svg",
       },
       items: [
         {
