@@ -9,7 +9,7 @@ import styles from "./styles.module.css";
 const features = [
   {
     title: <>Cloud Security</>,
-    imageUrl: "/img/PrismaCloud.png",
+    imageUrl: "/img/PrismaCloud.svg",
     toPage: "https://prisma.pan.dev",
     target: "_self",
     color: "prisma",
@@ -24,8 +24,8 @@ const features = [
   },
   {
     title: <>Secure Access Service Edge</>,
-    imageUrl: "/img/PrismaSase.png",
-    toPage: "https://prisma.pan.dev",
+    imageUrl: "/img/PrismaSASE.svg",
+    toPage: "https://pan.dev/sase",
     target: "_self",
     color: "prisma",
     description: (
