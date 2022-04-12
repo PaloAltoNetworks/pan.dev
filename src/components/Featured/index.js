@@ -8,22 +8,8 @@ import styles from "./styles.module.css";
 
 const features = [
   {
-    title: <>Threat Intelligence and AI</>,
-    imageUrl: "/img/Cortex_Logo.svg",
-    toPage: "https://cortex.pan.dev",
-    color: "cortex",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Get started with developing solutions with Cortex XDR and Cortex Data
-          Lake. Find API reference docs, tutorials and more.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: <>Cloud Automation and Security</>,
-    imageUrl: "/img/Prisma_Logo.svg",
+    title: <>Cloud Security</>,
+    imageUrl: "/img/PrismaCloud.png",
     toPage: "https://prisma.pan.dev",
     target: "_self",
     color: "prisma",
@@ -32,6 +18,48 @@ const features = [
         <p className="text text--secondary">
           Discover the APIs, tools and techniques necessary for bringing DevOps
           practices to the cloud.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: <>Secure Access Service Edge</>,
+    imageUrl: "/img/PrismaSase.png",
+    toPage: "https://prisma.pan.dev",
+    target: "_self",
+    color: "prisma",
+    description: (
+      <>
+        <p className="text text--secondary">
+          Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: <>Automate Anything</>,
+    imageUrl: "/img/Cortex_XSoar_Logo.svg",
+    toPage: "https://xsoar.pan.dev",
+    color: "cortex",
+    description: (
+      <>
+        <p className="text text--secondary">
+          Browse reference docs, tutorials, the XSOAR Marketplace and more.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: <>Threat Intelligence and AI</>,
+    imageUrl: "/img/Cortex_Logo.svg",
+    toPage: "https://cortex.pan.dev",
+    color: "cortex",
+    offSet: true,
+    description: (
+      <>
+        <p className="text text--secondary">
+          Get started with developing solutions with Cortex XDR and Cortex Data
+          Lake. Find API reference docs, tutorials and more.
         </p>
       </>
     ),
@@ -50,32 +78,20 @@ const features = [
       </>
     ),
   },
-  {
-    title: <>Automate Anything</>,
-    imageUrl: "/img/Cortex_XSoar_Logo.svg",
-    toPage: "https://xsoar.pan.dev",
-    color: "cortex",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Browse reference docs, tutorials, the XSOAR Marketplace and more.
-        </p>
-      </>
-    ),
-  },
 ];
 
-function Feature({ imageUrl, title, description, toPage, color }) {
+function Feature({ imageUrl, title, description, toPage, color, offset }) {
   const imgUrl = useBaseUrl(imageUrl);
   const toUrl = toPage ? useBaseUrl(toPage) : null;
   const isBreakpoint = useMediaQuery({ query: "(max-width: 1200px)" });
+  const addOff = offset ? true : false;
 
   return (
     <div
       className={
-        isBreakpoint
-          ? "col col--6 margin-bottom--lg"
-          : "col col--3 margin-bottom--lg"
+        addOff
+          ? "col col--4 col--offset-2 margin-bottom--lg"
+          : "col col--4 margin-bottom--lg"
       }
     >
       <Button
