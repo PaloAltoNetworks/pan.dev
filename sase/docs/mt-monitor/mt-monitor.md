@@ -35,7 +35,7 @@ interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platfo
 
 ## Authentication
 
-Use the [Prisma SASE API Quick Start](/sase/docs/getstarted) for information about the SASE Services
+Use the [Prisma SASE API Quick Start](/sase/docs/getstarted) for information about the Authentication Service
 common authentication mechanism and base URL.
 
 ## API Requests

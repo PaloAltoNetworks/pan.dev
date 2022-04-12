@@ -38,8 +38,8 @@ module.exports = {
       title: "",
       logo: {
         alt: "Palo Alto Networks for Developers",
-        src: "img/pan_dev_black.png",
-        srcDark: "img/pan_dev_white.png",
+        src: "img/pan_dev_black.svg",
+        srcDark: "img/pan_dev_white.svg",
       },
       items: [
         {
@@ -132,12 +132,6 @@ module.exports = {
         },
       ],
     },
-      /*
-    announcementBar: {
-        id: "announcementBar",
-        content: `This documentation is in an early preview state. It is subject to change without notice.`,
-        },
-        */
     footer: {
       style: "light",
       logo: {
@@ -170,7 +164,6 @@ module.exports = {
     ],
   ],
   plugins: [
-    /*
     [
       "@docusaurus/plugin-sitemap",
       {
@@ -179,7 +172,6 @@ module.exports = {
         priority: 0.5,
       },
     ],
-    */
     [
       require.resolve("./plugin-sitemap-coveo/src/index.cjs"),
       {
@@ -205,7 +197,7 @@ module.exports = {
       rel: "stylesheet",
     },
   ],
-  onDuplicateRoutes: "error",
-  onBrokenLinks: "error",
-  onBrokenMarkdownLinks: "error",
+  onDuplicateRoutes: "throw",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
 };

@@ -13,8 +13,8 @@ Welcome to the Prisma Access Configuration APIs. To use these APIs, you must be 
 Security Servie Provider (MSSP) customer as of March 2022 and must have configured your multitenancy 
 hierarchy for a new deployment of Prisma Access.
 
-The Prisma Access Configuration APIs use [SASE services](/sase-services/docs) for API authorization and access.
-After you obtain an [access token](/sase-services/docs/authentication-overview), 
+The Prisma Access Configuration APIs use [Authentication Service](/sase/api/auth/authservice#tag/AuthService) for API authorization and access.
+After you obtain an [access token](/sase/docs/access-tokens), 
 you can use these APIs to configure your Prisma Access deployments.
 
 Generally, to perform a configuration change, you issue one or more configuration 
