@@ -269,7 +269,7 @@ For example:
       }...
 
 ## Properties ##
-Properties are a required array of objects. Properties are database field names that will be returned in the API response. You can use one or more properties to customize your request, but you can also use most of the examples in the [API reference](/sase/api/msp) as they are. 
+Properties are a required array of objects. Properties are database field names that will be returned in the API response. You can use one or more properties to customize your request, but you can also use most of the examples in the [API reference](/sase/api/mt-monitor) as they are. 
 
 Some of the properties are predefined, so you must use exactly what you see. Some properties contain choices, so you can decide. 
 
