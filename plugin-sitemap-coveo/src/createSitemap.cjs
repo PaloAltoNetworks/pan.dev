@@ -40,7 +40,7 @@ function generateMeta(routePath, crumbs) {
     sitemap_informationtype: ["Developer"],
     sitemap_productcategory: [],
     sitemap_feature: [],
-    sitemap_osversion: ["All"],
+    sitemap_osversion: [],
     sitemap_featurecategory: [],
   };
   coveo_metadata = traverse(crumbs, coveo_metadata, routePath);
