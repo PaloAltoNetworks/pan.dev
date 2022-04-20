@@ -43,6 +43,32 @@ module.exports = {
       },
       items: [
         {
+            label: "Network Security",
+            to: "cloudngfw",
+            items: [
+                {
+                    to: "#",
+                    label: "Docs",
+                    className: "section__docs",
+                },
+                {
+                    to: "cloudngfw/docs",
+                    label: "Cloud NGFW",
+                    className: "indent",
+                },
+                {
+                  to: "#",
+                  label: "API Reference",
+                  className: "section__docs",
+                },
+                {
+                  to: "cloudngfw/aws/api",
+                  label: "Cloud NGFW for AWS",
+                  className: "indent",
+                }
+            ]
+        },
+        {
           label: "Secure Access Service Edge",
           to: "sase",
           items: [
@@ -187,6 +213,15 @@ module.exports = {
         path: "sase",
         routeBasePath: "sase",
         sidebarPath: require.resolve("./sase/sidebar.js"),
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "cloudngfw",
+        path: "cloudngfw",
+        routeBasePath: "cloudngfw",
+        sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
       },
     ],
   ],
