@@ -2,9 +2,10 @@ const globby = require("globby");
 const yaml = require("js-yaml");
 const fs = require("fs");
 // Use the following to frontload docs
-var docs = [
-    "api/subscription/subscription-api",
-];
+// var docs = [
+//     "api/subscription/subscription-api",
+// ];
+var docs = [];
 
 // Change these variables to match your doc path
 const relativePath = "api/subscription";
@@ -16,7 +17,7 @@ function genEndpoints() {
     absolute: false,
     objectMode: true,
     deep: 1,
-    onlyDirectories: false,
+    onlyDirectories: false
   });
   specs.map((spec) => {
     const specContents = fs.readFileSync(spec.path, "utf8");
@@ -34,8 +35,8 @@ function genEndpoints() {
       collapsed: true,
       link: {
         type: "doc",
-        id: linkId,
-      },
+        id: linkId
+      }
     };
     var items = [];
     for ([path, methods] of Object.entries(paths)) {
@@ -47,8 +48,8 @@ function genEndpoints() {
           label: linkLabel,
           href: `${absolutePath}/${docId}#operation/${operationId}`,
           customProps: {
-            method: method,
-          },
+            method: method
+          }
         };
         items.push(item);
       }
@@ -61,5 +62,5 @@ function genEndpoints() {
 const endpoints = genEndpoints();
 const sidebar = docs.concat(endpoints);
 module.exports = {
-  sidebar: sidebar,
+  sidebar: sidebar
 };

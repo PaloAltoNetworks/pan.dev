@@ -2,7 +2,9 @@ const globby = require("globby");
 const yaml = require("js-yaml");
 const fs = require("fs");
 // Use the following to frontload docs
-var docs = ["sase/config/config-api"];
+// var docs = ["sase/config/config-api"];
+var docs = [];
+
 // Change these variables to match your doc path
 const relativePath = "sase/config";
 const absolutePath = "/api/sase/config";
@@ -15,7 +17,7 @@ function genEndpoints() {
     absolute: false,
     objectMode: true,
     deep: 1,
-    onlyDirectories: false,
+    onlyDirectories: false
   });
   specs.map((spec) => {
     const specContents = fs.readFileSync(spec.path, "utf8");
@@ -29,7 +31,7 @@ function genEndpoints() {
     const paths = data.paths;
     var category = {
       type: "category",
-      label: categoryLabel,
+      label: categoryLabel
     };
     var items = [`${relativePath}/${docId}`];
     for ([path, methods] of Object.entries(paths)) {
@@ -41,8 +43,8 @@ function genEndpoints() {
           label: linkLabel,
           href: `${absolutePath}/${docId}#operation/${operationId}`,
           customProps: {
-            method: method,
-          },
+            method: method
+          }
         };
         items.push(item);
       }
@@ -59,5 +61,5 @@ function genEndpoints() {
 const [endpoints, endEndpoints] = genEndpoints();
 const sidebar = docs.concat(endpoints).concat(endEndpoints);
 module.exports = {
-  sidebar: sidebar,
+  sidebar: sidebar
 };
