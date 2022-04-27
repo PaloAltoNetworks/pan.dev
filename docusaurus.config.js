@@ -4,15 +4,27 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
+if (process.env.CI_MERGE_REQUEST_IID) {
+  if (process.env.CI_PROJECT_DIR == "dev") {
+    baseUrl = "/";
+  } else {
+    baseUrl =
+      process.env.GL_PAGES_BASE_URL ??
+      `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`;
+  }
+} else {
+  baseUrl = process.env.GL_PAGES_BASE_URL ?? "/";
+}
+console.log(baseUrl);
 module.exports = {
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
-  url: process.env.CI_PAGES_URL ? process.env.CI_PAGES_URL : "https://pan.dev",
-  baseUrl: process.env.CI_MERGE_REQUEST_IID
-    ? `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`
-    : "/",
-
+  url: process.env.GL_PAGES_URL
+    ? process.env.GL_PAGES_URL
+    : process.env.CI_PAGES_URL ?? "https://pan.dev",
+  baseUrl: baseUrl,
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
@@ -43,30 +55,30 @@ module.exports = {
       },
       items: [
         {
-            label: "Network Security",
-            to: "cloudngfw",
-            items: [
-                {
-                    to: "#",
-                    label: "Docs",
-                    className: "section__docs",
-                },
-                {
-                    to: "cloudngfw/docs",
-                    label: "Cloud NGFW",
-                    className: "indent",
-                },
-                {
-                  to: "#",
-                  label: "API Reference",
-                  className: "section__docs",
-                },
-                {
-                  to: "cloudngfw/aws/api",
-                  label: "Cloud NGFW for AWS",
-                  className: "indent",
-                }
-            ]
+          label: "Network Security",
+          to: "cloudngfw",
+          items: [
+            {
+              to: "#",
+              label: "Docs",
+              className: "section__docs",
+            },
+            {
+              to: "cloudngfw/docs",
+              label: "Cloud NGFW",
+              className: "indent",
+            },
+            {
+              to: "#",
+              label: "API Reference",
+              className: "section__docs",
+            },
+            {
+              to: "cloudngfw/aws/api",
+              label: "Cloud NGFW for AWS",
+              className: "indent",
+            },
+          ],
         },
         {
           label: "Secure Access Service Edge",
@@ -115,6 +127,11 @@ module.exports = {
             {
               to: "sase/api/mt-monitor",
               label: "Aggregate Monitoring",
+              className: "indent",
+            },
+            {
+              to: "sase/api/insights/2.0",
+              label: "Prisma Access Insights",
               className: "indent",
             },
           ],
@@ -232,6 +249,20 @@ module.exports = {
       rel: "stylesheet",
     },
   ],
+  customFields: {
+    pai_versions: [
+      {
+        label: "Version 2.0",
+        to: "/sase/api/insights/2.0",
+        version: "2.0",
+      },
+      {
+        label: "Version 1.0",
+        to: "/sase/api/insights/1.0",
+        version: "1.0",
+      },
+    ],
+  },
   onDuplicateRoutes: "throw",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
