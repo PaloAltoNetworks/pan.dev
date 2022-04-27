@@ -79,6 +79,27 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Prisma Access Insights",
+      collapsed: true,
+      items: [
+          "docs/insights/insights",
+          "docs/insights/getting_started-20",
+          "docs/insights/getting_started-10",
+          {
+              type: "category",
+              label: "Query Language",
+              collapsed: true,
+              items: [
+                  "docs/insights/pai_query_language",
+                  "docs/insights/query_language_resources",
+                  "docs/insights/query_properties",
+                  "docs/insights/query_filters"
+              ]
+          }
+      ],
+    },
+    {
+      type: "category",
       label: "Prisma SASE API Release Notes",
       collapsed: true,
       items: ["docs/release-notes/release-notes",
@@ -92,4 +113,6 @@ module.exports = {
   pa_config_api: require("../static/sase/spec/prisma-access-config/sidebar_builder").sidebar,
   msp_api: require("../static/sase/spec/mt-monitor/sidebar_builder").sidebar,
   subscription_api: require("../static/sase/spec/subscription/sidebar_builder").sidebar,
+  pai_api_10: require("../static/sase/spec/insights/1.0/sidebar_builder").sidebar,
+  pai_api_20: require("../static/sase/spec/insights/2.0/sidebar_builder").sidebar,
 };

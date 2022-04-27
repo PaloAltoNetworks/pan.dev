@@ -279,7 +279,7 @@ function DocSidebarVersionDropdown({
       <a
         className="menu__link"
         style={{
-          color: "var(--ifm-version-background)",
+          color: "var(--ifm-color-emphasis-0)",
         }}
       >
         Select API Version: &ensp;
