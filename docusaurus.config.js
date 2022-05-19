@@ -100,37 +100,93 @@ module.exports = {
               className: "section__docs",
             },
             {
-              to: "sase/api/tenancy",
+              to: "sase-old/api/tenancy",
               label: "Tenancy Service",
               className: "indent",
             },
             {
-              to: "sase/api/iam",
+              to: "sase-old/api/iam",
               label: "Identity and Access Management",
               className: "indent",
             },
             {
-              to: "sase/api/auth",
+              to: "sase-old/api/auth",
               label: "Authentication Service",
               className: "indent",
             },
             {
-              to: "sase/api/subscription",
+              to: "sase-old/api/subscription",
               label: "Subscription Service",
               className: "indent",
             },
             {
-              to: "sase/api/prisma-access-config",
+              to: "sase-old/api/prisma-access-config",
               label: "Prisma Access Configuration",
               className: "indent",
             },
             {
-              to: "sase/api/mt-monitor",
+              to: "sase-old/api/mt-monitor",
               label: "Aggregate Monitoring",
               className: "indent",
             },
             {
-              to: "sase/api/insights/2.0",
+              to: "sase-old/api/insights/2.0",
+              label: "Prisma Access Insights",
+              className: "indent",
+            },
+          ],
+        },
+        {
+          label: "New SASE",
+          to: "sase",
+          items: [
+            {
+              to: "#",
+              label: "Docs",
+              className: "section__docs",
+            },
+            {
+              to: "sase/docs",
+              label: "Prisma SASE",
+              className: "indent",
+            },
+            {
+              to: "#",
+              label: "Prisma SASE API Reference",
+              className: "section__docs",
+            },
+            {
+              to: "sase/api/tenancy/introduction",
+              label: "Tenancy Service",
+              className: "indent",
+            },
+            {
+              to: "sase/api/iam/introduction",
+              label: "Identity and Access Management",
+              className: "indent",
+            },
+            {
+              to: "sase/api/auth/introduction",
+              label: "Authentication Service",
+              className: "indent",
+            },
+            {
+              to: "sase/api/subscription/introduction",
+              label: "Subscription Service",
+              className: "indent",
+            },
+            {
+              to: "sase/api/prisma-access-config/introduction",
+              label: "Prisma Access Configuration",
+              className: "indent",
+            },
+            {
+              to: "sase/api/mt-monitor/introduction",
+              label: "Aggregate Monitoring",
+              className: "indent",
+            },
+            {
+              to: "sase/api/insights/2.0/introduction",
               label: "Prisma Access Insights",
               className: "indent",
             },
@@ -191,6 +247,7 @@ module.exports = {
         gtm: "GTM-PLXD79N",
       },
     ],
+    "docusaurus-theme-openapi-docs"
   ],
   presets: [
     [
@@ -207,6 +264,63 @@ module.exports = {
     ],
   ],
   plugins: [
+    [
+      "docusaurus-plugin-openapi-docs",
+      {
+        id: "sase",
+        config: {
+          auth: {
+            specPath: "static/sase/spec/auth",
+            outputDir: "products/sase/api/auth",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          iam: {
+            specPath: "static/sase/spec/iam",
+            outputDir: "products/sase/api/iam",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          insights: {
+            specPath: "static/sase/spec/insights",
+            outputDir: "products/sase/api/insights",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          mtmonitor: {
+            specPath: "static/sase/spec/mt-monitor",
+            outputDir: "products/sase/api/mt-monitor",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          access: {
+            specPath: "static/sase/spec/prisma-access-config",
+            outputDir: "products/sase/api/prisma-access-config",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          sub: {
+            specPath: "static/sase/spec/subscription",
+            outputDir: "products/sase/api/subscription",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          tenancy: {
+            specPath: "static/sase/spec/tenancy",
+            outputDir: "products/sase/api/tenancy",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+        },
+      },
+    ],
     [
       "@docusaurus/plugin-sitemap",
       {
@@ -228,7 +342,7 @@ module.exports = {
       {
         id: "sase",
         path: "sase",
-        routeBasePath: "sase",
+        routeBasePath: "sase-old",
         sidebarPath: require.resolve("./sase/sidebar.js"),
       },
     ],
@@ -239,6 +353,16 @@ module.exports = {
         path: "cloudngfw",
         routeBasePath: "cloudngfw",
         sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "products",
+        path: "products",
+        routeBasePath: "/",
+        sidebarPath: require.resolve("./products/sidebars.js"),
+        docItemComponent: "@theme/ApiItem",
       },
     ],
   ],
