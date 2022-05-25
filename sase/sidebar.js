@@ -102,8 +102,8 @@ module.exports = {
       type: "category",
       label: "Prisma SASE API Release Notes",
       collapsed: true,
-      items: ["docs/release-notes/release-notes",
-              "docs/release-notes/changelog"
+      items: ["docs/release-notes/changelog",
+              "docs/release-notes/release-notes"
       ],
     },
   ],

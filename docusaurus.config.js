@@ -91,7 +91,17 @@ module.exports = {
             },
             {
               to: "sase/docs",
-              label: "Prisma SASE",
+              label: "Prisma SASE Developer's Guide",
+              className: "indent",
+            },
+            {
+              to: "/sase/docs/release-notes/changelog",
+              label: "Prisma SASE Changelog",
+              className: "indent",
+            },
+            {
+              to: "/sase/docs/release-notes/release-notes",
+              label: "Prisma SASE Release Notes",
               className: "indent",
             },
             {
