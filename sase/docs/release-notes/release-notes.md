@@ -3,7 +3,7 @@ id: release-notes
 title: Release Notes
 description: Prisma SASE API Release Notes 
 hide_title: true
-slug: /docs/release-notes
+slug: /docs/release-notes/release-notes
 hide_table_of_contents: false
 keywords:
   - sase
@@ -37,7 +37,7 @@ The following configuration endpoints have changed:
 | /config/v1/config-versions/candidate | [/sse/config/v1/config-versions](/sase/api/prisma-access-config/configuration-management#operation/delete-sse-config-v1-config-versions) |
 
 Also, [/sse/config/v1/config-versions/candidate:push](/sase/api/prisma-access-config/configuration-management#operation/post-sse-config-v1-config-versions-candidate:push)
-formerly had a field `devices` in its request body. This is now `fields`. 
+formerly had a field `devices` in its request body. This is now `folders`. 
 
 The following new API is added:
 
