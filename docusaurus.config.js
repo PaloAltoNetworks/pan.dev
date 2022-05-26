@@ -4,27 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-if (process.env.CI_MERGE_REQUEST_IID) {
-  if (process.env.CI_PROJECT_DIR == "dev") {
-    baseUrl = "/";
-  } else {
-    baseUrl =
-      process.env.GL_PAGES_BASE_URL ??
-      `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`;
-  }
-} else {
-  baseUrl = process.env.GL_PAGES_BASE_URL ?? "/";
-}
-console.log(baseUrl);
 module.exports = {
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
-  url: process.env.GL_PAGES_URL
-    ? process.env.GL_PAGES_URL
-    : process.env.CI_PAGES_URL ?? "https://pan.dev",
-  baseUrl: baseUrl,
+  url: "https://pan.dev",
+  baseUrl: "/",
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
@@ -247,7 +232,7 @@ module.exports = {
         gtm: "GTM-PLXD79N",
       },
     ],
-    "docusaurus-theme-openapi-docs"
+    "docusaurus-theme-openapi-docs",
   ],
   presets: [
     [

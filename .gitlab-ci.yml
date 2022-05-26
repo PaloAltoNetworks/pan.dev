@@ -1,58 +1,37 @@
-image: docker.art.code.pan.run/build-tools--image-node:16.ep1
+stages:
+  - build
+  - deploy
 
 cache:
   paths:
     - node_modules/
 
-stages:
-  - 📦 publish
-  - screenshot
-
-pages:
-  stage: 📦 publish
-  script:
-    - echo "$GL_PAGES_URL"
-    - echo "$GL_PAGES_BASE_URL"
-    - yarn install
-    - yarn run build
-    - mv build public
+build_dev:
+  image: docker.art.code.pan.run/build-tools--image-node:16.ep1
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  stage: build
   artifacts:
     paths:
       - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  variables: 
-    GL_PAGES_URL: $GL_PAGES_URL
-    GL_PAGES_BASE_URL: $GL_PAGES_BASE_URL
-
-  environment:
-    name: production/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
-    url: https://${CI_PROJECT_NAMESPACE}.docs.pan.run
-
-🤔 pages:preview:
-  stage: 📦 publish
+  environment: dev
+  variables:
+    NODE_TLS_REJECT_UNAUTHORIZED: 0
   script:
+    - yarn config set "strict-ssl" false
     - yarn install
     - yarn run build
     - mv build public
-  artifacts:
-    paths:
-      - public
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
-  environment:
-    name: preview/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
-    url: https://${CI_PROJECT_NAMESPACE}.docs.pan.run/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/public/index.html
-    on_stop: 😢 pages:preview:stop
 
-😢 pages:preview:stop:
-  stage: 📦 publish
+deploy_preview:
+  image: docker.art.code.pan.run/build-tools--image-gcp-utils:1.0.2
+  stage: deploy
   rules:
     - if: $CI_MERGE_REQUEST_IID
-      when: manual
-  allow_failure: true
   environment:
-    name: preview/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
-    action: stop
+    name: dev
+    url: https://pandev-${GITLAB_USER_ID}-${CI_MERGE_REQUEST_IID}-dot-tryingpan.uc.r.appspot.com
   script:
-    - echo "👋 bye"
+    - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud auth list --filter=status:ACTIVE --format="value(account)"
+    - gcloud app deploy public/app.yaml --project $GCP_PROJECT_ID --no-promote --quiet --version pandev-${GITLAB_USER_ID}-${CI_MERGE_REQUEST_IID}
