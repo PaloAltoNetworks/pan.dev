@@ -66,7 +66,7 @@ module.exports = {
           ],
         },
         {
-          label: "Secure Access Service Edge",
+          label: "SASE",
           to: "sase",
           items: [
             {
@@ -85,73 +85,17 @@ module.exports = {
               className: "section__docs",
             },
             {
-              to: "sase-old/api/tenancy",
+              to: "sase/api/tenancy",
               label: "Tenancy Service",
               className: "indent",
             },
             {
-              to: "sase-old/api/iam",
+              to: "sase/api/iam",
               label: "Identity and Access Management",
               className: "indent",
             },
             {
-              to: "sase-old/api/auth",
-              label: "Authentication Service",
-              className: "indent",
-            },
-            {
-              to: "sase-old/api/subscription",
-              label: "Subscription Service",
-              className: "indent",
-            },
-            {
-              to: "sase-old/api/prisma-access-config",
-              label: "Prisma Access Configuration",
-              className: "indent",
-            },
-            {
-              to: "sase-old/api/mt-monitor",
-              label: "Aggregate Monitoring",
-              className: "indent",
-            },
-            {
-              to: "sase-old/api/insights/2.0",
-              label: "Prisma Access Insights",
-              className: "indent",
-            },
-          ],
-        },
-        {
-          label: "New SASE",
-          to: "sase",
-          items: [
-            {
-              to: "#",
-              label: "Docs",
-              className: "section__docs",
-            },
-            {
-              to: "sase/docs",
-              label: "Prisma SASE",
-              className: "indent",
-            },
-            {
-              to: "#",
-              label: "Prisma SASE API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "sase/api/tenancy/introduction",
-              label: "Tenancy Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/iam/introduction",
-              label: "Identity and Access Management",
-              className: "indent",
-            },
-            {
-              to: "sase/api/auth/introduction",
+              to: "sase/api/auth",
               label: "Authentication Service",
               className: "indent",
             },
@@ -161,12 +105,12 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase/api/prisma-access-config/introduction",
+              to: "sase/api/prisma-access-config",
               label: "Prisma Access Configuration",
               className: "indent",
             },
             {
-              to: "sase/api/mt-monitor/introduction",
+              to: "sase/api/mt-monitor",
               label: "Aggregate Monitoring",
               className: "indent",
             },
@@ -239,8 +183,11 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
-          sidebarPath: require.resolve("./contributing/sidebars.js"),
-          path: "contributing",
+          id: "docs",
+          path: "docs",
+          routeBasePath: "/",
+          sidebarPath: require.resolve("./docs/sidebars.js"),
+          docItemComponent: "@theme/ApiItem",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css")],
@@ -252,53 +199,68 @@ module.exports = {
     [
       "docusaurus-plugin-openapi-docs",
       {
-        id: "sase",
+        id: "apis",
         config: {
           auth: {
             specPath: "static/sase/spec/auth",
-            outputDir: "products/sase/api/auth",
+            outputDir: "docs/sase/api/auth",
             sidebarOptions: {
               groupPathsBy: "tags",
+              categoryLinkSource: "info",
             },
           },
           iam: {
             specPath: "static/sase/spec/iam",
-            outputDir: "products/sase/api/iam",
+            outputDir: "docs/sase/api/iam",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
           },
-          insights: {
-            specPath: "static/sase/spec/insights",
-            outputDir: "products/sase/api/insights",
+          insightsv1: {
+            specPath: "static/sase/spec/insights/1.0",
+            outputDir: "docs/sase/api/insights/1.0",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          insightsv2: {
+            specPath: "static/sase/spec/insights/2.0",
+            outputDir: "docs/sase/api/insights/2.0",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
           },
           mtmonitor: {
             specPath: "static/sase/spec/mt-monitor",
-            outputDir: "products/sase/api/mt-monitor",
+            outputDir: "docs/sase/api/mt-monitor",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
           },
           access: {
             specPath: "static/sase/spec/prisma-access-config",
-            outputDir: "products/sase/api/prisma-access-config",
+            outputDir: "docs/sase/api/prisma-access-config",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
           },
           sub: {
             specPath: "static/sase/spec/subscription",
-            outputDir: "products/sase/api/subscription",
+            outputDir: "docs/sase/api/subscription",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
           },
           tenancy: {
             specPath: "static/sase/spec/tenancy",
-            outputDir: "products/sase/api/tenancy",
+            outputDir: "docs/sase/api/tenancy",
+            sidebarOptions: {
+              groupPathsBy: "tags",
+            },
+          },
+          cloudngfw: {
+            specPath: "static/cloudngfw/aws/spec/api",
+            outputDir: "docs/cloudngfw/api/aws",
             sidebarOptions: {
               groupPathsBy: "tags",
             },
@@ -320,34 +282,6 @@ module.exports = {
         id: "coveo-sitemap",
         changefreq: "weekly",
         priority: 0.5,
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "sase",
-        path: "sase",
-        routeBasePath: "sase-old",
-        sidebarPath: require.resolve("./sase/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "cloudngfw",
-        path: "cloudngfw",
-        routeBasePath: "cloudngfw",
-        sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "products",
-        path: "products",
-        routeBasePath: "/",
-        sidebarPath: require.resolve("./products/sidebars.js"),
-        docItemComponent: "@theme/ApiItem",
       },
     ],
   ],
