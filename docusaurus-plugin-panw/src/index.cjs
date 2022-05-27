@@ -50,8 +50,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ],
       };
     },
-    getThemePath() {
-      return path.join(__dirname, "theme");
-    },
   };
 };
