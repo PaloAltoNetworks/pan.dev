@@ -14,6 +14,7 @@ keywords:
 
 | Date | Description |
 |------|-------------|
+| June 7, 2022 | Published additional information about [IAM user accounts](/sase/docs/user-accounts). |
 | May 25, 2022 | Published [User Account APIs](/sase/api/iam/useraccounts) for the IAM service. |
 | May 16, 2022 | Prisma Access Configuration API monthly release, which includes [breaking changes](/sase/docs/release-notes/release-notes#april-2022) to the APIs.|
 | April 26, 2022 | Added Prisma Access Insights v1.0 and v2.0 APIs |
