@@ -59,6 +59,10 @@ module.exports = {
               type: "doc",
               id: "docs/api-call",
             },
+            {
+              type: "doc",
+              id: "docs/user-accounts",
+            },
         ]
     },
     {
