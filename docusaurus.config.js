@@ -309,4 +309,5 @@ module.exports = {
   onDuplicateRoutes: "throw",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
+  trailingSlash: true,
 };
