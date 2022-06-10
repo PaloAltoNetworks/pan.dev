@@ -11,6 +11,6 @@ which offers identical functionality. However, the 2.0 APIs are meant for new Ma
 Service Providers (MSSPs) who purchased their licenses no sooner than March 2022. The 1.0 APIs are
 meant for traditional single tenant customers.
 
-MSSP customers should begin with [Getting Started with the 2.0 APIs](/sase/docs/insights/getting_started-20).
+MSSP customers should begin with [Getting Started with the 2.0 APIs](/sase/docs/insights/getting_started-20/).
 
-Single tenant customers should begin with [Getting Started with the 1.0 APIs](/sase/docs/insights/getting_started-10).
+Single tenant customers should begin with [Getting Started with the 1.0 APIs](/sase/docs/insights/getting_started-10/).
