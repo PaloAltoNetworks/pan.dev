@@ -32,19 +32,15 @@ module.exports = {
     colorMode: {
       defaultMode: "light",
     },
-    /*
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
-        facetFilters: [
-          ["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"],
-        ],
+        facetFilters: [["tags:pandev"]],
       }, // Optional, if provided by Algolia
     },
-    */
     hideOnScroll: true,
     navbar: {
       title: "",
