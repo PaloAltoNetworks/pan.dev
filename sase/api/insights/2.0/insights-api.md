@@ -9,11 +9,15 @@ keywords:
   - API
 ---
 
-The Prisma Access Insights 2.0 APIs allow you to query your Prisma Access Insights tenants for server
-status and data resources. These 2.0 APIs are intended to support Managed Security Service Providers
-(MSSPs) who are managing tenants in a multi-tenant environment. If you are a customer who is
-managing Prisma Access Insights tenants in a single tenant environment, please use the
-[1.0 APIs](/sase/api/insights/1.0).
+The Prisma Access Insights 2.0 APIs allow you to query your Prisma Access tenant for the health of
+your Prisma Access network deployment. The 2.0 APIs are are intended for cloud-managed Prisma Access
+customers, where the tenants have been onboarded by Palo Alto Networks using a Tenant Service Group
+(TSG) identifier. 
+
+To validate your tenant ID go to the Prisma Access Hub, click on the Prisma Access Insights
+application name, and look in the **Manage Apps** section.
+
+To use 1.0 APIs, see [1.0 APIs](/sase/api/insights/1.0).
 
 
 For information about access tokens and base URLs, please see 
