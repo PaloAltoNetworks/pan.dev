@@ -112,8 +112,6 @@ Cloud NGFW Programmatic access is disabled by default.
 	* For cloud rulestack admin role—`GET https://api.<regionname>.aws.cloudngfw.paloaltonetworks.com/v1/mgmt/tokens/cloudrulestackadmin`
 	* For cloud global rulestack admin role—`GET https://api.<regionname>.aws.cloudngfw.paloaltonetworks.com/v1/mgmt/tokens/cloudglobalrulestackadmin`
 	
-	For information about roles and permissions, see [Cloud NGFW roles and permissions](https://docs.paloaltonetworks.com/cloud-ngfw/aws/cloud-ngfw-on-aws/getting-started-with-cloud-ngfw-for-aws/invite-users) table. 
-	
 	***Get Token***
 	
 	Following is an example of the curl command to get token.
