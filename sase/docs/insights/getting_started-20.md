@@ -8,8 +8,11 @@ sidebar_label: Get Started 2.0
 Palo Alto Networks® Prisma Access Insights APIs allows you to continuously monitor the health and
 performance of your Prisma Access environment using Insights in the Prisma Access app. 
 
-This document provides information about getting started with Prisma Access
-Insights 2.0 APIs and is intended for an MSSP developer audience.
+This document provides information about getting started with Prisma Access Insights 2.0 APIs. The
+2.0 APIs are intended for cloud-managed Prisma Access customers, where the tenants have been
+onboarded by Palo Alto Networks using a Tenant Service Group (TSG) identifier. To see whether your
+tenant uses TSG IDs, go to the Prisma Access Hub, click on the Prisma Access Insights application
+name, and look in the **Manage Apps** section.
 
 ## API Request Overview
 
