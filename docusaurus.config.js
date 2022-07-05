@@ -140,7 +140,7 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase/api/insights/2.0",
+              to: "sase/api/insights/1.0",
               label: "Prisma Access Insights",
               className: "indent",
             },
@@ -262,14 +262,14 @@ module.exports = {
   customFields: {
     pai_versions: [
       {
-        label: "Version 2.0",
-        to: "/sase/api/insights/2.0",
-        version: "2.0",
-      },
-      {
         label: "Version 1.0",
         to: "/sase/api/insights/1.0",
         version: "1.0",
+      },
+      {
+        label: "Version 2.0",
+        to: "/sase/api/insights/2.0",
+        version: "2.0",
       },
     ],
   },
