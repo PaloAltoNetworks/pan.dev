@@ -4,6 +4,7 @@ title: Release Notes
 description: Prisma SASE API Release Notes
 hide_title: true
 hide_table_of_contents: false
+slug: /sase/docs/release-notes
 keywords:
   - sase
 ---
@@ -51,7 +52,7 @@ First public release of the Prisma SASE APIs. This release provides support for
 [identity management and role management](/sase/docs/roles),
 offers a common method for
 [authentication and API access](/sase/docs/api-call),
-[subscription monitoring](/sase/api/subscription/introduction),
+[subscription monitoring](/sase/api/subscription/subscription-service),
 [Prisma Access configuration](/sase/docs/prisma-access-config),
 and [aggregate monitoring](/sase/docs/mt-monitor).
 

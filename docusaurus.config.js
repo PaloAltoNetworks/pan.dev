@@ -17,7 +17,6 @@ module.exports = {
     colorMode: {
       defaultMode: "light",
     },
-    /*
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
@@ -25,11 +24,10 @@ module.exports = {
       searchParameters: {
         typoTolerance: false,
         facetFilters: [
-          ["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"],
+          ["tags:pandev", "tags:strata", "tags:xsoar", "tags:cortex"],
         ],
       }, // Optional, if provided by Algolia
     },
-    */
     hideOnScroll: true,
     navbar: {
       title: "",
@@ -85,7 +83,7 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "/sase/docs/release-notes/release-notes",
+              to: "/sase/docs/release-notes",
               label: "Prisma SASE Release Notes",
               className: "indent",
             },
@@ -193,6 +191,10 @@ module.exports = {
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css")],
+        },
+        gtag: {
+          trackingID: "GTM-PLXD79N",
+          anonymizeIP: true,
         },
       },
     ],
