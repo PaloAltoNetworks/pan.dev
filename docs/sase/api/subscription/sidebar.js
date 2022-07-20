@@ -1,1 +1,1 @@
-module.exports = [{"type":"category","label":"Instance","items":[{"type":"doc","id":"sase/api/subscription/list-instances","label":"List instances","className":"api-method get"}]}];
+module.exports = [{"type":"doc","id":"sase/api/subscription/subscription-service"},{"type":"category","label":"Instance","link":{"type":"generated-index","title":"Instance","slug":"/category/instance"},"items":[{"type":"doc","id":"sase/api/subscription/list-instances","label":"List instances","className":"api-method get"}]}];

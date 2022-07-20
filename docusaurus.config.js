@@ -76,7 +76,17 @@ module.exports = {
             },
             {
               to: "sase/docs",
-              label: "Prisma SASE",
+              label: "Prisma SASE Developer's Guide",
+              className: "indent",
+            },
+            {
+              to: "/sase/docs/release-notes/changelog",
+              label: "Prisma SASE Changelog",
+              className: "indent",
+            },
+            {
+              to: "/sase/docs/release-notes/release-notes",
+              label: "Prisma SASE Release Notes",
               className: "indent",
             },
             {
@@ -100,7 +110,7 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase/api/subscription/introduction",
+              to: "sase/api/subscription/subscription-service",
               label: "Subscription Service",
               className: "indent",
             },
@@ -115,7 +125,7 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase/api/insights/2.0/introduction",
+              to: "sase/api/insights/2.0/api-server-status-v-2",
               label: "Prisma Access Insights",
               className: "indent",
             },
@@ -169,15 +179,7 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  themes: [
-    [
-      require.resolve("./docusaurus-plugin-panw/src/index.cjs"),
-      {
-        gtm: "GTM-PLXD79N",
-      },
-    ],
-    "docusaurus-theme-openapi-docs",
-  ],
+  themes: ["docusaurus-theme-openapi-docs"],
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -200,69 +202,69 @@ module.exports = {
       "docusaurus-plugin-openapi-docs",
       {
         id: "apis",
+        docsPluginId: "docs",
         config: {
           auth: {
             specPath: "static/sase/spec/auth",
             outputDir: "docs/sase/api/auth",
             sidebarOptions: {
-              groupPathsBy: "tags",
-              categoryLinkSource: "info",
+              groupPathsBy: "tag",
             },
           },
           iam: {
             specPath: "static/sase/spec/iam",
             outputDir: "docs/sase/api/iam",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           insightsv1: {
             specPath: "static/sase/spec/insights/1.0",
             outputDir: "docs/sase/api/insights/1.0",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           insightsv2: {
             specPath: "static/sase/spec/insights/2.0",
             outputDir: "docs/sase/api/insights/2.0",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           mtmonitor: {
             specPath: "static/sase/spec/mt-monitor",
             outputDir: "docs/sase/api/mt-monitor",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           access: {
             specPath: "static/sase/spec/prisma-access-config",
             outputDir: "docs/sase/api/prisma-access-config",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           sub: {
             specPath: "static/sase/spec/subscription",
             outputDir: "docs/sase/api/subscription",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           tenancy: {
             specPath: "static/sase/spec/tenancy",
             outputDir: "docs/sase/api/tenancy",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
           cloudngfw: {
             specPath: "static/cloudngfw/aws/spec/api",
             outputDir: "docs/cloudngfw/api/aws",
             sidebarOptions: {
-              groupPathsBy: "tags",
+              groupPathsBy: "tag",
             },
           },
         },
