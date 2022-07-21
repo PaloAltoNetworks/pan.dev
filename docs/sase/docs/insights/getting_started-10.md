@@ -9,7 +9,7 @@ Palo Alto Networks® Prisma Access Insights APIs allows you to continuously moni
 performance of your Prisma Access environment using Insights in the Prisma Access app. 
 
 This document provides information about getting started with Prisma Access
-Insights 1.0 APIs and is intended for a developer audience.
+Insights 1.0 APIs. The 1.0 APIs are meant for all cloud-managed single-tenant customers, as well as Panorama-managed single-tenant and multi-tenant customers. 
 
 ## API Request Overview
 
