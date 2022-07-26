@@ -346,65 +346,6 @@ components:
             $ref: '#/components/schemas/generic_error'
       description: Not Found
   schemas:
-    certificate-profiles:
-      properties:
-        block_expired_cert:
-          type: boolean
-        block_timeout_cert:
-          type: boolean
-        block_unauthenticated_cert:
-          type: boolean
-        block_unknown_cert:
-          type: boolean
-        ca_certificates:
-          items:
-            properties:
-              default_ocsp_url:
-                type: string
-              name:
-                type: string
-              ocsp_verify_cert:
-                type: string
-              template_name:
-                type: string
-            type: object
-          type: array
-        cert_status_timeout:
-          type: string
-        crl_receive_timeout:
-          type: string
-        domain:
-          type: string
-        id:
-          description: uuid of the resource
-          example: abcd-1234
-          readOnly: true
-          type: string
-        name:
-          description: Alphanumeric string [ 0-9a-zA-Z._-]
-          maxLength: 63
-          type: string
-        ocsp_receive_timeout:
-          type: string
-        use_crl:
-          type: boolean
-        use_ocsp:
-          type: boolean
-        username_field:
-          properties:
-            subject:
-              enum:
-              - common-name
-              type: string
-            subject_alt:
-              enum:
-              - email
-              type: string
-          type: object
-      required:
-      - name
-      - ca_certificates
-      type: object
     error_detail_cause_info:
       properties:
         code:
@@ -428,27 +369,42 @@ components:
         _request_id:
           type: string
       type: object
+    internal-dns-servers:
+      properties:
+        domain_name:
+          items:
+            type: string
+          type: array
+        name:
+          type: string
+        primary:
+          type: string
+        secondary:
+          type: string
+      required:
+      - name
+      - domain_name
+      - primary
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
       type: http
 info:
   contact: {}
-  description: 'Manages certificates profiles.
+  description: 'Manages [internal DNS servers](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-admin/prisma-access-service-infrastructure/dns).
 
     '
-  title: Certificate Profiles
+  title: Internal DNS Servers
   version: '1.0'
   x-logo:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
-  /sse/config/v1/certificate-profiles:
+  /sse/config/v1/internal-dns-servers:
     get:
-      description: 'List certificate profiles.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles
+      description: List all internal DNS servers.
+      operationId: get-sse-config-v1-internal-dns-servers
       parameters:
       - $ref: '#/components/parameters/limit-optional'
       - $ref: '#/components/parameters/offset-optional'
@@ -459,22 +415,11 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  data:
-                    allOf:
-                    - items:
-                        $ref: '#/components/schemas/certificate-profiles'
-                      type: array
-                  limit:
-                    default: 200
-                    type: number
-                  offset:
-                    default: 0
-                    type: number
-                  total:
-                    type: number
-                type: object
-          description: List of certificate profiles
+                allOf:
+                - items:
+                    $ref: '#/components/schemas/internal-dns-servers'
+                  type: array
+          description: Get the internal dns server by id.
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -487,22 +432,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: List certificate profiles
+      summary: List internal DNS servers
       tags:
-      - CertificateProfiles
+      - InternalDNSServers
     post:
-      description: 'Create a certificate profile.
-
-        '
-      operationId: post-sse-config-v1-certificate-profiles
+      description: Create an internal DNS server.
+      operationId: post-sse-config-v1-internal-dns-servers
       parameters:
       - $ref: '#/components/parameters/folder'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to create
+              $ref: '#/components/schemas/internal-dns-servers'
+        description: The internal dns server you want to create
       responses:
         '201':
           $ref: '#/components/responses/http_created'
@@ -518,15 +461,13 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Create certificate profiles
+      summary: Create an internal DNS server
       tags:
-      - CertificateProfiles
-  /sse/config/v1/certificate-profiles/{id}:
+      - InternalDNSServers
+  /sse/config/v1/internal-dns-servers/{id}:
     delete:
-      description: 'Delete a certificate profile.
-
-        '
-      operationId: delete-sse-config-v1-certificate-profiles-id
+      description: Delete an internal DNS server.
+      operationId: delete-sse-config-v1-internal-dns-servers-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -546,14 +487,12 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Delete a certificate profile
+      summary: Delete an internal DNS server
       tags:
-      - CertificateProfiles
+      - InternalDNSServers
     get:
-      description: 'Get a certificate profile by ID.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles-id
+      description: Get an internal DNS server.
+      operationId: get-sse-config-v1-internal-dns-servers-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -563,9 +502,9 @@ paths:
               schema:
                 allOf:
                 - items:
-                    $ref: '#/components/schemas/certificate-profiles'
+                    $ref: '#/components/schemas/internal-dns-servers'
                   type: array
-          description: Get the certificate profile by id.
+          description: Get the internal dns server by id.
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -578,22 +517,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Get a certificate profile
+      summary: Get an internal DNS server
       tags:
-      - CertificateProfiles
+      - InternalDNSServers
     put:
-      description: 'Modify a certificate profile.
-
-        '
-      operationId: put-sse-config-v1-certificate-profiles-id
+      description: Edit an internal DNS server.
+      operationId: put-sse-config-v1-internal-dns-servers-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to edit
+              $ref: '#/components/schemas/internal-dns-servers'
+        description: The internal dns server you want to edit
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -611,10 +548,10 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Modify a certificate profile
+      summary: Edit an internal DNS server
       tags:
-      - CertificateProfiles
+      - InternalDNSServers
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- name: CertificateProfiles
+- name: InternalDNSServers

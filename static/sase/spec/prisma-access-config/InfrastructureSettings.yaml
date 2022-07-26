@@ -185,22 +185,6 @@ components:
           message: Session Timeout
         _request_id: abcd-1234
   parameters:
-    folder:
-      description: 'The folder on which you want to perform this operation.
-
-        '
-      in: query
-      name: folder
-      required: true
-      schema:
-        enum:
-        - Shared
-        - Mobile Users
-        - Remote Networks
-        - Service Connections
-        - Mobile Users Container
-        - Mobile Users Explicit Proxy
-        type: string
     limit-optional:
       description: 'The maximum number of result objects to return per page.
 
@@ -210,15 +194,6 @@ components:
       required: false
       schema:
         type: number
-    name-optional:
-      description: 'The name of the entry.
-
-        '
-      in: query
-      name: name
-      required: false
-      schema:
-        type: string
     offset-optional:
       description: 'The offset of the result entry.
 
@@ -228,15 +203,6 @@ components:
       required: false
       schema:
         type: number
-    uuid-required:
-      description: 'The resource''s unique identifier.
-
-        '
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
   responses:
     access_errors:
       content:
@@ -332,8 +298,6 @@ components:
           schema:
             $ref: '#/components/schemas/generic_error'
       description: General Errors
-    http_created:
-      description: Created
     http_ok:
       description: Ok
     not_found:
@@ -346,64 +310,16 @@ components:
             $ref: '#/components/schemas/generic_error'
       description: Not Found
   schemas:
-    certificate-profiles:
+    edit-shared-infrastructure-settings:
       properties:
-        block_expired_cert:
-          type: boolean
-        block_timeout_cert:
-          type: boolean
-        block_unauthenticated_cert:
-          type: boolean
-        block_unknown_cert:
-          type: boolean
-        ca_certificates:
-          items:
-            properties:
-              default_ocsp_url:
-                type: string
-              name:
-                type: string
-              ocsp_verify_cert:
-                type: string
-              template_name:
-                type: string
-            type: object
-          type: array
-        cert_status_timeout:
+        egress_ip_notification_url:
           type: string
-        crl_receive_timeout:
+        infra_bgp_as:
           type: string
-        domain:
+        infrastructure_subnet:
           type: string
-        id:
-          description: uuid of the resource
-          example: abcd-1234
-          readOnly: true
+        infrastructure_subnet_ipv6:
           type: string
-        name:
-          description: Alphanumeric string [ 0-9a-zA-Z._-]
-          maxLength: 63
-          type: string
-        ocsp_receive_timeout:
-          type: string
-        use_crl:
-          type: boolean
-        use_ocsp:
-          type: boolean
-        username_field:
-          properties:
-            subject:
-              enum:
-              - common-name
-              type: string
-            subject_alt:
-              enum:
-              - email
-              type: string
-          type: object
-      required:
-      - name
-      - ca_certificates
       type: object
     error_detail_cause_info:
       properties:
@@ -428,32 +344,51 @@ components:
         _request_id:
           type: string
       type: object
+    shared-infrastructure-settings:
+      properties:
+        api_key:
+          type: string
+        captive_portal_redirect_ip_address:
+          type: string
+        egress_ip_notification_url:
+          type: string
+        infra_bgp_as:
+          type: string
+        infrastructure_subnet:
+          type: string
+        infrastructure_subnet_ipv6:
+          type: string
+        ipv6:
+          type: boolean
+        loopback_ips:
+          items:
+            type: string
+          type: array
+        tunnel_monitor_ip_address:
+          type: string
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
       type: http
 info:
   contact: {}
-  description: 'Manages certificates profiles.
+  description: 'Manages [shared infrastructure settings](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-admin/prisma-access-service-infrastructure/set-up-the-prisma-access-service-infrastructure).
 
     '
-  title: Certificate Profiles
+  title: Shared Infrastructure Settings
   version: '1.0'
   x-logo:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
-  /sse/config/v1/certificate-profiles:
+  /sse/config/v1/shared-infrastructure-settings:
     get:
-      description: 'List certificate profiles.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles
+      description: List all infrastructure settings.
+      operationId: get-sse-config-v1-shared-infrastructure-settings
       parameters:
       - $ref: '#/components/parameters/limit-optional'
       - $ref: '#/components/parameters/offset-optional'
-      - $ref: '#/components/parameters/name-optional'
-      - $ref: '#/components/parameters/folder'
       responses:
         '200':
           content:
@@ -463,7 +398,7 @@ paths:
                   data:
                     allOf:
                     - items:
-                        $ref: '#/components/schemas/certificate-profiles'
+                        $ref: '#/components/schemas/shared-infrastructure-settings'
                       type: array
                   limit:
                     default: 200
@@ -474,7 +409,7 @@ paths:
                   total:
                     type: number
                 type: object
-          description: List of certificate profiles
+          description: List of infrastructure settings under Shared folder
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -487,113 +422,18 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: List certificate profiles
+      summary: List all infrastructure settings
       tags:
-      - CertificateProfiles
-    post:
-      description: 'Create a certificate profile.
-
-        '
-      operationId: post-sse-config-v1-certificate-profiles
-      parameters:
-      - $ref: '#/components/parameters/folder'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to create
-      responses:
-        '201':
-          $ref: '#/components/responses/http_created'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Create certificate profiles
-      tags:
-      - CertificateProfiles
-  /sse/config/v1/certificate-profiles/{id}:
-    delete:
-      description: 'Delete a certificate profile.
-
-        '
-      operationId: delete-sse-config-v1-certificate-profiles-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
-      responses:
-        '200':
-          $ref: '#/components/responses/http_ok'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Delete a certificate profile
-      tags:
-      - CertificateProfiles
-    get:
-      description: 'Get a certificate profile by ID.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - items:
-                    $ref: '#/components/schemas/certificate-profiles'
-                  type: array
-          description: Get the certificate profile by id.
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Get a certificate profile
-      tags:
-      - CertificateProfiles
+      - InfrastructureSettings
     put:
-      description: 'Modify a certificate profile.
-
-        '
-      operationId: put-sse-config-v1-certificate-profiles-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
+      description: Edit an infrastructure setting.
+      operationId: put-sse-config-v1-shared-infrastructure-settings
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to edit
+              $ref: '#/components/schemas/edit-shared-infrastructure-settings'
+        description: The infrastructure settings to edit
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -611,10 +451,10 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Modify a certificate profile
+      summary: Edit an infrastructure setting
       tags:
-      - CertificateProfiles
+      - InfrastructureSettings
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- name: CertificateProfiles
+- name: InfrastructureSettings
