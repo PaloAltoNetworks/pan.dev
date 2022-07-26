@@ -346,65 +346,6 @@ components:
             $ref: '#/components/schemas/generic_error'
       description: Not Found
   schemas:
-    certificate-profiles:
-      properties:
-        block_expired_cert:
-          type: boolean
-        block_timeout_cert:
-          type: boolean
-        block_unauthenticated_cert:
-          type: boolean
-        block_unknown_cert:
-          type: boolean
-        ca_certificates:
-          items:
-            properties:
-              default_ocsp_url:
-                type: string
-              name:
-                type: string
-              ocsp_verify_cert:
-                type: string
-              template_name:
-                type: string
-            type: object
-          type: array
-        cert_status_timeout:
-          type: string
-        crl_receive_timeout:
-          type: string
-        domain:
-          type: string
-        id:
-          description: uuid of the resource
-          example: abcd-1234
-          readOnly: true
-          type: string
-        name:
-          description: Alphanumeric string [ 0-9a-zA-Z._-]
-          maxLength: 63
-          type: string
-        ocsp_receive_timeout:
-          type: string
-        use_crl:
-          type: boolean
-        use_ocsp:
-          type: boolean
-        username_field:
-          properties:
-            subject:
-              enum:
-              - common-name
-              type: string
-            subject_alt:
-              enum:
-              - email
-              type: string
-          type: object
-      required:
-      - name
-      - ca_certificates
-      type: object
     error_detail_cause_info:
       properties:
         code:
@@ -428,27 +369,103 @@ components:
         _request_id:
           type: string
       type: object
+    service-connections:
+      properties:
+        backup_SC:
+          type: string
+        bgp_peer:
+          properties:
+            local_ip_address:
+              type: string
+            local_ipv6_address:
+              type: string
+            peer_ip_address:
+              type: string
+            peer_ipv6_address:
+              type: string
+            same_as_primary:
+              type: boolean
+            secret:
+              type: string
+          type: object
+        ipsec_tunnel:
+          type: string
+        name:
+          type: string
+        nat_pool:
+          type: string
+        no_export_community:
+          enum:
+          - Disabled
+          - Enabled-In
+          - Enabled-Out
+          - Enabled-Both
+          type: string
+        protocol:
+          properties:
+            bgp:
+              properties:
+                do_not_export_routes:
+                  type: boolean
+                enable:
+                  type: boolean
+                fast_failover:
+                  type: boolean
+                local_ip_address:
+                  type: string
+                originate_default_route:
+                  type: boolean
+                peer_as:
+                  type: string
+                peer_ip_address:
+                  type: string
+                secret:
+                  type: string
+                summarize_mobile_user_routes:
+                  type: boolean
+              type: object
+          type: object
+        qos:
+          properties:
+            enable:
+              type: boolean
+            qos_profile:
+              type: string
+          type: object
+        region:
+          type: string
+        secondary_ipsec_tunnel:
+          type: string
+        source_nat:
+          type: boolean
+        subnets:
+          items:
+            type: string
+          type: array
+      required:
+      - name
+      - ipsec_tunnel
+      - region
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
       type: http
 info:
   contact: {}
-  description: 'Manages certificates profiles.
+  description: 'Manages [service connections](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-admin/prisma-access-service-connections).
 
     '
-  title: Certificate Profiles
+  title: Service Connections
   version: '1.0'
   x-logo:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
-  /sse/config/v1/certificate-profiles:
+  /sse/config/v1/service-connections:
     get:
-      description: 'List certificate profiles.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles
+      description: List all service connections.
+      operationId: get-sse-config-v1-service-connections
       parameters:
       - $ref: '#/components/parameters/limit-optional'
       - $ref: '#/components/parameters/offset-optional'
@@ -463,7 +480,7 @@ paths:
                   data:
                     allOf:
                     - items:
-                        $ref: '#/components/schemas/certificate-profiles'
+                        $ref: '#/components/schemas/service-connections'
                       type: array
                   limit:
                     default: 200
@@ -474,7 +491,7 @@ paths:
                   total:
                     type: number
                 type: object
-          description: List of certificate profiles
+          description: List of service connections
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -487,22 +504,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: List certificate profiles
+      summary: List service connections
       tags:
-      - CertificateProfiles
+      - ServiceConnections
     post:
-      description: 'Create a certificate profile.
-
-        '
-      operationId: post-sse-config-v1-certificate-profiles
+      description: Create service connections.
+      operationId: post-sse-config-v1-service-connections
       parameters:
       - $ref: '#/components/parameters/folder'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to create
+              $ref: '#/components/schemas/service-connections'
+        description: The service connection you want to create
       responses:
         '201':
           $ref: '#/components/responses/http_created'
@@ -518,15 +533,13 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Create certificate profiles
+      summary: Create service connections
       tags:
-      - CertificateProfiles
-  /sse/config/v1/certificate-profiles/{id}:
+      - ServiceConnections
+  /sse/config/v1/service-connections/{id}:
     delete:
-      description: 'Delete a certificate profile.
-
-        '
-      operationId: delete-sse-config-v1-certificate-profiles-id
+      description: Delete a service connection.
+      operationId: delete-sse-config-v1-service-connections-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -546,14 +559,12 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Delete a certificate profile
+      summary: Delete a service connection
       tags:
-      - CertificateProfiles
+      - ServiceConnections
     get:
-      description: 'Get a certificate profile by ID.
-
-        '
-      operationId: get-sse-config-v1-certificate-profiles-id
+      description: Get a service connection.
+      operationId: get-sse-config-v1-service-connections-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -563,9 +574,9 @@ paths:
               schema:
                 allOf:
                 - items:
-                    $ref: '#/components/schemas/certificate-profiles'
+                    $ref: '#/components/schemas/service-connections'
                   type: array
-          description: Get the certificate profile by id.
+          description: Get the service connection by id.
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -578,22 +589,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Get a certificate profile
+      summary: Get a service connection
       tags:
-      - CertificateProfiles
+      - ServiceConnections
     put:
-      description: 'Modify a certificate profile.
-
-        '
-      operationId: put-sse-config-v1-certificate-profiles-id
+      description: Edit a service connection.
+      operationId: put-sse-config-v1-service-connections-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/certificate-profiles'
-        description: The certificate profile you want to edit
+              $ref: '#/components/schemas/service-connections'
+        description: The service connection you want to edit
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -611,10 +620,10 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Modify a certificate profile
+      summary: Edit a service connection
       tags:
-      - CertificateProfiles
+      - ServiceConnections
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- name: CertificateProfiles
+- name: ServiceConnections
