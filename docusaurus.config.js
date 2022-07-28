@@ -118,7 +118,7 @@ module.exports = {
               className: "indent",
             },
             {
-              to: "sase/api/sdwan/unified",
+              to: "sase/api/sdwan",
               label: "Prisma SD-WAN",
               className: "indent",
             },
