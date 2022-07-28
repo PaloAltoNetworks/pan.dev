@@ -2,6 +2,7 @@
 id: msp-api
 title: Aggregate Monitoring APIs
 sidebar_label: Aggregate Monitoring APIs
+slug: /sase/api/mt-monitor
 keywords:
   - SASE
   - Reference
