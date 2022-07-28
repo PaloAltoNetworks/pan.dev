@@ -349,9 +349,9 @@ module.exports = {
       },
     ],
   },
-  onDuplicateRoutes: "throw",
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
+  onDuplicateRoutes: "warn",
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
   webpack: {
     jsLoader: (isServer) => ({
