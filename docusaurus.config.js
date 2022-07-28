@@ -118,6 +118,11 @@ module.exports = {
               className: "indent",
             },
             {
+              to: "sase/api/sdwan/unified",
+              label: "Prisma SD-WAN",
+              className: "indent",
+            },
+            {
               to: "sase/api/mt-monitor",
               label: "Aggregate Monitoring",
               className: "indent",
@@ -220,18 +225,22 @@ module.exports = {
               groupPathsBy: "tag",
             },
           },
-          insightsv1: {
-            specPath: "static/sase/spec/insights/1.0",
-            outputDir: "docs/sase/api/insights/1.0",
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
-          },
-          insightsv2: {
+          insights_versioned: {
             specPath: "static/sase/spec/insights/2.0",
             outputDir: "docs/sase/api/insights/2.0",
             sidebarOptions: {
               groupPathsBy: "tag",
+            },
+            version: "2.0",
+            label: "v2.0",
+            baseUrl: "/sase/api/insights",
+            versions: {
+              "1.0": {
+                specPath: "static/sase/spec/insights/1.0",
+                outputDir: "docs/sase/api/insights/1.0",
+                label: "v1.0",
+                baseUrl: "/sase/api/insights/1.0",
+              },
             },
           },
           mtmonitor: {
@@ -267,6 +276,24 @@ module.exports = {
             outputDir: "docs/cloudngfw/api/aws",
             sidebarOptions: {
               groupPathsBy: "tag",
+            },
+          },
+          sdwan_versions: {
+            specPath: "static/sase/spec/sdwan/unified",
+            outputDir: "docs/sase/api/sdwan/unified",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+            version: "Unified",
+            label: "Unified",
+            baseUrl: "/sase/api/sdwan",
+            versions: {
+              legacy: {
+                specPath: "static/sase/spec/sdwan/legacy",
+                outputDir: "docs/sase/api/sdwan/legacy",
+                label: "Legacy",
+                baseUrl: "/sase/api/sdwan/legacy",
+              },
             },
           },
         },
@@ -307,6 +334,18 @@ module.exports = {
         label: "Version 2.0",
         to: "/sase/api/insights/2.0",
         version: "2.0",
+      },
+    ],
+    sdwan_versions: [
+      {
+        label: "Unified SASE SD-WAN",
+        to: "/sase/api/sdwan/unified",
+        version: "unified",
+      },
+      {
+        label: "Legacy Prisma SD-WAN",
+        to: "/sase/api/sdwan/legacy",
+        version: "legacy",
       },
     ],
   },

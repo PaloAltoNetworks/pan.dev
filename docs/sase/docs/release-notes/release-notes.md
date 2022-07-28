@@ -20,6 +20,15 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## July 2022
+
+- First documentation release of the [Prisma SD-WAN APIs](/sase/docs/sdwan/sdwan).
+- Added `shared-infrastructure-settings`, `internal-dns-servers`, and `service-connections`
+  endpoints to the [Prisma Access Configuration APIs](/sase/api/prisma-access-config). These are
+  grouped under `Service Setup` which is renamed from `Remote Networks`.
+- Removed the API Server Status APIs from [Prisma Access](/sase/api/insights/1.0) Insights as they are not intended for
+  customer consumption.
+
 ## April 2022
 
 The [Prisma Access configuration APIs](/sase/docs/prisma-access-config)

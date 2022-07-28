@@ -21,6 +21,12 @@ const sidebars = {
   cloudngfwforaws_api: ["sase/api/auth/auth-api"].concat(
     require("./cloudngfw/api/aws/sidebar")
   ),
+  sdwan_unified: ["sase/api/sdwan/unified/unified"].concat(
+    require("./sase/api/sdwan/unified/sidebar")
+  ),
+  sdwan_legacy: ["sase/api/sdwan/legacy/legacy"].concat(
+    require("./sase/api/sdwan/legacy/sidebar")
+  ),
 };
 
 module.exports = sidebars;

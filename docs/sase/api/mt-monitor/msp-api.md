@@ -2,7 +2,6 @@
 id: msp-api
 title: Aggregate Monitoring APIs
 sidebar_label: Aggregate Monitoring APIs
-slug: /sase/api/mt-monitor
 keywords:
   - SASE
   - Reference
@@ -19,8 +18,7 @@ Prisma Access instance.
 
 The functionality exposed by these APIs can also be performed using the [Prisma SASE Multitenant
 Platform user
-interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platform/monitor-tenants)
-user.
+interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platform/monitor-tenants).
 
 See the [Prisma SASE Multitenant Platform API docs](/sase/docs/mt-monitor) for more information about
 how to use the information in this API reference.
