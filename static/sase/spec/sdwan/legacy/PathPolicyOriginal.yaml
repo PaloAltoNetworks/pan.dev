@@ -1,0 +1,816 @@
+components:
+  schemas:
+    Aggregate:
+      properties:
+        field: {description: Field, type: string}
+        operator:
+          description: Operator
+          enum: [max, count, min, avg, sum]
+          type: string
+    BandwidthAllocationScheme:
+      properties:
+        bandwidth_range: {$ref: '#/components/schemas/BandwidthRange', description: Bandwidth
+            Range}
+        business_priorities:
+          description: Business Priorities
+          items: {$ref: '#/components/schemas/BusinessPriority'}
+          type: array
+    BandwidthRange:
+      properties:
+        high: {description: High, format: double, type: number}
+        low: {description: Low, format: double, type: number}
+    BandwidthSplit:
+      properties:
+        bulk: {description: Bulk, format: double, type: number}
+        rt_audio: {description: Rt Audio, format: double, type: number}
+        rt_video: {description: Rt Video, format: double, type: number}
+        transactional: {description: Transactional, format: double, type: number}
+    BusinessPriority:
+      properties:
+        bandwidth_allocation: {description: Bandwidth Allocation, format: double,
+          type: number}
+        bandwidth_split_per_type: {$ref: '#/components/schemas/BandwidthSplit', description: Bandwidth
+            Split Per Type}
+        priority_num: {description: Priority Num, format: int32, type: integer}
+    BusinessPriorityNameMapper:
+      properties:
+        priority_name: {description: Priority Name, type: string}
+        priority_num: {description: Priority Num, format: int32, type: integer}
+    Error:
+      properties:
+        _error:
+          items: {$ref: '#/components/schemas/ErrorResponse'}
+          type: array
+    ErrorResponse:
+      properties:
+        code: {type: string}
+        message: {type: string}
+    ListQueryResponse:
+      properties:
+        count: {format: int32, type: integer}
+        deleted_count: {format: int64, type: integer}
+        deleted_ids:
+          items: {type: string}
+          type: array
+        id: {type: string}
+        next_query: {type: object}
+        tenant_id: {type: string}
+        total_count: {format: int64, type: integer}
+      type: object
+    ListResponse:
+      properties:
+        count: {format: int32, type: integer}
+        id: {type: string}
+        tenant_id: {type: string}
+      type: object
+    PathsAllowed:
+      properties:
+        active_paths:
+          description: 'Active Paths: Valid NotNull(error = NETWORKPOLICY_RULE_CONFIG_INVALID_ACTIVE_PATHS:
+            Active paths can not be null or empty.) Size(max = 2147483647, error =
+            NETWORKPOLICY_RULE_CONFIG_INVALID_ACTIVE_PATHS: Active paths can not be
+            null or empty., min = 1) '
+          items: {$ref: '#/components/schemas/WANPath'}
+          type: array
+        backup_paths:
+          description: 'Backup Paths: Valid '
+          items: {$ref: '#/components/schemas/WANPath'}
+          type: array
+        l3_failure_paths:
+          description: 'L3 Failure Paths: Valid '
+          items: {$ref: '#/components/schemas/WANPath'}
+          type: array
+      required: [active_paths]
+    PolicyRule:
+      properties:
+        app_def_id: {description: 'App Def Id: Required(error = APP_DEF_ID_REQD: App
+            def ID required.) Size(max = 30, error = APP_DEF_ID_EXCEEDS_LIMIT: App
+            def ID exceeds limit., min = 0) Pattern(error = ID_HAS_INVALID_CHARS:
+            ID has invalid chars., regexp = [0-9]*) ', type: string}
+        app_def_name: {description: App Def Name, type: string}
+        default_rule: {description: 'Default Rule: JsonIgnore(value = true) ', type: boolean}
+        description: {description: 'Description: Size(max = 256, error = POLICY_RULE_DESCRIPTION_EXCEEDS_LIMIT:
+            Policy rule description exceeds limit., min = 0) ', type: string}
+        disabled: {description: Disabled, type: boolean}
+        disabled_reason: {description: 'Disabled Reason: Size(max = 5000, DISABLED_REASON_INVALID_0001,
+            min = 0) ', type: string}
+        id: {type: string}
+        inactive: {description: Inactive, type: boolean}
+        inactive_reason: {description: 'Inactive Reason: Size(max = 5000, INACTIVE_REASON_INVALID_0001,
+            min = 0) ', type: string}
+        lan_network_ids:
+          description: Lan Network Ids
+          items: {description: Lan Network Ids, type: string}
+          type: array
+        name: {description: 'Name: Required(error = POLICY_RULE_NAME_REQD: Policy
+            rule name required.) Size(max = 128, error = POLICY_RULE_NAME_EXCEEDS_LIMIT:
+            Policy rule name exceeds limit., min = 0) ', type: string}
+        network_context_id: {description: 'Network Context Id: Size(max = 30, error
+            = NETWORK_CONTEXT_ID_EXCEEDS_LIMIT: Network context id exceeeds limit.,
+            min = 0) Pattern(error = ID_HAS_INVALID_CHARS: ID has invalid chars.,
+            regexp = [0-9]*) ', type: string}
+        paths_allowed: {$ref: '#/components/schemas/PathsAllowed', description: 'Paths
+            Allowed: Required(error = PATHS_ALLOWED_REQUIRED: Paths allowed is required.)
+            Valid '}
+        policy_set_id: {description: Policy Set Id, type: string}
+        priority_num: {description: Priority Num, format: int32, type: integer}
+        region: {description: Region, type: string}
+        service_context:
+          description: 'Service Context: Size(max = 2, error = SERVICECONTEXT_SIZE_EXCEEDED:
+            Service context size exceeded., min = 0) Valid '
+          items: {$ref: '#/components/schemas/ServiceContext'}
+          type: array
+        site_paths_allowed:
+          description: 'Site Paths Allowed: JsonDeserialize(as = classOf[Void], builder
+            = classOf[Void], contentAs = classOf[Void], contentConverter = classOf[Converter$None],
+            contentUsing = classOf[JsonDeserializer$None], converter = classOf[Converter$None],
+            keyAs = classOf[Void], keyUsing = classOf[KeyDeserializer$None], using
+            = classOf[SiteWanPathDeSerializer]) '
+          items: {$ref: '#/components/schemas/SiteWanPath'}
+          type: array
+        tenant_id: {description: 'Tenant Id: NotNull Digits(fraction = 0, integer
+            = 20, TENANT_ID_INVALID_0001) ', type: string}
+      required: [paths_allowed, app_def_id, name, tenant_id]
+    PolicyRuleQuery:
+      properties:
+        aggregate: {$ref: '#/components/schemas/Aggregate', description: Aggregate}
+        dest_page: {description: Dest Page, format: int32, type: integer}
+        getDeleted: {description: GetDeleted, type: boolean}
+        group_by:
+          description: Group By
+          items: {description: Group By, type: string}
+          type: array
+        id: {description: Id, type: string}
+        last_query_ts: {description: Last Query Ts, format: int64, type: integer}
+        limit: {description: Limit, format: int32, type: integer}
+        next_query: {type: object}
+        query_params: {type: object}
+        retrieved_fields:
+          description: Retrieved Fields
+          items: {description: Retrieved Fields, type: string}
+          type: array
+        retrieved_fields_mask: {description: Retrieved Fields Mask, type: boolean}
+        sort_params: {type: object}
+        total_count: {description: Total Count, format: int64, type: integer}
+    PolicyRuleQueryFilter:
+      properties:
+        app_def_id: {description: 'App Def Id: Required(error = APP_DEF_ID_REQD: App
+            def ID required.) Size(max = 30, error = APP_DEF_ID_EXCEEDS_LIMIT: App
+            def ID exceeds limit., min = 0) Pattern(error = ID_HAS_INVALID_CHARS:
+            ID has invalid chars., regexp = [0-9]*) ', type: string}
+        description: {description: 'Description: Size(max = 256, error = POLICY_RULE_DESCRIPTION_EXCEEDS_LIMIT:
+            Policy rule description exceeds limit., min = 0) ', type: string}
+        id: {description: Id, type: string}
+        name: {description: 'Name: Required(error = POLICY_RULE_NAME_REQD: Policy
+            rule name required.) Size(max = 128, error = POLICY_RULE_NAME_EXCEEDS_LIMIT:
+            Policy rule name exceeds limit., min = 0) ', type: string}
+        network_context_id: {description: 'Network Context Id: Size(max = 30, error
+            = NETWORK_CONTEXT_ID_EXCEEDS_LIMIT: Network context id exceeeds limit.,
+            min = 0) Pattern(error = ID_HAS_INVALID_CHARS: ID has invalid chars.,
+            regexp = [0-9]*) ', type: string}
+        paths_allowed: {$ref: '#/components/schemas/PathsAllowed', description: 'Paths
+            Allowed: Required(error = PATHS_ALLOWED_REQUIRED: Paths allowed is required.)
+            Valid '}
+        policy_set_id: {description: Policy Set Id, type: string}
+        priority_num: {description: Priority Num, type: integer}
+        service_context:
+          description: 'Service Context: Size(max = 2, error = SERVICECONTEXT_SIZE_EXCEEDED:
+            Service context size exceeded., min = 0) Valid '
+          items: {$ref: '#/components/schemas/ServiceContext'}
+          type: array
+      required: [paths_allowed, app_def_id, name]
+    PolicyRuleScreen:
+      properties:
+        app_def_id: {description: 'App Def Id: Required(error = APP_DEF_ID_REQD: App
+            def ID required.) Size(max = 30, error = APP_DEF_ID_EXCEEDS_LIMIT: App
+            def ID exceeds limit., min = 0) Pattern(error = ID_HAS_INVALID_CHARS:
+            ID has invalid chars., regexp = [0-9]*) ', type: string}
+        description: {description: 'Description: Size(max = 256, error = POLICY_RULE_DESCRIPTION_EXCEEDS_LIMIT:
+            Policy rule description exceeds limit., min = 0) ', type: string}
+        id: {description: Id, type: string}
+        name: {description: 'Name: Required(error = POLICY_RULE_NAME_REQD: Policy
+            rule name required.) Size(max = 128, error = POLICY_RULE_NAME_EXCEEDS_LIMIT:
+            Policy rule name exceeds limit., min = 0) ', type: string}
+        network_context_id: {description: 'Network Context Id: Size(max = 30, error
+            = NETWORK_CONTEXT_ID_EXCEEDS_LIMIT: Network context id exceeeds limit.,
+            min = 0) Pattern(error = ID_HAS_INVALID_CHARS: ID has invalid chars.,
+            regexp = [0-9]*) ', type: string}
+        paths_allowed: {$ref: '#/components/schemas/PathsAllowed', description: 'Paths
+            Allowed: Required(error = PATHS_ALLOWED_REQUIRED: Paths allowed is required.)
+            Valid '}
+        priority_num: {description: Priority Num, type: integer}
+        service_context:
+          description: 'Service Context: Size(max = 2, error = SERVICECONTEXT_SIZE_EXCEEDED:
+            Service context size exceeded., min = 0) Valid '
+          items: {$ref: '#/components/schemas/ServiceContext'}
+          type: array
+      required: [paths_allowed, app_def_id, name]
+    PolicySet:
+      properties:
+        bandwidth_allocation_schemes:
+          description: 'Bandwidth Allocation Schemes: Required(error = BANDWIDTH_ALLOCATION_SCHEME_REQD:
+            Please provide Bandwidth Allocation scheme for set.) Size(max = 4, error
+            = BANDWIDTH_ALLOCATION_SCHEME_LIST_SIZE_EXCEEDED: Bandwidth Allocation
+            scheme list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BandwidthAllocationScheme'}
+          type: array
+        business_priority_names:
+          description: 'Business Priority Names: Required(error = BUSINESS_PRIORITY_NAMES_REQD:
+            Business priority names required.) Size(max = 4, error = BUSINESS_PRIORITY_NAME_LIST_SIZE_EXCEEDED:
+            Business priority name list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BusinessPriorityNameMapper'}
+          type: array
+        default_policy: {description: Default Policy, type: boolean}
+        description: {description: 'Description: Size(max = 256, POLICY_SET_DESCRIPTION_EXCEEDS_LIMIT,
+            min = 0) ', type: string}
+        id: {description: Id, type: string}
+        name: {description: 'Name: Required(POLICY_SET_NAME_REQD) Size(max = 128,
+            POLICY_SET_NAME_EXCEEDS_LIMIT, min = 0) ', type: string}
+      required: [business_priority_names, bandwidth_allocation_schemes, name]
+    PolicySetPOSTScreen:
+      properties:
+        bandwidth_allocation_schemes:
+          description: 'Bandwidth Allocation Schemes: Valid Required(error = BANDWIDTH_ALLOCATION_SCHEME_REQD:
+            Please provide Bandwidth Allocation scheme for set.) Size(max = 4, error
+            = BANDWIDTH_ALLOCATION_SCHEME_LIST_SIZE_EXCEEDED: Bandwidth Allocation
+            scheme list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BandwidthAllocationScheme'}
+          type: array
+        business_priority_names:
+          description: 'Business Priority Names: Required(error = BUSINESS_PRIORITY_NAMES_REQD:
+            Business priority names required.) Size(max = 4, error = BUSINESS_PRIORITY_NAME_LIST_SIZE_EXCEEDED:
+            Business priority name list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BusinessPriorityNameMapper'}
+          type: array
+        clone_from: {description: 'Clone From: Size(max = 30, POLICY_SET_CLONE_FROM_EXCEEDS_SIZE,
+            min = 0) JsonIgnore(value = true) ', type: string}
+        default_policy: {description: Default Policy, type: boolean}
+        description: {description: 'Description: Size(max = 256, POLICY_SET_DESCRIPTION_EXCEEDS_LIMIT,
+            min = 0) ', type: string}
+        id: {description: Id, type: string}
+        name: {description: 'Name: Required(POLICY_SET_NAME_REQD) Size(max = 128,
+            POLICY_SET_NAME_EXCEEDS_LIMIT, min = 0) ', type: string}
+        policy_stance:
+          description: 'Policy Stance: ValidateEnum(enumClass = classOf[PolicyStance],
+            error = INVALID_POLICY_STANCE: Policy stance value is not supported.,
+            nullAllowed = true) JsonIgnore(value = true) '
+          enum: [CONSERVATIVE, STANDARD, OPTIMUM]
+          type: string
+      required: [business_priority_names, bandwidth_allocation_schemes, name]
+    PolicySetQuery:
+      properties:
+        aggregate: {$ref: '#/components/schemas/Aggregate', description: Aggregate}
+        dest_page: {description: Dest Page, format: int32, type: integer}
+        getDeleted: {description: GetDeleted, type: boolean}
+        group_by:
+          description: Group By
+          items: {description: Group By, type: string}
+          type: array
+        id: {description: Id, type: string}
+        last_query_ts: {description: Last Query Ts, format: int64, type: integer}
+        limit: {description: Limit, format: int32, type: integer}
+        next_query: {type: object}
+        query_params: {type: object}
+        retrieved_fields:
+          description: Retrieved Fields
+          items: {description: Retrieved Fields, type: string}
+          type: array
+        retrieved_fields_mask: {description: Retrieved Fields Mask, type: boolean}
+        sort_params: {type: object}
+        total_count: {description: Total Count, format: int64, type: integer}
+    PolicySetQueryFilter:
+      properties:
+        bandwidth_allocation_schemes:
+          description: Bandwidth Allocation Schemes
+          items: {$ref: '#/components/schemas/BandwidthAllocationScheme'}
+          type: array
+        business_priority_names:
+          description: Business Priority Names
+          items: {$ref: '#/components/schemas/BusinessPriorityNameMapper'}
+          type: array
+        default_policy: {description: Default Policy, type: boolean}
+        description: {description: Description, type: string}
+        id: {description: Id, type: string}
+        name: {description: Name, type: string}
+    PolicySetScreen:
+      properties:
+        bandwidth_allocation_schemes:
+          description: 'Bandwidth Allocation Schemes: Required(error = BANDWIDTH_ALLOCATION_SCHEME_REQD:
+            Please provide Bandwidth Allocation scheme for set.) Size(max = 4, error
+            = BANDWIDTH_ALLOCATION_SCHEME_LIST_SIZE_EXCEEDED: Bandwidth Allocation
+            scheme list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BandwidthAllocationScheme'}
+          type: array
+        business_priority_names:
+          description: 'Business Priority Names: Required(error = BUSINESS_PRIORITY_NAMES_REQD:
+            Business priority names required.) Size(max = 4, error = BUSINESS_PRIORITY_NAME_LIST_SIZE_EXCEEDED:
+            Business priority name list exceeds the limit of 4., min = 0) Valid '
+          items: {$ref: '#/components/schemas/BusinessPriorityNameMapper'}
+          type: array
+        default_policy: {description: Default Policy, type: boolean}
+        description: {description: 'Description: Size(max = 256, POLICY_SET_DESCRIPTION_EXCEEDS_LIMIT,
+            min = 0) ', type: string}
+        id: {description: Id, type: string}
+        name: {description: 'Name: Required(POLICY_SET_NAME_REQD) Size(max = 128,
+            POLICY_SET_NAME_EXCEEDS_LIMIT, min = 0) ', type: string}
+      required: [business_priority_names, bandwidth_allocation_schemes, name]
+    PolicySetState:
+      properties:
+        id: {description: Id, type: string}
+        policy_req_state:
+          description: Policy Req State
+          enum: [POLICY_REQ_PENDING, POLICY_CREATE_INPROGRESS, POLICY_CREATE_COMPLETE,
+            POLICY_REPLICATE, POLICY_CREATE_FAILED, POLICY_REQ_COMPLETE]
+          type: string
+        policy_set_id: {description: Policy Set Id, type: string}
+    ServiceContext:
+      properties:
+        active_service_label_id: {description: 'Active Service Label Id: Required(ACTIVE_SERVICE_LABEL_REQD) ',
+          type: string}
+        active_service_label_type:
+          description: Active Service Label Type
+          enum: [CG_TRANSIT, NON_CG_TRANSIT, SASE]
+          type: string
+        backup_service_label_id: {description: Backup Service Label Id, type: string}
+        backup_service_label_type:
+          description: Backup Service Label Type
+          enum: [CG_TRANSIT, NON_CG_TRANSIT, SASE]
+          type: string
+        type:
+          description: 'Type: ValidateEnum(enumClass = classOf[ServiceContextType],
+            message = Invalid enum string., nullAllowed = false) '
+          enum: [ALLOWED_TRANSIT, REQUIRED_TRANSIT]
+          type: string
+      required: [active_service_label_id, type]
+    SiteWanPath:
+      properties:
+        wn_name: {description: Wn Name, type: string}
+        wp_type:
+          description: Wp Type
+          enum: [DIRECT_PUBLIC_WAN, DIRECT_PRIVATE_WAN, VPN_ON_PUBLIC_WAN, VPN_ON_PRIVATE_WAN]
+          type: string
+    WANPath:
+      properties:
+        label: {description: 'Label: Pattern(message = INVALID_PATH_LABEL, regexp
+            = (public|private)-((([1-9])|([1-2][0-9])|(3[0-2]))|([*]))) ', type: string}
+        path_type:
+          description: 'Path Type: ValidateEnum(enumClass = classOf[PathType], message
+            = INVALID_PATH_TYPE, nullAllowed = false) '
+          enum: [vpn, direct, servicelink]
+          type: string
+      required: [path_type]
+info:
+  contact: {}
+  description: List of APIs used to manage the original path policies rules.
+  title: Path Policy Original
+  version: Latest
+openapi: 3.0.0
+paths:
+  /v3.0/api/tenants/{tenant_id}/policysets:
+    get:
+      description: Get all policy sets of tenant.
+      operationId: get-v3.0-api-tenants-tenant_id-policysets
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ListResponse'}
+                - properties:
+                    items:
+                      items: {$ref: '#/components/schemas/PolicySet'}
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all policy sets of tenant. (v3.0)
+      tags: [Path Policy Original]
+    post:
+      description: Create a new Policy Set
+      operationId: post-v3.0-api-tenants-tenant_id-policysets
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicySetPOSTScreen'}
+        description: Details of the policy set to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicySet'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: SECURITY_POLICYSET_NAME_REQUIRED}
+                  - {code: SECURITY_POLICYSET_NAME_INVALID}
+                  - {code: SECURITY_POLICYSET_DESCRIPTION_INVALID}
+                  - {code: ONLY_POLICY_STANCE_OR_CLONE_FROM_CAN_BE_SET}
+                  - {code: CLONE_FROM_POLICYSET_DOES_NOT_EXIST}
+                  - {code: INVALID_JSON_EXTRA_ATTRIBUTE}
+                  - {code: POLICY_SET_CONFIG_STANCE_OR_CLONE_FROM}
+                  - {code: POLICY_SET_CONFIG_DEFAULT_EXIST}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Create a new Policy Set (v3.0)
+      tags: [Path Policy Original]
+  /v3.0/api/tenants/{tenant_id}/policysets/query:
+    post:
+      description: Queries db for policysets that match query params.
+      operationId: post-v3.0-api-tenants-tenant_id-policysets-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicySetQuery'}
+        description: Query details for policy set
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ListQueryResponse'}
+                - properties:
+                    items:
+                      items: {$ref: '#/components/schemas/PolicySetQueryFilter'}
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: BAD_REQUEST}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Queries db for policysets that match query params. (v3.0)
+      tags: [Path Policy Original]
+  /v3.0/api/tenants/{tenant_id}/policysets/{policy_set_id}:
+    delete:
+      description: Delete policy set.
+      operationId: delete-v3.0-api-tenants-tenant_id-policysets-policy_set_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicySet'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: POLICY_SET_IN_USE}
+                  - {code: DELETE_FORBIDDEN}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Delete policy set. (v3.0)
+      tags: [Path Policy Original]
+    get:
+      description: Get a specific policy set of tenant.
+      operationId: get-v3.0-api-tenants-tenant_id-policysets-policy_set_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicySet'}
+          description: Successful Operation
+      summary: Get a specific policy set of tenant. (v3.0)
+      tags: [Path Policy Original]
+    put:
+      description: Update policy set.
+      operationId: put-v3.0-api-tenants-tenant_id-policysets-policy_set_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicySetScreen'}
+        description: Policyset id
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicySet'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: POLICY_NOT_AVAILABLE}
+                  - {code: INVALID_JSON_EXTRA_ATTRIBUTE}
+                  - {code: INVALID_JSON_COMMON_ATTR_MISMATCH}
+                  - {code: POLICY_SET_UPDATE_DEFAULT_POLICY_EXISTS}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Update policy set. (v3.0)
+      tags: [Path Policy Original]
+  /v3.0/api/tenants/{tenant_id}/policysets/{policy_set_id}/status:
+    get:
+      description: Get a specific policy set status of tenant.
+      operationId: get-v3.0-api-tenants-tenant_id-policysets-policy_set_id-status
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicySetState'}
+          description: Successful Operation
+      summary: Get a specific policy set status of tenant. (v3.0)
+      tags: [Path Policy Original]
+  /v3.1/api/tenants/{tenant_id}/policyrules/query:
+    post:
+      description: Queries db for policyrules that match query params.
+      operationId: post-v3.1-api-tenants-tenant_id-policyrules-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicyRuleQuery'}
+        description: Query Details for Policy Rule
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ListQueryResponse'}
+                - properties:
+                    items:
+                      items: {$ref: '#/components/schemas/PolicyRuleQueryFilter'}
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: BAD_REQUEST}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Queries db for policyrules that match query params. (v3.1)
+      tags: [Path Policy Original]
+  /v3.1/api/tenants/{tenant_id}/policysets/{policy_set_id}/policyrules:
+    get:
+      description: Get policy rules of tenant
+      operationId: get-v3.1-api-tenants-tenant_id-policysets-policy_set_id-policyrules
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - {$ref: '#/components/schemas/ListQueryResponse'}
+                  - properties:
+                      items:
+                        items: {$ref: '#/components/schemas/PolicyRuleQueryFilter'}
+                        type: array
+                    type: object
+                - allOf:
+                  - {$ref: '#/components/schemas/ListResponse'}
+                  - properties:
+                      items:
+                        items: {$ref: '#/components/schemas/PolicyRule'}
+                        type: array
+                    type: object
+          description: Successful Operation
+      summary: Get policy rules of tenant (v3.1)
+      tags: [Path Policy Original]
+    post:
+      description: Create a new Policy
+      operationId: post-v3.1-api-tenants-tenant_id-policysets-policy_set_id-policyrules
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicyRuleScreen'}
+        description: Details of the policy to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyRule'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: INVALID_LAN_SEGMENTID}
+                  - {code: ID_HAS_INVALID_CHARS}
+                  - {code: POLICY_RULE_NAME_EXCEEDS_LIMIT}
+                  - {code: APP_DEF_ID_REQD}
+                  - {code: POLICY_RULE_DESCRIPTION_EXCEEDS_LIMIT}
+                  - {code: SERVICECONTEXT_SIZE_EXCEEDED}
+                  - {code: APP_DEF_ID_EXCEEDS_LIMIT}
+                  - {code: PATHS_ALLOWED_REQUIRED}
+                  - {code: POLICY_RULE_NAME_REQD}
+                  - {code: NETWORK_CONTEXT_ID_EXCEEDS_LIMIT}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Create a new Policy (v3.1)
+      tags: [Path Policy Original]
+  /v3.1/api/tenants/{tenant_id}/policysets/{policy_set_id}/policyrules/{policy_rule_id}:
+    delete:
+      description: Delete policy rule of tenant.
+      operationId: delete-v3.1-api-tenants-tenant_id-policysets-policy_set_id-policyrules-policy_rule_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      - description: Policy rule Id
+        in: path
+        name: policy_rule_id
+        required: true
+        schema: {description: Policy Rule Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyRule'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: POLICYRULE_NOT_FOUND}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Delete policy rule of tenant. (v3.1)
+      tags: [Path Policy Original]
+    get:
+      description: Get a specific policy rule of tenant
+      operationId: get-v3.1-api-tenants-tenant_id-policysets-policy_set_id-policyrules-policy_rule_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      - description: Policy Rule Id
+        in: path
+        name: policy_rule_id
+        required: true
+        schema: {description: Policy Rule Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyRule'}
+          description: Successful Operation
+      summary: Get a specific policy rule of tenant (v3.1)
+      tags: [Path Policy Original]
+    put:
+      description: Update policy rule of tenant.
+      operationId: put-v3.1-api-tenants-tenant_id-policysets-policy_set_id-policyrules-policy_rule_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema: {description: Tenant Id, type: string}
+      - description: Policy Set Id
+        in: path
+        name: policy_set_id
+        required: true
+        schema: {description: Policy Set Id, type: string}
+      - description: Policy rule Id
+        in: path
+        name: policy_rule_id
+        required: true
+        schema: {description: Policy Rule Id, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PolicyRuleScreen'}
+        description: Details of the policy to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyRule'}
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: INVALID_LAN_SEGMENTID}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Update policy rule of tenant. (v3.1)
+      tags: [Path Policy Original]
+tags:
+- {name: Path Policy Original}
