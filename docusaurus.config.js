@@ -135,6 +135,11 @@ module.exports = {
               className: "indent",
             },
             {
+              to: "sase/api/sdwan/unified",
+              label: "Prisma SD-WAN",
+              className: "indent",
+            },
+            {
               to: "sase/api/mt-monitor",
               label: "Aggregate Monitoring",
               className: "indent",
@@ -271,6 +276,18 @@ module.exports = {
         to: "/sase/api/insights/2.0",
         version: "2.0",
       },
+    ],
+    sdwan_versions: [
+      {
+        label: "Unified SASE SD-WAN",
+        to: "/sase/api/sdwan/unified",
+        version: "unified",
+      },
+      {
+        label: "Legacy Prisma SD-WAN",
+        to: "/sase/api/sdwan/legacy",
+        version: "legacy",
+      }
     ],
   },
   onDuplicateRoutes: "throw",
