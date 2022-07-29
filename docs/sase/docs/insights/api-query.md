@@ -14,10 +14,10 @@ The Prisma Access Insights query language allows you to retrieve selected
 information from your Prisma Access environment. This language is JSON-based. You submit queries
 and retrieve query results using the following Prisma Access Insights APIs.
 
-| Customer      | API Version | API                                                                                                                                  |
-| ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| MSSP          | 2.0         | [Resource Query](/sase/api/insights/2.0/resource-query/)<br />[Resource Custom Query](/sase/api/insights/2.0/custom-resource-query/) |
-| Single Tenant | 1.0         | [Resource Query](/sase/api/insights/1.0/resource-query/)<br />[Resource Custom Query](/sase/api/insights/1.0/custom-resource-query/) |
+| Customer      | API Version | API                                                                                                                                                                                                                                    |
+| ------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MSSP          | 2.0         | [Resource Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-resource-name)<br />[Resource Custom Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-custom-feature-name-request-name)                                   |
+| Single Tenant | 1.0         | [Resource Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-resource-name)<br />[Resource Custom Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-custom-feature-name-request-name) |
 
 Before using the Insights API, you'll need to generate an access token. Depending on the API version
 that you're using, see Getting Started:

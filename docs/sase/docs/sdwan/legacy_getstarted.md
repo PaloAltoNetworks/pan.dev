@@ -4,7 +4,6 @@ title: Prisma SD-WAN Legacy API Get Started
 description: Getting started with the Prisma SD-WAN Legacy API.
 hide_title: false
 hide_table_of_contents: false
-slug: /sdwan/docs/legacy_getstarted
 keywords:
   - sdwan
   - prisma sdwan config utility

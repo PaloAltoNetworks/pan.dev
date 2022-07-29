@@ -4,7 +4,6 @@ title: Python SDK
 description: Prisma SD-WAN Python SDK
 hide_title: true
 hide_table_of_contents: false
-slug: /sdwan/docs/sdwan_gsg_sdk
 keywords:
   - sdwan
 ---

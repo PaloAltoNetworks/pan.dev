@@ -4,7 +4,6 @@ title: Prisma SD-WAN Config Utility
 description: Prisma SD-WAN Config Utility
 hide_title: true
 hide_table_of_contents: true
-slug: /sdwan/docs/prismasdwanconfig
 keywords:
   - sdwan
   - prisma sdwan config utility
@@ -24,8 +23,8 @@ This utility can be used to:
 - Use configs as a template to deploy 1000s of sites.
   The cloudgenix_config utility can be downloaded and installed using the pip utility : **pip install cloudgenix_config**
   The cloudgenix_config utility has two sub-utilities that can be used for import and export of data:
-- [pull_site](/sase/docs/sdwan/prismasdwanconfig#pull_site)
-- [do_site](/sase/docs/sdwan/prismasdwanconfig#do_site)
+- [pull_site](#pull_site)
+- [do_site](#do_site)
 
 ### pull_site
 

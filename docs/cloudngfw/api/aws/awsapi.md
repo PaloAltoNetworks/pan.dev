@@ -108,7 +108,7 @@ Cloud NGFW Programmatic access is disabled by default.
 
 9. Generate SubcriptionKey and TokenID.
 
-   To access Cloud NGFW using REST APIs, use this path before the API call—`api.<regionname>.aws.cloudngfw.paloaltonetworks.com`. For more information, see [Manage API Tokens](/cloudngfw/api/aws/describe-programmatic-access-token).
+   To access Cloud NGFW using REST APIs, use this path before the API call—`api.<regionname>.aws.cloudngfw.paloaltonetworks.com`. For more information, see [Manage API Tokens](/cloudngfw/api/aws/manage-api-tokens).
 
    - For cloud firewall admin role—`GET https://api.<regionname>.aws.cloudngfw.paloaltonetworks.com/v1/mgmt/tokens/cloudfirewalladmin`
    - For cloud rulestack admin role—`GET https://api.<regionname>.aws.cloudngfw.paloaltonetworks.com/v1/mgmt/tokens/cloudrulestackadmin`

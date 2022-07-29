@@ -3,8 +3,8 @@ id: filters
 title: Query Filters
 description: Prisma SASE Aggregate Monitoring query filters
 hide_title: true
-slug: /sase/docs/filters
 hide_table_of_contents: false
+slug: /sase/docs/filters
 keywords:
   - sase
 ---
@@ -19,7 +19,7 @@ In a POST request body, you will provide a required filter. This is a json objec
 
 In a POST request body, you will also provide required properties. This is an array of objects. Property field names will be returned in the API response. You can use one or more properties to customize the response, but you can also use most of the examples in the API reference just as they are.
 
-For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/list-threat-summary) contains a filter with rules of [Rule2](#rule2), [RuleName3](#rulename3), and [TimeFilter](#timefilter), and properties of [Property6](#property6):
+For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-threats-summary) contains a filter with rules of [Rule2](#rule2), [RuleName3](#rulename3), and [TimeFilter](#timefilter), and properties of [Property6](#property6):
 
     {
       "filter": {

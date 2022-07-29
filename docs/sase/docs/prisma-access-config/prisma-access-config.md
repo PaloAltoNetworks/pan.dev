@@ -19,5 +19,5 @@ you can use these APIs to configure your Prisma Access deployments.
 Generally, to perform a configuration change, you issue one or more configuration
 changes using the [configuration APIs](/sase/api/prisma-access-config). This creates
 a _candidate_ configuration. Once you have completed creating your candidate configuration,
-you can [push your candidate](/sase/api/prisma-access-config/push-the-candidate-configuration). This creates a [configuration job](/sase/api/prisma-access-config/get-a-configuration-by-version).
+you can [push your candidate](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push). This creates a [configuration job](/sase/api/prisma-access-config/get-sse-config-v-1-jobs-id).
 Once this job is complete, your candidate configuration becomes your _running_ configuration.

@@ -17,4 +17,4 @@ keywords:
 You will find examples here on how to configure Prisma Access using the configuration APIs.
 
 Here's how you link to an individual API:
-[List address groups](/sase/api/prisma-access-config/list-address-groups)
+[List address groups](/sase/api/prisma-access-config/get-sse-config-v-1-address-groups-id)

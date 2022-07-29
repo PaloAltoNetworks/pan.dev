@@ -12,10 +12,10 @@ created for you based on your usage patterns.
 You use different REST calls, depending on whether you are querying for
 general or custom resources:
 
-| Customer      | API Version | API                                                                                                                                        |
-| ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| MSSP          | 2.0         | [General resource query](/sase/api/insights/2.0/resource-query)<br />[Custom resource query](/sase/api/insights/2.0/custom-resource-query) |
-| Single Tenant | 1.0         | [General resource query](/sase/api/insights/1.0/resource-query)<br />[Custm resource query](/sase/api/insights/1.0/custom-resource-query)  |
+| Customer      | API Version | API                                                                                                                                                                                                                                    |
+| ------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MSSP          | 2.0         | [Resource Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-resource-name)<br />[Resource Custom Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-custom-feature-name-request-name)                                   |
+| Single Tenant | 1.0         | [Resource Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-resource-name)<br />[Resource Custom Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-custom-feature-name-request-name) |
 
 ## General Resources
 
