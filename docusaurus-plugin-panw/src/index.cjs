@@ -8,9 +8,6 @@ module.exports = function redocWebpack(context, options) {
   const isProd = process.env.NODE_ENV === "production";
   return {
     name: "docusaurus-plugin-webpack",
-    getClientModules() {
-      return [path.join(__dirname, "custom.css")];
-    },
     configureWebpack() {
       return {
         resolve: {
