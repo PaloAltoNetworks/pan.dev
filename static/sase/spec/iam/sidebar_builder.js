@@ -2,9 +2,7 @@ const globby = require("globby");
 const yaml = require("js-yaml");
 const fs = require("fs");
 // Use the following to frontload docs
-var docs = [
-    "api/iam/iam-api",
-];
+var docs = ["api/iam/iam-api"];
 
 // Change these variables to match your doc path
 const relativePath = "api/iam";

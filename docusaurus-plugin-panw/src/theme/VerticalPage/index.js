@@ -30,13 +30,10 @@ function ProductContainer({ href, children }) {
 function ProductLayout({ href, icon, title, description }) {
   return (
     <ProductContainer href={href}>
-      <h2 className={clsx("text--truncate", styles.productTitle)} title={title}>
+      <h2 className={clsx(styles.productTitle)} title={title}>
         {icon} {title}
       </h2>
-      <div
-        className={clsx("text--truncate", styles.productDescription)}
-        title={description}
-      >
+      <div className={clsx(styles.productDescription)} title={description}>
         {description}
       </div>
     </ProductContainer>

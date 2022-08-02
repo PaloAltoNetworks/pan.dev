@@ -1,0 +1,675 @@
+---
+id: panos_tutorials_address_group
+title: Working with Address Groups
+sidebar_label: Working with Address Groups
+hide_title: false
+description: Working with Address Groups using PAN-OS API
+keywords:
+  - PAN-OS API
+  - Address Group
+  - PAN-OS
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This tutorial covers how to add & populate Static and Dynamic Address Groups to PAN-OS using API. If you are looking into adding IPs to Dynamic Address Groups using the Dynamic Address Group API, please refer to the [dedicated tutorial](panos_dag_qs.md).
+
+This tutorial has 2 sections: the first section covers [static Address Groups](#static-address-groups), the second section covers  [Dynamic Address Groups](#dynamic-address-groups).
+
+## Requirements
+
+To follow this tutorial, it is recommended that that you are familiar with the concepts of Palo Alto Networks Next-Generation Firewalls, Security Policies and APIs. Some basic understanding of XML is also recommended.
+
+Make sure you have a Palo Alto Networks Next-Generation Firewall deployed and that you have administrative access to its Management interface via HTTPS. To avoid potential disruptions, it's recommended to run all the tests on a **non-production** environment.
+
+No specific programming language expertise is required, although _Python_ is recommended. Examples with both [XML API](xmlapi_qs.md), [REST API](restapi_qs.md) and [pan-python](panpython_qs.md) are provided.
+
+## Static Address Groups
+
+Static Address Groups are address groups whose content is statically defined inside the PAN-OS configuration. They are *traditional* Address Groups. To change the members of a static address groups, you should change the PAN-OS config and commit.
+
+### Steps
+
+1. Grab the API Key
+1. Create an Address object (optional)
+1. Create an Address Group
+1. Edit the Address Group (optional)
+1. Commit!
+
+### Step 1: Grab the API Key
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python', value: 'pp', },
+  ]
+}>
+<TabItem value="xml">
+
+Please refer to the [XML API Quickstart](xmlapi_qs.md) for instructions.
+
+</TabItem>
+
+<TabItem value="rest">
+
+Please refer to the [REST API Quickstart](restapi_qs.md) for instructions.
+
+</TabItem>
+
+<TabItem value="pp">
+
+Please refer to the [pan-python guide](panpython_apikey.md) for details.
+
+</TabItem>
+</Tabs>
+
+### Step 2: Create an Address object (optional)
+
+Static Address Groups cannot be empty. If you don't have an Address object already defined or you don't want to use it, you should create at least an Address object before creating the Address Group.
+
+The following code will create a new Address object called `TutorialEntry` with IP `1.1.1.1/32` (Hello there Cloudflare!)
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python (CLI)', value: 'pp-cli', },
+    { label: 'pan-python (Python)', value: 'pp-py', },
+  ]
+}>
+<TabItem value="xml">
+
+The following code is for a Unix shell. To avoid fighting with string escapes, we use environment variables to store API Key, XPath and the new entry.
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<ip-netmask>1.1.1.1/32</ip-netmask>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address/entry[@name='TutorialEntry']"
+curl -g "https://<firewall>/api/?type=config&action=set&key=$API_KEY&xpath=$ELEMENT_XPATH&element=$ELEMENT_VALUE"
+```
+
+Response should be:
+
+```bash
+<response status="success" code="20"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="rest">
+
+```bash
+export API_KEY="<Your API Key here>"
+curl -XPOST "https://<firewall>/restapi/9.0/Objects/Addresses?location=vsys&vsys=vsys1&key=$API_KEY&name=TutorialEntry" -d '
+{
+    "entry": [{
+        "@name": "TutorialEntry",
+        "ip-netmask": "1.1.1.1/32"
+    }]
+}
+'
+```
+
+Response should be:
+
+```bash
+{"@status":"success","@code":"20","msg":"command succeeded"}
+```
+
+</TabItem>
+
+<TabItem value="pp-cli">
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<ip-netmask>1.1.1.1/32</ip-netmask>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address/entry[@name='TutorialEntry']"
+panxapi.py -G -DDD -h <firewall> -x -K $API_KEY -S $ELEMENT_VALUE $ELEMENT_XPATH
+```
+
+Response should be:
+
+```bash
+<response code="20" status="success"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="pp-py">
+
+```python
+#!/usr/bin/env python3
+
+import pan.xapi
+
+HOSTNAME="<Your firewall hostname>"
+API_KEY="<Your API Key>"
+ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address/entry[@name='TutorialEntry']"
+ELEMENT_VALUE="<ip-netmask>1.1.1.1/32</ip-netmask>"
+
+try:
+    xapi = pan.xapi.PanXapi(
+        api_key=API_KEY,
+        hostname=HOSTNAME,
+        use_get=True
+    )
+except pan.xapi.PanXapiError as msg:
+    print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+    sys.exit(1)
+
+try:
+    xapi.set(xpath=ELEMENT_XPATH,
+            element=ELEMENT_VALUE)
+except pan.xapi.PanXapiError as msg:
+    print('set:', msg, file=sys.stderr)
+    sys.exit(1)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 3: Create the Address Group
+
+Now we can create our static Address Group, we will call it *TutorialAddressGroup*.
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python (CLI)', value: 'pp-cli', },
+    { label: 'pan-python (Python)', value: 'pp-py', },
+  ]
+}>
+<TabItem value="xml">
+
+The following code is for a Unix shell. To avoid fighting with string escapes, we use environment variables to store API Key, XPath and the new entry.
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<member>TutorialEntry</member>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+curl -g "https://<firewall>/api/?type=config&action=set&key=$API_KEY&xpath=$ELEMENT_XPATH&element=$ELEMENT_VALUE"
+```
+
+Response should be:
+
+```bash
+<response status="success" code="20"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="rest">
+
+```bash
+export API_KEY="<Your API Key here>"
+curl -XPOST "https://<firewall>/restapi/9.0/Objects/AddressGroups?location=vsys&vsys=vsys1&key=$API_KEY&name=TutorialAddressGroup" -d '{
+     "entry": [{
+         "@name": "TutorialAddressGroup",
+         "static": {
+             "member": ["TutorialEntry"]
+         }
+     }]
+}'
+```
+
+Response should be:
+
+```bash
+{"@status":"success","@code":"20","msg":"command succeeded"}
+```
+
+</TabItem>
+
+<TabItem value="pp-cli">
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<member>TutorialEntry</member>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+panxapi.py -G -DDD -h <firewall> -x -K $API_KEY -S $ELEMENT_VALUE $ELEMENT_XPATH
+```
+
+Response should be:
+
+```bash
+<response code="20" status="success"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="pp-py">
+
+```python
+#!/usr/bin/env python3
+
+import pan.xapi
+
+HOSTNAME="<Your firewall hostname>"
+API_KEY="<Your API Key>"
+ELEMENT_VALUE="<member>TutorialEntry</member>"
+ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+
+try:
+    xapi = pan.xapi.PanXapi(
+        api_key=API_KEY,
+        hostname=HOSTNAME,
+        use_get=True
+    )
+except pan.xapi.PanXapiError as msg:
+    print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+    sys.exit(1)
+
+try:
+    xapi.set(xpath=ELEMENT_XPATH,
+            element=ELEMENT_VALUE)
+except pan.xapi.PanXapiError as msg:
+    print('set:', msg, file=sys.stderr)
+    sys.exit(1)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 4: Edit the Address Group (optional)
+
+We could commit now, but for the sake of this tutorial let's edit the address group we created to add a new entry and remove the existing one.
+
+Before starting, create a new Address object called *TutorialEntry2* following [Step 2](#step-2-create-an-address-object-optional).
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python (CLI)', value: 'pp-cli', },
+    { label: 'pan-python (Python)', value: 'pp-py', },
+  ]
+}>
+<TabItem value="xml">
+
+We can use an *edit* request here for the PAN-OS XML API. It is a bit weird, as the element should overlap with the XPath (`<static>` appears on both XPath and inside the element).
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+export ELEMENT_VALUE="<static><member>TutorialEntry2</member></static>"
+curl -g "https://<firewall>/api/?type=config&action=edit&key=$API_KEY&xpath=$ELEMENT_XPATH&element=$ELEMENT_VALUE"
+```
+
+Response should be:
+
+```bash
+<response status="success" code="20"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="rest">
+
+Using *PUT* we can replace the existing definition of the AddressGroup with a new one:
+
+```bash
+export API_KEY="<Your API Key here>"
+curl -XPUT "https://<firewall>/restapi/9.0/Objects/AddressGroups?location=vsys&vsys=vsys1&key=$API_KEY&name=TutorialAddressGroup" -d '{
+    "entry": [{
+        "@name": "TutorialAddressGroup",
+        "static": {
+            "member": ["TutorialEntry2"]
+        }
+    }]
+}'
+```
+
+Response should be:
+
+```bash
+{"@status":"success","@code":"20","msg":"command succeeded"}
+```
+
+</TabItem>
+
+<TabItem value="pp-cli">
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+export ELEMENT_VALUE="<static><member>TutorialEntry2</member></static>"
+panxapi.py -G -DDD -h <firewall> -x -K $API_KEY -e $ELEMENT_VALUE $ELEMENT_XPATH
+```
+
+Response should be:
+
+```bash
+<response code="20" status="success"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="pp-py">
+
+```python
+#!/usr/bin/env python3
+
+import pan.xapi
+
+HOSTNAME="<Your firewall hostname>"
+API_KEY="<Your API Key>"
+ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+ELEMENT_VALUE="<static><member>TutorialEntry2</member></static>"
+
+try:
+    xapi = pan.xapi.PanXapi(
+        api_key=API_KEY,
+        hostname=HOSTNAME,
+        use_get=True
+    )
+except pan.xapi.PanXapiError as msg:
+    print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+    sys.exit(1)
+
+try:
+    xapi.edit(xpath=ELEMENT_XPATH,
+            element=ELEMENT_VALUE)
+except pan.xapi.PanXapiError as msg:
+    print('edit:', msg, file=sys.stderr)
+    sys.exit(1)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 5: Commit!
+
+This is where pan-python and the SDKs start shining. The commit process via the API is asynchronous and has 2 steps:
+
+1. Send the commit request. This will start a commit job and return a job id
+2. Periodically check with the API the status of the job. When the job has finished the API response includes the commit result
+
+This process is easy to implement with the SDKs as they include functions to issue the commit request and automatically follow the resulting job.
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python (CLI)', value: 'pp-cli', },
+    { label: 'pan-python (Python)', value: 'pp-py', },
+  ]
+}>
+<TabItem value="xml">
+
+Let's do a commit in the hard way. First we send the request and then we follow the job using `curl`.
+
+```bash
+export API_KEY="<Your API Key here>"
+curl -g "https://<firewall>/api/?key=$API_KEY&type=commit&cmd=<commit></commit>"
+```
+
+Response should be (jobid will be different):
+
+```bash
+<response status="success" code="19"><result><msg><line>Commit job enqueued with jobid 271</line></msg><job>271</job></result></response>
+```
+
+Now with the jobid we can poll the API to check the status of the job:
+
+```bash
+curl -g "https://<firewall>/api/?type=op&cmd=<show><jobs><id>271</id></jobs></show>"
+```
+
+When the commit job is still running, the status will be *ACT*:
+
+```xml
+<response status="success">
+    <result>
+        <job>
+            <tenq>2019/11/19 10:45:11</tenq>
+            <tdeq>10:45:11</tdeq>
+            <id>271</id>
+            <user>XMLTutorial</user>
+            <type>Commit</type>
+            <status>ACT</status>
+            <queued>NO</queued>
+            <stoppable>yes</stoppable>
+            <result>PEND</result>
+            <tfin>Still Active</tfin>
+            <description></description>
+            <positionInQ>0</positionInQ>
+            <progress>0</progress>
+            <warnings></warnings>
+            <details></details>
+       </job>
+    </result>
+</response>
+```
+
+Once finished, the status will be *FIN* and you can check if the commit was successful by looking at the `<result>` tag:
+
+```xml
+<response status="success">
+    <result>
+        <job>
+            <tenq>2019/11/19 10:45:11</tenq>
+            <tdeq>10:45:11</tdeq>
+            <id>271</id>
+            <user>XMLTutorial</user>
+            <type>Commit</type>
+            <status>FIN</status>
+            <queued>NO</queued>
+            <stoppable>no</stoppable>
+            <result>OK</result>
+            <tfin>10:47:27</tfin>
+            <description></description>
+            <positionInQ>0</positionInQ>
+            <progress>100</progress>
+            <details>
+                <line>Partial changes to commit: changes to configuration by all administrators </line>
+                <line>Changes to policy and objects configuration</line>
+                <line>Changes to configuration in device and network</line>
+                <line>Changes to shared configuration</line>
+                <line>Configuration committed successfully</line>
+            </details>
+            <warnings></warnings>
+        </job>
+    </result>
+</response>
+```
+
+</TabItem>
+
+<TabItem value="rest">
+
+*Not supported yet* use the PAN-OS XML API to commit.
+
+</TabItem>
+
+<TabItem value="pp-cli">
+
+pan-python can do all the tracking work for you. Just use the `--sync` command line argument to tell `panxapy.py` to start tracking the commit job:
+
+```bash
+export API_KEY="<Your API Key here>"
+panxapi.py -G -h <firewall> -x -K $API_KEY -C '' --sync
+```
+
+Response should be similar to:
+
+```bash
+commit: success: "Partial changes to commit: changes to configuration by all administrators
+Changes to policy and objects configuration
+Changes to configuration in device and network
+Changes to shared configuration
+Configuration committed successfully
+... dump of xml response ...
+```
+
+</TabItem>
+
+<TabItem value="pp-py">
+
+The pan-python library exposes a nice function to start the commit and track the job for you (note *sync=True* in the *commit* call):
+
+```python
+#!/usr/bin/env python3
+
+import pan.xapi
+
+HOSTNAME="<Your firewall hostname>"
+API_KEY="<Your API Key>"
+
+try:
+    xapi = pan.xapi.PanXapi(
+        api_key=API_KEY,
+        hostname=HOSTNAME,
+        use_get=True
+    )
+except pan.xapi.PanXapiError as msg:
+    print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+    sys.exit(1)
+
+try:
+    xapi.commit(cmd='<commit></commit>', sync=True)
+except pan.xapi.PanXapiError as msg:
+    print('commit:', msg, file=sys.stderr)
+    sys.exit(1)
+
+print(xapi.xml_root())
+```
+
+</TabItem>
+</Tabs>
+
+## Dynamic Address Groups
+
+Dynamic Address Groups are defined as boolean expressions over IP tags. Every time an IP is tagged using the Dynamic Address Group API, PAN-OS evaluates the expression associated with a Dynamic Address Group. If the result is *true*, then the IP is automatically added to the Dynamic Address Group.
+
+Dynamic Address Groups is a powerful mechanism that could be used to cover many use cases, for details about populating the Dynamic Address Group refer to the [dedicated tutorial](panos_dag_qs.md).
+
+### Steps
+
+1. Grab the API Key
+1. Add a new Dynamic Address Group
+1. Commit!
+1. Populate the Dynamic Address Group
+
+### Step 1: Grab the API Key
+
+See [Step 1 of Static Address Groups](#step-1-grab-the-api-key)
+
+### Step 2: Add a new Dynamic Address Group
+
+The content of a Dynamic Address Group is not a static list of Address objects, like for Static Address Groups, but a *filter*. A filter is a boolean expression built on IP tags.
+
+In this example we will create a new Dynamic Address Group called *TutorialDAG* with filter `tag1 AND tag2`. All the IPs pushed via the DAG API with both `tag1` **and** `tag2` will be automatically added to this DAG.
+
+<Tabs
+  defaultValue="xml"
+  values={[
+    { label: 'XML API', value: 'xml', },
+    { label: 'REST API', value: 'rest', },
+    { label: 'pan-python (CLI)', value: 'pp-cli', },
+    { label: 'pan-python (Python)', value: 'pp-py', },
+  ]
+}>
+<TabItem value="xml">
+
+Note the element content is URL encoded:
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<filter>tag1%20AND%20tag2</filter>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialDAG']/dynamic"
+curl -g "https://<firewall>/api/?type=config&action=set&key=$API_KEY&xpath=$ELEMENT_XPATH&element=$ELEMENT_VALUE"
+```
+
+Response should be:
+
+```bash
+<response status="success" code="20"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="rest">
+
+```bash
+export API_KEY="<Your API Key here>"
+curl -XPOST "https://<firewall>/restapi/9.0/Objects/AddressGroups?location=vsys&vsys=vsys1&key=$API_KEY&name=TutorialDAG" -d '{
+     "entry": [{
+         "@name": "TutorialDAG",
+         "dynamic": {
+             "filter": "tag1 AND tag2"
+         }
+     }]
+}'
+```
+
+Response should be:
+
+```bash
+{"@status":"success","@code":"20","msg":"command succeeded"}
+```
+
+</TabItem>
+
+<TabItem value="pp-cli">
+
+```bash
+export API_KEY="<Your API Key here>"
+export ELEMENT_VALUE="<filter>tag1 AND tag2</filter>"
+export ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialDAG']/dynamic"
+panxapi.py -G -DDD -h <firewall> -x -K $API_KEY -S "$ELEMENT_VALUE" $ELEMENT_XPATH
+```
+
+Response should be:
+
+```bash
+<response code="20" status="success"><msg>command succeeded</msg></response>
+```
+
+</TabItem>
+
+<TabItem value="pp-py">
+
+```python
+#!/usr/bin/env python3
+
+import pan.xapi
+
+HOSTNAME="<Your firewall hostname>"
+API_KEY="<Your API Key>"
+ELEMENT_VALUE="<member>TutorialEntry</member>"
+ELEMENT_XPATH="/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group/entry[@name='TutorialAddressGroup']/static"
+
+try:
+    xapi = pan.xapi.PanXapi(
+        api_key=API_KEY,
+        hostname=HOSTNAME,
+        use_get=True
+    )
+except pan.xapi.PanXapiError as msg:
+    print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+    sys.exit(1)
+
+try:
+    xapi.set(xpath=ELEMENT_XPATH,
+            element=ELEMENT_VALUE)
+except pan.xapi.PanXapiError as msg:
+    print('set:', msg, file=sys.stderr)
+    sys.exit(1)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 3: Commit!
+
+See [Step 5 of Static Address Group section](#step-5-commit)
+
+### Step 4: Populate the Dynamic Address Group
+
+Not covered here, check the [dedicated tutorial](panos_dag_qs.md)

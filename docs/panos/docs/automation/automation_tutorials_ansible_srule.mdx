@@ -1,0 +1,427 @@
+---
+id: automation_tutorials_ansible_srule
+title: Adding a Security Rule
+sidebar_label: Adding a Security Rule - Ansible
+hide_title: false
+description: Adding a Security Rule in Panorama using Ansible
+keywords:
+  - PAN-OS API
+  - Security Rules
+  - Rulebases
+  - PAN-OS
+  - Panorama
+  - Ansible
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+In this tutorial we will add a Security Rule to a Device Group in Panorama using Ansible.
+
+## Requirements
+
+To follow this tutorial, it is recommended that that you are familiar with the concepts of Palo Alto Networks Next-Generation Firewalls, Security Policies and APIs.
+
+Make sure you have a Palo Alto Networks Panorama deployed and that you have administrative access to its Management interface via HTTPS. To avoid potential disruptions, it's recommended to run all the tests on a **non-production** environment.
+
+## Setup your environment
+
+### Install virtualenv (optional)
+
+This is not required, but we suggest using [virtualenv](https://virtualenv.pypa.io/en/latest/) to keep your test and development environments clean. It's super easy:
+
+```shell
+pip install virtualenv
+```
+
+Once installed, you can use the `virtualenv` command to create a new virtual environment to store your packages without polluting the system library:
+
+```console
+$ virtualenv ansible-venv
+Using base prefix '/usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7'
+New python executable in /Users/lmori/Documents/panos.pan.dev/panos.pan.dev/ansible-venv/bin/python3.7
+Also creating executable in /Users/lmori/Documents/panos.pan.dev/panos.pan.dev/ansible-venv/bin/python
+Installing setuptools, pip, wheel...
+done.
+$ . ./ansible-venv/bin/activate
+(ansible-venv) $
+```
+
+After the end of the tutorial you can remove Ansible and all the installed packages by removing the virtualenv directory:
+
+```console
+(ansible-venv) $ deactivate
+$ rm -rf ansible-venv
+```
+
+### Install Ansible
+
+You can easily add Ansible to any Python environment using `pip`:
+
+```shell
+pip install ansible
+```
+
+### Install Ansible collection for PAN-OS API
+
+Palo Alto Networks provides an Ansible collection to facilitate working with PAN-OS API. Use `ansible-galaxy` to install it:
+
+```shell
+ansible-galaxy collection install paloaltonetworks.panos
+```
+
+### Add your environment variables
+
+Create a file called `vars.yml` with the information of your environment:
+
+```yaml
+panorama_provider:
+  # the hostname or IP address of Panorama
+  ip_address: panorama.example.com
+  # username and password of a Panorama admin user
+  # with access to the XML API
+  username: admin
+  password: admin
+
+# the name of Device Group we will add the security rules to
+# IT SHOULD ALREADY EXIST!
+device_group: DG-Tutorial
+```
+
+The `vars.yml` file contains sensitive information, we can use `ansible-vault` to encrypt it:
+
+```console
+$ ansible-vault encrypt vars.yml
+New Vault password:
+Confirm New Vault password:
+Encryption successful
+```
+
+## Your first playbook
+
+### Create a security rule
+
+We can use the following playbook to add a new rule to the Security Rulebase of the Device Group specified in the `vars.yml` file. Note that:
+
+- we specify `no_log: yes` when loading the vars file, to avoid logging the confidential information loaded from the file
+- in the rule no `location` is specified, this deaults to `top` - the security rule will be created at the top of the rulebase
+- with `state: present`, we tell `panos_security_rule` that the rule should be created if not existent
+
+```yaml {16,35}
+---
+- hosts: localhost
+  connection: local
+
+collections:
+    - paloaltonetworks.panos
+
+  handlers:
+    - name: commit config
+      panos_commit:
+        provider: "{{ panorama_provider }}"
+
+  tasks:
+    - name: include variables (free-form)
+      include_vars: vars.yml
+      no_log: 'yes'
+
+    # permit dns to 1.1.1.1
+    - name: permit dns to 1.1.1.1
+      panos_security_rule:
+        provider: "{{ panorama_provider }}"
+        device_group: "{{ device_group }}"
+        rule_name: 'DNS permit'
+        description: 'DNS rule test'
+        source_zone: ['trust']
+        destination_zone: ['untrust']
+        source_ip: ['any']
+        source_user: ['any']
+        destination_ip: ['1.1.1.1']
+        category: ['any']
+        application: ['dns']
+        service: ['application-default']
+        hip_profiles: ['any']
+        action: 'allow'
+        state: 'present'
+        commit: false
+      notify: commit config
+```
+
+> Note that we use `connection: local` and `hosts: localhost` as there is no Ansible agent running on Panorama/PAN-OS. All the commands will be executed directly on the development host and Ansible will connect to Panorama/PAN-OS using the XML API
+
+We can now run the playbook using `ansible-playbook`:
+
+```console
+$ ansible-playbook -i 127.0.0.1, --ask-vault-pass -e "ansible_python_interpreter=$(which python)" srule.yml
+Vault password:
+
+PLAY [localhost] ***********************************************************************
+
+TASK [Gathering Facts] *****************************************************************
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pan-python required library] *********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pandevice required library] **********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install xmltodict required library] **********
+ok: [127.0.0.1]
+
+TASK [include variables (free-form)] ***************************************************
+ok: [127.0.0.1]
+
+TASK [permit dns to 1.1.1.1] ***********************************************************
+changed: [127.0.0.1]
+
+RUNNING HANDLER [commit config] ********************************************************
+changed: [127.0.0.1]
+
+PLAY RECAP *****************************************************************************
+127.0.0.1                  : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+> when `--ask-vault-pass` is used, `ansible-playbook` will ask for the password to decrypt the `vars.yml` file
+
+> `-e "ansible_python_interpreter=$(which python)"` is useful when running `ansible-playbook` from inside a virtual environment. It sets the environment variable `ansible_python_interpreter` to the path of the Python interpreter used to run `ansible-playbook`. Ny default `ansible-playbook` uses the system Python interpreter instead of the one in the virtual environment.
+
+On Panorama:
+
+![Rule Added!](/panos/img/automation_tutorials_ansible_srule_1.png)
+
+### Commit
+
+The playbook we have just created also commits the configuration on Panorama when the rule is added. The `permit dns to 1.1.1.1` task triggers the `commit config` handler when the state of the rule changes (the rule is added).
+
+```yaml {8-11,36}
+---
+- hosts: localhost
+  connection: local
+
+  collections:
+    - paloaltonetworks.panos
+
+  handlers:
+    - name: commit config
+      panos_commit:
+        provider: "{{ panorama_provider }}"
+
+  tasks:
+    - name: include variables (free-form)
+      include_vars: vars.yml
+      no_log: "yes"
+
+    # permit dns to 1.1.1.1
+    - name: permit dns to 1.1.1.1
+      panos_security_rule:
+        provider: "{{ panorama_provider }}"
+        device_group: "{{ device_group }}"
+        rule_name: "DNS permit"
+        description: "DNS rule test"
+        source_zone: ["trust"]
+        destination_zone: ["untrust"]
+        source_ip: ["any"]
+        source_user: ["any"]
+        destination_ip: ["1.1.1.1"]
+        category: ["any"]
+        application: ["dns"]
+        service: ["application-default"]
+        hip_profiles: ["any"]
+        action: "allow"
+        state: "present"
+        commit: false
+      notify: commit config
+```
+
+When we will add more config tasks to this playbook we can configure each task to notify the `commit config` handler. As soon as at least one of the config task will change the config, the handler will be notified and commit will be triggered.
+
+### Idempotency
+
+Our sample playbook does not define an action but a state: we are telling Ansible that the final configuration of the Security Rulebase should have the `DNS Permit` as the topmost rule. If you run the playbook a second time, Ansible won't apply any change because the security rulebase will already be in the state described in the playbook. Let's try:
+
+```console
+$ ansible-playbook -i 127.0.0.1, --ask-vault-pass -e "ansible_python_interpreter=$(which python)" srule.yml
+Vault password:
+
+PLAY [localhost] ***********************************************************************
+
+TASK [Gathering Facts] *****************************************************************
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pan-python required library] *********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pandevice required library] **********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install xmltodict required library] **********
+ok: [127.0.0.1]
+
+TASK [include variables (free-form)] ***************************************************
+ok: [127.0.0.1]
+
+TASK [permit dns to 1.1.1.1] ***********************************************************
+ok: [127.0.0.1]
+
+PLAY RECAP *****************************************************************************
+127.0.0.1                  : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+## Second playbook
+
+### One more rule
+
+In the second playbook we:
+
+- add a spyware security profile in the `DNS Permit` rule
+- add a second security rule `after` the `DNS Permit` rule
+
+The structure of the playbook is the same with an handler performing a commit only when at least one of the tasks has changed the config.
+
+```yaml
+---
+- hosts: localhost
+  connection: local
+
+  collections:
+    - paloaltonetworks.panos
+
+  handlers:
+    - name: commit config
+      panos_commit:
+        provider: "{{ panorama_provider }}"
+
+  tasks:
+    - name: include variables (free-form)
+      include_vars: vars.yml
+      no_log: "yes"
+
+    # permit dns to 1.1.1.1
+    - name: permit dns to 1.1.1.1
+      panos_security_rule:
+        provider: "{{ panorama_provider }}"
+        device_group: "{{ device_group }}"
+        rule_name: "DNS permit"
+        description: "DNS rule test"
+        source_zone: ["trust"]
+        destination_zone: ["untrust"]
+        source_ip: ["any"]
+        source_user: ["any"]
+        destination_ip: ["1.1.1.1"]
+        category: ["any"]
+        application: ["dns"]
+        service: ["application-default"]
+        hip_profiles: ["any"]
+        spyware: "strict"
+        action: "allow"
+        state: "present"
+        commit: false
+      notify: commit config
+
+    # permit web browsing to safe categories
+    - name: permit web browsing
+      panos_security_rule:
+        provider: "{{ panorama_provider }}"
+        device_group: "{{ device_group }}"
+        rule_name: "Allow Web Browsing"
+        description: "Allow Web Browsing"
+        source_zone: ["trust"]
+        destination_zone: ["untrust"]
+        source_ip: ["any"]
+        source_user: ["any"]
+        destination_ip: ["any"]
+        category: ["any"]
+        application: ["web-browsing"]
+        service: ["application-default"]
+        hip_profiles: ["any"]
+        url_filtering: "default"
+        location: "after"
+        existing_rule: "DNS permit"
+        spyware: "strict"
+        action: "allow"
+        state: "present"
+        commit: false
+      notify: commit config
+```
+
+### Test
+
+When we run the playbook, Ansible:
+
+- adds a spyware security profile to the _existing_ `DNS Permit` rule
+- adds a new rule _after_ the `DNS Permit`
+- commits the config
+
+```console
+$ ansible-playbook -i 127.0.0.1, --ask-vault-pass -e "ansible_python_interpreter=$(which python)" srule.yml
+Vault password:
+
+PLAY [localhost] ***********************************************************************
+
+TASK [Gathering Facts] *****************************************************************
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pan-python required library] *********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pandevice required library] **********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install xmltodict required library] **********
+ok: [127.0.0.1]
+
+TASK [include variables (free-form)] ***************************************************
+ok: [127.0.0.1]
+
+TASK [permit dns to 1.1.1.1] ***********************************************************
+changed: [127.0.0.1]
+
+TASK [permit web browsing] *************************************************************
+changed: [127.0.0.1]
+
+RUNNING HANDLER [commit config] ********************************************************
+changed: [127.0.0.1]
+
+PLAY RECAP *****************************************************************************
+127.0.0.1                  : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+On Panorama:
+
+![Rule Added!](/panos/img/automation_tutorials_ansible_srule_2.png)
+
+### Idempotency
+
+Again, the playbook is idempotent. If we run the playbook a second time, Ansible won't change the config:
+
+```console
+$ ansible-playbook -i 127.0.0.1, --ask-vault-pass -e "ansible_python_interpreter=$(which python)" srule.yml
+Vault password:
+
+PLAY [localhost] ***********************************************************************
+
+TASK [Gathering Facts] *****************************************************************
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pan-python required library] *********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install pandevice required library] **********
+ok: [127.0.0.1]
+
+TASK [paloaltonetworks.panos : Install xmltodict required library] **********
+ok: [127.0.0.1]
+
+TASK [include variables (free-form)] ***************************************************
+ok: [127.0.0.1]
+
+TASK [permit dns to 1.1.1.1] ***********************************************************
+ok: [127.0.0.1]
+
+TASK [permit web browsing] *************************************************************
+ok: [127.0.0.1]
+
+PLAY RECAP *****************************************************************************
+127.0.0.1                  : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```

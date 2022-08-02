@@ -2,9 +2,7 @@ const globby = require("globby");
 const yaml = require("js-yaml");
 const fs = require("fs");
 // Use the following to frontload docs
-var docs = [
-    "api/tenancy/tenancy-api",
-];
+var docs = ["api/tenancy/tenancy-api"];
 
 // Change these variables to match your doc path
 const relativePath = "api/tenancy";
@@ -31,7 +29,7 @@ function genEndpoints() {
     var category = {
       type: "category",
       label: categoryLabel,
-      collapsed: true,
+      collapsed: false,
       link: {
         type: "doc",
         id: linkId,
