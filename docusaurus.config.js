@@ -209,10 +209,7 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  themes: [
-    "docusaurus-theme-openapi-docs",
-    require.resolve("./docusaurus-plugin-panw/src/index.cjs"),
-  ],
+  themes: ["docusaurus-theme-openapi-docs"],
   presets: [
     [
       "@docusaurus/preset-classic",
