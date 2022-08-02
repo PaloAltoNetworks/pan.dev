@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from "react";
-import DocCardList from "@theme/DocCardList";
+import DocCardListProduct from "@theme/DocCardListProduct";
 import Button from "@theme/Button";
 import useGlobalData from "@docusaurus/useGlobalData";
 
 export default function ProductIndex({ product }) {
   const crumbs = require("/crumbs.json");
   const product_menu = crumbs[product].children;
-  return <DocCardList items={product_menu} />;
+  return <DocCardListProduct items={product_menu} />;
   /*
   var docs = [];
   var apis = [];

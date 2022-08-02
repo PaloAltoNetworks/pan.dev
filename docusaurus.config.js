@@ -16,7 +16,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 } else {
   baseUrl = process.env.GL_PAGES_BASE_URL ?? "/";
 }
-console.log(baseUrl);
+
 module.exports = {
   title: "Develop with Palo Alto Networks",
   tagline:
@@ -32,19 +32,15 @@ module.exports = {
     colorMode: {
       defaultMode: "light",
     },
-    /*
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
-        facetFilters: [
-          ["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"],
-        ],
-      }, // Optional, if provided by Algolia
+        facetFilters: [["tags:pandev"]],
+      },
     },
-    */
     hideOnScroll: true,
     navbar: {
       title: "",
@@ -56,7 +52,6 @@ module.exports = {
       items: [
         {
           label: "Network Security",
-          to: "cloudngfw",
           items: [
             {
               to: "#",
@@ -69,6 +64,16 @@ module.exports = {
               className: "indent",
             },
             {
+              to: "panos/docs",
+              label: "PAN-OS",
+              className: "indent",
+            },
+            {
+              to: "expedition/docs",
+              label: "Expedition",
+              className: "indent",
+            },
+            {
               to: "#",
               label: "API Reference",
               className: "section__docs",
@@ -76,6 +81,16 @@ module.exports = {
             {
               to: "cloudngfw/aws/api",
               label: "Cloud NGFW for AWS",
+              className: "indent",
+            },
+            {
+              to: "cdss/iot/api/iot-public-api-headers",
+              label: "IoT API",
+              className: "indent",
+            },
+            {
+              to: "cdss/tp/api",
+              label: "Threat Prevention API",
               className: "indent",
             },
           ],
@@ -195,28 +210,36 @@ module.exports = {
     },
   },
   themes: [
-    [
-      require.resolve("./docusaurus-plugin-panw/src/index.cjs"),
-      {
-        gtm: "GTM-PLXD79N",
-      },
-    ],
+    "docusaurus-theme-openapi-docs",
+    require.resolve("./docusaurus-plugin-panw/src/index.cjs"),
   ],
   presets: [
     [
       "@docusaurus/preset-classic",
       {
         docs: {
-          sidebarPath: require.resolve("./contributing/sidebars.js"),
-          path: "contributing",
+          id: "docs",
+          routeBasePath: "/",
+          sidebarPath: require.resolve("./docs/sidebar.js"),
+          docItemComponent: "@theme/ApiItem",
+          remarkPlugins: [require("mdx-mermaid")],
+          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css")],
+        },
+        gtag: {
+          trackingID: "GTM-PLXD79N",
+          anonymizeIP: true,
         },
       },
     ],
   ],
   plugins: [
+    [
+      "docusaurus-plugin-openapi-docs",
+      { id: "apis", docsPluginId: "docs", config: require("./api.config") },
+    ],
     [
       "@docusaurus/plugin-sitemap",
       {
@@ -273,7 +296,8 @@ module.exports = {
       },
     ],
   },
-  onDuplicateRoutes: "throw",
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
+  onDuplicateRoutes: "warn",
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
+  trailingSlash: true,
 };
