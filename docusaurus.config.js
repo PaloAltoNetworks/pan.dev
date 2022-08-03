@@ -226,7 +226,7 @@ module.exports = {
           editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         },
         theme: {
-          customCss: [require.resolve("./src/css/custom.css")],
+          customCss: [require.resolve("./src/css/custom.scss")],
         },
         gtag: {
           trackingID: "GTM-PLXD79N",
@@ -274,6 +274,7 @@ module.exports = {
         sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
       },
     ],
+    "docusaurus-plugin-sass",
   ],
   stylesheets: [
     {
