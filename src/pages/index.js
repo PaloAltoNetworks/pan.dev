@@ -46,7 +46,7 @@ function Home() {
                 <div className={classnames("col col--12")}>
                   <img
                     className={styles.heroImage}
-                    src="img/PANW_Parent_Logo_White.svg"
+                    src="img/PANW_Parent_Logo_Black.svg"
                   />
                 </div>
               </div>
@@ -57,7 +57,7 @@ function Home() {
       <main>
         <section className="featuredContainer">
           <div className="container">
-            <h1 className={styles.heroProjectTaglineDark}>
+            <h1 className={styles.heroProjectTagline}>
               Explore our Developer Docs Sites
             </h1>
             <Featured />
