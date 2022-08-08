@@ -23,8 +23,8 @@ const DOCUSAURUS = {
   fontFamily: "var(--ifm-font-family-base)",
   fontSize: "var(--ifm-font-size-base)",
   dark: {
-    primaryText: "#c3c3c1",
-    secondaryText: "#f4f4f2",
+    primaryText: "#f0f4f7",
+    secondaryText: "#128df2",
     backgroundColor: "#121212",
   },
 };
@@ -40,7 +40,7 @@ let LIGHT_THEME_OPTIONS = {
     },
   },
   sidebar: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
   rightPanel: {
     backgroundColor: "transparent",
@@ -79,19 +79,19 @@ function getThemeOptions(colorMode) {
     spacing: { unit: "2" },
     colors: {
       primary: {
-        main: "#fa582d",
+        main: "#006fcc",
       },
       success: {
-        main: "#4ab061",
+        main: "#1db846",
       },
       error: {
         main: "#d13c3c",
       },
       info: {
-        main: "#fcdd70",
+        main: "#38a5ff",
       },
       warning: {
-        main: "#ef9e00",
+        main: "#ef9700",
       },
       http: {
         get: ({ colors }) => colors.info.main,
@@ -122,7 +122,7 @@ function getThemeOptions(colorMode) {
       code: {
         lineHeight: "var(--ifm-pre-line-height)",
         fontFamily: "var(--ifm-font-family-monospace)",
-        color: "var(--ifm-color-emphasis-100)",
+        color: "var(--ifm-color-emphasis-900)",
       },
     },
   };
