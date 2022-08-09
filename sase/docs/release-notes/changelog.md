@@ -14,6 +14,7 @@ keywords:
 
 | Date | Description |
 |------|-------------|
+| July 27, 2022 | Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details. |
 | July 5, 2022 | Clarified the difference between [Device Insights 2.0 and 1.0 APIs](/sase/docs/insights). <br/> Added the `support_contact` field to the [Tenancy Service](/sase/api/tenancy) APIs. |
 | June 7, 2022 | Published additional information about [IAM user accounts](/sase/docs/user-accounts). |
 | May 25, 2022 | Published [User Account APIs](/sase/api/iam/useraccounts) for the IAM service. |

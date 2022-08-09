@@ -1,8 +1,5 @@
 ---
 id: contributing
-title: Contributing Guidelines
-hide_title: true
-sidebar_label: Contributing Guidelines
 ---
 
 # Contributing Guidelines

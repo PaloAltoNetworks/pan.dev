@@ -4,11 +4,10 @@ module.exports = {
     outputDir: "docs/cdss/iot/api",
   },
   tp: {
-    specPath: "static/cdss/tp/tp.yaml",
-    outputDir: "docs/cdss/tp/api",
-  },
-  atp: {
-    specPath: "static/cdss/tp/atp.yaml",
-    outputDir: "docs/cdss/atp/api",
+    specPath: "static/cdss/threat-vault/spec",
+    outputDir: "docs/cdss/threat-vault/api",
+    sidebarOptions: {
+      groupPathsBy: "tag",
+    },
   },
 };

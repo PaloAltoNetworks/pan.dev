@@ -1,0 +1,150 @@
+components:
+  schemas:
+    DemStatus:
+      properties:
+        dem_enabled: {description: Dem Enabled, type: boolean}
+        id: {description: Id, type: string}
+        site_id: {description: 'Site Id: Digits(fraction = 0, integer = 50, SITEID_INVALID)
+            NotNull ', type: string}
+      required: [site_id]
+    DemStatusQueryResponse:
+      properties:
+        dem_enabled: {description: Dem Enabled, type: boolean}
+        id: {description: Id, type: string}
+        site_id: {description: 'Site Id: Digits(fraction = 0, integer = 50, SITEID_INVALID)
+            NotNull ', type: string}
+      required: [site_id]
+    Error:
+      properties:
+        _error:
+          items: {$ref: '#/components/schemas/ErrorResponse'}
+          type: array
+    ErrorResponse:
+      properties:
+        code: {type: string}
+        message: {type: string}
+    ListQueryResponse:
+      properties:
+        count: {format: int32, type: integer}
+        deleted_count: {format: int64, type: integer}
+        deleted_ids:
+          items: {type: string}
+          type: array
+        id: {type: string}
+        next_query: {type: object}
+        total_count: {format: int64, type: integer}
+      type: object
+    ListResponse:
+      properties:
+        count: {format: int32, type: integer}
+        id: {type: string}
+      type: object
+info:
+  contact: {}
+  description: List of APIs used to retrieve the Autonomous DEM status in Prisma SD-WAN.
+  title: ADEM
+  version: Latest
+openapi: 3.0.0
+paths:
+  /sdwan/v2.0/api/demstatus/query:
+    post:
+      description: 'Query the status of your ADEM instance.
+
+        '
+      operationId: post-sdwan-v2.0-api-demstatus-query
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DemStatusQueryResponse'}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ListQueryResponse'}
+                - properties:
+                    items:
+                      items: {$ref: '#/components/schemas/DemStatusQueryResponse'}
+                      type: array
+                  type: object
+          description: Successful operation
+      summary: Query ADEM status
+      tags: [ADEM]
+  /sdwan/v2.0/api/sites/{site_id}/demstatus:
+    get:
+      description: Get all ADEM status for a site
+      operationId: get-sdwan-v2.0-api-sites-site_id-demstatus
+      parameters:
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema: {description: Site Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ListResponse'}
+                - properties:
+                    items:
+                      items: {$ref: '#/components/schemas/DemStatus'}
+                      type: array
+                  type: object
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: SITE_NOT_FOUND}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Get all ADEM status for a site (v2.0)
+      tags: [ADEM]
+  /sdwan/v2.0/api/sites/{site_id}/demstatus/{dem_status_id}:
+    get:
+      description: Get ADEM status for a site
+      operationId: get-sdwan-v2.0-api-sites-site_id-demstatus-dem_status_id
+      parameters:
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema: {description: Site Id, type: string}
+      - description: Site Id
+        in: path
+        name: dem_status_id
+        required: true
+        schema: {description: Dem Status Id, type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DemStatus'}
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: SITE_NOT_FOUND}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - {code: SITE_NOT_FOUND}
+              schema: {$ref: '#/components/schemas/Error'}
+          description: Bad Request
+      summary: Get ADEM status for a site (v2.0)
+      tags: [ADEM]
+tags:
+- {name: ADEM}
