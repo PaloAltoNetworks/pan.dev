@@ -54,44 +54,202 @@ module.exports = {
           label: "Network Security",
           items: [
             {
-              to: "#",
-              label: "Docs",
-              className: "section__docs",
-            },
-            {
               to: "cloudngfw/docs",
               label: "Cloud NGFW",
-              className: "indent",
+              logoClass: "panos",
+              docs: [
+                {
+                  to: "cloudngfw/docs",
+                  label: "Cloud NGFW Doc 1"
+                },
+                {
+                  to: "cloudngfw/docs",
+                  label: "Cloud NGFW Doc 2"
+                },
+                {
+                  to: "cloudngfw/docs",
+                  label: "Cloud NGFW Doc 3"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud NGFW API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud NGFW API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud NGFW API Doc 3"
+                },
+              ]
             },
             {
               to: "panos/docs",
               label: "PAN-OS",
-              className: "indent",
-            },
-            {
-              to: "expedition/docs",
-              label: "Expedition",
-              className: "indent",
-            },
-            {
-              to: "#",
-              label: "API Reference",
-              className: "section__docs",
+              logoClass: "panos",
+              docs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS Doc 3"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "PAN-OS API Doc 3"
+                },
+              ]
             },
             {
               to: "cloudngfw/aws/api",
               label: "Cloud NGFW for AWS",
-              className: "indent",
+              logoClass: "panos",
+              docs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS Doc 1"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Cloud AWS API Doc 3"
+                },
+              ]
             },
             {
               to: "cdss/iot/api/iot-public-api-headers",
               label: "IoT API",
-              className: "indent",
+              logoClass: "panos",
+              docs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT Doc 1"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "IoT API Doc 3"
+                },
+              ]
             },
             {
               to: "cdss/tp/api",
               label: "Threat Prevention API",
-              className: "indent",
+              logoClass: "panos",
+              docs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "TP Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "TP Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "TP Doc 1"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "TP API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "TP API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "TP API Doc 3"
+                },
+              ]
+            },
+            {
+              to: "expedition/docs",
+              label: "Expedition",
+              logoClass: "cortex",
+              docs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition Doc 1"
+                },
+              ],
+              apidocs: [
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition API Doc 1"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition API Doc 2"
+                },
+                {
+                  to: "cloudfw/docs",
+                  label: "Expedition API Doc 3"
+                },
+              ]
             },
           ],
         },
@@ -100,65 +258,54 @@ module.exports = {
           to: "sase",
           items: [
             {
-              to: "#",
-              label: "Docs",
-              className: "section__docs",
-            },
-            {
               to: "sase/docs",
-              label: "Prisma SASE Developer's Guide",
-              className: "indent",
-            },
-            {
-              to: "/sase/docs/release-notes/changelog",
-              label: "Prisma SASE Changelog",
-              className: "indent",
-            },
-            {
-              to: "/sase/docs/release-notes/release-notes",
-              label: "Prisma SASE Release Notes",
-              className: "indent",
-            },
-            {
-              to: "#",
-              label: "Prisma SASE API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "sase/api/tenancy",
-              label: "Tenancy Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/iam",
-              label: "Identity and Access Management",
-              className: "indent",
-            },
-            {
-              to: "sase/api/auth",
-              label: "Authentication Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/subscription",
-              label: "Subscription Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/prisma-access-config",
-              label: "Prisma Access Configuration",
-              className: "indent",
-            },
-            {
-              to: "sase/api/mt-monitor",
-              label: "Aggregate Monitoring",
-              className: "indent",
-            },
-            {
-              to: "sase/api/insights/1.0",
-              label: "Prisma Access Insights",
-              className: "indent",
-            },
+              label: "Prisma SASE",
+              logoClass: "prisma",
+              docs: [
+                {
+                  to: "sase/docs",
+                  label: "Prisma SASE Developer's Guide"
+                },
+                {
+                  to: "/sase/docs/release-notes/changelog",
+                  label: "Prisma SASE Changelog",
+                },
+                {
+                  to: "/sase/docs/release-notes/release-notes",
+                  label: "Prisma SASE Release Notes",
+                }
+              ],
+              apidocs: [
+                {
+                  to: "sase/api/tenancy",
+                  label: "Tenancy Service",
+                },
+                {
+                  to: "sase/api/iam",
+                  label: "Identity and Access Management",
+                },
+                {
+                  to: "sase/api/auth",
+                  label: "Authentication Service",
+                },
+                {
+                  to: "sase/api/subscription",
+                  label: "Subscription Service",
+                },
+                {
+                  to: "sase/api/prisma-access-config",
+                  label: "Prisma Access Configuration",
+                },
+                {
+                  to: "sase/api/mt-monitor",
+                  label: "Aggregate Monitoring",
+                },
+                {
+                  to: "sase/api/insights/1.0",
+                  label: "Prisma Access Insights",
+                },
+              ]
+            }
           ],
         },
         {
