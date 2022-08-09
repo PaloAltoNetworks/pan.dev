@@ -71,6 +71,8 @@ module.exports = {
             {
               to: "expedition/docs",
               label: "Expedition",
+              to: "cdss/threat-vault/docs",
+              label: "Threat Prevention Docs",
               className: "indent",
             },
             {
@@ -91,6 +93,8 @@ module.exports = {
             {
               to: "cdss/tp/api",
               label: "Threat Prevention API",
+              to: "cdss/threat-vault/api",
+              label: "Threat Vault API",
               className: "indent",
             },
           ],
@@ -147,6 +151,11 @@ module.exports = {
             {
               to: "sase/api/prisma-access-config",
               label: "Prisma Access Configuration",
+              className: "indent",
+            },
+            {
+              to: "sase/api/sdwan/unified",
+              label: "Prisma SD-WAN",
               className: "indent",
             },
             {
@@ -294,6 +303,18 @@ module.exports = {
         label: "Version 2.0",
         to: "/sase/api/insights/2.0",
         version: "2.0",
+      },
+    ],
+    sdwan_versions: [
+      {
+        label: "Unified SASE SD-WAN",
+        to: "/sase/api/sdwan/unified",
+        version: "unified",
+      },
+      {
+        label: "Legacy Prisma SD-WAN",
+        to: "/sase/api/sdwan/legacy",
+        version: "legacy",
       },
     ],
   },
