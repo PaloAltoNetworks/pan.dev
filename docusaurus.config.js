@@ -73,6 +73,24 @@ module.exports = {
                   to: "cloudngfw/docs/getstarted_aws/",
                   label: "Cloud NGFW for AWS"
                 },
+              ],
+              apidocs: [
+                {
+                  to: "cloudngfw/aws/api/",
+                  label: "Using Cloud NGFW for AWS REST APIs"
+                },
+                {
+                  to: "cloudngfw/api/aws/associaterulestacks/",
+                  label: "Associate Rulestacks to NGFW"
+                },
+                {
+                  to: "cloudngfw/api/aws/manageapitokens/",
+                  label: "Manage API Tokens"
+                },
+                {
+                  to: "cloudngfw/api/aws/managecertificateobjects/",
+                  label: "Manage Certificate Objects"
+                },
               ]
             },
             {
