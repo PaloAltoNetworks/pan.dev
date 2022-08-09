@@ -1,3 +1,7 @@
+---
+id: contributing
+---
+
 # Contributing Guidelines
 
 Thank you for your interest in **Palo Alto Networks** developer documentation!
@@ -252,9 +256,9 @@ module.exports = {
     {
       type: "category",
       label: "Tutorials", // Category label
-      items: ["apis/my_awesome_tutorial"] // Document ID (including relative path)
-    }
-  ]
+      items: ["apis/my_awesome_tutorial"], // Document ID (including relative path)
+    },
+  ],
 };
 ```
 
