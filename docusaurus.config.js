@@ -70,7 +70,7 @@ module.exports = {
             },
             {
               to: "cdss/threat-vault/docs",
-              label: "Threat Vault",
+              label: "Cloud-Delivered Security Services",
               className: "indent",
             },
             {
