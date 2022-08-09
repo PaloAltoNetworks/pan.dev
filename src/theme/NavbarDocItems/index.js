@@ -1,5 +1,5 @@
 import React from 'react'
-import NavbarNavLink from '../NavbarItem/NavbarNavLink'
+import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
 
 function NavbarDocItems({ apiDocs, docs }) {
   const apiDocItems = apiDocs &&
@@ -36,7 +36,7 @@ function NavbarDocItems({ apiDocs, docs }) {
 
   return (
     <div className="navbar-doc-items-container">
-      <ul className="navbar-doc-items">
+      <ul>
         {apiDocs && apiDocItems}
         {docs && docItems}
       </ul>
