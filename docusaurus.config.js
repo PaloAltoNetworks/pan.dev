@@ -136,7 +136,7 @@ module.exports = {
             },
             {
               to: "sase/api/subscription",
-              label: "Security Subscription Service",
+              label: "Subscription Service",
               className: "indent",
             },
             {
@@ -302,7 +302,7 @@ module.exports = {
         label: "Legacy Prisma SD-WAN",
         to: "/sase/api/sdwan/legacy",
         version: "legacy",
-      }
+      },
     ],
   },
   onDuplicateRoutes: "throw",
