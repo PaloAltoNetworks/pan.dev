@@ -20,11 +20,8 @@ function NavbarItems({items}) {
   return (
     <>
       {items.map((item, i) => (
-        <>
           <NavbarItem {...item} key={i} />
-        </>
       ))}
-
     </>
   );
 }

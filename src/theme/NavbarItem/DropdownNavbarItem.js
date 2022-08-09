@@ -22,9 +22,11 @@ function isItemActive(item, localPathname) {
   }
   return false;
 }
+
 function containsActiveItems(items, localPathname) {
   return items.some((item) => isItemActive(item, localPathname));
 }
+
 function DropdownNavbarItemDesktop({
   items,
   position,
@@ -35,6 +37,7 @@ function DropdownNavbarItemDesktop({
   const dropdownRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [apiDocItems, setApiDocItems] = useState({ apidocs: null, docs: null }); 
+  const showDualNavLayout = position === "left";
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -56,30 +59,54 @@ function DropdownNavbarItemDesktop({
       document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [dropdownRef]);
-  return (
-    <div
-      ref={dropdownRef}
-      className={clsx('navbar__item', 'dropdown', 'dropdown--hoverable', {
-        'dropdown--right': position === 'right',
-        'dropdown--show': showDropdown,
-      })}>
-      <NavbarNavLink
-        aria-haspopup="true"
-        aria-expanded={showDropdown}
-        role="button"
-        href={props.to ? undefined : '#'}
-        className={clsx('navbar__link', className)}
-        {...props}
-        onClick={props.to ? undefined : (e) => e.preventDefault()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            setShowDropdown(!showDropdown);
-          }
-        }}>
-        {props.children ?? props.label}
-      </NavbarNavLink>
+
+  function SingleDropdownMenu() {
+    return (
       <div className="dropdown__menu">
+        <ul>
+          {items.map((childItemProps, i) => {
+            const { apidocs, docs, logoClass } = childItemProps;
+              return (
+                <NavbarItem
+                  className={logoClass}
+                  isDropdownItem
+                  onClick={(e) => {
+                    if (apidocs || docs) {
+                      e.preventDefault(); 
+                      setApiDocItems({ apidocs, docs });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (i === items.length - 1 && e.key === 'Tab') {
+                      e.preventDefault();
+                      setShowDropdown(false);
+                      const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                      if (nextNavbarItem) {
+                        const targetItem =
+                          nextNavbarItem instanceof HTMLAnchorElement
+                            ? nextNavbarItem
+                            : // Next item is another dropdown; focus on the inner
+                              // anchor element instead so there's outline
+                              nextNavbarItem.querySelector('a');
+                        targetItem.focus();
+                      }
+                    }
+                  }}
+                  activeClassName="dropdown__link--active"
+                  {...childItemProps}
+                  key={i}
+                />
+              )
+            }
+            )}
+        </ul>
+      </div>
+    )
+  }
+
+  function DualDropdownMenu() {
+    return (
+      <div className="dropdown__menu dual-layout">
         <ul>
           <span className="navbar-section-title">{props.children ?? props.label}</span>
           {items.map((childItemProps, i) => {
@@ -89,8 +116,10 @@ function DropdownNavbarItemDesktop({
                   className={logoClass}
                   isDropdownItem
                   onClick={(e) => {
-                    e.preventDefault(); 
-                    setApiDocItems({ apidocs, docs });
+                    if (apidocs || docs) {
+                      e.preventDefault(); 
+                      setApiDocItems({ apidocs, docs });
+                    }
                   }}
                   onKeyDown={(e) => {
                     if (i === items.length - 1 && e.key === 'Tab') {
@@ -119,9 +148,37 @@ function DropdownNavbarItemDesktop({
         <div className="navbar-section-border"></div>
         <NavbarDocItems apiDocs={apiDocItems.apidocs} docs={apiDocItems.docs} />
       </div>
+    )
+  }
+
+  return (
+    <div
+      ref={dropdownRef}
+      className={clsx('navbar__item', 'dropdown', 'dropdown--hoverable', {
+        'dropdown--right': position === 'right',
+        'dropdown--show': showDropdown,
+      })}>
+      <NavbarNavLink
+        aria-haspopup="true"
+        aria-expanded={showDropdown}
+        role="button"
+        href={props.to ? undefined : '#'}
+        className={clsx('navbar__link', className)}
+        {...props}
+        onClick={props.to ? undefined : (e) => e.preventDefault()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            setShowDropdown(!showDropdown);
+          }
+        }}>
+        {props.children ?? props.label}
+      </NavbarNavLink>
+      {showDualNavLayout ? <DualDropdownMenu/> : <SingleDropdownMenu />}
     </div>
   );
 }
+
 function DropdownNavbarItemMobile({
   items,
   className,
@@ -140,6 +197,7 @@ function DropdownNavbarItemMobile({
       setCollapsed(!containsActive);
     }
   }, [localPathname, containsActive, setCollapsed]);
+
   return (
     <li
       className={clsx('menu__list-item', {
@@ -173,6 +231,7 @@ function DropdownNavbarItemMobile({
     </li>
   );
 }
+
 export default function DropdownNavbarItem({mobile = false, ...props}) {
   const Comp = mobile ? DropdownNavbarItemMobile : DropdownNavbarItemDesktop;
   return <Comp {...props} />;

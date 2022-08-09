@@ -2,6 +2,8 @@ import React from 'react'
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
 
 function NavbarDocItems({ apiDocs, docs }) {
+  if (!apiDocs && !docs) return null; 
+  
   const apiDocItems = apiDocs &&
     <>
       <span className="navbar-section-title">API Reference</span>
