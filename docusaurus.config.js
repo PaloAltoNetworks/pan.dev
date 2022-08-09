@@ -60,29 +60,18 @@ module.exports = {
               docs: [
                 {
                   to: "cloudngfw/docs",
-                  label: "Cloud NGFW Doc 1"
-                },
-                {
-                  to: "cloudngfw/docs",
-                  label: "Cloud NGFW Doc 2"
-                },
-                {
-                  to: "cloudngfw/docs",
-                  label: "Cloud NGFW Doc 3"
-                },
+                  label: "Cloud NGFW Overview"
+                }
               ],
-              apidocs: [
+            },
+            {
+              to: "cloudngfw/aws/api",
+              label: "Cloud NGFW for AWS",
+              logoClass: "panos",
+              docs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "Cloud NGFW API Doc 1"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "Cloud NGFW API Doc 2"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "Cloud NGFW API Doc 3"
+                  to: "cloudngfw/docs/getstarted_aws/",
+                  label: "Cloud NGFW for AWS"
                 },
               ]
             },
@@ -92,63 +81,42 @@ module.exports = {
               logoClass: "panos",
               docs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS Doc 1"
+                  to: "panos/docs",
+                  label: "PAN-OS Docs Overview"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS Doc 2"
+                  to: "panos/docs/automation/",
+                  label: "Automation"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS Doc 3"
-                },
-              ],
-              apidocs: [
-                {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS API Doc 1"
+                  to: "panos/docs/automation/terraform_ansible_container/",
+                  label: "Terraform and Ansible Automation Container"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS API Doc 2"
+                  to: "panos/docs/automation/ansible_qs/",
+                  label: "Ansible Quickstart"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "PAN-OS API Doc 3"
-                },
-              ]
-            },
-            {
-              to: "cloudngfw/aws/api",
-              label: "Cloud NGFW for AWS",
-              logoClass: "panos",
-              docs: [
-                {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS Doc 1"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS Doc 1"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS Doc 1"
+                  to: "panos/docs/automation/terraform_qs/",
+                  label: "Terraform Quickstart"
                 },
               ],
               apidocs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS API Doc 1"
+                  to: "panos/docs/apis/",
+                  label: "PAN-OS APIs and SDKs"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS API Doc 2"
+                  to: "panos/docs/apis/xmlapi_qs/",
+                  label: "XML API Quickstart"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Cloud AWS API Doc 3"
+                  to: "panos/docs/apis/restapi_qs/",
+                  label: "REST API Quickstart"
+                },
+                {
+                  to: "panos/docs/apis/pandevice_qs/",
+                  label: "PAN-OS-Python Framework Quickstart"
                 },
               ]
             },
@@ -158,30 +126,26 @@ module.exports = {
               logoClass: "panos",
               docs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "IoT Doc 1"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "IoT Doc 1"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "IoT Doc 1"
-                },
+                  to: "cdss/iot/api/iot-public-api-headers",
+                  label: "IoT Public API Authentication"
+                }
               ],
               apidocs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "IoT API Doc 1"
+                  to: "cdss/iot/api/alert-list",
+                  label: "Get Security Alerts"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "IoT API Doc 2"
+                  to: "cdss/iot/api/alert-resolve/",
+                  label: "Resolve a Security Alert"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "IoT API Doc 3"
+                  to: "cdss/iot/api/aruba-wlc-bulk-update",
+                  label: "Bulk Device Updates"
+                },
+                {
+                  to: "cdss/iot/api/device-detail-ip",
+                  label: "Get Device Details"
                 },
               ]
             },
@@ -191,31 +155,35 @@ module.exports = {
               logoClass: "panos",
               docs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "TP Doc 1"
+                  to: "cdss/tp/api/",
+                  label: "Threat Vault API Overview"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "TP Doc 1"
+                  to: "cdss/tp/tp-public-api-headers/",
+                  label: "Threat Vault API Authentication"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "TP Doc 1"
+                  to: "cdss/tp/tp-public-api-access-limits/",
+                  label: "Threat Vault API Access Limits"
+                },
+                {
+                  to: "cdss/tp/tp-public-api-manage-key/",
+                  label: "Threat Vault API Key Management"
+                },
+                {
+                  to: "cdss/tp/tp-public-api-best-practices/",
+                  label: "Threat Vault API Best Practices"
                 },
               ],
               apidocs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "TP API Doc 1"
+                  to: "cdss/tp/api/threat-prevention-api-overview/",
+                  label: "Threat Prevention API Overview"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "TP API Doc 2"
-                },
-                {
-                  to: "cloudfw/docs",
-                  label: "TP API Doc 3"
-                },
+                  to: "cdss/atp/api/advanced-threat-prevention-api-overview/",
+                  label: "Advanced Threat Prevention API Overview"
+                }
               ]
             },
             {
@@ -224,30 +192,34 @@ module.exports = {
               logoClass: "cortex",
               docs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition Doc 1"
+                  to: "expedition/docs",
+                  label: "Expedition Overview"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition Doc 1"
+                  to: "expedition/docs/expedition_qs/",
+                  label: "Install Expedition"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition Doc 1"
+                  to: "expedition/docs/expedition_export/",
+                  label: "Export Vendor Configuration"
                 },
               ],
               apidocs: [
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition API Doc 1"
+                  to: "expedition/docs/expedition_apiint/",
+                  label: "Expedition API Introduction"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition API Doc 2"
+                  to: "expedition/docs/creating_credentials/",
+                  label: "Obtaining API Keys"
                 },
                 {
-                  to: "cloudfw/docs",
-                  label: "Expedition API Doc 3"
+                  to: "expedition/docs/managing_expedition_agent/",
+                  label: "Managing Expedition's Agent"
+                },
+                {
+                  to: "expedition/docs/managing_jobs/",
+                  label: "Managing Jobs"
                 },
               ]
             },
