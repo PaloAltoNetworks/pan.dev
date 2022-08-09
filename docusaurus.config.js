@@ -221,6 +221,11 @@ module.exports = {
     [
       "@docusaurus/preset-classic",
       {
+        docs: {
+          id: "docs",
+          path: "contributing",
+          routeBasePath: "docs",
+        },
         theme: {
           customCss: [require.resolve("./src/css/custom.css")],
         },
