@@ -69,6 +69,11 @@ module.exports = {
               className: "indent",
             },
             {
+              to: "cdss/threat-vault/docs",
+              label: "Cloud-Delivered Security Services",
+              className: "indent",
+            },
+            {
               to: "#",
               label: "API Reference",
               className: "section__docs",
@@ -76,6 +81,11 @@ module.exports = {
             {
               to: "cloudngfw/aws/api",
               label: "Cloud NGFW for AWS",
+              className: "indent",
+            },
+            {
+              to: "cdss/threat-vault/api",
+              label: "Threat Vault API",
               className: "indent",
             },
           ],
@@ -212,8 +222,9 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
-          sidebarPath: require.resolve("./contributing/sidebars.js"),
+          id: "docs",
           path: "contributing",
+          routeBasePath: "docs",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css")],
@@ -256,6 +267,15 @@ module.exports = {
         sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
       },
     ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "cdss",
+        path: "cdss",
+        routeBasePath: "cdss",
+        sidebarPath: require.resolve("./cdss/sidebar.js"),
+      },
+    ],
   ],
   stylesheets: [
     {
@@ -287,7 +307,7 @@ module.exports = {
         label: "Legacy Prisma SD-WAN",
         to: "/sase/api/sdwan/legacy",
         version: "legacy",
-      }
+      },
     ],
   },
   onDuplicateRoutes: "throw",
