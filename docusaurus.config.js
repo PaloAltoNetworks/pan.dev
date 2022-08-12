@@ -51,124 +51,197 @@ module.exports = {
       },
       items: [
         {
-          label: "Network Security",
+          label: "Docs",
+          megaNav: true,
           items: [
             {
-              to: "#",
-              label: "Docs",
-              className: "section__docs",
+              label: "Network Security",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  label: "Cloud NGFW Overview",
+                  to: "cloudngfw/docs"
+                },
+                {
+                  label: "PAN-OS Docs",
+                  to: "panos/docs"
+                },
+                {
+                  label: "CDSS Overview",
+                  to: "cdss/docs"
+                },
+                {
+                  label: "Threat Vault",
+                  to: "cdss/threat-vault/docs"
+                },
+                {
+                  label: "Expedition Docs",
+                  to: "expedition/docs"
+                },
+              ]
             },
             {
-              to: "cloudngfw/docs",
-              label: "Cloud NGFW",
-              className: "indent",
+              label: "Security Access Service Edge",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "sase/docs",
+                  label: "Prisma SASE Developer's Guide",
+                },
+                {
+                  to: "sase/docs/prisma-access-config/prisma-access-config",
+                  label: "Prisma Access Configuration",
+                },
+                {
+                  to: "sase/docs/insights",
+                  label: "Prisma Access Insights",
+                },
+                {
+                  to: "sase/docs/sdwan/sdwan",
+                  label: "Prisma SD-WAN",
+                },
+              ]
             },
             {
-              to: "panos/docs",
-              label: "PAN-OS",
-              className: "indent",
+              label: "Cloud Native Security",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
+                  label: "CSPM Docs",
+                },
+                {
+                  to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
+                  label: "CWPP Docs",
+                },
+                {
+                  to: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security",
+                  label: "Prisma Cloud Product Docs",
+                },
+              ]
             },
             {
-              to: "expedition/docs",
-              label: "Expedition",
-              to: "cdss/threat-vault/docs",
-              label: "Threat Prevention Docs",
-              className: "indent",
+              label: "Security Operations",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "https://xsoar.pan.dev/docs/welcome",
+                  label: "Cortex XSOAR Developer Docs",
+                },
+                {
+                  to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                  label: "Xpanse Python SDK",
+                },
+              ]
             },
-            {
-              to: "#",
-              label: "API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "cloudngfw/aws/api",
-              label: "Cloud NGFW for AWS",
-              className: "indent",
-            },
-            {
-              to: "cdss/iot/api/iot-public-api-headers",
-              label: "IoT API",
-              className: "indent",
-            },
-            {
-              to: "cdss/tp/api",
-              label: "Threat Prevention API",
-              to: "cdss/threat-vault/api",
-              label: "Threat Vault API",
-              className: "indent",
-            },
-          ],
+          ]
         },
         {
-          label: "Secure Access Service Edge",
+          label: "API Reference",
           to: "sase",
+          megaNav: true,
           items: [
             {
-              to: "#",
-              label: "Docs",
-              className: "section__docs",
+              label: "Network Security",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "cloudngfw/aws/api/",
+                  label: "Cloud NGFW for AWS API",
+                },
+                {
+                  to: "panos/docs/apis/",
+                  label: "PAN-OS APIs and SDKs",
+                },
+                {
+                  to: "cdss/iot/api/iot-public-api-headers",
+                  label: "IoT API",
+                },
+                {
+                  to: "cdss/threat-vault/api",
+                  label: "Threat Vault API",
+                },
+              ]
             },
             {
-              to: "sase/docs",
-              label: "Prisma SASE Developer's Guide",
-              className: "indent",
+              label: "Security Access Service Edge",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "sase/api/tenancy",
+                  label: "Tenancy Service",
+                },
+                {
+                  to: "sase/api/iam",
+                  label: "Identity and Access Management",
+                },
+                {
+                  to: "sase/api/auth",
+                  label: "Authentication Service",
+                },
+                {
+                  to: "sase/api/subscription",
+                  label: "Subscription Service",
+                },
+                {
+                  to: "sase/api/mt-monitor",
+                  label: "Aggregate Monitoring",
+                },
+                {
+                  to: "sase/api/prisma-access-config",
+                  label: "Prisma Access Configuration API",
+                },
+                {
+                  to: "sase/api/insights/2.0",
+                  label: "Prisma Access Insights API",
+                },
+                {
+                  to: "sase/api/sdwan",
+                  label: "Prisma SD-WAN API",
+                },
+              ]
             },
             {
-              to: "/sase/docs/release-notes/changelog",
-              label: "Prisma SASE Changelog",
-              className: "indent",
+              label: "Cloud Native Security",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "https://prisma.pan.dev/api/cloud/cspm",
+                  label: "CSPM API",
+                },
+                {
+                  to: "https://prisma.pan.dev/api/cloud/cwpp",
+                  label: "CWPP API",
+                },
+                {
+                  to: "https://prisma.pan.dev/api/cloud/code",
+                  label: "Code Security API",
+                },
+              ]
             },
             {
-              to: "/sase/docs/release-notes/release-notes",
-              label: "Prisma SASE Release Notes",
-              className: "indent",
+              label: "Security Operations",
+              to: "/",
+              className: "dropdown__category-title",
+              children: [
+                {
+                  to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
+                  label: "XSOAR (Demisto) API",
+                },
+                {
+                  to: "https://cortex.pan.dev/api/expander/annotations-apis",
+                  label: "Expander API",
+                },
+              ]
             },
-            {
-              to: "#",
-              label: "Prisma SASE API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "sase/api/tenancy",
-              label: "Tenancy Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/iam",
-              label: "Identity and Access Management",
-              className: "indent",
-            },
-            {
-              to: "sase/api/auth",
-              label: "Authentication Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/subscription",
-              label: "Subscription Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/prisma-access-config",
-              label: "Prisma Access Configuration",
-              className: "indent",
-            },
-            {
-              to: "sase/api/sdwan/unified",
-              label: "Prisma SD-WAN",
-              className: "indent",
-            },
-            {
-              to: "sase/api/mt-monitor",
-              label: "Aggregate Monitoring",
-              className: "indent",
-            },
-            {
-              to: "sase/api/insights/1.0",
-              label: "Prisma Access Insights",
-              className: "indent",
-            },
-          ],
+          ]
         },
         {
           label: "Other Developer Docs",
