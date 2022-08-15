@@ -202,7 +202,7 @@ module.exports = {
                   label: "Prisma Access Insights API",
                 },
                 {
-                  to: "sase/api/sdwan",
+                  to: "sase/api/sdwan/unified",
                   label: "Prisma SD-WAN API",
                 },
               ]
@@ -236,7 +236,7 @@ module.exports = {
                   label: "XSOAR (Demisto) API",
                 },
                 {
-                  to: "https://cortex.pan.dev/api/expander/annotations-apis",
+                  to: "https://cortex.pan.dev/api/expander/annotations-api",
                   label: "Expander API",
                 },
               ]
