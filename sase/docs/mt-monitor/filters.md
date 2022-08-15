@@ -19,7 +19,7 @@ In a POST request body, you will provide a required filter. This is a json objec
 
 In a POST request body, you will also provide required properties. This is an array of objects. Property field names will be returned in the API response. You can use one or more properties to customize the response, but you can also use most of the examples in the API reference just as they are.
 
-For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/dataresources#operation/post-mt-monitor-v1-agg-threats-summary) contains a filter with rules of [Rule2](#rule2), [RuleName3](#rulename3), and [TimeFilter](#timefilter), and properties of [Property6](#property6):
+For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/dataresources#operation/post-mt-monitor-v1-agg-threats-summary) contains a filter with rules of [ThreatSummaryRule](#threatsummaryrule) and [TimeFilter](#timefilter), and properties of [ThreatSummaryProperty](#threatsummaryproperty):
 
     {
       "filter": {
@@ -91,7 +91,77 @@ For example:
         }
       ]...
 
-### Rule ###
+### ApplicationRule ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| rule | string | Rule name. Must be `app_risky` or `blocked`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "rule": "app_risky"
+      }...
+
+### AppSrcRule ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| rule | string | Rule name. Must be `app_risky`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "rule": "app_risky"
+      }...
+
+### AppSummaryRule ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| rule | string | Rule name. Must be `app_risky`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "rule": "app_risky"
+      }...
+
+### ThreatRule ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field name. Must be `threat_severity`.
+| operator | string | Operator to run on the `property` field. Must be `equals`.
+| values | array of strings | Property value. Must be `critical`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "operator": "equals",
+        "property": "threat_severity",
+        "values": [
+          "critical"
+        ]
+      }...
+
+### ThreatSrcRule ###
 
 Object with the following properties:
 
@@ -116,29 +186,7 @@ For example:
         }
     }...
 
-### Rule1 ###
-
-Object with the following properties:
-
-| Property | Type | Description |
-| --- | --- | --- |
-| property | string | Property field name. Must be `threat_severity`.
-| operator | string | Operator to run on the `property` field. Must be `equals`.
-| values | array of strings | Property value. Must be `critical`.
-
-For example:
-
-    ...
-    "rules": [
-      {
-        "operator": "equals",
-        "property": "threat_severity",
-        "values": [
-          "critical"
-        ]
-      }...
-
-### Rule2 ###
+### ThreatSummaryRule ###
 
 Object with the following properties:
 
@@ -162,71 +210,52 @@ For example:
         ]
       }...
 
-### RuleName ###
+### UrlLogsRule ###
 
 Object with the following properties:
 
 | Property | Type | Description |
 | --- | --- | --- |
-| rule | string | Rule name. Must be `app_risky`.
+| property | string | Property field name. Must be `url_category_value`.
+| operator | string | Operator to run on the `property` field. Must be `in`.
+| values | array of strings | Property value. Can be one or more of the following when used with `url_category_value` and `in`: <ul><li>`high-risk` </li><li>`malware`</li></ul>
 
 For example:
 
     ...
     "rules": [
       {
-        "rule": "app_risky"
+        "property": "url_category_value",
+        "operator": "in",
+        "values": [
+          "high-risk",
+          "malware"
+        ]
       }...
 
-### RuleName1 ###
+### TimeFilter ###
 
 Object with the following properties:
 
 | Property | Type | Description |
 | --- | --- | --- |
-| rule | string | Rule name. Must be `app_risky`.
+| operator | string | Operator to run on the `property` field. Can be one of the following: <ul><li>`gt` - greater than comparison</li><li>`lt` - less than comparison</li><li>`last_n_minutes` - minutes comparison</li><li>`last_n_hours` - hours comparison</li><li>`last_n_days` - days comparison</li></ul>
+| property | string | Property field name. Can be one or more of the following: <ul><li>`event_time`</li><li>`update_time`</li><li>`updated_time`</li></ul>.
+| values | array of strings | Property value. Can be any number that represents minute, hour, or day counts when `property` is `event_time`.
 
 For example:
 
     ...
     "rules": [
       {
-        "rule": "app_risky"
+        "operator": "last_n_days",
+        "property": "event_time",
+        "values": [
+          7
+        ]
       }...
 
-### RuleName2 ###
-
-Object with the following properties:
-
-| Property | Type | Description |
-| --- | --- | --- |
-| rule | string | Rule name. Must be `app_risky`.
-
-For example:
-
-    ...
-    "rules": [
-      {
-        "rule": "app_risky"
-      }...
-
-### RuleName3 ###
-
-Object with the following properties:
-
-| Property | Type | Description |
-| --- | --- | --- |
-| rule | string | Rule name. Can be one of the following: <ul><li>`blocked` - blocked threats</li><li>`unblocked` - unblocked threats</li></ul>
-
-For example:
-
-    ...
-    "rules": [
-      {
-        "rule": "blocked"
-      }...
-
-### RuleName4 ###
+### UrlSummaryRule ###
 
 Object with the following properties:
 
@@ -245,35 +274,12 @@ For example:
         "rule": "blocked"
       }...
 
-
-### TimeFilter ###
-
-Object with the following properties:
-
-| Property | Type | Description |
-| --- | --- | --- |
-| operator | string | Operator to run on the `property` field. Can be one of the following: <ul><li>`equals` - single value comparison</li><li>`in` - multiple value comparison</li><li>`gt` - greater than comparison</li><li>`lt` - less than comparison</li><li>`last_n_minutes` - minutes comparison</li><li>`last_n_hours` - hours comparison</li><li>`last_n_days` - days comparison</li></ul>
-| property | string | Property field name. Must be `event_time`.
-| values | array of strings | Property value. Can be any number that represents minute, hour, or day counts when `property` is `event_time`.
-
-For example:
-
-    ...
-    "rules": [
-      {
-        "operator": "last_n_days",
-        "property": "event_time",
-        "values": [
-          7
-        ]
-      }...
-
 ## Properties ##
 Properties are a required array of objects. Properties are database field names that will be returned in the API response. You can use one or more properties to customize your request, but you can also use most of the examples in the [API reference](/sase/api/mt-monitor) as they are. 
 
 Some of the properties are predefined, so you must use exactly what you see. Some properties contain choices, so you can decide. 
 
-### Property ###
+### AlertProperty ###
 
 Object with the following properties:
 
@@ -301,35 +307,7 @@ For example:
         }
       ]
 
-### Property1 ###
-
-Object with the following properties:
-
-| Property | Type | Description |
-| --- | --- | --- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_app_count` - total count of risky applications</li><li>`total_app_remote_network` - total count of risky applications for remote networks</li><li>`total_app_mobile_users` - total count of risky apps for mobile users</li><li>`total_app_proxy_nodes` - total count of risky apps for proxy nodes</li></ul>
-
-For example:
-
-    "properties": [
-      {
-        "property": "sub_tenant_id"
-      },
-      {
-        "property": "total_app_count"
-      },
-      {
-        "property": "total_app_remote_network"
-      },
-      {
-        "property": "total_app_mobile_users"
-      },
-      {
-        "property": "total_app_proxy_nodes"
-      }
-    ]
-
-### Property2 ###
+### ApplicationProperty ###
 
 Object with the following properties:
 
@@ -367,8 +345,7 @@ For example:
       ]
     }
 
-
-### Property3 ###
+### AppSrcProperty ###
 
 Object with the following properties:
 
@@ -390,7 +367,50 @@ For example:
         }
       ]
 
-### Property4 ###
+### AppSummaryProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`total_app_count`</li><li>`total_app_remote_network`</li><li>`total_app_mobile_users`</li><li>`total_app_proxy_nodes`</li></ul> 
+
+For example:
+
+    "properties": [
+          {
+          "property": "sub_tenant_id"
+          },
+          {
+          "property": "total_app_count"
+          },
+          {
+          "property": "risk_of_app_count"
+          }
+        ]
+
+### ResourceProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`severity`</li><li>`alert_id`</li><li>`node_type`</li><li>`node_count`</li></ul> 
+
+For example:
+
+    "properties": [
+        {
+          "property": "alert_id"
+        },
+        {
+          "property": "node_type
+        {
+          "property": "node_count"
+        }
+      ]
+
+### ThreatSrcProperty ###
 
 Object with the following properties:
 
@@ -418,7 +438,7 @@ For example:
         }
       ]
 
-### Property5 ###
+### ThreatProperty ###
 
 Object with the following properties:
 
@@ -462,13 +482,13 @@ For example:
         }
       ]
 
-### Property6 ###
+### ThreatSummaryProperty ###
 
 Object with the following properties:
 
 | Property | Type | Description |
 | --- | --- | --- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_threats`</li><li>`blocked_count`</li><li>`unblocked_count`</li></ul>
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_threats`</li><li>`blocked_count`</li><li>`unblocked_count`</li><li>`malicious_count`</li></ul>
 
 For example:
 
@@ -481,7 +501,7 @@ For example:
         }
       ]
 
-### Property7 ###
+### UrlSummaryProperty ###
 
 Object with the following properties:
 
@@ -509,7 +529,7 @@ For example:
         }
       ]
 
-### Property8 ###
+### UpgradeListProperty ###
 
 Object with the following properties:
 
