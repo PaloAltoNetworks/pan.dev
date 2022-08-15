@@ -60,7 +60,7 @@ Refer to [Obtaining the API Keys](creating_credentials.mdx) section to obtain a 
 
 ### Step 2. Start the Expedition Agent
 
-Refer to [Managing Expedition's Agent](managing_expedition_agent) section to start the agent and be able to perform imports into a project.
+Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agent) section to start the agent and be able to perform imports into a project.
 
 ### Step 3. Create an Expedition project
 

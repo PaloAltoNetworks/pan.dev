@@ -19,7 +19,7 @@ To follow this tutorial, it is recommended that that you are familiar with the c
 
 Make sure you have a Palo Alto Networks Next-Generation Firewall deployed and that you have administrative access to its Management interface via HTTPS. To avoid potential disruptions, it's recommended to run all the tests on a **non-production** environment.
 
-In this tutorial you'll find code examples leveraging the [pan-python](/docs/apis/panpython_qs) and [pan-go](/docs/apis/pango_qs). It is assumed that the reader has basic PAN-OS API knowledge ([curl](/docs/apis/xmlapi_qs)) and that owns an API KEY for his PAN-OS device ([Grab the API Key](/docs/apis/xmlapi_qs#get-your-api-key))
+In this tutorial you'll find code examples leveraging the [pan-python](/panos/docs/apis/panpython_qs) and [pan-go](/panos/docs/apis/pango_qs). It is assumed that the reader has basic PAN-OS API knowledge ([curl](/panos/docs/apis/xmlapi_qs)) and that owns an API KEY for his PAN-OS device ([Grab the API Key](/panos/docs/apis/xmlapi_qs#get-your-api-key))
 
 ## Rule hit count
 
@@ -136,7 +136,7 @@ response
 
 As you can see the job of extracting runtime data from a PAN-OS firewall using the API is quite straightforward. Processing the XML output, though, can be a bit tough using plain POSIX/GNU CLI tools.
 
-Let's leverage two of the most used PAN-OS SDK's ( [pan-python](/docs/apis/panpython_qs) and [pan-go](/docs/apis/pango_qs) ) to get the job done.
+Let's leverage two of the most used PAN-OS SDK's ( [pan-python](/panos/docs/apis/panpython_qs) and [pan-go](/panos/docs/apis/pango_qs) ) to get the job done.
 
 ### Exporting rule hit count to CSV using Python
 

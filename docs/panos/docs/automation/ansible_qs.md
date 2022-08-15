@@ -68,4 +68,4 @@ repository (at <https://github.com/PaloAltoNetworks>) or sites other
 than our official Downloads page on <https://support.paloaltonetworks.com>
 are provided under the besteffort policy.
 
-## [Click here for an automated Terraform and Ansible One-click deployment for AWS and Azure](terraform_ansible_container)
+## [Click here for an automated Terraform and Ansible One-click deployment for AWS and Azure](/panos/docs/automation/terraform_ansible_container)

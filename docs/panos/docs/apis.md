@@ -18,11 +18,11 @@ When configuring and managing the Palo Alto Networks Next-Generation firewall fo
 
 ### XML API
 
-A powerful low-level API that covers all the firewall's features. Take full control of every aspect of your security and build deep integrations with your systems. Make API calls directly on the firewall or from Panorama. <a href="/docs/apis/xmlapi_qs" target="_self">Get Started</a>
+A powerful low-level API that covers all the firewall's features. Take full control of every aspect of your security and build deep integrations with your systems. Make API calls directly on the firewall or from Panorama. <a href="/panos/docs/apis/xmlapi_qs" target="_self">Get Started</a>
 
 ### REST API
 
-The new PAN-OS REST API simplifies access to policy resources on the firewall as top-level URIs. You can use the API to create, change, and delete these resources directly on the firewall or from Panorama. <a href="/docs/apis/restapi_qs" target="_self">Get Started</a>
+The new PAN-OS REST API simplifies access to policy resources on the firewall as top-level URIs. You can use the API to create, change, and delete these resources directly on the firewall or from Panorama. <a href="/panos/docs/apis/restapi_qs" target="_self">Get Started</a>
 
 ### SDKs
 
@@ -30,15 +30,15 @@ Jumpstart your automation project with SDKs for Python and Go!
 
 ##### PAN-OS-Python Framework
 
-Object-based interaction with the firewall in these language simplifies interaction with the firewall so you can focus on the automation itself. [Get Started](/docs/apis/pandevice_qs)
+Object-based interaction with the firewall in these language simplifies interaction with the firewall so you can focus on the automation itself. [Get Started](/panos/docs/apis/pandevice_qs)
 
 ##### PAN Python SDK
 
-Powerful, low-level SDK for interacting with **PAN-OS®**, **WildFire**, **AutoFocus** and more. [Get Started](/docs/apis/panpython_qs)
+Powerful, low-level SDK for interacting with **PAN-OS®**, **WildFire**, **AutoFocus** and more. [Get Started](/panos/docs/apis/panpython_qs)
 
 ##### PAN Go SDK
 
-A PAN-OS® GoLang SDK that also serves as the underlying client library for the Palo Alto Networks Terraform provider. [Get Started](/docs/apis/pango_qs)
+A PAN-OS® GoLang SDK that also serves as the underlying client library for the Palo Alto Networks Terraform provider. [Get Started](/panos/docs/apis/pango_qs)
 
 ---
 

@@ -33,7 +33,7 @@ mkvirtualenv pan-os-python
 pip install pan-os-python
 ```
 
-Pip will install the [pan-python](/docs/apis/panpython_qs) library as a dependency.
+Pip will install the [pan-python](/panos/docs/apis/panpython_qs) library as a dependency.
 
 Upgrade to the latest version:
 

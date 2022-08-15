@@ -41,7 +41,7 @@ To follow this guide, it is recommended that that you are familiar with the conc
 
 Make sure you have a Palo Alto Networks Next-Generation Firewall deployed and that you have administrative access to its Management interface via HTTPS. To avoid potential disruptions, it's recommended to run all the tests on a **non-production** environment.
 
-No specific programming language expertise is required, although _Python_ is recommended. Examples with both [curl](/docs/apis/xmlapi_qs) and [pan-python](/docs/apis/panpython_qs) are provided.
+No specific programming language expertise is required, although _Python_ is recommended. Examples with both [curl](/panos/docs/apis/xmlapi_qs) and [pan-python](/panos/docs/apis/panpython_qs) are provided.
 
 ## Steps
 
@@ -140,13 +140,13 @@ The Firewall configuration has been completed! No further commits are required b
 
 ### Step 4: Obtain the Firewall API Key
 
-It is now time to start interacting with the PAN-OS APIs. If you're able to connect to the Firewall management interface as admin, you should also be able to issue commands via the API. If you run into issues, please check if [API access is enabled](/docs/apis/xmlapi_qs) for your role. After that, you can generate an API key using the [XML API](/docs/apis/xmlapi_qs#get-your-api-key) or [pan-python](/docs/apis/panpython_apikey).
+It is now time to start interacting with the PAN-OS APIs. If you're able to connect to the Firewall management interface as admin, you should also be able to issue commands via the API. If you run into issues, please check if [API access is enabled](/panos/docs/apis/xmlapi_qs) for your role. After that, you can generate an API key using the [XML API](/panos/docs/apis/xmlapi_qs#get-your-api-key) or [pan-python](/panos/docs/apis/panpython_apikey).
 
 The API authentication is based on an API Key which is derived from your credentials (username, password and a firewall master key). The API Key doesn't change unless the credentials change, so you can reuse it for subsequent calls. Make sure you store it securely and don't leave it behind in the source code of your scripts.
 
 More information on the API Key is available [here](https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-panorama-api/get-started-with-the-pan-os-xml-api/get-your-api-key.html).
 
-> For more information about the PAN-OS XML API, please refer to the [official documentation](https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-panorama-api/get-started-with-the-pan-os-xml-api.html) or follow the [quickstart](/docs/apis/xmlapi_qs).
+> For more information about the PAN-OS XML API, please refer to the [official documentation](https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-panorama-api/get-started-with-the-pan-os-xml-api.html) or follow the [quickstart](/panos/docs/apis/xmlapi_qs).
 
 ### Step 5: Tag IP addresses
 
