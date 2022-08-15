@@ -21,23 +21,7 @@ For example, using curl:
     -H 'accept: application/json' \
     -H "Authorization: Bearer <ACCESS_TOKEN>" \
     -H "Content-Type: application/json" \
+    -H "X-PANW-Region: de" \ 
     -d '{"properties":[{"property":"sub_tenant_id"},{"property":"total_count"}],"filter":{"operator":"AND","rules":[{"property":"domain","operator":"in","values":["External","external"]},{"property":"event_time","operator":"last_n_days","values":[7]}]}}'
-
-See [Query Filters and Properties](/sase/docs/filters) for more information about the request body.
-
-## license_type query parameter
-
-The `license_type` query value is `PA_ONLY`. Depending on your license, using the query parameter
-returns all the aggregated license details of mobile users, remote networks, and service connections
-for the current Prisma Access parent tenant and its child tenants. If the query parameter is not
-used, the query returns the current single tenant response.
-
-For example, using curl:
-
-    curl -X POST "https://api.sase.paloaltonetworks.com/mt/monitor/v1/agg/alerts/list?license_type=PA_ONLY" \
-    -H 'accept: application/json' \
-    -H "Authorization: Bearer <ACCESS_TOKEN>" \
-    -H "Content-Type: application/json" \
-    -d '{"properties":[{"property":"total_count"},{"property":"mu_count"},{"property":"rn_count"},{"property":"sc_count"}],"filter":{"operator":"AND","rules":[{"property":"domain","operator":"in","values":["External","external"]},{"property":"event_time","operator":"last_n_days","values":[7]}]}}'
 
 See [Query Filters and Properties](/sase/docs/filters) for more information about the request body.
