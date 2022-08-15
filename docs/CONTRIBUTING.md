@@ -1,5 +1,6 @@
 ---
 id: contributing
+slug: /docs/contributing
 ---
 
 # Contributing Guidelines
