@@ -380,6 +380,33 @@ components:
         subject_int:
           type: string
       type: object
+    certificates-import:
+      properties:
+        certificate_file:
+          description: base64 encoded content of the certificate file
+          type: string
+        format:
+          default: pem
+          enum:
+          - pem
+          - pkcs12
+          - der
+          type: string
+        key_file:
+          description: base64 encoded content of the key file
+          type: string
+        name:
+          description: name of the certificate
+          minLength: 1
+          type: string
+        passphrase:
+          description: required when key_file is presented
+          type: string
+      required:
+      - name
+      - certificate_file
+      - format
+      type: object
     certificates-post:
       properties:
         algorithm:
@@ -616,6 +643,38 @@ paths:
       security:
       - Bearer: []
       summary: Delete certificates
+      tags:
+      - Certificates
+  /sse/config/v1/certificates:import:
+    post:
+      description: 'Import a certificate.
+
+        '
+      operationId: post-sse-config-v1-certificates:import
+      parameters:
+      - $ref: '#/components/parameters/folder'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/certificates-import'
+        description: The certificate you want to import
+      responses:
+        '201':
+          $ref: '#/components/responses/http_created'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Import a certificate
       tags:
       - Certificates
 servers:
