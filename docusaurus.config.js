@@ -56,7 +56,7 @@ module.exports = {
           items: [
             {
               label: "Network Security",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -83,7 +83,7 @@ module.exports = {
             },
             {
               label: "Security Access Service Edge",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -106,7 +106,7 @@ module.exports = {
             },
             {
               label: "Cloud Native Security",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -125,7 +125,7 @@ module.exports = {
             },
             {
               label: "Security Operations",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -147,7 +147,7 @@ module.exports = {
           items: [
             {
               label: "Network Security",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -170,7 +170,7 @@ module.exports = {
             },
             {
               label: "Security Access Service Edge",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -209,7 +209,7 @@ module.exports = {
             },
             {
               label: "Cloud Native Security",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {
@@ -228,7 +228,7 @@ module.exports = {
             },
             {
               label: "Security Operations",
-              to: "/",
+              to: "#",
               className: "dropdown__category-title",
               children: [
                 {

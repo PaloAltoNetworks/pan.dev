@@ -120,9 +120,11 @@ function DropdownNavbarItemMobile({
 }) {
   const localPathname = useLocalPathname();
   const containsActive = containsActiveItems(items, localPathname);
+  console.log({ containsActive, localPathname })
   const {collapsed, toggleCollapsed, setCollapsed} = useCollapsible({
     initialState: () => !containsActive,
   });
+  const [productGroupCollapsed, setProductGroupCollapased] = useState(true);
   // Expand/collapse if any item active after a navigation
   useEffect(() => {
     if (containsActive) {
@@ -148,16 +150,41 @@ function DropdownNavbarItemMobile({
         {props.children ?? props.label}
       </NavbarNavLink>
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        {items.map((childItemProps, i) => (
-          <NavbarItem
-            mobile
-            isDropdownItem
-            onClick={onClick}
-            activeClassName="menu__link--active"
-            {...childItemProps}
-            key={i}
-          />
-        ))}
+        {items.map((childItemProps, i) => {
+          // childItemProps => Product Vertical (this needs to be a dropdown)
+          const { children } = childItemProps;  
+          return children
+            ? <li className={clsx('menu__list-item', { 'menu__list-item--collapsed': productGroupCollapsed })}>
+                <NavbarNavLink
+                  to={childItemProps.to}
+                  label={childItemProps.label}
+                  role="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setProductGroupCollapased(!productGroupCollapsed);
+                  }}
+                  className={clsx(
+                    'menu__link menu__link--sublist menu__link--sublist-caret',
+                    className,
+                  )}
+                />
+                <Collapsible lazy as="ul" className="menu__list" collapsed={productGroupCollapsed}>
+                  {childItemProps.children?.map(navLink => 
+                    <li className="menu__link">
+                      <NavbarNavLink to={navLink.to} label={navLink.label}/>
+                    </li>
+                  )}
+                </Collapsible>
+              </li>
+             : <NavbarItem
+                  mobile
+                  isDropdownItem
+                  onClick={onClick}
+                  activeClassName="menu__link--active"
+                  {...childItemProps}
+                  key={i}
+                />
+        })}
       </Collapsible>
     </li>
   );
