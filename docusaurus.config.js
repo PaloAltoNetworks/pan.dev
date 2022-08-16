@@ -69,11 +69,7 @@ module.exports = {
                 },
                 {
                   label: "CDSS Overview",
-                  to: "cdss/docs"
-                },
-                {
-                  label: "Threat Vault",
-                  to: "cdss/threat-vault/docs"
+                  to: "cdss/threat-vault/docs/getstarted"
                 },
                 {
                   label: "Expedition Docs",
