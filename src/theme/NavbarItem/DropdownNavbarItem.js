@@ -124,13 +124,15 @@ function DropdownNavbarItemMobile({
   const {collapsed, toggleCollapsed, setCollapsed} = useCollapsible({
     initialState: () => !containsActive,
   });
-  const [productGroupCollapsed, setProductGroupCollapased] = useState(true);
+  const [productGroupIdx, setProductGroupIdx] = useState(null);
+
   // Expand/collapse if any item active after a navigation
   useEffect(() => {
     if (containsActive) {
       setCollapsed(!containsActive);
     }
   }, [localPathname, containsActive, setCollapsed]);
+
   return (
     <li
       className={clsx('menu__list-item', {
@@ -151,28 +153,30 @@ function DropdownNavbarItemMobile({
       </NavbarNavLink>
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
         {items.map((childItemProps, i) => {
-          // childItemProps => Product Vertical (this needs to be a dropdown)
           const { children } = childItemProps;  
+
           return children
-            ? <li className={clsx('menu__list-item', { 'menu__list-item--collapsed': productGroupCollapsed })}>
+            ? <li className={clsx('menu__list-item', { 'menu__list-item--collapsed': i !== productGroupIdx })}>
                 <NavbarNavLink
                   to={childItemProps.to}
                   label={childItemProps.label}
                   role="button"
                   onClick={(e) => {
                     e.preventDefault();
-                    setProductGroupCollapased(!productGroupCollapsed);
+                    if (i === productGroupIdx) {
+                      setProductGroupIdx(null);
+                    } else {
+                      setProductGroupIdx(i);
+                    }
                   }}
                   className={clsx(
                     'menu__link menu__link--sublist menu__link--sublist-caret',
                     className,
                   )}
                 />
-                <Collapsible lazy as="ul" className="menu__list" collapsed={productGroupCollapsed}>
-                  {childItemProps.children?.map(navLink => 
-                    <li className="menu__link">
-                      <NavbarNavLink to={navLink.to} label={navLink.label}/>
-                    </li>
+                <Collapsible lazy as="ul" className="menu__list" collapsed={i !== productGroupIdx}>
+                  {childItemProps.children?.map(navLink =>
+                    <NavbarNavLink className="menu__link" to={navLink.to} label={navLink.label} />
                   )}
                 </Collapsible>
               </li>
