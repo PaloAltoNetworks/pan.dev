@@ -63,6 +63,7 @@ const sidebarDictionary = {
   InfrastructureSettings: "Service Setup",
   InternalDNSServers: "Service Setup",  
   ServiceConnections: "Service Setup",  
+  TrafficSteering: "Service Setup",  
   AntiSpywareProfiles: "Security Services",
   DecryptionExclusions: "Security Services",
   DecryptionProfiles: "Security Services",
