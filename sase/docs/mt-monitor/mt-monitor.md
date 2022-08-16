@@ -49,7 +49,13 @@ For example, using curl:
     -H 'accept: application/json' \
     -H "Authorization: Bearer <ACCESS_TOKEN>" \
     -H "Content-Type: application/json" \
+    -H "X-PANW-Region: de" \ 
     -d '{"properties":[{"property":"sub_tenant_id"},{"property":"total_count"}],"filter":{"operator":"AND","rules":[{"property":"domain","operator":"in","values":["External","external"]},{"property":"event_time","operator":"last_n_days","values":[7]}]}}'
 
 Depending on the query and the [query parameter](/sase/docs/parameters), there are also [query
 filters and properties](/sase/docs/filters) that you need to use in the request body. 
+
+## X-PANW-Region Header Parameter
+The `X-PANW-Region` header parameter is the region you chose when setting up your tenant. It must be one of the following: `de`, `americas`, `europe`, `uk`, `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake (CDL) region specified.  
+
+If you need to verify which region to use, you can [list tenant hierarchy](/sase/api/mt-monitor/tenantresources#operation/get-mt-monitor-v1-agg-custom-tenant-hierarchy) to see the region in the response.
