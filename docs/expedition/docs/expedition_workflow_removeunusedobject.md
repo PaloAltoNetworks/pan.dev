@@ -15,12 +15,11 @@ keywords:
   - configuration
   - automation
   - convertion
-
 image: /expedition/img/expedition.png
 ---
 
-import Tabs from '@theme/Tabs';
 import { Mermaid } from 'mdx-mermaid/Mermaid';
+import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Link from "@docusaurus/Link";
 export function SetLanguage (lang) {
@@ -44,20 +43,17 @@ Below flowhart demo the workflow and the related API calls in each of the steps:
 
 ```Mermaid
 flowchart TB
-    A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
-    B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
-    C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
-    D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
-    E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
-    F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
-    G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]-->H["Create a filter for unused address, address group, service, service group objects<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
-    H["Create a filter for unused address, address group, service, service group objects<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
-    I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
-    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
-    K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"] --> L["Delete the Collection Content<br/> DELETE https://localhost/api/v1/{project_id}/collection/{collection_id}/content"]
-
-
-
+A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
+B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
+C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
+D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
+E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
+F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
+G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]-->H["Create a filter for unused address, address group, service, service group objects<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
+H["Create a filter for unused address, address group, service, service group objects<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
+J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
+K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"] --> L["Delete the Collection Content<br/> DELETE https://localhost/api/v1/{project_id}/collection/{collection_id}/content"]
 ```
 
 ### Step 1. Obtain the API Keys

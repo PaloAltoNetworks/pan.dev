@@ -58,7 +58,7 @@ function Home() {
         <section className="featuredContainer">
           <div className="container">
             <h1 className={styles.heroProjectTagline}>
-              Explore our Developer Docs Sites
+              Explore our Developer Docs
             </h1>
             <Featured />
           </div>
