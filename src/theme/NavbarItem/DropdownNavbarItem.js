@@ -179,7 +179,7 @@ function DropdownNavbarItemMobile({
         {props.children ?? props.label}
       </NavbarNavLink>
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        {itesm &&
+        {items &&
           items.map((childItemProps, i) => {
             const { children } = childItemProps;
 
