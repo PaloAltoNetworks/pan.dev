@@ -51,7 +51,8 @@ const config = {
       },
       items: [
         {
-          label: "Docs",
+          label: "Developer Docs",
+          className: "margin-left--lg",
           megaNav: true,
           items: [
             {
@@ -60,19 +61,19 @@ const config = {
               className: "dropdown__category-title",
               children: [
                 {
-                  label: "Cloud NGFW Overview",
+                  label: "Cloud NGFW",
                   to: "cloudngfw/docs",
                 },
                 {
-                  label: "PAN-OS Docs",
+                  label: "PAN-OS ",
                   to: "panos/docs",
                 },
                 {
-                  label: "CDSS Overview",
+                  label: "Cloud-Delivered Security Services",
                   to: "cdss/threat-vault/docs/getstarted",
                 },
                 {
-                  label: "Expedition Docs",
+                  label: "Expedition",
                   to: "expedition/docs",
                 },
               ],
@@ -84,7 +85,7 @@ const config = {
               children: [
                 {
                   to: "sase/docs",
-                  label: "Prisma SASE Developer's Guide",
+                  label: "Prisma SASE",
                 },
                 {
                   to: "sase/docs/prisma-access-config/prisma-access-config",
@@ -107,15 +108,11 @@ const config = {
               children: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "CSPM Docs",
+                  label: "Cloud Security Posture Management",
                 },
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                  label: "CWPP Docs",
-                },
-                {
-                  to: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security",
-                  label: "Prisma Cloud Product Docs",
+                  label: "Cloud Workload Protection Platform",
                 },
               ],
             },
@@ -126,7 +123,7 @@ const config = {
               children: [
                 {
                   to: "https://xsoar.pan.dev/docs/welcome",
-                  label: "Cortex XSOAR Developer Docs",
+                  label: "Cortex XSOAR",
                 },
                 {
                   to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
@@ -138,6 +135,7 @@ const config = {
         },
         {
           label: "API Reference",
+          className: "margin-left--lg",
           to: "sase",
           megaNav: true,
           items: [
@@ -236,32 +234,6 @@ const config = {
                   label: "Expander API",
                 },
               ],
-            },
-          ],
-        },
-        {
-          label: "Other Developer Docs",
-          position: "right",
-          items: [
-            {
-              href: "https://cortex.pan.dev",
-              label: "Cortex Data Lake",
-              logo: "/img/cortexfavicon.png",
-            },
-            {
-              href: "https://xsoar.pan.dev",
-              label: "Cortex XSOAR",
-              logo: "/img/Cortex-XSOAR-product-green.svg",
-            },
-            {
-              href: "https://panos.pan.dev",
-              label: "PAN-OS",
-              logo: "/img/strata_favicon.png",
-            },
-            {
-              href: "https://prisma.pan.dev",
-              label: "Prisma",
-              logo: "/img/prismafavicon.png",
             },
           ],
         },

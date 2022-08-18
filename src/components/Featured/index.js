@@ -70,7 +70,7 @@ function Feature({ imageUrl, title, description, toPage, color, offset }) {
   const imgUrl = useBaseUrl(imageUrl);
   const toUrl = toPage ? useBaseUrl(toPage) : null;
   return (
-    <div className="col col--6 margin-bottom--lg">
+    <div className="col col--6">
       <Button
         className={clsx(styles.featuredButton)}
         variant="plain"

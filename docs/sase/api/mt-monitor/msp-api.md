@@ -9,7 +9,7 @@ keywords:
   - API
 ---
 
-Welcome to the Prisma SASE Aggregae Monitoring APIs. To use these APIs, you must be a new Managed
+Welcome to the Prisma SASE Aggregate Monitoring APIs. To use these APIs, you must be a new Managed
 Security Service Provider (MSSP) customer as of March 2022 and must have configured your multitenant
 hierarchy for a new deployment of Prisma Access.
 
