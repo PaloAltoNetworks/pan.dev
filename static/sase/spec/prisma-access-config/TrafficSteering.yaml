@@ -369,148 +369,54 @@ components:
         _request_id:
           type: string
       type: object
-    ike-gateways:
+    traffic-steering:
       properties:
-        authentication:
+        action:
           oneOf:
           - properties:
-              pre_shared_key:
+              forward:
                 properties:
-                  key:
+                  target:
                     type: string
                 type: object
-            title: pre_shared_key
-            type: object
-          - properties:
-              allow_id_payload_mismatch:
-                type: boolean
-              certificate_profile:
-                type: string
-              local_certificate:
-                properties:
-                  local_certificate_name:
-                    type: string
+              no-pbf:
                 type: object
-              strict_validation_revocation:
-                type: boolean
-              use_management_as_source:
-                type: boolean
-            title: certificate
-            type: object
           type: object
-        id:
-          description: uuid of the resource
-          example: abcd-1234
-          readOnly: true
-          type: string
-        local_id:
-          properties:
-            id:
-              description: Local ID string
-              maxLength: 1024
-              minLength: 1
-              pattern: ^(.+\@[a-zA-Z0-9.-]+)$|^([$a-zA-Z0-9_:.-]+)$|^(([[:xdigit:]][[:xdigit:]])+)$|^([a-zA-Z0-9.]+=(\\,|[^,])+[,
-                ]+)*([a-zA-Z0-9.]+=(\\,|[^,])+)$
-              type: string
-            type:
-              type: string
-          type: object
+        category:
+          items:
+            type: string
+          type: array
+        destination:
+          default:
+          - any
+          items:
+            type: string
+          type: array
         name:
-          description: 'Alphanumeric string begin with letter: [0-9a-zA-Z._-]'
-          maxLength: 63
           type: string
-        peer_address:
-          oneOf:
-          - properties:
-              ip:
-                description: peer gateway has static IP address
-                type: string
-            title: ip
-            type: object
-          - properties:
-              fqdn:
-                description: peer gateway FQDN name
-                maxLength: 255
-                type: string
-            title: fqdn
-            type: object
-          - properties:
-              dynamic:
-                default: {}
-                type: object
-            title: dynamic
-            type: object
-          type: object
-        peer_id:
-          properties:
-            id:
-              description: Peer ID string
-              maxLength: 1024
-              minLength: 1
-              pattern: ^(.+\@[\*a-zA-Z0-9.-]+)$|^([\*$a-zA-Z0-9_:.-]+)$|^(([[:xdigit:]][[:xdigit:]])+)$|^([a-zA-Z0-9.]+=(\\,|[^,])+[,
-                ]+)*([a-zA-Z0-9.]+=(\\,|[^,])+)$
-              type: string
-            type:
-              enum:
-              - ipaddr
-              - keyid
-              - fqdn
-              - ufqdn
-              type: string
-          type: object
-        protocol:
-          properties:
-            ikev1:
-              properties:
-                dpd:
-                  properties:
-                    enable:
-                      type: boolean
-                  type: object
-                ike_crypto_profile:
-                  type: string
-              type: object
-            ikev2:
-              properties:
-                dpd:
-                  properties:
-                    enable:
-                      type: boolean
-                  type: object
-                ike_crypto_profile:
-                  type: string
-              type: object
-            version:
-              default: ikev2-preferred
-              enum:
-              - ikev2-preferred
-              - ikev1
-              - ikev2
-              type: string
-          type: object
-        protocol_common:
-          properties:
-            fragmentation:
-              properties:
-                enable:
-                  default: false
-                  enum:
-                  - false
-                  type: boolean
-              type: object
-            nat_traversal:
-              properties:
-                enable:
-                  type: boolean
-              type: object
-            passive_mode:
-              type: boolean
-          type: object
+        service:
+          default:
+          - any
+          items:
+            type: string
+          type: array
+        source:
+          default:
+          - any
+          items:
+            type: string
+          type: array
+        source_user:
+          default:
+          - any
+          items:
+            type: string
+          type: array
       required:
       - name
-      - authentication
-      - protocol
-      - peer_address
+      - service
+      - source
+      - target
       type: object
   securitySchemes:
     Bearer:
@@ -518,25 +424,20 @@ components:
       type: http
 info:
   contact: {}
-  description: 'Manages Internet Key Exchange (IKE) Gateway network profiles, which
-    specify
-
-    the configuration information necessary to perform IKE protocol negotiation with
-    a
-
-    peer gateway. This is the Phase 1 portion of the IKE/IPSec VPN setup.
+  description: 'Manages [traffic steering](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-admin/prisma-access-service-connections/traffic-forwarding)
+    for service connections.
 
     '
-  title: IKE Gateway Management
+  title: Traffic Steering
   version: '1.0'
   x-logo:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
-  /sse/config/v1/ike-gateways:
+  /sse/config/v1/traffic-steering:
     get:
-      description: Retrieve IKE gateway.
-      operationId: get-sse-config-v1-ike-gateways
+      description: List all service connections targeted by traffic steering rules.
+      operationId: get-sse-config-v1-traffic-steering
       parameters:
       - $ref: '#/components/parameters/limit-optional'
       - $ref: '#/components/parameters/offset-optional'
@@ -551,7 +452,7 @@ paths:
                   data:
                     allOf:
                     - items:
-                        $ref: '#/components/schemas/ike-gateways'
+                        $ref: '#/components/schemas/traffic-steering'
                       type: array
                   limit:
                     default: 200
@@ -562,7 +463,7 @@ paths:
                   total:
                     type: number
                 type: object
-          description: List of ike gateways
+          description: List of service connections
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -575,20 +476,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: List IKE gateways
+      summary: List service connections
       tags:
-      - IKEGateways
+      - TrafficSteering
     post:
-      description: Create an IKE gateway.
-      operationId: post-sse-config-v1-ike-gateways
+      description: Create a traffic steering rule for a service connection.
+      operationId: post-sse-config-v1-traffic-steering
       parameters:
       - $ref: '#/components/parameters/folder'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ike-gateways'
-        description: The ike gateway you want to create
+              $ref: '#/components/schemas/traffic-steering'
+        description: The service connection you want to create
       responses:
         '201':
           $ref: '#/components/responses/http_created'
@@ -604,15 +505,13 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Create IKE gateways
+      summary: Create a service connection
       tags:
-      - IKEGateways
-  /sse/config/v1/ike-gateways/{id}:
+      - TrafficSteering
+  /sse/config/v1/traffic-steering/{id}:
     delete:
-      description: 'Delete a ike gateway.
-
-        '
-      operationId: delete-sse-config-v1-ike-gateways-id
+      description: Delete a service connection.
+      operationId: delete-sse-config-v1-traffic-steering-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -632,12 +531,13 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Delete a ike gateway.
+      summary: Delete a service connection
       tags:
-      - IKEGateways
+      - TrafficSteering
     get:
-      description: Get an IKE gateway.
-      operationId: get-sse-config-v1-ike-gateways-id
+      description: Get a specific service connection targeted by the traffic steering
+        rule.
+      operationId: get-sse-config-v1-traffic-steering-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       responses:
@@ -647,9 +547,9 @@ paths:
               schema:
                 allOf:
                 - items:
-                    $ref: '#/components/schemas/ike-gateways'
+                    $ref: '#/components/schemas/traffic-steering'
                   type: array
-          description: Get the ike gateway by id.
+          description: Get the service connection by id.
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -662,22 +562,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Get an IKE gateway
+      summary: Get a service connection
       tags:
-      - IKEGateways
+      - TrafficSteering
     put:
-      description: 'Modify a ike gateway.
-
-        '
-      operationId: put-sse-config-v1-ike-gateways-id
+      description: Edit the service connection targeted by the traffic steering rule.
+      operationId: put-sse-config-v1-traffic-steering-id
       parameters:
       - $ref: '#/components/parameters/uuid-required'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ike-gateways'
-        description: The ike gateway you want to edit
+              $ref: '#/components/schemas/traffic-steering'
+        description: The service connection you want to edit
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -695,10 +593,10 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Edit a ike gateway.
+      summary: Edit a service connection
       tags:
-      - IKEGateways
+      - TrafficSteering
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- name: IKEGateways
+- name: TrafficSteering

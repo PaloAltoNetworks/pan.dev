@@ -1,0 +1,116 @@
+components:
+  schemas:
+    RequestBody_UpgradesList:
+      properties:
+        filter:
+          allOf:
+          - {$ref: '#/components/schemas/UpgradeListFilter'}
+          - {description: filter json object}
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/UpgradeListProperty'}
+          type: array
+      required: [properties, filter]
+      type: object
+    TimeFilter:
+      properties:
+        operator: {description: Filter operator that is one of the example values
+            and is run on the property field, example: 'gt, lt, last_n_minutes, last_n_hours,
+            last_n_days', type: string}
+        property: {description: Filter property field that is one of the example values,
+          example: 'event_time, update_time, updated_time', type: string}
+        values:
+          description: Filter property value
+          example: minute, hour or day counts if property is event_time
+          items: {type: string}
+          type: array
+      type: object
+    UpgradeListFilter:
+      description: "Upgrade list filter. Consists of a required operator and an array\
+        \ of rules objects. \n"
+      properties:
+        operator: {description: "Must be `AND`. \n", type: string}
+        rules:
+          description: 'See [TimeFilter](/sase/docs/filters#timefilter).
+
+            '
+          items: {$ref: '#/components/schemas/TimeFilter'}
+          type: array
+      required: [operator]
+      type: object
+    UpgradeListProperty:
+      properties:
+        alias: {type: string}
+        property: {description: "Upgrade list property. See [UpgradeListProperty](/sase/docs/filters#upgradelistproperty).\
+            \   \n", example: 'sub_tenant_id, amiversion, current_software_version,
+            last_upgrade_date, next_upgrade_scheduled_str, status, error, next_upgrade_scheduled',
+          type: string}
+      type: object
+  securitySchemes:
+    Bearer: {scheme: bearer, type: http}
+info:
+  contact: {}
+  description: 'Use the Insights Resource API for retrieving the upgrade status.
+
+    '
+  title: Insights Resource API
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /mt/monitor/v1/agg/custom/upgrades/list:
+    post:
+      description: 'Retrieve an aggregated list of all upgrade statuses across tenants.
+
+        '
+      operationId: post-mt-monitor-v1-agg-custom-upgrades-list
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: 'Must be one of the following: `de`, `americas`, `europe`, `uk`,
+          `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake
+          (CDL) region specified.    '
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Upgrade List:
+                value:
+                  properties:
+                  - {property: sub_tenant_id}
+                  - {property: amiversion}
+                  - {property: current_software_version}
+                  - {property: last_upgrade_date}
+                  - {property: next_upgrade_scheduled_str}
+                  - {property: status}
+                  - {property: error}
+                  - {property: next_upgrade_scheduled}
+            schema: {$ref: '#/components/schemas/RequestBody_UpgradesList'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Upgrade List:
+                  value:
+                  - {amiversion: <amiversion>, current_software_version: <current_software_version>,
+                    error: <error>, last_upgrade_date: <last_upgrade_date>, next_upgrade_scheduled: <next_upgrade_scheduled>,
+                    next_upgrade_scheduled_str: <next_upgrade_scheduled_str>, status: <status>,
+                    sub_tenant_id: <sub_tenant_id>}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List upgrades
+      tags: [InsightsResources]
+servers:
+- {url: 'https://api.sase.paloaltonetworks.com'}
+tags:
+- {name: InsightsResources}

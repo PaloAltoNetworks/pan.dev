@@ -20,6 +20,25 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## August 2022
+
+- Update to the Aggregate Monitoring APIs, including:
+
+  - Added the required `X-PANW-Region` header parameter.
+  - Added new [DataResources](/sase/api/mt-monitor/data-resource-api) endpoints:
+    - [mt/monitor/v1/agg/alerts](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-alerts)
+    - [mt/monitor/v1/agg/applicationUsage](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-applicationusage)
+    - [mt/monitor/v1/agg/applications](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-applications)
+    - [mt/monitor/v1/agg/resource](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-resource)
+    - [mt/monitor/v1/agg/threats](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-threats)
+    - [mt/monitor/v1/agg/urlLogs](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-url-summary)
+  - Moved `mt/monitor/v1/agg/custom/upgrades/list` to InsightsResources.
+  - Renamed query filters to user-friendly names.
+  - Removed the `license_type` query parameter.
+
+- Updated the Prisma Access Config APIs to add [traffic steering](/sase/api/prisma-access-config/traffic-steering).
+  You can also now [import a certificate](/sase/api/prisma-access-config/post-sse-config-v-1-certificates).
+
 ## July 2022
 
 - First documentation release of the [Prisma SD-WAN APIs](/sase/docs/sdwan).
