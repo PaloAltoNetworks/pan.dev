@@ -47,6 +47,9 @@ function ProductCard({ item }) {
 
 function ProductCardList({ product }) {
   const crumbs = require("/crumbs.json");
+  if (crumbs[product] === undefined || crumbs[product].children === undefined) {
+    return;
+  }
   const product_menu = crumbs[product].children;
   return (
     <div>
