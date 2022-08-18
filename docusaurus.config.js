@@ -30,7 +30,7 @@ const config = {
   projectName: "pan.dev",
   themeConfig: {
     colorMode: {
-      defaultMode: "light",
+      defaultMode: "light"
     },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
@@ -38,8 +38,8 @@ const config = {
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
-        facetFilters: [["tags:pandev"]],
-      },
+        facetFilters: [["tags:pandev"]]
+      }
     },
     hideOnScroll: true,
     navbar: {
@@ -47,7 +47,7 @@ const config = {
       logo: {
         alt: "Palo Alto Networks for Developers",
         src: "img/pan_dev_black.svg",
-        srcDark: "img/pan_dev_white.svg",
+        srcDark: "img/pan_dev_white.svg"
       },
       items: [
         {
@@ -62,21 +62,21 @@ const config = {
               children: [
                 {
                   label: "Cloud NGFW",
-                  to: "cloudngfw/docs",
+                  to: "cloudngfw/docs"
                 },
                 {
                   label: "PAN-OS ",
-                  to: "panos/docs",
+                  to: "panos/docs"
                 },
                 {
                   label: "Cloud-Delivered Security Services",
-                  to: "cdss/threat-vault/docs/getstarted",
+                  to: "cdss/threat-vault/docs/getstarted"
                 },
                 {
                   label: "Expedition",
-                  to: "expedition/docs",
-                },
-              ],
+                  to: "expedition/docs"
+                }
+              ]
             },
             {
               label: "Security Access Service Edge",
@@ -85,21 +85,21 @@ const config = {
               children: [
                 {
                   to: "sase/docs",
-                  label: "Prisma SASE",
+                  label: "Prisma SASE"
                 },
                 {
                   to: "sase/docs/prisma-access-config/prisma-access-config",
-                  label: "Prisma Access Configuration",
+                  label: "Prisma Access Configuration"
                 },
                 {
                   to: "sase/docs/insights",
-                  label: "Prisma Access Insights",
+                  label: "Prisma Access Insights"
                 },
                 {
-                  to: "sase/docs/sdwan",
-                  label: "Prisma SD-WAN",
-                },
-              ],
+                  to: "sase/docs/sdwan/sdwan",
+                  label: "Prisma SD-WAN"
+                }
+              ]
             },
             {
               label: "Cloud Native Security",
@@ -108,13 +108,13 @@ const config = {
               children: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "Cloud Security Posture Management",
+                  label: "Cloud Security Posture Management"
                 },
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                  label: "Cloud Workload Protection Platform",
-                },
-              ],
+                  label: "Cloud Workload Protection Platform"
+                }
+              ]
             },
             {
               label: "Security Operations",
@@ -123,15 +123,15 @@ const config = {
               children: [
                 {
                   to: "https://xsoar.pan.dev/docs/welcome",
-                  label: "Cortex XSOAR",
+                  label: "Cortex XSOAR"
                 },
                 {
                   to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                  label: "Xpanse Python SDK",
-                },
-              ],
-            },
-          ],
+                  label: "Xpanse Python SDK"
+                }
+              ]
+            }
+          ]
         },
         {
           label: "API Reference",
@@ -146,21 +146,21 @@ const config = {
               children: [
                 {
                   to: "cloudngfw/aws/api/",
-                  label: "Cloud NGFW for AWS API",
+                  label: "Cloud NGFW for AWS API"
                 },
                 {
                   to: "panos/docs/apis/",
-                  label: "PAN-OS APIs and SDKs",
+                  label: "PAN-OS APIs and SDKs"
                 },
                 {
                   to: "cdss/iot/api/iot-public-api-headers",
-                  label: "IoT API",
+                  label: "IoT API"
                 },
                 {
                   to: "cdss/threat-vault/api",
-                  label: "Threat Vault API",
-                },
-              ],
+                  label: "Threat Vault API"
+                }
+              ]
             },
             {
               label: "Security Access Service Edge",
@@ -169,37 +169,37 @@ const config = {
               children: [
                 {
                   to: "sase/api/tenancy",
-                  label: "Tenancy Service",
+                  label: "Tenancy Service"
                 },
                 {
                   to: "sase/api/iam",
-                  label: "Identity and Access Management",
+                  label: "Identity and Access Management"
                 },
                 {
                   to: "sase/api/auth",
-                  label: "Authentication Service",
+                  label: "Authentication Service"
                 },
                 {
                   to: "sase/api/subscription",
-                  label: "Subscription Service",
+                  label: "Subscription Service"
                 },
                 {
                   to: "sase/api/mt-monitor",
-                  label: "Aggregate Monitoring",
+                  label: "Aggregate Monitoring"
                 },
                 {
                   to: "sase/api/prisma-access-config",
-                  label: "Prisma Access Configuration API",
+                  label: "Prisma Access Configuration API"
                 },
                 {
-                  to: "sase/api/insights/2.0",
-                  label: "Prisma Access Insights API",
+                  to: "category/sase/api/insights/2.0/v-2-0/data-resource/",
+                  label: "Prisma Access Insights API"
                 },
                 {
                   to: "sase/api/sdwan/unified",
-                  label: "Prisma SD-WAN API",
-                },
-              ],
+                  label: "Prisma SD-WAN API"
+                }
+              ]
             },
             {
               label: "Cloud Native Security",
@@ -208,17 +208,17 @@ const config = {
               children: [
                 {
                   to: "https://prisma.pan.dev/api/cloud/cspm",
-                  label: "CSPM API",
+                  label: "CSPM API"
                 },
                 {
                   to: "https://prisma.pan.dev/api/cloud/cwpp",
-                  label: "CWPP API",
+                  label: "CWPP API"
                 },
                 {
                   to: "https://prisma.pan.dev/api/cloud/code",
-                  label: "Code Security API",
-                },
-              ],
+                  label: "Code Security API"
+                }
+              ]
             },
             {
               label: "Security Operations",
@@ -227,37 +227,37 @@ const config = {
               children: [
                 {
                   to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
-                  label: "XSOAR (Demisto) API",
+                  label: "XSOAR (Demisto) API"
                 },
                 {
                   to: "https://cortex.pan.dev/api/expander/annotations-api",
-                  label: "Expander API",
-                },
-              ],
-            },
-          ],
+                  label: "Expander API"
+                }
+              ]
+            }
+          ]
         },
         {
           to: "https://gallery.pan.dev",
           className: "header-github-link",
-          position: "right",
+          position: "right"
         },
         {
           href: "https://medium.com/palo-alto-networks-developer-blog",
           className: "header-blog-link",
           position: "right",
-          "aria-label": "Palo Alto Networks Developer Blog",
-        },
-      ],
+          "aria-label": "Palo Alto Networks Developer Blog"
+        }
+      ]
     },
     footer: {
       style: "light",
       logo: {
         alt: "Palo Alto Networks for developers",
-        src: "img/PANW_Parent_Logo_White.svg",
+        src: "img/PANW_Parent_Logo_White.svg"
       },
-      copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
-    },
+      copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`
+    }
   },
   themes: ["docusaurus-theme-openapi-docs"],
   presets: [
@@ -270,47 +270,47 @@ const config = {
           sidebarPath: require.resolve("./docs/sidebar.js"),
           docItemComponent: "@theme/ApiItem",
           remarkPlugins: [],
-          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
+          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master"
         },
         theme: {
-          customCss: [require.resolve("./src/css/custom.scss")],
+          customCss: [require.resolve("./src/css/custom.scss")]
         },
         gtag: {
           trackingID: "GTM-PLXD79N",
-          anonymizeIP: true,
-        },
-      },
-    ],
+          anonymizeIP: true
+        }
+      }
+    ]
   ],
   plugins: [
     [
       "docusaurus-plugin-openapi-docs",
-      { id: "apis", docsPluginId: "docs", config: require("./api.config") },
+      { id: "apis", docsPluginId: "docs", config: require("./api.config") }
     ],
     [
       "@docusaurus/plugin-sitemap",
       {
         id: "pan-sitemap",
         changefreq: "weekly",
-        priority: 0.5,
-      },
+        priority: 0.5
+      }
     ],
     [
       require.resolve("./plugin-sitemap-coveo/src/index.cjs"),
       {
         id: "coveo-sitemap",
         changefreq: "weekly",
-        priority: 0.5,
-      },
+        priority: 0.5
+      }
     ],
-    "docusaurus-plugin-sass",
+    "docusaurus-plugin-sass"
   ],
   stylesheets: [
     {
       href: "https://use.fontawesome.com/releases/v5.15.0/css/all.css",
       type: "text/css",
-      rel: "stylesheet",
-    },
+      rel: "stylesheet"
+    }
   ],
   onDuplicateRoutes: "warn",
   onBrokenLinks: "warn",
@@ -322,10 +322,10 @@ const config = {
       options: {
         loader: "tsx",
         format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017",
-      },
-    }),
-  },
+        target: isServer ? "node12" : "es2017"
+      }
+    })
+  }
 };
 
 async function createConfig() {
