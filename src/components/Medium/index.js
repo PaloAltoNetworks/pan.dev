@@ -29,7 +29,7 @@ function Medium() {
                     />
                   </div>
                   <div className="card__body">
-                    <div className="avatar">
+                    <div className="avatar padding-left--sm">
                       <div className="avatar__intro margin-left--none">
                         <h3 className="avatar__name">{blog.title}</h3>
                       </div>

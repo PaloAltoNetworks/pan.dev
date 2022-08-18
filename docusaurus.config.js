@@ -96,7 +96,7 @@ const config = {
                   label: "Prisma Access Insights",
                 },
                 {
-                  to: "sase/docs/sdwan/sdwan",
+                  to: "sase/docs/sdwan",
                   label: "Prisma SD-WAN",
                 },
               ],

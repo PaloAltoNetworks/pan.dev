@@ -53,6 +53,7 @@ function DropdownNavbarItemDesktop({
 
   return (
     <div
+      key={props.label}
       ref={dropdownRef}
       className={clsx(
         "navbar__item",
@@ -82,13 +83,16 @@ function DropdownNavbarItemDesktop({
       >
         {props.children ?? props.label}
       </NavbarNavLink>
-      <ul className={clsx("dropdown__menu", { "mega-nav": megaNav })}>
+      <ul
+        className={clsx("dropdown__menu", { "mega-nav": megaNav })}
+        key={props.label}
+      >
         {items &&
           items.map((childItemProps, i) => {
             const { children } = childItemProps;
 
             return (
-              <div className="col padding--none">
+              <div className="col padding--none" key={i}>
                 <div className="dropdown__menu-category">
                   <NavbarItem
                     className="dropdown__category-title"
@@ -111,12 +115,11 @@ function DropdownNavbarItemDesktop({
                       }
                     }}
                     {...childItemProps}
-                    key={i}
                   />
                   {children && (
                     <ul>
                       {Object.values(children).map((navLink) => (
-                        <li>
+                        <li key={navLink.label}>
                           <div className="button button--plain button--block margin-top--sm">
                             {" "}
                             <NavbarNavLink
@@ -179,7 +182,7 @@ function DropdownNavbarItemMobile({
         {props.children ?? props.label}
       </NavbarNavLink>
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        {itesm &&
+        {items &&
           items.map((childItemProps, i) => {
             const { children } = childItemProps;
 
