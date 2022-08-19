@@ -144,9 +144,7 @@ function DropdownNavbarItemDesktop({
             }
             )}
         </ul>
-        <div className="navbar-section-border" />
         <NavbarProductItems products={productItems} setApiDocItems={setApiDocItems} />
-        <div className="navbar-section-border" />
         <NavbarDocItems apiDocs={apiDocItems.apiDocs} docs={apiDocItems.docs} />
       </div>
     )
