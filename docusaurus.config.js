@@ -58,180 +58,268 @@ const config = {
             {
               label: "Network Security",
               to: "#",
-              className: "dropdown__category-title",
-              children: [
+              logoClass: "network-security",
+              products: [
                 {
                   label: "Cloud NGFW",
-                  to: "cloudngfw/docs"
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Cloud NGFW",
+                      to: "cloudngfw/docs"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "cloudngfw/aws/api/",
+                      label: "Cloud NGFW for AWS API"
+                    },
+                  ]
                 },
                 {
-                  label: "PAN-OS ",
-                  to: "panos/docs"
+                  label: "PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "PAN-OS ",
+                      to: "panos/docs"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "panos/docs/apis/",
+                      label: "PAN-OS APIs and SDKs"
+                    },
+                  ]
                 },
                 {
                   label: "Cloud-Delivered Security Services",
-                  to: "cdss/threat-vault/docs/getstarted"
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Cloud-Delivered Security Services",
+                      to: "cdss/threat-vault/docs/getstarted"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "cloudngfw/aws/api/",
+                      label: "Cloud NGFW for AWS API"
+                    },
+                  ]
                 },
                 {
                   label: "Expedition",
-                  to: "expedition/docs"
-                }
+                  to: "#",
+                  logoClass: "cortex",
+                  docs: [
+                    {
+                      label: "Expedition",
+                      to: "expedition/docs"
+                    }
+                  ],
+                  apiDocs: [
+                    {
+                      to: "cdss/threat-vault/api",
+                      label: "Threat Vault API"
+                    }
+                  ]
+                },
               ]
             },
             {
               label: "Security Access Service Edge",
               to: "#",
-              className: "dropdown__category-title",
-              children: [
+              logoClass: "network-security",
+              products: [
                 {
-                  to: "sase/docs",
-                  label: "Prisma SASE"
+                  label: "Prisma SASE",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      to: "sase/docs",
+                      label: "Prisma SASE Overview"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sase/api/tenancy",
+                      label: "Tenancy Service"
+                    },
+                    {
+                      to: "sase/api/iam",
+                      label: "Identity and Access Management"
+                    },
+                    {
+                      to: "sase/api/auth",
+                      label: "Authentication Service"
+                    },
+                    {
+                      to: "sase/api/subscription",
+                      label: "Subscription Service"
+                    },
+                    {
+                      to: "sase/api/mt-monitor",
+                      label: "Aggregate Monitoring"
+                    },
+                    {
+                      to: "sase/api/prisma-access-config",
+                      label: "Prisma Access Configuration API"
+                    },
+                    {
+                      to: "category/sase/api/insights/2.0/v-2-0/data-resource/",
+                      label: "Prisma Access Insights API"
+                    },
+                    {
+                      to: "sase/api/sdwan/unified",
+                      label: "Prisma SD-WAN API"
+                    }
+                  ]
                 },
                 {
-                  to: "sase/docs/prisma-access-config/prisma-access-config",
-                  label: "Prisma Access Configuration"
+                  label: "Prisma Access Configuration",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Configuration",
+                      to: "sase/docs/prisma-access-config"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sase/api/prisma-access-config",
+                      label: "Prisma Access Configuration APIs"
+                    },
+                  ]
                 },
                 {
-                  to: "sase/docs/insights",
-                  label: "Prisma Access Insights"
+                  label: "Prisma Access Insights",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Configuration",
+                      to: "sase/docs/insights"
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sase/api/prisma-access-config",
+                      label: "Prisma Access Configuration APIs"
+                    },
+                  ]
                 },
                 {
-                  to: "sase/docs/sdwan/sdwan",
-                  label: "Prisma SD-WAN"
-                }
+                  label: "Prisma SD-WAN",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SD-WAN",
+                      to: "sase/docs/sdwan"
+                    }
+                  ],
+                  apiDocs: [
+                    {
+                      to: "cdss/threat-vault/api",
+                      label: "Threat Vault API"
+                    }
+                  ]
+                },
               ]
             },
             {
               label: "Cloud Native Security",
               to: "#",
-              className: "dropdown__category-title",
-              children: [
+              logoClass: "network-security",
+              products: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "Cloud Security Posture Management"
+                  label: "Cloud Security Posture Management",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "https://prisma.pan.dev/api/cloud/cspm/",
+                      label: "CSPM API"
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "#",
+                      label: "Cloud Security Posture Management"
+                    },
+                    {
+                      to: "#",
+                      label: "Placeholder Doc 2"
+                    },
+                  ]
                 },
                 {
-                  to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                  label: "Cloud Workload Protection Platform"
+                  label: "Cloud Workload Protection Platform",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "https://prisma.pan.dev/api/cloud/cspm/",
+                      label: "CSPM API"
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "#",
+                      label: "Cloud Security Posture Management"
+                    },
+                    {
+                      to: "#",
+                      label: "Placeholder Doc 2"
+                    },
+                  ]
                 }
               ]
             },
             {
               label: "Security Operations",
               to: "#",
-              className: "dropdown__category-title",
-              children: [
+              logoClass: "network-security",
+              products: [
                 {
-                  to: "https://xsoar.pan.dev/docs/welcome",
-                  label: "Cortex XSOAR"
+                  to: "#",
+                  label: "Cortex XSOAR",
+                  logoClass: "xsoar",
+                  apiDocs: [
+                    {
+                      label: "XSOAR (Demoisto) API",
+                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class"
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "https://xsoar.pan.dev/docs/welcome",
+                      to: "https://xsoar.pan.dev/docs/welcome"
+                    }
+                  ]
                 },
                 {
-                  to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                  label: "Xpanse Python SDK"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "API Reference",
-          className: "margin-left--lg",
-          to: "sase",
-          megaNav: true,
-          items: [
-            {
-              label: "Network Security",
-              to: "#",
-              className: "dropdown__category-title",
-              children: [
-                {
-                  to: "cloudngfw/aws/api/",
-                  label: "Cloud NGFW for AWS API"
-                },
-                {
-                  to: "panos/docs/apis/",
-                  label: "PAN-OS APIs and SDKs"
-                },
-                {
-                  to: "cdss/iot/api/iot-public-api-headers",
-                  label: "IoT API"
-                },
-                {
-                  to: "cdss/threat-vault/api",
-                  label: "Threat Vault API"
-                }
-              ]
-            },
-            {
-              label: "Security Access Service Edge",
-              to: "#",
-              className: "dropdown__category-title",
-              children: [
-                {
-                  to: "sase/api/tenancy",
-                  label: "Tenancy Service"
-                },
-                {
-                  to: "sase/api/iam",
-                  label: "Identity and Access Management"
-                },
-                {
-                  to: "sase/api/auth",
-                  label: "Authentication Service"
-                },
-                {
-                  to: "sase/api/subscription",
-                  label: "Subscription Service"
-                },
-                {
-                  to: "sase/api/mt-monitor",
-                  label: "Aggregate Monitoring"
-                },
-                {
-                  to: "sase/api/prisma-access-config",
-                  label: "Prisma Access Configuration API"
-                },
-                {
-                  to: "category/sase/api/insights/2.0/v-2-0/data-resource/",
-                  label: "Prisma Access Insights API"
-                },
-                {
-                  to: "sase/api/sdwan/unified",
-                  label: "Prisma SD-WAN API"
-                }
-              ]
-            },
-            {
-              label: "Cloud Native Security",
-              to: "#",
-              className: "dropdown__category-title",
-              children: [
-                {
-                  to: "https://prisma.pan.dev/api/cloud/cspm",
-                  label: "CSPM API"
-                },
-                {
-                  to: "https://prisma.pan.dev/api/cloud/cwpp",
-                  label: "CWPP API"
-                },
-                {
-                  to: "https://prisma.pan.dev/api/cloud/code",
-                  label: "Code Security API"
-                }
-              ]
-            },
-            {
-              label: "Security Operations",
-              to: "#",
-              className: "dropdown__category-title",
-              children: [
-                {
-                  to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
-                  label: "XSOAR (Demisto) API"
-                },
-                {
-                  to: "https://cortex.pan.dev/api/expander/annotations-api",
-                  label: "Expander API"
+                  label: "Cortex",
+                  to: "#",
+                  logoClass: "cortex",
+                  apiDocs: [
+                    {
+                      label: "Expander API",
+                      to: "https://cortex.pan.dev/api/expander/annotations-api"
+                    }
+                  ],
+                  docs: [
+                    {
+                      label: "Xpanse Python SDK",
+                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/"
+                    }
+                  ]
                 }
               ]
             }
