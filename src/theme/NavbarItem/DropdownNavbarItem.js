@@ -9,6 +9,7 @@ import {isSamePath, useLocalPathname} from '@docusaurus/theme-common/internal';
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink';
 import NavbarItem from '@theme/NavbarItem';
 import NavbarDocItems from '../NavbarDocItems';
+import NavbarProductItems from '../NavbarProductItems';
 
 function isItemActive(item, localPathname) {
   if (isSamePath(item.to, localPathname)) {
@@ -32,6 +33,7 @@ function DropdownNavbarItemDesktop({
   position,
   className,
   onClick,
+  megaNav,
   ...props
 }) {
   const dropdownRef = useRef(null);
@@ -60,22 +62,14 @@ function DropdownNavbarItemDesktop({
     };
   }, [dropdownRef]);
 
-  function SingleDropdownMenu() {
+  function DropdownMenu() {
     return (
       <div className="dropdown__menu">
         <ul>
           {items.map((childItemProps, i) => {
-            // const { apidocs, docs, logoClass } = childItemProps;
               return (
                 <NavbarItem
-                  // className={logoClass}
                   isDropdownItem
-                  onClick={(e) => {
-                    if (apidocs || docs) {
-                      e.preventDefault(); 
-                      setApiDocItems({ apidocs, docs });
-                    }
-                  }}
                   onKeyDown={(e) => {
                     if (i === items.length - 1 && e.key === 'Tab') {
                       e.preventDefault();
@@ -104,13 +98,12 @@ function DropdownNavbarItemDesktop({
     )
   }
 
-  function DualDropdownMenu() {
+  function MegaDropdownMenu() {
     return (
       <div className="dropdown__menu dual-layout">
         <ul className="dropdown__menu--product-list">
           {items.map((childItemProps, i) => {
             const { products, logoClass } = childItemProps;
-
               return (
                 <NavbarItem
                   className={logoClass}
@@ -150,37 +143,6 @@ function DropdownNavbarItemDesktop({
     )
   }
 
-  function NavbarProductItems({ products, setApiDocItems }) {
-    console.log({products})
-
-    return (
-      <div className="navbar-product-list-container">
-        <ul>
-        {
-          products.map(product => {
-            const { label, apiDocs, docs, logoClass } = product 
-
-            return (
-              <NavbarNavLink
-                className={clsx('dropdown__link', logoClass)}
-                label={label}
-                to={"#"}
-                onClick={(e) => {
-                  if (apiDocs || docs) {
-                    e.preventDefault(); 
-                    setApiDocItems({ apiDocs, docs })
-                  }
-                }}
-                onMouseEnter={() => setApiDocItems({ apiDocs, docs })}
-              />
-            )
-          })
-        }
-        </ul>
-      </div>
-    )
-  }
-
   return (
     <div
       ref={dropdownRef}
@@ -204,8 +166,7 @@ function DropdownNavbarItemDesktop({
         }}>
         {props.children ?? props.label}
       </NavbarNavLink>
-      <DualDropdownMenu />
-      {/* {showDualNavLayout ? <DualDropdownMenu/> : <SingleDropdownMenu />} */}
+      {megaNav ? <MegaDropdownMenu /> : <DropdownMenu />}
     </div>
   );
 }
