@@ -100,8 +100,8 @@ function DropdownNavbarItemDesktop({
 
   function MegaDropdownMenu() {
     return (
-      <div className="dropdown__menu dual-layout">
-        <ul className="dropdown__menu--product-list">
+      <div className="dropdown__menu mega">
+        <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
             const { products, logoClass } = childItemProps;
               return (
