@@ -2,25 +2,22 @@ import React from 'react'
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
 import clsx from 'classnames';
 
-function NavbarProductItems({ products, setApiDocItems }) {
+function NavbarProductItems({ products, setApiDocItems, setProductIdx, productIdx }) {
   return (
     <div className="navbar-product-list-container">
       <ul>
       {
-        products.map(product => {
+        products.map((product, i) => {
           const { label, apiDocs, docs, logoClass } = product 
           return (
             <NavbarNavLink
-              className={clsx('dropdown__link', logoClass)}
+              className={clsx('dropdown__link', logoClass, { active: i === productIdx })}
               label={label}
               to={"#"}
-              onClick={(e) => {
-                if (apiDocs || docs) {
-                  e.preventDefault(); 
-                  setApiDocItems({ apiDocs, docs })
-                }
+              onMouseEnter={() => {
+                setApiDocItems({ apiDocs, docs });
+                setProductIdx(i);
               }}
-              onMouseEnter={() => setApiDocItems({ apiDocs, docs })}
             />
           )
         })
