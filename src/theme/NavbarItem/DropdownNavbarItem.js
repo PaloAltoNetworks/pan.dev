@@ -98,6 +98,9 @@ function DropdownNavbarItemDesktop({
     )
   }
 
+  const [productGroupIdx, setProductGroupIdx] = useState(null);
+  const [productIdx, setProductIdx] = useState(null);
+
   function MegaDropdownMenu() {
     return (
       <div className="dropdown__menu mega">
@@ -106,7 +109,7 @@ function DropdownNavbarItemDesktop({
             const { products, logoClass } = childItemProps;
               return (
                 <NavbarItem
-                  className={logoClass}
+                  className={clsx(logoClass, { active: i === productGroupIdx })}
                   isDropdownItem
                   onClick={(e) => {
                     e.preventDefault(); 
@@ -128,7 +131,10 @@ function DropdownNavbarItemDesktop({
                       }
                     }
                   }}
-                  onMouseEnter={() => setProductItems(products)}
+                  onMouseEnter={() => {
+                    setProductItems(products);
+                    setProductGroupIdx(i)
+                  }}
                   activeClassName="dropdown__link--active"
                   {...childItemProps}
                   key={i}
@@ -137,7 +143,12 @@ function DropdownNavbarItemDesktop({
             }
             )}
         </ul>
-        <NavbarProductItems products={productItems} setApiDocItems={setApiDocItems} />
+        <NavbarProductItems
+          products={productItems} 
+          setApiDocItems={setApiDocItems}
+          setProductIdx={setProductIdx}
+          productIdx={productIdx}
+        />
         <NavbarDocItems apiDocs={apiDocItems.apiDocs} docs={apiDocItems.docs} />
       </div>
     )
