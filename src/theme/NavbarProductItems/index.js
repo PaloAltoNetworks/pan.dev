@@ -3,6 +3,7 @@ import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
 import clsx from 'classnames';
 
 function NavbarProductItems({ products, setApiDocItems, setProductIdx, productIdx }) {
+  if (!products.length) return null; 
   return (
     <div className="navbar-product-list-container">
       <ul>
@@ -18,6 +19,7 @@ function NavbarProductItems({ products, setApiDocItems, setProductIdx, productId
                 setApiDocItems({ apiDocs, docs });
                 setProductIdx(i);
               }}
+              onClick={(e) => e.preventDefault()}
             />
           )
         })

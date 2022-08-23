@@ -38,8 +38,6 @@ function DropdownNavbarItemDesktop({
 }) {
   const dropdownRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [apiDocItems, setApiDocItems] = useState({ apiDocs: null, docs: null }); 
-  const [productItems, setProductItems] = useState([]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -50,11 +48,6 @@ function DropdownNavbarItemDesktop({
     };
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
-
-    if (items[0]) {
-      const { apidocs, docs } = items[0];
-      setApiDocItems({ apidocs, docs })
-    }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -98,12 +91,21 @@ function DropdownNavbarItemDesktop({
     )
   }
 
-  const [productGroupIdx, setProductGroupIdx] = useState(null);
-  const [productIdx, setProductIdx] = useState(null);
-
   function MegaDropdownMenu() {
+    const [apiDocItems, setApiDocItems] = useState({}); 
+    const [productItems, setProductItems] = useState([]);
+    const [productGroupIdx, setProductGroupIdx] = useState(null);
+    const [productIdx, setProductIdx] = useState(null);
+
+    const resetMegaNav = () => {
+      setApiDocItems({});
+      setProductItems([]);
+      setProductGroupIdx(null);
+      setProductIdx(null);
+    }
+
     return (
-      <div className="dropdown__menu mega">
+      <div className="dropdown__menu mega" onMouseLeave={resetMegaNav}>
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
             const { products, logoClass } = childItemProps;
@@ -111,10 +113,6 @@ function DropdownNavbarItemDesktop({
                 <NavbarItem
                   className={clsx(logoClass, { active: i === productGroupIdx })}
                   isDropdownItem
-                  onClick={(e) => {
-                    e.preventDefault(); 
-                    setProductItems(products);
-                  }}
                   onKeyDown={(e) => {
                     if (i === items.length - 1 && e.key === 'Tab') {
                       e.preventDefault();
@@ -131,6 +129,7 @@ function DropdownNavbarItemDesktop({
                       }
                     }
                   }}
+                  onClick={(e) => e.preventDefault()}
                   onMouseEnter={() => {
                     setProductItems(products);
                     setProductGroupIdx(i)
