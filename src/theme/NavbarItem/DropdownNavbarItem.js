@@ -104,6 +104,11 @@ function DropdownNavbarItemDesktop({
       setProductIdx(null);
     }
 
+    const resetApiDocs = () => {
+      setApiDocItems({});
+      setProductIdx(null);
+    }
+
     return (
       <div className="dropdown__menu mega" onMouseLeave={resetMegaNav}>
         <ul className="dropdown-product-group-list">
@@ -132,7 +137,10 @@ function DropdownNavbarItemDesktop({
                   onClick={(e) => e.preventDefault()}
                   onMouseEnter={() => {
                     setProductItems(products);
-                    setProductGroupIdx(i)
+                    setProductGroupIdx(i);
+                    if (Object.values(apiDocItems).length > 0) {
+                      resetApiDocs();
+                    }
                   }}
                   activeClassName="dropdown__link--active"
                   {...childItemProps}
