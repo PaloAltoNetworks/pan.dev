@@ -18,7 +18,8 @@ This section will go over the details on how to integrate Prisma SD-WAN with you
 
 To install the Prisma SD-WAN Python SDK, you can use the pip utility.
 
-    pip install prisma sdwan
+    pip install cloudgenix
+    
 If you run into issues installing the SDK, create a virtual environment to avoid errors and issues due to environmental dependencies.
 
     Terminal:~ sdkuser$ virtualenv sdk
