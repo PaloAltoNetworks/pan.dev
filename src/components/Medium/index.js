@@ -12,9 +12,6 @@ const blogs = blog_json.items.slice(0, 9);
 function Medium() {
   return (
     <div className="container">
-      <div className="text--center margin-top--lg">
-        <h1>Read our latest developer blogs</h1>
-      </div>
       <div className="container padding-top--lg">
         {blogs && blogs.length && (
           <div className={classnames("row")}>
