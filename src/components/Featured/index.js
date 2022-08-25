@@ -1,10 +1,8 @@
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import classnames from "classnames";
-import clsx from "clsx";
 import React from "react";
-import { useMediaQuery } from "react-responsive";
 import Button from "@theme/Button";
-import styles from "./styles.module.css";
+import clsx from "clsx";
+import "./Featured.scss";
 
 const features = [
   {
@@ -14,12 +12,10 @@ const features = [
     target: "_self",
     color: "prisma",
     description: (
-      <>
-        <p className="text">
-          Discover the APIs, tools and techniques necessary for bringing DevOps
-          practices to the cloud.
-        </p>
-      </>
+      <p>
+        Discover the APIs, tools and techniques necessary for bringing DevOps
+        practices to the cloud.
+      </p>
     ),
   },
   {
@@ -29,11 +25,9 @@ const features = [
     target: "_self",
     color: "prisma",
     description: (
-      <>
-        <p className="text">
-          Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.
-        </p>
-      </>
+      <p>
+        Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.
+      </p>
     ),
   },
   {
@@ -42,27 +36,22 @@ const features = [
     toPage: "https://xsoar.pan.dev",
     color: "cortex",
     description: (
-      <>
-        <p className="text">
-          Browse reference docs, tutorials, the XSOAR Marketplace and more.
-        </p>
-      </>
+      <p>
+        Browse reference docs, tutorials, the XSOAR Marketplace and more.
+      </p>
     ),
   },
-
   {
     title: <>Zero Trust Network Security</>,
     imageUrl: "/img/Strata_Logo.svg",
     toPage: "https://strata.pan.dev",
-    color: "strata",
+    color: "panos",
     description: (
-      <>
-        <p className="text">
-          Learn how to make the most of the PAN-OS APIs, Expedition, Terraform,
-          Ansible, and more.
-        </p>
-      </>
-    ),
+      <p>
+        Learn how to make the most of the PAN-OS APIs, Expedition, Terraform,
+        Ansible, and more.
+      </p>
+    )
   },
 ];
 
@@ -70,33 +59,31 @@ function Feature({ imageUrl, title, description, toPage, color, offset }) {
   const imgUrl = useBaseUrl(imageUrl);
   const toUrl = toPage ? useBaseUrl(toPage) : null;
   return (
-    <div className="col col--6">
-      <Button
-        className={clsx(styles.featuredButton)}
-        variant="plain"
-        href={toUrl}
-        target="_self"
-        uppercase={false}
-        newTab={false}
-        color={color}
-      >
-        <div className={clsx("card shadow--sm", styles.featured, color)}>
-          <div className="card__body">
-            {imgUrl && <img className={styles.featuredImage} src={imgUrl} />}
-            <div className={styles.featuredTitle}>{title}</div>
-            <div className={styles.featuredSummary}>{description}</div>
-          </div>
-        </div>
-      </Button>
+    <div className={clsx("featured-card-container", color)}>
+      <span></span>
+      <div className="featured-card-content">
+        <img className="featured-card-image" src={imgUrl}/>
+        <h2>{title}</h2>
+        {description}
+        <Button
+          variant="plain"
+          href={toUrl}
+          target="_self"
+          uppercase={false}
+          newTab={false}
+        >
+          Learn More
+        </Button>
+      </div>
     </div>
   );
 }
 
 function Featured() {
   return (
-    <div>
+    <div className="featured-container container">
       {features && features.length && (
-        <div className={classnames("row")}>
+        <div className="featured-cards-container">
           {features.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
