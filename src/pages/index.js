@@ -7,17 +7,19 @@
 
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
-import classnames from "classnames";
 import React from "react";
 import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
+import HomepageHero from "../components/HompageHero/HomepageHero";
+import HomepageBanner from '../components/HomepageBanner/HomepageBanner';
 import Medium from "../components/Medium";
 import styles from "./styles.module.css";
-import Link from "@docusaurus/Link";
 
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
+  const exploreImageSrc = 'img/homepage-banner/1.svg';
+  const blogImageSrc = 'img/homepage-banner/2.svg';
 
   return (
     <Layout
@@ -26,47 +28,15 @@ function Home() {
       wrapperClassName="homepage"
     >
       <ScrollUpButton />
-      <header className={classnames("hero hero--primary", styles.heroBanner)}>
-        <div className="container">
-          <div className={styles.hero}>
-            <div className={styles.heroInner}>
-              <div className="row">
-                <div className={classnames("col col--12")}>
-                  <h1 className={styles.heroProjectTagline}>
-                    The home of{" "}
-                    <span className={styles.heroProjectKeywords}>
-                      {" "}
-                      developer docs{" "}
-                    </span>
-                    at
-                  </h1>
-                </div>
-              </div>
-              <div className="row">
-                <div className={classnames("col col--12")}>
-                  <img
-                    className={styles.heroImage}
-                    src="img/PANW_Parent_Logo_Black.svg"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <HomepageHero />
       <main>
         <section className="featuredContainer">
-          <div className="container">
-            <h1 className={styles.heroProjectTagline}>
-              Explore our Developer Docs
-            </h1>
-            <Featured />
-          </div>
+          <HomepageBanner imgSrc={exploreImageSrc} text="Explore our Developer Docs" />
+          <Featured />
         </section>
-      </main>
-      <main>
         <section>
-          <Medium></Medium>
+          <HomepageBanner imgSrc={blogImageSrc} text="Read our latest Developer Blogs" />
+          <Medium />
         </section>
       </main>
     </Layout>
