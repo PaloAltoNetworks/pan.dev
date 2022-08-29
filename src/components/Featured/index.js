@@ -2,12 +2,14 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import React from "react";
 import Button from "@theme/Button";
 import clsx from "clsx";
+import { useColorMode } from '@docusaurus/theme-common'
 import "./Featured.scss";
 
 const features = [
   {
     title: <>Cloud Security</>,
-    imageUrl: "/img/PrismaCloud.svg",
+    imageUrl: "/img/featured-card-logos/PrismaCloud_Light_Mode.svg",
+    darkImageUrl: "/img/featured-card-logos/PrismaCloud_Dark_Mode.svg",
     toPage: "https://prisma.pan.dev",
     target: "_self",
     color: "prisma",
@@ -20,7 +22,8 @@ const features = [
   },
   {
     title: <>Secure Access Service Edge</>,
-    imageUrl: "/img/PrismaSASE.svg",
+    imageUrl: "/img/featured-card-logos/PrismaSASE_Light_Mode.svg",
+    darkImageUrl: "/img/featured-card-logos/PrismaSASE_Dark_Mode.svg",
     toPage: "https://pan.dev/sase",
     target: "_self",
     color: "prisma",
@@ -32,7 +35,8 @@ const features = [
   },
   {
     title: <>Automate Anything</>,
-    imageUrl: "/img/Cortex_XSoar_Logo.svg",
+    imageUrl: "/img/featured-card-logos/CortexXSOAR_Light_Mode.svg",
+    darkImageUrl: "/img/featured-card-logos/CortexXSOAR_Dark_Mode.svg",
     toPage: "https://xsoar.pan.dev",
     color: "cortex",
     description: (
@@ -44,6 +48,7 @@ const features = [
   {
     title: <>Zero Trust Network Security</>,
     imageUrl: "/img/Strata_Logo.svg",
+    darkImageUrl: "/img/Strata_Logo.svg",
     toPage: "https://strata.pan.dev",
     color: "panos",
     description: (
@@ -55,8 +60,9 @@ const features = [
   },
 ];
 
-function Feature({ imageUrl, title, description, toPage, color, offset }) {
-  const imgUrl = useBaseUrl(imageUrl);
+function Feature({ imageUrl, title, description, toPage, color, darkImageUrl }) {
+  const { colorMode } = useColorMode();
+  const imgUrl = colorMode === "light" ? useBaseUrl(imageUrl) : useBaseUrl(darkImageUrl);
   const toUrl = toPage ? useBaseUrl(toPage) : null;
   return (
     <div className={clsx("featured-card-container", color)}>
