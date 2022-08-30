@@ -35,6 +35,10 @@ module.exports = {
           type: "doc",
           id: "threat-vault/docs/access-limits/threat-vault",
         },
+        {
+          type: "doc",
+          id: "threat-vault/docs/access-limits/dns-security",
+        },
       ],
     },
     {
@@ -42,12 +46,14 @@ module.exports = {
       id: "threat-vault/docs/best-practices",
     },
     {
-      type: "category",
-      label: "Examples",
-      items: [
-        {
-          type: "category",
-          label: "Threat Vault API Examples",
+        type: "category",
+        label: "Examples",
+        collapsed: true,
+        items: [
+              {
+                  type: "category",
+                  label: "Threat Vault API Examples",
+                  collapsed: true,
           items: [
             {
               type: "doc",
@@ -77,9 +83,22 @@ module.exports = {
               type: "doc",
               id: "threat-vault/docs/examples/threat-vault/get-content-release-notes",
             },
-          ],
-        },
-      ],
+          ],  
+              },
+            {
+                  type: "category",
+                  label: "DNS Security API Examples",
+                  collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "threat-vault/docs/examples/dns-security/request-domain-information",
+            },
+
+          ], 
+              },
+
+        ]
     },
     {
       type: "category",
@@ -91,6 +110,7 @@ module.exports = {
         },
       ],
     },
+
     {
       type: "category",
       label: "Security Subscription Release Notes",
@@ -106,6 +126,6 @@ module.exports = {
       ],
     },
   ],
-  threat_vault_api: require("../static/cdss/threat-vault/spec/sidebar_builder")
-    .sidebar,
+  dns_security_api: require("../static/cdss/dns-security/spec/sidebar_builder").sidebar,
+  threat_vault_api: require("../static/cdss/threat-vault/spec/sidebar_builder").sidebar,
 };
