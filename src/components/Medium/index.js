@@ -7,14 +7,14 @@ const ITEMS_PER_ROW = 3; // Sync up the item col width if this is changed.
 
 const blog_json = require("./blogs.json");
 
-const blogs = blog_json.items.slice(0, 9);
+const blogs = blog_json.items.slice(0, 6);
 
 function Medium() {
   return (
     <div className="container">
-      <div className="container padding-top--lg">
+      <div className="padding-top--lg">
         {blogs && blogs.length && (
-          <div className={classnames("row")}>
+          <div className="row">
             {blogs.map((blog) => (
               <div key={blog.title} className="col col--4 margin-bottom--lg">
                 <div className={classnames("card", styles.showcaseBlog)}>
@@ -26,33 +26,27 @@ function Medium() {
                     />
                   </div>
                   <div className="card__body">
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <h3 className="avatar__name">{blog.title}</h3>
-                      </div>
+                    <div className="avatar__intro margin-left--none">
+                      <h3 className="avater__name">{blog.title}</h3>
                     </div>
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <p
-                          className={classnames(
-                            "text text--secondary",
-                            styles.blogAuthor
-                          )}
-                        >
-                          By: {blog.author}
-                        </p>
-                      </div>
+                    <div className="avatar__intro margin-left--none">
+                      <p
+                        className={classnames(
+                          "text--secondary",
+                          styles.blogAuthor
+                        )}
+                      >
+                        By: {blog.author}
+                      </p>
                     </div>
                     <br />
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <div className={styles.content}>
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: blog.content,
-                            }}
-                          />
-                        </div>
+                    <div className="avatar__intro margin-left--none">
+                      <div className={styles.content}>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: blog.content,
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
