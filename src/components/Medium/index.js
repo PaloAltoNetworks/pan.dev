@@ -9,17 +9,20 @@ import styles from "./styles.module.css";
 
 const blog_json = require("./blogs.json");
 const blogs = blog_json.items.slice(0, 9);
-const sliderSettings = {
-  autoplay: true,
-  autoplaySpeed: 7500,
-  dots: true,
-  infinite: true,
-  speed: 850,
-  slidesToShow: 3,
-  slidesToScroll: 3
-}
 
 function Medium() {
+  const sliderSettings = {
+    autoplay: true,
+    autoplaySpeed: 7500,
+    dots: true,
+    infinite: true,
+    speed: 850,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    nextArrow: <img src="/icons/slider-arrow-forward.svg" />,
+    prevArrow: <img src="/icons/slider-arrow-back.svg" />
+  }
+
   const BlogCard = ({ blog }) => {
     return (
       <div className={classnames("card", styles.showcaseBlog)}>
