@@ -88,6 +88,11 @@ module.exports = {
               label: "Threat Vault API",
               className: "indent",
             },
+            {
+              to: "cdss/dns-security/api",
+              label: "DNS Security API (BETA)",
+              className: "indent",
+            },
           ],
         },
         {
