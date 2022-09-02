@@ -10,6 +10,7 @@ import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink';
 import NavbarItem from '@theme/NavbarItem';
 import NavbarDocItems from '../NavbarDocItems';
 import NavbarProductItems from '../NavbarProductItems';
+import './DropdownNavbarItem.scss';
 
 function isItemActive(item, localPathname) {
   if (isSamePath(item.to, localPathname)) {
@@ -60,32 +61,32 @@ function DropdownNavbarItemDesktop({
       <div className="dropdown__menu">
         <ul>
           {items.map((childItemProps, i) => {
-              return (
-                <NavbarItem
-                  isDropdownItem
-                  onKeyDown={(e) => {
-                    if (i === items.length - 1 && e.key === 'Tab') {
-                      e.preventDefault();
-                      setShowDropdown(false);
-                      const nextNavbarItem = dropdownRef.current.nextElementSibling;
-                      if (nextNavbarItem) {
-                        const targetItem =
-                          nextNavbarItem instanceof HTMLAnchorElement
-                            ? nextNavbarItem
-                            : // Next item is another dropdown; focus on the inner
-                              // anchor element instead so there's outline
-                              nextNavbarItem.querySelector('a');
-                        targetItem.focus();
-                      }
+            return (
+              <NavbarItem
+                isDropdownItem
+                onKeyDown={(e) => {
+                  if (i === items.length - 1 && e.key === 'Tab') {
+                    e.preventDefault();
+                    setShowDropdown(false);
+                    const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                    if (nextNavbarItem) {
+                      const targetItem =
+                        nextNavbarItem instanceof HTMLAnchorElement
+                          ? nextNavbarItem
+                          : // Next item is another dropdown; focus on the inner
+                            // anchor element instead so there's outline
+                            nextNavbarItem.querySelector('a');
+                      targetItem.focus();
                     }
-                  }}
-                  activeClassName="dropdown__link--active"
-                  {...childItemProps}
-                  key={i}
-                />
-              )
-            }
-            )}
+                  }
+                }}
+                activeClassName="dropdown__link--active"
+                {...childItemProps}
+                key={i}
+              />
+            )
+          }  
+        )}
         </ul>
       </div>
     )
@@ -208,38 +209,84 @@ function DropdownNavbarItemMobile({
     }
   }, [localPathname, containsActive, setCollapsed]);
 
+  const [productGroupIdx, setProductGroupIdx] = useState(null);
+  const [productIdx, setProductIdx] = useState(null);
+
   return (
-    <li
-      className={clsx('menu__list-item', {
-        'menu__list-item--collapsed': collapsed,
-      })}>
-      <NavbarNavLink
-        role="button"
-        className={clsx(
-          'menu__link menu__link--sublist menu__link--sublist-caret',
-          className,
-        )}
-        {...props}
-        onClick={(e) => {
-          e.preventDefault();
-          toggleCollapsed();
-        }}>
-        {props.children ?? props.label}
-      </NavbarNavLink>
-      <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
-        {items.map((childItemProps, i) => (
-          <NavbarItem
-            mobile
-            isDropdownItem
-            onClick={onClick}
-            activeClassName="menu__link--active"
-            {...childItemProps}
-            key={i}
-          />
-        ))}
-      </Collapsible>
-    </li>
-  );
+    <>
+      {items.map((item, i) => {
+        const { products } = item;
+        const productGroupListClass = clsx('menu__list-item',
+          { 'menu__list-item--collapsed': i !== productGroupIdx }
+        )
+        return (
+          <li className={productGroupListClass}>
+            <NavbarNavLink
+              role="button"
+              className={clsx(
+                'menu__list-item',
+                { 'menu__list-item--collapsed': i !== productGroupIdx }
+              )}
+              label={item.label}
+              onClick={(e) => {
+                e.preventDefault();
+                if (i !== productGroupIdx) {
+                  setProductGroupIdx(i);
+                } else {
+                  setProductGroupIdx(null);
+                }
+              }}
+            />
+            <Collapsible lazy as="ul" className="menu__list" collapsed={i !== productGroupIdx}>
+              {products.map((product, j) =>
+                <li className={clsx('menu__list-item', {'menu__list-item--collapsed': j !== productIdx})}>
+                  <NavbarNavLink
+                    to={product.to}
+                    label={product.label}
+                    className={clsx(
+                      'menu__link menu__link--sublist menu__link--sublist-caret',
+                    )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log({ j, productIdx })
+                    if (j !== productIdx) {
+                      setProductIdx(j);
+                    } else {
+                      setProductIdx(null);
+                    }
+                  }}/>
+                  <Collapsible lazy as="ul" className="menu__list" collapsed={j !== productIdx}>
+                    <NavbarNavLink
+                      className={clsx('menu__link section__title')}
+                      label={"Docs"}
+                      onClick={(e) => e.preventDefault()}/>
+                      {product.docs.map(productDoc => 
+                        <NavbarNavLink
+                          className={clsx('menu__link menu__link--sublist')}
+                          label={productDoc.label}
+                          to={productDoc.to}
+                        />
+                      )}
+                    <NavbarNavLink
+                      className={clsx('menu__link section__title')}
+                      label={"API Reference"}
+                      onClick={(e) => e.preventDefault()}/>
+                      {product.apiDocs.map(apiDoc => 
+                        <NavbarNavLink
+                          className={clsx('menu__link menu__link--sublist')}
+                          label={apiDoc.label}
+                          to={apiDoc.to}
+                        />
+                      )}
+                  </Collapsible>
+                </li>
+              )}
+            </Collapsible>
+          </li>
+        )
+      })}
+    </>
+  )
 }
 
 export default function DropdownNavbarItem({mobile = false, ...props}) {
