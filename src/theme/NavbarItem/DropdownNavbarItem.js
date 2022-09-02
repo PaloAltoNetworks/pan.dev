@@ -117,6 +117,7 @@ function DropdownNavbarItemDesktop({
             const { products, logoClass } = childItemProps;
               return (
                 <NavbarItem
+                  key={i}
                   className={clsx(logoClass, { active: i === productGroupIdx })}
                   isDropdownItem
                   onKeyDown={(e) => {
@@ -220,7 +221,7 @@ function DropdownNavbarItemMobile({
           { 'menu__list-item--collapsed': i !== productGroupIdx }
         )
         return (
-          <li className={productGroupListClass}>
+          <li key={i} className={productGroupListClass}>
             <NavbarNavLink
               role="button"
               className={clsx(
