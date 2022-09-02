@@ -248,7 +248,6 @@ function DropdownNavbarItemMobile({
                     )}
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log({ j, productIdx })
                     if (j !== productIdx) {
                       setProductIdx(j);
                     } else {
