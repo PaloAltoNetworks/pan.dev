@@ -224,7 +224,7 @@ function DropdownNavbarItemMobile({
             <NavbarNavLink
               role="button"
               className={clsx(
-                'menu__list-item',
+                'menu__link menu__link--sublist menu__link--sublist-caret product-group',
                 { 'menu__list-item--collapsed': i !== productGroupIdx }
               )}
               label={item.label}
