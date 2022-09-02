@@ -14,3 +14,4 @@ keywords:
 | Date            | Description                                                                                                             |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | August 08, 2022 | First public release of the Threat Vault API for Threat Prevention and Advanced Threat Prevention subscription holders. |
+| August 23, 2022 | First public `BETA` release of the DNS Security API for DNS Security subscription holders. |
