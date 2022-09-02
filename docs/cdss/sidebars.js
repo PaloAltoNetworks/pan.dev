@@ -9,7 +9,7 @@ module.exports = {
   cdss_docs: [
     {
       type: "doc",
-      id: "threat-vault/docs/home",
+      id: "cdss/threat-vault/docs/home",
     },
     {
       type: "category",
@@ -18,19 +18,19 @@ module.exports = {
       items: [
         {
           type: "doc",
-          id: "threat-vault/docs/getstarted",
+          id: "cdss/threat-vault/docs/getstarted",
         },
         {
           type: "doc",
-          id: "threat-vault/docs/authentication",
+          id: "cdss/threat-vault/docs/authentication",
         },
         {
           type: "doc",
-          id: "threat-vault/docs/api-key-management",
+          id: "cdss/threat-vault/docs/api-key-management",
         },
         {
           type: "doc",
-          id: "threat-vault/docs/api-call",
+          id: "cdss/threat-vault/docs/api-call",
         },
       ],
     },
@@ -40,17 +40,17 @@ module.exports = {
       items: [
         {
           type: "doc",
-          id: "threat-vault/docs/access-limits/threat-vault",
+          id: "cdss/threat-vault/docs/access-limits/threat-vault",
         },
         {
           type: "doc",
-          id: "threat-vault/docs/access-limits/dns-security",
+          id: "cdss/threat-vault/docs/access-limits/dns-security",
         },
       ],
     },
     {
       type: "doc",
-      id: "threat-vault/docs/best-practices",
+      id: "cdss/threat-vault/docs/best-practices",
     },
     {
       type: "category",
@@ -59,36 +59,36 @@ module.exports = {
       items: [
         {
           type: "category",
-          label: "Threat Vault API Examples",
+          label: "cdss/threat Vault API Examples",
           collapsed: true,
           items: [
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-threat-signature-metadata-ips",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-threat-signature-metadata-ips",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-threat-signature-metadata-antivirus",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-threat-signature-metadata-antivirus",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-threat-signature-metadata",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-threat-signature-metadata",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-threat-signature-history",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-threat-signature-history",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-atp-report",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-atp-report",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-atp-report-pcap",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-atp-report-pcap",
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/threat-vault/get-content-release-notes",
+              id: "cdss/threat-vault/docs/examples/threat-vault/get-content-release-notes",
             },
           ],
         },
@@ -99,7 +99,7 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "threat-vault/docs/examples/dns-security/request-domain-information",
+              id: "cdss/threat-vault/docs/examples/dns-security/request-domain-information",
             },
           ],
         },
@@ -111,7 +111,7 @@ module.exports = {
       items: [
         {
           type: "doc",
-          id: "threat-vault/docs/response-fields/threat-vault-response-fields",
+          id: "cdss/threat-vault/docs/response-fields/threat-vault-response-fields",
         },
       ],
     },
@@ -122,11 +122,11 @@ module.exports = {
       items: [
         {
           type: "doc",
-          id: "threat-vault/docs/release-notes/changelog",
+          id: "cdss/threat-vault/docs/release-notes/changelog",
         },
         {
           type: "doc",
-          id: "threat-vault/docs/release-notes/release-notes",
+          id: "cdss/threat-vault/docs/release-notes/release-notes",
         },
       ],
     },
