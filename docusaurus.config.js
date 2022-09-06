@@ -203,14 +203,14 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      label: "Prisma Access Configuration",
-                      to: "sase/docs/insights"
+                      label: "Get Started 2.0",
+                      to: "sase/docs/insights/getting_started-20"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "sase/api/prisma-access-config",
-                      label: "Prisma Access Configuration APIs"
+                      to: "sase/docs/insights",
+                      label: "Prisma Access Insights APIs"
                     }
                   ]
                 },
@@ -220,14 +220,18 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      label: "Prisma SD-WAN",
+                      label: "Prisma SD-WAN Overview",
                       to: "sase/docs/sdwan"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "cdss/threat-vault/api",
-                      label: "Threat Vault API"
+                      to: "sase/api/sdwan/unified",
+                      label: "Prisma SD-WAN Unified"
+                    },
+                    {
+                      to: "sase/api/sdwan/legacy",
+                      label: "Prisma SD-WAN Legacy"
                     }
                   ]
                 }
@@ -250,12 +254,8 @@ const config = {
                   ],
                   docs: [
                     {
-                      to: "#",
-                      label: "Cloud Security Posture Management"
-                    },
-                    {
-                      to: "#",
-                      label: "Placeholder Doc 2"
+                      to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
+                      label: "Getting Started"
                     }
                   ]
                 },
@@ -265,18 +265,14 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/api/cloud/cspm/",
-                      label: "CSPM API"
+                      to: "https://prisma.pan.dev/api/cloud/cwpp",
+                      label: "CWPP API"
                     }
                   ],
                   docs: [
                     {
-                      to: "#",
-                      label: "Cloud Security Posture Management"
-                    },
-                    {
-                      to: "#",
-                      label: "Placeholder Doc 2"
+                      to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
+                      label: "Getting Started"
                     }
                   ]
                 }

@@ -180,7 +180,7 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`Unified`),
     },
-    "sase/api/sdwan/unified/unified",
+    "sase/api/sdwan/unified",
   ].concat(require("./api/sdwan/unified/sidebar")),
   sdwan_legacy: [
     {
