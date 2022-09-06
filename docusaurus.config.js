@@ -175,7 +175,7 @@ const config = {
                       label: "Prisma Access Insights API"
                     },
                     {
-                      to: "sase/api/sdwan/unified",
+                      to: "sase/api/sdwan",
                       label: "Prisma SD-WAN API"
                     }
                   ]
@@ -226,7 +226,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "sase/api/sdwan/unified",
+                      to: "sase/api/sdwan",
                       label: "Prisma SD-WAN Unified"
                     },
                     {
