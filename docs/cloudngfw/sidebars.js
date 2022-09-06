@@ -28,7 +28,11 @@ module.exports = {
       ],
     },
   ],
-  cloudngfwforaws_api: ["sase/api/auth/auth-api"].concat(
-    require("./api/aws/sidebar")
-  ),
+  cloudngfwforaws_api: [
+    {
+      type: "doc",
+      id: "cloudngfw/api/aws/awsapi"
+    },
+    require('./api/aws/sidebar')
+  ]
 };
