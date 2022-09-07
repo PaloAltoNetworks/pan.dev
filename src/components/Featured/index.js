@@ -7,7 +7,7 @@ import "./Featured.scss";
 
 const features = [
   {
-    title: <>Cloud Security</>,
+    title: <>Cloud Native Security</>,
     imageUrl: "/img/featured-card-logos/PrismaCloud_Light_Mode.svg",
     darkImageUrl: "/img/featured-card-logos/PrismaCloud_Dark_Mode.svg",
     toPage: "https://prisma.pan.dev",
@@ -34,7 +34,7 @@ const features = [
     ),
   },
   {
-    title: <>Automate Anything</>,
+    title: <>Security Operations</>,
     imageUrl: "/img/featured-card-logos/CortexXSOAR_Light_Mode.svg",
     darkImageUrl: "/img/featured-card-logos/CortexXSOAR_Dark_Mode.svg",
     toPage: "https://xsoar.pan.dev",
@@ -46,7 +46,7 @@ const features = [
     ),
   },
   {
-    title: <>Zero Trust Network Security</>,
+    title: <>Network Security</>,
     imageUrl: "/img/Strata_Logo.svg",
     darkImageUrl: "/img/Strata_Logo.svg",
     toPage: "https://strata.pan.dev",
