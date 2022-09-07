@@ -32,6 +32,11 @@ const config = {
     colorMode: {
       defaultMode: "light"
     },
+    docs: {
+      sidebar: {
+        hideable: true,
+      },
+    },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
@@ -354,7 +359,7 @@ const config = {
           sidebarPath: require.resolve("./docs/sidebars.js"),
           docItemComponent: "@theme/ApiItem",
           remarkPlugins: [],
-          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master"
+          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")]
