@@ -7,9 +7,8 @@ import {
 } from '@docusaurus/theme-common';
 import {isSamePath, useLocalPathname} from '@docusaurus/theme-common/internal';
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink';
-import NavbarItem from '@theme/NavbarItem';
 import NavbarDocItems from '../NavbarDocItems';
-import NavbarProductItems from '../NavbarProductItems';
+import NavbarItem from '@theme/NavbarItem';
 import './DropdownNavbarItem.scss';
 
 function isItemActive(item, localPathname) {
@@ -96,6 +95,7 @@ function DropdownNavbarItemDesktop({
     const [apiDocItems, setApiDocItems] = useState({}); 
     const [productItems, setProductItems] = useState([]);
     const [productGroupIdx, setProductGroupIdx] = useState(null);
+    const [productTitle, setProductTitle] = useState('');
     const [productIdx, setProductIdx] = useState(null);
 
     const resetMegaNav = () => {
@@ -111,54 +111,73 @@ function DropdownNavbarItemDesktop({
     }
 
     return (
-      <div className="dropdown__menu mega" onMouseLeave={resetMegaNav}>
+      <div className="dropdown__menu mega" >
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
-            const { products, logoClass } = childItemProps;
+            const { products, logoClass, label } = childItemProps;
               return (
-                <NavbarItem
-                  key={i}
-                  className={clsx(logoClass, { active: i === productGroupIdx })}
-                  isDropdownItem
-                  onKeyDown={(e) => {
-                    if (i === items.length - 1 && e.key === 'Tab') {
-                      e.preventDefault();
-                      setShowDropdown(false);
-                      const nextNavbarItem = dropdownRef.current.nextElementSibling;
-                      if (nextNavbarItem) {
-                        const targetItem =
-                          nextNavbarItem instanceof HTMLAnchorElement
-                            ? nextNavbarItem
-                            : // Next item is another dropdown; focus on the inner
-                              // anchor element instead so there's outline
-                              nextNavbarItem.querySelector('a');
-                        targetItem.focus();
+                <>
+                  <NavbarItem
+                    key={i}
+                    className={clsx('product-group-list__product-title')}
+                    isDropdownItem
+                    onKeyDown={(e) => {
+                      if (i === items.length - 1 && e.key === 'Tab') {
+                        e.preventDefault();
+                        setShowDropdown(false);
+                        const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                        if (nextNavbarItem) {
+                          const targetItem =
+                            nextNavbarItem instanceof HTMLAnchorElement
+                              ? nextNavbarItem
+                              : // Next item is another dropdown; focus on the inner
+                                // anchor element instead so there's outline
+                                nextNavbarItem.querySelector('a');
+                          targetItem.focus();
+                        }
                       }
-                    }
-                  }}
-                  onClick={(e) => e.preventDefault()}
-                  onMouseEnter={() => {
-                    setProductItems(products);
-                    setProductGroupIdx(i);
-                    if (Object.values(apiDocItems).length > 0) {
-                      resetApiDocs();
-                    }
-                  }}
-                  activeClassName="dropdown__link--active"
-                  {...childItemProps}
-                  key={i}
-                />
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setProductItems(products);
+                      setProductGroupIdx(i);
+                    }}
+                    activeClassName="dropdown__link--active"
+                    {...childItemProps}
+                  />
+                  <Collapsible
+                    className="padding-top--none padding-left--none"
+                    lazy as="ul"
+                    collapsed={i !== productGroupIdx}
+                  >
+                    {products.map((product, j) => {
+                      const { apiDocs, docs, label } = product
+                      return (
+                        <li className="padding-left--sm">
+                          <NavbarNavLink
+                            className={clsx("dropdown__link", { active: productIdx === j })}
+                            label={product.label}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setApiDocItems({ apiDocs, docs })
+                              setProductTitle(label);
+                              setProductIdx(j);
+                            }}
+                          />
+                        </li>
+                      )
+                    })}
+                  </Collapsible>
+                </>
               )
             }
             )}
         </ul>
-        <NavbarProductItems
-          products={productItems} 
-          setApiDocItems={setApiDocItems}
-          setProductIdx={setProductIdx}
-          productIdx={productIdx}
+        <NavbarDocItems
+          apiDocs={apiDocItems.apiDocs}
+          docs={apiDocItems.docs}
+          productTitle={productTitle}
         />
-        <NavbarDocItems apiDocs={apiDocItems.apiDocs} docs={apiDocItems.docs} />
       </div>
     )
   }

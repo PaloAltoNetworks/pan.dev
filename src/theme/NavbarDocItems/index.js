@@ -1,13 +1,14 @@
 import React from 'react'
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
+import './NavbarDocItems.scss'
 
-function NavbarDocItems({ apiDocs, docs }) {
+function NavbarDocItems({ apiDocs, docs, productTitle }) {
   if (!apiDocs && !docs) return null; 
 
   const apiDocItems = apiDocs &&
-    <>
-      <span className="navbar-section-title">API Reference</span>
-      <div className="navbar-doc-items"> 
+    <div className="navbar-doc-items">
+      <span className="navbar-doc-items__title">API Reference</span>
+      <div className="navbar-doc-items__links"> 
         {Object.values(apiDocs).map(apiDoc => 
           <li>
             <NavbarNavLink
@@ -18,12 +19,12 @@ function NavbarDocItems({ apiDocs, docs }) {
           </li>
         )}
       </div>
-    </>
+    </div>
 
   const docItems = docs && 
-    <>
-      <span className="navbar-section-title">Docs</span>
-      <div className="navbar-doc-items"> 
+    <div className="navbar-doc-items">
+      <span className="navbar-doc-items__title">Docs</span>
+      <div className="navbar-doc-items__links"> 
         {Object.values(docs).map(doc =>
           <li>
             <NavbarNavLink
@@ -34,11 +35,12 @@ function NavbarDocItems({ apiDocs, docs }) {
           </li>
         )}
       </div>
-    </>
+    </div>
 
   return (
     <div className="navbar-doc-items-container">
-      <ul className="navbar-doc-items-list">
+      <h2 className="navbar-doc-items__product-title">{productTitle}</h2>
+      <ul className="navbar-doc-items__list-container">
         {apiDocs && apiDocItems}
         {docs && docItems}
       </ul>
