@@ -93,90 +93,89 @@ function DropdownNavbarItemDesktop({
 
   function MegaDropdownMenu() {
     const [apiDocItems, setApiDocItems] = useState({}); 
-    const [productItems, setProductItems] = useState([]);
+    const [colorclass, setcolorclass] = useState('')
     const [productGroupIdx, setProductGroupIdx] = useState(null);
     const [productTitle, setProductTitle] = useState('');
     const [productIdx, setProductIdx] = useState(null);
-
-    const resetMegaNav = () => {
-      setApiDocItems({});
-      setProductItems([]);
-      setProductGroupIdx(null);
-      setProductIdx(null);
-    }
-
-    const resetApiDocs = () => {
-      setApiDocItems({});
-      setProductIdx(null);
-    }
 
     return (
       <div className="dropdown__menu mega" >
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
-            const { products, logoClass, label } = childItemProps;
-              return (
-                <>
-                  <NavbarItem
-                    key={i}
-                    className={clsx('product-group-list__product-title')}
-                    isDropdownItem
-                    onKeyDown={(e) => {
-                      if (i === items.length - 1 && e.key === 'Tab') {
-                        e.preventDefault();
-                        setShowDropdown(false);
-                        const nextNavbarItem = dropdownRef.current.nextElementSibling;
-                        if (nextNavbarItem) {
-                          const targetItem =
-                            nextNavbarItem instanceof HTMLAnchorElement
-                              ? nextNavbarItem
-                              : // Next item is another dropdown; focus on the inner
-                                // anchor element instead so there's outline
-                                nextNavbarItem.querySelector('a');
-                          targetItem.focus();
-                        }
-                      }
-                    }}
-                    onClick={(e) => {
+            const { products, colorclass } = childItemProps;
+            const firstProduct = Object.values(products)[0];
+
+            return (
+              <React.Fragment key={i}>
+                <NavbarItem
+                  className={clsx(`product-group-list__product-title ${colorclass}`,
+                    { active: i === productGroupIdx }
+                  )}
+                  isDropdownItem
+                  onKeyDown={(e) => {
+                    if (i === items.length - 1 && e.key === 'Tab') {
                       e.preventDefault();
-                      setProductItems(products);
+                      setShowDropdown(false);
+                      const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                      if (nextNavbarItem) {
+                        const targetItem =
+                          nextNavbarItem instanceof HTMLAnchorElement
+                            ? nextNavbarItem
+                            : // Next item is another dropdown; focus on the inner
+                              // anchor element instead so there's outline
+                              nextNavbarItem.querySelector('a');
+                        targetItem.focus();
+                      }
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setcolorclass(colorclass);
+                    if (i !== productGroupIdx) {
                       setProductGroupIdx(i);
-                    }}
-                    activeClassName="dropdown__link--active"
-                    {...childItemProps}
-                  />
-                  <Collapsible
-                    className="padding-top--none padding-left--none"
-                    lazy as="ul"
-                    collapsed={i !== productGroupIdx}
-                  >
-                    {products.map((product, j) => {
-                      const { apiDocs, docs, label } = product
-                      return (
-                        <li className="padding-left--sm">
-                          <NavbarNavLink
-                            className={clsx("dropdown__link", { active: productIdx === j })}
-                            label={product.label}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setApiDocItems({ apiDocs, docs })
-                              setProductTitle(label);
-                              setProductIdx(j);
-                            }}
-                          />
-                        </li>
-                      )
-                    })}
-                  </Collapsible>
-                </>
-              )
-            }
-            )}
+                      setProductTitle(firstProduct.label);
+                      setProductIdx(0);
+                      setApiDocItems({ apiDocs: firstProduct.apiDocs, docs:firstProduct.docs })
+                    } else {
+                      setProductGroupIdx(null);
+                    }
+                  }}
+                  activeClassName="dropdown__link--active"
+                  {...childItemProps}
+                />
+                <Collapsible
+                  className="padding-top--none padding-left--none"
+                  lazy as="ul"
+                  collapsed={i !== productGroupIdx}
+                >
+                  {products.map((product, j) => {
+                    const { apiDocs, docs, label } = product
+                    return (
+                      <li className="padding-left--sm" key={j}>
+                        <NavbarNavLink
+                          className={clsx(`dropdown__link product ${colorclass}`, { active: productIdx === j })}
+                          label={product.label}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setApiDocItems({ apiDocs, docs })
+                            setProductTitle(label);
+                            setProductIdx(j);
+                          }}
+                        />
+                      </li>
+                    )
+                  })}
+                </Collapsible>
+              </React.Fragment>
+            )
+          }
+        )}
         </ul>
         <NavbarDocItems
           apiDocs={apiDocItems.apiDocs}
           docs={apiDocItems.docs}
           productTitle={productTitle}
+          colorclass={colorclass}
         />
       </div>
     )
