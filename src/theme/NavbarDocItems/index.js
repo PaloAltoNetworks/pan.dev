@@ -2,9 +2,9 @@ import React from 'react'
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink'
 import './NavbarDocItems.scss'
 
-function NavbarDocItems({ apiDocs, docs, productTitle }) {
+function NavbarDocItems({ apiDocs, docs, colorclass, productTitle }) {
   if (!apiDocs && !docs) return null; 
-
+  
   const apiDocItems = apiDocs &&
     <div className="navbar-doc-items">
       <span className="navbar-doc-items__title">API Reference</span>
@@ -39,7 +39,7 @@ function NavbarDocItems({ apiDocs, docs, productTitle }) {
 
   return (
     <div className="navbar-doc-items-container">
-      <h2 className="navbar-doc-items__product-title">{productTitle}</h2>
+      <h2 className={`navbar-doc-items__product-title ${colorclass}`}>{productTitle}</h2>
       <ul className="navbar-doc-items__list-container">
         {apiDocs && apiDocItems}
         {docs && docItems}

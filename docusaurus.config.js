@@ -63,7 +63,7 @@ const config = {
             {
               label: "Network Security",
               to: "#",
-              logoClass: "network-security",
+              colorclass: "network-security",
               products: [
                 {
                   label: "Cloud NGFW",
@@ -138,7 +138,7 @@ const config = {
             {
               label: "Security Access Service Edge",
               to: "#",
-              logoClass: "network-security",
+              colorclass: "sase",
               products: [
                 {
                   label: "Prisma SASE",
@@ -245,7 +245,7 @@ const config = {
             {
               label: "Cloud Native Security",
               to: "#",
-              logoClass: "network-security",
+              colorclass: "cloud-native-security",
               products: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
@@ -286,7 +286,7 @@ const config = {
             {
               label: "Security Operations",
               to: "#",
-              logoClass: "network-security",
+              colorclass: "security-operations",
               products: [
                 {
                   to: "#",
