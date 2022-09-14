@@ -103,7 +103,7 @@ function DropdownNavbarItemDesktop({
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
             const { products, colorclass } = childItemProps;
-            const firstProduct = Object.values(products)[0];
+            const firstProduct = products[0];
 
             return (
               <React.Fragment key={i}>
