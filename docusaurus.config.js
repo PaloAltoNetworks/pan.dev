@@ -56,7 +56,7 @@ module.exports = {
       items: [
         {
           label: "Network Security",
-          to: "cloudngfw",
+          to: "network-security",
           items: [
             {
               to: "#",
@@ -279,6 +279,15 @@ module.exports = {
         path: "cdss",
         routeBasePath: "cdss",
         sidebarPath: require.resolve("./cdss/sidebar.js"),
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "network-security",
+        path: "network-security",
+        routeBasePath: "network-security",
+        sidebarPath: false,
       },
     ],
   ],
