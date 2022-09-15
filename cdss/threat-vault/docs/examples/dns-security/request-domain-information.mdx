@@ -23,7 +23,7 @@ Keep a few things in mind when formatting your API query:
 
 ## Example 1: Request information about multiple domains in batch mode.
 
-When start and end dates are not specified for each domain, all available data is returned.
+When start and end dates are not specified, all available data is returned for each specified domain.
 
 ```shell-session
 curl -X POST -d '{"domains": [{"domain": "google.com"}, {"domain": "yahoo.com"}, {"domain": "microsoft.com"}]}' 'https://api.dns.service.paloaltonetworks.com/v1/domain/info' \
@@ -1744,5 +1744,179 @@ A successful API call returns an HTTP response code of 200, indicating success; 
       ]
     },
   ]
+}
+```
+
+## Example 3: Request information about multiple [high risk] domains in batch mode.
+
+The specified domains in this request are considered to be risky or dangerous (at the time of publication - this can change as domains are reanalyzed by DNS Security), classified with the following current threat categories: annexpublishers.org `malware`, tipmuch.com `malware`, and classclean.net `command-and-control`.
+
+```shell-session
+curl -X POST -d '{"domains": [{"domain": "annexpublishers.org"}, {"domain": "tipmuch.com"}, {"domain": "classclean.net"}]}' 'https://api.dns.service.paloaltonetworks.com/v1/domain/info' \
+  -H 'X-DNS-API-APIKEY: api_key' \
+  -H 'Content-Type: application/json'
+```
+
+A successful API call returns an HTTP response code of 200, indicating success; additionally, the API provides a JSON object with various data fields containing the results of the request.
+
+```json
+{
+    "success": true,
+    "message": "",
+    "results": [
+        {
+            "domain": "annexpublishers.org",
+            "verdict": 1,
+            "category": "malware",
+            "categoryHistories": [
+                {
+                    "category": "malware",
+                    "time": "2022-09-05T08:55:38Z",
+                    "evidences": [
+                        "Corroborated by intelligence sources",
+                        "URL sandbox analysis found this URL to be malicious."
+                    ]
+                },
+                {
+                    "category": "health-and-medicine",
+                    "time": "2020-07-18T14:06:44Z",
+                    "evidences": [
+                        "Entity no longer malicious by PANW crawlers"
+                    ]
+                }
+            ],
+            "ipHistories": [
+                {
+                    "ip": "107.180.37.105",
+                    "type": "a",
+                    "first": "2020-03-25T06:04:21Z",
+                    "last": "2022-09-15T11:11:12Z",
+                    "count": 487,
+                    "asn": {
+                        "ASNumber": 26496,
+                        "ASName": "AS26496, Unknown"
+                    },
+                    "geo": {
+                        "countryCode": "US",
+                        "countryName": "United States"
+                    }
+                },
+                {
+                    "ip": "162.222.227.194",
+                    "type": "a",
+                    "first": "2019-12-29T01:14:13Z",
+                    "last": "2020-03-23T21:41:23Z",
+                    "count": 2,
+                    "asn": {
+                        "ASNumber": 46606,
+                        "ASName": "UNIFIEDLAYER-AS-1, US"
+                    },
+                    "geo": {
+                        "countryCode": "US",
+                        "countryName": "United States"
+                    }
+                }
+            ]
+        },
+        {
+            "domain": "tipmuch.com",
+            "verdict": 1,
+            "category": "malware",
+            "categoryHistories": [
+                {
+                    "category": "malware",
+                    "time": "2022-06-25T13:25:57Z",
+                    "evidences": [
+                        "Corroborated by intelligence sources",
+                        "Associated with known malicious URL"
+                    ]
+                },
+                {
+                    "category": "training-and-tools",
+                    "time": "2022-06-25T08:35:08Z",
+                    "evidences": [
+                        "Corroborated by intelligence sources",
+                        "Associated with known malicious URL"
+                    ]
+                }
+            ],
+            "ipHistories": [
+                {
+                    "ip": "17.0.0.10",
+                    "type": "a",
+                    "first": "2022-04-18T16:46:29Z",
+                    "last": "2022-04-18T16:46:29Z",
+                    "count": 1,
+                    "asn": {
+                        "ASNumber": 714,
+                        "ASName": "APPLE-ENGINEERING, US"
+                    },
+                    "geo": {
+                        "countryCode": "US",
+                        "countryName": "United States"
+                    }
+                },
+                {
+                    "ip": "34.98.99.30",
+                    "type": "a",
+                    "first": "2020-10-29T11:16:52Z",
+                    "last": "2020-10-29T11:16:52Z",
+                    "count": 2,
+                    "asn": {
+                        "ASNumber": 15169,
+                        "ASName": "GOOGLE, US"
+                    },
+                    "geo": {
+                        "countryCode": "US",
+                        "countryName": "United States"
+                    }
+                },
+                {
+                    "ip": "192.3.3.147",
+                    "type": "a",
+                    "first": "2020-11-04T01:17:40Z",
+                    "last": "2022-09-15T07:55:40Z",
+                    "count": 10,
+                    "asn": {
+                        "ASNumber": 36352,
+                        "ASName": "AS-COLOCROSSING, US"
+                    },
+                    "geo": {
+                        "countryCode": "US",
+                        "countryName": "United States"
+                    }
+                }
+            ]
+        },
+        {
+            "domain": "classclean.net",
+            "verdict": 0,
+            "category": "command-and-control",
+            "categoryHistories": [
+                {
+                    "category": "command-and-control",
+                    "time": "2021-09-10T18:36:35Z",
+                    "evidences": [
+                        "Associated with a malicious sample submitted and analyzed by WildFire",
+                        "Corroborated by intelligence sources",
+                        "Associated with known domain generation algorithms",
+                        "Manual review",
+                        "Associated with known bad IPs"
+                    ]
+                },
+                {
+                    "category": "malware",
+                    "time": "2020-09-22T06:03:23Z",
+                    "evidences": [
+                        "Associated with a malicious sample submitted and analyzed by WildFire",
+                        "Corroborated by intelligence sources",
+                        "Manual review",
+                        "Associated with known bad IPs"
+                    ]
+                }
+            ],
+            "ipHistories": []
+        }
+    ]
 }
 ```

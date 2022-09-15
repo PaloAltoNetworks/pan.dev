@@ -78,6 +78,20 @@ const features = [
       </>
     ),
   },
+ {
+    title: <>CDSS and Cloud NGFW STUFF</>,
+    imageUrl: "/img/Network_Security_Logo.svg",
+    toPage: "https://strata.pan.dev",
+    color: "strata",
+    description: (
+      <>
+        <p className="text text--secondary">
+          Learn how to make the most of the PAN-OS APIs, Expedition, Terraform,
+          Ansible, and more.
+        </p>
+      </>
+    ),
+  },
 ];
 
 function Feature({ imageUrl, title, description, toPage, color, offset }) {
