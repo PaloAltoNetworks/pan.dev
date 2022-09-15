@@ -300,7 +300,7 @@ const config = {
                   ],
                   docs: [
                     {
-                      label: "https://xsoar.pan.dev/docs/welcome",
+                      label: "Cortex XSOAR Developer Hub",
                       to: "https://xsoar.pan.dev/docs/welcome"
                     }
                   ]
