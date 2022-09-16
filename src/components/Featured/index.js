@@ -79,15 +79,14 @@ const features = [
     ),
   },
  {
-    title: <>CDSS and Cloud NGFW STUFF</>,
+    title: <>Cloud-Delivered Security Services and Cloud NGFW</>,
     imageUrl: "/img/Network_Security_Logo.svg",
     toPage: "https://strata.pan.dev",
     color: "strata",
     description: (
       <>
         <p className="text text--secondary">
-          Learn how to make the most of the PAN-OS APIs, Expedition, Terraform,
-          Ansible, and more.
+          Make the most of Palo Alto Networks best in class security products - get started with CDSS APIs and Cloud NGFW APIs today!
         </p>
       </>
     ),
