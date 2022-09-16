@@ -93,23 +93,26 @@ function DropdownNavbarItemDesktop({
 
   function MegaDropdownMenu() {
     const [apiDocItems, setApiDocItems] = useState({}); 
-    const [colorclass, setcolorclass] = useState('')
+    const [colorClass, setColorClass] = useState('')
     const [productGroupIdx, setProductGroupIdx] = useState(null);
     const [productTitle, setProductTitle] = useState('');
     const [productIdx, setProductIdx] = useState(null);
+
+    const [expandedProductGroups, setExpandedProductGroups] = useState({});
+    const [initialCollapse, setInitialCollapse] = useState(true);
 
     return (
       <div className="dropdown__menu mega" >
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
-            const { products, colorclass } = childItemProps;
+            const { products, colorclass, label: productGroupLabel } = childItemProps;
             const firstProduct = products[0];
 
             return (
               <React.Fragment key={i}>
                 <NavbarItem
                   className={clsx(`product-group-list__product-title ${colorclass}`,
-                    { active: i === productGroupIdx }
+                    { active: i === productGroupIdx && expandedProductGroups[productGroupLabel] }
                   )}
                   isDropdownItem
                   onKeyDown={(e) => {
@@ -130,14 +133,16 @@ function DropdownNavbarItemDesktop({
                   }}
                   onClick={(e) => {
                     e.preventDefault();
-                    setcolorclass(colorclass);
-                    if (i !== productGroupIdx) {
-                      setProductGroupIdx(i);
+                    setColorClass(colorclass);
+                    if (expandedProductGroups[productGroupLabel]) {
+                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: false });
+                    } else {
+                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: true });
                       setProductTitle(firstProduct.label);
                       setProductIdx(0);
-                      setApiDocItems({ apiDocs: firstProduct.apiDocs, docs:firstProduct.docs })
-                    } else {
-                      setProductGroupIdx(null);
+                      setProductGroupIdx(i);
+                      setApiDocItems({ apiDocs: firstProduct.apiDocs, docs:firstProduct.docs });
+                      setInitialCollapse(false);
                     }
                   }}
                   activeClassName="dropdown__link--active"
@@ -146,20 +151,25 @@ function DropdownNavbarItemDesktop({
                 <Collapsible
                   className="padding-top--none padding-left--none"
                   lazy as="ul"
-                  collapsed={i !== productGroupIdx}
+                  collapsed={initialCollapse || !expandedProductGroups[productGroupLabel]}
                 >
                   {products.map((product, j) => {
                     const { apiDocs, docs, label } = product
                     return (
                       <li className="padding-left--sm" key={j}>
                         <NavbarNavLink
-                          className={clsx(`dropdown__link product ${colorclass}`, { active: productIdx === j })}
+                          className={clsx(
+                            `dropdown__link product ${colorclass}`,
+                            { active: productIdx === j && productGroupIdx === i }
+                          )}
                           label={product.label}
                           onClick={(e) => {
                             e.preventDefault();
-                            setApiDocItems({ apiDocs, docs })
+                            setApiDocItems({ apiDocs, docs });
+                            setColorClass(colorclass)
                             setProductTitle(label);
                             setProductIdx(j);
+                            setProductGroupIdx(i);
                           }}
                         />
                       </li>
@@ -175,7 +185,7 @@ function DropdownNavbarItemDesktop({
           apiDocs={apiDocItems.apiDocs}
           docs={apiDocItems.docs}
           productTitle={productTitle}
-          colorclass={colorclass}
+          colorClass={colorClass}
         />
       </div>
     )
