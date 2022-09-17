@@ -133,16 +133,16 @@ function DropdownNavbarItemDesktop({
                   }}
                   onClick={(e) => {
                     e.preventDefault();
-                    setColorClass(colorclass);
                     if (expandedProductGroups[productGroupLabel]) {
                       setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: false });
                     } else {
-                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: true });
-                      setProductTitle(firstProduct.label);
-                      setProductIdx(0);
-                      setProductGroupIdx(i);
                       setApiDocItems({ apiDocs: firstProduct.apiDocs, docs:firstProduct.docs });
+                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: true });
                       setInitialCollapse(false);
+                      setColorClass(colorclass);
+                      setProductIdx(0);
+                      setProductTitle(firstProduct.label);
+                      setProductGroupIdx(i);
                     }
                   }}
                   activeClassName="dropdown__link--active"
