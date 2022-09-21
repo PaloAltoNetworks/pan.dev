@@ -64,6 +64,7 @@ const config = {
               label: "Network Security",
               to: "#",
               colorclass: "network-security",
+              description: "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
                   label: "Cloud NGFW",
@@ -72,13 +73,15 @@ const config = {
                   docs: [
                     {
                       label: "Cloud NGFW",
-                      to: "cloudngfw/docs"
+                      to: "cloudngfw/docs",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "cloudngfw/aws/api/",
-                      label: "Cloud NGFW for AWS API"
+                      label: "Cloud NGFW for AWS API",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -89,13 +92,15 @@ const config = {
                   docs: [
                     {
                       label: "PAN-OS ",
-                      to: "panos/docs"
+                      to: "panos/docs",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "panos/docs/apis/",
-                      label: "PAN-OS APIs and SDKs"
+                      label: "PAN-OS APIs and SDKs",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -106,13 +111,15 @@ const config = {
                   docs: [
                     {
                       label: "Cloud-Delivered Security Services",
-                      to: "cdss/threat-vault/docs/getstarted"
+                      to: "cdss/threat-vault/docs/getstarted",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "cloudngfw/aws/api/",
-                      label: "Cloud NGFW for AWS API"
+                      label: "Cloud NGFW for AWS API",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -123,13 +130,15 @@ const config = {
                   docs: [
                     {
                       label: "Expedition",
-                      to: "expedition/docs"
+                      to: "expedition/docs",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "cdss/threat-vault/api",
-                      label: "Threat Vault API"
+                      label: "Threat Vault API",
+                      icon: "api-doc"
                     }
                   ]
                 }
@@ -139,6 +148,7 @@ const config = {
               label: "Security Access Service Edge",
               to: "#",
               colorclass: "sase",
+              description: "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
               products: [
                 {
                   label: "Prisma SASE",
@@ -147,41 +157,50 @@ const config = {
                   docs: [
                     {
                       to: "sase/docs",
-                      label: "Prisma SASE Overview"
+                      label: "Prisma SASE Overview",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "sase/api/tenancy",
-                      label: "Tenancy Service"
+                      label: "Tenancy Service",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/iam",
-                      label: "Identity and Access Management"
+                      label: "Identity and Access Management",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/auth",
-                      label: "Authentication Service"
+                      label: "Authentication Service",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/subscription",
-                      label: "Subscription Service"
+                      label: "Subscription Service",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/mt-monitor",
-                      label: "Aggregate Monitoring"
+                      label: "Aggregate Monitoring",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/prisma-access-config",
-                      label: "Prisma Access Configuration API"
+                      label: "Prisma Access Configuration API",
+                      icon: "api-doc"
                     },
                     {
                       to: "category/sase/api/insights/2.0/v-2-0/data-resource/",
-                      label: "Prisma Access Insights API"
+                      label: "Prisma Access Insights API",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/sdwan",
-                      label: "Prisma SD-WAN API"
+                      label: "Prisma SD-WAN API",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -192,13 +211,15 @@ const config = {
                   docs: [
                     {
                       label: "Prisma Access Configuration",
-                      to: "sase/docs/prisma-access-config"
+                      to: "sase/docs/prisma-access-config",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "sase/api/prisma-access-config",
-                      label: "Prisma Access Configuration APIs"
+                      label: "Prisma Access Configuration APIs",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -209,13 +230,15 @@ const config = {
                   docs: [
                     {
                       label: "Get Started 2.0",
-                      to: "sase/docs/insights/getting_started-20"
+                      to: "sase/docs/insights/getting_started-20",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "sase/docs/insights",
-                      label: "Prisma Access Insights APIs"
+                      label: "Prisma Access Insights APIs",
+                      icon: "api-doc"
                     }
                   ]
                 },
@@ -226,17 +249,20 @@ const config = {
                   docs: [
                     {
                       label: "Prisma SD-WAN Overview",
-                      to: "sase/docs/sdwan"
+                      to: "sase/docs/sdwan",
+                      icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
                       to: "sase/api/sdwan",
-                      label: "Prisma SD-WAN Unified"
+                      label: "Prisma SD-WAN Unified",
+                      icon: "api-doc"
                     },
                     {
                       to: "sase/api/sdwan/legacy",
-                      label: "Prisma SD-WAN Legacy"
+                      label: "Prisma SD-WAN Legacy",
+                      icon: "api-doc"
                     }
                   ]
                 }
@@ -246,6 +272,7 @@ const config = {
               label: "Cloud Native Security",
               to: "#",
               colorclass: "cloud-native-security",
+              description: "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
               products: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
@@ -254,13 +281,15 @@ const config = {
                   apiDocs: [
                     {
                       to: "https://prisma.pan.dev/api/cloud/cspm/",
-                      label: "CSPM API"
+                      label: "CSPM API",
+                      icon: "api-doc"
                     }
                   ],
                   docs: [
                     {
                       to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                      label: "Getting Started"
+                      label: "Getting Started",
+                      icon: "doc"
                     }
                   ]
                 },
@@ -271,13 +300,15 @@ const config = {
                   apiDocs: [
                     {
                       to: "https://prisma.pan.dev/api/cloud/cwpp",
-                      label: "CWPP API"
+                      label: "CWPP API",
+                      icon: "api-doc"
                     }
                   ],
                   docs: [
                     {
                       to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                      label: "Getting Started"
+                      label: "Getting Started",
+                      icon: "doc"
                     }
                   ]
                 }
@@ -287,6 +318,7 @@ const config = {
               label: "Security Operations",
               to: "#",
               colorclass: "security-operations",
+              description: "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
               products: [
                 {
                   to: "#",
@@ -295,13 +327,15 @@ const config = {
                   apiDocs: [
                     {
                       label: "XSOAR (Demoisto) API",
-                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class"
+                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
+                      icon: "api-doc"
                     }
                   ],
                   docs: [
                     {
                       label: "Cortex XSOAR Developer Hub",
-                      to: "https://xsoar.pan.dev/docs/welcome"
+                      to: "https://xsoar.pan.dev/docs/welcome",
+                      icon: "doc"
                     }
                   ]
                 },
@@ -312,13 +346,15 @@ const config = {
                   apiDocs: [
                     {
                       label: "Expander API",
-                      to: "https://cortex.pan.dev/api/expander/annotations-api"
+                      to: "https://cortex.pan.dev/api/expander/annotations-api",
+                      icon: "api-doc"
                     }
                   ],
                   docs: [
                     {
                       label: "Xpanse Python SDK",
-                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/"
+                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                      icon: "doc"
                     }
                   ]
                 }
