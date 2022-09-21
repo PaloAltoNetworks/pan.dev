@@ -81,7 +81,7 @@ const features = [
  {
     title: <>CDSS and Cloud NGFW API Support</>,
     imageUrl: "/img/Network_Security_Logo.svg",
-    toPage: "https://strata.pan.dev",
+    toPage: "https://pan.dev/network-security",
     color: "strata",
     description: (
       <>
