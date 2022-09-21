@@ -6,8 +6,6 @@ import clsx from "clsx";
 import "./Featured.scss";
 
 function FeaturedCard({ colorclass, description, label, products }) {
-  const { colorMode } = useColorMode();
-
   function ProductContent({ product }) {
     const { apiDocs, docs, label } = product; 
     const allDocs = [...docs, ...apiDocs]
@@ -19,15 +17,10 @@ function FeaturedCard({ colorclass, description, label, products }) {
           {
             allDocs.map(docs => {
               const { label, to, icon } = docs
-              const iconSrc = icon === "doc"
-                ? `/icons/docs-icon-${colorMode === "light" ? "dark" : "light"}.svg`
-                : `/icons/api-docs-icon-${colorMode === "light" ? "dark" : "light"}.svg`
+              const iconClass = icon === "doc" ? "doc-icon" : "api-doc-icon"
 
-              return <li className="featured-card__product-list-item">
-                <div className="product-icon-container">
-                  <img src={iconSrc}/>
-                </div>
-                <NavbarNavLink label={label} to={to}/>
+              return <li className={`featured-card__product-list-item ${iconClass}`}>
+                <NavbarNavLink className="featured-card__product-link" label={label} to={to}/>
               </li>
             })
           }
