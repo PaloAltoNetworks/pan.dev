@@ -79,14 +79,14 @@ const features = [
     ),
   },
  {
-    title: <>Cloud-Delivered Security Services and Cloud NGFW</>,
+    title: <>CDSS and Cloud NGFW API Support</>,
     imageUrl: "/img/Network_Security_Logo.svg",
     toPage: "https://strata.pan.dev",
     color: "strata",
     description: (
       <>
         <p className="text text--secondary">
-          Make the most of Palo Alto Networks best in class security products - get started with CDSS APIs and Cloud NGFW APIs today!
+          Take your Advanced | Threat Prevention and DNS Security security subscriptions, as well as your Cloud NGFW deployment to the next level. Get started with CDSS APIs and Cloud NGFW APIs.
         </p>
       </>
     ),
