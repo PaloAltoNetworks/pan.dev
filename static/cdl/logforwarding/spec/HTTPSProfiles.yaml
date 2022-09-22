@@ -1,0 +1,350 @@
+components:
+  schemas:
+    ApiError:
+      properties:
+        errorCode:
+          description: Server error code
+          type: integer
+        errorMessage:
+          description: A message describing the error code
+          type: string
+      required:
+      - errorMessage
+      type: object
+    HttpsDestination:
+      description: Https profile destination
+      example: {}
+      properties:
+        basicAuth:
+          type: string
+        clientAuthType:
+          type: string
+        displayName:
+          type: string
+        notification:
+          type: string
+        outputFormat:
+          type: string
+        payloadFormat:
+          type: string
+        profileToken:
+          type: string
+        selfSignedChain:
+          type: string
+        uri:
+          type: string
+        username:
+          type: string
+      required:
+      - displayName
+      - outputFormat
+      - uri
+      type: object
+    HttpsProfile:
+      properties:
+        destination:
+          $ref: '#/components/schemas/HttpsDestination'
+        logtypes:
+          items:
+            $ref: '#/components/schemas/LogTypes'
+          type: array
+      required:
+      - destination
+      - logtypes
+      type: object
+    HttpsProfileDetail:
+      properties:
+        destination:
+          $ref: '#/components/schemas/HttpsDestination'
+        logtypes:
+          items:
+            $ref: '#/components/schemas/LogTypes'
+          type: array
+        profileId:
+          example: bd69764a-af85-4a66-8fb0-7df1a4317c65
+          type: string
+        status:
+          $ref: '#/components/schemas/ProfileStatus'
+      required:
+      - profileId
+      - destination
+      - logtypes
+      - status
+      type: object
+    LogTypes:
+      description: Profile logtype object
+      properties:
+        allColumns:
+          example: false
+          type: boolean
+        excludedColumns:
+          items:
+            type: string
+          type: array
+        filter:
+          example: log_time = '2022-09-04T01:00:01.000Z' AND vsys != ''
+          type: string
+        includedColumns:
+          example:
+          - log_time
+          - vsys
+          items:
+            type: string
+          type: array
+        logtype:
+          example: firewall.traffic
+          type: string
+      type: object
+    ProfileStatus:
+      description: Profile status
+      enum:
+      - pending
+      - inactive
+      - active
+      type: string
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Manages HTTPS profiles
+
+    '
+  title: HTTPS Profiles
+  version: '1.0'
+openapi: 3.0.0
+paths:
+  /logging_service/logforwarding/v1/https_profiles:
+    get:
+      description: Get all HTTPS profiles.
+      operationId: get-logging_service-logforwarding-v1-https_profiles
+      parameters:
+      - description: Profile in this status to be returned
+        in: query
+        name: status
+        schema:
+          items:
+            $ref: '#/components/schemas/ProfileStatus'
+          type: array
+      - description: max number of profiles in the result
+        in: query
+        name: resultSize
+        schema:
+          default: 100
+          type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/HttpsProfileDetail'
+                type: array
+          description: Request successfully processed
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Invalid input
+        429:
+          content: {}
+          description: Too many request
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: LogForwarding Service internal error
+        503:
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get all HTTPS profiles
+      tags:
+      - HTTPSProfiles
+    post:
+      description: Create an HTTPS profile.
+      operationId: post-logging_service-logforwarding-v1-https_profiles
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HttpsProfile'
+        description: LogForwarding Profile Request Body
+        required: true
+      responses:
+        200:
+          content:
+            '*/*':
+              schema:
+                example: bd69764a-af85-4a66-8fb0-7df1a4317c65
+                type: string
+          description: Returns profile id on successful request processing
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Invalid input / failed connectivity check
+        429:
+          content: {}
+          description: Too many request
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: LogForwarding Service internal error
+        503:
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Create an HTTPS profile
+      tags:
+      - HTTPSProfiles
+  /logging_service/logforwarding/v1/https_profiles/{profileId}:
+    delete:
+      description: Delete an HTTPS profile.
+      operationId: delete-logging_service-logforwarding-v1-https_profiles-profileid
+      parameters:
+      - description: Profile ID to delete
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Request successfully processed
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Profile does not exists
+        429:
+          content: {}
+          description: Too many request
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: LogForwarding Service internal error
+        503:
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Delete HTTPS profile
+      tags:
+      - HTTPSProfiles
+    get:
+      description: Get an HTTPS profile.
+      operationId: get-logging_service-logforwarding-v1-https_profiles-profileid
+      parameters:
+      - description: Profile ID to be returned
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpsProfileDetail'
+          description: Request successfully processed
+          headers:
+            X-Etag:
+              description: Tag for controlling concurrent updates
+              schema:
+                example: ddd24f872b8d42f10afdcedc44ae334e
+                type: string
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Profile ID does not exists
+        429:
+          content: {}
+          description: Too many request
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: LogForwarding Service internal error
+        503:
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get HTTPS profile
+      tags:
+      - HTTPSProfiles
+    put:
+      description: Update an HTTPS profile.
+      operationId: put-logging_service-logforwarding-v1-https_profiles-profileid
+      parameters:
+      - description: Profile ID to be updated
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+      - description: Tag for controlling concurrent updates
+        in: header
+        name: etag
+        schema:
+          example: ddd24f872b8d42f10afdcedc44ae334e
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpsProfile'
+        description: New profile value
+        required: true
+      responses:
+        200:
+          description: Request successfully processed
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Invalid input
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Profile does not exists
+        429:
+          content: {}
+          description: Too many request
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: LogForwarding Service internal error
+        503:
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Update HTTPS profile
+      tags:
+      - HTTPSProfiles
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: HTTPSProfiles
