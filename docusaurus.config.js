@@ -74,6 +74,11 @@ module.exports = {
               className: "indent",
             },
             {
+              to: "cdl/logforwarding/docs",
+              label: "Log Forwarding",
+              className: "indent",
+            },
+            {
               to: "#",
               label: "API Reference",
               className: "section__docs",
@@ -91,6 +96,11 @@ module.exports = {
             {
               to: "cdss/dns-security/api",
               label: "DNS Security API (BETA)",
+              className: "indent",
+            },
+            {
+              to: "cdl/logforwarding/api",
+              label: "Log Forwarding",
               className: "indent",
             },
           ],
@@ -279,6 +289,15 @@ module.exports = {
         path: "cdss",
         routeBasePath: "cdss",
         sidebarPath: require.resolve("./cdss/sidebar.js"),
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "cdl",
+        path: "cdl",
+        routeBasePath: "cdl",
+        sidebarPath: require.resolve("./cdl/sidebar.js"),
       },
     ],
   ],
