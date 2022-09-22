@@ -86,7 +86,7 @@ const features = [
     description: (
       <>
         <p className="text text--secondary">
-          Take your Advanced | Threat Prevention and DNS Security security subscriptions, as well as your Cloud NGFW deployment to the next level. Get started with CDSS APIs and Cloud NGFW APIs.
+          Take your Advanced | Threat Prevention and DNS Security security subscriptions, as well as your Cloud NGFW deployment, to the next level.
         </p>
       </>
     ),
