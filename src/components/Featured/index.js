@@ -78,6 +78,19 @@ const features = [
       </>
     ),
   },
+ {
+    title: <>CDSS and Cloud NGFW API Support</>,
+    imageUrl: "/img/Network_Security_Logo.svg",
+    toPage: "https://pan.dev/network-security",
+    color: "strata",
+    description: (
+      <>
+        <p className="text text--secondary">
+          Take your Advanced | Threat Prevention and DNS Security security subscriptions, as well as your Cloud NGFW deployment, to the next level.
+        </p>
+      </>
+    ),
+  },
 ];
 
 function Feature({ imageUrl, title, description, toPage, color, offset }) {
