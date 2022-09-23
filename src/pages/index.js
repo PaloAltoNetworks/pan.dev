@@ -8,6 +8,7 @@
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import React from "react";
+import BackToTopButton from "@theme/BackToTopButton";
 import Featured from "../components/Featured";
 import HomepageHero from "../components/HompageHero/HomepageHero";
 import HomepageBanner from '../components/HomepageBanner/HomepageBanner';
@@ -31,6 +32,7 @@ function Home() {
         <section id="developer-docs-section" className={styles.featuredContainer}>
           <HomepageBanner imgSrc={exploreImageSrc} text="Explore our Developer Docs" />
           <Featured />
+          <BackToTopButton />
         </section>
         <section>
           <HomepageBanner imgSrc={blogImageSrc} text="Read our latest Developer Blogs" />
