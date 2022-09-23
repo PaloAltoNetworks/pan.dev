@@ -15,11 +15,11 @@ function FeaturedCard({ colorclass, description, label, products }) {
         <h3 className="featured-card__product-group-label">{label}</h3>
         <ul className="featured-card__product-list">
           {
-            allDocs.map(docs => {
+            allDocs.map((docs, i) => {
               const { label, to, icon } = docs
               const iconClass = icon === "doc" ? "doc-icon" : "api-doc-icon"
 
-              return <li className={`featured-card__product-list-item ${iconClass}`}>
+              return <li className={`featured-card__product-list-item ${iconClass}`} key={i}>
                 <NavbarNavLink className="featured-card__product-link" label={label} to={to}/>
               </li>
             })
