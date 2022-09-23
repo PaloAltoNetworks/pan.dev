@@ -6,7 +6,7 @@ function HomepageBanner({ imgSrc, text }) {
   return (
     <header className="homepage-banner-container">
       <div className="container banner-content-container">
-        <h2 className="banner-header">{text}</h2>
+        <h2 id="developer-docs-header" className="banner-header">{text}</h2>
       </div>
     </header>
   )

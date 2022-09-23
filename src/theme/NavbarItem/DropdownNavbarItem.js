@@ -100,6 +100,15 @@ function DropdownNavbarItemDesktop({
 
     const [expandedProductGroups, setExpandedProductGroups] = useState({});
     const [initialCollapse, setInitialCollapse] = useState(true);
+    
+    const showViewAllDocs = Object.keys(apiDocItems).length > 0;
+    const handleViewAllDocsClick = () => {
+      const yOffset = -50; 
+      const developerDocsSection = document.getElementById("developer-docs-section");
+      const y = developerDocsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
 
     return (
       <div className="dropdown__menu mega" >
@@ -181,12 +190,22 @@ function DropdownNavbarItemDesktop({
           }
         )}
         </ul>
-        <NavbarDocItems
-          apiDocs={apiDocItems.apiDocs}
-          docs={apiDocItems.docs}
-          productTitle={productTitle}
-          colorClass={colorClass}
-        />
+        <div className="dropdown-right-panel">
+          <NavbarDocItems
+            apiDocs={apiDocItems.apiDocs}
+            docs={apiDocItems.docs}
+            productTitle={productTitle}
+            colorClass={colorClass}
+          />
+          {showViewAllDocs && 
+            <a
+              className="dropdown-right-panel__explore-docs-link"
+              onClick={handleViewAllDocsClick}
+            >
+              Explore our Developer Docs
+            </a>
+          }
+        </div>
       </div>
     )
   }
