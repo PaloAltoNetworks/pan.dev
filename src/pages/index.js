@@ -30,7 +30,7 @@ function Home() {
       <ScrollUpButton />
       <HomepageHero />
       <main>
-        <section id="developer-docs-section" className="featuredContainer">
+        <section id="developer-docs-section" className={styles.featuredContainer}>
           <HomepageBanner imgSrc={exploreImageSrc} text="Explore our Developer Docs" />
           <Featured />
         </section>
