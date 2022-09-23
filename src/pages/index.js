@@ -8,7 +8,6 @@
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import React from "react";
-import ScrollUpButton from "react-scroll-up-button";
 import Featured from "../components/Featured";
 import HomepageHero from "../components/HompageHero/HomepageHero";
 import HomepageBanner from '../components/HomepageBanner/HomepageBanner';
@@ -27,7 +26,6 @@ function Home() {
       description="The hub for Palo Alto Networks developer documentation, including API reference docs, quickstarts, tutorials, tools and open-source projects."
       wrapperClassName="homepage"
     >
-      <ScrollUpButton />
       <HomepageHero />
       <main>
         <section id="developer-docs-section" className={styles.featuredContainer}>
