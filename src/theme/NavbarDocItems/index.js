@@ -39,7 +39,8 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
 
   return (
     <div className="navbar-doc-items-container">
-      <h2 className={`navbar-doc-items__product-title ${colorClass}`}>{productTitle}</h2>
+      <h2 className="navbar-doc-items__product-title">{productTitle}</h2>
+      <div className={`navbar-doc-items__section-divider ${colorClass}`}/>
       <ul className="navbar-doc-items__list-container">
         {apiDocs && apiDocItems}
         {docs && docItems}
