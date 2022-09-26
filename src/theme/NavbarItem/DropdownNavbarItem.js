@@ -6,6 +6,7 @@ import {
   Collapsible,
 } from '@docusaurus/theme-common';
 import {isSamePath, useLocalPathname} from '@docusaurus/theme-common/internal';
+import Link from "@docusaurus/Link";
 import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink';
 import NavbarDocItems from '../NavbarDocItems';
 import NavbarItem from '@theme/NavbarItem';
@@ -100,6 +101,7 @@ function DropdownNavbarItemDesktop({
 
     const [expandedProductGroups, setExpandedProductGroups] = useState({});
     const [initialCollapse, setInitialCollapse] = useState(true);
+    const showViewAllDocs = Object.keys(apiDocItems).length > 0;
 
     return (
       <div className="dropdown__menu mega" >
@@ -181,12 +183,22 @@ function DropdownNavbarItemDesktop({
           }
         )}
         </ul>
-        <NavbarDocItems
-          apiDocs={apiDocItems.apiDocs}
-          docs={apiDocItems.docs}
-          productTitle={productTitle}
-          colorClass={colorClass}
-        />
+        <div className="dropdown-right-panel">
+          <NavbarDocItems
+            apiDocs={apiDocItems.apiDocs}
+            docs={apiDocItems.docs}
+            productTitle={productTitle}
+            colorClass={colorClass}
+          />
+          {showViewAllDocs && 
+            <Link
+              className="dropdown-right-panel__explore-docs-link"
+              to="/#developer-docs-section"
+            >
+              Explore our Developer Docs
+            </Link>
+          }
+        </div>
       </div>
     )
   }
