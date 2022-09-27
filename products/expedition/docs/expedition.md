@@ -4,7 +4,7 @@ title: Expedition 2.0
 sidebar_label: Overview
 hide_title: true
 description: Overview of Expedition 2.0
-slug: /expedition/expedition/docs
+slug: /expedition/docs
 keywords:
   - pan-os
   - panos

@@ -6,6 +6,7 @@
  */
 const globby = require("globby");
 const fs = require("fs");
+const sidebars = require("./sidebars");
 
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
@@ -429,100 +430,10 @@ const config = {
     ],
     "docusaurus-plugin-sass",
     [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "contributing",
-        routeBasePath: "contributing",
-        path: "contributing",
-        sidebarPath: false,
-        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-      },
-    ],
-    [
       "docusaurus-plugin-openapi-docs",
       {
-        id: "cloudngfw",
-        docsPluginId: "cloudngfw",
-        config: {
-          cloudngfw: {
-            specPath: "openapi-specs/cloudngfw/aws",
-            outputDir: "products/cloudngfw/api/aws",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-        },
-      },
-    ],
-    [
-      "docusaurus-plugin-openapi-docs",
-      {
-        id: "cdss",
-        docsPluginId: "cdss",
-        config: {
-          iot: {
-            specPath: "openapi-specs/iot/iot.yaml",
-            outputDir: "products/cdss/iot/api",
-          },
-          tp: {
-            specPath: "openapi-specs/threat-vault/",
-            outputDir: "products/cdss/threat-vault/api",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          dns_security: {
-            specPath: "openapi-specs/dns-security/dns-security.yaml",
-            outputDir: "products/cdss/dns-security/api",
-          },
-        },
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "cdss",
-        routeBasePath: "cdss",
-        path: "products/cdss",
-        sidebarPath: "./products/cdss/sidebars.js",
-        docItemComponent: "@theme/ApiItem",
-        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "panos",
-        routeBasePath: "panos",
-        path: "products/panos",
-        sidebarPath: "./products/panos/sidebars.js",
-        docItemComponent: "@theme/ApiItem",
-        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "expedition",
-        routeBasePath: "expedition",
-        path: "products/expedition",
-        sidebarPath: "./products/expedition/sidebars.js",
-        docItemComponent: "@theme/ApiItem",
-        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "cloudngfw",
-        routeBasePath: "cloudngfw",
-        path: "products/cloudngfw",
-        sidebarPath: "./products/cloudngfw/sidebars.js",
-        docItemComponent: "@theme/ApiItem",
-        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-      },
-    ],
-    [
-      "docusaurus-plugin-openapi-docs",
-      {
-        id: "sase",
-        docsPluginId: "sase",
+        id: "apis",
+        docsPluginId: "docs",
         config: {
           auth: {
             specPath: "openapi-specs/sase/auth",
@@ -536,7 +447,7 @@ const config = {
           },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
-            outputDir: "products/sase/access/api/insights/2.0",
+            outputDir: "products/access/api/insights/2.0",
             sidebarOptions: { groupPathsBy: "tag" },
             version: "2.0",
             label: "v2.0",
@@ -544,7 +455,7 @@ const config = {
             versions: {
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
-                outputDir: "products/sase/access/api/insights/1.0",
+                outputDir: "products/access/api/insights/1.0",
                 label: "v1.0",
                 baseUrl:
                   "/category/access/api/insights/1.0/v-1-0/data-resource/",
@@ -558,7 +469,7 @@ const config = {
           },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
-            outputDir: "products/sase/access/api/prisma-access-config",
+            outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sub: {
@@ -571,9 +482,9 @@ const config = {
             outputDir: "products/sase/sase/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          sdwan_versions: {
+          sdwan: {
             specPath: "openapi-specs/sdwan/unified",
-            outputDir: "products/sase/sdwan/api/unified",
+            outputDir: "products/sdwan/api/unified",
             sidebarOptions: { groupPathsBy: "tag" },
             version: "Unified",
             label: "Unified",
@@ -581,11 +492,29 @@ const config = {
             versions: {
               legacy: {
                 specPath: "openapi-specs/sdwan/legacy",
-                outputDir: "products/sase/sdwan/api/legacy",
+                outputDir: "products/sdwan/api/legacy",
                 label: "Legacy",
                 baseUrl: "/sdwan/api/legacy",
               },
             },
+          },
+          cloudngfw: {
+            specPath: "openapi-specs/cloudngfw/aws",
+            outputDir: "products/cloudngfw/api/aws",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          iot: {
+            specPath: "openapi-specs/iot/iot.yaml",
+            outputDir: "products/iot/api",
+          },
+          tp: {
+            specPath: "openapi-specs/threat-vault/",
+            outputDir: "products/threat-vault/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          dns_security: {
+            specPath: "openapi-specs/dns-security/dns-security.yaml",
+            outputDir: "products/dns-security/api",
           },
         },
       },
@@ -593,12 +522,12 @@ const config = {
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "sase",
+        id: "docs",
         routeBasePath: "/",
-        path: "products/sase",
-        sidebarPath: "./products/sase/sidebars.js",
-        docItemComponent: "@theme/ApiItem",
+        path: "products",
+        sidebarPath: false,
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
+        include: ["**/*.{md,mdx}"],
       },
     ],
   ],
@@ -625,33 +554,30 @@ const config = {
   },
 };
 
-function docsPluginInclude(config, filters) {
-  const plugins = config.plugins;
-  let targetConfig = Object.assign({}, config);
-  delete targetConfig.plugins;
-
-  const filteredPlugins = plugins.filter((plugin) => {
-    if (plugin[0] !== "@docusaurus/plugin-content-docs") {
-      return plugin;
-    }
-    if (
-      plugin[0] === "@docusaurus/plugin-content-docs" &&
-      filters.includes(plugin[1].id)
-    ) {
-      return plugin;
-    }
-    return;
+/*
+Takes in list of products to filter based on directory, outputs list of globby include for the doc plugin
+*/
+function docsPluginInclude(filters) {
+  include = [];
+  filters.forEach((product) => {
+    let product_include = product + "/**/*.{md,mdx}";
+    include.push(product_include);
   });
+  return include;
+}
 
-  targetConfig.plugins = filteredPlugins;
-
-  return targetConfig;
+function getProductIDs() {
+  let filters = null;
+  if (process.env.DOCS_PLUGIN_INCLUDE) {
+    filters = process.env.DOCS_PLUGIN_INCLUDE.split(",");
+  }
+  return filters;
 }
 
 async function createConfig() {
-  if (process.env.DOCS_PLUGIN_INCLUDE) {
-    filters = process.env.DOCS_PLUGIN_INCLUDE.split(",");
-    return docsPluginInclude(config, filters);
+  let filters = getProductIDs();
+  if (filters) {
+    config.plugins[4][1].include = docsPluginInclude(filters);
   }
   return config;
 }
