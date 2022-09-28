@@ -571,8 +571,7 @@ function docsPluginInclude(filters) {
 
 async function createConfig() {
   let filters =
-    process.env.DOCS_PLUGIN_INCLUDE &&
-    process.env.DOCS_PLUGIN_INCLUDE.split(",");
+    process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
   if (filters) {
     config.plugins[4][1].include = docsPluginInclude(filters);
   }

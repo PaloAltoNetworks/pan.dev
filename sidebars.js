@@ -4,8 +4,8 @@ async function generateSidebars() {
   const product_sidebars = await utils.Globby("./products/**/sidebars.js");
 
   let sidebar = {};
-  const filters = process.env.DOCS_PLUGIN_INCLUDE
-    ? process.env.DOCS_PLUGIN_INCLUDE.split(",")
+  const filters = process.env.PRODUCTS_INCLUDE
+    ? process.env.PRODUCTS_INCLUDE.split(",")
     : undefined;
   if (filters) {
     filters.forEach((filter) => {
