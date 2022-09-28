@@ -5,13 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import classnames from "classnames";
-import React from "react";
-import Layout from "@theme/Layout";
-import styles from "./styles.module.css";
-import clsx from "clsx";
 import Link from "@docusaurus/Link";
+import clsx from "clsx";
+import React from "react";
+import styles from "./styles.module.css";
 
 function ProductContainer({ href, children }) {
   const className = clsx(

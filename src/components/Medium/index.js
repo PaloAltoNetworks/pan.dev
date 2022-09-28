@@ -1,10 +1,10 @@
 import Link from "@docusaurus/Link";
-import classnames from "classnames";
+import clsx from "clsx";
 import React from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-import "./Slider.scss"
+import "slick-carousel/slick/slick.css";
+import "./Slider.scss";
 import styles from "./styles.module.css";
 
 const blog_json = require("./blogs.json");
@@ -49,25 +49,29 @@ function Medium() {
         }
       }
     ]
-  }
+  };
 
   const BlogCard = ({ blog }) => {
     return (
-      <div className={classnames("card", styles.showcaseBlog)}>
+      <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
-          <img src={blog.thumbnail} alt={blog.title} className={styles.blogImage} />
+          <img
+            src={blog.thumbnail}
+            alt={blog.title}
+            className={styles.blogImage}
+          />
         </div>
         <div className="card__body">
           <h3 className="avater__name">{blog.title}</h3>
           <div className="avatar__intro margin-left--none">
-            <p className={classnames("text--secondary", styles.blogAuthor)}>
+            <p className={clsx("text--secondary", styles.blogAuthor)}>
               By: {blog.author}
             </p>
           </div>
           <br />
           <div className="avatar__intro margin-left--none">
             <div className={styles.content}>
-              <div dangerouslySetInnerHTML={{__html: blog.content }} />
+              <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             </div>
           </div>
         </div>
@@ -84,15 +88,17 @@ function Medium() {
           </Link>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="container">
       <div className="slider-container container">
         {blogs?.length && (
           <Slider {...sliderSettings}>
-            {blogs.map((blog) => <BlogCard blog={blog} />)}
+            {blogs.map((blog) => (
+              <BlogCard blog={blog} />
+            ))}
           </Slider>
         )}
       </div>
