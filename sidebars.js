@@ -1,39 +1,38 @@
-const all_sidebars = [
-  "./products/access/access.sidebars",
-  "./products/cdss/cdss.sidebars",
-  "./products/cloudngfw/cloudngfw.sidebars",
-  "./products/dns-security/dns-security.sidebars",
-  "./products/expedition/expedition.sidebars",
-  "./products/iot/iot.sidebars",
-  "./products/panos/panos.sidebars",
-  "./products/sase/sase.sidebars",
-  "./products/sdwan/sdwan.sidebars",
-  "./products/threat-vault/threat-vault.sidebars",
-];
+const utils = require("@docusaurus/utils");
 
-function getProductIDs() {
-  let filters = null;
-  if (process.env.DOCS_PLUGIN_INCLUDE) {
-    filters = process.env.DOCS_PLUGIN_INCLUDE.split(",");
-  }
-  return filters;
-}
+async function generateSidebars() {
+  const product_sidebars = await utils.Globby("./products/**/sidebars.js");
 
-function sidebarSelector() {
   let sidebar = {};
-  let filters = getProductIDs();
+  const filters = process.env.DOCS_PLUGIN_INCLUDE
+    ? process.env.DOCS_PLUGIN_INCLUDE.split(",")
+    : undefined;
   if (filters) {
-    filters.forEach((product) => {
-      let sidebars_path = "./products/" + product + "/" + product + ".sidebars";
-      sidebar = Object.assign(sidebar, require(sidebars_path));
+    filters.forEach((filter) => {
+      const sidebars_path = product_sidebars.filter((sidebar) =>
+        sidebar.includes(filter)
+      )[0];
+      if (sidebars_path) {
+        sidebar = Object.assign(sidebar, require(sidebars_path));
+      }
     });
   } else {
-    all_sidebars.forEach((product_sidebar) => {
+    product_sidebars.forEach((product_sidebar) => {
       sidebar = Object.assign(sidebar, require(product_sidebar));
     });
   }
   return sidebar;
 }
 
-sidebar = sidebarSelector();
-module.exports = sidebar;
+const sidebars = async () => {
+  try {
+    return await generateSidebars();
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+module.exports = sidebars().then((s) => {
+  return s;
+});
