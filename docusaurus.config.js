@@ -197,12 +197,12 @@ const config = {
                       icon: "api-doc"
                     },
                     {
-                      to: "sase/api/prisma-access-config",
+                      to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration API",
                       icon: "api-doc"
                     },
                     {
-                      to: "category/sase/api/insights/2.0/v-2-0/data-resource/",
+                      to: "access/api/insights/data-resource",
                       label: "Prisma Access Insights API",
                       icon: "api-doc"
                     },
