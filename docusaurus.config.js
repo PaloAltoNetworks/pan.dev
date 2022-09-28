@@ -264,12 +264,12 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "/category/sdwan/api/unified/unified/adem",
+                      to: "/sdwan/api/unified/unified",
                       label: "Prisma SD-WAN Unified",
                       icon: "api-doc"
                     },
                     {
-                      to: "/category/sdwan/api/legacy/legacy/adem",
+                      to: "/sdwan/api/legacy/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc"
                     }
@@ -453,7 +453,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
             version: "2.0",
             label: "v2.0",
-            baseUrl: "/category/access/api/insights/2.0/v-2-0/data-resource/",
+            baseUrl: "/category/access/api/insights/v-2-0/data-resource/",
             versions: {
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
@@ -490,13 +490,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
             version: "Unified",
             label: "Unified",
-            baseUrl: "/sdwan/api",
+            baseUrl: "/sdwan/api/unified/unified",
             versions: {
               legacy: {
                 specPath: "openapi-specs/sdwan/legacy",
                 outputDir: "products/sdwan/api/legacy",
                 label: "Legacy",
-                baseUrl: "/sdwan/api/legacy"
+                baseUrl: "/sdwan/api/legacy/legacy"
               }
             }
           },
