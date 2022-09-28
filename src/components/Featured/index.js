@@ -7,7 +7,11 @@ import "./Featured.scss";
 function FeaturedCard({ colorclass, description, label, products }) {
   function ProductContent({ product }) {
     const { apiDocs, docs, label } = product;
-    const allDocs = [...docs, ...apiDocs];
+    const allDocs = apiDocs?.length > 0 && docs?.length > 0
+      ? [...docs, ...apiDocs]
+      : apiDocs?.length > 0
+      ? apiDocs 
+      : docs
 
     return (
       <div className="featured-card__product-container">
