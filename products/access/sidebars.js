@@ -1,7 +1,7 @@
-const insightsVersions = require("./access/api/insights/2.0/versions.json");
+const insightsVersions = require("./api/insights/versions.json");
 const {
   versionSelector,
-  versionCrumb,
+  versionCrumb
 } = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
 
 module.exports = {
@@ -10,28 +10,31 @@ module.exports = {
       type: "html",
       defaultStyle: true,
       value: versionSelector(insightsVersions),
-      className: "version-button",
+      className: "version-button"
     },
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`v1.0`),
+      value: versionCrumb(`v1.0`)
     },
-  ].concat(require("./access/api/insights/1.0/sidebar")),
+    require("./api/insights/1.0/sidebar")
+  ],
   saseinsightsv2: [
     {
       type: "html",
       defaultStyle: true,
       value: versionSelector(insightsVersions),
-      className: "version-button",
+      className: "version-button"
     },
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`v2.0`),
+      value: versionCrumb(`v2.0`)
     },
-  ].concat(require("./access/api/insights/2.0/sidebar")),
-  saseprismaaccess: ["access/api/prisma-access-config/config-api"].concat(
-    require("./access/api/prisma-access-config/sidebar")
-  ),
+    require("./api/insights/sidebar")
+  ],
+  saseprismaaccess: [
+    "access/api/prisma-access-config/config-api",
+    require("./api/prisma-access-config/sidebar")
+  ]
 };
