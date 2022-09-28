@@ -4,6 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+const globby = require("globby");
+const fs = require("fs");
+const sidebars = require("./sidebars");
 
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
@@ -34,8 +37,8 @@ const config = {
     },
     docs: {
       sidebar: {
-        hideable: true,
-      },
+        hideable: true
+      }
     },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
@@ -64,7 +67,8 @@ const config = {
               label: "Network Security",
               to: "#",
               colorclass: "network-security",
-              description: "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
+              description:
+                "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
                   label: "Cloud NGFW",
@@ -111,14 +115,24 @@ const config = {
                   docs: [
                     {
                       label: "Cloud-Delivered Security Services",
-                      to: "cdss/threat-vault/docs/getstarted",
+                      to: "/threat-vault/docs",
                       icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "cloudngfw/aws/api/",
-                      label: "Cloud NGFW for AWS API",
+                      to: "/threat-vault/api",
+                      label: "Threat Vault APIs",
+                      icon: "api-doc"
+                    },
+                    {
+                      to: "/iot/iot-api",
+                      label: "IoT API",
+                      icon: "api-doc"
+                    },
+                    {
+                      to: "/dns-security/api",
+                      label: "DNS Security API",
                       icon: "api-doc"
                     }
                   ]
@@ -134,13 +148,7 @@ const config = {
                       icon: "doc"
                     }
                   ],
-                  apiDocs: [
-                    {
-                      to: "cdss/threat-vault/api",
-                      label: "Threat Vault API",
-                      icon: "api-doc"
-                    }
-                  ]
+                  apiDocs: []
                 }
               ]
             },
@@ -148,7 +156,8 @@ const config = {
               label: "Security Access Service Edge",
               to: "#",
               colorclass: "sase",
-              description: "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
+              description:
+                "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
               products: [
                 {
                   label: "Prisma SASE",
@@ -272,7 +281,8 @@ const config = {
               label: "Cloud Native Security",
               to: "#",
               colorclass: "cloud-native-security",
-              description: "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
+              description:
+                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
               products: [
                 {
                   to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
@@ -318,7 +328,8 @@ const config = {
               label: "Security Operations",
               to: "#",
               colorclass: "security-operations",
-              description: "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
+              description:
+                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
               products: [
                 {
                   to: "#",
@@ -389,14 +400,7 @@ const config = {
     [
       "@docusaurus/preset-classic",
       {
-        docs: {
-          id: "docs",
-          routeBasePath: "/",
-          sidebarPath: require.resolve("./docs/sidebars.js"),
-          docItemComponent: "@theme/ApiItem",
-          remarkPlugins: [],
-          editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
-        },
+        docs: false,
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")]
         },
@@ -408,10 +412,6 @@ const config = {
     ]
   ],
   plugins: [
-    [
-      "docusaurus-plugin-openapi-docs",
-      { id: "apis", docsPluginId: "docs", config: require("./api.config") }
-    ],
     [
       "@docusaurus/plugin-sitemap",
       {
@@ -428,7 +428,111 @@ const config = {
         priority: 0.5
       }
     ],
-    "docusaurus-plugin-sass"
+    "docusaurus-plugin-sass",
+    [
+      "docusaurus-plugin-openapi-docs",
+      {
+        id: "default",
+        docsPluginId: "default",
+        config: {
+          auth: {
+            specPath: "openapi-specs/sase/auth",
+            outputDir: "products/sase/sase/api/auth",
+            sidebarOptions: {
+              groupPathsBy: "tag"
+            }
+          },
+          iam: {
+            specPath: "openapi-specs/sase/iam",
+            outputDir: "products/sase/sase/api/iam",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          insights: {
+            specPath: "openapi-specs/access/insights/2.0",
+            outputDir: "products/access/api/insights",
+            sidebarOptions: { groupPathsBy: "tag" },
+            version: "2.0",
+            label: "v2.0",
+            baseUrl: "/category/access/api/insights/2.0/v-2-0/data-resource/",
+            versions: {
+              "1.0": {
+                specPath: "openapi-specs/access/insights/1.0",
+                outputDir: "products/access/api/insights/1.0",
+                label: "v1.0",
+                baseUrl:
+                  "/category/access/api/insights/1.0/v-1-0/data-resource/"
+              }
+            }
+          },
+          mtmonitor: {
+            specPath: "openapi-specs/sase/mt-monitor",
+            outputDir: "products/sase/sase/api/mt-monitor",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          access: {
+            specPath: "openapi-specs/access/prisma-access-config",
+            outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          sub: {
+            specPath: "openapi-specs/sase/subscription",
+            outputDir: "products/sase/sase/api/subscription",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          tenancy: {
+            specPath: "openapi-specs/sase/tenancy",
+            outputDir: "products/sase/sase/api/tenancy",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          sdwan: {
+            specPath: "openapi-specs/sdwan/unified",
+            outputDir: "products/sdwan/api/unified",
+            sidebarOptions: { groupPathsBy: "tag" },
+            version: "Unified",
+            label: "Unified",
+            baseUrl: "/sdwan/api",
+            versions: {
+              legacy: {
+                specPath: "openapi-specs/sdwan/legacy",
+                outputDir: "products/sdwan/api/legacy",
+                label: "Legacy",
+                baseUrl: "/sdwan/api/legacy"
+              }
+            }
+          },
+          cloudngfw: {
+            specPath: "openapi-specs/cloudngfw/aws",
+            outputDir: "products/cloudngfw/api/aws",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          iot: {
+            specPath: "openapi-specs/iot/iot.yaml",
+            outputDir: "products/iot/api"
+          },
+          tp: {
+            specPath: "openapi-specs/threat-vault/",
+            outputDir: "products/threat-vault/api",
+            sidebarOptions: { groupPathsBy: "tag" }
+          },
+          dns_security: {
+            specPath: "openapi-specs/dns-security/dns-security.yaml",
+            outputDir: "products/dns-security/api"
+          }
+        }
+      }
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "default",
+        routeBasePath: "/",
+        path: "products",
+        sidebarPath: "./sidebars.js",
+        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
+        include: ["**/*.{md,mdx}"],
+        docItemComponent: "@theme/ApiItem"
+      }
+    ]
   ],
   stylesheets: [
     {
@@ -453,10 +557,24 @@ const config = {
   }
 };
 
+/*
+Takes in list of products to filter based on directory, outputs list of globby include for the doc plugin
+*/
+function docsPluginInclude(filters) {
+  include = [];
+  filters.forEach((product) => {
+    let product_include = product + "/**/*.{md,mdx}";
+    include.push(product_include);
+  });
+  return include;
+}
+
 async function createConfig() {
-  //const mdxMermaid = await import("mdx-mermaid");
-  // @ts-expect-error: we know it exists, right
-  // config.presets[0][1].docs.remarkPlugins.push(mdxMermaid.default);
+  let filters =
+    process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
+  if (filters) {
+    config.plugins[4][1].include = docsPluginInclude(filters);
+  }
   return config;
 }
 
