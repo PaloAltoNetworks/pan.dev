@@ -2,7 +2,6 @@
 id: legacy
 title: Legacy Prisma SD-WAN APIs
 sidebar_label: Legacy Prisma SD-WAN APIs
-slug: /sdwan/api/sdwan/legacy
 ---
 
 The Prisma SD-WAN legacy APIs allow you to integrate Prisma SD-WAN into your existing applications
