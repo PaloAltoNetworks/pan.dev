@@ -220,13 +220,13 @@ const config = {
                   docs: [
                     {
                       label: "Prisma Access Configuration",
-                      to: "sase/docs/prisma-access-config",
+                      to: "access/docs/prisma-access/config",
                       icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "sase/api/prisma-access-config",
+                      to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration APIs",
                       icon: "api-doc"
                     }
@@ -239,13 +239,13 @@ const config = {
                   docs: [
                     {
                       label: "Get Started 2.0",
-                      to: "sase/docs/insights/getting_started-20",
+                      to: "access/docs/insights/getting_started-20",
                       icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "sase/docs/insights",
+                      to: "category/access/api/insights/v-2-0/data-resource",
                       label: "Prisma Access Insights APIs",
                       icon: "api-doc"
                     }
@@ -258,18 +258,18 @@ const config = {
                   docs: [
                     {
                       label: "Prisma SD-WAN Overview",
-                      to: "sase/docs/sdwan",
+                      to: "/sdwan/docs",
                       icon: "doc"
                     }
                   ],
                   apiDocs: [
                     {
-                      to: "sase/api/sdwan",
+                      to: "/category/sdwan/api/unified/unified/adem",
                       label: "Prisma SD-WAN Unified",
                       icon: "api-doc"
                     },
                     {
-                      to: "sase/api/sdwan/legacy",
+                      to: "/category/sdwan/api/legacy/legacy/adem",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc"
                     }
