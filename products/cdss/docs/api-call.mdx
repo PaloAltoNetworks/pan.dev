@@ -1,0 +1,219 @@
+---
+id: api-call
+title: Make API Calls
+description: Make API calls using the Security Subscription APIs
+slug: /threat-vault/docs/api-call
+hide_title: false
+hide_table_of_contents: false
+keywords:
+  - security subscription
+---
+
+You can make an API call when the following requirements have been met:
+
+1. Verify that you have an active CDSS subscription associated with the API service that you want to use. For information about licensing, refer to [product documentation](https://docs.paloaltonetworks.com/resources/licensing-registration-activation) or review your entitlements on the [Palo Alto Networks Support Portal](https://support.paloaltonetworks.com/).
+
+:::note
+The DNS Security API is currently in `BETA`. To inquire about joining the beta or to receive support or provide suggestions, please contact dns-api@paloaltonetworks.com.
+:::
+
+2. Retrieve an API key. The API key is part of the access control scheme and authenticates your requests to the respective CDSS API service.
+3. (Recommended) Review the [Cloud-Delivered Security Services Developer's Guide](/cdss/threat-vault/docs) and the API Reference guide for the API service that you wish to leverage.
+
+Once you have an API key for authentication, you can use that API key to make calls to the API service for which the key was generated for. API keys do not operate across different product lines and services.
+
+To make an API call, you must provide the API key in the header using the API key parameter name specified by the product. The Threat Vault API uses the API key parameter name of `X-API-KEY` while the DNS Security API uses `X-DNS-API-APIKEY`.
+
+When a successful API request is made, the API returns a JSON object containing a series of data fields, or in some cases, files, that includes relevant data types, operational metrics, or status details. Additionally, several custom response headers are also available to display the current usage status.
+
+## API Call Example (Threat Vault API)
+
+In this Threat Vault API request, the base URI (https://api.threatvault.paloaltonetworks.com/service/v1/threats), the API key tied to your Threat Prevention | Advanced Threat Prevention license, and the unique threat ID are specified.
+
+For example, using curl:
+
+```shell-session
+curl -H 'X-API-KEY: api_key' 'https://api.threatvault.paloaltonetworks.com/service/v1/threats?id=30001'
+```
+
+The response for this Threat Vault API example, which retrieves information about a specific threat signature ID, displays detailed information about a vulnerability with a unique threat ID of 30001, known as: Novell GroupWise iCal RRULE Time Conversion Invalid Array Indexing Vulnerability.
+
+```json
+{
+  "success": true,
+  "count": 1,
+  "link": {
+    "previous": null,
+    "next": null
+  },
+  "data": {
+    "vulnerability": [
+      {
+        "name": "Novell GroupWise iCal RRULE Time Conversion Invalid Array Indexing Vulnerability",
+        "description": "Novell GroupWise 8.0 before HP3 is prone to a buffer overflow vulnerability while parsing certain crafted calendar requests. The vulnerability is due to an invalid array indexing error while parsing a crafted yearly RRULE variable in a VCALENDAR attachment. An attacker could exploit the vulnerability by sending a crafted VCALENDAR request in an e-mail message. A successful attack could lead to remote code execution with the privileges of the server.",
+        "ori_release_time": "2016-12-29T16:55:04Z",
+        "default_action": "reset-server",
+        "reference": [
+          "http://www.verisigninc.com/en_US/products-and-services/network-intelligence-availability/idefense/public-vulnerability-reports/articles/index.xhtml?id=945"
+        ],
+        "severity": "high",
+        "min_version": "8.1.0",
+        "id": 30001,
+        "cve": ["CVE-2011-2663"],
+        "details": {
+          "change_data": "updated associated default action to reset"
+        },
+        "latest_release_version": 8337,
+        "latest_release_time": "2020-10-29T18:15:11Z",
+        "status": "released",
+        "ori_release_version": 650,
+        "category": "overflow",
+        "max_version": "",
+        "vendor": []
+      }
+    ]
+  },
+  "message": "Successful"
+}
+```
+
+## API Call Example (DNS Security API)
+
+In this DNS Security API request, the base URI (https://api.dns.service.paloaltonetworks.com/v1/domain/info) and the domain google.com are specified in the body, while the API key tied to your DNS Security license is added to the header using `X-DNS-API-APIKEY`.
+
+For example, using curl:
+
+```shell-session
+curl -X POST -d '{"domains": [{"domain": "google.com"}]}' 'https://api.dns.service.paloaltonetworks.com/v1/domain/info' -H 'X-DNS-API-APIKEY: api_key' -H 'Content-Type: application/json'
+
+```
+
+Upon success, the HTTP response code is 200 for this DNS Security API example, which retrieves information about the specified domain.
+
+Detailed information about the domain as categorized by the DNS Security subscription is contained in the response body using the JSON format.
+
+```json
+{
+  "results": [
+    {
+      "category": "search-engines",
+      "domain": "google.com",
+      "verdict": 0,
+      "categoryHistories": [
+        {
+          "category": "search-engines",
+          "evidences": [],
+          "time": "2018-11-29T21:26:31Z"
+        },
+        {
+          "category": "search-engines",
+          "evidences": [],
+          "time": "2018-11-28T07:24:48Z"
+        }
+      ],
+      "ipHistories": [
+        {
+          "asn": {
+            "ASNumber": 0,
+            "ASName": ""
+          },
+          "count": 62,
+          "geo": {
+            "countryName": "Reserved",
+            "countryCode": "ZZ"
+          },
+          "first": "2020-05-12T10:57:04Z",
+          "last": "2022-08-15T23:18:07Z",
+          "ip": "0.0.0.0",
+          "type": "a"
+        },
+        {
+          "last": "2022-03-23T05:00:17Z",
+          "first": "2022-03-23T05:00:17Z",
+          "geo": {
+            "countryName": "United States",
+            "countryCode": "US"
+          },
+          "type": "a",
+          "ip": "16.1.121.85",
+          "asn": {
+            "ASNumber": 0,
+            "ASName": "Not routed, None"
+          },
+          "count": 1
+        },
+        {
+          "count": 1,
+          "asn": {
+            "ASName": "Not routed, None",
+            "ASNumber": 0
+          },
+          "ip": "16.2.147.119",
+          "type": "a",
+          "first": "2022-03-23T04:45:06Z",
+          "geo": {
+            "countryCode": "US",
+            "countryName": "United States"
+          },
+          "last": "2022-03-23T04:45:06Z"
+        },
+        {
+          "count": 542,
+          "asn": {
+            "ASName": "CLOUDFLARENET - Cloudflare, Inc., US",
+            "ASNumber": 13335
+          },
+          "ip": "1.0.0.1",
+          "type": "a",
+          "first": "2021-03-02T15:42:49Z",
+          "geo": {
+            "countryName": "Australia",
+            "countryCode": "AU"
+          },
+          "last": "2021-03-23T01:03:53Z"
+        },
+        {
+          "ip": "1.1.1.1",
+          "type": "a",
+          "geo": {
+            "countryCode": "AU",
+            "countryName": "Australia"
+          },
+          "first": "2021-08-24T09:28:23Z",
+          "last": "2022-03-25T06:20:14Z",
+          "count": 4,
+          "asn": {
+            "ASNumber": 38726,
+            "ASName": "VTCDIGICOM-AS-VN VTC DIGICOM, VN"
+          }
+        },
+        {
+          "asn": {
+            "ASNumber": 0,
+            "ASName": "Not routed, None"
+          },
+          "count": 17,
+          "geo": {
+            "countryName": "Australia",
+            "countryCode": "AU"
+          },
+          "first": "2020-12-03T23:16:19Z",
+          "last": "2022-04-27T23:30:43Z",
+          "ip": "1.2.3.4",
+          "type": "a"
+        }
+      ]
+    }
+  ],
+  "message": "",
+  "success": true
+}
+```
+
+The header response provides details about the current usage status. For more information about these header responses, refer to [DNS Security Access Limits](../docs/access-limits/dns-security).
+
+```
+x-quota-limit-remaining: 9989
+x-quota-limit-reset: 1661552858
+x-quota-limit-total: 10000
+```
