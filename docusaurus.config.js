@@ -202,12 +202,12 @@ const config = {
                       icon: "api-doc"
                     },
                     {
-                      to: "access/api/insights/data-resource",
+                      to: "access/api/insights",
                       label: "Prisma Access Insights API",
                       icon: "api-doc"
                     },
                     {
-                      to: "sase/api/sdwan",
+                      to: "sdwan/api/unified/unified",
                       label: "Prisma SD-WAN API",
                       icon: "api-doc"
                     }
@@ -245,7 +245,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "category/access/api/insights/v-2-0/data-resource",
+                      to: "access/api/insights",
                       label: "Prisma Access Insights APIs",
                       icon: "api-doc"
                     }
