@@ -4,8 +4,10 @@ import './NavbarDocItems.scss'
 
 function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
   if (!apiDocs && !docs) return null; 
+  const hasApiDocs = apiDocs?.length > 0; 
+  const hasDocs = docs?.length > 0;
   
-  const apiDocItems = apiDocs &&
+  const apiDocItems = hasApiDocs &&
     <div className="navbar-doc-items">
       <span className="navbar-doc-items__title">API Reference</span>
       <div className="navbar-doc-items__links"> 
@@ -21,7 +23,7 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
       </div>
     </div>
 
-  const docItems = docs && 
+  const docItems = hasDocs &&
     <div className="navbar-doc-items">
       <span className="navbar-doc-items__title">Docs</span>
       <div className="navbar-doc-items__links"> 
@@ -42,8 +44,8 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
       <h2 className="navbar-doc-items__product-title">{productTitle}</h2>
       <div className={`navbar-doc-items__section-divider ${colorClass}`}/>
       <ul className="navbar-doc-items__list-container">
-        {apiDocs && apiDocItems}
-        {docs && docItems}
+        {apiDocItems}
+        {docItems}
       </ul>
     </div>
   )
