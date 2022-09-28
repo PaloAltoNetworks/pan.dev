@@ -129,7 +129,7 @@ module.exports = {
     "sase/api/mt-monitor/msp-api",
     require("./sase/api/mt-monitor/sidebar")
   ],
-  sasesubscription: require("./sase/api/subscription/sidebar"),
+  sasesubscription: ["sase/api/subscription/subscription-api", require("./sase/api/subscription/sidebar")],
   sasetenancy: [
     "sase/api/tenancy/tenancy-api",
     require("./sase/api/tenancy/sidebar")
