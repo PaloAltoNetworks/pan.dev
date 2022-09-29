@@ -29,6 +29,9 @@ const config = {
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
   themeConfig: {
+    prism: {
+      additionalLanguages: ["ruby", "csharp", "php"]
+    },
     colorMode: {
       defaultMode: "light"
     },
