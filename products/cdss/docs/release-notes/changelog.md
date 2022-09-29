@@ -3,7 +3,6 @@ id: changelog
 title: Changelog
 description: Cloud-Delivered Security Services API Changelog
 hide_title: true
-slug: /threat-vault/docs/release-notes/changelog
 hide_table_of_contents: true
 keywords:
   - security subscription

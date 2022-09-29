@@ -6,7 +6,7 @@ var docs = [
   {
     type: "link",
     label: "Legacy",
-    href: "/sase/api/sdwan/legacy/",
+    href: "/sdwan/api/legacy/",
     customProps: {
       version: "sdwan_versions",
     },
@@ -15,7 +15,7 @@ var docs = [
 ];
 // Change these variables to match your doc path
 const relativePath = "api/sdwan/legacy";
-const absolutePath = "/sase/api/sdwan/legacy";
+const absolutePath = "/sdwan/api/legacy";
 
 function genEndpoints() {
   const endpoints = [];

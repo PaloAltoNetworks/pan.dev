@@ -33,12 +33,12 @@ const config = {
   projectName: "pan.dev",
   themeConfig: {
     colorMode: {
-      defaultMode: "light"
+      defaultMode: "light",
     },
     docs: {
       sidebar: {
-        hideable: true
-      }
+        hideable: true,
+      },
     },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
@@ -46,8 +46,8 @@ const config = {
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
-        facetFilters: [["tags:pandev"]]
-      }
+        facetFilters: [["tags:pandev"]],
+      },
     },
     hideOnScroll: true,
     navbar: {
@@ -55,7 +55,7 @@ const config = {
       logo: {
         alt: "Palo Alto Networks for Developers",
         src: "img/pan_dev_black.svg",
-        srcDark: "img/pan_dev_white.svg"
+        srcDark: "img/pan_dev_white.svg",
       },
       items: [
         {
@@ -78,16 +78,16 @@ const config = {
                     {
                       label: "Cloud NGFW",
                       to: "cloudngfw/docs",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "cloudngfw/aws/api/",
                       label: "Cloud NGFW for AWS API",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "PAN-OS",
@@ -97,16 +97,16 @@ const config = {
                     {
                       label: "PAN-OS ",
                       to: "panos/docs",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "panos/docs/apis/",
                       label: "PAN-OS APIs and SDKs",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Cloud-Delivered Security Services",
@@ -116,41 +116,41 @@ const config = {
                     {
                       label: "Cloud-Delivered Security Services",
                       to: "/threat-vault/docs",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "/threat-vault/api",
                       label: "Threat Vault APIs",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
-                      to: "/iot/iot-api",
+                      to: "/iot/api",
                       label: "IoT API",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "/dns-security/api",
                       label: "DNS Security API",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Expedition",
                   to: "#",
-                  logoClass: "cortex",
+                  logoClass: "panos",
                   docs: [
                     {
                       label: "Expedition",
                       to: "expedition/docs",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
-                  apiDocs: []
-                }
-              ]
+                  apiDocs: [],
+                },
+              ],
             },
             {
               label: "Security Access Service Edge",
@@ -167,51 +167,51 @@ const config = {
                     {
                       to: "sase/docs",
                       label: "Prisma SASE Overview",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "sase/api/tenancy",
                       label: "Tenancy Service",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sase/api/iam",
                       label: "Identity and Access Management",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sase/api/auth",
                       label: "Authentication Service",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sase/api/subscription",
                       label: "Subscription Service",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sase/api/mt-monitor",
                       label: "Aggregate Monitoring",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration API",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "access/api/insights",
                       label: "Prisma Access Insights API",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sdwan/api/unified/unified",
                       label: "Prisma SD-WAN API",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma Access Configuration",
@@ -220,17 +220,17 @@ const config = {
                   docs: [
                     {
                       label: "Prisma Access Configuration",
-                      to: "access/docs/prisma-access/config",
-                      icon: "doc"
-                    }
+                      to: "access/docs/prisma-access-config",
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration APIs",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma Access Insights",
@@ -240,16 +240,16 @@ const config = {
                     {
                       label: "Get Started 2.0",
                       to: "access/docs/insights/getting_started-20",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "access/api/insights",
                       label: "Prisma Access Insights APIs",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma SD-WAN",
@@ -259,23 +259,23 @@ const config = {
                     {
                       label: "Prisma SD-WAN Overview",
                       to: "/sdwan/docs",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       to: "/sdwan/api/unified/unified",
                       label: "Prisma SD-WAN Unified",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "/sdwan/api/legacy/legacy",
                       label: "Prisma SD-WAN Legacy",
-                      icon: "api-doc"
-                    }
-                  ]
-                }
-              ]
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
             },
             {
               label: "Cloud Native Security",
@@ -292,16 +292,16 @@ const config = {
                     {
                       to: "https://prisma.pan.dev/api/cloud/cspm/",
                       label: "CSPM API",
-                      icon: "api-doc"
-                    }
+                      icon: "api-doc",
+                    },
                   ],
                   docs: [
                     {
                       to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
                       label: "Getting Started",
-                      icon: "doc"
-                    }
-                  ]
+                      icon: "doc",
+                    },
+                  ],
                 },
                 {
                   label: "Cloud Workload Protection Platform",
@@ -311,18 +311,18 @@ const config = {
                     {
                       to: "https://prisma.pan.dev/api/cloud/cwpp",
                       label: "CWPP API",
-                      icon: "api-doc"
-                    }
+                      icon: "api-doc",
+                    },
                   ],
                   docs: [
                     {
                       to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
                       label: "Getting Started",
-                      icon: "doc"
-                    }
-                  ]
-                }
-              ]
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
             },
             {
               label: "Security Operations",
@@ -339,16 +339,16 @@ const config = {
                     {
                       label: "XSOAR (Demoisto) API",
                       to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
-                      icon: "api-doc"
-                    }
+                      icon: "api-doc",
+                    },
                   ],
                   docs: [
                     {
                       label: "Cortex XSOAR Developer Hub",
                       to: "https://xsoar.pan.dev/docs/welcome",
-                      icon: "doc"
-                    }
-                  ]
+                      icon: "doc",
+                    },
+                  ],
                 },
                 {
                   label: "Cortex",
@@ -358,42 +358,42 @@ const config = {
                     {
                       label: "Expander API",
                       to: "https://cortex.pan.dev/api/expander/annotations-api",
-                      icon: "api-doc"
-                    }
+                      icon: "api-doc",
+                    },
                   ],
                   docs: [
                     {
                       label: "Xpanse Python SDK",
                       to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                      icon: "doc"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
         {
           to: "https://gallery.pan.dev",
           className: "header-github-link",
-          position: "right"
+          position: "right",
         },
         {
           href: "https://medium.com/palo-alto-networks-developer-blog",
           className: "header-blog-link",
           position: "right",
-          "aria-label": "Palo Alto Networks Developer Blog"
-        }
-      ]
+          "aria-label": "Palo Alto Networks Developer Blog",
+        },
+      ],
     },
     footer: {
       style: "light",
       logo: {
         alt: "Palo Alto Networks for developers",
-        src: "img/PANW_Parent_Logo_White.svg"
+        src: "img/PANW_Parent_Logo_White.svg",
       },
-      copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`
-    }
+      copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
+    },
   },
   themes: ["docusaurus-theme-openapi-docs"],
   presets: [
@@ -402,14 +402,14 @@ const config = {
       {
         docs: false,
         theme: {
-          customCss: [require.resolve("./src/css/custom.scss")]
+          customCss: [require.resolve("./src/css/custom.scss")],
         },
         gtag: {
           trackingID: "GTM-PLXD79N",
-          anonymizeIP: true
-        }
-      }
-    ]
+          anonymizeIP: true,
+        },
+      },
+    ],
   ],
   plugins: [
     [
@@ -417,16 +417,16 @@ const config = {
       {
         id: "pan-sitemap",
         changefreq: "weekly",
-        priority: 0.5
-      }
+        priority: 0.5,
+      },
     ],
     [
       require.resolve("./plugin-sitemap-coveo/src/index.cjs"),
       {
         id: "coveo-sitemap",
         changefreq: "weekly",
-        priority: 0.5
-      }
+        priority: 0.5,
+      },
     ],
     "docusaurus-plugin-sass",
     [
@@ -437,15 +437,15 @@ const config = {
         config: {
           auth: {
             specPath: "openapi-specs/sase/auth",
-            outputDir: "products/sase/sase/api/auth",
+            outputDir: "products/sase/api/auth",
             sidebarOptions: {
-              groupPathsBy: "tag"
-            }
+              groupPathsBy: "tag",
+            },
           },
           iam: {
             specPath: "openapi-specs/sase/iam",
-            outputDir: "products/sase/sase/api/iam",
-            sidebarOptions: { groupPathsBy: "tag" }
+            outputDir: "products/sase/api/iam",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
@@ -460,66 +460,66 @@ const config = {
                 outputDir: "products/access/api/insights/1.0",
                 label: "v1.0",
                 baseUrl:
-                  "/category/access/api/insights/1.0/v-1-0/data-resource/"
-              }
-            }
+                  "/category/access/api/insights/1.0/v-1-0/data-resource/",
+              },
+            },
           },
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
-            outputDir: "products/sase/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag" }
+            outputDir: "products/sase/api/mt-monitor",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
-            sidebarOptions: { groupPathsBy: "tag" }
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           sub: {
             specPath: "openapi-specs/sase/subscription",
-            outputDir: "products/sase/sase/api/subscription",
-            sidebarOptions: { groupPathsBy: "tag" }
+            outputDir: "products/sase/api/subscription",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           tenancy: {
             specPath: "openapi-specs/sase/tenancy",
-            outputDir: "products/sase/sase/api/tenancy",
-            sidebarOptions: { groupPathsBy: "tag" }
+            outputDir: "products/sase/api/tenancy",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
-            outputDir: "products/sdwan/api/unified",
+            outputDir: "products/sdwan/api",
             sidebarOptions: { groupPathsBy: "tag" },
             version: "Unified",
             label: "Unified",
-            baseUrl: "/sdwan/api/unified/unified",
+            baseUrl: "/sdwan/api/",
             versions: {
               legacy: {
                 specPath: "openapi-specs/sdwan/legacy",
                 outputDir: "products/sdwan/api/legacy",
                 label: "Legacy",
-                baseUrl: "/sdwan/api/legacy/legacy"
-              }
-            }
+                baseUrl: "/sdwan/api/legacy/",
+              },
+            },
           },
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
-            sidebarOptions: { groupPathsBy: "tag" }
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
-            outputDir: "products/iot/api"
+            outputDir: "products/iot/api",
           },
-          tp: {
+          "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
             outputDir: "products/threat-vault/api",
-            sidebarOptions: { groupPathsBy: "tag" }
+            sidebarOptions: { groupPathsBy: "tag" },
           },
-          dns_security: {
+          "dns-security": {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
-            outputDir: "products/dns-security/api"
-          }
-        }
-      }
+            outputDir: "products/dns-security/api",
+          },
+        },
+      },
     ],
     [
       "@docusaurus/plugin-content-docs",
@@ -530,16 +530,16 @@ const config = {
         sidebarPath: "./sidebars.js",
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
-        docItemComponent: "@theme/ApiItem"
-      }
-    ]
+        docItemComponent: "@theme/ApiItem",
+      },
+    ],
   ],
   stylesheets: [
     {
       href: "https://use.fontawesome.com/releases/v5.15.0/css/all.css",
       type: "text/css",
-      rel: "stylesheet"
-    }
+      rel: "stylesheet",
+    },
   ],
   onDuplicateRoutes: "warn",
   onBrokenLinks: "warn",
@@ -551,10 +551,10 @@ const config = {
       options: {
         loader: "tsx",
         format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017"
-      }
-    })
-  }
+        target: isServer ? "node12" : "es2017",
+      },
+    }),
+  },
 };
 
 /*

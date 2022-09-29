@@ -18,7 +18,6 @@ Thank you for your interest in **Palo Alto Networks** developer documentation!
 
 To get started, choose how you would like to contribute:
 
-
 <article className="margin-top--lg">
   <section className="row">
     <article className="col col--6 margin-bottom--lg">

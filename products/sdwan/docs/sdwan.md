@@ -20,11 +20,11 @@ codes to indicate the response to those operations.
 
 There are two versions of these APIs:
 
-- [Unified APIs](/sase/api/sdwan) integrate with the other SASE APIs for a
+- [Unified APIs](/sdwan/api) integrate with the other SASE APIs for a
   seamless SASE authentication and request mechanism. See
   [Prisma SASE API Get Started](/sase/docs/getstarted) for authentication and HTTP request details.
 
-- [Legacy APIs](/sase/api/sdwan/legacy) are identical to the Prisma SD-WAN offering that
+- [Legacy APIs](/sdwan/api/legacy) are identical to the Prisma SD-WAN offering that
   existed prior to the availability of the unified SASE APIs on June 6, 2022. These APIs receive security
   tokens when you login to the service, and the tokens are included in the request as HTTP headers.
-  See [Prisma SD-WAN Legacy API Get Started](/sase/docs/sdwan/legacy_getstarted) for details.
+  See [Prisma SD-WAN Legacy API Get Started](/sdwan/docs/legacy_getstarted) for details.

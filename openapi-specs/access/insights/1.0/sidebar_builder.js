@@ -6,7 +6,7 @@ var docs = [
   {
     type: "link",
     label: "1.0",
-    href: "/sase/api/insights/1.0/",
+    href: "/access/api/insights/1.0/",
     customProps: {
       version: "pai_versions",
     },
@@ -15,7 +15,7 @@ var docs = [
 ];
 // Change these variables to match your doc path
 const relativePath = "api/insights/1.0";
-const absolutePath = "/sase/api/insights/1.0";
+const absolutePath = "/access/api/insights/1.0";
 
 function genEndpoints() {
   const endpoints = [];

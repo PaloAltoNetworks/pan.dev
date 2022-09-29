@@ -5,7 +5,7 @@ const fs = require("fs");
 var docs = ["api/prisma-access-config/config-api"];
 // Change these variables to match your doc path
 const relativePath = "api/prisma-access-config";
-const absolutePath = "/sase/api/prisma-access-config";
+const absolutePath = "/access/api/prisma-access-config";
 
 const sidebarDictionary = {
   AuthenticationRules: "Identity Services",
