@@ -4,9 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const globby = require("globby");
-const fs = require("fs");
-const sidebars = require("./sidebars");
 
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
@@ -32,6 +29,9 @@ const config = {
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
   themeConfig: {
+    prism: {
+      additionalLanguages: ["ruby", "csharp", "php"]
+    },
     colorMode: {
       defaultMode: "light"
     },
