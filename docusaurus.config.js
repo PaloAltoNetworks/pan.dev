@@ -90,25 +90,6 @@ const config = {
                   ],
                 },
                 {
-                  label: "PAN-OS",
-                  to: "#",
-                  logoClass: "panos",
-                  docs: [
-                    {
-                      label: "PAN-OS ",
-                      to: "panos/docs",
-                      icon: "doc",
-                    },
-                  ],
-                  apiDocs: [
-                    {
-                      to: "panos/docs/apis/",
-                      label: "PAN-OS APIs and SDKs",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
                   label: "Cloud-Delivered Security Services",
                   to: "#",
                   logoClass: "panos",
