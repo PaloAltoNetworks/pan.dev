@@ -76,8 +76,20 @@ function CardDoc({ item }) {
   );
 }
 
+function CardRef({ item }) {
+  const icon = "📄️";
+  return (
+    <CardLayout
+      href={item.href}
+      icon={icon}
+      title={item.label ?? " "}
+      description={item.description ?? " "}
+    />
+  );
+}
+
 export default function DocCardProduct({ item }) {
-  var type = item.type ? item.type : "doc";
+  var type = item.type ? item.type : "product";
   switch (type) {
     case "link":
       return <CardLink item={item} />;
@@ -87,6 +99,9 @@ export default function DocCardProduct({ item }) {
 
     case "doc":
       return <CardDoc item={item} />;
+
+    case "product":
+      return <CardRef item={item} />;
 
     default:
       throw new Error(`unknown item type ${JSON.stringify(item)}`);
