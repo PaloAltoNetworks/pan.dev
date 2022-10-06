@@ -4,9 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const globby = require("globby");
-const fs = require("fs");
-const sidebars = require("./sidebars");
 
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
@@ -32,6 +29,9 @@ const config = {
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
   themeConfig: {
+    prism: {
+      additionalLanguages: ["ruby", "csharp", "php"]
+    },
     colorMode: {
       defaultMode: "light",
     },
@@ -85,25 +85,6 @@ const config = {
                     {
                       to: "cloudngfw/aws/api/",
                       label: "Cloud NGFW for AWS API",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
-                  label: "PAN-OS",
-                  to: "#",
-                  logoClass: "panos",
-                  docs: [
-                    {
-                      label: "PAN-OS ",
-                      to: "panos/docs",
-                      icon: "doc",
-                    },
-                  ],
-                  apiDocs: [
-                    {
-                      to: "panos/docs/apis/",
-                      label: "PAN-OS APIs and SDKs",
                       icon: "api-doc",
                     },
                   ],
