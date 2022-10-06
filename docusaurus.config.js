@@ -554,6 +554,7 @@ async function createConfig() {
   let filters =
     process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
   if (filters) {
+    console.log("Partioning content by " + filters.join(","))
     config.plugins[4][1].include = docsPluginInclude(filters);
   }
   return config;
