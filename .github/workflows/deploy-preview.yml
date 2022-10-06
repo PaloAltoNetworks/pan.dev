@@ -39,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      PRODUCTS_INCLUDE: contributing
 
     steps:
       - name: Checkout repository
@@ -61,20 +63,8 @@ jobs:
       - name: Install dependencies
         run: yarn --prefer-offline
 
-      - name: Check for netsec label
-        id: netsec_label_check
-        uses: docker://agilepathway/pull-request-label-checker:latest
-        with:
-          all_of: netsec
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          allow_failure: true
-
-      - name: Export netsec filter
-        if: steps.netsec_label_check.outputs.label_check == 'success'
-        env:
-          PRODUCTS_INCLUDE: netsec
-        run: |
-          echo "Limiting build to 'netsec' content"
+      - name: Get labels
+        run: echo ${{ join(github.event.pull_request.labels.*.name. ', ') }}
 
       - name: Build site
         run: yarn build
@@ -97,6 +87,9 @@ jobs:
         with:
           name: build-dir
           path: build/
+
+      - name: Install firebase-tools
+        run: yarn add firebase-tools@11.13.0
 
       - name: Deploy to Firebase
         id: deploy_preview
