@@ -61,18 +61,20 @@ jobs:
       - name: Install dependencies
         run: yarn --prefer-offline
 
-      - name: Check labels
-        id: label_check
+      - name: Check for netsec label
+        id: netsec_label_check
         uses: docker://agilepathway/pull-request-label-checker:latest
         with:
-          any_of: sase,netsec
+          all_of: netsec
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           allow_failure: true
 
-      - name: Export build filter
-        if: steps.label_check.outputs.label_check == 'success'
+      - name: Export netsec filter
+        if: steps.netsec_label_check.outputs.label_check == 'success'
+        env:
+          PRODUCTS_INCLUDE: netsec
         run: |
-          echo ${{ join(steps.label_check.outputs.*) }}
+          echo "Limiting build to 'netsec' content"
 
       - name: Build site
         run: yarn build
