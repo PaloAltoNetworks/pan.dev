@@ -3,8 +3,7 @@ name: "Deploy Preview"
 on:
   pull_request:
     branches: [ master ]
-
-
+    types: [opened, reopened, labeled, unlabeled, synchronize]
 
 jobs:
   analyze:
@@ -62,17 +61,18 @@ jobs:
       - name: Install dependencies
         run: yarn --prefer-offline
 
-      - name: Partition build by product(s)
-        if: join(github.event.issue.labels) != ''
+      - name: Check labels
+        id: label_check
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          any_of: sase,netsec
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          allow_failure: true
+
+      - name: Export build filter
+        if: steps.label_check.outputs.label_check == 'success'
         run: |
-          labels=${{ github.event.issue.labels }}
-          products=["netsec", "sase"]
-          for item in ${labels[*]}
-          do
-            if [[ contains(products, "$item") ]]; then
-              echo "Product label matched!"
-            fi
-          done
+          echo "${{ steps.label_check.outputs.* }}"
 
       - name: Build site
         run: yarn build
