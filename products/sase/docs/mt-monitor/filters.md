@@ -19,7 +19,7 @@ In a POST request body, you will provide a required filter. This is a json objec
 
 In a POST request body, you will also provide required properties. This is an array of objects. Property field names will be returned in the API response. You can use one or more properties to customize the response, but you can also use most of the examples in the API reference just as they are.
 
-For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/dataresources#operation/post-mt-monitor-v1-agg-threats-summary) contains a filter with rules of [ThreatSummaryRule](#threatsummaryrule) and [TimeFilter](#timefilter), and properties of [ThreatSummaryProperty](#threatsummaryproperty):
+For example, the following POST request body for [List Threat Summary](/sase/api/mt-monitor/post-mt-monitor-v1-agg-threats-summary) contains a filter with rules of [ThreatSummaryRule](#threatsummaryrule) and [TimeFilter](#timefilter), and properties of [ThreatSummaryProperty](#threatsummaryproperty):
 
     {
       "filter": {

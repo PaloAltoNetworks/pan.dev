@@ -36,16 +36,16 @@ occurred in between API product releases.
   - Renamed query filters to user-friendly names.
   - Removed the `license_type` query parameter.
 
-- Updated the Prisma Access Config APIs to add [traffic steering](/sase/api/prisma-access-config/traffic-steering).
-  You can also now [import a certificate](/sase/api/prisma-access-config/post-sse-config-v-1-certificates).
+- Updated the Prisma Access Config APIs to add [traffic steering](/access/api/prisma-access-config/traffic-steering).
+  You can also now [import a certificate](/access/api/prisma-access-config/post-sse-config-v-1-certificates).
 
 ## July 2022
 
-- First documentation release of the [Prisma SD-WAN APIs](/sase/docs/sdwan).
+- First documentation release of the [Prisma SD-WAN APIs](/sdwan/docs).
 - Added `shared-infrastructure-settings`, `internal-dns-servers`, and `service-connections`
-  endpoints to the [Prisma Access Configuration APIs](/sase/api/prisma-access-config). These are
+  endpoints to the [Prisma Access Configuration APIs](/access/api/prisma-access-config). These are
   grouped under `Service Setup` which is renamed from `Remote Networks`.
-- Removed the API Server Status APIs from [Prisma Access](/sase/api/insights/1.0/api-server-status-v-1) Insights as they are not intended for
+- Removed the API Server Status APIs from [Prisma Access](/access/api/insights/1.0/api-server-status-v-1) Insights as they are not intended for
   customer consumption.
 
 ## April 2022
@@ -57,21 +57,21 @@ begin with `/sse/config/v1`. For example, `/config/v1/certificate-profiles` is n
 
 The following configuration endpoints have changed:
 
-| Old                                  | New                                                                                                                                |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| /config/v1/load-config               | [/sse/config/v1/config-versions:load](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-load)                     |
-| /config/v1/running/push              | [/sse/config/v1/config-versions/candidate:push](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push) |
-| /config/v1/config-versions/candidate | [/sse/config/v1/config-versions](/sase/api/prisma-access-config/get-sse-config-v-1-config-versions)                                |
+| Old                                  | New                                                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| /config/v1/load-config               | [/sse/config/v1/config-versions:load](/access/api/prisma-access-config/post-sse-config-v-1-config-versions-load)                     |
+| /config/v1/running/push              | [/sse/config/v1/config-versions/candidate:push](/access/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push) |
+| /config/v1/config-versions/candidate | [/sse/config/v1/config-versions](/access/api/prisma-access-config/get-sse-config-v-1-config-versions)                                |
 
-Also, [/sse/config/v1/config-versions/candidate:push](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push)
+Also, [/sse/config/v1/config-versions/candidate:push](/access/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push)
 formerly had a field `devices` in its request body. This is now `fields`.
 
 The following new API is added:
 
-- [/sse/config/v1/config-versions/{version}](/sase/api/prisma-access-config/get-sse-config-v-1-config-versions-version)
+- [/sse/config/v1/config-versions/{version}](/access/api/prisma-access-config/get-sse-config-v-1-config-versions-version)
 
 Throughout the entire service, APIs that retrieve or edit a resource by ID now no longer support the
-`folder` query parameter. See, for example [/sse/config/v1/addresses/{id}](/sase/api/prisma-access-config/get-sse-config-v-1-addresses).
+`folder` query parameter. See, for example [/sse/config/v1/addresses/{id}](/access/api/prisma-access-config/get-sse-config-v-1-addresses).
 
 ## March 2022
 
