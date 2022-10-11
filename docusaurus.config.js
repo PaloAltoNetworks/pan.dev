@@ -284,6 +284,15 @@ module.exports = {
     [
       "@docusaurus/plugin-content-docs",
       {
+        id: "cdl",
+        path: "cdl",
+        routeBasePath: "cdl",
+        sidebarPath: require.resolve("./cdl/sidebar.js"),
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
         id: "network-security",
         path: "network-security",
         routeBasePath: "network-security",
