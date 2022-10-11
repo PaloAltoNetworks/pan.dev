@@ -1,0 +1,388 @@
+components:
+  schemas:
+    ApiError:
+      properties:
+        errorCode: {description: Server error code, type: integer}
+        errorMessage: {description: A message describing the error code, type: string}
+      required: [errorMessage]
+      type: object
+    ClientAuthBasic:
+      properties:
+        password: {description: 'HTTPS server password.
+
+            ', type: string}
+        username: {description: 'HTTPS server user name.
+
+            ', type: string}
+      required: [username, password]
+      type: object
+    ClientAuthChronicle:
+      properties:
+        customerId: {description: 'Your Google Workspace [Customer ID](https://support.google.com/a/answer/10070793?hl=en).
+
+            ', type: string}
+        serviceAccount: {description: 'Your Google Workspace [Service Account Token](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
+            Must be stringified.
+
+            ', type: string}
+      required: [customerId, serviceAccount]
+      type: object
+    ClientAuthSentinel:
+      properties:
+        primaryKey: {description: 'Your Microsoft Sentinel [workspace primary key](https://learn.microsoft.com/en-us/azure/sentinel/create-custom-connector#find-your-workspace-id-and-key).
+
+            ', type: string}
+        workspaceId: {description: 'Your Microsoft Sentinel [workspace ID](https://learn.microsoft.com/en-us/azure/sentinel/create-custom-connector#find-your-workspace-id-and-key).
+
+            ', type: string}
+      required: [workspaceId, primaryKey]
+      type: object
+    ClientAuthSplunk:
+      properties:
+        hecToken: {description: 'Your Splunk [HTTP Event Collector Token](https://splunk.paloaltonetworks.com/cortex-hec.html)
+
+            ', type: string}
+      required: [hecToken]
+      type: object
+    HttpsDestination:
+      description: 'Profile name and HTTPS receiver information.
+
+        '
+      example: {}
+      properties:
+        clientAuth:
+          oneOf:
+          - {$ref: '#/components/schemas/ClientAuthSentinel'}
+          - {$ref: '#/components/schemas/ClientAuthChronicle'}
+          - {$ref: '#/components/schemas/ClientAuthSplunk'}
+          - {$ref: '#/components/schemas/ClientAuthBasic'}
+        clientAuthType:
+          description: 'The type of HTTPS destination to receive your logs.
+
+            '
+          enum: [Splunk, Sentinel, Chronicle, Basic, None]
+          type: string
+        displayName: {description: 'Name of the profile.
+
+            ', type: string}
+        notification: {description: 'An email address to receive updates about log
+            transmission.
+
+            ', type: string}
+        payloadFormat:
+          description: 'The format of the log data. Select the correct format for
+            your HTTPS receiver.
+
+            '
+          enum: [ARRAY_JSON, STACKED_JSON]
+          type: string
+        profileToken: {type: string}
+        uri: {description: 'The URI for the HTTPS destination. Must begin with `https:/`.
+
+            ', type: string}
+      required: [displayName, uri, clientAuthType, payloadFormat]
+      type: object
+    HttpsProfile:
+      properties:
+        destination: {$ref: '#/components/schemas/HttpsDestination'}
+        logtypes:
+          description: "The parameters used to specify the logs that you want to send.\
+            \ \n"
+          items: {$ref: '#/components/schemas/LogTypes'}
+          type: array
+      required: [destination, logtypes]
+      type: object
+    HttpsProfileDetail:
+      properties:
+        destination: {$ref: '#/components/schemas/HttpsDestination'}
+        logtypes:
+          items: {$ref: '#/components/schemas/LogTypes'}
+          type: array
+        profileId: {example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string}
+        status: {$ref: '#/components/schemas/ProfileStatus'}
+      required: [profileId, destination, logtypes, status]
+      type: object
+    LogTypes:
+      description: Profile logtype object
+      properties:
+        allColumns: {description: '`True` sends all log fields. `False` sends a subset
+            of log fields.
+
+            ', example: false, type: boolean}
+        excludedColumns:
+          description: 'The specific log fields you do not want to send. Does nothing
+            if the same field is present in `includedColumns`.
+
+            '
+          items: {type: string}
+          type: array
+        filter: {description: 'The [filter query](https://docs.paloaltonetworks.com/cortex/cortex-data-lake/cortex-data-lake-getting-started/retrieve-log-records/about-queries)
+            used to send a subset of logs.
+
+            ', example: 'log_time = ''2022-09-04T01:00:01.000Z'' AND vsys != ''''',
+          type: string}
+        includedColumns:
+          description: 'The specific log fields you want to send. Does nothing if
+            `allColumns` is `True`.
+
+            '
+          example: [log_time, vsys]
+          items: {type: string}
+          type: array
+        logtype: {description: 'The [log type](/cdl/logforwarding/docs/syslog_lf)
+            that you want to send.
+
+            ', example: firewall.traffic, type: string}
+      type: object
+    ProfileStatus:
+      description: Profile status
+      enum: [pending, inactive, active]
+      type: string
+  securitySchemes:
+    Bearer: {scheme: bearer, type: http}
+info:
+  contact: {}
+  description: 'To meet your long-term storage, reporting and monitoring, or legal
+    and compliance needs,
+
+    you can configure Cortex Data Lake to forward logs to an HTTPS server or to the
+    following
+
+    SIEMs:
+
+
+    -   Splunk HTTP Event Collector (HEC)
+
+    -   Microsoft Sentinel
+
+    -   Google Chronicle
+
+    '
+  title: HTTPS Profiles
+  version: '1.0'
+openapi: 3.0.0
+paths:
+  /logging-service/logforwarding/v1/https-profiles:
+    get:
+      description: Retrieve information about all existing HTTPS profiles, including
+        their profile IDs.
+      operationId: get-logging-service-logforwarding-v1-https-profiles
+      parameters:
+      - description: The status of the profiles to be returned.
+        in: query
+        name: status
+        schema:
+          items: {$ref: '#/components/schemas/ProfileStatus'}
+          type: array
+      - description: The maximum number of profiles to be returned.
+        in: query
+        name: resultSize
+        schema: {default: 100, type: integer}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items: {$ref: '#/components/schemas/HttpsProfileDetail'}
+                type: array
+          description: Request successfully processed
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get all HTTPS profiles
+      tags: [HTTPSProfiles]
+    post:
+      description: Create an HTTPS profile object to send logs to an HTTPS receiver
+        or SIEM.
+      operationId: post-logging-service-logforwarding-v1-https-profiles
+      requestBody:
+        content:
+          '*/*':
+            schema: {$ref: '#/components/schemas/HttpsProfile'}
+        description: null
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema: {example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string}
+          description: Returns profile id on successful request processing
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input / failed connectivity check
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Create an HTTPS profile
+      tags: [HTTPSProfiles]
+  /logging-service/logforwarding/v1/https-profiles/{profileId}:
+    delete:
+      description: 'Delete the HTTPS profile with the specified profile ID.
+
+        '
+      operationId: delete-logging-service-logforwarding-v1-https-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to delete.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Request successfully processed}
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile does not exists
+        '429':
+          content: {}
+          description: Too many request
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Delete HTTPS profile
+      tags: [HTTPSProfiles]
+    get:
+      description: 'Retrieve the HTTPS profile that has the specified profile ID.
+        The response header
+
+        contains the etag that you need to update the HTTPS profile.
+
+        '
+      operationId: get-logging-service-logforwarding-v1-https-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to retrieve.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/HttpsProfileDetail'}
+          description: Request successfully processed
+          headers:
+            etag:
+              description: Tag for controlling concurrent updates
+              schema: {example: ddd24f872b8d42f10afdcedc44ae334e, type: string}
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile ID does not exists
+        '429':
+          content: {}
+          description: Too many request
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get HTTPS profile
+      tags: [HTTPSProfiles]
+    put:
+      description: 'Update an HTTPS profile using the etag obtained from retrieving
+        the HTTPS profile by
+
+        its profile ID. You can change only the destination and logtype fields. You
+        can not
+
+        change the profileType.
+
+        '
+      operationId: put-logging-service-logforwarding-v1-https-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to update.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      - description: 'Tag required to update the profile.
+
+          '
+        in: header
+        name: etag
+        schema: {example: ddd24f872b8d42f10afdcedc44ae334e, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/HttpsProfile'}
+        description: New profile value
+        required: true
+      responses:
+        '200': {description: Request successfully processed}
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile does not exists
+        '429':
+          content: {}
+          description: Too many request
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Update HTTPS profile
+      tags: [HTTPSProfiles]
+servers:
+- {url: 'https://api.sase.paloaltonetworks.com'}
+tags:
+- {name: HTTPSProfiles}
