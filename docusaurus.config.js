@@ -174,6 +174,11 @@ module.exports = {
               label: "Prisma Access Insights",
               className: "indent",
             },
+            {
+              to: "cdl/logforwarding/api",
+              label: "Log Forwarding",
+              className: "indent",
+            },
           ],
         },
         {
