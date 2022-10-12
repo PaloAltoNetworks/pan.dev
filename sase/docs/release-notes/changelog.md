@@ -14,6 +14,7 @@ keywords:
 
 | Date | Description |
 |------|-------------|
+| Oct 12, 2022 | The Cortex Data Lake [Log Forwarding APIs](/cdl/logforwarding/docs) now use the same common authentication mechanism as is used by most SASE APIs. |
 | August 17, 2022 | New endpoints for the Prisma Access Config APIs. See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.|
 | August 15, 2022 | Updated the [Aggregate Monitoring APIs](/sase/api/mt-monitor). See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.|
 | July 27, 2022 | Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details. |
