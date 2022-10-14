@@ -20,11 +20,11 @@ These APIs use the [common SASE authentication](/sase/docs/getstarted) for servi
 
 To configure your Prisma Access Cloud Managed tenant, use the configuration APIs described here to
 create a _candidate_ configuration. Once you have finished creating your candidate configuration,
-[push the candidate](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-load).
+[push the candidate](/access/api/prisma-access-config/post-sse-config-v-1-config-versions-load).
 This creates a configuration job. Once that job has finished, the candidate configuration becomes
 the _running_ configuration.
 
 An API exists to
-[show the running configuration](/sase/api/prisma-access-config/get-sse-config-v-1-config-versions-version).
+[show the running configuration](/access/api/prisma-access-config/get-sse-config-v-1-config-versions-version).
 If you make a mistake creating your candidate configuration, you can
-[rollback to the running configuration](/sase/api/prisma-access-config/delete-sse-config-v-1-config-versions-candidate).
+[rollback to the running configuration](/access/api/prisma-access-config/delete-sse-config-v-1-config-versions-candidate).
