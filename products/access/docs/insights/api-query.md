@@ -14,18 +14,18 @@ The Prisma Access Insights query language allows you to retrieve selected
 information from your Prisma Access environment. This language is JSON-based. You submit queries
 and retrieve query results using the following Prisma Access Insights APIs.
 
-| Customer      | API Version | API                                                                                                                                                                                                                                    |
-| ------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| MSSP          | 2.0         | [Resource Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-resource-name)<br />[Resource Custom Query](/sase/api/insights/2.0/get-api-sase-v-2-0-resource-custom-feature-name-request-name)                                   |
-| Single Tenant | 1.0         | [Resource Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-resource-name)<br />[Resource Custom Query](/sase/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-custom-feature-name-request-name) |
+| Customer      | API Version | API                                                                                                                                                                                                                                        |
+| ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| MSSP          | 2.0         | [Resource Query](/access/api/insights/get-api-sase-v-2-0-resource-resource-name)<br />[Resource Custom Query](/access/api/insights/get-api-sase-v-2-0-resource-custom-feature-name-request-name)                                           |
+| Single Tenant | 1.0         | [Resource Query](/access/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-resource-name)<br />[Resource Custom Query](/access/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-custom-feature-name-request-name) |
 
 Before using the Insights API, you'll need to generate an access token. Depending on the API version
 that you're using, see Getting Started:
 
-| Customer      | API Version | API                                                                                        |
-| ------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| MSSP          | 2.0         | [Get Started with Prisma Access Insights 2.0 API](/sase/docs/insights/getting_started-20/) |
-| Single Tenant | 1.0         | [Get Started with Prisma Access Insights 1.0 API](/sase/docs/insights/getting_started-10/) |
+| Customer      | API Version | API                                                                                          |
+| ------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| MSSP          | 2.0         | [Get Started with Prisma Access Insights 2.0 API](/access/docs/insights/getting_started-20/) |
+| Single Tenant | 1.0         | [Get Started with Prisma Access Insights 1.0 API](/access/docs/insights/getting_started-10/) |
 
 ## Query Language Usage
 
@@ -80,17 +80,17 @@ the query response.
 
 ## Query Components
 
-Queries are submitted against [resources](/sase/docs/insights/query_language_resources/) that are available to your
+Queries are submitted against [resources](/access/docs/insights/query_language_resources/) that are available to your
 Prisma Access Insights tenant. Each query consists of the following:
 
-- [properties](/sase/docs/insights/query_properties/)
+- [properties](/access/docs/insights/query_properties/)
 
   Identify the data to output for the query. This begins by identifying
   the data fields to include in the query output, but then also
   includes sorting information, and any functions that you want to
   apply to the query data.
 
-- [filters](/sase/docs/insights/query_filters/)
+- [filters](/access/docs/insights/query_filters/)
 
   Limit the information included in your query results by applying boolean expressions to information found in the dataset.
 

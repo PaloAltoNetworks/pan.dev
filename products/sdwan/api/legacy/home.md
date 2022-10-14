@@ -9,4 +9,4 @@ and workflows. These legacy APIs are identical to the APIs that existed prior to
 the unified SASE APIs on June 6, 2022.
 
 To get started with these APIs, see
-[Prisma SD-WAN Legacy API Get Started](/sase/docs/sdwan/legacy_getstarted).
+[Prisma SD-WAN Legacy API Get Started](/sdwan/docs/legacy_getstarted).

@@ -4,7 +4,7 @@ title: Welcome to Prisma Access Configuration APIs
 description: Prisma Access Configuration APIs
 hide_title: false
 hide_table_of_contents: false
-slug: /access/docs/prisma-access/config
+slug: /access/docs/config
 keywords:
   - sase
 ---
@@ -18,7 +18,7 @@ After you obtain an [access token](/sase/docs/access-tokens),
 you can use these APIs to configure your Prisma Access deployments.
 
 Generally, to perform a configuration change, you issue one or more configuration
-changes using the [configuration APIs](/sase/api/prisma-access-config). This creates
+changes using the [configuration APIs](/access/api/prisma-access-config). This creates
 a _candidate_ configuration. Once you have completed creating your candidate configuration,
-you can [push your candidate](/sase/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push). This creates a [configuration job](/sase/api/prisma-access-config/get-sse-config-v-1-jobs-id).
+you can [push your candidate](/access/api/prisma-access-config/post-sse-config-v-1-config-versions-candidate-push). This creates a [configuration job](/access/api/prisma-access-config/get-sse-config-v-1-jobs-id).
 Once this job is complete, your candidate configuration becomes your _running_ configuration.

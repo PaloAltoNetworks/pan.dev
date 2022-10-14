@@ -2,7 +2,7 @@ module.exports = {
   sase_docs: [
     {
       type: "doc",
-      id: "sase/docs/home"
+      id: "sase/docs/home",
     },
     {
       type: "category",
@@ -11,15 +11,15 @@ module.exports = {
       items: [
         {
           type: "doc",
-          id: "sase/docs/getstarted"
+          id: "sase/docs/getstarted",
         },
         {
           type: "doc",
-          id: "sase/docs/tenant-service-groups"
+          id: "sase/docs/tenant-service-groups",
         },
         {
           type: "doc",
-          id: "sase/docs/service-accounts"
+          id: "sase/docs/service-accounts",
         },
         {
           type: "category",
@@ -28,17 +28,17 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "sase/docs/roles-overview"
+              id: "sase/docs/roles-overview",
             },
             {
               type: "doc",
-              id: "sase/docs/roles-assign"
+              id: "sase/docs/roles-assign",
             },
             {
               type: "doc",
-              id: "sase/docs/all-roles"
-            }
-          ]
+              id: "sase/docs/all-roles",
+            },
+          ],
         },
         {
           type: "category",
@@ -47,29 +47,29 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "sase/docs/access-tokens"
+              id: "sase/docs/access-tokens",
             },
             {
               type: "doc",
-              id: "sase/docs/scope"
-            }
-          ]
+              id: "sase/docs/scope",
+            },
+          ],
         },
         {
           type: "doc",
-          id: "sase/docs/api-call"
+          id: "sase/docs/api-call",
         },
         {
           type: "doc",
-          id: "sase/docs/user-accounts"
-        }
-      ]
+          id: "sase/docs/user-accounts",
+        },
+      ],
     },
     {
       type: "category",
       label: "Prisma Access Configuration",
       collapsed: true,
-      items: ["access/docs/prisma-access-config/prisma-access-config"]
+      items: ["access/docs/prisma-access-config/prisma-access-config"],
     },
     {
       type: "category",
@@ -79,8 +79,8 @@ module.exports = {
         "sdwan/docs/sdwan",
         "sdwan/docs/legacy_getstarted",
         "sdwan/docs/prismasdwanconfig",
-        "sdwan/docs/sdwan_gsg_sdk"
-      ]
+        "sdwan/docs/sdwan_gsg_sdk",
+      ],
     },
     {
       type: "category",
@@ -89,8 +89,8 @@ module.exports = {
       items: [
         "sase/docs/mt-monitor/mt-monitor",
         "sase/docs/mt-monitor/parameters",
-        "sase/docs/mt-monitor/filters"
-      ]
+        "sase/docs/mt-monitor/filters",
+      ],
     },
     {
       type: "category",
@@ -108,10 +108,10 @@ module.exports = {
             "access/docs/insights/pai_query_language",
             "access/docs/insights/query_language_resources",
             "access/docs/insights/query_properties",
-            "access/docs/insights/query_filters"
-          ]
-        }
-      ]
+            "access/docs/insights/query_filters",
+          ],
+        },
+      ],
     },
     {
       type: "category",
@@ -119,19 +119,16 @@ module.exports = {
       collapsed: true,
       items: [
         "sase/docs/release-notes/changelog",
-        "sase/docs/release-notes/release-notes"
-      ]
-    }
+        "sase/docs/release-notes/release-notes",
+      ],
+    },
   ],
-  saseauth: ["sase/api/auth/auth-api", require("./sase/api/auth/sidebar")],
-  saseiam: ["sase/api/iam/iam-api", require("./sase/api/iam/sidebar")],
-  sasemt: [
-    "sase/api/mt-monitor/msp-api",
-    require("./sase/api/mt-monitor/sidebar")
-  ],
-  sasesubscription: ["sase/api/subscription/subscription-api", require("./sase/api/subscription/sidebar")],
+  saseauth: ["sase/api/auth/auth-api", require("./api/auth/sidebar")],
+  saseiam: ["sase/api/iam/iam-api", require("./api/iam/sidebar")],
+  sasemt: ["sase/api/mt-monitor/msp-api", require("./api/mt-monitor/sidebar")],
+  sasesubscription: require("./api/subscription/sidebar"),
   sasetenancy: [
     "sase/api/tenancy/tenancy-api",
-    require("./sase/api/tenancy/sidebar")
-  ]
+    require("./api/tenancy/sidebar"),
+  ],
 };
