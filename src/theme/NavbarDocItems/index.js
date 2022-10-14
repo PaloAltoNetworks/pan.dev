@@ -25,7 +25,7 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
 
   const docItems = hasDocs &&
     <div className="navbar-doc-items">
-      <span className="navbar-doc-items__title">Docs</span>
+      <span className="navbar-doc-items__title">Developer Guides</span>
       <div className="navbar-doc-items__links"> 
         {Object.values(docs).map(doc =>
           <li>

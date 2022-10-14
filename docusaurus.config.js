@@ -134,7 +134,7 @@ const config = {
               ]
             },
             {
-              label: "Security Access Service Edge",
+              label: "Secure Access Service Edge",
               to: "#",
               colorclass: "sase",
               description:
@@ -147,7 +147,17 @@ const config = {
                   docs: [
                     {
                       to: "sase/docs",
-                      label: "Prisma SASE Overview",
+                      label: "Prisma SASE Developer's Guide",
+                      icon: "doc"
+                    },
+                    {
+                      to: "sase/docs/release-notes/changelog",
+                      label: "Prisma SASE Changelog",
+                      icon: "doc"
+                    },
+                    {
+                      to: "sase/docs/release-notes",
+                      label: "Prisma SASE Release Notes",
                       icon: "doc"
                     }
                   ],
@@ -173,25 +183,25 @@ const config = {
                       icon: "api-doc"
                     },
                     {
+                      to: "access/api/prisma-access-config",
+                      label: "Prisma Access Configuration",
+                      icon: "api-doc"
+                    },
+                    {
+                      to: "sdwan/api/unified/unified",
+                      label: "Prisma SD-WAN",
+                      icon: "api-doc"
+                    },
+                    {
                       to: "sase/api/mt-monitor",
                       label: "Aggregate Monitoring",
                       icon: "api-doc"
                     },
                     {
-                      to: "access/api/prisma-access-config",
-                      label: "Prisma Access Configuration API",
-                      icon: "api-doc"
-                    },
-                    {
                       to: "access/api/insights",
-                      label: "Prisma Access Insights API",
+                      label: "Prisma Access Insights",
                       icon: "api-doc"
                     },
-                    {
-                      to: "sdwan/api/unified/unified",
-                      label: "Prisma SD-WAN API",
-                      icon: "api-doc"
-                    }
                   ]
                 },
                 {
@@ -219,6 +229,11 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
+                      label: "Get Started 1.0",
+                      to: "access/docs/insights/getting_started-10",
+                      icon: "doc"
+                    },
+                    {
                       label: "Get Started 2.0",
                       to: "access/docs/insights/getting_started-20",
                       icon: "doc"
@@ -226,8 +241,13 @@ const config = {
                   ],
                   apiDocs: [
                     {
+                      to: "access/api/insights/1.0",
+                      label: "Prisma Access Insights 1.0",
+                      icon: "api-doc"
+                    },
+                    {
                       to: "access/api/insights",
-                      label: "Prisma Access Insights APIs",
+                      label: "Prisma Access Insights 2.0",
                       icon: "api-doc"
                     }
                   ]
