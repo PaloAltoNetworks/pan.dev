@@ -4,7 +4,7 @@ title: Welcome to Prisma Access Configuration APIs
 description: Prisma Access Configuration APIs
 hide_title: false
 hide_table_of_contents: false
-slug: /access/docs/config
+slug: /access/docs/prisma-access-config
 keywords:
   - sase
 ---
