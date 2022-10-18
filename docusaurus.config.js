@@ -96,7 +96,7 @@ const config = {
                   docs: [
                     {
                       label: "Cloud-Delivered Security Services",
-                      to: "/threat-vault/docs",
+                      to: "/cdss/docs",
                       icon: "doc",
                     },
                   ],
@@ -183,12 +183,12 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/prisma-access-config",
+                      to: "/access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
                       icon: "api-doc"
                     },
                     {
-                      to: "sdwan/api/unified/unified",
+                      to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc"
                     },
@@ -210,7 +210,7 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      label: "Prisma Access Configuration",
+                      label: "Prisma Access Configuration Developer's Guide",
                       to: "access/docs/prisma-access-config",
                       icon: "doc",
                     },
@@ -218,7 +218,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "access/api/prisma-access-config",
-                      label: "Prisma Access Configuration APIs",
+                      label: "Prisma Access Configuration",
                       icon: "api-doc",
                     },
                   ],
@@ -265,12 +265,12 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "/sdwan/api/unified/unified",
+                      to: "sdwan/api",
                       label: "Prisma SD-WAN Unified",
                       icon: "api-doc",
                     },
                     {
-                      to: "/sdwan/api/legacy/legacy",
+                      to: "sdwan/api/legacy/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc",
                     },
