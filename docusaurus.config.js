@@ -362,7 +362,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      label: "Cortex Data Lake Log Forwarding",
+                      label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc"
                     }
@@ -373,6 +373,11 @@ const config = {
                       to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
                       icon: "doc",
                     },
+                    {
+                      label: "Log Forwarding Developer's Guide",
+                      to: "cdl/docs/log-forwarding",
+                      icon: "doc"
+                    }
                   ],
                 },
               ],
