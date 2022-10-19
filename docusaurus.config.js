@@ -361,6 +361,11 @@ const config = {
                       to: "https://cortex.pan.dev/api/expander/annotations-api",
                       icon: "api-doc",
                     },
+                    {
+                      label: "Cortex Data Lake Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc"
+                    }
                   ],
                   docs: [
                     {
@@ -519,6 +524,11 @@ const config = {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
             outputDir: "products/dns-security/api",
           },
+          cdl: {
+            specPath: "openapi-specs/cdl/logforwarding",
+            outputDir: "products/cdl/api/logforwarding",
+            sidebarOptions: { groupPathsBy: "tag" }
+          }
         },
       },
     ],
