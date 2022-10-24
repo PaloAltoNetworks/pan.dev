@@ -1,0 +1,96 @@
+---
+id: info-gather-sysinfo
+title: Ansible for PAN-OS
+sidebar_label: System Information
+hide_title: true
+description: Information Gathering
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from '../assumptions.md'
+
+# Information Gathering Tasks
+
+In these playbooks, you will gather information from a PAN-OS next-generation firewall. The tasks in these playbooks are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
+
+<Assumptions components={props.components} />
+
+## The "system info" playbook
+
+This playbook gathers a number of system information items from a PAN-OS next-generation firewall.
+
+1. Create a file called ```get-system-info.yml``` and paste in the following content:
+```yaml
+---
+- name: Gather system info
+  hosts: 'firewall'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Gather facts for device
+      paloaltonetworks.panos.panos_facts:
+        provider: "{{ device }}"
+
+    - name: Display information
+      ansible.builtin.debug:
+        msg:
+          - "Hostname: {{ ansible_facts['net_hostname'] }}"
+          - "Serial: {{ ansible_facts['net_serial'] }}"
+          - "Model: {{ ansible_facts['net_model'] }}"
+          - "Version: {{ ansible_facts['net_version'] }}"
+          - "Uptime: {{ ansible_facts['net_uptime'] }}"
+          - "HA Enabled: {{ ansible_facts['net_ha_enabled'] }}"
+          - "HA Type: {{ ansible_facts['net_ha_localmode'] }}"
+          - "HA Status: {{ ansible_facts['net_ha_localstate'] }}"
+          - "Multi-VSYS: {{ ansible_facts['net_multivsys'] }}"
+          - "{{ ansible_facts['net_session_usage'] }} out of {{ ansible_facts['net_session_max'] }} sessions in use"
+```
+2. Execute the playbook with the following command:
+```
+ansible-playbook -i inventory.txt get-system-info.yml
+```
+3. The output should be something similar to this:
+```
+PLAY [firewall] ********************************************************************************************
+
+TASK [Gathering Facts] *************************************************************************************
+ok: [firewall]
+
+TASK [Gather facts for device] *****************************************************************************
+ok: [firewall]
+
+TASK [Display information] *********************************************************************************
+ok: [firewall] => {
+    "msg": [
+        "Hostname: firewall",
+        "Serial: 0011223344556778899",
+        "Model: PA-VM",
+        "Version: 10.1.7",
+        "Uptime: 8 days, 0:56:41",
+        "HA Enabled: True",
+        "HA Type: Active-Passive",
+        "HA Status: active",
+        "Multi-VSYS: off",
+        "12530 out of 256000 sessions in use"
+    ]
+}
+
+PLAY RECAP *************************************************************************************************
+firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```

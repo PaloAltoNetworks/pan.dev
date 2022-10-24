@@ -68,7 +68,7 @@ const config = {
               to: "#",
               colorclass: "network-security",
               description:
-                "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
+                "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
                   label: "Cloud NGFW",
@@ -131,6 +131,55 @@ const config = {
                   ],
                   apiDocs: [],
                 },
+                {
+                  label: "PAN-OS APIs and SDKs",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Documentation",
+                      to: "panos/docs",
+                      icon: "doc"
+                    }
+                  ],
+                  apiDocs: []
+                },
+                {
+                  label: "Ansible for PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Documentation",
+                      to: "ansible/panos/docs",
+                      icon: "doc"
+                    },
+                    {
+                      label: "Module Reference",
+                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      icon: "api-doc"
+                    }
+                  ],
+                  apiDocs: []
+                },
+                {
+                  label: "Terraform for PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Documentation",
+                      to: "terraform/panos/docs",
+                      icon: "doc"
+                    },
+                    {
+                      label: "Provider Reference",
+                      to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
+                      icon: "api-doc"
+                    }
+                  ],
+                  apiDocs: []
+                }
               ],
             },
             {
