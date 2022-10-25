@@ -16,8 +16,7 @@ module.exports = {
             label: "SDKs",
             items: [
                 "panos/docs/panospython",
-                "panos/docs/panpython",
-                "panos/docs/pango",
+                "panos/docs/panosgo",
                 "panos/docs/panosphp"
             ],
         },

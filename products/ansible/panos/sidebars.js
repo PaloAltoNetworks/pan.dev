@@ -56,6 +56,7 @@ module.exports = {
             label: "Background Information",
             items: [
                 "ansible/panos/docs/info/background",
+                "ansible/panos/docs/info/connectivity",
                 "ansible/panos/docs/info/gathered-filter"
             ],
         },
