@@ -40,6 +40,9 @@ function FeaturedCard({ colorclass, description, label, products }) {
     );
   }
 
+  const leftProductColumn = products.slice(0, Math.floor(products.length / 2));
+  const rightProductColumn = products.slice(Math.floor(products.length / 2), products.length);
+
   return (
     <div className={clsx("featured-card-container", colorclass)}>
       <div className="featured-card-content">
@@ -47,9 +50,16 @@ function FeaturedCard({ colorclass, description, label, products }) {
         <div className="featured-card-content__section-divider" />
         <p className="featured-card-content__description">{description}</p>
         <div className="featured-card__products-container">
-          {products.map((product, i) => (
-            <ProductContent key={i} product={product} />
-          ))}
+          <div className="feature-card__left-column">
+            {leftProductColumn.map((product, i) => (
+              <ProductContent key={i} product={product} />
+            ))}
+          </div>
+          <div className="feature-card__right-column">
+            {rightProductColumn.map((product, i) => (
+              <ProductContent key={i} product={product} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
