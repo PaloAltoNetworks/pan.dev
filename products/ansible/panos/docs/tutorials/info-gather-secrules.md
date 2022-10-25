@@ -56,7 +56,7 @@ This playbook gathers all the security (firewall) rules from a PAN-OS next-gener
 ```
 2. Execute the playbook with the following command:
 ```
-ansible-playbook -i inventory.txt get-security-rules.yml
+ansible-playbook -i inventory.txt --ask-vault-pass get-security-rules.yml
 ```
 3. The output should be something similar to this:
 ```

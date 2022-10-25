@@ -14,6 +14,9 @@ keywords:
   - configuration
   - ansible
 ---
+
+import Support from '../../../community-support-statement.md'
+
 # Ansible for PAN-OS
 
 PAN-OS can be configured and operated with [Ansible](https://www.ansible.com), allowing configuration to be defined and managed as code, and facilitating automated operations.
@@ -31,8 +34,4 @@ This documentation is split into four sections:
 
 The collection of Ansible modules for PAN-OS is free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/pan-os-ansible).
 
-## Getting Help
-
-The modules are currently supported under a best-effort policy per the [support statement](https://github.com/PaloAltoNetworks/pan-os-ansible#support).
-
-Community support can be found within [the relevant section of the Palo Alto Networks Live Community](https://live.paloaltonetworks.com/t5/automation-api-discussions/bd-p/TechnologiesSDKsDiscussions).
+<Support components={props.components} />

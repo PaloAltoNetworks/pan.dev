@@ -59,7 +59,7 @@ This playbook checks if the PAN-OS next-generation firewall is ready. If it is n
 ```
 2. Execute the playbook with the following command:
 ```
-ansible-playbook -i inventory.txt check-ready.yml
+ansible-playbook -i inventory.txt --ask-vault-pass check-ready.yml
 ```
 3. If the firewall is ready, the output should be something similar to this:
 ```

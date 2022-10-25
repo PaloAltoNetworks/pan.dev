@@ -104,12 +104,25 @@ ip_address: "192.168.1.2"
 username: "admin"
 password: "admin"
 ```
-5. Note that for these learning examples, we are storing PAN-OS credentials in a plain-text file on disk. This is not a production-level solution, and other solutions for managing secrets should be considered for real-world deployments. Ansible, Hashicorp, public cloud providers and many others have solutions for this.
+:::caution 
+Note that for these learning examples, we are storing PAN-OS credentials in a file on disk. This is not a production-level solution, and other solutions for managing secrets should be considered for real-world deployments. Ansible (Red Hat) and many others have solutions for this.
+:::
+5. Use the following command to have ```ansible-vault``` encrypt the files with credentials:
+```
+ansible-vault encrypt firewall.yml
+ansible-vault encrypt panorama.yml
+```
+Using this command, ```ansible-vault``` will request a password to be used for accessing the encrypted file at a later date:
+```
+New Vault password:
+Confirm New Vault password:
+Encryption successful
+```
 
 ## Confirm access to PAN-0S
-<font color="red">
-Is this needed?
-</font>
 
-1. Explain
-2. Execute test command(s) - https? admin creds?
+1. Ensure the host machine executing Ansible can reach the NGFW or Panorama. Execute the following command, replacing ```HOSTNAME``` with the IP address or hostname of your NGFW or Panorama:
+```
+http-ping https://HOSTNAME -c 1
+```
+If ```http-ping``` is not available on your host machine, other tools like curl may also be able to confirm the host machine can reach the NGFW or Panorama using HTTPS.

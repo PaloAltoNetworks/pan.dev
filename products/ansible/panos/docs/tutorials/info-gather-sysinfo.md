@@ -1,9 +1,9 @@
 ---
 id: info-gather-sysinfo
-title: Ansible for PAN-OS
+title: Gathering System Information
 sidebar_label: System Information
 hide_title: true
-description: Information Gathering
+description: Gathering System Information
 keywords:
   - pan-os
   - panos
@@ -63,7 +63,7 @@ This playbook gathers a number of system information items from a PAN-OS next-ge
 ```
 2. Execute the playbook with the following command:
 ```
-ansible-playbook -i inventory.txt get-system-info.yml
+ansible-playbook -i inventory.txt --ask-vault-pass get-system-info.yml
 ```
 3. The output should be something similar to this:
 ```

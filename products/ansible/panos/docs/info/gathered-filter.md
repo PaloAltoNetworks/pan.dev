@@ -1,9 +1,9 @@
 ---
 id: gathered-filter
-title: Gathered Filter
-sidebar_label: Gathered Filter
+title: Information Gathering with Gathered Filter
+sidebar_label: Information Gathering with Gathered Filter
 hide_title: true
-description: Gathered Filter
+description: Information Gathering with Gathered Filter
 keywords:
   - pan-os
   - panos
@@ -14,8 +14,8 @@ keywords:
   - ansible
 ---
 
-Gathered Filter
-===============
+Information Gathering with Gathered Filter
+==========================================
 
 Starting in *v2.11.0*, the modules belonging to this collection that behave like
 network resource modules all support a `gathered_filter` parameter.  Where present,
