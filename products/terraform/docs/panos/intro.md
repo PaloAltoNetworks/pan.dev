@@ -4,7 +4,7 @@ title: Terraform for PAN-OS
 sidebar_label: Terraform for PAN-OS
 hide_title: true
 description: Terraform for PAN-OS
-slug: /terraform/panos/docs
+slug: /terraform/docs/panos
 keywords:
   - pan-os
   - panos
