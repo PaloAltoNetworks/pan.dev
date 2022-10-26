@@ -76,18 +76,13 @@ const config = {
                   logoClass: "panos",
                   docs: [
                     {
-                      label: "APIs and SDKs",
-                      to: "panos/docs",
-                      icon: "doc",
-                    },
-                    {
                       label: "Ansible",
-                      to: "ansible/panos/docs",
+                      to: "ansible/docs/panos",
                       icon: "doc",
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/panos/docs",
+                      to: "terraform/docs/panos",
                       icon: "doc",
                     },
                   ],
@@ -116,7 +111,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/cloudngfw/docs",
+                      to: "terraform/docs/cloudngfw",
                       icon: "doc",
                     },
                   ],
@@ -169,35 +164,6 @@ const config = {
                     },
                   ],
                   apiDocs: [],
-                },
-                {
-                  label: "PAN-OS",
-                  to: "#",
-                  logoClass: "panos",
-                  docs: [
-                    {
-                      label: "Terraform",
-                      to: "terraform/docs/panos",
-                      icon: "doc",
-                    },
-                    {
-                      label: "Ansible",
-                      to: "ansible/docs/panos",
-                      icon: "doc",
-                    },
-                  ],
-                  apiDocs: [
-                    {
-                      label: "Terraform Provider Reference",
-                      to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
-                      icon: "api-doc",
-                    },
-                    {
-                      label: "Ansible Module Reference",
-                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
-                      icon: "api-doc",
-                    },
-                  ],
                 },
               ],
             },
