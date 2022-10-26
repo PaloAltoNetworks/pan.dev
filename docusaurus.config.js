@@ -90,6 +90,25 @@ const config = {
                   ],
                 },
                 {
+                  label: "Cortex Data Lake",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Log Forwarding Developer's Guide",
+                      to: "cdl/docs/log-forwarding",
+                      icon: "doc"
+                    }
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc"
+                    }
+                  ],
+                },
+                {
                   label: "Cloud-Delivered Security Services",
                   to: "#",
                   logoClass: "panos",
@@ -202,6 +221,11 @@ const config = {
                       label: "Prisma Access Insights",
                       icon: "api-doc"
                     },
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc"
+                    }
                   ]
                 },
                 {
@@ -361,11 +385,6 @@ const config = {
                       to: "https://cortex.pan.dev/api/expander/annotations-api",
                       icon: "api-doc",
                     },
-                    {
-                      label: "Log Forwarding",
-                      to: "cdl/api/log-forwarding",
-                      icon: "api-doc"
-                    }
                   ],
                   docs: [
                     {
@@ -373,11 +392,6 @@ const config = {
                       to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
                       icon: "doc",
                     },
-                    {
-                      label: "Log Forwarding Developer's Guide",
-                      to: "cdl/docs/log-forwarding",
-                      icon: "doc"
-                    }
                   ],
                 },
               ],
