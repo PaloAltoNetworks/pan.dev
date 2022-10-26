@@ -13,7 +13,7 @@ keywords:
   - terraform
 ---
 
-import Support from '../../community-support-statement.md'
+import Support from '../../../community-support-statement.md'
 
 # Terraform for Cloud NGFW
 
