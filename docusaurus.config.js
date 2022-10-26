@@ -149,12 +149,12 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      label: "Provider Reference",
+                      label: "Terraform Provider Reference",
                       to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
                       icon: "api-doc",
                     },
                     {
-                      label: "Module Reference",
+                      label: "Ansible Module Reference",
                       to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
                       icon: "api-doc",
                     },
