@@ -68,16 +68,55 @@ const config = {
               to: "#",
               colorclass: "network-security",
               description:
-                "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
+                "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
+                {
+                  label: "PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "APIs and SDKs",
+                      to: "panos/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/panos/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/panos/docs",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Ansible Module Reference",
+                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      icon: "api-doc",
+                    },
+                    {
+                      label: "Terraform Provider Reference",
+                      to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
                 {
                   label: "Cloud NGFW",
                   to: "#",
                   logoClass: "panos",
                   docs: [
                     {
-                      label: "Cloud NGFW",
+                      label: "Introduction",
                       to: "cloudngfw/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/cloudngfw/docs",
                       icon: "doc",
                     },
                   ],
