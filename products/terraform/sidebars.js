@@ -50,24 +50,24 @@ module.exports = {
       collapsed: false,
       label: "AWS",
       items: [
-        {
-          type: "category",
-          collapsed: true,
-          label: "Getting Started Tutorials",
-          items: ["terraform/cloudngfw/aws/tutorials/tutorial"],
-        },
-        {
-          type: "category",
-          collapsed: true,
-          label: "How-To Guides",
-          items: ["terraform/cloudngfw/aws/guides/guide"],
-        },
-        {
-          type: "category",
-          collapsed: true,
-          label: "Background Information",
-          items: ["terraform/cloudngfw/aws/info/info"],
-        },
+        // {
+        //   type: "category",
+        //   collapsed: true,
+        //   label: "Getting Started Tutorials",
+        //   items: ["terraform/cloudngfw/aws/tutorials/tutorial"],
+        // },
+        // {
+        //   type: "category",
+        //   collapsed: true,
+        //   label: "How-To Guides",
+        //   items: ["terraform/cloudngfw/aws/guides/guide"],
+        // },
+        // {
+        //   type: "category",
+        //   collapsed: true,
+        //   label: "Background Information",
+        //   items: ["terraform/cloudngfw/aws/info/info"],
+        // },
         {
           type: "category",
           collapsed: true,
