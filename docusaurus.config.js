@@ -76,6 +76,11 @@ const config = {
                   logoClass: "panos",
                   docs: [
                     {
+                      label: "APIs and SDKs",
+                      to: "panos/docs",
+                      icon: "doc"
+                    },
+                    {
                       label: "Ansible",
                       to: "ansible/docs/panos",
                       icon: "doc",
