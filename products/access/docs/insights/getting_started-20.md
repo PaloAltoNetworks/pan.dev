@@ -54,9 +54,9 @@ instance.
 
 The full URL for an API request includes the base URL, plus the API URI described in the API
 reference documentation. For example, a customer using the US region 
-requests service health status using:
+can query for external alerts using:
 
-`https://pa-us01.api.prismaaccess.com/api/sase/resource/v2.0/health`
+`https://pa-us01.api.prismaaccess.com/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current`
 
 
 ## Sample: API Request
@@ -72,7 +72,7 @@ API call using the `Prisma-Tenant` custom HTTP header.
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
     # <TSG_ID> - Tenant Service Group ID used for the scope when you obtained your access token.
     #
-    curl -o --location "https://<TENANT_REGION_API_SERVER>/api/sase/v1.0/health" \
+    curl -o --location "https://<TENANT_REGION_API_SERVER>/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current" \
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Prisma-Tenant <TSG_ID>" \
         -H "Content-Type: application/json" 
