@@ -129,6 +129,25 @@ const config = {
                   ],
                 },
                 {
+                  label: "Cortex Data Lake",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Log Forwarding Developer's Guide",
+                      to: "cdl/docs/log-forwarding",
+                      icon: "doc"
+                    }
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc"
+                    }
+                  ],
+                },
+                {
                   label: "Cloud-Delivered Security Services",
                   to: "#",
                   logoClass: "panos",
@@ -190,12 +209,12 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      to: "sase/docs/release-notes/changelog",
+                      to: "/sase/docs/release-notes/changelog",
                       label: "Prisma SASE Changelog",
                       icon: "doc",
                     },
                     {
-                      to: "sase/docs/release-notes",
+                      to: "sase/docs/release-notes/release-notes",
                       label: "Prisma SASE Release Notes",
                       icon: "doc",
                     },
@@ -241,7 +260,12 @@ const config = {
                       label: "Prisma Access Insights",
                       icon: "api-doc",
                     },
-                  ],
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc"
+                    }
+                  ]
                 },
                 {
                   label: "Prisma Access Configuration",
@@ -400,21 +424,11 @@ const config = {
                       to: "https://cortex.pan.dev/api/expander/annotations-api",
                       icon: "api-doc",
                     },
-                    {
-                      label: "Log Forwarding",
-                      to: "cdl/api/log-forwarding",
-                      icon: "api-doc",
-                    },
                   ],
                   docs: [
                     {
                       label: "Xpanse Python SDK",
                       to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                      icon: "doc",
-                    },
-                    {
-                      label: "Log Forwarding Developer's Guide",
-                      to: "cdl/docs/log-forwarding",
                       icon: "doc",
                     },
                   ],
