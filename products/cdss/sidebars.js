@@ -59,7 +59,7 @@ module.exports = {
       items: [
         {
           type: "category",
-          label: "threat Vault API Examples",
+          label: "Threat Vault API Examples",
           collapsed: true,
           items: [
             {
