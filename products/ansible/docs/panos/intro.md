@@ -4,7 +4,7 @@ title: Ansible for PAN-OS
 sidebar_label: Introduction
 hide_title: true
 description: Ansible for PAN-OS
-slug: /ansible/panos/docs
+slug: /ansible/docs/panos
 keywords:
   - pan-os
   - panos

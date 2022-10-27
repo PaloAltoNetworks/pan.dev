@@ -4,7 +4,7 @@ title: Terraform for Cloud NGFW
 sidebar_label: Terraform for Cloud NGFW
 hide_title: true
 description: Terraform for Cloud NGFW
-slug: /terraform/cloudngfw/docs
+slug: /terraform/docs/cloudngfw
 keywords:
   - cloudngfw
   - api
@@ -13,7 +13,7 @@ keywords:
   - terraform
 ---
 
-import Support from '../../community-support-statement.md'
+import Support from '../../../community-support-statement.md'
 
 # Terraform for Cloud NGFW
 
