@@ -25,6 +25,6 @@ This creates a configuration job. Once that job has finished, the candidate conf
 the _running_ configuration.
 
 An API exists to
-[show the running configuration](/access/api/prisma-access-config/get-sse-config-v-1-config-versions-version).
+[show the running configuration](/access/api/prisma-access-config/get-sse-config-v-1-config-versions-running/).
 If you make a mistake creating your candidate configuration, you can
 [rollback to the running configuration](/access/api/prisma-access-config/delete-sse-config-v-1-config-versions-candidate).
