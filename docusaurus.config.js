@@ -517,14 +517,14 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
             version: "2.0",
             label: "v2.0",
-            baseUrl: "/category/access/api/insights/v-2-0/data-resource/",
+            baseUrl: "/access/api/insights/",
             versions: {
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
                 label: "v1.0",
                 baseUrl:
-                  "/category/access/api/insights/1.0/v-1-0/data-resource/",
+                  "/access/api/insights/1.0/",
               },
             },
           },
