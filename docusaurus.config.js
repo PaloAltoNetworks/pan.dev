@@ -30,7 +30,7 @@ const config = {
   projectName: "pan.dev",
   themeConfig: {
     prism: {
-      additionalLanguages: ["ruby", "csharp", "php"]
+      additionalLanguages: ["ruby", "csharp", "php"],
     },
     colorMode: {
       defaultMode: "light",
@@ -68,16 +68,55 @@ const config = {
               to: "#",
               colorclass: "network-security",
               description:
-                "Learn how to make the most of the PAN-OS APIs, Expedition, Terraform, Ansible, and more.",
+                "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
+                {
+                  label: "PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "APIs and SDKs",
+                      to: "panos/docs",
+                      icon: "doc"
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Ansible Module Reference",
+                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      icon: "api-doc",
+                    },
+                    {
+                      label: "Terraform Provider Reference",
+                      to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
                 {
                   label: "Cloud NGFW",
                   to: "#",
                   logoClass: "panos",
                   docs: [
                     {
-                      label: "Cloud NGFW",
+                      label: "Introduction",
                       to: "cloudngfw/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/docs/cloudngfw",
                       icon: "doc",
                     },
                   ],
@@ -167,18 +206,18 @@ const config = {
                     {
                       to: "sase/docs",
                       label: "Prisma SASE Developer's Guide",
-                      icon: "doc"
+                      icon: "doc",
                     },
                     {
                       to: "/sase/docs/release-notes/changelog",
                       label: "Prisma SASE Changelog",
-                      icon: "doc"
+                      icon: "doc",
                     },
                     {
                       to: "sase/docs/release-notes/release-notes",
                       label: "Prisma SASE Release Notes",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
@@ -204,22 +243,22 @@ const config = {
                     {
                       to: "/access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "sase/api/mt-monitor",
                       label: "Aggregate Monitoring",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "access/api/insights",
                       label: "Prisma Access Insights",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       label: "Log Forwarding",
@@ -255,7 +294,7 @@ const config = {
                     {
                       label: "Get Started 1.0",
                       to: "access/docs/insights/getting_started-10",
-                      icon: "doc"
+                      icon: "doc",
                     },
                     {
                       label: "Get Started 2.0",
@@ -267,14 +306,14 @@ const config = {
                     {
                       to: "access/api/insights/1.0",
                       label: "Prisma Access Insights 1.0",
-                      icon: "api-doc"
+                      icon: "api-doc",
                     },
                     {
                       to: "access/api/insights",
                       label: "Prisma Access Insights 2.0",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma SD-WAN",
@@ -546,8 +585,8 @@ const config = {
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
-            sidebarOptions: { groupPathsBy: "tag" }
-          }
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
         },
       },
     ],
