@@ -78,7 +78,7 @@ const config = {
                     {
                       label: "APIs and SDKs",
                       to: "panos/docs",
-                      icon: "doc"
+                      icon: "doc",
                     },
                     {
                       label: "Ansible",
@@ -136,15 +136,15 @@ const config = {
                     {
                       label: "Log Forwarding Developer's Guide",
                       to: "cdl/docs/log-forwarding",
-                      icon: "doc"
-                    }
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
                       label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
-                      icon: "api-doc"
-                    }
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -263,9 +263,9 @@ const config = {
                     {
                       label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
-                      icon: "api-doc"
-                    }
-                  ]
+                      icon: "api-doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma Access Configuration",
@@ -401,7 +401,7 @@ const config = {
                   logoClass: "xsoar",
                   apiDocs: [
                     {
-                      label: "XSOAR (Demoisto) API",
+                      label: "XSOAR (Demisto) API",
                       to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
                       icon: "api-doc",
                     },
