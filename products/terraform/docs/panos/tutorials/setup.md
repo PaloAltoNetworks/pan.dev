@@ -14,20 +14,18 @@ keywords:
   - terraform
 ---
 
+import ConnCheck from '../../../../connectivitycheck.md'
+
 # Setting up
 
-In this tutorial we will get setup ready to execute Terraform plans for PAN-OS.
-<!---
-- Do we go for local install, container install, some (unknown as yet) online sandbox, or give the choice?
-- Guidance on writing tutorials is to remove choice, not worry about best practices, and just get to the learning...
--->
+In this tutorial, you will get ready to execute Terraform plans for PAN-OS by preparing your host machine.
 
 ## Assumptions
 
 This tutorial/guide assumes:
-- access to a Terraform compatible host machine, with administrative credentials
+- you have access to a Terraform compatible host machine, with administrative credentials
 - the host machine has working connectivity and access to the Internet to download content
-- the connectivity and administrative credentials for either a PAN-OS next-generation firewall or Panorama
+- the host machine has working connectivity and access to either a PAN-OS next-generation firewall or Panorama
 
 ## Install Terraform
 
@@ -36,7 +34,7 @@ This tutorial/guide assumes:
 ```
 terraform -version
 ```
-3. You should see an output like this (exact version numbers will differ, and you may contain a warning if you are not on the latest version):
+3. You should see an output like this (exact version numbers will differ, and you may receive a warning if you are not on the latest version):
 ```
 Terraform v1.1.9
 
@@ -44,10 +42,4 @@ Your version of Terraform is out of date! The latest version
 is 1.3.3. You can update by downloading from https://www.terraform.io/downloads.html
 ```
 
-## Confirm access to PAN-0S
-
-1. Ensure the host machine executing Terraform can reach the NGFW or Panorama. Execute the following command, replacing ```HOSTNAME``` with the IP address or hostname of your NGFW or Panorama:
-```
-http-ping https://HOSTNAME -c 1
-```
-If ```http-ping``` is not available on your host machine, other tools like curl may also be able to confirm the host machine can reach the NGFW or Panorama using HTTPS.
+<ConnCheck components={props.components} />

@@ -18,7 +18,7 @@ import Assumptions from '../assumptions.md'
 
 # Panorama Configuration, Commit and Push
 
-In this guide we will make configuration changes on Panorama within a Device Group. We will then commit the changes to Panorama, then push the changes to the managed devices (firewalls).
+In this guide, you will make configuration changes on Panorama within a Device Group. You will then commit the changes to Panorama, then push the changes to the managed devices (firewalls).
 
 <Assumptions components={props.components} />
 
@@ -44,7 +44,7 @@ Create a new Ansible yaml file named `device-group-changes-commit-and-push.yml`,
 
 ## Make configuration changes
 
-Start the playbook tasks by defining the desired configuration state, some new configuration elements within the Device Group:
+Start the playbook tasks by defining the desired configuration state; you create some new configuration elements within the Device Group:
 
 ```yaml
   tasks:
@@ -72,7 +72,7 @@ Start the playbook tasks by defining the desired configuration state, some new c
         destination_zone: ["dmz"]
         destination_ip: ["Object-One"]
         application: ["ssh"]
-        service: ["tcp-22"]
+        service: ["tcp-12345"]
         action: "allow"
 ```
 
@@ -171,5 +171,3 @@ Putting all the sections together, the playbook in entirety looks like this:
     - debug:
         msg: "Push with job ID: {{ results.jobid }} finished"
 ```
-
-

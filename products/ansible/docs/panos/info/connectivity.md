@@ -16,7 +16,7 @@ keywords:
 
 # How Ansible connects to PAN-OS
 
-When using Ansible with PAN-OS, the connection method used is ```local```. For example:
+When you are using Ansible with PAN-OS, the connection method used is ```local```. For example:
 
 ```yaml
 ---

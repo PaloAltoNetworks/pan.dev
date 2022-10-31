@@ -18,7 +18,7 @@ import Assumptions from '../assumptions.md'
 
 # Configure Anything Using XPath
 
-In this guide we will make configuration changes to a firewall using a generic module capable of configuring anything in PAN-OS using the XPath. This is especially useful for configuring features for which there is no predefined module in the PAN-OS Ansible Collection.
+In this guide, you will make configuration changes to a firewall using a generic module capable of configuring anything in PAN-OS which uses an XPath. This is especially useful for configuring features for which there is no predefined module in the PAN-OS Ansible Collection.
 
 <Assumptions components={props.components} />
 
@@ -75,13 +75,13 @@ This XML configuration file, shortened for brevity, highlights the XPath and ele
       </vsys>
 ```
 
-By following the (indented) elements in the XML configuration, we can see that the XPath required for a VSYS is:
+By following the (indented) elements in the XML configuration, you can see that the XPath required for a VSYS is:
 
 ```
 /config/devices/entry[@name="localhost.localdomain"]/vsys
 ```
 
-Then beneath the `vsys` element is the VSYS `entry` itself. When creating a VSYS, we only need to define the VSYS ID number, but we also include a display name for human readability within the configuration later on:
+Then beneath the `vsys` element is the VSYS `entry` itself. When creating a VSYS, you only need to define the VSYS ID number, but you can also include a display name for human readability within the configuration later on:
 
 ```xml
 <entry name="vsys1">
@@ -91,7 +91,7 @@ Then beneath the `vsys` element is the VSYS `entry` itself. When creating a VSYS
 
 ## Define the VSYS creation task
 
-With the XPath and element, we can now define a task that will create a new VSYS, passing in the XPath and element to the task:
+With the XPath and element, you can now define a task that will create a new VSYS, passing in the XPath and element to the task:
 
 ```yaml
   tasks:

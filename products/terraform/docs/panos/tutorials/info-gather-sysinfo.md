@@ -70,18 +70,22 @@ output "the_info" {
 ```hcl
 .
 .
+
 variable "panos_hostname" {
   type = string
+  // highlight-next-line
   default = "172.16.14.5"
 }
 
 variable "panos_username" {
   type = string
+  // highlight-next-line
   default = "firewall_admin"
 }
 
 variable "panos_password" {
   type = string
+  // highlight-next-line
   default = "a_pa55word_l1ke_th1s"
 }
 .
