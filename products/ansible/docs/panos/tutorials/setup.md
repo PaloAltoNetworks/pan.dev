@@ -14,19 +14,18 @@ keywords:
   - ansible
 ---
 
+import ConnCheck from '../../../../connectivitycheck.md'
+
 # Setting up
 
 In this tutorial we will get setup ready to execute Ansible playbooks for PAN-OS.
-<!---
-- Do we go for local install, container install, some (unknown as yet) online sandbox, or give the choice?
-- Guidance on writing tutorials is to remove choice, not worry about best practices, and just get to the learning...
--->
+
 ## Assumptions
 
 This tutorial/guide assumes:
-- access to a Linux-based machine, with administrative credentials
+- you have access to a Linux-based machine, with administrative credentials
 - the machine has working connectivity and access to the Internet to download content
-- the connectivity and administrative credentials for either a PAN-OS next-generation firewall or Panorama
+- the machine has working connectivity and access to either a PAN-OS next-generation firewall or Panorama
 
 ## Install Ansible
 
@@ -84,6 +83,9 @@ paloaltonetworks.panos 2.11.0
 
 ## Setup the hosts file
 
+In these steps, if you are only using Ansible to configure/operate a firewall, you can omit the steps and lines related to Panorama.
+Likewise, if you are only using Ansible to configure/operate Panorama, you can omit the steps and lines related to the firewall.
+
 1. In the directory where you will store your Ansible playbook files, create a file called ```inventory.txt``` with the following content:
 ```
 firewall
@@ -119,10 +121,4 @@ Confirm New Vault password:
 Encryption successful
 ```
 
-## Confirm access to PAN-0S
-
-1. Ensure the host machine executing Ansible can reach the NGFW or Panorama. Execute the following command, replacing ```HOSTNAME``` with the IP address or hostname of your NGFW or Panorama:
-```
-http-ping https://HOSTNAME -c 1
-```
-If ```http-ping``` is not available on your host machine, other tools like curl may also be able to confirm the host machine can reach the NGFW or Panorama using HTTPS.
+<ConnCheck components={props.components} />

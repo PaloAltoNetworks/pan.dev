@@ -16,11 +16,7 @@ keywords:
 
 # Using create_before_destroy
 
-The order of operations that Terraform handles updates / deletes does not by
-default work the way that PAN-OS does things.  In order to make Terraform behave
-properly, inside of **each and every resource** you need to specify a
-[`lifecycle`](https://www.terraform.io/language/meta-arguments/lifecycle) block
-like so:
+The order of operations that Terraform handles updates / deletes does not by default work the way that PAN-OS does things.  In order to make Terraform behave properly, inside of **each and every resource** you need to specify a [`lifecycle`](https://www.terraform.io/language/meta-arguments/lifecycle) block like so:
 
 ```hcl
 resource "panos_address_object" "example" {
