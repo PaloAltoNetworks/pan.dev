@@ -18,7 +18,7 @@ import Assumptions from '../assumptions.md'
 
 # Information Gathering Tasks
 
-In these playbooks, you will gather information from a PAN-OS next-generation firewall. The tasks in these playbooks are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
+With this playbook, you will gather information from a PAN-OS next-generation firewall. The tasks in this playbook are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
 
 <Assumptions components={props.components} />
 

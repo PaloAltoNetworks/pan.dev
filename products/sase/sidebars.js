@@ -111,6 +111,83 @@ module.exports = {
             "access/docs/insights/query_filters",
           ],
         },
+        {
+            type: "category",
+            label: "Examples",
+            collapsed: true,
+            items: [
+                "access/docs/insights/examples/examples",
+                {
+                  type: "category",
+                   label: "Alerts",
+                   collapsed: true,
+                   items: [
+                       "access/docs/insights/examples/alerts-dashboard/alerts-dashboard",
+                       "access/docs/insights/examples/alerts-dashboard/external-alerts-current",
+                       "access/docs/insights/examples/alerts-dashboard/current-alerts-generated",
+                       "access/docs/insights/examples/alerts-dashboard/open-alerts-overtime",
+                       "access/docs/insights/examples/alerts-dashboard/raised-alerts-over-time",
+                       "access/docs/insights/examples/alerts-dashboard/cleared-alerts-over-time",
+                   ]
+                 },
+                 {
+                   type: "category",
+                   label: "Mobile Users",
+                   collapsed: true,
+                   items: [
+                       "access/docs/insights/examples/mobile-users-dashboard/mobile-users-dashboard",
+                       "access/docs/insights/examples/mobile-users-dashboard/connected-user-count",
+                       "access/docs/insights/examples/mobile-users-dashboard/current-connected-user-list",
+                       "access/docs/insights/examples/mobile-users-dashboard/mu-users-list",
+                   ]
+                 },
+                 {
+                     type: "category",
+                     label: "Prisma Access Locations",
+                     collapsed: true,
+                     items: [
+                         "access/docs/insights/examples/pa-locations-dashboard/pa-locations-dashboard",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-mu-status",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-gp-mobile-users-logins",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-rn-status",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-rn-bandwidth",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-sc-bandwidth",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-sc-status",
+                         "access/docs/insights/examples/pa-locations-dashboard/location-ep-status",
+                     ]
+                 },
+                 {
+                     type: "category",
+                     label: "Remote Networks",
+                     collapsed: true,
+                     items: [
+                         "access/docs/insights/examples/remote-networks-dashboard/remote-networks-dashboard",
+                         "access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status",
+                         "access/docs/insights/examples/remote-networks-dashboard/rn-bandwidth-allocated",
+                         "access/docs/insights/examples/remote-networks-dashboard/rn-list",
+                     ]
+                 },
+                 {
+                   type: "category",
+                   label: "Service Connections",
+                   collapsed: true,
+                   items: [
+                       "access/docs/insights/examples/service-connections-dashboard/service-connections-dashboard",
+                       "access/docs/insights/examples/service-connections-dashboard/sc_list",
+                       "access/docs/insights/examples/service-connections-dashboard/sc-bandwidth-consumption",
+                   ]
+                 },
+                 {
+                   type: "category",
+                   label: "Tunnels",
+                   collapsed: true,
+                   items: [
+                       "access/docs/insights/examples/tunnels-dashboard/tunnel-dashboard",
+                       "access/docs/insights/examples/tunnels-dashboard/tunnel_list",
+                   ]
+                 }
+            ]
+        },
       ],
     },
     {

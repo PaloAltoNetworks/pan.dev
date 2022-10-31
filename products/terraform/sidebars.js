@@ -20,7 +20,7 @@ module.exports = {
       collapsed: true,
       label: "How-To Guides",
       items: [
-        "terraform/docs/panos/guides/commits",
+        //"terraform/docs/panos/guides/commits",
         "terraform/docs/panos/guides/auditcomments",
       ],
     },

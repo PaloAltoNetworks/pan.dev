@@ -18,7 +18,7 @@ import Assumptions from '../assumptions.md'
 
 # Upgrade Single Firewall
 
-In this guide we will upgrad the PAN-OS softare on a single firewall. We will download the software, install the software, reboot the firewall, then check the firewall is ready again after the reboot.
+In this guide, you will upgrade the PAN-OS software on a single firewall. You will download the software, install the software, reboot the firewall, then check the firewall is ready again after the reboot.
 
 <Assumptions components={props.components} />
 
@@ -67,7 +67,7 @@ Continue the tasks by initially waiting for 30 seconds to allow PAN-OS to initia
         seconds: 30
 ```
 
-We now want to wait until the firewall has rebooted and is ready to pass traffic again, using the `panos_check` module and recording the `result` of the task execution. The `until` keyword tells Ansible to repeat the `panos_check` task until the conditions are met; that the check has not failed and that the resulting message from the task confirms the device is ready. The task is re-executed every 15 seconds up to a maximum of 100 times:
+You now want to wait until the firewall has rebooted and is ready to pass traffic again, using the `panos_check` module. You record the outcome of the task execution as `result`. The `until` keyword tells Ansible to repeat the `panos_check` task until the conditions are met; that the check has not failed, and that the `result` message confirms the device is ready. The task is re-executed every 15 seconds up to a maximum of 100 times:
 
 ```yaml
     - name: Check if PAN-OS appliance is ready
