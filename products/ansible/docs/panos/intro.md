@@ -30,6 +30,10 @@ This documentation is split into four sections:
 - Background information: Higher level content discussing the "why"
 - Reference: Lists the modules available for PAN-OS, with their correct usage including examples
 
+# Collection Reference
+
+The reference guide for all modules contained within the PAN-OS collection can be found [here](https://paloaltonetworks.github.io/pan-os-ansible/modules.html). This provides the listing of modules, with their parameters, valid inputs and types, and examples of correct usage.
+
 ## Open-Source
 
 The collection of Ansible modules for PAN-OS is free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/pan-os-ansible).

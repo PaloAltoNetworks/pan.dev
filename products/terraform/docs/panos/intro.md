@@ -28,6 +28,10 @@ This documentation is split into four sections:
 - Background info: Higher level content discussing the "why"
 - Reference documentation: Lists the resources and data sources available for PAN-OS, with their correct usage including examples
 
+# Provider Reference
+
+The reference guide for the PAN-OS Terraform Provider can be found [here](https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs). This provides the listing of resources and data sources, with their parameters, valid inputs and types, and examples of correct usage.
+
 ## Open-Source
 
 The Terraform provider for PAN-OS is free and open-source software. It is released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/terraform-provider-panos).
