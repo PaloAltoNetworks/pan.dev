@@ -15,12 +15,15 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Upgrade Single Firewall
 
 In this guide, you will upgrade the PAN-OS software on a single firewall. You will download the software, install the software, reboot the firewall, then check the firewall is ready again after the reboot.
 
 <Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
 
 ## Create playbook files and define connectivity to the firewall
 

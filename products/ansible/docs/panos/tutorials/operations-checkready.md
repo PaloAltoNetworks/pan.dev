@@ -15,12 +15,15 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Operations Tasks
 
 With this playbook, you will perform operations on a PAN-OS next-generation firewall. These are common operational tasks that would otherwise need to be performed manually.
 
 <Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
 
 ## The "check ready" playbook
 

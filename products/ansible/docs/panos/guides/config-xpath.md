@@ -15,12 +15,15 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Configure Anything Using XPath
 
 In this guide, you will make configuration changes to a firewall using a generic module capable of configuring anything in PAN-OS which uses an XPath. This is especially useful for configuring features for which there is no predefined module in the PAN-OS Ansible Collection.
 
 <Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
 
 ## Create playbook files and define connectivity to the firewall
 

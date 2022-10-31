@@ -15,12 +15,15 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Information Gathering Tasks
 
 With this playbook, you will gather information from a PAN-OS next-generation firewall. The tasks in this playbooks are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
 
 <Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
 
 ## The "system info" playbook
 
