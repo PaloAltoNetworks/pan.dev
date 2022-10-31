@@ -19,17 +19,17 @@ import Support from '../../../community-support-statement.md'
 
 # Terraform for PAN-OS
 
-PAN-OS can be configured with [Terraform](https://www.terraform.io), allowing configuration to be defined and managed as code, facilitating automated operations.
+You can configure PAN-OS with [Terraform](https://www.terraform.io), allowing your configuration to be defined and managed as code, facilitating automated operations.
 
 This documentation is split into four sections:
 
 - Getting started tutorials: Start here if you are new to Terraform for PAN-OS
 - How-to guides: Useful for achieving specific real-world objectives or solving specific real-world challenges
 - Background info: Higher level content discussing the "why"
-- Reference documentation: Lists the modules available for PAN-OS, with their correct usage including examples
+- Reference documentation: Lists the resources and data sources available for PAN-OS, with their correct usage including examples
 
 ## Open-Source
 
-The Terraform provider for PAN-OS is free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/terraform-provider-panos).
+The Terraform provider for PAN-OS is free and open-source software. It is released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/terraform-provider-panos).
 
 <Support components={props.components} />

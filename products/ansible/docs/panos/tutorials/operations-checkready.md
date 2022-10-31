@@ -18,13 +18,13 @@ import Assumptions from '../assumptions.md'
 
 # Operations Tasks
 
-In these playbooks, you will perform operations on a PAN-OS next-generation firewall. These are common tasks that would otherwise need to be performed manually.
+With this playbook, you will perform operations on a PAN-OS next-generation firewall. These are common operational tasks that would otherwise need to be performed manually.
 
 <Assumptions components={props.components} />
 
 ## The "check ready" playbook
 
-This playbook checks if the PAN-OS next-generation firewall is ready. If it is not, the check will retry multiple times until the firewall is ready, for example whilst waiting for a firewall reboot to complete.
+This playbook checks if the PAN-OS next-generation firewall is ready. If the firewall is not ready, the check will retry multiple times until the firewall is ready. This can be useful when waiting for a firewall reboot to complete.
 
 1. Create a file called ```check-ready.yml``` and paste in the following content:
 ```yaml

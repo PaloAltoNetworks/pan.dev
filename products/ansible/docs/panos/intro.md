@@ -19,7 +19,7 @@ import Support from '../../../community-support-statement.md'
 
 # Ansible for PAN-OS
 
-PAN-OS can be configured and operated with [Ansible](https://www.ansible.com), allowing configuration to be defined and managed as code, and facilitating automated operations.
+You can configure and operate PAN-OS with [Ansible](https://www.ansible.com), including defining and managing your configuration as code, and automating your operations.
 
 ## Documentation
 

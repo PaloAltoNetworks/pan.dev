@@ -27,6 +27,17 @@ This documentation is split into four sections:
 - Background info: Higher level content discussing the "why"
 - Reference documentation: Lists the modules available for Cloud NGFW, with their correct usage including examples
 -->
+
+<!---
+"Provider Reference" section will go once the docs here are fleshed out.
+"-->
+# Provider Reference
+
+The reference guide for the AWS Cloud NGFW Terraform Provider can be found [here](https://registry.terraform.io/providers/PaloAltoNetworks/cloudngfwaws/latest/docs). This provides the listing of resources and data sources, with their parameters, valid inputs and types, and examples of correct usage.
+<!---
+"Provider Reference" section will go once the docs here are fleshed out.
+"-->
+
 ## Open-Source
 
 The Terraform providers for Cloud NGFW are free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/terraform-provider-cloudngfwaws).
