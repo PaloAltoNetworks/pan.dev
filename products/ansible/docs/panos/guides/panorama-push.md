@@ -15,12 +15,15 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Panorama Configuration, Commit and Push
 
 In this guide, you will make configuration changes on Panorama within a Device Group. You will then commit the changes to Panorama, then push the changes to the managed devices (firewalls).
 
 <Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
 
 ## Create playbook files and define connectivity to Panorama
 

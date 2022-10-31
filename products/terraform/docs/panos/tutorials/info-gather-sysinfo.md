@@ -15,6 +15,7 @@ keywords:
 ---
 
 import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Information Gathering Tasks
 
@@ -22,9 +23,11 @@ With this Terraform code, you will gather information from a PAN-OS next-generat
 
 <Assumptions components={props.components} />
 
-## The "system info" Terraform configuration file
+<LabGuidance components={props.components} />
 
-This plan gathers a number of system information items from a PAN-OS next-generation firewall.
+## Getting "system info"
+
+This Terraform operation gathers a number of system information items from a PAN-OS next-generation firewall.
 
 1. Create a file called ```get-system-info.tf``` and paste in the following content:
 ```hcl

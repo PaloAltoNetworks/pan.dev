@@ -14,7 +14,8 @@ keywords:
   - ansible
 ---
 
-import ConnCheck from '../../../../connectivitycheck.md'
+import ConnCheck from '../../../../connectivity-check.md'
+import LabGuidance from '../../../../lab-guidance.md'
 
 # Setting up
 
@@ -26,6 +27,8 @@ This tutorial/guide assumes:
 - you have access to a Linux-based machine, with administrative credentials
 - the machine has working connectivity and access to the Internet to download content
 - the machine has working connectivity and access to either a PAN-OS next-generation firewall or Panorama
+
+<LabGuidance components={props.components} />
 
 ## Install Ansible
 

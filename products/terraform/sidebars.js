@@ -11,7 +11,17 @@ module.exports = {
           type: "category",
           collapsed: true,
           label: "Information Gathering Tasks",
-          items: ["terraform/docs/panos/tutorials/info-gather-sysinfo"],
+          items: [
+            "terraform/docs/panos/tutorials/info-gather-sysinfo",
+          ],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Configuration Tasks",
+          items: [
+            "terraform/docs/panos/tutorials/config-secpol-and-objs",
+          ],
         },
       ],
     },
@@ -20,8 +30,7 @@ module.exports = {
       collapsed: true,
       label: "How-To Guides",
       items: [
-        //"terraform/docs/panos/guides/commits",
-        "terraform/docs/panos/guides/auditcomments",
+        "terraform/docs/panos/guides/commits",
       ],
     },
     {
@@ -34,6 +43,7 @@ module.exports = {
         "terraform/docs/panos/info/parallelism",
         "terraform/docs/panos/info/create-before-destroy",
         "terraform/docs/panos/info/panos-versions",
+        "terraform/docs/panos/info/auditcomments",
       ],
     },
     {
