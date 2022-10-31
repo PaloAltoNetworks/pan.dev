@@ -30,8 +30,40 @@ const config = {
   projectName: "pan.dev",
   themeConfig: {
     prism: {
-      additionalLanguages: ["ruby", "csharp", "php"],
+      additionalLanguages: ["csharp", "php"],
     },
+    languageTabs: [
+      {
+        highlight: "bash",
+        language: "curl",
+        logoClass: "bash",
+      },
+      {
+        highlight: "python",
+        language: "python",
+        logoClass: "python",
+      },
+      {
+        highlight: "go",
+        language: "go",
+        logoClass: "go",
+      },
+      {
+        highlight: "javascript",
+        language: "nodejs",
+        logoClass: "nodejs",
+      },
+      {
+        highlight: "csharp",
+        language: "csharp",
+        logoClass: "csharp",
+      },
+      {
+        highlight: "php",
+        language: "php",
+        logoClass: "php",
+      },
+    ],
     colorMode: {
       defaultMode: "light",
     },
