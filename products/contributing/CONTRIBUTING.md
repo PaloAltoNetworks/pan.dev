@@ -2,6 +2,7 @@
 id: contributing
 title: Contributing Guidelines
 sidebar_label: Contributing Guidelines
+sidebar_position: 1
 hide_title: true
 slug: /contributing
 hide_table_of_contents: true
