@@ -59,6 +59,34 @@ jobs:
 
       - name: Install dependencies
         run: yarn --prefer-offline
+        
+      - name: Include netsec
+        if: contains( github.event.pull_request.labels.*.name, 'netsec')
+        run: |
+          echo "Including 'netsec' in build..."
+          echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw" >> $GITHUB_ENV
+
+      - name: Include sase
+        if: contains( github.event.pull_request.labels.*.name, 'sase')
+        run: |
+          echo "Including 'sase' in build..."
+          if [ $PRODUCTS_INCLUDE != '' ]
+          then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=sase,access,sdwan" >> $GITHUB_ENV
+          fi
+
+      - name: Include contributing
+        if: contains( github.event.pull_request.labels.*.name, 'contributing')
+        run: |
+          echo "Including 'contributing' in build..."
+          if [ $PRODUCTS_INCLUDE != '' ]
+          then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,contributing" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=contributing" >> $GITHUB_ENV
+          fi
 
       - name: Build site
         run: yarn build
@@ -81,6 +109,9 @@ jobs:
         with:
           name: build-dir
           path: build/
+          
+      - name: Install firebase-tools
+        run: yarn add firebase-tools@11.13.0
 
       - name: Deploy to Firebase
         id: deploy_preview
