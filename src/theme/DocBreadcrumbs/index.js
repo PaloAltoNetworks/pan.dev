@@ -74,12 +74,14 @@ function HomeBreadcrumbItem() {
 }
 export default function DocBreadcrumbs() {
   const breadcrumbs = useSidebarBreadcrumbs();
-  const path = breadcrumbs[0]?.href ?? breadcrumbs[1]?.href;
-  var product = "";
-  if (path) {
-    for (var prop in crumbs) {
-      if (path.includes(crumbs[prop].href)) {
-        product = crumbs[prop].label;
+  if (breadcrumbs) {
+    const path = breadcrumbs[0]?.href ?? breadcrumbs[1]?.href;
+    var product = "";
+    if (path) {
+      for (var prop in crumbs) {
+        if (path.includes(crumbs[prop].href)) {
+          product = crumbs[prop].label;
+        }
       }
     }
   }
