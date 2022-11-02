@@ -1,0 +1,41 @@
+---
+id: intro
+title: Ansible for PAN-OS
+sidebar_label: Introduction
+hide_title: true
+description: Ansible for PAN-OS
+slug: /ansible/docs/panos
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Support from '../../../community-support-statement.md'
+
+# Ansible for PAN-OS
+
+You can configure and operate PAN-OS with [Ansible](https://www.ansible.com), including defining and managing your configuration as code, and automating your operations.
+
+## Documentation
+
+This documentation is split into four sections:
+
+- Getting started tutorials: Start here if you are new to Ansible for PAN-OS
+- How-to guides: Useful for achieving real-world objectives, or solving specific challenges
+- Background information: Higher level content discussing the "why"
+- Reference: Lists the modules available for PAN-OS, with their correct usage including examples
+
+# Collection Reference
+
+The reference guide for all modules contained within the PAN-OS collection can be found [here](https://paloaltonetworks.github.io/pan-os-ansible/modules.html). This provides the listing of modules, with their parameters, valid inputs and types, and examples of correct usage.
+
+## Open-Source
+
+The collection of Ansible modules for PAN-OS is free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/pan-os-ansible).
+
+<Support components={props.components} />

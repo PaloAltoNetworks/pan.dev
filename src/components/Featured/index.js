@@ -1,140 +1,86 @@
-import useBaseUrl from "@docusaurus/useBaseUrl";
-import classnames from "classnames";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
 import clsx from "clsx";
 import React from "react";
-import { useMediaQuery } from "react-responsive";
-import Button from "@theme/Button";
-import styles from "./styles.module.css";
+import "./Featured.scss";
 
-const features = [
-  {
-    title: <>Cloud Security</>,
-    imageUrl: "/img/PrismaCloud.svg",
-    toPage: "https://prisma.pan.dev",
-    target: "_self",
-    color: "prisma",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Discover the APIs, tools and techniques necessary for bringing DevOps
-          practices to the cloud.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: <>Secure Access Service Edge</>,
-    imageUrl: "/img/PrismaSASE.svg",
-    toPage: "https://pan.dev/sase",
-    target: "_self",
-    color: "prisma",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: <>Automate Anything</>,
-    imageUrl: "/img/Cortex_XSoar_Logo.svg",
-    toPage: "https://xsoar.pan.dev",
-    color: "cortex",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Browse reference docs, tutorials, the XSOAR Marketplace and more.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: <>Threat Intelligence and AI</>,
-    imageUrl: "/img/Cortex_Logo.svg",
-    toPage: "https://cortex.pan.dev",
-    color: "cortex",
-    offSet: true,
-    description: (
-      <>
-        <p className="text text--secondary">
-          Get started with developing solutions with Cortex XDR and Cortex Data
-          Lake. Find API reference docs, tutorials and more.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: <>Zero Trust Network Security</>,
-    imageUrl: "/img/Strata_Logo.svg",
-    toPage: "https://strata.pan.dev",
-    color: "strata",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Learn how to make the most of the PAN-OS APIs, Expedition, Terraform,
-          Ansible, and more.
-        </p>
-      </>
-    ),
-  },
- {
-    title: <>CDSS and Cloud NGFW API Support</>,
-    imageUrl: "/img/Network_Security_Logo.svg",
-    toPage: "https://pan.dev/network-security",
-    color: "strata",
-    description: (
-      <>
-        <p className="text text--secondary">
-          Take your Advanced | Threat Prevention and DNS Security security subscriptions, as well as your Cloud NGFW deployment, to the next level.
-        </p>
-      </>
-    ),
-  },
-];
+function FeaturedCard({ colorclass, description, label, products }) {
+  function ProductContent({ product }) {
+    const { apiDocs, docs, label } = product;
+    const allDocs =
+      apiDocs?.length > 0 && docs?.length > 0
+        ? [...docs, ...apiDocs]
+        : apiDocs?.length > 0
+        ? apiDocs
+        : docs;
 
-function Feature({ imageUrl, title, description, toPage, color, offset }) {
-  const imgUrl = useBaseUrl(imageUrl);
-  const toUrl = toPage ? useBaseUrl(toPage) : null;
-  const isBreakpoint = useMediaQuery({ query: "(max-width: 1200px)" });
-  const addOff = offset ? true : false;
+    return (
+      <div className="featured-card__product-container">
+        <h3 className="featured-card__product-group-label">{label}</h3>
+        <ul className="featured-card__product-list">
+          {allDocs.map((docs, i) => {
+            const { label, to, icon } = docs;
+            const iconClass = icon === "doc" ? "doc-icon" : "api-doc-icon";
+
+            return (
+              <li
+                className={`featured-card__product-list-item ${iconClass}`}
+                key={i}
+              >
+                <NavbarNavLink
+                  className="featured-card__product-link"
+                  label={label}
+                  to={to}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+
+  const leftProductColumn = products.slice(0, Math.floor(products.length / 2));
+  const rightProductColumn = products.slice(Math.floor(products.length / 2), products.length);
 
   return (
-    <div
-      className={
-        addOff
-          ? "col col--4 col--offset-2 margin-bottom--lg"
-          : "col col--4 margin-bottom--lg"
-      }
-    >
-      <Button
-        className={clsx(styles.featuredButton, "shadow--md")}
-        variant="plain"
-        href={toUrl}
-        target="_self"
-        uppercase={false}
-        newTab={false}
-        color={color}
-      >
-        <div className={clsx("card", styles.featured, color)}>
-          <div className="card__body">
-            {imgUrl && <img className={styles.featuredImage} src={imgUrl} />}
-            <div className={styles.featuredTitle}>{title}</div>
-            <div className={styles.featuredSummary}>{description}</div>
+    <div className={clsx("featured-card-container", colorclass)}>
+      <div className="featured-card-content">
+        <h2 className="featured-card-content__label">{label}</h2>
+        <div className="featured-card-content__section-divider" />
+        <p className="featured-card-content__description">{description}</p>
+        <div className="featured-card__products-container">
+          <div className="feature-card__left-column">
+            {leftProductColumn.map((product, i) => (
+              <ProductContent key={i} product={product} />
+            ))}
+          </div>
+          <div className="feature-card__right-column">
+            {rightProductColumn.map((product, i) => (
+              <ProductContent key={i} product={product} />
+            ))}
           </div>
         </div>
-      </Button>
+      </div>
     </div>
   );
 }
 
-function Featured() {
+function FeaturedCardIndex() {
+  const {
+    siteConfig: { themeConfig },
+  } = useDocusaurusContext();
+  const {
+    navbar: { items },
+  } = themeConfig;
+  const featuredCards = items[0].items;
+
   return (
-    <div>
-      {features && features.length && (
-        <div className={classnames("row centRow")}>
-          {features.map((props, idx) => (
-            <Feature key={idx} {...props} />
+    <div className="featured-container container">
+      {featuredCards?.length && (
+        <div className="featured-cards-container">
+          {featuredCards.map((props, idx) => (
+            <FeaturedCard key={idx} {...props} />
           ))}
         </div>
       )}
@@ -142,4 +88,4 @@ function Featured() {
   );
 }
 
-export default Featured;
+export default FeaturedCardIndex;
