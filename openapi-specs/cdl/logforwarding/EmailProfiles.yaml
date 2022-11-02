@@ -1,0 +1,326 @@
+components:
+  schemas:
+    ApiError:
+      properties:
+        errorCode: {description: Server error code, type: integer}
+        errorMessage: {description: A message describing the error code, type: string}
+      required: [errorMessage]
+      type: object
+    EmailDestination:
+      description: 'Profile name and email recipient information.
+
+        '
+      properties:
+        bcc:
+          description: 'Additional addresses to receive the emails. Max of 10.
+
+            '
+          example: [jbendonis@techniumnetworking.com, khanm@wavelifesci.com]
+          items: {type: string}
+          type: array
+        displayName: {description: 'Name of the profile.
+
+            ', example: PA-Disable-Client, type: string}
+        subject: {description: 'Subject to appear in the emails.
+
+            ', example: Global Protect Disable - Notification, type: string}
+        to: {description: 'Email address of the recipient.
+
+            ', example: paloaltoreporting@wavelifesci.com, type: string}
+      required: [displayName, subject, to]
+      type: object
+    EmailProfile:
+      properties:
+        destination: {$ref: '#/components/schemas/EmailDestination'}
+        logtypes:
+          description: "The parameters used to specify the logs that you want to send.\
+            \ \n"
+          items: {$ref: '#/components/schemas/LogTypes'}
+          type: array
+      required: [destination, logtypes]
+      type: object
+    EmailProfileDetail:
+      properties:
+        destination: {$ref: '#/components/schemas/EmailDestination'}
+        logtypes:
+          items: {$ref: '#/components/schemas/LogTypes'}
+          type: array
+        profileId: {description: 'ID of the profile.
+
+            ', example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string}
+        status: {$ref: '#/components/schemas/ProfileStatus'}
+      required: [profileId, destination, logtypes, status]
+      type: object
+    LogTypes:
+      description: Profile logtype object
+      properties:
+        allColumns: {description: '`True` sends all log fields. `False` sends a subset
+            of log fields.
+
+            ', example: false, type: boolean}
+        excludedColumns:
+          description: 'The specific log fields you do not want to send. Does nothing
+            if the same field is present in `includedColumns`.
+
+            '
+          items: {type: string}
+          type: array
+        filter: {description: 'The [filter query](https://docs.paloaltonetworks.com/cortex/cortex-data-lake/cortex-data-lake-getting-started/retrieve-log-records/about-queries)
+            used to send a subset of logs.
+
+            ', example: 'log_time = ''2022-09-04T01:00:01.000Z'' AND vsys != ''''',
+          type: string}
+        includedColumns:
+          description: 'The specific log fields you want to send. Does nothing if
+            `allColumns` is `True`.
+
+            '
+          example: [log_time, vsys]
+          items: {type: string}
+          type: array
+        logtype: {description: 'The [log type](/cdl/logforwarding/docs/syslog_lf)
+            that you want to send.
+
+            ', example: firewall.traffic, type: string}
+      type: object
+    ProfileStatus:
+      description: Profile status
+      enum: [pending, inactive, active]
+      type: string
+  securitySchemes:
+    Bearer: {scheme: bearer, type: http}
+info:
+  contact: {}
+  description: 'To get email notifications whenever critical issues occur on your
+    network, you can
+
+    configure Cortex Data Lake to send notifications to an email destination.
+
+    '
+  title: Email Profiles
+  version: '1.0'
+openapi: 3.0.0
+paths:
+  /logging-service/logforwarding/v1/email-profiles:
+    get:
+      description: 'Retrieve information about all existing e-mail profiles, including
+        their profile IDs.
+
+        '
+      operationId: get-logging-service-logforwarding-v1-email-profiles
+      parameters:
+      - description: The status of the profiles to be returned.
+        in: query
+        name: status
+        schema:
+          items: {$ref: '#/components/schemas/ProfileStatus'}
+          type: array
+      - description: The maximum number of profiles to be returned.
+        in: query
+        name: resultSize
+        schema: {default: 100, type: integer}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items: {$ref: '#/components/schemas/EmailProfileDetail'}
+                type: array
+          description: Request successfully processed
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get all email profiles
+      tags: [EmailProfiles]
+    post:
+      description: 'Create an email profile object to send logs to an email address.
+
+        '
+      operationId: post-logging-service-logforwarding-v1-email-profiles
+      requestBody:
+        content:
+          '*/*':
+            schema: {$ref: '#/components/schemas/EmailProfile'}
+        description: null
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema: {example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string}
+          description: Returns profile id on successful request processing
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input / failed connectivity check
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Create an email profile
+      tags: [EmailProfiles]
+  /logging-service/logforwarding/v1/email-profiles/{profileId}:
+    delete:
+      description: 'Delete the email profile with the specified profile ID.
+
+        '
+      operationId: delete-logging-service-logforwarding-v1-email-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to delete.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      responses:
+        '200': {description: Request successfully processed}
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile does not exist
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Delete email profile
+      tags: [EmailProfiles]
+    get:
+      description: Retrieve the email profile that has the specified profile ID. The
+        response header contains the etag that you need to update the email profile.
+      operationId: get-logging-service-logforwarding-v1-email-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to retrieve.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/EmailProfileDetail'}
+          description: Request successfully processed
+          headers:
+            etag:
+              description: Tag for controlling concurrent updates
+              schema: {example: ddd24f872b8d42f10afdcedc44ae334e, type: string}
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile does not exist
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Get email profile
+      tags: [EmailProfiles]
+    put:
+      description: 'Update an email profile using the etag obtained from retrieving
+        the email profile by
+
+        its profile ID. You can change only the destination and logtype fields. You
+        can not
+
+        change the profileType.
+
+        '
+      operationId: put-logging-service-logforwarding-v1-email-profiles-profileid
+      parameters:
+      - description: 'The ID of the profile you want to update.
+
+          '
+        in: path
+        name: profileId
+        required: true
+        schema: {type: string}
+      - description: 'Tag required to update the profile.
+
+          '
+        in: header
+        name: etag
+        schema: {example: ddd24f872b8d42f10afdcedc44ae334e, type: string}
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EmailProfile'}
+        description: New profile value
+        required: true
+      responses:
+        '200': {description: Request successfully processed}
+        '400':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Invalid input
+        '404':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: Profile does not exists
+        '429':
+          content: {}
+          description: Too many requests
+        '500':
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ApiError'}
+          description: LogForwarding Service internal error
+        '503':
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+      - Bearer: []
+      summary: Update email profile
+      tags: [EmailProfiles]
+servers:
+- {url: 'https://api.sase.paloaltonetworks.com'}
+tags:
+- {name: EmailProfiles}

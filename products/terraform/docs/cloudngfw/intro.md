@@ -1,0 +1,39 @@
+---
+id: intro
+title: Terraform for Cloud NGFW
+sidebar_label: Terraform for Cloud NGFW
+hide_title: true
+description: Terraform for Cloud NGFW
+slug: /terraform/docs/cloudngfw
+keywords:
+  - cloudngfw
+  - api
+  - firewall
+  - configuration
+  - terraform
+---
+
+import Support from '../../../community-support-statement.md'
+
+# Terraform for Cloud NGFW
+
+Cloud NGFW can be configured with [Terraform](https://www.terraform.io), allowing configuration to be defined and managed as code, facilitating automated operations.
+
+<!---
+This documentation is split into four sections:
+
+- Getting started tutorials: Start here if you are new to Terraform for Cloud NGFW
+- How-to guides: Useful for achieving specific real-world objectives or solving specific real-world challenges
+- Background info: Higher level content discussing the "why"
+- Reference documentation: Lists the modules available for Cloud NGFW, with their correct usage including examples
+-->
+
+# Provider Reference
+
+The reference guide for the AWS Cloud NGFW Terraform Provider can be found [here](https://registry.terraform.io/providers/PaloAltoNetworks/cloudngfwaws/latest/docs). This provides the listing of resources and data sources, with their parameters, valid inputs and types, and examples of correct usage.
+
+## Open-Source
+
+The Terraform providers for Cloud NGFW are free and open-source software, released under the Apache License 2.0, and source code can be found on [GitHub](https://github.com/PaloAltoNetworks/terraform-provider-cloudngfwaws).
+
+<Support components={props.components} />

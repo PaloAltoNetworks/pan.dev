@@ -1,80 +1,105 @@
 import Link from "@docusaurus/Link";
-import classnames from "classnames";
+import clsx from "clsx";
 import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "./Slider.scss";
 import styles from "./styles.module.css";
 
-const ITEMS_PER_ROW = 3; // Sync up the item col width if this is changed.
-
 const blog_json = require("./blogs.json");
-
 const blogs = blog_json.items.slice(0, 9);
 
 function Medium() {
+  const sliderSettings = {
+    autoplay: true,
+    autoplaySpeed: 7500,
+    dots: true,
+    infinite: true,
+    speed: 850,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    nextArrow: <img src="/icons/slider-arrow-forward.svg" />,
+    prevArrow: <img src="/icons/slider-arrow-back.svg" />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 996,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+          arrows: false
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false
+        }
+      }
+    ]
+  };
+
+  const BlogCard = ({ blog }) => {
+    return (
+      <div className={clsx("card", styles.showcaseBlog)}>
+        <div className="card__image">
+          <img
+            src={blog.thumbnail}
+            alt={blog.title}
+            className={styles.blogImage}
+          />
+        </div>
+        <div className="card__body">
+          <h3 className="avater__name">{blog.title}</h3>
+          <div className="avatar__intro margin-left--none">
+            <p className={clsx("text--secondary", styles.blogAuthor)}>
+              By: {blog.author}
+            </p>
+          </div>
+          <br />
+          <div className="avatar__intro margin-left--none">
+            <div className={styles.content}>
+              <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+            </div>
+          </div>
+        </div>
+        <div className="card__footer">
+          <Link
+            className="button button--outline button--primary button--block"
+            variant="plain"
+            href={blog.link}
+            target="_blank"
+            uppercase="false"
+          >
+            {" "}
+            Read More on Medium
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container">
-      <div className="text--center margin-top--lg">
-        <h1>Read our latest developer blogs</h1>
-      </div>
-      <div className="container padding-top--lg">
-        {blogs && blogs.length && (
-          <div className={classnames("row")}>
+      <div className="slider-container container">
+        {blogs?.length && (
+          <Slider {...sliderSettings}>
             {blogs.map((blog) => (
-              <div key={blog.title} className="col col--4 margin-bottom--lg">
-                <div className={classnames("card", styles.showcaseBlog)}>
-                  <div className="card__image">
-                    <img
-                      src={blog.thumbnail}
-                      alt={blog.title}
-                      className={styles.blogImage}
-                    />
-                  </div>
-                  <div className="card__body">
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <h3 className="avatar__name">{blog.title}</h3>
-                      </div>
-                    </div>
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <p
-                          className={classnames(
-                            "text text--secondary",
-                            styles.blogAuthor
-                          )}
-                        >
-                          By: {blog.author}
-                        </p>
-                      </div>
-                    </div>
-                    <br />
-                    <div className="avatar">
-                      <div className="avatar__intro margin-left--none">
-                        <div className={styles.content}>
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: blog.content,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card__footer">
-                    <Link
-                      className="button button--outline button--primary button--block"
-                      variant="plain"
-                      href={blog.link}
-                      target="_blank"
-                      uppercase="false"
-                    >
-                      {" "}
-                      Read More on Medium
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <BlogCard blog={blog} />
             ))}
-          </div>
+          </Slider>
         )}
       </div>
     </div>

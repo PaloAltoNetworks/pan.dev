@@ -1,0 +1,160 @@
+components:
+  responses:
+    roles_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/_pagination"
+              - example:
+                  count: 1
+                  items:
+                    - description: Full access to all functions.
+                      label: Superuser
+                      name: superuser
+                      permissions:
+                        - prisma_access.config.get
+                        - iam.service_account.create
+                        - iam.access_policy.create
+                        - "..."
+              - properties:
+                  items:
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/role"
+                    type: array
+                type: object
+      description: Successful response.
+  schemas:
+    _pagination:
+      properties:
+        count:
+          description: Total count of the items
+          type: integer
+      required:
+        - count
+        - items
+      type: object
+    role:
+      example:
+        label: Superuser
+        name: super_user
+        permissions:
+          - prisma_access.config.get
+          - iam.service_account.create
+          - iam.access_policy.create
+      properties:
+        label:
+          description: "The text displayed in the user interface for this role.
+
+            "
+          type: string
+        name:
+          description: "The role name.
+
+            "
+          type: string
+        permissions:
+          description: "The permissions granted to this role.
+
+            "
+          items:
+            type: string
+          type: array
+      title: Root Type for role
+      type: object
+    role_create:
+      example:
+        description: Full access to all functions.
+        label: Superuser
+        name: superuser
+        permissions:
+          - prisma_access.config.get
+          - iam.service_account.create
+          - iam.access_policy.create
+          - "..."
+      properties:
+        label:
+          description: "The text displayed in the user interface for this role.
+
+            "
+          type: string
+        name:
+          description: "The role name.
+
+            "
+          type: string
+        permissions:
+          description: "The permissions granted to this role.
+
+            "
+          items:
+            type: string
+          type: array
+      required:
+        - name
+      title: Root Type for role
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description:
+    "Roles are used to identify a collection of [permissions](/sase/api/iam/permissions)
+    that are granted
+
+    to a user or service account. Roles are assigned to a user or service account
+    using
+
+    [access policies](/sase/api/iam/access-policies).
+
+    "
+  title: Roles
+  version: "1.0"
+openapi: 3.0.2
+paths:
+  /iam/v1/roles:
+    get:
+      description: "Retrieve a list of all roles.
+
+        "
+      operationId: get-iam-v1-roles
+      responses:
+        "200":
+          $ref: "#/components/responses/roles_list"
+      security:
+        - Bearer: []
+      summary: List all roles
+      tags:
+        - Roles
+  /iam/v1/roles/{name}:
+    get:
+      description: "Get a specified role.
+
+        "
+      operationId: get-iam-v1-roles-name
+      parameters:
+        - description: Role Name
+          in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/role_create"
+          description: Successful response - returns a single `role`.
+      security:
+        - Bearer: []
+      summary: List a specific role
+      tags:
+        - Roles
+servers:
+  - url: https://api.sase.paloaltonetworks.com
+tags:
+  - name: Roles

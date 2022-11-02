@@ -16,8 +16,8 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 } else {
   baseUrl = process.env.GL_PAGES_BASE_URL ?? "/";
 }
-console.log(baseUrl);
-module.exports = {
+
+const config = {
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -29,22 +29,58 @@ module.exports = {
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
   themeConfig: {
+    prism: {
+      additionalLanguages: ["csharp", "php"],
+    },
+    languageTabs: [
+      {
+        highlight: "bash",
+        language: "curl",
+        logoClass: "bash",
+      },
+      {
+        highlight: "python",
+        language: "python",
+        logoClass: "python",
+      },
+      {
+        highlight: "go",
+        language: "go",
+        logoClass: "go",
+      },
+      {
+        highlight: "javascript",
+        language: "nodejs",
+        logoClass: "nodejs",
+      },
+      {
+        highlight: "csharp",
+        language: "csharp",
+        logoClass: "csharp",
+      },
+      {
+        highlight: "php",
+        language: "php",
+        logoClass: "php",
+      },
+    ],
     colorMode: {
       defaultMode: "light",
     },
-    /*
+    docs: {
+      sidebar: {
+        hideable: true,
+      },
+    },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
       indexName: "pan",
       searchParameters: {
         typoTolerance: false,
-        facetFilters: [
-          ["tags:prisma", "tags:strata", "tags:xsoar", "tags:cortex"],
-        ],
-      }, // Optional, if provided by Algolia
+        facetFilters: [["tags:pandev"]],
+      },
     },
-    */
     hideOnScroll: true,
     navbar: {
       title: "",
@@ -55,155 +91,381 @@ module.exports = {
       },
       items: [
         {
-          label: "Network Security",
-          to: "network-security",
+          label: "Developer Docs",
+          className: "margin-left--lg",
+          megaNav: true,
           items: [
             {
+              label: "Network Security",
               to: "#",
-              label: "Docs",
-              className: "section__docs",
+              colorclass: "network-security",
+              description:
+                "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
+              products: [
+                {
+                  label: "PAN-OS",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "APIs and SDKs",
+                      to: "panos/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Ansible Module Reference",
+                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      icon: "api-doc",
+                    },
+                    {
+                      label: "Terraform Provider Reference",
+                      to: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cloud NGFW",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Introduction",
+                      to: "cloudngfw/docs",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform",
+                      to: "terraform/docs/cloudngfw",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "cloudngfw/aws/api/",
+                      label: "Cloud NGFW for AWS API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cortex Data Lake",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Log Forwarding Developer's Guide",
+                      to: "cdl/docs/log-forwarding",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cloud-Delivered Security Services",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Cloud-Delivered Security Services",
+                      to: "/cdss/docs",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "/threat-vault/api",
+                      label: "Threat Vault APIs",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "/iot/api",
+                      label: "IoT API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "/dns-security/api",
+                      label: "DNS Security API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Expedition",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Expedition",
+                      to: "expedition/docs",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [],
+                },
+              ],
             },
             {
-              to: "cloudngfw/docs",
-              label: "Cloud NGFW",
-              className: "indent",
-            },
-            {
-              to: "cdss/threat-vault/docs",
-              label: "Cloud-Delivered Security Services",
-              className: "indent",
-            },
-            {
-              to: "cdl/logforwarding/docs",
-              label: "Log Forwarding",
-              className: "indent",
-            },
-            {
+              label: "Secure Access Service Edge",
               to: "#",
-              label: "API Reference",
-              className: "section__docs",
+              colorclass: "sase",
+              description:
+                "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
+              products: [
+                {
+                  label: "Prisma SASE",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      to: "sase/docs",
+                      label: "Prisma SASE Developer's Guide",
+                      icon: "doc",
+                    },
+                    {
+                      to: "/sase/docs/release-notes/changelog",
+                      label: "Prisma SASE Changelog",
+                      icon: "doc",
+                    },
+                    {
+                      to: "sase/docs/release-notes/release-notes",
+                      label: "Prisma SASE Release Notes",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sase/api/tenancy",
+                      label: "Tenancy Service",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/iam",
+                      label: "Identity and Access Management",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/auth",
+                      label: "Authentication Service",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/subscription",
+                      label: "Subscription Service",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "/access/api/prisma-access-config",
+                      label: "Prisma Access Configuration",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sdwan/api",
+                      label: "Prisma SD-WAN",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/mt-monitor",
+                      label: "Aggregate Monitoring",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights",
+                      icon: "api-doc",
+                    },
+                    {
+                      label: "Log Forwarding",
+                      to: "cdl/api/log-forwarding",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Access Configuration",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Configuration Developer's Guide",
+                      to: "access/docs/prisma-access-config",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "access/api/prisma-access-config",
+                      label: "Prisma Access Configuration",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Access Insights",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Get Started 1.0",
+                      to: "access/docs/insights/getting_started-10",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Get Started 2.0",
+                      to: "access/docs/insights/getting_started-20",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "access/api/insights/1.0",
+                      label: "Prisma Access Insights 1.0",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights 2.0",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma SD-WAN",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SD-WAN Overview",
+                      to: "/sdwan/docs",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sdwan/api",
+                      label: "Prisma SD-WAN Unified",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sdwan/api/legacy/legacy",
+                      label: "Prisma SD-WAN Legacy",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
             },
             {
-              to: "cloudngfw/aws/api",
-              label: "Cloud NGFW for AWS",
-              className: "indent",
-            },
-            {
-              to: "cdss/threat-vault/api",
-              label: "Threat Vault API",
-              className: "indent",
-            },
-            {
-              to: "cdss/dns-security/api",
-              label: "DNS Security API (BETA)",
-              className: "indent",
-            },
-            {
-              to: "cdl/logforwarding/api",
-              label: "Log Forwarding",
-              className: "indent",
-            },
-          ],
-        },
-        {
-          label: "Secure Access Service Edge",
-          to: "sase",
-          items: [
-            {
+              label: "Cloud Native Security",
               to: "#",
-              label: "Docs",
-              className: "section__docs",
+              colorclass: "cloud-native-security",
+              description:
+                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
+              products: [
+                {
+                  to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
+                  label: "Cloud Security Posture Management",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "https://prisma.pan.dev/api/cloud/cspm/",
+                      label: "CSPM API",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
+                      label: "Getting Started",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cloud Workload Protection Platform",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "https://prisma.pan.dev/api/cloud/cwpp",
+                      label: "CWPP API",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
+                      label: "Getting Started",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
             },
             {
-              to: "sase/docs",
-              label: "Prisma SASE Developer's Guide",
-              className: "indent",
-            },
-            {
-              to: "/sase/docs/release-notes/changelog",
-              label: "Prisma SASE Changelog",
-              className: "indent",
-            },
-            {
-              to: "/sase/docs/release-notes/release-notes",
-              label: "Prisma SASE Release Notes",
-              className: "indent",
-            },
-            {
+              label: "Security Operations",
               to: "#",
-              label: "Prisma SASE API Reference",
-              className: "section__docs",
-            },
-            {
-              to: "sase/api/tenancy",
-              label: "Tenancy Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/iam",
-              label: "Identity and Access Management",
-              className: "indent",
-            },
-            {
-              to: "sase/api/auth",
-              label: "Authentication Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/subscription",
-              label: "Subscription Service",
-              className: "indent",
-            },
-            {
-              to: "sase/api/prisma-access-config",
-              label: "Prisma Access Configuration",
-              className: "indent",
-            },
-            {
-              to: "sase/api/sdwan/unified",
-              label: "Prisma SD-WAN",
-              className: "indent",
-            },
-            {
-              to: "sase/api/mt-monitor",
-              label: "Aggregate Monitoring",
-              className: "indent",
-            },
-            {
-              to: "sase/api/insights/1.0",
-              label: "Prisma Access Insights",
-              className: "indent",
-            },
-            {
-              to: "cdl/logforwarding/api",
-              label: "Log Forwarding",
-              className: "indent",
-            },
-          ],
-        },
-        {
-          label: "Other Developer Docs",
-          position: "right",
-          items: [
-            {
-              href: "https://cortex.pan.dev",
-              label: "Cortex Data Lake",
-              logo: "/img/cortexfavicon.png",
-            },
-            {
-              href: "https://xsoar.pan.dev",
-              label: "Cortex XSOAR",
-              logo: "/img/Cortex-XSOAR-product-green.svg",
-            },
-            {
-              href: "https://panos.pan.dev",
-              label: "PAN-OS",
-              logo: "/img/strata_favicon.png",
-            },
-            {
-              href: "https://prisma.pan.dev",
-              label: "Prisma",
-              logo: "/img/prismafavicon.png",
+              colorclass: "security-operations",
+              description:
+                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
+              products: [
+                {
+                  to: "#",
+                  label: "Cortex XSOAR",
+                  logoClass: "xsoar",
+                  apiDocs: [
+                    {
+                      label: "XSOAR (Demisto) API",
+                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Cortex XSOAR Developer Hub",
+                      to: "https://xsoar.pan.dev/docs/welcome",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cortex",
+                  to: "#",
+                  logoClass: "cortex",
+                  apiDocs: [
+                    {
+                      label: "Expander API",
+                      to: "https://cortex.pan.dev/api/expander/annotations-api",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Xpanse Python SDK",
+                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -229,25 +491,18 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  themes: [
-    [
-      require.resolve("./docusaurus-plugin-panw/src/index.cjs"),
-      {
-        gtm: "GTM-PLXD79N",
-      },
-    ],
-  ],
+  themes: ["docusaurus-theme-openapi-docs"],
   presets: [
     [
       "@docusaurus/preset-classic",
       {
-        docs: {
-          id: "docs",
-          path: "contributing",
-          routeBasePath: "docs",
-        },
+        docs: false,
         theme: {
-          customCss: [require.resolve("./src/css/custom.css")],
+          customCss: [require.resolve("./src/css/custom.scss")],
+        },
+        gtag: {
+          trackingID: "GTM-PLXD79N",
+          anonymizeIP: true,
         },
       },
     ],
@@ -269,49 +524,114 @@ module.exports = {
         priority: 0.5,
       },
     ],
+    "docusaurus-plugin-sass",
     [
-      "@docusaurus/plugin-content-docs",
+      "docusaurus-plugin-openapi-docs",
       {
-        id: "sase",
-        path: "sase",
-        routeBasePath: "sase",
-        sidebarPath: require.resolve("./sase/sidebar.js"),
+        id: "default",
+        docsPluginId: "default",
+        config: {
+          auth: {
+            specPath: "openapi-specs/sase/auth",
+            outputDir: "products/sase/api/auth",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+          },
+          iam: {
+            specPath: "openapi-specs/sase/iam",
+            outputDir: "products/sase/api/iam",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          insights: {
+            specPath: "openapi-specs/access/insights/2.0",
+            outputDir: "products/access/api/insights",
+            sidebarOptions: { groupPathsBy: "tag" },
+            version: "2.0",
+            label: "v2.0",
+            baseUrl: "/access/api/insights/",
+            versions: {
+              "1.0": {
+                specPath: "openapi-specs/access/insights/1.0",
+                outputDir: "products/access/api/insights/1.0",
+                label: "v1.0",
+                baseUrl:
+                  "/access/api/insights/1.0/",
+              },
+            },
+          },
+          mtmonitor: {
+            specPath: "openapi-specs/sase/mt-monitor",
+            outputDir: "products/sase/api/mt-monitor",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          access: {
+            specPath: "openapi-specs/access/prisma-access-config",
+            outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          sub: {
+            specPath: "openapi-specs/sase/subscription",
+            outputDir: "products/sase/api/subscription",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          tenancy: {
+            specPath: "openapi-specs/sase/tenancy",
+            outputDir: "products/sase/api/tenancy",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          sdwan: {
+            specPath: "openapi-specs/sdwan/unified",
+            outputDir: "products/sdwan/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+            version: "Unified",
+            label: "Unified",
+            baseUrl: "/sdwan/api/",
+            versions: {
+              legacy: {
+                specPath: "openapi-specs/sdwan/legacy",
+                outputDir: "products/sdwan/api/legacy",
+                label: "Legacy",
+                baseUrl: "/sdwan/api/legacy/",
+              },
+            },
+          },
+          cloudngfw: {
+            specPath: "openapi-specs/cloudngfw/aws",
+            outputDir: "products/cloudngfw/api/aws",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          iot: {
+            specPath: "openapi-specs/iot/iot.yaml",
+            outputDir: "products/iot/api",
+          },
+          "threat-vault": {
+            specPath: "openapi-specs/threat-vault/",
+            outputDir: "products/threat-vault/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "dns-security": {
+            specPath: "openapi-specs/dns-security/dns-security.yaml",
+            outputDir: "products/dns-security/api",
+          },
+          cdl: {
+            specPath: "openapi-specs/cdl/logforwarding",
+            outputDir: "products/cdl/api/logforwarding",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+        },
       },
     ],
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "cloudngfw",
-        path: "cloudngfw",
-        routeBasePath: "cloudngfw",
-        sidebarPath: require.resolve("./cloudngfw/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "cdss",
-        path: "cdss",
-        routeBasePath: "cdss",
-        sidebarPath: require.resolve("./cdss/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "cdl",
-        path: "cdl",
-        routeBasePath: "cdl",
-        sidebarPath: require.resolve("./cdl/sidebar.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "network-security",
-        path: "network-security",
-        routeBasePath: "network-security",
-        sidebarPath: false,
+        id: "default",
+        routeBasePath: "/",
+        path: "products",
+        sidebarPath: "./sidebars.js",
+        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
+        include: ["**/*.{md,mdx}"],
+        docItemComponent: "@theme/ApiItem",
       },
     ],
   ],
@@ -322,33 +642,41 @@ module.exports = {
       rel: "stylesheet",
     },
   ],
-  customFields: {
-    pai_versions: [
-      {
-        label: "Version 1.0",
-        to: "/sase/api/insights/1.0",
-        version: "1.0",
+  onDuplicateRoutes: "warn",
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
+  trailingSlash: true,
+  webpack: {
+    jsLoader: (isServer) => ({
+      loader: require.resolve("esbuild-loader"),
+      options: {
+        loader: "tsx",
+        format: isServer ? "cjs" : undefined,
+        target: isServer ? "node12" : "es2017",
       },
-      {
-        label: "Version 2.0",
-        to: "/sase/api/insights/2.0",
-        version: "2.0",
-      },
-    ],
-    sdwan_versions: [
-      {
-        label: "Unified SASE SD-WAN",
-        to: "/sase/api/sdwan/unified",
-        version: "unified",
-      },
-      {
-        label: "Legacy Prisma SD-WAN",
-        to: "/sase/api/sdwan/legacy",
-        version: "legacy",
-      },
-    ],
+    }),
   },
-  onDuplicateRoutes: "throw",
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
 };
+
+/*
+Takes in list of products to filter based on directory, outputs list of globby include for the doc plugin
+*/
+function docsPluginInclude(filters) {
+  include = [];
+  filters.forEach((product) => {
+    let product_include = product + "/**/*.{md,mdx}";
+    include.push(product_include);
+  });
+  return include;
+}
+
+async function createConfig() {
+  let filters =
+    process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
+  if (filters) {
+    config.plugins[4][1].include = docsPluginInclude(filters);
+  }
+  return config;
+}
+
+module.exports = createConfig;

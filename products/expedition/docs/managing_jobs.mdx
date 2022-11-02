@@ -1,0 +1,342 @@
+---
+id: managing_jobs
+title: Managing Jobs
+sidebar_label: Managing Jobs
+hide_title: false
+description: Managing Jobs in Expedition
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - expedition
+  - migration
+  - firewall
+  - configuration
+  - automation
+  - credentials
+  - apikeys
+
+image: /expedition/img/expedition.png
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Link from "@docusaurus/Link";
+export function SetLanguage(lang) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("defaultLanguage", lang);
+    window.location.reload();
+  }
+}
+
+**Choose language for code snippet**
+
+<a className="button button--primary" onClick={() => SetLanguage("python")}>
+  Python
+</a>
+&nbsp;
+<a className="button button--info" onClick={() => SetLanguage("php")}>
+  Php
+</a>
+&nbsp;
+<a className="button button--danger" onClick={() => SetLanguage("go")}>
+  Go
+</a>
+<br />
+<br />
+
+In this section we describe the concept of tasks in Expedition, how to create them, monitor them and cancel them.
+
+### Description
+
+Some of the background tasks in Expedition 2.0 are better performed within jobs that can be monitored, are non-blocking and in some cases, can be cancelled.
+Importing a configuration is one of such actions as, depending on the configuration size, the required time for importing may be excessive for a blocking code.
+
+In general terms, jobs are meant to be handled by an `Agent` in Expedition that should be started in advance. See [Managing Expedition's Agent](/expedition/docs/managing_expedition_agent) section for more information.  
+In a general view, jobs are created in Expedition depending on the type of request that it is being submitted. When a request has potential to require a certain amount of time to be completed,
+this is executed as a job by the Expedition agent.
+
+### Example of a Job Creation
+
+The process of importing a configuration is an example of a task that is executed by the `Agent` as a `job`.
+All tasks requests that become executed within jobs will answer back with a job*id that can later be monitored or cancelled (\_note: cancelling may not be allowed for all type of tasks*).
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+{ label: 'Php', value: 'php', },
+{ label: 'Go', value: 'go', },
+]
+}>  
+<TabItem value="python">
+
+```python
+print("*****Import the PAN-OS configuration of your device to the project\n")
+url = "https://" + ip + "/api/v1/project/{0}/import/device".format(int(projectId))
+print(url)
+data = {"device_id": DeviceId}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+jobId = json.dumps(response["data"]["job_id"])
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+echo  "START AGENT \n";
+$url = 'https://'.$ip.'/api/v1/agent/start';
+
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, $hed);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_HEADER, 0);
+
+$response = curl_exec($curl);
+
+$jobId = $response->Contents->response->data->content->system->jobs->jobId
+curl_close($curl);
+```
+
+</TabItem>
+
+<TabItem value="go">
+
+```go
+//TODO
+```
+
+</TabItem> 
+</Tabs>
+
+The following JSON exemplifies the response that a request will generate when a job is created.
+Notice that the response includes the `jobId` (1619 in this case) and a brief description on the job type and its status.
+The jobId can be collected through the JSON path `Contents->response->data->content->system->jobs->jobId`
+
+```json
+{
+  "Type": "success",
+  "success": true,
+  "Contents-Format": "json",
+  "Contents": {
+    "code": 0,
+    "success": true,
+    "cacheable": false,
+    "metadata": {},
+    "response": {
+      "total": 1,
+      "current-page": 1,
+      "per-page": 10,
+      "total-pages": 1,
+      "state": 0,
+      "response-messages": {
+        "total": 0,
+        "code": 0,
+        "messages": []
+      },
+      "data": {
+        "total-objects": null,
+        "fields": null,
+        "columns": null,
+        "content": {
+          "system": {
+            "jobs": {
+              "jobId": 1619,
+              "description": "Importing Config into Project",
+              "state": 1,
+              "JobMsg": {
+                "statusCode": 1,
+                "statusMessage": "Completed"
+              },
+              "TasksMsg": ["Completed. Filter executed successfully"],
+              "nextStep": []
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Checking Job status
+
+Within an answer of a job status, we can explore the current state of its execution.
+The `state` field will provide a numeric value that represents the execution percentage (from 0 - 0% to 1 - 100%).
+
+Once the execution is completed, having the state to 1, it would be the moment to request the task response.
+
+The calls comply with the following structure:
+
+| Method  | EndPoint                                                     | Parameters                                           |
+| ------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| GET     | <small>`https://localhost/api/v1/job/status/<jobId>`</small> | <small>_in url_<br/>**jobId** : job id value</small> |
+| Example | <small>`https://localhost/api/v1/job/status/1619`</small>    | <small>_in url_<br/> jobId: 1619</small>             |
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+{ label: 'Php', value: 'php', },
+{ label: 'Go', value: 'go', },
+]
+}>  
+<TabItem value="python">
+
+```python
+jobFinished = False
+print("CHECK configuration upload status...........")
+r = requests.get(
+    "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
+    verify=False,
+    headers=hed,
+)
+response = r.json()
+# print(response)
+jobState = json.dumps(response["data"]["state"])
+percentage = float(jobState) * 100
+print(
+    "Import PAN-OS configuration from devie to Project: "
+    + str(round(percentage, 2))
+    + "%\n"
+)
+# Wait until job is done
+while jobState != "1":
+    sleep(5)
+    r = requests.get(
+        "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
+        verify=False,
+        headers=hed,
+    )
+    response = r.json()
+    jobState = json.dumps(response["data"]["state"])
+    percentage = float(jobState) * 100
+    print(
+        "PAN-OS configuration has been imported to Project: "
+        + str(round(percentage, 2))
+        + "%\n"
+    )
+response = r.json()
+statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
+print(statusmessage)
+```
+
+</TabItem> 
+<TabItem value="go">
+
+```go
+//TODO
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+echo  "RESTART AGENT \n";
+$url = 'https://'.$ip.'/api/v1/job/'.$jobId;
+
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, $hed);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_HEADER, 0);
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+$response = curl_exec($curl);
+$jobState = $response->Contents->response->data->content->system->jobs->state
+$percentage = float($jobState)*100
+echo('Importing configuration: '+ str(round($percentage,2))+ '%')
+
+#Wait until all content is retrieved from device
+while($jobState != '1')
+{
+    sleep(0.5)
+    $response = curl_exec($curl);
+    $jobState = $response->Contents->response->data->content->system->jobs->state
+    $percentage = float($jobState)*100
+    echo('Importing configuration: '+ str(round($percentage,2))+ '%')
+}
+
+curl_close($curl);
+```
+
+</TabItem> 
+</Tabs>
+
+### Cancelling a Job
+
+Certain jobs can be cancelled on demand if no side consequences would impact on the current project.
+To request the cancellation of a job, we need to call the folloging URL with the DELETE method with the `jobId` that wants to be cancelled.
+
+If a job gets cancelled, its `state` will be modified to `-1`.
+If a job cannot be cancelled, its execution will continue uninfluenced, its `state` will keep reflecting the current execition percentage
+and a message will inform that the current job cannot be cancelled.
+
+| Method  | EndPoint                                              | Parameters                                           |
+| ------- | ----------------------------------------------------- | ---------------------------------------------------- |
+| DELETE  | <small>`https://localhost/api/v1/job/<jobId>`</small> | <small>_in url_<br/>**jobId** : job id value</small> |
+| Example | <small>`https://localhost/api/v1/job/1619`</small>    | <small>_in url_<br/> jobId: 1619</small>             |
+
+The calls comply with the following structure:
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+{ label: 'Php', value: 'php', },
+{ label: 'Go', value: 'go', },
+]
+}>  
+<TabItem value="python">
+
+```python
+
+print('CANCELLING A JOB')
+r = requests.delete('https://'+ip+'/api/v1/job/'+jobId, verify=False, headers=hed)
+response=r.json()
+cancelled = json.dumpsresponse['Contents']['response']['data']['content']['system']['jobs']['state'])
+if(cancelled == -1)
+    print('Job has been cancelled')
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+echo  "RESTART AGENT \n";
+$url = 'https://'.$ip.'/api/v1/job/'.$jobId;
+
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, $hed);
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_HEADER, 0);
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+$response = curl_exec($curl);
+$cancelled = $response->Contents->response->data->content->system->jobs->state
+if($cancelled == -1)
+{
+    echo "The job has been cancelled";
+}
+curl_close($curl);
+```
+
+</TabItem> 
+<TabItem value="go">
+
+```go
+//TODO
+```
+
+</TabItem> 
+</Tabs>
+
+### Getting the Job result
+
+Once a job is completed, it is then possible to continue with the next steps in the user's workflow.
+In some cases, the job can suggest a next step that it is meaningful given the current completed task.  
+For instance, after a configuration has been imorted to the device, the next step would be assign device with configuration to the project.
