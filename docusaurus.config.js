@@ -76,6 +76,8 @@ const config = {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
       indexName: "pan",
+      externalUrlRegex:
+        "cortex.pan.dev|xsoar.pan.dev|prisma.pan.dev|gallery.pan.dev|panos.pan.dev",
       searchParameters: {
         typoTolerance: false,
         facetFilters: [["tags:pandev"]],
@@ -555,8 +557,7 @@ const config = {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
                 label: "v1.0",
-                baseUrl:
-                  "/access/api/insights/1.0/",
+                baseUrl: "/access/api/insights/1.0/",
               },
             },
           },
