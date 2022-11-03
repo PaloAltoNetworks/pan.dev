@@ -28,8 +28,8 @@ function Medium() {
           slidesToShow: 3,
           slidesToScroll: 3,
           infinite: true,
-          dots: true
-        }
+          dots: true,
+        },
       },
       {
         breakpoint: 996,
@@ -37,18 +37,18 @@ function Medium() {
           slidesToShow: 2,
           slidesToScroll: 2,
           initialSlide: 2,
-          arrows: false
-        }
+          arrows: false,
+        },
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          arrows: false
-        }
-      }
-    ]
+          arrows: false,
+        },
+      },
+    ],
   };
 
   const BlogCard = ({ blog }) => {
@@ -97,7 +97,7 @@ function Medium() {
         {blogs?.length && (
           <Slider {...sliderSettings}>
             {blogs.map((blog) => (
-              <BlogCard blog={blog} />
+              <BlogCard blog={blog} key={blog.guid} />
             ))}
           </Slider>
         )}
