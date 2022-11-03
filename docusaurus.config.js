@@ -367,7 +367,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sdwan/api/legacy/legacy",
+                      to: "sdwan/api/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc",
                     },
