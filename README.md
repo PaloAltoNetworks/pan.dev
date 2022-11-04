@@ -7,7 +7,7 @@
   </a>
 </h1>
 
-## About PAN.dev 
+## About PAN.dev
 
 **What is PAN.dev?**
 
@@ -15,7 +15,7 @@ PAN.dev is the home for developer-focused documentation at Palo Alto Networks.
 
 **Why was PAN.dev created**?
 
-PAN.dev was created to deliver a better developer experience to our developer community by aggregating developer-focused content, simplifying the doc authoring experience, and providing content in a more consumable medium. 
+PAN.dev was created to deliver a better developer experience to our developer community by aggregating developer-focused content, simplifying the doc authoring experience, and providing content in a more consumable medium.
 
 **Who can contribute?**
 
@@ -23,9 +23,9 @@ Anyone! We made pan.dev open source so all members of the community can author, 
 
 **How can I contribute?**
 
-We have a [contributing guide](https://github.com/PaloAltoNetworks/pan.dev/blob/master/CONTRIBUTING.md). Docs are authored in markdown an easy-to-write plain text markup language (the same format used for readme's and slack!).
+We have a [contributing guide](https://pan.dev/contributing). Docs are authored in markdown an easy-to-write plain text markup language (the same format used for readme's and slack!).
 
-A special thanks to all those who have contributed to the docs so far! 
+A special thanks to all those who have contributed to the docs so far!
 
 **Contributors**
 
@@ -33,21 +33,21 @@ A special thanks to all those who have contributed to the docs so far!
   <img src="https://contrib.rocks/image?repo=PaloAltoNetworks/pan.dev" />
 </a>
 
-## The techincal side
+## Developer Environment
 
 This website is built using Docusaurus 2, a modern static website generator.
 
-> URL: https://pan.dev
+> For more advanced/detailed use cases see the [contributing guide](https://pan.dev/contributing)
 
 ### Installation
 
-```shell-session
+```
 yarn
 ```
 
 ### Local Development
 
-```shell-session
+```
 yarn start
 ```
 
@@ -55,7 +55,7 @@ This command starts a local development server and open up a browser window. Mos
 
 ### Build
 
-```shell-session
+```
 yarn build
 ```
 
@@ -63,9 +63,9 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-The `upstream/master` branch is linked to a Firebase site and will auto-deploy when changes are merged into `master`.
+The `master` branch is linked to a Firebase site and will auto-deploy when changes are merged.
 
-Build previews will be automatically generated for merges and pull requests into the `upstream/master` branch. Build previews can be used to review changes to determine if they are ready to be merged into `upstream/master`.
+Build/deploy previews will be automatically generated for pull requests into the `master` branch. Build/deploy previews can be used to review changes to determine if they are ready to be merged into `master`.
 
 ### Support
-See [SUPPORT.md](https://github.com/PaloAltoNetworks/pan.dev/blob/master/SUPPORT.md). 
+See [SUPPORT.md](https://github.com/PaloAltoNetworks/pan.dev/blob/master/SUPPORT.md).
