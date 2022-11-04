@@ -543,7 +543,7 @@ const config = {
           iam: {
             specPath: "openapi-specs/sase/iam",
             outputDir: "products/sase/api/iam",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
@@ -564,7 +564,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
@@ -584,7 +584,7 @@ const config = {
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
             version: "Unified",
             label: "Unified",
             baseUrl: "/sdwan/api/",
@@ -600,7 +600,7 @@ const config = {
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
@@ -609,7 +609,7 @@ const config = {
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
             outputDir: "products/threat-vault/api",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           "dns-security": {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
@@ -618,7 +618,7 @@ const config = {
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
         },
       },
