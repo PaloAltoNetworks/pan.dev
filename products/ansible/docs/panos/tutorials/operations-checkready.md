@@ -49,7 +49,7 @@ This playbook checks if the PAN-OS next-generation firewall is ready. If the fir
   tasks:
     - name: Check if PAN-OS appliance is ready and wait until it is
       paloaltonetworks.panos.panos_check:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
       changed_when: false
       register: result
       until: result is not failed and result.msg == 'Device is ready.'

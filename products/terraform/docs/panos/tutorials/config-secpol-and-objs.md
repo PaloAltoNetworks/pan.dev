@@ -210,7 +210,7 @@ panos_address_object.destination-server: Creation complete after 1s [id=vsys1:de
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-7. Login to the PAN-OS GUI or CLI and confirm that the two new address objects ```source-server``` and ```destination-server``` have been created.
+7. Login to the PAN-OS GUI and confirm that the two new address objects ```source-server``` and ```destination-server``` have been created.
 
 ![image of PAN-OS GUI with address objects](address-objects.png)
 
@@ -299,7 +299,7 @@ panos_service_object.tcp-12345: Creation complete after 0s [id=vsys1:tcp-12345]
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-7. Login to the PAN-OS GUI or CLI and confirm that the two new address objects ```tcp-12345``` and ```tcp-9876``` have been created.
+7. Login to the PAN-OS GUI and confirm that the two new address objects ```tcp-12345``` and ```tcp-9876``` have been created.
 
 ![image of PAN-OS GUI with service objects](service-objects.png)
 
@@ -450,7 +450,7 @@ panos_security_rule_group.example_ruleset: Creating...
 panos_security_rule_group.example_ruleset: Creation complete after 1s [id=shared:pre-rulebase:vsys1:6::ZXhhbXBsZSBydWxlIDEKZXhhbXBsZSBydWxlIDI=]
 ```
 
-7. Login to the PAN-OS GUI or CLI and confirm that the two new address objects ```example rule 1``` and ```example rule 2``` have been created.
+7. Login to the PAN-OS GUI or confirm that the two new address objects ```example rule 1``` and ```example rule 2``` have been created.
 
 ![image of PAN-OS GUI with security policy rules](security-policy-rules.png)
 
