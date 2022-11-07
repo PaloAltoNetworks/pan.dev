@@ -19,8 +19,17 @@ module.exports = {
         {
           type: "category",
           collapsed: true,
+          label: "Configuration Tasks",
+          items: ["ansible/docs/panos/tutorials/config-secpol-and-objs"],
+        },
+        {
+          type: "category",
+          collapsed: true,
           label: "Operations Tasks",
-          items: ["ansible/docs/panos/tutorials/operations-checkready"],
+          items: [
+            "ansible/docs/panos/tutorials/operations-checkready",
+            "ansible/docs/panos/tutorials/operations-upgrade-firewall",
+          ],
         },
       ],
     },

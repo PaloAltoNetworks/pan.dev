@@ -66,13 +66,13 @@ ansible-playbook -i inventory.txt --ask-vault-pass get-security-rules.yml
 PLAY [Gather rules] ****************************************************************************************
 
 TASK [Gathering Facts] *************************************************************************************
-ok: [host_vm-series-a]
+ok: [firewall]
 
 TASK [Get all security rules] ******************************************************************************
-ok: [host_vm-series-a]
+ok: [firewall]
 
 TASK [Output] **********************************************************************************************
-ok: [host_vm-series-a] => {
+ok: [firewall] => {
     "msg": {
         "changed": false,
         "failed": false,
@@ -212,5 +212,5 @@ ok: [host_vm-series-a] => {
 }
 
 PLAY RECAP *************************************************************************************************
-host_vm-series-a           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
