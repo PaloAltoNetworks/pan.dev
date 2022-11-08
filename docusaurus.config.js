@@ -30,7 +30,7 @@ const config = {
   projectName: "pan.dev",
   themeConfig: {
     prism: {
-      additionalLanguages: ["csharp", "php"],
+      additionalLanguages: ["csharp", "php", "hcl"],
     },
     languageTabs: [
       {
