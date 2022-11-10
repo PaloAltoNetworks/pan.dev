@@ -1,9 +1,9 @@
 ---
 id: panorama-push
 title: Ansible for PAN-OS
-sidebar_label: Panorama Configuration, Commit and Push
+sidebar_label: Configure, Commit and Push with Panorama
 hide_title: true
-description: Panorama Configuration, Commit and Push
+description: Configure, Commit and Push with Panorama
 keywords:
   - pan-os
   - panos
@@ -17,7 +17,7 @@ keywords:
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
 
-# Panorama Configuration, Commit and Push
+# Configure, Commit and Push with Panorama
 
 In this guide, you will make configuration changes on Panorama within a Device Group. You will then commit the changes to Panorama, then push the changes to the managed devices (firewalls).
 
@@ -27,7 +27,7 @@ In this guide, you will make configuration changes on Panorama within a Device G
 
 ## Create playbook files and define connectivity to Panorama
 
-Create a new Ansible yaml file named `device-group-changes-commit-and-push.yml`, establish a variable block called `provider` for Panorama, and reference the PAN-OS collection:
+Create a new Ansible yaml file named `device-group-changes-commit-and-push.yml`, establish a variable block called `device` for Panorama, and reference the PAN-OS collection:
 
 ```yaml
 ---
@@ -35,7 +35,7 @@ Create a new Ansible yaml file named `device-group-changes-commit-and-push.yml`,
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"
@@ -53,21 +53,21 @@ Start the playbook tasks by defining the desired configuration state; you create
   tasks:
     - name: Create address object
       panos_address_object:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         name: "Object-One"
         value: "1.1.1.1"
 
     - name: Create service object
       panos_service_object:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         name: "tcp-12345"
         destination_port: "12345"
 
     - name: Add security rule
       panos_security_rule:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         rule_name: "Allow SSH on port 12345"
         source_zone: ["internet"]
@@ -86,7 +86,7 @@ Continue the tasks with a commit operation on Panorama for the configuration cha
 ```yaml
     - name: Commit candidate configuration
       panos_commit_panorama:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
       register: results
     - debug:
         msg: "Commit with job ID: {{ results.jobid }} had output: {{ results.details }}"
@@ -99,7 +99,7 @@ Continue the tasks with a push (and commit) to the managed devices in the Device
 ```yaml
     - name: Commit and Push template configuration
       panos_commit_push:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         style: "device group"
         name: "lab-device-group"
         include_template: no
@@ -118,7 +118,7 @@ Putting all the sections together, the playbook in entirety looks like this:
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"
@@ -130,21 +130,21 @@ Putting all the sections together, the playbook in entirety looks like this:
   tasks:
     - name: Create address object
       panos_address_object:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         name: "Object-One"
         value: "1.1.1.1"
 
     - name: Create service object
       panos_service_object:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         name: "tcp-12345"
         destination_port: "12345"
 
     - name: Add security rule
       panos_security_rule:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         device_group: "lab-device-group"
         rule_name: "Allow SSH on port 12345"
         source_zone: ["internet"]
@@ -157,7 +157,7 @@ Putting all the sections together, the playbook in entirety looks like this:
 
     - name: Commit candidate configuration
       panos_commit_panorama:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
       register: results
 
     - debug:
@@ -165,7 +165,7 @@ Putting all the sections together, the playbook in entirety looks like this:
 
     - name: Commit and Push template configuration
       panos_commit_push:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         style: "device group"
         name: "lab-device-group"
         include_template: no

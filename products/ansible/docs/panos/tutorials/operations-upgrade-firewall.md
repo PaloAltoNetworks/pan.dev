@@ -16,6 +16,7 @@ keywords:
 
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
+import ClosingNotes from '../closingnotes.md'
 
 # Operations Tasks
 
@@ -117,3 +118,5 @@ firewall                   : ok=5    changed=1    unreachable=0    failed=0    s
 ```
 
 6. Login to the PAN-OS GUI and confirm that the firewall is now running the target version of PAN-OS
+
+<ClosingNotes components={props.components} />

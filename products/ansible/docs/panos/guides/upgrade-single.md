@@ -1,9 +1,9 @@
 ---
 id: upgrade-single
 title: Ansible for PAN-OS
-sidebar_label: Upgrade Single Firewall
+sidebar_label: Upgrade a Single Firewall
 hide_title: true
-description: Upgrade Single Firewall
+description: Upgrade a Single Firewall
 keywords:
   - pan-os
   - panos
@@ -17,7 +17,7 @@ keywords:
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
 
-# Upgrade Single Firewall
+# Upgrade a Single Firewall
 
 In this guide, you will upgrade the PAN-OS software on a single firewall. You will download the software, install the software, reboot the firewall, then check the firewall is ready again after the reboot.
 
@@ -27,7 +27,7 @@ In this guide, you will upgrade the PAN-OS software on a single firewall. You wi
 
 ## Create playbook files and define connectivity to the firewall
 
-Create a new Ansible yaml file named `upgrade-single-firewall.yml`, establish a variable block called `provider` for the firewall, and reference the PAN-OS collection:
+Create a new Ansible yaml file named `upgrade-single-firewall.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection:
 
 ```yaml
 ---
@@ -35,7 +35,7 @@ Create a new Ansible yaml file named `upgrade-single-firewall.yml`, establish a 
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"
@@ -103,7 +103,7 @@ Putting all the sections together, the playbook in entirety looks like this:
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"

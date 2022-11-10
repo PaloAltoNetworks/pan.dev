@@ -28,7 +28,7 @@ This documentation is split into four sections:
 - Reference documentation: Lists the modules available for Cloud NGFW, with their correct usage including examples
 -->
 
-# Provider Reference
+## Provider Reference
 
 The reference guide for the AWS Cloud NGFW Terraform Provider can be found [here](https://registry.terraform.io/providers/PaloAltoNetworks/cloudngfwaws/latest/docs). This provides the listing of resources and data sources, with their parameters, valid inputs and types, and examples of correct usage.
 

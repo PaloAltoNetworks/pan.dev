@@ -20,7 +20,10 @@ module.exports = {
           type: "category",
           collapsed: true,
           label: "Configuration Tasks",
-          items: ["ansible/docs/panos/tutorials/config-secpol-and-objs"],
+          items: [
+            "ansible/docs/panos/tutorials/config-secpol-and-objs",
+            "ansible/docs/panos/tutorials/config-networking",
+          ],
         },
         {
           type: "category",
@@ -45,6 +48,8 @@ module.exports = {
           items: [
             "ansible/docs/panos/guides/config-xpath",
             "ansible/docs/panos/guides/panorama-push",
+            "ansible/docs/panos/guides/use-config-lock",
+            "ansible/docs/panos/guides/import-load-config",
           ],
         },
         {

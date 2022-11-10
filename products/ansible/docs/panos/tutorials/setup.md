@@ -84,10 +84,7 @@ ansible-galaxy collection list | grep panos
 paloaltonetworks.panos 2.11.0
 ```
 
-## Setup the hosts file
-
-In these steps, if you are only using Ansible to configure/operate a firewall, you can omit the steps and lines related to Panorama.
-Likewise, if you are only using Ansible to configure/operate Panorama, you can omit the steps and lines related to the firewall.
+## Setup the Ansible inventory
 
 1. In the directory where you will store your Ansible playbook files, create a file called ```inventory.txt``` with the following content:
 ```
@@ -99,13 +96,6 @@ panorama
 ```
 ---
 ip_address: "192.168.1.1"
-username: "admin"
-password: "admin"
-```
-4. Within the ```host_vars``` directory, create a file call ```panorama.yml``` with the following content, changing the values for ```ip_address```, ```username``` and ```password``` as appropriate:
-```
----
-ip_address: "192.168.1.2"
 username: "admin"
 password: "admin"
 ```
