@@ -27,7 +27,7 @@ In this guide, you will make configuration changes to a firewall using a generic
 
 ## Create playbook files and define connectivity to the firewall
 
-Create a new Ansible yaml file named `configure-with-xpath.yml`, establish a variable block called `provider` for the firewall, and reference the PAN-OS collection:
+Create a new Ansible yaml file named `configure-with-xpath.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection:
 
 ```yaml
 ---
@@ -35,7 +35,7 @@ Create a new Ansible yaml file named `configure-with-xpath.yml`, establish a var
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"
@@ -100,7 +100,7 @@ With the XPath and element, you can now define a task that will create a new VSY
   tasks:
     - name: Create VSYS
       paloaltonetworks.panos.panos_config_element:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         xpath: '/config/devices/entry[@name="localhost.localdomain"]/vsys'
         element: '<entry name="vsys2"><display-name>Second-VSYS</display-name></entry>'
 ```
@@ -115,7 +115,7 @@ Putting all the sections together, the playbook in entirety looks like this:
   connection: local
 
   vars:
-    provider:
+    device:
       ip_address: "{{ ip_address }}"
       username: "{{ username | default(omit) }}"
       password: "{{ password | default(omit) }}"
@@ -127,7 +127,7 @@ Putting all the sections together, the playbook in entirety looks like this:
   tasks:
     - name: Create a VSYS
       paloaltonetworks.panos.panos_config_element:
-        provider: "{{ provider }}"
+        provider: "{{ device }}"
         xpath: '/config/devices/entry[@name="localhost.localdomain"]/vsys'
         element: '<entry name="vsys2"><display-name>Second-VSYS</display-name></entry>'
 ```

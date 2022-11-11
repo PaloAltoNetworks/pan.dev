@@ -95,7 +95,7 @@ variable "panos_password" {
 .
 ```
 
-3. Initialise Terraform with the following command, which will download the PAN-OS provider:
+3. Initialize Terraform with the following command, which will download the PAN-OS provider:
 
 ```
 terraform init

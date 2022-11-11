@@ -16,6 +16,7 @@ keywords:
 
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
+import ClosingNotes from '../closingnotes.md'
 
 # Information Gathering Tasks
 
@@ -214,3 +215,5 @@ ok: [firewall] => {
 PLAY RECAP *************************************************************************************************
 firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
+
+<ClosingNotes components={props.components} />

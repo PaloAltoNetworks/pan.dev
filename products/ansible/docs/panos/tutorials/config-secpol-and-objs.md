@@ -1,9 +1,9 @@
 ---
 id: config-secpol-and-objs
 title: Ansible for PAN-OS
-sidebar_label: Security Policy Rules and Objects
+sidebar_label: Security Policies and Objects
 hide_title: true
-description: Security Policy Rules and Objects
+description: Security Policies and Objects
 keywords:
   - pan-os
   - panos
@@ -16,6 +16,7 @@ keywords:
 
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
+import ClosingNotes from '../closingnotes.md'
 
 # Configuration Tasks
 
@@ -25,9 +26,9 @@ With this playbook, you will create items in a PAN-OS next-generation firewall, 
 
 <LabGuidance components={props.components} />
 
-## The "security policy and address objects" playbook
+## Security policies and address objects
 
-With this playbook, you will create a number of items related to security policies (firewall rules). This will include address objects, service objects, and the rules themselves. Then you will commit the configuration to make the changes live.
+In this tutorial, you will create a number of items related to security policies (firewall rules). This will include address objects, service objects, and the rules themselves. Then you will commit the configuration to make the changes live.
 
 ## Create address objects
 
@@ -214,7 +215,7 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
 
 ## Commit the configuration
 
-9. Create a file called ```commit-firewall.yml``` and paste in the following content:
+13. Create a file called ```commit-firewall.yml``` and paste in the following content:
 ```yaml
 ---
 - name: Commit firewall candidate configuration
@@ -239,11 +240,11 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
         msg: "Commit with Job ID: {{ results.jobid }} had output: {{ results.details }}"
 
 ```
-10. Execute the playbook with the following command:
+14. Execute the playbook with the following command:
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass commit-firewall.yml
 ```
-11. The output should be something similar to this:
+15. The output should be something similar to this:
 ```
 PLAY [Commit firewall candidate configuration] *************************************************************************************************************************************
 
@@ -261,3 +262,5 @@ ok: [firewall] => {
 PLAY RECAP *************************************************************************************************************************************************************************
 firewall                   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
 ```
+
+<ClosingNotes components={props.components} />
