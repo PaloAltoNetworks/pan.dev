@@ -1,0 +1,134 @@
+---
+id: import-load-config
+title: Ansible for PAN-OS
+sidebar_label: Import and load a config file
+hide_title: true
+description: Import and load a configuration file
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
+
+# Import and load a configuration file
+
+In this guide, you will import a PAN-OS XML configuration file to your NGFW, then load the config into candidate configuration. This is most commonly done when restoring from a backup. 
+
+<Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
+
+## Create playbook files and define connectivity to the firewall
+
+Create a new Ansible yaml file named `import-and-load-config.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection:
+
+```yaml
+---
+- hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+  collections:
+    - paloaltonetworks.panos
+```
+
+## Import the configuration file
+
+You will first import a valid PAN-OS XML configuration file to the NGFW. The file should be stored in a location accessible to the host executing Ansible, and could be passed as an extra runtime variable. For one-off operations, the variable could be defined in the playbook itself
+
+```yaml
+    cfg_file: "exampleconfig.xml"
+```
+
+The first tasks in the playbook by uses ```panos_import``` to import/upload the XML config file:
+
+```yaml
+  tasks:
+    - name: Import configuration
+      paloaltonetworks.panos.panos_import:
+        provider: "{{ device }}"
+        file: "{{ cfg_file }}"
+        category: "configuration"
+      register: result
+```
+
+## Load the configuration file
+
+Continue the tasks by loading the imported config file. This will use `panos_loadcfg` to make the imported config file the new candidate configuration:
+
+```yaml
+    - name: Load configuration
+      paloaltonetworks.panos.panos_loadcfg:
+        ip_address: "{{ device.ip_address }}"
+        username: "{{ device.username }}"
+        password: "{{ device.password }}"
+        file: "{{ result.filename }}"
+```
+
+## Commit the imported configuration
+
+To make the imported configuration "live", a commit is required to promote the candidate configuration into the running configuration:
+
+```yaml
+    - name: Commit candidate configuration
+      panos_commit_firewall:
+        provider: "{{ device }}"
+      register: results
+    - debug:
+        msg: "Commit with job ID: {{ results.jobid }} had output: {{ results.details }}"
+```
+
+## Final playbook
+
+Putting all the sections together, the playbook in entirety looks like this:
+
+```yaml
+---
+- hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Import configuration
+      paloaltonetworks.panos.panos_import:
+        provider: "{{ device }}"
+        file: "{{ cfg_file }}"
+        category: "configuration"
+      register: result
+
+    - name: Load configuration
+      paloaltonetworks.panos.panos_loadcfg:
+        ip_address: "{{ device.ip_address }}"
+        username: "{{ device.username }}"
+        password: "{{ device.password }}"
+        file: "{{ result.filename }}"
+
+    - name: Commit candidate configuration
+      panos_commit_firewall:
+        provider: "{{ device }}"
+      register: results
+    - debug:
+        msg: "Commit with job ID: {{ results.jobid }} had output: {{ results.details }}"
+```
