@@ -27,7 +27,7 @@ With this Terraform code, you will configure a number of items on a PAN-OS next-
 
 ## Get Terraform ready for configuration
 
-In the first section, you will create a Terraform file, and initialise Terraform so it is ready to perform configuration operations.
+In the first section, you will create a Terraform file, and initialize Terraform so it is ready to perform configuration operations.
 
 1. Create a file called ```security-policies.tf``` and paste in the following content:
 ```hcl
@@ -89,7 +89,7 @@ variable "panos_password" {
 .
 ```
 
-3. Initialise Terraform with the following command, which will download the PAN-OS provider:
+3. Initialize Terraform with the following command, which will download the PAN-OS provider:
 
 ```
 terraform init
