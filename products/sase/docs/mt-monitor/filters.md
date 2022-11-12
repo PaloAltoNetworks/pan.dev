@@ -146,6 +146,52 @@ For example:
         "rule": "app_risky"
       }...
 
+### CDLStatusRule ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field name. Must be `status`.
+| operator | string | Operator to run on the `property` field. Must be `in`.
+| values | array of strings | Property value. Can be `Up` or `Down` when property is `status`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "operator": "in",
+        "property": "status",
+        "values": [
+          "Up",
+          "Down"
+        ]
+      }...
+
+### OutlierRule  ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field name. Must be `node_type`.
+| operator | string | Operator to run on the `property` field. Must be `in`.
+| values | array of strings | Property value. Can be `48` or `49` when property is `node_type`.
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "operator": "in",
+        "property": "node_type",
+        "values": [
+          48,
+          49
+        ]
+      }...
+
 ### ThreatRule
 
 Object with the following properties:
@@ -397,6 +443,75 @@ For example:
           }
         ]
 
+### CDLStatusProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | :--|
+| alias | string | Change a property field name to a different name of your choice.
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`state`</li><li>`location_count`</li></ul>
+
+For example:
+
+    "properties": [
+        {
+          "property": "status"
+        },
+        {
+          "property": "location_count"
+        },
+        {
+          "property": "sub_tenant_id"
+        }
+      ]
+
+### GatewayStatusProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | :--|
+| alias | string | Change a property field name to a different name of your choice.
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`status`</li><li>`gateway_count`</li></ul>
+
+For example:
+
+    "properties": [
+        {
+        "property": "status"
+        },
+        {
+        "property": "gateway_count"
+        },
+        {
+        "property": "sub_tenant_id"
+        }
+      ]
+
+### OutliersProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | :--|
+| alias | string | Change a property field name to a different name of your choice.
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`site_name`</li><li>`bandwidth_consumed`</li><li>`unit`</li></ul>
+
+For example:
+
+    "properties": [
+        {
+          "property": "site_name"
+        },
+        {
+          "property": "bandwidth_consumed"
+        },
+        {
+          "property": "unit"
+        }
+      ]
+
 ### ResourceProperty
 
 Object with the following properties:
@@ -506,6 +621,22 @@ For example:
         },
         {
           "property": "unblocked_count"
+        }
+      ]
+
+### UniqueUserProperty ###
+
+Object with the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: `user_count`
+
+For example:
+
+    "properties": [
+        {
+          "property": "user_count"
         }
       ]
 
