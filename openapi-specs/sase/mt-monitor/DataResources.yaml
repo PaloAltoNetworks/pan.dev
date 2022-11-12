@@ -150,7 +150,73 @@ components:
 
             ', example: 'app_risky, blocked', type: string}
       type: object
+    CDLStatusFilter:
+      properties:
+        operator: {description: Always set to AND, type: string}
+        rules:
+          anyOf:
+          - {$ref: '#/components/schemas/CDLStatusRule'}
+          items: {type: object}
+          type: array
+      required: [operator]
+      type: object
+    CDLStatusProperty:
+      properties:
+        alias: {type: string}
+        property: {description: Property field name. Property fields will be returned
+            in the API response., example: 'sub_tenant_id, state, location_count',
+          type: string}
+      type: object
+    CDLStatusRule:
+      properties:
+        operator: {description: Filter operator that is one of the example values
+            and is run on the property field, example: in, type: string}
+        property: {description: Filter property field that is one of the example values,
+          example: status, type: string}
+        values:
+          description: Filter property value
+          example: Up, Down if property is status
+          items: {type: string}
+          type: array
+      type: object
     FilterRule: {type: object}
+    GatewayStatusProperty:
+      properties:
+        alias: {type: string}
+        property: {description: Property field name. Property fields will be returned
+            in the API response., example: 'sub_tenant_id, status, gateway_count',
+          type: string}
+      type: object
+    OutlierRule:
+      properties:
+        operator: {description: Filter operator that is one of the example values
+            and is run on the property field, example: in, type: string}
+        property: {description: Filter property field that is one of the example values,
+          example: node_type, type: string}
+        values:
+          description: Filter property value
+          example: 48, 49 if property is node_type
+          items: {type: string}
+          type: array
+      type: object
+    OutliersFilter:
+      properties:
+        operator: {description: Always set to AND, type: string}
+        rules:
+          anyOf:
+          - {$ref: '#/components/schemas/OutlierRule'}
+          - {$ref: '#/components/schemas/TimeFilter'}
+          items: {type: object}
+          type: array
+      required: [operator]
+      type: object
+    OutliersProperty:
+      properties:
+        alias: {type: string}
+        property: {description: Property field name. Property fields will be returned
+            in the API response., example: 'site_name, bandwidth_consumed, unit',
+          type: string}
+      type: object
     RequestBody_Alert:
       properties:
         filter:
@@ -196,6 +262,38 @@ components:
         properties:
           description: List of property json objects
           items: {$ref: '#/components/schemas/ApplicationProperty'}
+          type: array
+      required: [properties, filter]
+      type: object
+    RequestBody_CDLStatus:
+      properties:
+        filter:
+          allOf:
+          - {$ref: '#/components/schemas/CDLStatusFilter'}
+          - {description: filter json object}
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/CDLStatusProperty'}
+          type: array
+      required: [properties, filter]
+      type: object
+    RequestBody_GatewayStatus:
+      properties:
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/GatewayStatusProperty'}
+          type: array
+      required: [properties]
+      type: object
+    RequestBody_Outliers:
+      properties:
+        filter:
+          allOf:
+          - {$ref: '#/components/schemas/OutliersFilter'}
+          - {description: filter json object}
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/OutliersProperty'}
           type: array
       required: [properties, filter]
       type: object
@@ -246,6 +344,14 @@ components:
           items: {$ref: '#/components/schemas/ThreatSummaryProperty'}
           type: array
       required: [properties, filter]
+      type: object
+    RequestBody_UniqueUsers:
+      properties:
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/UniqueUserProperty'}
+          type: array
+      required: [properties]
       type: object
     RequestBody_UrlSummary:
       properties:
@@ -419,6 +525,12 @@ components:
           items: {type: string}
           type: array
       type: object
+    UniqueUserProperty:
+      properties:
+        alias: {type: string}
+        property: {description: Property field name. Property fields will be returned
+            in the API response., example: user_count, type: string}
+      type: object
     UrlLogsRule:
       properties:
         operator: {description: Filter operator that is one of the example values
@@ -477,22 +589,13 @@ openapi: 3.0.2
 paths:
   /mt/monitor/v1/agg/alerts:
     post:
-      description: "Retrieve an aggregated count of alerts across tenants.       \
-        \        \n"
+      description: Get alerts counts across tenants resource
       operationId: post-mt-monitor-v1-agg-alerts
       parameters:
-      - description: 'Must be `tenant`. Using the query parameter returns all the
-          aggregated responses for the current parent tenant and its child tenants.
-          If not used, the results for just the current tenant are returned.
-
-          '
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -508,11 +611,11 @@ paths:
                       property: domain
                       values: [External, external]
                     - operator: last_n_days
-                      property: event_time
+                      property: updated_time
                       values: [7]
                   properties:
                   - {property: sub_tenant_id}
-                  - {property: total_count}
+                  - {alias: count, function: count, property: alert_id}
               Alerts Distribution By Severity:
                 value:
                   filter:
@@ -556,7 +659,7 @@ paths:
               examples:
                 Alerts Count By Tenant:
                   value:
-                  - {sub_tenant_id: <sub_tenant_id>, total_count: 10}
+                  - {count: 10, sub_tenant_id: <sub_tenant_id>}
                 Alerts Distribution By Severity:
                   value:
                   - {count: 3, severity: <severity>}
@@ -569,7 +672,7 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List alert count
+      summary: Get Alerts Counts
       tags: [DataResources]
   /mt/monitor/v1/agg/alerts/list:
     post:
@@ -585,10 +688,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -625,24 +725,17 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List alerts by source
+      summary: List alert count
       tags: [DataResources]
   /mt/monitor/v1/agg/applicationUsage:
     post:
-      description: "Retrieve a list of application usage by application type.    \
-        \               \n"
+      description: Get Application Usage by Application type
       operationId: post-mt-monitor-v1-agg-applicationusage
       parameters:
-      - description: "Must be `tenant`. Using the query parameter returns all the\
-          \ aggregated responses for the current parent tenant and its child tenants.\
-          \ If not used, the results for just the current tenant are returned. \n"
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -717,24 +810,17 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List application usage by type
+      summary: Get Application Usage by Application type
       tags: [DataResources]
   /mt/monitor/v1/agg/applications:
     post:
-      description: "Retrieve an aggregated count of applications across tenants. \
-        \                \n"
+      description: Get applications counts across tenants
       operationId: post-mt-monitor-v1-agg-applications
       parameters:
-      - description: "Must be `tenant`. Using the query parameter returns all the\
-          \ aggregated responses for the current parent tenant and its child tenants.\
-          \ If not used, the results for just the current tenant are returned. \n"
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.   \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -743,6 +829,19 @@ paths:
             examples:
               Security Rules and Risky Apps:
                 value:
+                  count: 4
+                  filter:
+                    operator: AND
+                    rules:
+                    - {rule: app_risky}
+                    - operator: not_equals
+                      property: rule_matched
+                      values: ['']
+                    - {operator: is_not_null, property: rule_matched}
+                    - {rule: unblocked}
+                    - operator: last_n_days
+                      property: event_time
+                      values: [30]
                   properties:
                   - {property: sub_tenant_id}
                   - alias: count
@@ -812,7 +911,7 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List application count
+      summary: Get Applications Counts
       tags: [DataResources]
   /mt/monitor/v1/agg/applications/list:
     post:
@@ -826,10 +925,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -838,31 +934,17 @@ paths:
             examples:
               Applications List:
                 value:
-                  properties:
-                  - {property: tenant_id}
-                  - {property: tenant_name}
-                  - {property: app}
-                  - {function: avg, property: unique_app_count}
-                  - function: sum
-                    property: app_count
-                    sort: {order: desc}
-              Risky Applications List:
-                value:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
                   properties:
-                  - {property: tenant_id}
-                  - {property: tenant_name}
-                  - {property: app}
-                  - {function: avg, property: unique_app_count}
-                  - function: sum
-                    property: app_count
-                    sort: {order: desc}
+                  - {property: sub_tenant_id}
+                  - {property: unique_total_apps}
+                  - {property: risk_of_app_count}
+                  - {property: blocked_app_count}
             schema: {$ref: '#/components/schemas/RequestBody_Application'}
       responses:
         '200':
@@ -871,12 +953,8 @@ paths:
               examples:
                 Applications List:
                   value:
-                  - {app: App1, app_count: 100, tenant_id: '1234', tenant_name: Tenant_1234,
-                    unique_app_count: 10}
-                Risky Applications List:
-                  value:
-                  - {app: App1, app_count: 100, tenant_id: '1234', tenant_name: Tenant_1234,
-                    unique_app_count: 10}
+                  - {blocked_app_count: 10, risk_of_app_count: '3', sub_tenant_id: '1234',
+                    unique_total_apps: '2'}
           description: Success
         '400': {description: Bad Request}
         '500': {description: Server Error}
@@ -897,10 +975,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -912,7 +987,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -926,7 +1000,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -969,10 +1042,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.  \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -984,8 +1054,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: blocked}
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -1012,7 +1080,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -1024,8 +1091,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: blocked}
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -1038,8 +1103,6 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: unblocked}
-                    - {rule: app_risky}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
@@ -1077,20 +1140,13 @@ paths:
       tags: [DataResources]
   /mt/monitor/v1/agg/resource:
     post:
-      description: "Retrieve aggregated network inventory across tenants.        \
-        \            \n"
+      description: Get network inventory across tenants
       operationId: post-mt-monitor-v1-agg-resource
       parameters:
-      - description: "Must be `tenant`. Using the query parameter returns all the\
-          \ aggregated responses for the current parent tenant and its child tenants.\
-          \ If not used, the results for just the current tenant are returned. \n"
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.   \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1119,26 +1175,296 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List network inventory count
+      summary: Get Network Inventory Count
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity:
+    post:
+      description: Get RN and SC site status count
+      operationId: post-mt-monitor-v1-agg-serviceconnectivity
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Site Status:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: node_type
+                      values: [51, 48]
+                    - operator: in
+                      property: site_state_name
+                      values: [Up, Down]
+                  properties:
+                  - {property: node_type}
+                  - {property: sub_tenant_id}
+                  - {alias: count, function: distinct_count, property: site_name}
+              Site Status per Tenant:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: node_type
+                      values: [51, 48]
+                    - operator: in
+                      property: site_state_name
+                      values: [Up, Down]
+                  properties:
+                  - {property: site_state_name}
+                  - {property: node_type}
+                  - {property: sub_tenant_id}
+                  - {alias: count, function: distinct_count, property: site_name}
+            schema: {$ref: '#/components/schemas/RequestBody_Resource'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Site Status:
+                  value:
+                  - {count: 1, node_type: 48, site_state_name: Down}
+                  - {count: 1, node_type: 51, site_state_name: Up}
+                Site Status per Tenant:
+                  value:
+                  - {count: 1, node_type: 48, site_state_name: Down, sub_tenant_id: '9000000006'}
+                  - {count: 1, node_type: 51, site_state_name: Up, sub_tenant_id: '9000000006'}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get RN and SC site status count
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity/cdlStatus:
+    post:
+      description: Get CDL Connectivity Status
+      operationId: post-mt-monitor-v1-agg-serviceconnectivity-cdlstatus
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Cortex Data Lake Connections:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: state
+                      values: [Up, Down]
+                  properties:
+                  - {property: status}
+                  - {property: location_count}
+              Cortex Data Lake Connections per Tenant:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: state
+                      values: [Up, Down]
+                  properties:
+                  - {property: status}
+                  - {property: location_count}
+                  - {property: sub_tenant_id}
+            schema: {$ref: '#/components/schemas/RequestBody_CDLStatus'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Cortex Data Lake Connections:
+                  value:
+                  - {location_count: 100, status: <status>}
+                Cortex Data Lake Connections per Tenant:
+                  value:
+                  - {location_count: 100, status: <status>, sub_tenant_id: <sub_tenant_id>}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get CDL Connectivity Status
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity/gatewayStatus:
+    post:
+      description: Get Mobile Gateway Connection Status
+      operationId: post-mt-monitor-v1-agg-serviceconnectivity-gatewaystatus
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Gateway Locations:
+                value:
+                  properties:
+                  - {property: status}
+                  - {property: gateway_count}
+              Gateway Locations per Tenant:
+                value:
+                  properties:
+                  - {property: status}
+                  - {property: gateway_count}
+                  - {property: sub_tenant_id}
+            schema: {$ref: '#/components/schemas/RequestBody_GatewayStatus'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Gateway Locations:
+                  value:
+                  - {gateway_count: 100, status: <status>}
+                Gateway Locations per Tenant:
+                  value:
+                  - {gateway_count: 100, status: <status>, sub_tenant_id: <sub_tenant_id>}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get Mobile Gateway Connection Status
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity/licenseAllocated:
+    get:
+      description: Total GP License allocated(mobile_users - explicit_proxy)
+      operationId: get-mt-monitor-v1-agg-serviceconnectivity-licenseallocated
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Total GP License Allocated:
+                  value:
+                  - explicit_proxy: {size: 0, unit: user}
+                    mobile_users: {size: 10000, unit: user}
+                    okyo: {size: 0, unit: user}
+                    remote_networks: {size: 10000, unit: mbps}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Total GP License allocated
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity/topOutliers:
+    post:
+      description: Get top outliers(sites which consumes more bandwidth than allocated)
+      operationId: post-mt-monitor-v1-agg-serviceconnectivity-topoutliers
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Top Outliers:
+                value:
+                  count: 5
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values: [45]
+                    - operator: gt
+                      property: threshold
+                      values: [80]
+                    - operator: in
+                      property: node_type
+                      values: [48]
+                  properties:
+                  - {property: site_name}
+                  - {property: bandwidth_consumed}
+                  - {property: unit}
+            schema: {$ref: '#/components/schemas/RequestBody_Outliers'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Top Outliers:
+                  value:
+                  - {bandwidth_consumed: 10, site_name: <site_name>, unit: Kbps}
+                  - {bandwidth_consumed: 100, count: 9, site_name: <site_name>, unit: Kbps}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get top outliers(sites which consumes more bandwidth than allocated)
+      tags: [DataResources]
+  /mt/monitor/v1/agg/serviceConnectivity/uniqueUsers:
+    post:
+      description: Get Unique GP users connected in last 90 days
+      operationId: post-mt-monitor-v1-agg-serviceconnectivity-uniqueusers
+      parameters:
+      - in: query
+        name: agg_by
+        schema: {type: string}
+      - in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Unique Users GP:
+                value:
+                  properties:
+                  - {property: user_count}
+            schema: {$ref: '#/components/schemas/RequestBody_UniqueUsers'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Unique Users GP:
+                  value:
+                  - {user_count: 100}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get Unique GP users connected in last 90 days
       tags: [DataResources]
   /mt/monitor/v1/agg/threats:
     post:
-      description: "Retrieve an aggregated count of threats across tenants.      \
-        \              \n"
+      description: Get threats counts across tenants
       operationId: post-mt-monitor-v1-agg-threats
       parameters:
-      - description: 'Must be `tenant`. Using the query parameter returns all the
-          aggregated responses for the current parent tenant and its child tenants.
-          If not used, the results for just the current tenant are returned.
-
-          '
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.    \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1247,7 +1573,7 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List threat count
+      summary: Get threats Counts
       tags: [DataResources]
   /mt/monitor/v1/agg/threats/list:
     post:
@@ -1263,10 +1589,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.                             \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1301,18 +1624,6 @@ paths:
                     - operator: in
                       property: severity
                       values: [Critical, High, Medium]
-                    - operator: in
-                      property: url_category_unknown
-                      values: [unknown]
-                    - operator: in
-                      property: url_category_malicious
-                      values: [grayware, malware, command-and-control, phishing]
-                    - operator: in
-                      property: action_value
-                      values: [deny, drop, drop-reset, block, block-url, block-ip,
-                        drop-packet, drop-all, drop-icmp, reset-both, reset-client,
-                        reset-server, block-continue, block-override, override-lockout,
-                        random-drop, syncookie-sent, sinkhole]
                   properties:
                   - {property: sub_tenant_id}
                   - {property: total_threats}
@@ -1355,10 +1666,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.                             \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1377,10 +1685,10 @@ paths:
                       property: event_time
                       values: [7]
                   properties:
-                  - {property: total_app_count}
-                  - {property: total_app_remote_network}
-                  - {property: total_app_mobile_users}
-                  - {property: total_app_proxy_nodes}
+                  - {property: total_threats}
+                  - {property: total_remote_network}
+                  - {property: total_mobile_users}
+                  - {property: total_proxy_nodes}
               Threat Count by Source per Tenant:
                 value:
                   filter:
@@ -1394,10 +1702,10 @@ paths:
                       values: [7]
                   properties:
                   - {property: sub_tenant_id}
-                  - {property: total_app_count}
-                  - {property: total_app_remote_network}
-                  - {property: total_app_mobile_users}
-                  - {property: total_app_proxy_nodes}
+                  - {property: total_threats}
+                  - {property: total_remote_network}
+                  - {property: total_mobile_users}
+                  - {property: total_proxy_nodes}
             schema: {$ref: '#/components/schemas/RequestBody_ThreatSrc'}
       responses:
         '200':
@@ -1406,12 +1714,12 @@ paths:
               examples:
                 Threat Count by Source:
                   value:
-                  - {total_app_count: 10, total_app_mobile_users: 10, total_app_proxy_nodes: 10,
-                    total_app_remote_network: 10}
+                  - {total_mobile_users: 10, total_proxy_nodes: 10, total_remote_network: 10,
+                    total_threats: 10}
                 Threat Count by Source per Tenant:
                   value:
-                  - {sub_tenant_id: <sub_tenant_id>, total_app_count: 10, total_app_mobile_users: 10,
-                    total_app_proxy_nodes: 10, total_app_remote_network: 10}
+                  - {sub_tenant_id: <sub_tenant_id>, total_mobile_users: 10, total_proxy_nodes: 10,
+                    total_remote_network: 10, total_threats: 10}
           description: Success
         '400': {description: Bad Request}
         '500': {description: Server Error}
@@ -1433,10 +1741,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.                              \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1451,7 +1756,9 @@ paths:
                     - operator: in
                       property: severity
                       values: [Critical, High, Medium]
-                    - {rule: blocked}
+                    - operator: last_n_days
+                      property: event_time
+                      values: [7]
                   properties:
                   - {property: total_threats}
                   - {property: blocked_count}
@@ -1527,7 +1834,9 @@ paths:
                     - operator: in
                       property: severity
                       values: [Critical, High, Medium]
-                    - {rule: unblocked}
+                    - operator: last_n_days
+                      property: event_time
+                      values: [7]
                   properties:
                   - {property: total_threats}
                   - {property: unblocked_count}
@@ -1576,10 +1885,7 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.   \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1591,46 +1897,36 @@ paths:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: url_high_risk}
-                    - {rule: blocked}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
                   properties:
-                  - alias: count
-                    function: sum
-                    property: uri_count
-                    sort: {order: desc}
+                  - {alias: count, property: blocked_uri_count}
               Blocked Risky URL Count By Tenant:
                 value:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: url_high_risk}
-                    - {rule: blocked}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
                   properties:
                   - {property: sub_tenant_id}
                   - alias: count
-                    function: sum
-                    property: uri_count
+                    property: blocked_uri_count
                     sort: {order: desc}
               Risky URL Count By Tenant:
                 value:
                   filter:
                     operator: AND
                     rules:
-                    - {rule: url_high_risk}
                     - operator: last_n_days
                       property: event_time
                       values: [7]
                   properties:
                   - {property: sub_tenant_id}
                   - alias: count
-                    function: sum
-                    property: uri_count
+                    property: total_uri
                     sort: {order: desc}
             schema: {$ref: '#/components/schemas/RequestBody_UrlSummary'}
       responses:
@@ -1655,20 +1951,13 @@ paths:
       tags: [DataResources]
   /mt/monitor/v1/agg/urlLogs:
     post:
-      description: "Retrieve top tenants with risky URLs.                  \n"
+      description: Get Top Tenants with Risky Urls
       operationId: post-mt-monitor-v1-agg-urllogs
       parameters:
-      - description: "Must be `tenant`. Using the query parameter returns all the\
-          \ aggregated responses for the current parent tenant and its child tenants.\
-          \ If not used, the results for just the current tenant are returned. \n"
-        in: query
+      - in: query
         name: agg_by
         schema: {type: string}
-      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
-          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
-          \ (CDL) region specified.                                              \
-          \         \n"
-        in: header
+      - in: header
         name: X-PANW-Region
         schema: {type: string}
       requestBody:
@@ -1759,7 +2048,7 @@ paths:
         '500': {description: Server Error}
       security:
       - Bearer: []
-      summary: List top tenants with risky URLs
+      summary: Get Top Tenants with Risky Urls
       tags: [DataResources]
 servers:
 - {url: 'https://api.sase.paloaltonetworks.com'}
