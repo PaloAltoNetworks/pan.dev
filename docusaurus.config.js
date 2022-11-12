@@ -335,6 +335,11 @@ const config = {
                       to: "access/docs/insights/getting_started-20",
                       icon: "doc",
                     },
+                    {
+                      label: "API FAQs",
+                      to: "access/docs/insights/pai-faqs",
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
