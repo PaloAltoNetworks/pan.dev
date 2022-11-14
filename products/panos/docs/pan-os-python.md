@@ -15,9 +15,10 @@ keywords:
 
 # pan-os-python (Python)
 
-The ```pan-os-python``` SDK framework helps interact with PAN-OS devices. It is object-oriented and mimics the traditional interaction with the device via the GUI, CLI or XML API. It is also part of the underpinnings of the [PAN-OS Ansible collection](../../ansible/panos/docs/).
+The `pan-os-python` SDK framework helps interact with PAN-OS devices. It is object-oriented and mimics the traditional interaction with the device via the GUI, CLI or XML API. It is also part of the underpinnings of the [PAN-OS Ansible collection](/ansible/docs/panos/).
 
 Documentation for this SDK can be found [here](https://pan-os-python.readthedocs.io), and includes:
+
 - A [getting started guide](https://pan-os-python.readthedocs.io/en/latest/getting-started.html)
 - Some [example scripts](https://pan-os-python.readthedocs.io/en/latest/examples.html) to show how the framework can be used
 - [How-to-guides](https://pan-os-python.readthedocs.io/en/latest/howto.html) for specific use cases
