@@ -137,3 +137,103 @@ When the field type requires a date or time, use one of the following supported 
    
    Record must match at least one rule.
 
+## State Filter Values
+
+### Tunnel State
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | Init |
+| 1 | Up |
+| 2 | Inactive |
+| 3 | Down |
+
+### Site State
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | Down |
+| 1 | Up |
+| 2 | Warning |
+
+### Location State 
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | Down |
+| 1 | Up | 
+| 2 | Warning |
+
+### Instance/Node State
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | Down |
+| 1 | Up | 
+| 2 | Inactive |
+
+### Node Types 
+
+| Node Type ID  | Node Type Name |
+| --------------|----------------|
+| 47 | Hub |
+| 48 | Firewall/remote network |
+| 49 | Mobile user gateway |
+| 50 | Mobile user portal |
+| 51 | Service connection |
+| 153 | Explicit proxy |
+
+### Firewall HA
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | None |
+| 1 | Passive |
+| 2 | Active |
+
+### Monitoring State 
+
+| State ID | State Name |
+| ---------|------------|
+| 0 | Down |
+| 1 | Up |
+| 2 | Not configured |
+
+### User Types
+
+| User Type ID | User Type Name |
+|--------------|----------------|
+| ep | Explicit Proxy |
+| gp | GlobalProtect |
+
+### Edge Location Display Name
+
+See [Prisma Access Locations](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-panorama-admin/prepare-the-prisma-access-infrastructure/list-of-prisma-access-locations).
+
+### Mobile User Connection State
+
+| Connection State | Mobile User State |
+|------------------|-------------------|
+| CONNECTED | Mobile user in connected state |
+| CONNECT_CONTINUE | |
+
+### Alert Severity
+
+| Severity ID | Severity ID Mapping Values |
+|-------------|----------------------------|
+| High  | 4 |
+| Medium  | 3 |
+| Low | 2 |
+| Informational | 1 |
+
+
+
+
+
+
+ 
+
+
+
+
+
