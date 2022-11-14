@@ -21,6 +21,25 @@ See also the [change log](/sase/docs/release-notes/changelog) for information on
 occurred in between API product releases.
 
 
+## Late August 2022
+
+Updates for the Aggregate Monitoring APIs:
+
+* New DataResources endpoints such as 
+[Get RN and SC site status count](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-serviceconnectivity/), 
+[Get CDL connectivity status](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-serviceconnectivity-cdlstatus/), 
+[Get mobile gateway connection status](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-serviceconnectivity-gatewaystatus/), 
+[Get total GP licenses allocated](/sase/api/mt-monitor/get-mt-monitor-v-1-agg-serviceconnectivity-licenseallocated/), 
+[Get top outliers](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-serviceconnectivity-topoutliers/), and 
+[List unique GP users](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-serviceconnectivity-uniqueusers/).
+* New query filters such as [CDLStatusRule](/sase/docs/filters/#cdlstatusrule) and [OutlierRule](/sase/docs/filters/#outlierrule).
+* New properties such as
+[CDLStatusProperty](/sase/docs/filters/#cdlstatusproperty), 
+[GatewayStatusProperty](/sase/docs/filters/#gatewaystatusproperty), 
+[OutliersProperty](/sase/docs/filters/#outliersproperty), and
+[UniqueUserProperty](/sase/docs/filters/#uniqueuserproperty).
+* New and revised request and response samples.
+
 ## August 2022
 
 * Update to the Aggregate Monitoring APIs, including:
