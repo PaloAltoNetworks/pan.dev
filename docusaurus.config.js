@@ -110,7 +110,7 @@ const config = {
                   logoClass: "panos",
                   docs: [
                     {
-                      label: "APIs and SDKs",
+                      label: "APIs, SDKs, & Tutorials",
                       to: "panos/docs",
                       icon: "doc",
                     },
