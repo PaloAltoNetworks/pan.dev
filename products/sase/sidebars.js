@@ -185,9 +185,10 @@ module.exports = {
                        "access/docs/insights/examples/tunnels-dashboard/tunnel-dashboard",
                        "access/docs/insights/examples/tunnels-dashboard/tunnel_list",
                    ]
-                 }
+                 },
             ]
         },
+        "access/docs/insights/pai-faqs"
       ],
     },
     {

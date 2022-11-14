@@ -1,7 +1,7 @@
 ---
 id: parameters
 title: Query Parameters
-description: Prisma SASE Multitenant Platform query parameters
+description: Prisma SASE Platform query parameters
 slug: /sase/docs/parameters
 hide_title: false
 hide_table_of_contents: false
