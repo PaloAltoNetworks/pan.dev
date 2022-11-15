@@ -498,7 +498,10 @@ const config = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  themes: ["docusaurus-theme-openapi-docs"],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["docusaurus-theme-openapi-docs", "@docusaurus/theme-mermaid"],
   presets: [
     [
       "@docusaurus/preset-classic",
