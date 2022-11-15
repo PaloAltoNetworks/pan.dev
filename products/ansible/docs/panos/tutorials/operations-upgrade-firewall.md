@@ -14,23 +14,24 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../\_assumptions.md'
+import LabGuidance from '../../../../\_lab-guidance.md'
 import ClosingNotes from '../closingnotes.md'
 
 # Operations Tasks
 
 With this playbook, you will perform operations on a PAN-OS next-generation firewall. These are common operational tasks that would otherwise need to be performed manually.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## The "upgrade firewall" playbook
 
 This playbook upgrades the software on a PAN-OS next-generation firewall. The playbook initiates a download of the new version of software, installs it, reboots the NGFW to make the new version live, and checks to ensure the reboot is complete and the firewall is ready again.
 
-1. Create a file called ```upgrade-firewall.yml``` and paste in the following content:
+1. Create a file called `upgrade-firewall.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Upgrade firewall
@@ -49,8 +50,8 @@ This playbook upgrades the software on a PAN-OS next-generation firewall. The pl
   tasks:
     - name: Install target PAN-OS version
       paloaltonetworks.panos.panos_software:
-        provider: '{{ device }}'
-        version: '{{ version }}'
+        provider: "{{ device }}"
+        version: "{{ version }}"
         download: true
         install: true
         restart: true
@@ -71,19 +72,22 @@ This playbook upgrades the software on a PAN-OS next-generation firewall. The pl
     - name: Display output
       debug:
         msg: "{{ result.msg }}"
-
 ```
-2. Decide on the target version of PAN-OS you are going to upgrade to. To keep this tutorial simple, we suggest you choose the next maintenance release above the currently operating version, by incrementing the final digit of the current version by one. For example, if you are running ```10.1.5```, choose ```10.1.6```; if you are running ```10.2.1```, choose ```10.2.2```. Ensure that the target version exists by checking the release notes for the major version you are currently running, for example check [here](https://docs.paloaltonetworks.com/pan-os/10-1/pan-os-release-notes) for 10.1 and check [here](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-release-notes) for 10.2.
+
+2. Decide on the target version of PAN-OS you are going to upgrade to. To keep this tutorial simple, we suggest you choose the next maintenance release above the currently operating version, by incrementing the final digit of the current version by one. For example, if you are running `10.1.5`, choose `10.1.6`; if you are running `10.2.1`, choose `10.2.2`. Ensure that the target version exists by checking the release notes for the major version you are currently running, for example check [here](https://docs.paloaltonetworks.com/pan-os/10-1/pan-os-release-notes) for 10.1 and check [here](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-release-notes) for 10.2.
 
 3. Execute the playbook with the following command, including the target version of PAN-OS:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass upgrade-firewall.yml -e "version=10.2.2"
 ```
-4. The playbook will upgrade the firewall. Note that the entire execution time for this playbook will be several minutes, and will vary depending upon the speed of Internet connection for the firewall to download the new version, and the speed at which the firewall installs the new version and reboots. You can observe the progress of the download and installation by logging in to the PAN-OS GUI using the ```Tasks``` button in the bottom right, it should look something like this:
+
+4. The playbook will upgrade the firewall. Note that the entire execution time for this playbook will be several minutes, and will vary depending upon the speed of Internet connection for the firewall to download the new version, and the speed at which the firewall installs the new version and reboots. You can observe the progress of the download and installation by logging in to the PAN-OS GUI using the `Tasks` button in the bottom right, it should look something like this:
 
 ![image of PAN-OS GUI showing download and installation progress](upgrade-progress.png)
 
 5. The playbook output should be something similar to this:
+
 ```
 PLAY [Upgrade firewall] *******************************************************************************************************************
 
@@ -114,7 +118,7 @@ ok: [firewall] => {
 }
 
 PLAY RECAP ********************************************************************************************************************************
-firewall                   : ok=5    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0  
+firewall                   : ok=5    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 6. Login to the PAN-OS GUI and confirm that the firewall is now running the target version of PAN-OS

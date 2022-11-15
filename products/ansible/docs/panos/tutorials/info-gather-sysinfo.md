@@ -14,27 +14,28 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../\_assumptions.md'
+import LabGuidance from '../../../../\_lab-guidance.md'
 import ClosingNotes from '../closingnotes.md'
 
 # Information Gathering Tasks
 
 With this playbook, you will gather information from a PAN-OS next-generation firewall. The tasks in this playbook are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## The "system info" playbook
 
 This playbook gathers a number of system information items from a PAN-OS next-generation firewall.
 
-1. Create a file called ```get-system-info.yml``` and paste in the following content:
+1. Create a file called `get-system-info.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Gather system info
-  hosts: 'firewall'
+  hosts: "firewall"
   connection: local
 
   vars:
@@ -65,11 +66,15 @@ This playbook gathers a number of system information items from a PAN-OS next-ge
           - "Multi-VSYS: {{ ansible_facts['net_multivsys'] }}"
           - "{{ ansible_facts['net_session_usage'] }} out of {{ ansible_facts['net_session_max'] }} sessions in use"
 ```
+
 2. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass get-system-info.yml
 ```
+
 3. The output should be something similar to this:
+
 ```
 PLAY [firewall] ********************************************************************************************
 
@@ -96,7 +101,7 @@ ok: [firewall] => {
 }
 
 PLAY RECAP *************************************************************************************************
-firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 <ClosingNotes components={props.components} />

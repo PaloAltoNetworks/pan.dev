@@ -14,27 +14,28 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../\_assumptions.md'
+import LabGuidance from '../../../../\_lab-guidance.md'
 import ClosingNotes from '../closingnotes.md'
 
 # Information Gathering Tasks
 
 With this playbook, you will gather information from a PAN-OS next-generation firewall. The tasks in this playbook are useful both on their own in order to gather data, but also to use the data to feed into other tasks or other playbooks.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## The "gather firewall rules" playbook
 
 This playbook gathers all the security (firewall) rules from a PAN-OS next-generation firewall.
 
-1. Create a file called ```get-security-rules.yml``` and paste in the following content:
+1. Create a file called `get-security-rules.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Gather security rules
-  hosts: 'firewall'
+  hosts: "firewall"
   connection: local
 
   vars:
@@ -49,20 +50,24 @@ This playbook gathers all the security (firewall) rules from a PAN-OS next-gener
   tasks:
     - name: Get all security rules
       paloaltonetworks.panos.panos_security_rule:
-        provider: '{{ device }}'
-        gathered_filter: '*'
+        provider: "{{ device }}"
+        gathered_filter: "*"
         state: gathered
       register: sec_rules
 
     - name: Output
       ansible.builtin.debug:
-        msg: '{{ sec_rules }}'
+        msg: "{{ sec_rules }}"
 ```
+
 2. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass get-security-rules.yml
 ```
+
 3. The output should be something similar to this:
+
 ```
 PLAY [Gather rules] ****************************************************************************************
 
@@ -213,7 +218,7 @@ ok: [firewall] => {
 }
 
 PLAY RECAP *************************************************************************************************
-firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall           : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 <ClosingNotes components={props.components} />

@@ -14,17 +14,17 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../\_assumptions.md'
+import LabGuidance from '../../../../\_lab-guidance.md'
 import ClosingNotes from '../closingnotes.md'
 
 # Configuration Tasks
 
 With this playbook, you will create items in a PAN-OS next-generation firewall, in order to perform configuration of PAN-OS "as-code". This is one of the most common use case for Ansible in relation to PAN-OS.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## Zones, interfaces and routes
 
@@ -32,11 +32,12 @@ In this tutorial, you will create a number of items related to networking. This 
 
 ## Create a virtual router and some security zones
 
-1. Create a file called ```create-vr-and-zones.yml``` and paste in the following content:
+1. Create a file called `create-vr-and-zones.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Create VR and Zones
-  hosts: 'firewall'
+  hosts: "firewall"
   connection: local
 
   vars:
@@ -51,35 +52,39 @@ In this tutorial, you will create a number of items related to networking. This 
   tasks:
     - name: Create new Virtual Router
       paloaltonetworks.panos.panos_virtual_router:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         name: "new-vrouter"
 
     - name: Create zone for Internet
       paloaltonetworks.panos.panos_zone:
-        provider: '{{ device }}'
-        zone: 'internet'
-        mode: 'layer3'
+        provider: "{{ device }}"
+        zone: "internet"
+        mode: "layer3"
         enable_userid: false
 
     - name: Create zone for DMZ
       paloaltonetworks.panos.panos_zone:
-        provider: '{{ device }}'
-        zone: 'dmz'
-        mode: 'layer3'
+        provider: "{{ device }}"
+        zone: "dmz"
+        mode: "layer3"
         enable_userid: false
 
     - name: Create zone for Users
       paloaltonetworks.panos.panos_zone:
-        provider: '{{ device }}'
-        zone: 'users'
-        mode: 'layer3'
+        provider: "{{ device }}"
+        zone: "users"
+        mode: "layer3"
         enable_userid: true
 ```
+
 2. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass create-vr-and-zones.yml
 ```
+
 3. The output should be something similar to this:
+
 ```
 PLAY [Create VR and Zones] *******************************************************************************************************************************
 
@@ -101,7 +106,8 @@ changed: [firewall]
 PLAY RECAP ***********************************************************************************************************************************************
 firewall                   : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
-4. Login to the PAN-OS GUI and confirm that the virtual router ```new-vrouter``` has been created, and the three new zones ```internet``` ```dmz``` and ```users``` have been created.
+
+4. Login to the PAN-OS GUI and confirm that the virtual router `new-vrouter` has been created, and the three new zones `internet` `dmz` and `users` have been created.
 
 ![image of PAN-OS GUI with virtual routers](vrouter01.png)
 
@@ -109,7 +115,8 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
 
 ## Configure networking interfaces and create static routes
 
-5. Create a file called ```create-interfaces-and-routes.yml``` and paste in the following content:
+5. Create a file called `create-interfaces-and-routes.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Configure networking
@@ -128,7 +135,7 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
   tasks:
     - name: Configure Internet-facing interface
       paloaltonetworks.panos.panos_interface:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         if_name: "ethernet1/1"
         vr_name: "new-vrouter"
         mode: "layer3"
@@ -138,7 +145,7 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
 
     - name: Configure DMZ-facing interface
       paloaltonetworks.panos.panos_interface:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         if_name: "ethernet1/2"
         vr_name: "new-vrouter"
         mode: "layer3"
@@ -148,7 +155,7 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
 
     - name: Configure user-facing interface
       paloaltonetworks.panos.panos_interface:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         if_name: "ethernet1/3"
         vr_name: "new-vrouter"
         mode: "layer3"
@@ -158,7 +165,7 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
 
     - name: Create default route
       paloaltonetworks.panos.panos_static_route:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         name: "Default route"
         virtual_router: "new-vrouter"
         destination: "0.0.0.0/0"
@@ -167,19 +174,22 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
 
     - name: Create route for internal subnet
       paloaltonetworks.panos.panos_static_route:
-        provider: '{{ device }}'
+        provider: "{{ device }}"
         name: "Intenal subnet"
         virtual_router: "new-vrouter"
         destination: "192.168.10.0/24"
         interface: "ethernet1/3"
         nexthop: "192.168.1.254"
-  
 ```
+
 6. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass create-interfaces-and-routes.yml
 ```
+
 7. The output should be something similar to this:
+
 ```
 PLAY [Configure interfaces and create static routes] *****************************************************************************************************
 
@@ -202,9 +212,10 @@ TASK [Create route for internal subnet] ****************************************
 changed: [firewall]
 
 PLAY RECAP ***********************************************************************************************************************************************
-firewall                   : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall                   : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
-8. Login to the PAN-OS GUI and confirm that ```new-vrouter``` now has three network interfaces, and that two static routes have been created.
+
+8. Login to the PAN-OS GUI and confirm that `new-vrouter` now has three network interfaces, and that two static routes have been created.
 
 ![image of PAN-OS GUI with virtual routers](vrouter02.png)
 
@@ -212,7 +223,8 @@ firewall                   : ok=6    changed=5    unreachable=0    failed=0    s
 
 ## Commit the configuration
 
-9. Create a file called ```commit-firewall.yml``` and paste in the following content:
+9. Create a file called `commit-firewall.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Commit firewall candidate configuration
@@ -235,13 +247,16 @@ firewall                   : ok=6    changed=5    unreachable=0    failed=0    s
       register: results
     - debug:
         msg: "Commit with Job ID: {{ results.jobid }} had output: {{ results.details }}"
-
 ```
+
 10. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass commit-firewall.yml
 ```
+
 11. The output should be something similar to this:
+
 ```
 PLAY [Commit firewall candidate configuration] *************************************************************************************************************************************
 
@@ -257,7 +272,7 @@ ok: [firewall] => {
 }
 
 PLAY RECAP *************************************************************************************************************************************************************************
-firewall                   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+firewall                   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 <ClosingNotes components={props.components} />
