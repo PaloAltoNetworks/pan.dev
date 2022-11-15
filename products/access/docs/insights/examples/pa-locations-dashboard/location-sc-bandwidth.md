@@ -43,35 +43,35 @@ The following request payload uses a filter for `last_n_hours`. The values for t
 
 
     {
-     "properties": [
-       {
-         "property": "edge_location_display_name",
-         "alias": "location_name",
-         "sort": {
-           "order": "asc",
-           "sequence": 2
-         }
-       },
-       {
-         "property": "total_consumption",
-         "sort": {
-           "order": "desc",
-           "sequence": 1
-         }
-       }
-     ],
-     "filter": {
-       "rules": [
-         {
-           "property": "event_time",
-           "operator": "last_n_hours",
-           "values": [
-             24
+         "properties": [
+           {
+             "property": "edge_location_display_name",
+             "alias": "location_name",
+             "sort": {
+               "order": "asc",
+               "sequence": 2
+             }
+           },
+           {
+             "property": "total_consumption",
+             "sort": {
+               "order": "desc",
+               "sequence": 1
+             }
+           }
+         ],
+         "filter": {
+           "rules": [
+             {
+               "property": "event_time",
+               "operator": "last_n_hours",
+               "values": [
+                 24
+               ]
+             }
            ]
-         }
-       ]
-     },
-     "count": 5
+         },
+         "count": 5
     }
 
 
