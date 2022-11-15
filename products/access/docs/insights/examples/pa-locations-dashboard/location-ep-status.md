@@ -25,7 +25,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 2.0 Call
 
-    POST /api/sase/v2.0/resource/tenant/query/edge_location_current_status
+    POST /api/sase/v2.0/resource/query/edge_location_current_status
 
     Prisma-Tenant:{{tenant_id}}
 
@@ -60,9 +60,8 @@ values for these filters are:
                    "values": [0,1,2]
                }
            ]
-       }
-    },
-    "count":100
+       },
+       "count":100
     }
 
 
