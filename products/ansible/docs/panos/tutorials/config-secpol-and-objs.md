@@ -92,7 +92,7 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
 5. Create a file called ```create-service-objects.yml``` and paste in the following content:
 ```yaml
 ---
-- name: Create address objects
+- name: Create service objects
   hosts: 'firewall'
   connection: local
 

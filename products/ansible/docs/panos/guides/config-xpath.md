@@ -31,7 +31,8 @@ Create a new Ansible yaml file named `configure-with-xpath.yml`, establish a var
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Configuration with Xpath
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:
@@ -111,7 +112,8 @@ Putting all the sections together, the playbook in entirety looks like this:
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Configuration with Xpath
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:

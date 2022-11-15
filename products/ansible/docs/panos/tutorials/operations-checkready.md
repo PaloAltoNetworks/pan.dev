@@ -33,7 +33,7 @@ This playbook checks if the PAN-OS next-generation firewall is ready. If the fir
 1. Create a file called ```check-ready.yml``` and paste in the following content:
 ```yaml
 ---
-- name: Gather system info
+- name: Check the firewall is ready
   hosts: 'firewall'
   connection: local
   gather_facts: false
