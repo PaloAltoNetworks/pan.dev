@@ -15,7 +15,7 @@ keywords:
 ---
 
 import Assumptions from '../\_assumptions.md'
-import LabGuidance from '../../../../\_lab-guidance.md'
+import LabGuidance from '/products/shared/\_lab-guidance.md'
 
 # Configuring Security Policy (Firewall) Rules and Objects
 
