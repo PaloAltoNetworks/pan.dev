@@ -1,8 +1,8 @@
 ---
 id: location-mu-status
-title: GlobalProtect Mobile User Status
-description: GlobalProtect Mobile User Status
-sidebar_label: GlobalProtect Mobile User Status
+title: GlobalProtect Mobile User Edge Location Status
+description: GlobalProtect Mobile Edge Location User Status
+sidebar_label: GlobalProtect Mobile User Edge Location Status
 ---
 
 You can view the status of the mobile users managed for a specific Prisma Access location using the `edge_location_current_status` resource.
@@ -24,7 +24,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 2.0 Call
 
-    POST /api/sase/v2.0/resource/tenant/query/edge_location_current_status
+    POST /api/sase/v2.0/resource/query/edge_location_current_status
 
     Prisma-Tenant:{{tenant_id}}
 
