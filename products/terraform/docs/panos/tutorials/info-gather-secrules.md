@@ -1,0 +1,313 @@
+---
+id: info-gather-secrules
+title: Gathering Security Policy Rule Information
+sidebar_label: Security Policy Rule Information
+hide_title: true
+description: Gathering Security Policy Rule Information
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - terraform
+---
+
+import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
+import ClosingNotes from '../closingnotes.md'
+import TutorialInit from './tutorial-init.md'
+
+# Information Gathering Tasks
+
+With this Terraform code, you will gather information from a PAN-OS next-generation firewall. This is useful on its own in order to gather data, but the gathered data can also be used to feed into other Terraform operations.
+
+<Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
+
+## Getting Terraform Ready
+
+This Terraform operation gathers a number of system information items from a PAN-OS next-generation firewall.
+
+1. Create a file called `get-security-policies.tf` and paste in the following content:
+
+<TutorialInit components={props.components} />
+
+## Gathering the rulebase information
+
+1. First you will gather information about the rulebase as a whole. When there are multiple rulebases in a Panorama-enabled architecture, this step is especially important. Add the following code to the bottom of the existing `get-security-policies.tf` file:
+
+```hcl
+data "panos_security_rules" "security_policy_rules" {}
+
+output "security_policy_rules" {
+  value = data.panos_security_rules.security_policy_rules
+}
+
+output "number_of_security_rules" {
+  value = data.panos_security_rules.security_policy_rules.total
+}
+
+output "security_policy_rulenames" {
+  value = data.panos_security_rules.security_policy_rules.listing
+}
+```
+
+2. Instruct Terraform to inspect the firewall and gather data by executing the following command:
+
+```
+terraform plan
+```
+
+3. The output should look something like this (the order may differ):
+
+```hcl
+Changes to Outputs:
+  + security_policy_rules     = {
+      + device_group = "shared"
+      + id           = "shared:pre-rulebase:vsys1"
+      + listing      = [
+          + "RULE1",
+          + "RULE2",
+          + "Test rule",
+          + "example rule 1",
+          + "example rule 2",
+        ]
+      + rulebase     = "pre-rulebase"
+      + total        = 5
+      + vsys         = "vsys1"
+    }
+  + number_of_security_rules  = 5
+  + security_policy_rulenames = [
+      + "RULE1",
+      + "RULE2",
+      + "Test rule",
+      + "example rule 1",
+      + "example rule 2",
+    ]
+
+You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
+```
+
+## Gathering the rule details
+
+1. Next you will get the details of the rules themselves; for each rule, you will get the source, the destination, the action, etc. You will use the data gathered in the first step (`data.panos_security_rules.security_policy_rules.listing`) as an input to this step. Using that information, the list of rulenames, with the `for_each` function, you will be able to gather the detailed information about each rule in the rulebase. Add the following code to the bottom of the existing `get-security-policies.tf` file:
+
+```hcl
+data "panos_security_rule" "example" {
+  for_each = toset(data.panos_security_rules.security_policy_rules.listing)
+  name     = each.key
+}
+
+output "rule_output" {
+  value = data.panos_security_rule.example
+}
+```
+
+2. Instruct Terraform to inspect the firewall and gather data by executing the following command:
+
+```
+terraform plan
+```
+
+3. The output should look something like this (truncated for brevity):
+
+```hcl
+Changes to Outputs:
+  + security_policy_rules     = {
+      + device_group = "shared"
+      + id           = "shared:pre-rulebase:vsys1"
+      + listing      = [
+          + "RULE1",
+          + "RULE2",
+          + "Test rule",
+          + "example rule 1",
+          + "example rule 2",
+        ]
+      + rulebase     = "pre-rulebase"
+      + total        = 5
+      + vsys         = "vsys1"
+    }
+  + number_of_security_rules  = 5
+  + security_policy_rulenames = [
+      + "RULE1",
+      + "RULE2",
+      + "Test rule",
+      + "example rule 1",
+      + "example rule 2",
+    ]
+ + rule_output               = {
+      + RULE1            = {
+          + device_group = "shared"
+          + id           = "shared:pre-rulebase:vsys1:RULE1"
+          + name         = "RULE1"
+          + rule         = [
+              + {
+                  + action                             = "allow"
+                  + applications                       = [
+                      + "any",
+                    ]
+                  + audit_comment                      = ""
+                  + categories                         = [
+                      + "any",
+                    ]
+                  + data_filtering                     = ""
+                  + description                        = ""
+                  + destination_addresses              = [
+                      + "any",
+                    ]
+                  + destination_devices                = [
+                      + "any",
+                    ]
+                  + destination_zones                  = [
+                      + "any",
+                    ]
+                  + disable_server_response_inspection = false
+                  + disabled                           = false
+                  + file_blocking                      = ""
+                  + group                              = ""
+                  + group_tag                          = ""
+                  + hip_profiles                       = []
+                  + icmp_unreachable                   = false
+                  + log_end                            = true
+                  + log_setting                        = ""
+                  + log_start                          = false
+                  + name                               = "RULE1"
+                  + negate_destination                 = false
+                  + negate_source                      = false
+                  + negate_target                      = false
+                  + schedule                           = ""
+                  + services                           = [
+                      + "application-default",
+                    ]
+                  + source_addresses                   = [
+                      + "any",
+                    ]
+                  + source_devices                     = [
+                      + "any",
+                    ]
+                  + source_users                       = [
+                      + "any",
+                    ]
+                  + source_zones                       = [
+                      + "any",
+                    ]
+                  + spyware                            = ""
+                  + tags                               = []
+                  + target                             = []
+                  + type                               = ""
+                  + url_filtering                      = ""
+                  + uuid                               = "11df5a2a-1d93-48f7-8d7e-50aab84ee0e4"
+                  + virus                              = ""
+                  + vulnerability                      = ""
+                  + wildfire_analysis                  = ""
+                },
+            ]
+          + rulebase     = "pre-rulebase"
+          + vsys         = "vsys1"
+        }
+      + RULE2            = {
+          + device_group = "shared"
+          + id           = "shared:pre-rulebase:vsys1:RULE2"
+          + name         = "RULE2"
+          + rule         = [
+              + {
+                  + action                             = "allow"
+                  + applications                       = [
+                      + "any",
+                    ]
+                  + audit_comment                      = ""
+                  // highlight-start
+                  .
+                  .
+                  .
+                  .
+                  // highlight-end
+                  // highlight-next-line
+                  .
+                  + uuid                               = "f5140c7c-b28a-4786-bdf9-e02eb54084c9"
+                  + virus                              = ""
+                  + vulnerability                      = ""
+                  + wildfire_analysis                  = ""
+                },
+            ]
+          + rulebase     = "pre-rulebase"
+          + vsys         = "vsys1"
+        }
+    }
+
+You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
+```
+
+## Final code
+
+Putting all the sections together, the code in entirety looks like this:
+
+```hcl
+# Define required Terraform providers
+terraform {
+  required_providers {
+    panos = {
+      source  = "paloaltonetworks/panos"
+      version = "~> 1.11.0"
+    }
+  }
+}
+
+# Configure the PAN-OS provider for Terraform
+provider "panos" {
+  hostname = var.panos_hostname
+  username = var.panos_username
+  password = var.panos_password
+}
+
+variable "panos_hostname" {
+  type    = string
+  default = "vm-series-test.jamoi.xyz"
+}
+
+variable "panos_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "panos_password" {
+  type    = string
+  default = "Commit123!"
+}
+
+
+# Define the data we want to gather, the rules in the security policy
+data "panos_security_rules" "security_policy_rules" {}
+
+# Output data for the rulebase in its entirety
+output "security_policy_rules" {
+  value = data.panos_security_rules.security_policy_rules
+}
+
+# Output the number of rules in the rulebase
+output "number_of_security_rules" {
+  value = data.panos_security_rules.security_policy_rules.total
+}
+
+# Output just the names of the rules 
+output "security_policy_rulenames" {
+  value = data.panos_security_rules.security_policy_rules.listing
+}
+
+
+# Use the names of the rules from the previous data gathering, and gather the detailed information for each rule
+data "panos_security_rule" "example" {
+  for_each = toset(data.panos_security_rules.security_policy_rules.listing)
+  name     = each.key
+}
+
+# Out the detailed information of each rule in the rulebase
+output "rule_output" {
+  value = data.panos_security_rule.example
+}
+```
+
+<ClosingNotes components={props.components} />

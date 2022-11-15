@@ -16,6 +16,8 @@ keywords:
 
 import Assumptions from '../assumptions.md'
 import LabGuidance from '../../../../lab-guidance.md'
+import ClosingNotes from '../closingnotes.md'
+import TutorialInit from './tutorial-init.md'
 
 # Configuring Security Policy (Firewall) Rules and Objects
 
@@ -29,119 +31,35 @@ With this Terraform code, you will configure a number of items on a PAN-OS next-
 
 In the first section, you will create a Terraform file, and initialize Terraform so it is ready to perform configuration operations.
 
-1. Create a file called ```security-policies.tf``` and paste in the following content:
-```hcl
-terraform {
-    required_providers {
-        panos = {
-            source  = "paloaltonetworks/panos"
-            version = "~> 1.11.0"
-        }
-    }
-}
+1. Create a file called `security-policies.tf` and paste in the following content:
 
-provider "panos" {
-    hostname = var.panos_hostname
-    username = var.panos_username
-    password = var.panos_password
-}
-
-variable "panos_hostname" {
-  type = string
-  default = "192.168.1.1"
-}
-
-variable "panos_username" {
-  type = string
-  default = "admin"
-}
-
-variable "panos_password" {
-  type = string
-  default = "admin"
-}
-```
-
-2. Edit the ```variable``` sections of the file, replacing the values for ```panos_hostname```, ```panos_username``` and ```panos_password``` with relevant values for your environment. For example:
-
-```hcl
-.
-.
-
-variable "panos_hostname" {
-  type = string
-  // highlight-next-line
-  default = "172.16.14.5"
-}
-
-variable "panos_username" {
-  type = string
-  // highlight-next-line
-  default = "firewall_admin"
-}
-
-variable "panos_password" {
-  type = string
-  // highlight-next-line
-  default = "a_pa55word_l1ke_th1s"
-}
-.
-.
-```
-
-3. Initialize Terraform with the following command, which will download the PAN-OS provider:
-
-```
-terraform init
-```
-
-4. The output should look something like this:
-
-```
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding paloaltonetworks/panos versions matching "~> 1.11.0"...
-- Installing paloaltonetworks/panos v1.11.0...
-- Installed paloaltonetworks/panos v1.11.0 (signed by a HashiCorp partner, key ID D5D93F98EFA33E83)
-
-Partner and community providers are signed by their developers.
-If you'd like to know more about provider signing, you can read about it here:
-https://www.terraform.io/docs/plugins/signing.html
-
-Terraform has created a lock file .terraform.lock.hcl to record the provider
-selections it made above. Include this file in your version control repository
-so that Terraform can guarantee to make the same selections by default when
-you run "terraform init" in the future.
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-```
+<TutorialInit components={props.components} />
 
 ## Address Objects
 
 This Terraform code will configure address objects items to be used later in the security policies.
 
-1. Add the following code to the bottom of the existing ```security-policies.tf``` file:
+1. Add the following code to the bottom of the existing `security-policies.tf` file:
 
 ```hcl
 resource "panos_address_object" "destination-server" {
-        name = "destination-server"
-        value = "192.168.80.5/32"
-        description = "Address object 1 from Terraform"
+  name        = "destination-server"
+  value       = "192.168.80.5/32"
+  description = "Address object 1 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "panos_address_object" "source-server" {
-        name = "source-server"
-        value = "192.168.120.8/32"
-        description = "Address object 2 from Terraform"
+  name        = "source-server"
+  value       = "192.168.120.8/32"
+  description = "Address object 2 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 ```
 
@@ -153,7 +71,7 @@ terraform plan
 
 3. Assuming you did not already have address objects with the same names as those in the Terraform code, the output should look something like this:
 
-```
+```hcl
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
 
@@ -190,7 +108,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 terraform apply
 ```
 
-5. When prompted, say ```yes``` to confirm you are happy to make these changes
+5. When prompted, say `yes` to confirm you are happy to make these changes
 
 ```
 Do you want to perform these actions?
@@ -201,7 +119,7 @@ Do you want to perform these actions?
 ```
 
 6. The output should look something like this:
-```
+```hcl
 panos_address_object.source-server: Creating...
 panos_address_object.destination-server: Creating...
 panos_address_object.source-server: Creation complete after 1s [id=vsys1:source-server]
@@ -210,7 +128,7 @@ panos_address_object.destination-server: Creation complete after 1s [id=vsys1:de
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-7. Login to the PAN-OS GUI and confirm that the two new address objects ```source-server``` and ```destination-server``` have been created.
+7. Login to the PAN-OS GUI and confirm that the two new address objects `source-server` and `destination-server` have been created.
 
 ![image of PAN-OS GUI with address objects](address-objects.png)
 
@@ -218,21 +136,29 @@ Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
 This Terraform code will configure service objects items to be used later in the security policies.
 
-1. Add the following code to the bottom of the existing ```security-policies.tf``` file:
+1. Add the following code to the bottom of the existing `security-policies.tf` file:
 
 ```hcl
 resource "panos_service_object" "tcp-12345" {
-    name = "12345-tcp"
-    protocol = "tcp"
-    description = "Service object 1 from Terraform"
-    destination_port = "12345"
+  name             = "12345-tcp"
+  protocol         = "tcp"
+  description      = "Service object 1 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  destination_port = "12345"
 }
 
 resource "panos_service_object" "tcp-9876" {
-    name = "9876-tcp"
-    protocol = "tcp"
-    description = "Service object 2 from Terraform"
-    destination_port = "9876"
+  name             = "9876-tcp"
+  protocol         = "tcp"
+  description      = "Service object 2 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  destination_port = "9876"
 }
 ```
 
@@ -244,7 +170,7 @@ terraform plan
 
 3. Assuming you did not already have address objects with the same names as those in the Terraform code, the output should look something like this:
 
-```
+```hcl
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
 
@@ -279,7 +205,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 terraform apply
 ```
 
-5. When prompted, say ```yes``` to confirm you are happy to make these changes
+5. When prompted, say `yes` to confirm you are happy to make these changes
 
 ```
 Do you want to perform these actions?
@@ -290,7 +216,7 @@ Do you want to perform these actions?
 ```
 
 6. The output should look something like this:
-```
+```hcl
 panos_service_object.tcp-9876: Creating...
 panos_service_object.tcp-12345: Creating...
 panos_service_object.tcp-9876: Creation complete after 0s [id=vsys1:tcp-9876]
@@ -299,7 +225,7 @@ panos_service_object.tcp-12345: Creation complete after 0s [id=vsys1:tcp-12345]
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-7. Login to the PAN-OS GUI and confirm that the two new address objects ```tcp-12345``` and ```tcp-9876``` have been created.
+7. Login to the PAN-OS GUI and confirm that the two new address objects `tcp-12345` and `tcp-9876` have been created.
 
 ![image of PAN-OS GUI with service objects](service-objects.png)
 
@@ -307,35 +233,39 @@ Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
 This Terraform code will configure security policies, referencing the address and service objects previously created.
 
-1. Add the following code to the bottom of the existing ```security-policies.tf``` file:
+1. Add the following code to the bottom of the existing `security-policies.tf` file:
 
 ```hcl
 resource "panos_security_rule_group" "example_ruleset" {
-    position_keyword = "bottom"
-    rule {
-        name = "example rule 1"
-        source_zones = ["any"]
-        source_addresses = [panos_address_object.source-server.name]
-        source_users = ["any"]
-        destination_zones = ["any"]
-        destination_addresses = [panos_address_object.destination-server.name]
-        applications = ["ssh"]
-        services = [panos_service_object.tcp-12345.name]
-        categories = ["any"]
-        action = "allow"
-    }
-    rule {
-        name = "example rule 2"
-        source_zones = ["any"]
-        source_addresses = [panos_address_object.source-server.name]
-        source_users = ["any"]
-        destination_zones = ["any"]
-        destination_addresses = [panos_address_object.destination-server.name]
-        applications = ["any"]
-        services = [panos_service_object.tcp-9876.name]
-        categories = ["any"]
-        action = "deny"
-    }
+  position_keyword = "bottom"
+  rule {
+    name                  = "example rule 1"
+    source_zones          = ["any"]
+    source_addresses      = [panos_address_object.source-server.name]
+    source_users          = ["any"]
+    destination_zones     = ["any"]
+    destination_addresses = [panos_address_object.destination-server.name]
+    applications          = ["ssh"]
+    services              = [panos_service_object.tcp-12345.name]
+    categories            = ["any"]
+    action                = "allow"
+  }
+  rule {
+    name                  = "example rule 2"
+    source_zones          = ["any"]
+    source_addresses      = [panos_address_object.source-server.name]
+    source_users          = ["any"]
+    destination_zones     = ["any"]
+    destination_addresses = [panos_address_object.destination-server.name]
+    applications          = ["any"]
+    services              = [panos_service_object.tcp-9876.name]
+    categories            = ["any"]
+    action                = "deny"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 ```
 
@@ -347,7 +277,7 @@ terraform plan
 
 3. The output should look something like this:
 
-```
+```hcl
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
 
@@ -434,7 +364,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 terraform apply
 ```
 
-5. When prompted, say ```yes``` to confirm you are happy to make these changes
+5. When prompted, say `yes` to confirm you are happy to make these changes
 
 ```
 Do you want to perform these actions?
@@ -445,15 +375,134 @@ Do you want to perform these actions?
 ```
 
 6. The output should look something like this:
-```
+```hcl
 panos_security_rule_group.example_ruleset: Creating...
 panos_security_rule_group.example_ruleset: Creation complete after 1s [id=shared:pre-rulebase:vsys1:6::ZXhhbXBsZSBydWxlIDEKZXhhbXBsZSBydWxlIDI=]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
-7. Login to the PAN-OS GUI or confirm that the two new address objects ```example rule 1``` and ```example rule 2``` have been created.
+7. Login to the PAN-OS GUI and confirm that the two new address objects `example rule 1` and `example rule 2` have been created.
 
 ![image of PAN-OS GUI with security policy rules](security-policy-rules.png)
 
 ## Committing Configuration Changes
 
 Please note that, due to how Terraform operates, in-band commits for PAN-OS are currently not possible. Therefore the changes you made with the steps above will be present only in the candidate configuration. A commit can performed out of band, either manually or through the approach discussed [here](/terraform/docs/panos/guides/commits).
+
+## Final code
+
+Putting all the sections together, the code in entirety looks like this:
+
+```hcl
+# Define required Terraform providers
+terraform {
+  required_providers {
+    panos = {
+      source  = "paloaltonetworks/panos"
+      version = "~> 1.11.0"
+    }
+  }
+}
+
+# Configure the PAN-OS provider for Terraform
+provider "panos" {
+  hostname = var.panos_hostname
+  username = var.panos_username
+  password = var.panos_password
+}
+
+variable "panos_hostname" {
+  type    = string
+  default = "192.168.1.1"
+}
+
+variable "panos_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "panos_password" {
+  type    = string
+  default = "admin"
+}
+
+# Create address objects
+resource "panos_address_object" "destination-server" {
+  name        = "destination-server"
+  value       = "192.168.80.5/32"
+  description = "Address object 1 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_address_object" "source-server" {
+  name        = "source-server"
+  value       = "192.168.120.8/32"
+  description = "Address object 2 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create service objects
+resource "panos_service_object" "tcp-12345" {
+  name        = "12345-tcp"
+  protocol    = "tcp"
+  description = "Service object 1 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  destination_port = "12345"
+}
+
+resource "panos_service_object" "tcp-9876" {
+  name        = "9876-tcp"
+  protocol    = "tcp"
+  description = "Service object 2 from Terraform"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  destination_port = "9876"
+}
+
+# Create security rules
+resource "panos_security_rule_group" "example_ruleset" {
+  position_keyword = "bottom"
+  rule {
+    name                  = "example rule 1"
+    source_zones          = ["any"]
+    source_addresses      = [panos_address_object.source-server.name]
+    source_users          = ["any"]
+    destination_zones     = ["any"]
+    destination_addresses = [panos_address_object.destination-server.name]
+    applications          = ["ssh"]
+    services              = [panos_service_object.tcp-12345.name]
+    categories            = ["any"]
+    action                = "allow"
+  }
+  rule {
+    name                  = "example rule 2"
+    source_zones          = ["any"]
+    source_addresses      = [panos_address_object.source-server.name]
+    source_users          = ["any"]
+    destination_zones     = ["any"]
+    destination_addresses = [panos_address_object.destination-server.name]
+    applications          = ["any"]
+    services              = [panos_service_object.tcp-9876.name]
+    categories            = ["any"]
+    action                = "deny"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+<ClosingNotes components={props.components} />

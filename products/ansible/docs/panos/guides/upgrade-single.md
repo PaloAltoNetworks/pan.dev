@@ -31,7 +31,8 @@ Create a new Ansible yaml file named `upgrade-single-firewall.yml`, establish a 
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Upgrade firewall
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:
@@ -99,7 +100,8 @@ Putting all the sections together, the playbook in entirety looks like this:
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Upgrade firewall
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:

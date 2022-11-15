@@ -1,0 +1,201 @@
+---
+id: csv-address-objects
+title: Ansible for PAN-OS
+sidebar_label: Address Objects from CSV
+hide_title: true
+description: Creating Address Objects from a CSV File
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from '../assumptions.md'
+import LabGuidance from '../../../../lab-guidance.md'
+
+# Creating Address Objects from a CSV File
+
+In this guide, you will create a number of address objects using a CSV file as the source configuration data. This is a common task when data is provided to you in a generic format like [CSV](https://en.wikipedia.org/wiki/Comma-separated_values). 
+
+The playbook created in this guide can be modified for data in CSV in many formats. For this example, we will use a format like this which includes a header row:
+```csv
+hostname,ip
+test1,1.1.1.1
+test2,2.2.2.2
+test3,3.3.3.3
+test4,4.4.4.4
+```
+
+<Assumptions components={props.components} />
+
+<LabGuidance components={props.components} />
+
+## Create playbook files and define connectivity to the firewall
+
+Create a new Ansible yaml file named `csv-address-objects.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection:
+
+```yaml
+---
+- name: Create Address Object from a CSV Source File
+  hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+  collections:
+    - paloaltonetworks.panos
+```
+
+## Read the CSV file
+
+You will first read in the CSV and `register` the data to a variable. The file should be stored in a location accessible to the host executing Ansible, and could be passed as an extra runtime variable. For one-off operations, the variable could be defined in the playbook itself
+
+```yaml
+    csv_filename: "../test.csv"
+```
+
+The first task in the playbook by uses ```read_csv``` to load the CSV file and store (`register`) the data in a variable called `csv_data`:
+
+```yaml
+  tasks:
+    - name: Read CSV file
+      ansible.builtin.read_csv:
+        path: "{{ csv_filename }}"
+        key: hostname
+      register: csv_data
+```
+
+## Create address objects with a loop
+
+You will now use the `panos_address_object` module, with an extra statement `with_items` at the end. This is one looping mechanism available in Ansible (more details [here](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html)). The `with_items` statement asks the module to loop over the data passed in, which in your case is the `csv_data` from the first task (passed in `dict` format and looped over with `dict2items`):
+
+```yaml
+    - name: Create address objects
+      paloaltonetworks.panos.panos_address_object:
+        provider: "{{ device }}"
+        name: "{{ item.value.hostname }}"
+        value: "{{ item.value.ip }}"
+      // highlight-next-line
+      with_items: "{{ csv_data.dict | dict2items }}"
+```
+
+## Add the new address objects to a group
+
+The playbook could end there if your only objective is to create address objects based on the CSV source file. A follow-on task adds the newly created address objects to an address group. First, you will use `set_fact` to create a list of the address object names, based on the `csv_data` data from the CSV file, and store the list in a variable called `address_objects_list`:
+
+```yaml
+    - name: Create a list of the address objects
+      ansible.builtin.set_fact:
+        address_objects_list: "{{ csv_data.dict | dict2items | map(attribute='key') | list }}"
+```
+
+The list of address object names can now be added to an address group:
+
+```yaml
+    - name: Add address objects to address group
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        name: test_group
+        // highlight-next-line
+        static_value: "{{ address_objects_list }}"
+```
+
+Note that if the address group defined in the above task already exists, Ansible will overwrite the list of address objects in the group. If your goal is to add the new address objects to the existing group (not overwrite the existing list of address objects), use `state: merged` per the example below:
+
+```yaml
+    - name: Add address objects to address group
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        name: test_group
+        static_value: "{{ address_objects_list }}"
+        // highlight-next-line
+        state: merged
+```
+
+## Create a security rule
+
+Finally for this playbook, you will create a security rule which uses the address group created in the previous task:
+
+```yaml
+    - name: Create a security rule
+      paloaltonetworks.panos.panos_security_rule:
+        provider: "{{ device }}"
+        state: "present"
+        rule_name: "Test rule"
+        source_zone: ["any"]
+        destination_zone: ["any"]
+        // highlight-next-line
+        source_ip: ["test_group"]
+        source_user: ["any"]
+        destination_ip: ["any"]
+        application: ["ssh"]
+        action: "allow"
+```
+
+## Final playbook
+
+Putting all the sections together, the playbook in entirety looks like this:
+
+```yaml
+---
+- name: Create Address Object from a CSV Source File
+  hosts: "firewall"
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+    csv_filename: "../test.csv"
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Read CSV file
+      ansible.builtin.read_csv:
+        path: "{{ csv_filename }}"
+        key: hostname
+      register: csv_data
+
+    - name: Create address objects
+      paloaltonetworks.panos.panos_address_object:
+        provider: "{{ device }}"
+        name: "{{ item.value.hostname }}"
+        value: "{{ item.value.ip }}"
+      with_items: "{{ csv_data.dict | dict2items }}"
+
+    - name: Create a list of the address objects
+      ansible.builtin.set_fact:
+        address_objects_list: "{{ csv_data.dict | dict2items | map(attribute='key') | list }}"
+
+    - name: Add address objects to address group
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        name: test_group
+        static_value: "{{ address_objects_list }}"
+
+    - name: Create a security rule
+      paloaltonetworks.panos.panos_security_rule:
+        provider: "{{ device }}"
+        state: "present"
+        rule_name: "Test rule"
+        source_zone: ["any"]
+        destination_zone: ["any"]
+        source_ip: ["test_group"]
+        source_user: ["any"]
+        destination_ip: ["any"]
+        application: ["ssh"]
+        action: "allow"
+```

@@ -46,3 +46,56 @@ is 1.3.3. You can update by downloading from https://www.terraform.io/downloads.
 ```
 
 <ConnCheck components={props.components} />
+
+## PAN-OS Provider declaration and configuration
+
+Within the Terraform code in your working directory, you should declare:
+- the PAN-OS provider, with version constraints
+- the hostname/IP address of the PAN-OS device you are going to be using
+- the administrative credentials for the PAN-OS device you are going to be using
+
+The tutorials in this section all include code to cover these requirements within their step-by-step instructions, so you can move onto one of the tutorials now.
+
+For informational purposes, example declarations will be shown below. First is the provider declaration, which would typically live in a `providers.tf` file:
+
+```hcl
+# Declare PAN-OS Terraform provider, with a version constraint
+
+terraform {
+  required_providers {
+    panos = {
+      source  = "paloaltonetworks/panos"
+      version = "~> 1.11.0"
+    }
+  }
+}
+
+# Configure the PAN-OS Terraform provider with hostname and administrative credential variables
+
+provider "panos" {
+  hostname = var.panos_hostname
+  username = var.panos_username
+  password = var.panos_password
+}
+```
+
+Second is the declaration of the variables used to configure the provider, which would typically live in a `variables.tf` file, and would *not* normally include hard-coded vales:
+
+```hcl
+# Define the values for the variables
+
+variable "panos_hostname" {
+  type    = string
+  default = "192.168.1.1"
+}
+
+variable "panos_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "panos_password" {
+  type    = string
+  default = "admin"
+}
+```

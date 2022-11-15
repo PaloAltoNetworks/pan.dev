@@ -168,7 +168,7 @@ firewall                   : ok=5    changed=4    unreachable=0    failed=0    s
     - name: Create route for internal subnet
       paloaltonetworks.panos.panos_static_route:
         provider: '{{ device }}'
-        name: "Intenal subnet"
+        name: "Internal subnet"
         virtual_router: "new-vrouter"
         destination: "192.168.10.0/24"
         interface: "ethernet1/3"
@@ -205,6 +205,8 @@ PLAY RECAP *********************************************************************
 firewall                   : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
 8. Login to the PAN-OS GUI and confirm that ```new-vrouter``` now has three network interfaces, and that two static routes have been created.
+
+![image of PAN-OS GUI with network interfaces](network-interfaces.png)
 
 ![image of PAN-OS GUI with virtual routers](vrouter02.png)
 
