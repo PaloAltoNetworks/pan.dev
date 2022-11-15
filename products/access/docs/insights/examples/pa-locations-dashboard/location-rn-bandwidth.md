@@ -23,7 +23,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 2.0 Call
 
-    POST /api/sase/v2.0/resource/tenant/custom/query/locations/location_rn_bandwidth
+    POST /api/sase/v2.0/resource/custom/query/locations/location_rn_bandwidth
 
     Prisma-Tenant:{{super_tenant_id}}
 
@@ -45,32 +45,32 @@ The following request payload uses the `last_n_days` and `edge_location_display_
 
 
     {
-    "properties": [
-      {
-        "property": "edge_location_display_name",
-        "alias": "location_name"
-       },
-      {
-        "property": "total_consumption"
-       }
-    ],
-    "filter": {
-      "rules": [
-        {
-          "property": "event_time",
-          "operator": "last_n_days",
-          "values": [
-            30
+        "properties": [
+          {
+            "property": "edge_location_display_name",
+            "alias": "location_name"
+           },
+          {
+            "property": "total_consumption"
+           }
+        ],
+        "filter": {
+          "rules": [
+            {
+              "property": "event_time",
+              "operator": "last_n_days",
+              "values": [
+                30
+              ]
+            },
+            {
+                "property": "edge_location_display_name",
+                "operator": "equals",
+                "values": ["US East"]
+            }
           ]
         },
-        {
-            "property": "edge_location_display_name",
-            "operator": "equals",
-            "values": ["US East"]
-        }
-      ]
-    },
-    "count": 5
+        "count": 5
     }
 
 

@@ -5,8 +5,7 @@ description: Service Connection Status
 sidebar_label: Service Connection Status
 ---
 
-You can view the status of the service connections managed by a specific Prisma Access location
-using the `edge_location_current_status` resource.
+You can view the number of users connected in real time to Prisma Access using the `edge_location_current_status` resource.
 
 The information returned by this query can also be viewed in the UI, here:
 
@@ -24,7 +23,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 2.0 Call
 
-    POST /api/sase/v2.0/resource/tenant/query/edge_location_current_status
+    POST /api/sase/v2.0/resource/query/edge_location_current_status
 
     Prisma-Tenant:{{tenant_id}}
 
@@ -41,26 +40,27 @@ The following request payload uses filters for `sc_state_instance`. The values f
 * `2` : Instance is in a warning state.
 
 
-    {
-       "properties": [
-           {
-               "property": "sc_state_instance"
-           },
-           {
-               "property": "edge_location_display_name"
-           }
-       ],
-       "filter": {
-           "rules": [
-               {
-                   "property": "sc_state_instance",
-                   "operator": "in",
-                   "values": [0,1,2]
-               }
-           ]
-       }
-    },
-    "count":100
+     {
+        "properties": [
+            {
+                "property": "sc_state_instance"
+            },
+            {
+                "property": "edge_location_display_name"
+            }
+        ],
+        "filter": {
+            "rules": [
+                {
+                    "property": "sc_state_instance",
+                    "operator": "in",
+                    "values": [0,1,2]
+                }
+            ]
+        },
+        "count":100
+    }
+
 
 
 ## Request Response
