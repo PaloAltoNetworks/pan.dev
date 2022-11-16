@@ -13,7 +13,7 @@ keywords:
   - configuration
 ---
 
-# PAN-OS REST API
+# PAN-OS REST API!
 
 Documentation for the REST API can be found [here](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-panorama-api), within the official technical documentation for PAN-OS.
 
