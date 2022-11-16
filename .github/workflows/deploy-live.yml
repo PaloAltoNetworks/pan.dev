@@ -9,7 +9,7 @@ jobs:
    build:
       if: github.repository_owner == 'PaloAltoNetworks'
       name: Build
-      runs-on: ubuntu-latest
+      runs-on: pan-dev-runner
 
       steps:
         - name: Checkout repository
@@ -19,7 +19,7 @@ jobs:
           id: yarn-cache-dir-path
           run: echo "::set-output name=dir::$(yarn cache dir)"
 
-        - uses: actions/cache@v2
+        - uses: actions/cache@v3
           id: yarn-cache
           with:
             path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -31,9 +31,9 @@ jobs:
           run: yarn --prefer-offline
 
         - name: Build site
-          run: yarn build
+          run: yarn build-github
 
-        - uses: actions/upload-artifact@v2
+        - uses: actions/upload-artifact@v3
           with:
             name: build-dir
             path: build/
@@ -41,13 +41,13 @@ jobs:
    deploy:
       name: Deploy
       needs: build
-      runs-on: ubuntu-latest
+      runs-on: pan-dev-runner
 
       steps:
         - name: Checkout repository
           uses: actions/checkout@v2
 
-        - uses: actions/download-artifact@v2
+        - uses: actions/download-artifact@v3
           with:
             name: build-dir
             path: build/
