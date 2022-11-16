@@ -14,16 +14,16 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../_assumptions.md'
+import LabGuidance from '/products/shared/_lab-guidance.md'
 
 # Use a Configuration Lock
 
 In this guide, you will use a configuration lock, whilst you make changes. This ensures the integrity of the configuration changes by not allowing any other administrators or to make changes during the time the lock is active.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## Create playbook files and define connectivity to the firewall
 
@@ -47,19 +47,19 @@ Create a new Ansible yaml file named `changes-with-config-lock.yml`, establish a
 
 ## Check if there is a lock in place
 
-Start the playbook by using ```panos_op``` to check if there is already a configuration lock. If there is a lock in place, you retry the task until the lock is released:
+Start the playbook by using `panos_op` to check if there is already a configuration lock. If there is a lock in place, you retry the task until the lock is released:
 
 ```yaml
-  tasks:
-    - name: Wait for config lock
-      paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<show><config-locks><vsys>{{ vsys }}</vsys></config-locks></show>'
-        cmd_is_xml: true
-      retries: 30
-      delay: 10
-      register: result
-      until: result.stdout_xml == '<response status="success"><result><config-locks /></result></response>'
+tasks:
+  - name: Wait for config lock
+    paloaltonetworks.panos.panos_op:
+      provider: "{{ device }}"
+      cmd: "<show><config-locks><vsys>{{ vsys }}</vsys></config-locks></show>"
+      cmd_is_xml: true
+    retries: 30
+    delay: 10
+    register: result
+    until: result.stdout_xml == '<response status="success"><result><config-locks /></result></response>'
 ```
 
 ## Acquire the configuration lock
@@ -67,11 +67,11 @@ Start the playbook by using ```panos_op``` to check if there is already a config
 Continue the tasks by taking the configuration lock:
 
 ```yaml
-    - name: Acquire config lock
-      paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<request><config-lock><add><comment>Ansible config lock</comment></add></config-lock></request>'
-        cmd_is_xml: true
+- name: Acquire config lock
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><config-lock><add><comment>Ansible config lock</comment></add></config-lock></request>"
+    cmd_is_xml: true
 ```
 
 ## Make configuration changes
@@ -79,12 +79,12 @@ Continue the tasks by taking the configuration lock:
 With the lock acquired, it is now safe to make changes knowing other administrators and tools will not be able to interfere.
 
 ```yaml
-    - name: Create address object
-      paloaltonetworks.panos.panos_address_object:
-        provider: "{{ device }}"
-        name: "{{ address-object-name }}"
-        value: "{{ address-object-ip-address }}"
-        description: "Created with Ansible"
+- name: Create address object
+  paloaltonetworks.panos.panos_address_object:
+    provider: "{{ device }}"
+    name: "{{ address-object-name }}"
+    value: "{{ address-object-ip-address }}"
+    description: "Created with Ansible"
 ```
 
 As many changes as required can be inserted at this stage of the playbook, whilst the configuration lock is being held.
@@ -94,11 +94,11 @@ As many changes as required can be inserted at this stage of the playbook, whils
 Now that the changes are made, the configuration lock can be released.
 
 ```yaml
-    - name: Release config lock
-      paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<request><config-lock><remove></remove></config-lock></request>'
-        cmd_is_xml: true
+- name: Release config lock
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><config-lock><remove></remove></config-lock></request>"
+    cmd_is_xml: true
 ```
 
 ## Final playbook
@@ -123,8 +123,8 @@ Putting all the sections together, the playbook in entirety looks like this:
   tasks:
     - name: Wait for config lock
       paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<show><config-locks><vsys>{{ vsys }}</vsys></config-locks></show>'
+        provider: "{{ device }}"
+        cmd: "<show><config-locks><vsys>{{ vsys }}</vsys></config-locks></show>"
         cmd_is_xml: true
       retries: 30
       delay: 10
@@ -133,8 +133,8 @@ Putting all the sections together, the playbook in entirety looks like this:
 
     - name: Acquire config lock
       paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<request><config-lock><add><comment>Ansible config lock</comment></add></config-lock></request>'
+        provider: "{{ device }}"
+        cmd: "<request><config-lock><add><comment>Ansible config lock</comment></add></config-lock></request>"
         cmd_is_xml: true
 
     - name: Create address object
@@ -146,7 +146,7 @@ Putting all the sections together, the playbook in entirety looks like this:
 
     - name: Release config lock
       paloaltonetworks.panos.panos_op:
-        provider: '{{ device }}'
-        cmd: '<request><config-lock><remove></remove></config-lock></request>'
+        provider: "{{ device }}"
+        cmd: "<request><config-lock><remove></remove></config-lock></request>"
         cmd_is_xml: true
 ```
