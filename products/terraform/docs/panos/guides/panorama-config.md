@@ -15,8 +15,8 @@ keywords:
   - terraform
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../_assumptions.md'
+import LabGuidance from '/products/shared/_lab-guidance.md'
 
 # Configure with Panorama
 
