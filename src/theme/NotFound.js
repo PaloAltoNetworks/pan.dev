@@ -16,7 +16,7 @@ export default function NotFound() {
   } = themeConfig;
 
   const [searchResults, setSearchResults] = useState([]);
-  const location = useLocation().pathname.split("/");
+  const location = useLocation().pathname.split("/").join(" ");
 
   const client = algoliaSearch(appId, apiKey);
   const index = client.initIndex(indexName);
