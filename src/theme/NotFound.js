@@ -25,6 +25,7 @@ export default function NotFound() {
     async function getResults() {
       const results = await Promise.resolve(
         index.search(location, {
+          distinct: 1,
           hitsPerPage: 5,
           facetFilters: [["tags:pandev"]],
         })
@@ -40,6 +41,11 @@ export default function NotFound() {
       <PageMetadata title="Page Not Found" />
       <Layout>
         <main className="container margin-vert--xl">
+          <div className="row">
+            <div className="col col--4 col--offset-4">
+              <img src="/img/404_Page.svg" />
+            </div>
+          </div>
           <div className="row">
             <div className="col col--8 col--offset-2">
               <h1 className="hero__title">
@@ -61,7 +67,7 @@ export default function NotFound() {
                           {" > "}
                           {result.hierarchy.lvl1 ??
                             result.hierarchy.lvl2 ??
-                            result.herarchy.lvl3 ??
+                            result.hierarchy.lvl3 ??
                             result.hierarchy.lvl4}
                         </a>
                       </div>
