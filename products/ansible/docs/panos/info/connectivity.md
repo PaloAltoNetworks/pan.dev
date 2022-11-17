@@ -16,7 +16,7 @@ keywords:
 
 # How Ansible connects to PAN-OS
 
-When you are using Ansible with PAN-OS, the connection method used is ```local```. For example:
+When you are using Ansible with PAN-OS, the connection method used is `local`. For example:
 
 ```yaml
 ---
@@ -28,7 +28,7 @@ When you are using Ansible with PAN-OS, the connection method used is ```local``
   .
 ```
 
-This instructs Ansible to use the local machine to execute the playbook, as opposed to instructing the remote machine to execute the playbook. The remote machine, when using Ansible for PAN-OS, would be the NGFW or Panorama; executing third-party code on these machines would break Palo Alto Networks' assurance model. Ansible therefore executes the playbooks on the local machine, and using the PAN-OS modules, sends the required commands to the NGFW or Panorama using the PAN-OS APIs for those appliances. For this reason, it is common to define a ```provider``` variable block at the start of a playbook, to specify the remote NGFW or Panorama connectivity and administrative credentials. That variable block is then referred to when executing tasks. For example, this shows a provider block named ```device```:
+This instructs Ansible to use the local machine to execute the playbook, as opposed to instructing the remote machine to execute the playbook. The remote machine, when using Ansible for PAN-OS, would be the NGFW or Panorama; executing third-party code on these machines would break Palo Alto Networks' assurance model. Ansible therefore executes the playbooks on the local machine, and using the PAN-OS modules, sends the required commands to the NGFW or Panorama using the PAN-OS APIs for those appliances. For this reason, it is common to define a `provider` variable block at the start of a playbook, to specify the remote NGFW or Panorama connectivity and administrative credentials. That variable block is then referred to when executing tasks. For example, this shows a provider block named `device`:
 
 ```yaml
   .
