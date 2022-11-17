@@ -8,7 +8,7 @@ jobs:
   analyze:
     if: github.repository_owner	== 'PaloAltoNetworks'
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: pan-dev-runner
     permissions:
       contents: read
       security-events: write
@@ -49,7 +49,7 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -89,12 +89,12 @@ jobs:
           fi
 
       - name: Build site
-        run: yarn build
+        run: yarn build-github && zip -r build.zip build
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
-          name: build-dir
-          path: build/
+          name: build
+          path: build.zip
 
   deploy:
     name: Deploy
@@ -105,10 +105,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
-          name: build-dir
-          path: build/
+          name: build
+
+      - name: Unzip build artifact
+        run: unzip build.zip
 
       - name: Install firebase-tools
         run: yarn add firebase-tools@11.13.0
