@@ -14,14 +14,15 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
+import Assumptions from '../_assumptions.md'
+import LabGuidance from '/products/shared/_lab-guidance.md'
 
 # Creating Address Objects from a CSV File
 
-In this guide, you will create a number of address objects using a CSV file as the source configuration data. This is a common task when data is provided to you in a generic format like [CSV](https://en.wikipedia.org/wiki/Comma-separated_values). 
+In this guide, you will create a number of address objects using a CSV file as the source configuration data. This is a common task when data is provided to you in a generic format like [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
 
 The playbook created in this guide can be modified for data in CSV in many formats. For this example, we will use a format like this which includes a header row:
+
 ```csv
 hostname,ip
 test1,1.1.1.1
@@ -60,18 +61,18 @@ Create a new Ansible yaml file named `csv-address-objects.yml`, establish a vari
 You will first read in the CSV and `register` the data to a variable. The file should be stored in a location accessible to the host executing Ansible, and could be passed as an extra runtime variable. For one-off operations, the variable could be defined in the playbook itself
 
 ```yaml
-    csv_filename: "../test.csv"
+csv_filename: "../test.csv"
 ```
 
-The first task in the playbook by uses ```read_csv``` to load the CSV file and store (`register`) the data in a variable called `csv_data`:
+The first task in the playbook by uses `read_csv` to load the CSV file and store (`register`) the data in a variable called `csv_data`:
 
 ```yaml
-  tasks:
-    - name: Read CSV file
-      ansible.builtin.read_csv:
-        path: "{{ csv_filename }}"
-        key: hostname
-      register: csv_data
+tasks:
+  - name: Read CSV file
+    ansible.builtin.read_csv:
+      path: "{{ csv_filename }}"
+      key: hostname
+    register: csv_data
 ```
 
 ## Create address objects with a loop
@@ -93,9 +94,9 @@ You will now use the `panos_address_object` module, with an extra statement `wit
 The playbook could end there if your only objective is to create address objects based on the CSV source file. A follow-on task adds the newly created address objects to an address group. First, you will use `set_fact` to create a list of the address object names, based on the `csv_data` data from the CSV file, and store the list in a variable called `address_objects_list`:
 
 ```yaml
-    - name: Create a list of the address objects
-      ansible.builtin.set_fact:
-        address_objects_list: "{{ csv_data.dict | dict2items | map(attribute='key') | list }}"
+- name: Create a list of the address objects
+  ansible.builtin.set_fact:
+    address_objects_list: "{{ csv_data.dict | dict2items | map(attribute='key') | list }}"
 ```
 
 The list of address object names can now be added to an address group:
