@@ -1,9 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PageMetadata } from "@docusaurus/theme-common";
 import Layout from "@theme/Layout";
-import SearchBar from "@theme/SearchBar";
+import algoliaSearch from "algoliasearch/lite";
+import { useSearchPage } from "@docusaurus/theme-common/internal";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { useLocation } from "@docusaurus/router";
+import algoliaSearchHelper from "algoliasearch-helper";
 
 export default function NotFound() {
+  const {
+    siteConfig: { themeConfig },
+  } = useDocusaurusContext();
+  const {
+    algolia: { appId, apiKey, indexName, externalUrlRegex },
+  } = themeConfig;
+
+  let isMounted = true;
+
+  const [searchResults, setSearchResults] = useState([]);
+  const location = useLocation().pathname.split("/");
+
+  const client = algoliaSearch(appId, apiKey);
+  const index = client.initIndex(indexName);
+
+  useEffect(() => {
+    async function getResults() {
+      const results = await Promise.resolve(
+        index.search(location, {
+          hitsPerPage: 5,
+          facetFilters: [["tags:pandev"]],
+        })
+      );
+
+      if (isMounted) {
+        setSearchResults(results.hits);
+      }
+    }
+
+    getResults();
+
+    return () => {
+      isMounted = false;
+    };
+  });
+
   return (
     <>
       <PageMetadata title="Page Not Found" />
@@ -14,22 +54,54 @@ export default function NotFound() {
               <h1 className="hero__title">
                 Sorry, we have a broken link or this URL doesn't exist.
               </h1>
-              <p>Our team has been notified of this error.</p>
-              <h3>
-                Use the search bar below or{" "}
-                <a href="https://pan.dev/#developer-docs-section">
-                  {" "}
-                  explore our developer docs{" "}
-                </a>{" "}
-                to find what you're looking for.
-              </h3>
+              <h4>Our team has been notified of this error.</h4>
             </div>
           </div>
-          <div className="row">
-            <div className="col col--2 col--offset-5 padding-bottom--lg padding-top-md">
-              <SearchBar />
+          {searchResults.length > 0 && (
+            <div>
+              <div className="row">
+                <div className="col col--8 col--offset-2">
+                  <h2>Here are some suggested pages to visit: </h2>
+                  {searchResults.map((result) => (
+                    <div className="row" key={result.objectID}>
+                      <div className="result">
+                        <a href={result.url}>
+                          {result.hierarchy.lvl0}
+                          {" > "}
+                          {result.hierarchy.lvl1}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="row">
+                <div className="col col--8 col--offset-2 padding-top--lg">
+                  <h3>
+                    or{" "}
+                    <a href="https://pan.dev/#developer-docs-section">
+                      {" "}
+                      explore all of our developer docs{" "}
+                    </a>{" "}
+                    to find what you're looking for.
+                  </h3>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+          {searchResults.length < 1 && (
+            <div className="row">
+              <div className="col col--8 col--offset-2 padding-top--lg">
+                <h3>
+                  <a href="https://pan.dev/#developer-docs-section">
+                    {" "}
+                    Explore all of our developer docs{" "}
+                  </a>{" "}
+                  to find what you're looking for.
+                </h3>
+              </div>
+            </div>
+          )}
         </main>
       </Layout>
     </>
