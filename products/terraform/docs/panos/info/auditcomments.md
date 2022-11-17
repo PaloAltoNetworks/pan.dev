@@ -16,10 +16,10 @@ keywords:
 
 # Audit Comment Logic for All Policy Rules
 
-Audit comments are supported for the applicable PAN-OS versions and appear as a normal argument for all policy rules (aka - security rule, NAT rule, etc).  However, the way that audit comments are supported across all resources is not standard:
+Audit comments are supported for the applicable PAN-OS versions and appear as a normal argument for all policy rules (aka - security rule, NAT rule, etc). However, the way that audit comments are supported across all resources is not standard:
 
-* the audit comment will always be an empty string in the local state file
-* the audit comment is only applied if there is a change to a rule's spec (creation or update)
+- the audit comment will always be an empty string in the local state file
+- the audit comment is only applied if there is a change to a rule's spec (creation or update)
 
 Let's take an example.
 
@@ -45,7 +45,7 @@ resource "panos_security_rule_group" "g1" {
 }
 ```
 
-After `terraform apply`, all 3 rules will be created as they did not previously exist.  Because `one`, `two`, and `three` were created, all 3 will have their audit comments applied.
+After `terraform apply`, all 3 rules will be created as they did not previously exist. Because `one`, `two`, and `three` were created, all 3 will have their audit comments applied.
 
 Now, let's say I update my plan and it now looks like this:
 
@@ -74,7 +74,7 @@ resource "panos_security_rule_group" "g1" {
 }
 ```
 
-So we've added "four" and made an update to "two"'s description.  In this situation, `terraform apply` will apply the audit comment for "two" (due to the changed description) and "four" (because it's a new rule).  Even though the audit comments for "one" and "three" have changed, diffs are suppressed for the `audit_comment` field.  Thus, there is no change for the specs for "one" and "three", so the audit comments associated with them are not applied.
+So we've added "four" and made an update to "two"'s description. In this situation, `terraform apply` will apply the audit comment for "two" (due to the changed description) and "four" (because it's a new rule). Even though the audit comments for "one" and "three" have changed, diffs are suppressed for the `audit_comment` field. Thus, there is no change for the specs for "one" and "three", so the audit comments associated with them are not applied.
 
 The audit comment stored in the local state file will always be an empty string. This is because of a number of reasons, but the easiest to communicate is performance.
 

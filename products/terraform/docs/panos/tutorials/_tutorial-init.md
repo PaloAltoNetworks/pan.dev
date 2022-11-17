@@ -30,7 +30,7 @@ variable "panos_password" {
 }
 ```
 
-2. Edit the ```variable``` sections of the file, replacing the values for ```panos_hostname```, ```panos_username``` and ```panos_password``` with relevant values for your environment. For example:
+2. Edit the `variable` sections of the file, replacing the values for `panos_hostname`, `panos_username` and `panos_password` with relevant values for your environment. For example:
 
 ```hcl
 .
@@ -56,6 +56,7 @@ variable "panos_password" {
 .
 .
 ```
+
 :::caution
 The PAN-OS credentials are being stored within the code and on disk unencrypted. This is not a production-level solution, and other solutions for managing secrets should be considered for real-world deployments. Hashicorp (owners of Terraform) and many others have solutions for this.
 :::
