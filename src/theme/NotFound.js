@@ -6,6 +6,8 @@ import { useSearchPage } from "@docusaurus/theme-common/internal";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { useLocation } from "@docusaurus/router";
 import algoliaSearchHelper from "algoliasearch-helper";
+import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 export default function NotFound() {
   const {
@@ -79,10 +81,13 @@ export default function NotFound() {
                 <div className="col col--8 col--offset-2 padding-top--lg">
                   <h3>
                     or{" "}
-                    <a href="https://pan.dev/#developer-docs-section">
+                    <Link
+                      uppercase="false"
+                      href={useBaseUrl("/#developer-docs-section")}
+                    >
                       {" "}
-                      explore all of our developer docs{" "}
-                    </a>{" "}
+                      Explore all of our developer docs{" "}
+                    </Link>{" "}
                     to find what you're looking for.
                   </h3>
                 </div>
@@ -93,10 +98,13 @@ export default function NotFound() {
             <div className="row">
               <div className="col col--8 col--offset-2 padding-top--lg">
                 <h3>
-                  <a href="https://pan.dev/#developer-docs-section">
+                  <Link
+                    uppercase="false"
+                    href={useBaseUrl("/#developer-docs-section")}
+                  >
                     {" "}
                     Explore all of our developer docs{" "}
-                  </a>{" "}
+                  </Link>{" "}
                   to find what you're looking for.
                 </h3>
               </div>
