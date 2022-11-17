@@ -9,9 +9,9 @@ keywords:
   - sase
 ---
 
-Welcome to the Prisma Access Configuration APIs. To use these APIs, you must be a new Managed
-Security Service Provider (MSSP) customer as of March 2022 and must have configured your multitenancy
-hierarchy for a new deployment of Prisma Access.
+Welcome to the Prisma Access Configuration APIs. These APIs are available to Prisma Access tenants that utilize
+Prisma Access Cloud Management for service onboarding, configuration, and operations.  Panorama managed tenants
+will continue to utilize the [Prisma Access APIs for Panorama](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-panorama-admin/prisma-access-overview/prisma-access-apis).
 
 The Prisma Access Configuration APIs use [Authentication Service](/sase/api/auth) for API authorization and access.
 After you obtain an [access token](/sase/docs/access-tokens),

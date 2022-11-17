@@ -110,7 +110,7 @@ const config = {
                   logoClass: "panos",
                   docs: [
                     {
-                      label: "APIs and SDKs",
+                      label: "APIs, SDKs, & Tutorials",
                       to: "panos/docs",
                       icon: "doc",
                     },
@@ -498,7 +498,10 @@ const config = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  themes: ["docusaurus-theme-openapi-docs"],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["docusaurus-theme-openapi-docs", "@docusaurus/theme-mermaid"],
   presets: [
     [
       "@docusaurus/preset-classic",
