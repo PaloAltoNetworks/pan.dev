@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { PageMetadata } from "@docusaurus/theme-common";
 import Layout from "@theme/Layout";
 import algoliaSearch from "algoliasearch/lite";
-import { useSearchPage } from "@docusaurus/theme-common/internal";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { useLocation } from "@docusaurus/router";
-import algoliaSearchHelper from "algoliasearch-helper";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
@@ -16,8 +14,6 @@ export default function NotFound() {
   const {
     algolia: { appId, apiKey, indexName, externalUrlRegex },
   } = themeConfig;
-
-  let isMounted = true;
 
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation().pathname.split("/");
@@ -33,18 +29,11 @@ export default function NotFound() {
           facetFilters: [["tags:pandev"]],
         })
       );
-
-      if (isMounted) {
-        setSearchResults(results.hits);
-      }
+      setSearchResults(results.hits);
     }
 
     getResults();
-
-    return () => {
-      isMounted = false;
-    };
-  });
+  }, []);
 
   return (
     <>
@@ -70,7 +59,10 @@ export default function NotFound() {
                         <a href={result.url}>
                           {result.hierarchy.lvl0}
                           {" > "}
-                          {result.hierarchy.lvl1}
+                          {result.hierarchy.lvl1 ??
+                            result.hierarchy.lvl2 ??
+                            result.herarchy.lvl3 ??
+                            result.hierarchy.lvl4}
                         </a>
                       </div>
                     </div>
