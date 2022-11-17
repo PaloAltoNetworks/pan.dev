@@ -20,7 +20,6 @@ image: /expedition/img/expedition.png
 ---
 
 import Tabs from '@theme/Tabs';
-import { Mermaid } from 'mdx-mermaid/Mermaid';
 import TabItem from '@theme/TabItem';
 import Link from "@docusaurus/Link";
 export function SetLanguage (lang) {
@@ -42,7 +41,7 @@ In this section we present a workflow example to for bulk change on appling Secu
 
 Below flowhart demo the workflow and the related API calls in each of the steps:
 
-```Mermaid
+```mermaid
 flowchart TB
     A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
     B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
