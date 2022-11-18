@@ -18,7 +18,7 @@ behave as a reverse proxy between a User-ID enabled application and a PAN-OS NGF
 
 ## User-ID API and External Dynamic List (EDL)
 
-They're probably the most common way to share external IP metadata with the NGFW. The Use 
+They're probably the most common way to share external IP metadata with the NGFW. The Use
 cases for them are enormous: from blocking known DoS sources to forward traffic from specific
 IP addresses on low latency links.
 
@@ -31,32 +31,34 @@ Apr 12 16:00:40 raspberrypi systemd-logind[282]: New session 2506 of user xhoms.
 Apr 12 16:00:40 raspberrypi systemd: pam_unix(systemd-user:session): session opened for user xhoms by (uid=0)
 ```
 
-Won't it be great to have a way to share the IP addresses used by the user **xhoms** with the NGFW 
+Won't it be great to have a way to share the IP addresses used by the user **xhoms** with the NGFW
 so specific security policies are applied to traffic sourced by that address just because we now know
 the endpoint is being managed by that user?
 
 The following Shell CGI script could be used to create an External Dynamic List (EDL) that would
-list all known IP addresses the account *xhoms* was used to login into this server.
+list all known IP addresses the account _xhoms_ was used to login into this server.
 
 ```sh
 cat /var/log/auth.log | sed -En 's/.*[[:space:]]sshd.*Accepted publickey for xhoms from ([^[:space:]]*).*/\1/p'
 ```
 
 That is great but:
-* When would address be removed from the list? At the daily log rollout?
-* Are all listed IP addresses still being operated by the user *xhoms*?
-* Is there any way to remove addresses from the list at user logout?
+
+- When would address be removed from the list? At the daily log rollout?
+- Are all listed IP addresses still being operated by the user _xhoms_?
+- Is there any way to remove addresses from the list at user logout?
 
 To overcome these (and many other) limitations Palo Alto Networks NGFW feature a very powerful
 IP tagging API called User-ID. Although EDL and User-ID cover similar objectives there are
 fundamental technical differences between them:
-* User-ID is "asynchronous" (push mode) and provides a very flexible way to create groupings. Either
-by tagging address objects (Dynamic Address Group - DAG ) or by mapping users to addresses and
-then tagging these users (Dynamic User Group - DUG)
-* EDL is "universal". Almost all network appliance vendors provide a feature to fetch an IP address
-list from a URL.
 
-Years ago it was up to the end customer to create its own connectors.  Just like the CGI script we
+- User-ID is "asynchronous" (push mode) and provides a very flexible way to create groupings. Either
+  by tagging address objects (Dynamic Address Group - DAG ) or by mapping users to addresses and
+  then tagging these users (Dynamic User Group - DUG)
+- EDL is "universal". Almost all network appliance vendors provide a feature to fetch an IP address
+  list from a URL.
+
+Years ago it was up to the end customer to create its own connectors. Just like the CGI script we
 shared before. But as presence of PAN-OS powered NGFW's grown among enterprise customers more application
 vendors decided to leverage the User-ID value by providing API clients out-of-the-box. Althought this is
 great (for Palo Alto Network customers) losing the option to fetch a list from a URL (EDL mode) makes it
@@ -105,7 +107,7 @@ pipe it at the output of a cURL command and pack everything as a CGI script.
 But in this tutorial we're going to levarage the GO Package https://pkg.go.dev/github.com/xhoms/panoslib/uid
 to follow a diferent approach: we'll hijack User-ID messages by implementing a micro-service
 that behaves as a reverse proxy between the application that features the User-ID client and
-the PAN-OS device. I like this approach because it opens the door to other use cases like 
+the PAN-OS device. I like this approach because it opens the door to other use cases like
 enforcing timeout (adding timeout to entries that do not have it), converting DAG messages
 into DUG equivalents or adding additional tags based on the source application.
 
@@ -123,8 +125,9 @@ http.ListenAndServe(":8080", proxy)
 ```
 
 Next step is to provide a minimum of configuration options allowing the user to provide:
-* the target PAN-OS device (`hostport`) and 
-* the TCP to bound our micro-service to (defaulting to `8080`)
+
+- the target PAN-OS device (`hostport`) and
+- the TCP to bound our micro-service to (defaulting to `8080`)
 
 Let's then use the following version as the foundation for our reverse proxy application
 
@@ -153,11 +156,12 @@ func main() {
 ### Monitoring the User-ID messages
 
 Next goal is to be able to monitor the User-ID messages sent to the PAN-OS device.
-To acomplish that we need to capture transactions that conform to the following 
+To acomplish that we need to capture transactions that conform to the following
 schema:
-* pattern equals `/api/`
-* methods GET or PUT
-* parameter `type` (either in Query String or POST payload) equals to `user-id`
+
+- pattern equals `/api/`
+- methods GET or PUT
+- parameter `type` (either in Query String or POST payload) equals to `user-id`
 
 We'll leverage GO http's routing capability by creating two handlers. One of them
 will process all requests sent to `/api/` while the other one will behave like
@@ -200,12 +204,13 @@ log.Fatal(http.ListenAndServe(":"+port, nil))
 
 Finally we need to implemente the `apiHandler()` to extract the User-ID messages
 (`cmd` parameter) by:
-* reading parameters from the URL Query String for GET requests or
-* performing the following tasks in case of POST requests
-    1. read the request body and keep a safe copy
-    2. re-set the body to be able to call `ParseForm()` and check if `type` equals `user-id`
-    extracting `cmd` in such a case
-    3. re-set the body to be able to invoke the reverse proxy
+
+- reading parameters from the URL Query String for GET requests or
+- performing the following tasks in case of POST requests
+  1. read the request body and keep a safe copy
+  2. re-set the body to be able to call `ParseForm()` and check if `type` equals `user-id`
+     extracting `cmd` in such a case
+  3. re-set the body to be able to invoke the reverse proxy
 
 This is how the modified version of the `apiHandler()` looks like
 
@@ -240,9 +245,10 @@ func (m manInMiddle) apiHandler(w http.ResponseWriter, r *http.Request) {
 ### Creating the User-ID state
 
 Now it is time to:
-* parse the User-ID (XML) command we extracted and
-* keep a simulated stated from reading the different mappings (user-ip, user-group and
-ip-tag) and honouring the provided time out values for each of them.
+
+- parse the User-ID (XML) command we extracted and
+- keep a simulated stated from reading the different mappings (user-ip, user-group and
+  ip-tag) and honouring the provided time out values for each of them.
 
 Fortunatelly we can leverage the packages https://pkg.go.dev/github.com/xhoms/panoslib/collection,
 https://pkg.go.dev/github.com/xhoms/panoslib/uid and
@@ -334,7 +340,7 @@ before the list is retrieved.
 
 And now let's wrap this `list` function in a http handler that will extract required
 parameters from a URL query string featuring the schema `?list=[user|group|tag]&key=<tag>`
- 
+
 ```go
 func (m manInMiddle) edlHandler(w http.ResponseWriter, r *http.Request) {
 	out := &bytes.Buffer{}
@@ -467,7 +473,7 @@ Connection: close
 GET http://127.0.0.1:8080/edl/
     ?list=group
     &key=admin
-    
+
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Date: Mon, 12 Apr 2021 10:28:32 GMT

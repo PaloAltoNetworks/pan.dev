@@ -11,7 +11,6 @@ The information returned by this query can also be viewed in the UI, here:
 
 ![](/access/img/Alerts_cleared_open_raised_over_time.png)
 
-
 ## API Calls
 
 ### 1.0 Call
@@ -39,8 +38,9 @@ The following request payload uses the `state`, `severity` and `updated_time` fi
 `state` : The values for this filter are: 
 * `Raised` : The alert has been raised to an IT specialist's attention. 
 * `Cleared` : The alert has been cleared.
+`severity_id` : The values for this filter are:
 
-`updated_time` : string, format example `2021-07-03 23:12:13 UTC`
+`raised-time` : string, format example `2021-07-03 23:12:13 UTC`
 
 
     {
@@ -83,7 +83,6 @@ The following request payload uses the `state`, `severity` and `updated_time` fi
         ]
       }
     }
-
 
 ## Request Response
 

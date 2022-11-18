@@ -31,7 +31,6 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ## Request Payload
 
 The following request payload filters on `event_time` and
@@ -108,7 +107,6 @@ The operators for `event_time` are:
      },
      "count": 100
     }
-
 
 ## Request Response
 

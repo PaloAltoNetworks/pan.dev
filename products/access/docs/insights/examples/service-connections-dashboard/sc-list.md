@@ -18,7 +18,7 @@ The information returned by this query can also be viewed in the UI, here:
     POST /api/sase/v1.0/resource/tenant/{super_tenant_id}/custom/query/serviceconnections/sc_list
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ### 2.0 Call
@@ -28,7 +28,7 @@ The information returned by this query can also be viewed in the UI, here:
     Prisma-Tenant:{{tenant_id}}
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ## Request Payload
@@ -38,9 +38,9 @@ The following request payload filters on `event_time` and
 
 The operators for `event_time` are:
 
-* `last_n_minutes` : n = 15.
-* `last_n_hours` : n = 1, 3, 24, or 48.
-* `last_n_days` : n = 7 or 30.
+- `last_n_minutes` : n = 15.
+- `last_n_hours` : n = 1, 3, 24, or 48.
+- `last_n_days` : n = 7 or 30.
 
 
     {

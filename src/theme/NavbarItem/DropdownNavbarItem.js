@@ -1,16 +1,19 @@
-import React, {useState, useRef, useEffect} from 'react';
-import clsx from 'clsx';
+import React, { useState, useRef, useEffect } from "react";
+import clsx from "clsx";
 import {
   isRegexpStringMatch,
   useCollapsible,
   Collapsible,
-} from '@docusaurus/theme-common';
-import {isSamePath, useLocalPathname} from '@docusaurus/theme-common/internal';
+} from "@docusaurus/theme-common";
+import {
+  isSamePath,
+  useLocalPathname,
+} from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
-import NavbarNavLink from '@theme/NavbarItem/NavbarNavLink';
-import NavbarDocItems from '../NavbarDocItems';
-import NavbarItem from '@theme/NavbarItem';
-import './DropdownNavbarItem.scss';
+import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
+import NavbarDocItems from "../NavbarDocItems";
+import NavbarItem from "@theme/NavbarItem";
+import "./DropdownNavbarItem.scss";
 
 function isItemActive(item, localPathname) {
   if (isSamePath(item.to, localPathname)) {
@@ -47,12 +50,12 @@ function DropdownNavbarItemDesktop({
       }
       setShowDropdown(false);
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -65,17 +68,18 @@ function DropdownNavbarItemDesktop({
               <NavbarItem
                 isDropdownItem
                 onKeyDown={(e) => {
-                  if (i === items.length - 1 && e.key === 'Tab') {
+                  if (i === items.length - 1 && e.key === "Tab") {
                     e.preventDefault();
                     setShowDropdown(false);
-                    const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                    const nextNavbarItem =
+                      dropdownRef.current.nextElementSibling;
                     if (nextNavbarItem) {
                       const targetItem =
                         nextNavbarItem instanceof HTMLAnchorElement
                           ? nextNavbarItem
                           : // Next item is another dropdown; focus on the inner
                             // anchor element instead so there's outline
-                            nextNavbarItem.querySelector('a');
+                            nextNavbarItem.querySelector("a");
                       targetItem.focus();
                     }
                   }
@@ -84,19 +88,18 @@ function DropdownNavbarItemDesktop({
                 {...childItemProps}
                 key={i}
               />
-            )
-          }  
-        )}
+            );
+          })}
         </ul>
       </div>
-    )
+    );
   }
 
   function MegaDropdownMenu() {
-    const [apiDocItems, setApiDocItems] = useState({}); 
-    const [colorClass, setColorClass] = useState('')
+    const [apiDocItems, setApiDocItems] = useState({});
+    const [colorClass, setColorClass] = useState("");
     const [productGroupIdx, setProductGroupIdx] = useState(null);
-    const [productTitle, setProductTitle] = useState('');
+    const [productTitle, setProductTitle] = useState("");
     const [productIdx, setProductIdx] = useState(null);
 
     const [expandedProductGroups, setExpandedProductGroups] = useState({});
@@ -104,31 +107,41 @@ function DropdownNavbarItemDesktop({
     const showViewAllDocs = Object.keys(apiDocItems).length > 0;
 
     return (
-      <div className="dropdown__menu mega" >
+      <div className="dropdown__menu mega">
         <ul className="dropdown-product-group-list">
           {items.map((childItemProps, i) => {
-            const { products, colorclass, label: productGroupLabel } = childItemProps;
+            const {
+              products,
+              colorclass,
+              label: productGroupLabel,
+            } = childItemProps;
             const firstProduct = products[0];
 
             return (
               <React.Fragment key={i}>
                 <NavbarItem
-                  className={clsx(`product-group-list__product-title ${colorclass}`,
-                    { active: i === productGroupIdx && expandedProductGroups[productGroupLabel] }
+                  className={clsx(
+                    `product-group-list__product-title ${colorclass}`,
+                    {
+                      active:
+                        i === productGroupIdx &&
+                        expandedProductGroups[productGroupLabel],
+                    }
                   )}
                   isDropdownItem
                   onKeyDown={(e) => {
-                    if (i === items.length - 1 && e.key === 'Tab') {
+                    if (i === items.length - 1 && e.key === "Tab") {
                       e.preventDefault();
                       setShowDropdown(false);
-                      const nextNavbarItem = dropdownRef.current.nextElementSibling;
+                      const nextNavbarItem =
+                        dropdownRef.current.nextElementSibling;
                       if (nextNavbarItem) {
                         const targetItem =
                           nextNavbarItem instanceof HTMLAnchorElement
                             ? nextNavbarItem
                             : // Next item is another dropdown; focus on the inner
                               // anchor element instead so there's outline
-                              nextNavbarItem.querySelector('a');
+                              nextNavbarItem.querySelector("a");
                         targetItem.focus();
                       }
                     }
@@ -136,10 +149,19 @@ function DropdownNavbarItemDesktop({
                   onClick={(e) => {
                     e.preventDefault();
                     if (expandedProductGroups[productGroupLabel]) {
-                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: false });
+                      setExpandedProductGroups({
+                        ...expandedProductGroups,
+                        [productGroupLabel]: false,
+                      });
                     } else {
-                      setApiDocItems({ apiDocs: firstProduct.apiDocs, docs:firstProduct.docs });
-                      setExpandedProductGroups({ ...expandedProductGroups, [productGroupLabel]: true });
+                      setApiDocItems({
+                        apiDocs: firstProduct.apiDocs,
+                        docs: firstProduct.docs,
+                      });
+                      setExpandedProductGroups({
+                        ...expandedProductGroups,
+                        [productGroupLabel]: true,
+                      });
                       setInitialCollapse(false);
                       setColorClass(colorclass);
                       setProductIdx(0);
@@ -152,36 +174,40 @@ function DropdownNavbarItemDesktop({
                 />
                 <Collapsible
                   className="padding-top--none padding-left--none"
-                  lazy as="ul"
-                  collapsed={initialCollapse || !expandedProductGroups[productGroupLabel]}
+                  lazy
+                  as="ul"
+                  collapsed={
+                    initialCollapse || !expandedProductGroups[productGroupLabel]
+                  }
                 >
                   {products.map((product, j) => {
-                    const { apiDocs, docs, label } = product
+                    const { apiDocs, docs, label } = product;
                     return (
                       <li className="padding-left--sm" key={j}>
                         <NavbarNavLink
                           className={clsx(
                             `dropdown__link product ${colorclass}`,
-                            { active: productIdx === j && productGroupIdx === i }
+                            {
+                              active: productIdx === j && productGroupIdx === i,
+                            }
                           )}
                           label={product.label}
                           onClick={(e) => {
                             e.preventDefault();
                             setApiDocItems({ apiDocs, docs });
-                            setColorClass(colorclass)
+                            setColorClass(colorclass);
                             setProductTitle(label);
                             setProductIdx(j);
                             setProductGroupIdx(i);
                           }}
                         />
                       </li>
-                    )
+                    );
                   })}
                 </Collapsible>
               </React.Fragment>
-            )
-          }
-        )}
+            );
+          })}
         </ul>
         <div className="dropdown-right-panel">
           <NavbarDocItems
@@ -190,40 +216,42 @@ function DropdownNavbarItemDesktop({
             productTitle={productTitle}
             colorClass={colorClass}
           />
-          {showViewAllDocs && 
+          {showViewAllDocs && (
             <Link
               className="dropdown-right-panel__explore-docs-link"
               to="/#developer-docs-section"
             >
               Explore our Developer Docs
             </Link>
-          }
+          )}
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div
       ref={dropdownRef}
-      className={clsx('navbar__item', 'dropdown', 'dropdown--hoverable', {
-        'dropdown--right': position === 'right',
-        'dropdown--show': showDropdown,
-      })}>
+      className={clsx("navbar__item", "dropdown", "dropdown--hoverable", {
+        "dropdown--right": position === "right",
+        "dropdown--show": showDropdown,
+      })}
+    >
       <NavbarNavLink
         aria-haspopup="true"
         aria-expanded={showDropdown}
         role="button"
-        href={props.to ? undefined : '#'}
-        className={clsx('navbar__link', className)}
+        href={props.to ? undefined : "#"}
+        className={clsx("navbar__link", className)}
         {...props}
         onClick={props.to ? undefined : (e) => e.preventDefault()}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             e.preventDefault();
             setShowDropdown(!showDropdown);
           }
-        }}>
+        }}
+      >
         {props.children ?? props.label}
       </NavbarNavLink>
       {megaNav ? <MegaDropdownMenu /> : <DropdownMenu />}
@@ -240,7 +268,7 @@ function DropdownNavbarItemMobile({
 }) {
   const localPathname = useLocalPathname();
   const containsActive = containsActiveItems(items, localPathname);
-  const {collapsed, toggleCollapsed, setCollapsed} = useCollapsible({
+  const { collapsed, toggleCollapsed, setCollapsed } = useCollapsible({
     initialState: () => !containsActive,
   });
   // Expand/collapse if any item active after a navigation
@@ -257,16 +285,16 @@ function DropdownNavbarItemMobile({
     <>
       {items.map((item, i) => {
         const { products } = item;
-        const productGroupListClass = clsx('menu__list-item',
-          { 'menu__list-item--collapsed': i !== productGroupIdx }
-        )
+        const productGroupListClass = clsx("menu__list-item", {
+          "menu__list-item--collapsed": i !== productGroupIdx,
+        });
         return (
           <li key={i} className={productGroupListClass}>
             <NavbarNavLink
               role="button"
               className={clsx(
-                'menu__link menu__link--sublist menu__link--sublist-caret product-group',
-                { 'menu__list-item--collapsed': i !== productGroupIdx }
+                "menu__link menu__link--sublist menu__link--sublist-caret product-group",
+                { "menu__list-item--collapsed": i !== productGroupIdx }
               )}
               label={item.label}
               onClick={(e) => {
@@ -278,58 +306,75 @@ function DropdownNavbarItemMobile({
                 }
               }}
             />
-            <Collapsible lazy as="ul" className="menu__list" collapsed={i !== productGroupIdx}>
-              {products.map((product, j) =>
-                <li className={clsx('menu__list-item', {'menu__list-item--collapsed': j !== productIdx})}>
+            <Collapsible
+              lazy
+              as="ul"
+              className="menu__list"
+              collapsed={i !== productGroupIdx}
+            >
+              {products.map((product, j) => (
+                <li
+                  className={clsx("menu__list-item", {
+                    "menu__list-item--collapsed": j !== productIdx,
+                  })}
+                >
                   <NavbarNavLink
                     to={product.to}
                     label={product.label}
                     className={clsx(
-                      'menu__link menu__link--sublist menu__link--sublist-caret',
+                      "menu__link menu__link--sublist menu__link--sublist-caret"
                     )}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (j !== productIdx) {
-                      setProductIdx(j);
-                    } else {
-                      setProductIdx(null);
-                    }
-                  }}/>
-                  <Collapsible lazy as="ul" className="menu__list" collapsed={j !== productIdx}>
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (j !== productIdx) {
+                        setProductIdx(j);
+                      } else {
+                        setProductIdx(null);
+                      }
+                    }}
+                  />
+                  <Collapsible
+                    lazy
+                    as="ul"
+                    className="menu__list"
+                    collapsed={j !== productIdx}
+                  >
                     <NavbarNavLink
-                      className={clsx('menu__link section__title')}
+                      className={clsx("menu__link section__title")}
                       label={"Docs"}
-                      onClick={(e) => e.preventDefault()}/>
-                      {product.docs.map(productDoc => 
-                        <NavbarNavLink
-                          className={clsx('menu__link menu__link--sublist')}
-                          label={productDoc.label}
-                          to={productDoc.to}
-                        />
-                      )}
+                      onClick={(e) => e.preventDefault()}
+                    />
+                    {product.docs.map((productDoc) => (
+                      <NavbarNavLink
+                        className={clsx("menu__link menu__link--sublist")}
+                        label={productDoc.label}
+                        to={productDoc.to}
+                      />
+                    ))}
                     <NavbarNavLink
-                      className={clsx('menu__link section__title')}
+                      className={clsx("menu__link section__title")}
                       label={"API Reference"}
-                      onClick={(e) => e.preventDefault()}/>
-                      {product.apiDocs.map(apiDoc => 
-                        <NavbarNavLink
-                          className={clsx('menu__link menu__link--sublist')}
-                          label={apiDoc.label}
-                          to={apiDoc.to}
-                        />
-                      )}
+                      onClick={(e) => e.preventDefault()}
+                    />
+                    {product.apiDocs.map((apiDoc) => (
+                      <NavbarNavLink
+                        className={clsx("menu__link menu__link--sublist")}
+                        label={apiDoc.label}
+                        to={apiDoc.to}
+                      />
+                    ))}
                   </Collapsible>
                 </li>
-              )}
+              ))}
             </Collapsible>
           </li>
-        )
+        );
       })}
     </>
-  )
+  );
 }
 
-export default function DropdownNavbarItem({mobile = false, ...props}) {
+export default function DropdownNavbarItem({ mobile = false, ...props }) {
   const Comp = mobile ? DropdownNavbarItemMobile : DropdownNavbarItemDesktop;
   return <Comp {...props} />;
 }
