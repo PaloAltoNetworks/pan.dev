@@ -32,4 +32,5 @@ Terraform and Ansible are often mentioned in the same context. They are two of t
 
 - Terraform entirely depends upon its state in order to calculate and execute operations, where Ansible runs tasks without a widespread state reconciliation
 - Ansible performs tasks in the order described in the playbook, and Terraform performs tasks as computed through the dependency graph it calculates
-  However, both are capable of operating idempotently, and both are capable of automating IT operations.
+
+However, both are capable of operating idempotently, and both are capable of automating IT operations.
