@@ -1,7 +1,7 @@
 ---
 id: sc-bandwidth-consumption
 title: Service Connection Bandwidth Consumption Over Time
-description: Service Connection Bandwidth Consumption 
+description: Service Connection Bandwidth Consumption
 sidebar_label: Service Connection Bandwidth Consumption Over Time
 ---
 
@@ -38,12 +38,11 @@ The following request payload filters on `event_time` and
 
 The operators for `event_time` are:
 
-* `last_n_minutes` : n = 15.
-* `last_n_hours` : n = 1, 3, 24, or 48.
-* `last_n_days` : n = 7 or 30.
+- `last_n_minutes` : n = 15.
+- `last_n_hours` : n = 1, 3, 24, or 48.
+- `last_n_days` : n = 7 or 30.
 
-
-
+````json
     {
      "properties": [
        {
@@ -107,9 +106,11 @@ The operators for `event_time` are:
      },
      "count": 100
     }
+    ```
 
 ## Request Response
 
+```json
     {
        "header": {
            "createdAt": "2022-10-14T18:15:49Z",
@@ -306,3 +307,4 @@ The operators for `event_time` are:
            }
        ]
     }
+````

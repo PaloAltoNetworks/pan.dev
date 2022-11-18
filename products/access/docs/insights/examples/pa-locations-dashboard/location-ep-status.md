@@ -41,74 +41,78 @@ values for this filter are:
 - `1` : Instance is up.
 - `2` : Instance is in a warning state.
 
-  {
+```json
+{
   "properties": [
-  {
-  "property": "ep_state_instance"
-  },
-  {
-  "property": "edge_location_display_name"
-  }
+    {
+      "property": "ep_state_instance"
+    },
+    {
+      "property": "edge_location_display_name"
+    }
   ],
   "filter": {
-  "rules": [
-  {
-  "property": "ep_state_instance",
-  "operator": "in",
-  "values": [0,1,2]
-  }
-  ]
+    "rules": [
+      {
+        "property": "ep_state_instance",
+        "operator": "in",
+        "values": [0, 1, 2]
+      }
+    ]
   },
-  "count":100
-  }
+  "count": 100
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-13T17:31:23Z",
-           "dataCount": 9,
-           "requestId": "4d83cec6-40db-4c16-b1a5-4bb703663018",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "US Central"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "US Northwest"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "Australia Southeast"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "Bahrain"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "Brazil South"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "India West"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "Japan Central"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "South Africa West"
-           },
-           {
-               "ep_state_instance": 1,
-               "edge_location_display_name": "UK"
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-13T17:31:23Z",
+    "dataCount": 9,
+    "requestId": "4d83cec6-40db-4c16-b1a5-4bb703663018",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "US Central"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "US Northwest"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "Australia Southeast"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "Bahrain"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "Brazil South"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "India West"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "Japan Central"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "South Africa West"
+    },
+    {
+      "ep_state_instance": 1,
+      "edge_location_display_name": "UK"
+    }
+  ]
+}
+```
