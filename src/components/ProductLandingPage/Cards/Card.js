@@ -9,14 +9,14 @@ function Card({ cta, description, image, title, type, links, logo }) {
     if (type === 'single') {
       if (content.logoSrc) {
         return (
-          <Link className="card-cta__single-link" href={content.link}>
+          <Link className="card-cta__single-link" to={content.link}>
             <img className="card-cta__logo" src={content.logoSrc} alt={content.logoAlt} />
           </Link>
         )
       }
 
       return (
-        <Link className="card-cta__single-link" href={content.link}>
+        <Link className="card-cta__single-link" to={content.link}>
           {content.text}
         </Link>
       )
@@ -30,14 +30,14 @@ function Card({ cta, description, image, title, type, links, logo }) {
               return (
                 <Link
                   className="card-cta__logo-link"
-                  href={ctaInfo.link}
+                  to={ctaInfo.link}
                 >
                   <img className="card-cta__logo" src={ctaInfo.logoSrc} />
                 </Link>
               )
             } else {
               return (
-                <Link className="card-cta__docs-link" href={ctaInfo.link}>
+                <Link className="card-cta__docs-link" to={ctaInfo.link}>
                   <span className="card-cta__text">{ctaInfo.text}</span>
                   <img src='img/icons/arrow-forward.svg' />
                 </Link>
@@ -82,7 +82,7 @@ function Card({ cta, description, image, title, type, links, logo }) {
         <div class="link-card__body">
           <h3>{title}</h3>
           <ul class="link-card__list">
-            {links.map(link => <li><Link href={link.path}>{link.text}</Link></li>)}
+            {links.map(link => <li><Link to={link.path}>{link.text}</Link></li>)}
           </ul>
           <CardFooterCTA cta={cta} />
         </div>

@@ -77,7 +77,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoSrc: "img/product-landing/terraform/terraform-logo.png"
           },
           {
-            link: "terraform/docs/panos",
+            link: "/terraform/docs/panos",
             text: "Docs"
           }
         ]
@@ -95,7 +95,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoSrc: "img/product-landing/terraform/terraform-logo.png"
           },
           {
-            link: "terraform/docs/cloudngfw",
+            link: "/terraform/docs/cloudngfw",
             text: "Docs"
           }
         ]
@@ -113,7 +113,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoSrc: "img/product-landing/terraform/terraform-logo.png"
           },
           {
-            link: "terraform/docs/cloudngfw",
+            link: "/terraform/docs/cloudngfw",
             text: "Docs"
           }
         ]
@@ -131,7 +131,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoSrc: "img/product-landing/terraform/terraform-logo.png"
           },
           {
-            link: "terraform/docs/cloudngfw",
+            link: "/terraform/docs/cloudngfw",
             text: "Docs"
           }
         ]
@@ -149,7 +149,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoSrc: "img/product-landing/terraform/terraform-logo.png"
           },
           {
-            link: "terraform/docs/cloudngfw",
+            link: "/terraform/docs/cloudngfw",
             text: "Docs"
           }
         ]
@@ -181,11 +181,11 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       },
       links: [
         {
-          path: "terraform/docs/panos/tutorials/config-secpol-and-objs",
+          path: "/terraform/docs/panos/tutorials/config-secpol-and-objs",
           text: "PAN-OS - Guide"
         },
         {
-          path: "terraform/docs/panos/info/background",
+          path: "/terraform/docs/panos/info/background",
           text: "PAN-OS - Background"
         }
       ]
