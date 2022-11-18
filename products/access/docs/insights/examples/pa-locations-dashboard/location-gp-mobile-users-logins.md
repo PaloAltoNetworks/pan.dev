@@ -68,6 +68,7 @@ The following request payload uses filters for both `event_time` and `edge_locat
         ]
       },
       "count": 5
+    }
 
 
 ## Request Response
