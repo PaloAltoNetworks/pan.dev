@@ -39,7 +39,7 @@ function Card({ cta, description, image, title, type, links, logo }) {
               return (
                 <Link className="card-cta__docs-link" to={ctaInfo.link}>
                   <span className="card-cta__text">{ctaInfo.text}</span>
-                  <img src='img/icons/arrow-forward.svg' />
+                  <img src='/img/icons/arrow-forward.svg' alt="Forward arrow icon" />
                 </Link>
               )
             }

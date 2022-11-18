@@ -53,7 +53,10 @@ function Feeds() {
             {FEEDS_IMAGE.map(feed =>
               <Link to={feed.link}>
                 <div className="feeds-image-text-wrapper">
-                  <img src="img/product-landing/terraform/feeds/stock-feed.jpg" />
+                  <img
+                    src="/img/product-landing/terraform/feeds/stock-feed.jpg"
+                    alt={feed.img.alt}
+                  />
                   <h3 className="feeds__title">{feed.title}</h3>
                 </div>
               </Link>
@@ -63,7 +66,11 @@ function Feeds() {
             {FEEDS.map(feed =>
               <li className="feeds-list__item">
                 <Link to={feed.link}>{feed.title}</Link>
-                <img className="external-icon" src="img/icons/external-icon.png" />
+                <img
+                  className="external-icon"
+                  src="/img/icons/external-icon.png"
+                  alt="External icon"
+                />
               </li>
             )}
           </ul>
