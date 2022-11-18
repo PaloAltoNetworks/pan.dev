@@ -1,0 +1,541 @@
+---
+id: redundant-internet
+title: SD-WAN for Redundant Internet
+hide_title: false
+description: An example configuration which uses the PAN-OS SD-WAN feature to perform load sharing and automatic Internet failover when there is service disruption on a connection is provided.
+keywords:
+  - PAN-OS
+  - SD-WAN
+---
+# Using PAN-OS SD-WAN for Redundant Internet
+
+**Author:** *Kevin Steves - Palo Alto Networks*
+
+## Abstract
+
+Software-Defined Wide Area Network (SD-WAN) is a technology that is
+included in PAN-OS.  One use case which is not explicitly covered in
+the
+[SD-WAN Administrator’s Guide](https://docs.paloaltonetworks.com/sd-wan/3-0/sd-wan-admin)
+is configuring SD-WAN on an Internet
+firewall with redundant Internet connections (e.g., dual ISPs).
+
+An example configuration which uses the PAN-OS SD-WAN feature to
+perform load sharing and automatic Internet failover when there is
+service disruption on a connection is provided.
+
+## Configuration
+
+In the example configuration there are two Internet connections:
+
+1. CenturyLink DSL, 40 Mbps
+2. Comcast Cable (Xfinity), 200 Mbps
+
+Two PA-460s running PAN-OS 10.2 are deployed in an Active/Passive high
+availability (HA) cluster (HA is optional).  The example configuration
+does not use Panorama, and can be deployed using the firewall Web
+Interface or the CLI.  The `set` CLI configuration statements for the
+SD-WAN configuration are provided, in addition to the configuration
+paths in the firewall Web Interface.
+
+The SD-WAN topology is a single branch using Direct Internet Access
+(DIA) only with no hub.
+
+Note: The example configuration has been previously deployed on a
+single PA-220 running PAN-OS 10.1.
+
+Note: When Panorama is used to configure SD-WAN, the SD-WAN plugin
+must be installed on the Panorama management server; the plugin is not
+used on PAN-OS firewalls.
+
+### Step 0: Verify SD-WAN License
+
+A license is required to enable the SD-WAN feature:
+
+```
+  admin@PA-460-1(active)> request license info
+
+  [...]
+
+  License entry:
+  Feature: SD WAN
+  Description: License to enable SD WAN feature
+  Serial: 999999999999
+  Authcode:
+  Issued: August 30, 2022
+  Expires: August 30, 2025
+  Expired?: no
+```
+
+### Step 1: Create Link Tags
+
+Create an object tag for each of the Internet links:
+
+```
+  set tag CenturyLink
+  set tag Comcast
+```
+
+**Web Interface**: *Objects->Tags*
+
+### Step 2: Create a SD-WAN Interface Profile
+
+Create a SD-WAN interface profile for each Internet link.  The tags
+created in *Step 1* are used in the profiles (`link-tag`) and will be
+used to reference the profiles in other SD-WAN objects.  The example
+uses the same profile name as the tag:
+
+```
+  set sdwan-interface-profile CenturyLink link-type ADSL/DSL
+  set sdwan-interface-profile CenturyLink maximum-download 40
+  set sdwan-interface-profile CenturyLink maximum-upload 3
+  set sdwan-interface-profile CenturyLink vpn-data-tunnel-support yes
+  set sdwan-interface-profile CenturyLink path-monitoring Aggressive
+  set sdwan-interface-profile CenturyLink probe-frequency 5
+  set sdwan-interface-profile CenturyLink failback-hold-time 120
+  set sdwan-interface-profile CenturyLink link-tag CenturyLink
+
+  set sdwan-interface-profile Comcast link-type Cablemodem
+  set sdwan-interface-profile Comcast maximum-download 200
+  set sdwan-interface-profile Comcast path-monitoring Aggressive
+  set sdwan-interface-profile Comcast probe-frequency 5
+  set sdwan-interface-profile Comcast failback-hold-time 120
+  set sdwan-interface-profile Comcast maximum-upload 5
+  set sdwan-interface-profile Comcast vpn-data-tunnel-support yes
+  set sdwan-interface-profile Comcast link-tag Comcast
+```
+
+This configuration does not create VPN tunnels--it is a single
+branch with no hub. The path monitoring mode, probe frequency, probe
+idle time and fallback hold time settings apply only to VPN
+tunnels. Probing is performed from the physical Ethernet interfaces to
+the next hop gateway using ICMP echo request at a fixed frequency of 1
+ping per second.
+
+**Web Interface**: *Network->SD-WAN Interface Profile*
+
+### Step 3: Configure SD-WAN Physical Ethernet Interfaces
+
+Configure a physical layer 3 Ethernet interface for each Internet
+link:
+
++ Assign interface to a zone and virtual router
++ Set an IPv4 address
+  - Static: set next hop gateway
+  - DHCP client: disable *Automatically create default route pointing to default gateway provided by server*
++ Enable SD-WAN
++ Set SD-WAN interface profile
+
+In the example configuration, `ethernet1/1` uses a static IP address
+and sets the next hop gateway (`sdwan-gateway`) and `ethernet1/2`
+uses DHCP client with options `create-default-route no`.
+
+```
+  set network interface ethernet ethernet1/1 layer3 sdwan-link-settings upstream-nat enable no
+  set network interface ethernet ethernet1/1 layer3 sdwan-link-settings upstream-nat static-ip
+  set network interface ethernet ethernet1/1 layer3 sdwan-link-settings enable yes
+  set network interface ethernet ethernet1/1 layer3 sdwan-link-settings sdwan-interface-profile CenturyLink
+  set network interface ethernet ethernet1/1 layer3 ip 192.168.0.254/24 sdwan-gateway 192.168.0.1
+
+  set network interface ethernet ethernet1/2 layer3 sdwan-link-settings upstream-nat enable no
+  set network interface ethernet ethernet1/2 layer3 sdwan-link-settings upstream-nat static-ip
+  set network interface ethernet ethernet1/2 layer3 sdwan-link-settings enable yes
+  set network interface ethernet ethernet1/2 layer3 sdwan-link-settings sdwan-interface-profile Comcast
+  set network interface ethernet ethernet1/2 layer3 dhcp-client create-default-route no
+
+  set zone l3-untrust network layer3 [ ethernet1/1 ethernet1/2 ]
+  set network virtual-router default interface [ ethernet1/1 ethernet1/2 ]
+```
+
+**Web Interface**: *Network->Interfaces->Ethernet->Config*
+
+**Web Interface**: *Network->Interfaces->Ethernet->IPv4*
+
+**Web Interface**: *Network->Interfaces->Ethernet->Advanced*
+
+### Step 4: Configure a Virtual SD-WAN Interface
+
+Create a virtual SD-WAN interface with an interface group containing
+the two Internet interfaces, and place them in the same zone and
+virtual router; the virtual interface is `sdwan.1`:
+
+```
+  set network interface sdwan units sdwan.1 interface [ ethernet1/1 ethernet1/2 ]
+
+  set zone l3-untrust network layer3 [ ethernet1/1 sdwan.1 ethernet1/2 ]
+
+  set network virtual-router default interface [ ethernet1/1 ethernet1/2 sdwan.1 ]
+```
+
+**Web Interface**: *Network->Interfaces->SD-WAN*
+
+### Step 5: Create Static Routes to the SD-WAN Interface
+
+Create a default route to the `sdwan.1` interface.  Additionally, host
+routes to devices connected to the interfaces in the SD-WAN interface
+group may need to be created so they can be reached through a specific
+interface.  In the example configuration there is a router and a cable
+modem that need to be reached for management:
+
+```
+  set network virtual-router default routing-table ip static-route default-sdwan interface sdwan.1
+  set network virtual-router default routing-table ip static-route default-sdwan metric 10
+  set network virtual-router default routing-table ip static-route default-sdwan destination 0.0.0.0/0
+  set network virtual-router default routing-table ip static-route default-sdwan route-table unicast
+
+  set network virtual-router default routing-table ip static-route comcast-modem interface ethernet1/2
+  set network virtual-router default routing-table ip static-route comcast-modem metric 10
+  set network virtual-router default routing-table ip static-route comcast-modem destination 192.168.100.1/32
+  set network virtual-router default routing-table ip static-route comcast-modem route-table unicast
+
+  set network virtual-router default routing-table ip static-route centurylink-router interface ethernet1/1
+  set network virtual-router default routing-table ip static-route centurylink-router metric 10
+  set network virtual-router default routing-table ip static-route centurylink-router destination 192.168.0.1/32
+  set network virtual-router default routing-table ip static-route centurylink-router route-table unicast
+```
+
+**Web Interface**: *Network->Virtual Routers*
+
+### Step 6: Configure SD-WAN Link Management Profiles
+
+Note: An error correction profile is not used in the configuration
+because Forward Error Correction (FEC) and Packet Duplication (PD)
+requires the receiver to have knowledge of FEC or PD.
+
+#### Step 6.1: Path Quality Profile
+
+There are a number of predefined path quality profiles, many with
+similar jitter, latency and packet loss values.  A custom profile is
+not created and the predefined `general-web` path quality profile will
+be used.
+
+**Web Interface**: *Objects->SD-WAN Link Management->Path Quality Profile*
+
+#### Step 6.2: SaaS Quality Profile
+
+The SaaS quality profile is a key component of the configuration--it
+is used to define path quality for physical links and the preferred
+path for outgoing connections.
+
+The SaaS quality profile has 3 monitoring mode options:
+
+1. Adaptive - passive monitoring using session packet send and receive statistics
+2. Static IP Address - ping IP addresses
+3. HTTP/HTTP2 - probe a URL
+
+The `adaptive` monitoring mode works very well for the redundant
+Internet use case, and it requires no additional configuration:
+
+```
+  set profiles sdwan-saas-quality saas-adaptive monitor-mode adaptive
+```
+
+**Web Interface**: *Objects->SD-WAN Link Management->SaaS Quality Profile*
+
+#### Step 6.3: Traffic Distribution Profile
+
+The traffic distribution profile has 3 options:
+
+1. Best Available Path
+2. Top Down Priority
+3. Weighted Session Distribution
+
+The two links have disparate bandwidth (40Mbps and 200Mbps) however
+load sharing is still desired and possible.  The `adaptive` SaaS
+monitoring mode is used combined with best available path:
+
+```
+  set profiles sdwan-traffic-distribution traffic-best-available link-tags CenturyLink
+  set profiles sdwan-traffic-distribution traffic-best-available link-tags Comcast
+  set profiles sdwan-traffic-distribution traffic-best-available traffic-distribution "Best Available Path"
+```
+
+**Web Interface**: *Objects->SD-WAN Link Management->Traffic Distribution Profile*
+
+### Step 7: Configure SD-WAN Policy Rules
+
+Create a single outbound SD-WAN policy rule which references the link
+management profiles created and the predefined `general-web` path
+quality profile:
+
+```
+  set rulebase sdwan rules rule0-saas action traffic-distribution-profile traffic-best-available
+  set rulebase sdwan rules rule0-saas from [ l3-internal l3-mgt l3-vm ]
+  set rulebase sdwan rules rule0-saas to l3-untrust
+  set rulebase sdwan rules rule0-saas source any
+  set rulebase sdwan rules rule0-saas destination any
+  set rulebase sdwan rules rule0-saas source-user any
+  set rulebase sdwan rules rule0-saas application any
+  set rulebase sdwan rules rule0-saas service any
+  set rulebase sdwan rules rule0-saas path-quality-profile general-web
+  set rulebase sdwan rules rule0-saas disabled no
+  set rulebase sdwan rules rule0-saas saas-quality-profile saas-adaptive
+```
+
+**Web Interface**: *Policies->SD-WAN*
+
+### Step 8: Configure SD-WAN Interface NAT Rules
+
+Create a NAT rule for each of the Internet interfaces:
+
+```
+  set rulebase nat rules rule1 source-translation dynamic-ip-and-port interface-address interface ethernet1/1
+  set rulebase nat rules rule1 to l3-untrust
+  set rulebase nat rules rule1 from [ l3-internal l3-mgt l3-vm ]
+  set rulebase nat rules rule1 source any
+  set rulebase nat rules rule1 destination any
+  set rulebase nat rules rule1 service any
+  set rulebase nat rules rule1 to-interface ethernet1/1
+
+  set rulebase nat rules rule2 source-translation dynamic-ip-and-port interface-address interface ethernet1/2
+  set rulebase nat rules rule2 to l3-untrust
+  set rulebase nat rules rule2 from [ l3-internal l3-mgt l3-vm ]
+  set rulebase nat rules rule2 source any
+  set rulebase nat rules rule2 destination any
+  set rulebase nat rules rule2 service any
+  set rulebase nat rules rule2 to-interface ethernet1/2
+```
+
+The `enternet1/1` interface is assigned a static private IP address.
+The connected gateway is a DSL router that is performing source NAT
+with its modem public IP address and NAT at the firewall is not
+required, however it is used to avoid adding static routes to internal
+networks on the router.
+
+Source NAT is required on the `ethernet1/2` interface because it has a
+DHCP assigned public IP address.
+
+**Web Interface**: *Policies->NAT*
+
+## High Availability Considerations
+
+### Link and Path Monitoring
+
+Do not enable HA link or path monitoring on the SD-WAN interfaces; the
+SD-WAN configuration will handle link and path failures while avoiding
+the need for an HA failover.
+
+## SD-WAN Troubleshooting, Monitoring and Debugging
+
+### SD-WAN `show sdwan` CLI Commands
+
+There are a number of useful SD-WAN CLI commands under the `show
+sdwan` command tree that are useful for monitoring and
+troubleshooting:
+
+```
+  admin@PA-460-1(active)> show sdwan ?
+  > connection     Show SD-WAN connection information
+  > details        Show SD-WAN debugging information
+  > event          Show SD-WAN related events
+  > path-monitor   sdwan path-monitor infomation
+  > pool           Show SD-WAN shared resource usage
+  > rule           Show SD-WAN rules
+  > session        Show SD-WAN session information
+```
+
+#### Show SD-WAN Rule
+
+The `show sdwan rule` CLI command displays the SD-WAN rules,
+including:
+
+- Traffic distribution method
+- Tag and interface
+- Latency, sensitivity (M is medium), jitter, packet loss from path quality profile
+
+```
+admin@PA-460-1(active)> show sdwan rule vif sdwan.1
+
+[slot1 dp0:]
+VIF: sdwan.1
+ID  Name                            Distribution Latency   Jitter    Pkt Loss  Tag            Weight EC-IF  I/F                 Config  FEC Ratio PD  Acti Pass Trigger Recover
+--- ------------------------------- ------------ --------- --------- --------- -------------- ------ ------ ------------------- ------- --- ----- --- ---- ---- ------- -------
+1   rule0-saas                      Best         300ms(M)  40ms(M)   5(M)      CenturyLink           yes    ethernet1/1                 no        no  no   yes
+                                                                               Comcast               yes    ethernet1/2
+```
+
+#### Show SD-WAN Interfaces State
+
+```
+  admin@PA-460-1(active)> show sdwan connection sdwan.1
+
+  [slot1 dp0:]
+  Name: sdwan.1(256)
+  id    name                                                            state   local-ip            peer-ip             tunnel-i/f  config   measure-only  indirect  path-choice
+  --    ----                                                            -----   -------             -------             ----------  -------  ------------  --------  -----------
+  16    ethernet1/1                                                     up      192.168.0.254/24                                             No            Yes       Yes
+  17    ethernet1/2                                                     up      203.0.113.1/24                                               No            Yes       Yes
+```
+
+#### Show SD-WAN Path Monitor Statistics
+
+```
+  admin@PA-460-1(active)> show sdwan path-monitor stats
+
+  ***slot1 dp0:***
+   idx    if-id  vif         state/reason       State-chg-cnt latency jitter loss(%) Type    Interface/Tunnel                                                 Profile
+  -------------------------------------------------------------------------------------------------------------------------------------
+   0      16     sdwan.1     UP/ping            0             1       0      0       Native  ethernet1/1                                                      N/A
+   1      17     sdwan.1     UP/ping            0             9       1      0       Native  ethernet1/2                                                      N/A
+   2      16     sdwan.1     UP/path_monitor    0             63      20     0       Passive ethernet1/1                                                      saas-adaptive
+   3      17     sdwan.1     UP/path_monitor    0             59      13     0       Passive ethernet1/2                                                      saas-adaptive
+```
+
+The ping monitoring in this case is for the fixed 1 ping per second
+probe performed to the next hop gateway of each Ethernet
+interface. Additional statistics for each interface can be displayed
+using the `conn-idx` option:
+
+```
+  admin@PA-460-1(active)> show sdwan path-monitor stats conn-idx 1
+
+
+
+  ----------------------------------------------------------------
+  ethernet1/2 idx: 1 Probing: Enabled  Monitor-mode: Aggressive
+  ----------------------------------------------------------------
+    probe-req-send:227933  State: up  State-chg-cnt: 0
+  probe-reply-recv:227909  local-metric: 10 peer-metric: 0
+
+           packet loss :  real-time  crt-use   version
+            per 100 pkt:  0          0         0
+
+
+                         latency   jitter    pkt_loss  health_ver
+           3000ms average
+              real time: 8         1         0
+            current use: 0         0         0         2
+
+           10000ms average
+              real time: 8         1         0
+            current use: 0         39        0         78
+
+           25000ms average
+              real time: 9         1         0
+            current use: 0         0         0         0
+```
+
+#### Show SD-WAN Session Distribution
+
+```
+  admin@PA-460-1(active)> show sdwan session distribution policy-name rule0-saas
+
+  [slot1 dp0:]
+  SD-WAN session distribution for policy 1
+
+  Vif        Link                 Count      Percentage
+  ---------- -------------------- ---------- ----------
+  sdwan.1    ethernet1/1(16)      10         7.14%
+  sdwan.1    ethernet1/2(17)      130        92.85%
+```
+
+#### Show SD-WAN Events, Including Path Selection
+
+The `show sdwan event` CLI command displays event logs, including
+which interface is used for new sessions.  The example configuration
+uses *Best Available Path* in the SD-WAN policy *Traffic Distribution
+Profile*, and can be used to confirm both interfaces are being used for
+path selection.
+
+```
+  admin@PA-460-1(active)> show sdwan event
+
+  [slot1 dp0:]
+  System time: 09/19 13:08:00
+  Path selection health format: latency/jitter/loss/adjusted-latency/total-loss
+  Path monitor health format: latency/jitter/loss::real-time-latency/real-time-jitter/real-time-loss
+
+  09/19 13:08:00:[Passive monitor activated] session 148913 resource 185
+  09/19 13:08:00:[path selection] session 148913 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:59:[path selection] session 148954 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:59:[path selection] session 148971 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:59:[path selection] session 148878 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:58:[Passive monitor de-activated] session 148838 resource 185
+  09/19 13:07:58:[Passive monitor de-activated] session 148412 resource 173
+  09/19 13:07:58:[Passive monitor de-activated] session 148742 resource 147
+  09/19 13:07:58:[Passive monitor activated] session 148898 resource 67
+  09/19 13:07:58:[path selection] session 148898 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:57:[Passive monitor de-activated] session 148868 resource 67
+  09/19 13:07:54:[Passive monitor de-activated] session 148834 resource 136
+  09/19 13:07:53:[Passive monitor de-activated] session 148816 resource 29
+  09/19 13:07:53:[Passive monitor activated] session 148970 resource 31
+  09/19 13:07:53:[path selection] session 148970 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:53:[Passive monitor activated] session 148488 resource 90
+  09/19 13:07:53:[path selection] session 148488 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:52:[path selection] session 148810 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:52:[path selection] session 148781 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:52:[Passive monitor activated] session 148848 resource 101
+  09/19 13:07:52:[path selection] session 148848 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:51:[Passive monitor activated] session 148780 resource 60
+  09/19 13:07:51:[path selection] session 148780 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:51:[path selection] session 148862 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:51:[path selection] session 148635 policy rule0-saas(Best) N/A => ethernet1/1(16) profile 300/40/5 initial selection
+  09/19 13:07:50:[path selection] session 148629 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:50:[path selection] session 148899 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:50:[path selection] session 148832 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:50:[path selection] session 148736 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:50:[path selection] session 148416 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:49:[Passive monitor activated] session 148834 resource 136
+  09/19 13:07:49:[path selection] session 148834 policy rule0-saas(Best) N/A => ethernet1/2(17) profile 300/40/5 initial selection
+  09/19 13:07:48:[Passive monitor de-activated] session 148829 resource 136
+  lines 1-39
+```
+
+### `sdwand.log`
+
+The `sdwand.log` contains various SD-WAN log events, including monitor
+UP and DOWN state changes.
+
+```
+admin@PA-460-1(active)> tail mp-log sdwand.log
+2022-10-01 14:35:51.231 -0700 Notify dnsproxyd of all-tunnel-down for if_index 17
+2022-10-01 18:54:50.831 -0700 Sdwan connection 3 if_idx 17 state set from  UP/path_monitor to  DOWN/path_monitor,change 2
+2022-10-01 18:54:51.231 -0700 Sdwan connection 3 if_idx 17 state set from  DOWN/path_monitor to  UP/path_monitor,change 3
+2022-10-01 18:54:52.631 -0700 Sdwan connection 2 if_idx 16 state set from  UP/path_monitor to  DOWN/path_monitor,change 2
+2022-10-01 18:54:53.631 -0700 Sdwan connection 2 if_idx 16 state set from  DOWN/path_monitor to  UP/path_monitor,change 3
+2022-10-02 01:26:44.031 -0700  pan_sdwan_update_vif_mtu(pan_sdwan.c:1646): Vif 256 MTU set to 1500
+2022-10-02 17:09:59.331 -0700 Sdwan connection 2 if_idx 16 state set from  UP/path_monitor to  DOWN/path_monitor,change 1
+2022-10-02 17:09:59.531 -0700 Sdwan connection 2 if_idx 16 state set from  DOWN/path_monitor to  UP/path_monitor,change 2
+2022-10-02 23:35:10.131 -0700 Sdwan connection 3 if_idx 17 state set from  UP/path_monitor to  DOWN/path_monitor,change 1
+2022-10-02 23:35:10.331 -0700 Sdwan connection 3 if_idx 17 state set from  DOWN/path_monitor to  UP/path_monitor,change 2
+
+```
+
+The *connection* number is the *idx* from `show sdwan path-monitor
+stats`, and the *if_idx* is the *if-id*. It's unclear what may cause
+the very short duration state changes--the last two are each 200
+milliseconds. These use a SaaS adaptive path monitoring profile.
+
+### SD-WAN Global Counters
+
+Add `value all` to show all counters (including zero).
+
+Add `delta yes` to show the difference between the last command.
+
+
+```
+  admin@PA-460-1(active)> show counter global filter aspect sdwan
+
+  Global counters:
+  Elapsed time since last sampling: 175.814 seconds
+
+  name                                   value     rate severity  category  aspect    description
+  --------------------------------------------------------------------------------
+  flow_sdwan_prob_req_tx                 10918        2 info      flow      sdwan     SDWAN prob request packet transmitted
+  flow_sdwan_prob_reply_rx               10918        2 info      flow      sdwan     SDWAN prob reply packet received
+  flow_sdwan_select_best                 14006        1 info      flow      sdwan     SDWAN best-available path selection
+  flow_sdwan_internal_ager              543629       99 info      flow      sdwan     SDWAN FEC/PD ager count
+  --------------------------------------------------------------------------------
+  Total counters shown: 4
+  --------------------------------------------------------------------------------
+```
+
+### SD-WAN Debug Flow Targets
+
+Two SD-WAN debug flow targets are available:
+
+```
+  admin@PA-460-1(active)> debug dataplane packet-diag set log feature flow s?
+    sdwan         sdwan
+    sdwan_probe   sdwan_probe
+```

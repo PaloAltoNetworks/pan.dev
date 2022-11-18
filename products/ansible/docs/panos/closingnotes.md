@@ -1,5 +1,0 @@
-
-## Closing notes
-- Tasks do not have to be divided into playbook files as has been described in this tutorial. All the tasks could have been placed in a single playbook, or equally the tasks could have been divided into more playbooks than those used in the tutorial. The structure of your playbooks is something to consider as you operationalize Ansible within your organization.
-- If you used the [setup instructions listed here](./tutorials/setup.md), you were using a static inventory file, and local PAN-OS credentials encrypted on disk with ```ansible-vault```. This is very suitable for a learning tutorial, but these approaches may not be suitable for production, and are also something to consider as you operationalize Ansible within your organization.
-- Almost all values for tasks were defined within the playbooks; names of configuration items, IP addresses, and more. This is very suitable for a learning tutorial, but this approach does not scale well in production, and using variables instead is something to consider as you operationalize Ansible within your organization.

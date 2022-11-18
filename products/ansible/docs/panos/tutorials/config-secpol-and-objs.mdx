@@ -14,17 +14,17 @@ keywords:
   - ansible
 ---
 
-import Assumptions from '../assumptions.md'
-import LabGuidance from '../../../../lab-guidance.md'
-import ClosingNotes from '../closingnotes.md'
+import Assumptions from '../_assumptions.md'
+import LabGuidance from '/products/shared/_lab-guidance.md'
+import ClosingNotes from '../_closingnotes.md'
 
 # Configuration Tasks
 
 With this playbook, you will create items in a PAN-OS next-generation firewall, in order to perform configuration of PAN-OS "as-code". This is one of the most common use case for Ansible in relation to PAN-OS.
 
-<Assumptions components={props.components} />
+<Assumptions />
 
-<LabGuidance components={props.components} />
+<LabGuidance />
 
 ## Security policies and address objects
 
@@ -32,11 +32,12 @@ In this tutorial, you will create a number of items related to security policies
 
 ## Create address objects
 
-1. Create a file called ```create-address-objects.yml``` and paste in the following content:
+1. Create a file called `create-address-objects.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Create address objects
-  hosts: 'firewall'
+  hosts: "firewall"
   connection: local
 
   vars:
@@ -61,13 +62,17 @@ In this tutorial, you will create a number of items related to security policies
         provider: "{{ device }}"
         name: "destination-server"
         value: "192.168.80.5/32"
-        description: "Address object 2 from Ansible"        
+        description: "Address object 2 from Ansible"
 ```
+
 2. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass create-address-objects.yml
 ```
+
 3. The output should be something similar to this:
+
 ```
 PLAY [Create address objects] ****************************************************************************************************************************
 
@@ -81,19 +86,21 @@ TASK [Create destination address object] ***************************************
 changed: [firewall]
 
 PLAY RECAP ***********************************************************************************************************************************************
-firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
-4. Login to the PAN-OS GUI and confirm that the two new address objects ```source-server``` and ```destination-server``` have been created.
+
+4. Login to the PAN-OS GUI and confirm that the two new address objects `source-server` and `destination-server` have been created.
 
 ![image of PAN-OS GUI with address objects](address-objects.png)
 
 ## Create service objects
 
-5. Create a file called ```create-service-objects.yml``` and paste in the following content:
+5. Create a file called `create-service-objects.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Create address objects
-  hosts: 'firewall'
+  hosts: "firewall"
   connection: local
 
   vars:
@@ -120,13 +127,17 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
         name: "tcp-9876"
         protocol: "tcp"
         destination_port: "9876"
-        description: "Service object 2 from Ansible"   
+        description: "Service object 2 from Ansible"
 ```
+
 6. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass create-service-objects.yml
 ```
+
 7. The output should be something similar to this:
+
 ```
 PLAY [Create service objects] ****************************************************************************************************************************
 
@@ -140,15 +151,17 @@ TASK [Create service object 'tcp-9876'] ****************************************
 changed: [firewall]
 
 PLAY RECAP ***********************************************************************************************************************************************
-firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
-8. Login to the PAN-OS GUI and confirm that the two new address objects ```tcp-12345``` and ```tcp-9876``` have been created.
+
+8. Login to the PAN-OS GUI and confirm that the two new address objects `tcp-12345` and `tcp-9876` have been created.
 
 ![image of PAN-OS GUI with service objects](service-objects.png)
 
 ## Create security policies
 
-9. Create a file called ```create-security-policies.yml``` and paste in the following content:
+9. Create a file called `create-security-policies.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Create security policies
@@ -187,13 +200,17 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
         destination_ip: ["destination-server"]
         application: ["ssh"]
         service: ["tcp-9876"]
-        action: "deny" 
+        action: "deny"
 ```
+
 10. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass create-security-policies.yml
 ```
+
 11. The output should be something similar to this:
+
 ```
 PLAY [Create security policies] ****************************************************************************************************************************************************
 
@@ -207,15 +224,17 @@ TASK [Add example rule 2] ******************************************************
 changed: [firewall]
 
 PLAY RECAP *************************************************************************************************************************************************************************
-firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+firewall                   : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
-12. Login to the PAN-OS GUI and confirm that the two new address objects ```example rule 1``` and ```example rule 2``` have been created.
+
+12. Login to the PAN-OS GUI and confirm that the two new address objects `example rule 1` and `example rule 2` have been created.
 
 ![image of PAN-OS GUI with security policy rules](security-policy-rules.png)
 
 ## Commit the configuration
 
-13. Create a file called ```commit-firewall.yml``` and paste in the following content:
+13. Create a file called `commit-firewall.yml` and paste in the following content:
+
 ```yaml
 ---
 - name: Commit firewall candidate configuration
@@ -238,13 +257,16 @@ firewall                   : ok=3    changed=2    unreachable=0    failed=0    s
       register: results
     - debug:
         msg: "Commit with Job ID: {{ results.jobid }} had output: {{ results.details }}"
-
 ```
+
 14. Execute the playbook with the following command:
+
 ```
 ansible-playbook -i inventory.txt --ask-vault-pass commit-firewall.yml
 ```
+
 15. The output should be something similar to this:
+
 ```
 PLAY [Commit firewall candidate configuration] *************************************************************************************************************************************
 
@@ -260,7 +282,7 @@ ok: [firewall] => {
 }
 
 PLAY RECAP *************************************************************************************************************************************************************************
-firewall                   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+firewall                   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
-<ClosingNotes components={props.components} />
+<ClosingNotes />
