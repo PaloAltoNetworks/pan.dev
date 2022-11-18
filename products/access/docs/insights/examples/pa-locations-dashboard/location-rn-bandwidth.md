@@ -37,12 +37,11 @@ The following request payload uses the `last_n_days` and `edge_location_display_
 
 `last_n_days`: The values for this filter are:
 
-* `last_n_minutes` : n = 15.
-* `last_n_hours` : n = 1, 3, 24, or 48.
-* `last_n_days` : n = 7 or 30.
+- `last_n_minutes` : n = 15.
+- `last_n_hours` : n = 1, 3, 24, or 48.
+- `last_n_days` : n = 7 or 30.
 
-`edge_location_display_name`:  String. A location name, such as US East, Japan, and so on.
-
+`edge_location_display_name`: String. A location name, such as US East, Japan, and so on.
 
     {
         "properties": [
@@ -73,7 +72,6 @@ The following request payload uses the `last_n_days` and `edge_location_display_
         "count": 5
     }
 
-
 ## Request Response
 
     {
@@ -101,6 +99,3 @@ The following request payload uses the `last_n_days` and `edge_location_display_
            }
        ]
     }
-
-
-

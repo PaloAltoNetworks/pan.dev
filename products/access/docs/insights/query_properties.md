@@ -18,13 +18,13 @@ your properties as an array of objects. For example:
           "property": "login_user_name",
           "function": "distinct_count",
           "sort": {
-            "order": "desc", 
+            "order": "desc",
             "sequence": 1
           }
         }
       ],
 
-The data field identified in each property must be available in the resource you are querying. 
+The data field identified in each property must be available in the resource you are querying.
 
 Each property can include an alias for the property, a function to apply to the property, as well as sorting information.
 
@@ -41,7 +41,6 @@ example:
 ## Properties Functions
 
 Functions can be applied to specified properties. For example:
-
 
     {
       "property": "login_user_name",
@@ -76,7 +75,7 @@ The following functions can be used with the properties portion of the query:
 
 - distinct_count
 
-  Returns a count of the number of distinct (unique) values seen for the identified property 
+  Returns a count of the number of distinct (unique) values seen for the identified property
   in the query set.
 
 - distinct
@@ -89,7 +88,7 @@ You can order the results of a function in either descending (`desc`) or ascendi
 For example:
 
     {
-       
+
       "property": "login_user_name",
       "function": "distinct_count",
       "sort": {

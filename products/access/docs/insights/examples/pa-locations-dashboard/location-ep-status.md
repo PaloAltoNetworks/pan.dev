@@ -22,7 +22,6 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ### 2.0 Call
 
     POST /api/sase/v2.0/resource/query/edge_location_current_status
@@ -38,32 +37,30 @@ The information returned by this query can also be viewed in the UI, here:
 The following request payload uses filters for the `ep_state_instance`. The
 values for these filters are:
 
-* `0` : Instance is down.
-* `1` : Instance is up.
-* `2` : Instance is in a warning state.
+- `0` : Instance is down.
+- `1` : Instance is up.
+- `2` : Instance is in a warning state.
 
-
-    {
-       "properties": [
-           {
-               "property": "ep_state_instance"
-           },
-           {
-               "property": "edge_location_display_name"
-           }
-       ],
-       "filter": {
-           "rules": [
-               {
-                   "property": "ep_state_instance",
-                   "operator": "in",
-                   "values": [0,1,2]
-               }
-           ]
-       },
-       "count":100
-    }
-
+  {
+  "properties": [
+  {
+  "property": "ep_state_instance"
+  },
+  {
+  "property": "edge_location_display_name"
+  }
+  ],
+  "filter": {
+  "rules": [
+  {
+  "property": "ep_state_instance",
+  "operator": "in",
+  "values": [0,1,2]
+  }
+  ]
+  },
+  "count":100
+  }
 
 ## Request Response
 

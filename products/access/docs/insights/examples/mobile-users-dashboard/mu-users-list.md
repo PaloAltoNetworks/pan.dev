@@ -21,7 +21,6 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ### 2.0 Call
 
     POST /api/sase/v2.0/resource/export/schedule/custom/query/gp_mobileusers/user_list
@@ -36,27 +35,25 @@ The information returned by this query can also be viewed in the UI, here:
 
 The following request payload uses a filter for `last_n_hours`. The values for this filter are:
 
-* `last_n_minutes` : n = 15.
-* `last_n_hours` : n = 1, 3, 24, or 48.
-* `last_n_days` : n = 7 or 30.
+- `last_n_minutes` : n = 15.
+- `last_n_hours` : n = 1, 3, 24, or 48.
+- `last_n_days` : n = 7 or 30.
 
-
-    {
-       "filter": {
-           "rules":[
-               {
-                   "property": "event_time",
-                   "operator": "last_n_days",
-                   "values": [30]
-               }
-           ]
-       },
-       "count":10
-    }
-
+  {
+  "filter": {
+  "rules":[
+  {
+  "property": "event_time",
+  "operator": "last_n_days",
+  "values": [30]
+  }
+  ]
+  },
+  "count":10
+  }
 
 ## Request Response
-  
+
     {
        "header": {
            "createdAt": "2022-10-13T18:39:20Z",

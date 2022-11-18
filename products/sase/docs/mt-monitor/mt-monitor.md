@@ -29,7 +29,7 @@ perform aggregated monitoring queries for the following resources:
 - [Tenant Resources API](/category/sase/api/mt-monitor/tenant-resources/): list all Prisma Access tenants in
   the hierarchy.
 
-The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's 
+The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's
 [Multitentant Portal user interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platform/monitor-tenants).
 
 ## Authentication

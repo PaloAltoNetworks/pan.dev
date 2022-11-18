@@ -31,7 +31,6 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ## Request Payload
 
     {
@@ -68,7 +67,6 @@ The information returned by this query can also be viewed in the UI, here:
         ]
       }
     }
-
 
 ## Request Response
 

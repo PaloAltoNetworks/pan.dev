@@ -11,7 +11,6 @@ The information returned by this query can also be viewed in the UI, here:
 
 ![](/access/img/Alerts_cleared_open_raised_over_time.png)
 
-
 ## API Calls
 
 ### 1.0 Call
@@ -37,13 +36,13 @@ The information returned by this query can also be viewed in the UI, here:
 The following request payload uses the `severity_id` and `raised-time` filters:
 
 `severity_id` : The values for this filter are:
-* `High` : 4
-* `Medium` : 3
-* `Low` : 2
-* `Informational` : 1
+
+- `High` : 4
+- `Medium` : 3
+- `Low` : 2
+- `Informational` : 1
 
 `raised-time` : string, format example `2021-07-03 23:12:13 UTC`
-
 
     {
       "properties": [
@@ -86,9 +85,7 @@ The following request payload uses the `severity_id` and `raised-time` filters:
       }
     }
 
-
 ## Request Response
-
 
     {
      "properties": [
@@ -131,4 +128,3 @@ The following request payload uses the `severity_id` and `raised-time` filters:
        ]
       }
     }
-

@@ -31,9 +31,7 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ## Request Payload
-
 
     {
      "properties": [
@@ -98,7 +96,6 @@ The information returned by this query can also be viewed in the UI, here:
      },
      "count": 100
     }
-
 
 ## Request Response
 

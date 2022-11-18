@@ -21,7 +21,6 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ### 2.0 Call
 
     POST /api/sase/v2.0/resource/custom/query/gp_mobileusers/current_connected_user_list
@@ -32,28 +31,25 @@ The information returned by this query can also be viewed in the UI, here:
 
     Content-Type: application/json
 
-
 ## Request Payload
 
 The following request payload uses the following filter:
 
-* `edge_location_display_name` : String. The edge location display name is a location name.
+- `edge_location_display_name` : String. The edge location display name is a location name.
 
-
-    {
-     "filter": {
-       "rules": [
-         {
-           "property": "edge_location_display_name",
-           "operator": "equals",
-           "values": [
-             "US Central"
-           ]
-         }
-       ]
-     }
-    }
-
+  {
+  "filter": {
+  "rules": [
+  {
+  "property": "edge_location_display_name",
+  "operator": "equals",
+  "values": [
+  "US Central"
+  ]
+  }
+  ]
+  }
+  }
 
 ## Request Response
 

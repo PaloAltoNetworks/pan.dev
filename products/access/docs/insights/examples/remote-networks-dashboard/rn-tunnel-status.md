@@ -18,7 +18,7 @@ The information returned by this query can also be viewed in the UI, here:
     POST /api/sase/v1.0/resource/tenant/{super_tenant_id}/query/rn-tunnel-status
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ### 2.0 Call
@@ -28,7 +28,7 @@ The information returned by this query can also be viewed in the UI, here:
     Prisma-Tenant:{{tenant_id}}
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ## Request Payload
@@ -36,78 +36,77 @@ The information returned by this query can also be viewed in the UI, here:
 The following request payload uses a filter for `last_n_days`. You can set the event_time on the UI using the Time Range filter. The
 values for these filters are:
 
-* `last_n_minutes` : n = 15.
-* `last_n_hours` : n = 1, 3, 24, or 48.
-* `last_n_days` : n = 7, 30, or 90.
+- `last_n_minutes` : n = 15.
+- `last_n_hours` : n = 1, 3, 24, or 48.
+- `last_n_days` : n = 7, 30, or 90.
 
+  {
+  "histogram": {
+  "property": "event_time",
+  "enableEmptyInterval": true,
+  "range": "day",
+  "value": "30"
+  },
+  "properties": [
+  {
+  "function": "avg",
+  "format": {
+  "function": "round",
+  "value": 2
+  },
+  "property": "tunnel_throughput_ingress",
+  "alias": "avg_ingress"
+  },
+  {
+  "function": "avg",
+  "format": {
+  "function": "round",
+  "value": 2
+  },
+  "property": "tunnel_throughput_egress",
+  "alias": "avg_egress"
+  },
+  {
+  "function": "max",
+  "format": {
+  "function": "round",
+  "value": 2
+  },
+  "property": "tunnel_throughput_ingress",
+  "alias": "peak_ingress"
+  },
+  {
+  "function": "max",
+  "format": {
+  "function": "round",
+  "value": 2
+  },
+  "property": "tunnel_throughput_egress",
+  "alias": "peak_egress"
+  }
+  ],
+  "filter": {
+  "rules": [
+  {
+  "property": "node_type",
+  "operator": "equals",
+  "values": [
+  48
+  ]
+  },
+  {
+  "property": "event_time",
+  "operator": "last_n_days",
+  "values": [
+  30
+  ]
+  }
 
-    {
-     "histogram": {
-       "property": "event_time",
-       "enableEmptyInterval": true,
-       "range": "day",
-       "value": "30"
-     },
-     "properties": [
-       {
-         "function": "avg",
-         "format": {
-           "function": "round",
-           "value": 2
-         },
-         "property": "tunnel_throughput_ingress",
-         "alias": "avg_ingress"
-       },
-       {
-         "function": "avg",
-         "format": {
-           "function": "round",
-           "value": 2
-         },
-         "property": "tunnel_throughput_egress",
-         "alias": "avg_egress"
-       },
-       {
-         "function": "max",
-         "format": {
-           "function": "round",
-           "value": 2
-         },
-         "property": "tunnel_throughput_ingress",
-         "alias": "peak_ingress"
-       },
-       {
-         "function": "max",
-         "format": {
-           "function": "round",
-           "value": 2
-         },
-         "property": "tunnel_throughput_egress",
-         "alias": "peak_egress"
-       }
-     ],
-     "filter": {
-       "rules": [
-         {
-           "property": "node_type",
-           "operator": "equals",
-           "values": [
-              48             
-           ]
-         },
-         {
-           "property": "event_time",
-           "operator": "last_n_days",
-           "values": [
-             30
-           ]
-         }
- 
        ]
-     },
-     "count": 100
-    }
 
+  },
+  "count": 100
+  }
 
 ## Request Response
 
@@ -151,6 +150,3 @@ values for these filters are:
            }
        ]
     }
-
-
- 

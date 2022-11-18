@@ -8,6 +8,6 @@ module.exports = {
   ],
   cdl_logforwarding_api: [
     "cdl/api/logforwarding/logforwardingapi",
-    require('./api/logforwarding/sidebar.js')
-  ]
-}
+    require("./api/logforwarding/sidebar.js"),
+  ],
+};

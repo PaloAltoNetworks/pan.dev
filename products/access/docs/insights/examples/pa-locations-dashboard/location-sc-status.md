@@ -1,7 +1,7 @@
 ---
 id: location-sc-status
 title: Service Connection Status
-description: Service Connection Status 
+description: Service Connection Status
 sidebar_label: Service Connection Status
 ---
 
@@ -18,7 +18,7 @@ The information returned by this query can also be viewed in the UI, here:
     POST /api/sase/v1.0/resource/tenant/{super_tenant_id}/query/edge_location_current_status
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ### 2.0 Call
@@ -28,40 +28,37 @@ The information returned by this query can also be viewed in the UI, here:
     Prisma-Tenant:{{tenant_id}}
 
     Authorization: Bearer {{jwt_token}}
-    
+
     Content-Type: application/json
 
 ## Request Payload
 
 The following request payload uses filters for `sc_state_instance`. The values for this filter are:
 
-* `0` : Instance is down.
-* `1` : Instance is up.
-* `2` : Instance is in a warning state.
+- `0` : Instance is down.
+- `1` : Instance is up.
+- `2` : Instance is in a warning state.
 
-
-     {
-        "properties": [
-            {
-                "property": "sc_state_instance"
-            },
-            {
-                "property": "edge_location_display_name"
-            }
-        ],
-        "filter": {
-            "rules": [
-                {
-                    "property": "sc_state_instance",
-                    "operator": "in",
-                    "values": [0,1,2]
-                }
-            ]
-        },
-        "count":100
-    }
-
-
+  {
+  "properties": [
+  {
+  "property": "sc_state_instance"
+  },
+  {
+  "property": "edge_location_display_name"
+  }
+  ],
+  "filter": {
+  "rules": [
+  {
+  "property": "sc_state_instance",
+  "operator": "in",
+  "values": [0,1,2]
+  }
+  ]
+  },
+  "count":100
+  }
 
 ## Request Response
 

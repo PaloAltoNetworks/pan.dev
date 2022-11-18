@@ -11,7 +11,6 @@ The information returned by this query can also be viewed in the UI, here:
 
 ![](/access/img/Alerts_cleared_open_raised_over_time.png)
 
-
 ## API Calls
 
 ### 1.0 Call
@@ -21,7 +20,6 @@ The information returned by this query can also be viewed in the UI, here:
     Authorization: Bearer {{jwt_token}}
 
     Content-Type: application/json
-
 
 ### 2.0 Call
 
@@ -77,9 +75,7 @@ The information returned by this query can also be viewed in the UI, here:
       }
     }
 
-
 ## Request Response
-
 
     {
        "header": {
@@ -108,4 +104,3 @@ The information returned by this query can also be viewed in the UI, here:
            }
        ]
     }
-
