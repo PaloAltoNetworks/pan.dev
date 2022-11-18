@@ -32,7 +32,7 @@ export const TERRAFORM_HERO_CONTENT = {
         }
       },
       image: {
-        src: "img/product-landing/terraform/technology-partner-award.jpg",
+        src: "/img/product-landing/terraform/technology-partner-award.jpg",
         alt: "Technology Partner of The Year"
       },
     },
@@ -47,7 +47,7 @@ export const TERRAFORM_HERO_CONTENT = {
         }
       },
       image: {
-        src: "img/product-landing/terraform/terraform-article.jpeg",
+        src: "/img/product-landing/terraform/terraform-article.jpeg",
         alt: "Technology Partner of The Year"
       },
     },
@@ -74,7 +74,8 @@ export const TERRAFORM_PROVIDER_CONTENT = {
         content: [
           {
             link: "https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest",
-            logoSrc: "img/product-landing/terraform/terraform-logo.png"
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo"
           },
           {
             link: "/terraform/docs/panos",
@@ -92,7 +93,8 @@ export const TERRAFORM_PROVIDER_CONTENT = {
         content: [
           {
             link: "https://registry.terraform.io/providers/PaloAltoNetworks/cloudngfwaws/latest",
-            logoSrc: "img/product-landing/terraform/terraform-logo.png"
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo"
           },
           {
             link: "/terraform/docs/cloudngfw",
@@ -110,7 +112,8 @@ export const TERRAFORM_PROVIDER_CONTENT = {
         content: [
           {
             link: "https://registry.terraform.io/providers/PaloAltoNetworks/prismacloud/latest",
-            logoSrc: "img/product-landing/terraform/terraform-logo.png"
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo"
           },
           {
             link: "/terraform/docs/cloudngfw",
@@ -128,7 +131,8 @@ export const TERRAFORM_PROVIDER_CONTENT = {
         content: [
           {
             link: "https://registry.terraform.io/providers/PaloAltoNetworks/prismacloudcompute/latest",
-            logoSrc: "img/product-landing/terraform/terraform-logo.png"
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo"
           },
           {
             link: "/terraform/docs/cloudngfw",
@@ -146,7 +150,8 @@ export const TERRAFORM_PROVIDER_CONTENT = {
         content: [
           {
             icon: "https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest",
-            logoSrc: "img/product-landing/terraform/terraform-logo.png"
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo"
           },
           {
             link: "/terraform/docs/cloudngfw",
@@ -175,7 +180,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
         type: "single",
         content: {
           link: "https://registry.terraform.io/search/providers?namespace=PaloAltoNetworks",
-          logoSrc: "img/product-landing/terraform/terraform-logo.png",
+          logoSrc: "/img/product-landing/terraform/terraform-logo.png",
           logoAlt: "Terraform Logo"
         }
       },
@@ -196,7 +201,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
         type: "single",
         content: {
           link: "https://prisma.pan.dev/docs/cloud/cspm/tf/tf_example1",
-          logoSrc: "img/product-landing/terraform/terraform-logo.png",
+          logoSrc: "/img/product-landing/terraform/terraform-logo.png",
           logoAlt: "Terraform Logo"
         }
       },
@@ -213,7 +218,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
         type: "single",
         content: {
           link: "https://registry.terraform.io/search/providers?namespace=PaloAltoNetworks",
-          logoSrc: "img/product-landing/terraform/terraform-logo.png",
+          logoSrc: "/img/product-landing/terraform/terraform-logo.png",
           logoAlt: "Terraform Logo"
         }
       },
