@@ -14,15 +14,13 @@ The Prisma Access Insights APIs enable automation and integration solutions for 
 There are two versions of the APIs. Both versions are functionally identical. They both allow you to
 query your Prisma Access tenant for the health of your Prisma Access network deployment.
 However, these API versions use different access tokens, and the mechanism by which you obtain an
-access token is different for each version. 
+access token is different for each version.
 
-The 2.0 APIs are for customers who use TSG IDs. This includes all customers using the Prisma SASE Multitenant Support. 
+The 2.0 APIs are for customers who use TSG IDs. This includes all customers using the Prisma SASE Multitenant Support.
 For more information, see [Get Started with Prisma Access Insights 2.0 API](/access/docs/insights/getting_started-20/).
 
 The 1.0 APIs support legacy single tenant customers.
 For more information, see [Get Started with Prisma Access Insights 1.0 API](/access/docs/insights/getting_started-10/).
-
-
 
 ## How do I identify whether my tenant has been migrated to TSG ID?
 
@@ -37,7 +35,7 @@ To see whether your tenant uses tenant service group (TSG) IDs:
 ## Why migrate from version 1.0 APIs to version 2.0 APIs?
 
 Version 2.0 is capable of supporting TSG IDs. The list of tenants and subtenants can be mentioned in
-the header, as opposed to concatenating tenants and subtenants in the URI. 
+the header, as opposed to concatenating tenants and subtenants in the URI.
 
 In version 1.0, the tenant ID that is present in the header always refers to the super tenant.
 
@@ -92,7 +90,7 @@ See [Get Started with Prisma Access Insights 2.0 API](/access/docs/insights/gett
 
 ## What does a typical query look like?
 
-To see examples of typical queries, see [Prisma Access Insights API Examples](/access/docs/insights/examples/). 
+To see examples of typical queries, see [Prisma Access Insights API Examples](/access/docs/insights/examples/).
 
 ## What are query components?
 
@@ -101,5 +99,3 @@ For details about query components, see [Prisma Access Insights Query Language](
 ## What are the possible filter values?
 
 For information about filter values, see [Query Language Filters](/access/docs/insights/query_filters/).
-
-
