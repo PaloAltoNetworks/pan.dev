@@ -6,6 +6,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { useLocation } from "@docusaurus/router";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import SearchBar from "@theme/SearchBar";
 
 export default function NotFound() {
   const {
@@ -40,25 +41,56 @@ export default function NotFound() {
     <>
       <PageMetadata title="Page Not Found" />
       <Layout>
-        <main className="container margin-vert--xl">
-          <div className="row">
-            <div className="col col--4 col--offset-4">
-              <img src="/img/404_Page.svg" />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col col--8 col--offset-2">
-              <h1 className="hero__title">
-                Sorry, we have a broken link or this URL doesn't exist.
-              </h1>
-              <h4>Our team has been notified of this error.</h4>
+        <main>
+          <div className="container hero-container">
+            <div
+              className="hero-content-container"
+              style={{ paddingBottom: "1rem" }}
+            >
+              <div className="container">
+                <div className="row">
+                  <div className="col col--4">
+                    <img src="/img/404_Page.svg" />
+                  </div>
+                  <div className="col col--8">
+                    <h1 className="hero__title">
+                      Sorry, we have a broken link or this URL doesn't exist.
+                    </h1>
+                    <p className="hero__subtitle">
+                      Our team has been notified of this error.
+                    </p>
+                    <h3 className="padding-vert--md">
+                      <Link
+                        uppercase="false"
+                        href={useBaseUrl("/#developer-docs-section")}
+                      >
+                        EXPLORE OUR DEVELOPER DOCS
+                      </Link>{" "}
+                      or use our{" "}
+                      <span
+                        className="dummy-search"
+                        style={{
+                          display: "inline-block",
+                        }}
+                      >
+                        <SearchBar />
+                      </span>{" "}
+                      to find what you're looking for.
+                    </h3>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           {searchResults.length > 0 && (
-            <div>
+            <div className="padding-vert--lg padding--lg">
+              <hr />
               <div className="row">
-                <div className="col col--8 col--offset-2">
-                  <h2>Here are some suggested pages to visit: </h2>
+                <div className="col col--12 col--offset-1">
+                  <h2>
+                    We found some pages that might match what you're looking
+                    for:{" "}
+                  </h2>
                   {searchResults.map((result) => (
                     <div className="row" key={result.objectID}>
                       <div className="result">
@@ -74,37 +106,6 @@ export default function NotFound() {
                     </div>
                   ))}
                 </div>
-              </div>
-              <div className="row">
-                <div className="col col--8 col--offset-2 padding-top--lg">
-                  <h3>
-                    or{" "}
-                    <Link
-                      uppercase="false"
-                      href={useBaseUrl("/#developer-docs-section")}
-                    >
-                      {" "}
-                      Explore all of our developer docs{" "}
-                    </Link>{" "}
-                    to find what you're looking for.
-                  </h3>
-                </div>
-              </div>
-            </div>
-          )}
-          {searchResults.length < 1 && (
-            <div className="row">
-              <div className="col col--8 col--offset-2 padding-top--lg">
-                <h3>
-                  <Link
-                    uppercase="false"
-                    href={useBaseUrl("/#developer-docs-section")}
-                  >
-                    {" "}
-                    Explore all of our developer docs{" "}
-                  </Link>{" "}
-                  to find what you're looking for.
-                </h3>
               </div>
             </div>
           )}
