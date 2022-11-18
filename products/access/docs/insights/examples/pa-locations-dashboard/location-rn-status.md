@@ -39,50 +39,54 @@ The following request payload filters on `rn_state_instance`. The values for thi
 - `1` : Instance is up.
 - `2` : Instance is in a warning state.
 
-  {
+```json
+{
   "properties": [
-  {
-  "property": "rn_state_instance"
-  },
-  {
-  "property": "edge_location_display_name"
-  }
+    {
+      "property": "rn_state_instance"
+    },
+    {
+      "property": "edge_location_display_name"
+    }
   ],
   "filter": {
-  "rules": [
-  {
-  "property": "rn_state_instance",
-  "operator": "in",
-  "values": [0,1,2]
-  }
-  ]
+    "rules": [
+      {
+        "property": "rn_state_instance",
+        "operator": "in",
+        "values": [0, 1, 2]
+      }
+    ]
   },
-  "count":100
-  }
+  "count": 100
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-13T17:01:01Z",
-           "dataCount": 3,
-           "requestId": "9c88f446-903c-4a23-8041-6dce0ad0cd6b",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "rn_state_instance": 1,
-               "edge_location_display_name": "US East"
-           },
-           {
-               "rn_state_instance": 1,
-               "edge_location_display_name": "US Central"
-           },
-           {
-               "rn_state_instance": 1,
-               "edge_location_display_name": "US Northwest"
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-13T17:01:01Z",
+    "dataCount": 3,
+    "requestId": "9c88f446-903c-4a23-8041-6dce0ad0cd6b",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "rn_state_instance": 1,
+      "edge_location_display_name": "US East"
+    },
+    {
+      "rn_state_instance": 1,
+      "edge_location_display_name": "US Central"
+    },
+    {
+      "rn_state_instance": 1,
+      "edge_location_display_name": "US Northwest"
+    }
+  ]
+}
+```

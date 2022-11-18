@@ -39,43 +39,45 @@ The following request payload filters on `mu_state_instance`. The values for thi
 - `1` : Instance is up.
 - `2` : Instance is in a warning state.
 
-  {
+```json
+{
   "properties": [
-  {
-  "property": "mu_state_instance"
-  },
-  {
-  "property": "edge_location_display_name"
-  }
+    {
+      "property": "mu_state_instance"
+    },
+    {
+      "property": "edge_location_display_name"
+    }
   ],
   "filter": {
-  "rules": [
-  {
-  "property": "mu_state_instance",
-  "operator": "in",
-  "values": [0,1]
-
-               }
-           ]
-       }
-
+    "rules": [
+      {
+        "property": "mu_state_instance",
+        "operator": "in",
+        "values": [0, 1]
+      }
+    ]
   }
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-07T20:53:46Z",
-           "dataCount": 1,
-           "requestId": "8dee86a7-5745-428f-8d0f-19dff1b9eb00",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "mu_state_instance": 1,
-               "edge_location_display_name": "US West"
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-07T20:53:46Z",
+    "dataCount": 1,
+    "requestId": "8dee86a7-5745-428f-8d0f-19dff1b9eb00",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "mu_state_instance": 1,
+      "edge_location_display_name": "US West"
+    }
+  ]
+}
+```
