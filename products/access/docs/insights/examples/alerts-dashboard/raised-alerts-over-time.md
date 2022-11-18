@@ -106,5 +106,3 @@ The following request payload uses the `severity` and `raised_time` filters:
   ]
 }
 ```
-
-ddddddd
