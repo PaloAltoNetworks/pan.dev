@@ -44,87 +44,78 @@ The following request payload uses the `severity_id` and `raised-time` filters:
 
 `raised-time` : string, format example `2021-07-03 23:12:13 UTC`
 
+```json
+{
+  "properties": [
     {
-      "properties": [
-        {
-          "property": "alert_id",
-          "function": "distinct_count",
-          "alias": "count"
-        }
-      ],
-      "histogram": {
-        "property": "updated_time",
-        "enableEmptyInterval": true,
-        "range": "hour",
-        "value": "1"
-      },
-      "filter": {
-        "rules": [
-          {
-            "property": "state",
-            "operator": "equals",
-            "values": [
-              "Raised"
-            ]
-          },
-          {
-            "property": "severity",
-            "operator": "not_in",
-            "values": [
-              "Notification"
-            ]      },
-          {
-            "property": "updated_time",
-            "operator": "between",
-            "values": [
-              1665783815889,
-              1665784714889
-            ]
-          }
-        ]
-      }
+      "property": "alert_id",
+      "function": "distinct_count",
+      "alias": "count"
     }
+  ],
+  "histogram": {
+    "property": "updated_time",
+    "enableEmptyInterval": true,
+    "range": "hour",
+    "value": "1"
+  },
+  "filter": {
+    "rules": [
+      {
+        "property": "state",
+        "operator": "equals",
+        "values": ["Raised"]
+      },
+      {
+        "property": "severity",
+        "operator": "not_in",
+        "values": ["Notification"]
+      },
+      {
+        "property": "updated_time",
+        "operator": "between",
+        "values": [1665783815889, 1665784714889]
+      }
+    ]
+  }
+}
+```
 
 ## Request Response
 
+```json
+{
+  "properties": [
     {
-     "properties": [
-       {
-         "property": "alert_id",
-         "function": "distinct_count",
-         "alias": "count"
-       }
-     ],
-     "histogram": {
-       "property": "updated_time",
-       "enableEmptyInterval": true,
-       "range": "hour",
-       "value": "1"
-     },
-     "filter": {
-        "rules": [
-         {
-           "property": "state",
-           "operator": "equals",
-           "values": [
-             "Raised"
-           ]
-         },
-         {
-           "property": "severity",
-           "operator": "not_in",
-           "values": [
-             "Notification"
-           ]
-         },
-         {
-           "property": "updated_time",
-           "operator": "between",
-           "values": [
-             1665783815889,
-             1665784714889
-           ]
-         }
-       ]
-      }
+      "property": "alert_id",
+      "function": "distinct_count",
+      "alias": "count"
     }
+  ],
+  "histogram": {
+    "property": "updated_time",
+    "enableEmptyInterval": true,
+    "range": "hour",
+    "value": "1"
+  },
+  "filter": {
+    "rules": [
+      {
+        "property": "state",
+        "operator": "equals",
+        "values": ["Raised"]
+      },
+      {
+        "property": "severity",
+        "operator": "not_in",
+        "values": ["Notification"]
+      },
+      {
+        "property": "updated_time",
+        "operator": "between",
+        "values": [1665783815889, 1665784714889]
+      }
+    ]
+  }
+}
+```

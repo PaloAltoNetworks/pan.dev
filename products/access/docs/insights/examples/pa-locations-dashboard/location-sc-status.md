@@ -39,46 +39,50 @@ The following request payload uses filters for `sc_state_instance`. The values f
 - `1` : Instance is up.
 - `2` : Instance is in a warning state.
 
-  {
+```json
+{
   "properties": [
-  {
-  "property": "sc_state_instance"
-  },
-  {
-  "property": "edge_location_display_name"
-  }
+    {
+      "property": "sc_state_instance"
+    },
+    {
+      "property": "edge_location_display_name"
+    }
   ],
   "filter": {
-  "rules": [
-  {
-  "property": "sc_state_instance",
-  "operator": "in",
-  "values": [0,1,2]
-  }
-  ]
+    "rules": [
+      {
+        "property": "sc_state_instance",
+        "operator": "in",
+        "values": [0, 1, 2]
+      }
+    ]
   },
-  "count":100
-  }
+  "count": 100
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-13T17:43:36Z",
-           "dataCount": 2,
-           "requestId": "22a06a26-6520-410b-a575-72d8fe03f181",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "sc_state_instance": 1,
-               "edge_location_display_name": "US East"
-           },
-           {
-               "sc_state_instance": 1,
-               "edge_location_display_name": "US West"
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-13T17:43:36Z",
+    "dataCount": 2,
+    "requestId": "22a06a26-6520-410b-a575-72d8fe03f181",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "sc_state_instance": 1,
+      "edge_location_display_name": "US East"
+    },
+    {
+      "sc_state_instance": 1,
+      "edge_location_display_name": "US West"
+    }
+  ]
+}
+```

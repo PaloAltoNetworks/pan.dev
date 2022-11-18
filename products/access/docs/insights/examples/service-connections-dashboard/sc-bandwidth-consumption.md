@@ -33,6 +33,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
+````json
     {
      "properties": [
        {
@@ -96,9 +97,11 @@ The information returned by this query can also be viewed in the UI, here:
      },
      "count": 100
     }
+    ```
 
 ## Request Response
 
+```json
     {
        "header": {
            "createdAt": "2022-10-14T18:15:49Z",
@@ -295,3 +298,4 @@ The information returned by this query can also be viewed in the UI, here:
            }
        ]
     }
+````

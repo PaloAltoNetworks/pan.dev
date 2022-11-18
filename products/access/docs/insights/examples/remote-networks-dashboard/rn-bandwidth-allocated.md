@@ -43,43 +43,43 @@ The following request payload uses the `last_n_days` and `edge_location_display_
 
 `edge_location_display_name`: String. The edge location display name is a location name.
 
-    {
-     "filter": {
-       "rules": [
-         {
-           "property": "event_time",
-           "operator": "last_n_days",
-           "values": [
-             90
-           ]
-         },
-         {
-           "property": "edge_location_display_name",
-           "operator": "not_equals",
-           "values": [
-             "no_data"
-           ]
-         }
-       ]
-     },
-     "count": 5
-    }
+```json
+{
+  "filter": {
+    "rules": [
+      {
+        "property": "event_time",
+        "operator": "last_n_days",
+        "values": [90]
+      },
+      {
+        "property": "edge_location_display_name",
+        "operator": "not_equals",
+        "values": ["no_data"]
+      }
+    ]
+  },
+  "count": 5
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-13T21:55:09Z",
-           "dataCount": 1,
-           "requestId": "446a9858-7991-430a-b0f0-b2427e2e8c51",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "allocated_bw": 2500000.0,
-               "allocated_aggregated_bw": 7000000.0
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-13T21:55:09Z",
+    "dataCount": 1,
+    "requestId": "446a9858-7991-430a-b0f0-b2427e2e8c51",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "allocated_bw": 2500000.0,
+      "allocated_aggregated_bw": 7000000.0
+    }
+  ]
+}
+```
