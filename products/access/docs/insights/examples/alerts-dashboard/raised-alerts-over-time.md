@@ -102,5 +102,3 @@ The information returned by this query can also be viewed in the UI, here:
   ]
 }
 ```
-
-ddddddd
