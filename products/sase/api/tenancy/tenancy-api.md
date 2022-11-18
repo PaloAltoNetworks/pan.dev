@@ -15,7 +15,7 @@ the multitenant user interface to create a TSG (that is, to create a tenant), or
 [Identity and Access Management API](/sase/api/iam/post-iam-v-1-service-accounts).
 
 Once you have a TSG, you can create a [service account](/sase/docs/service-accounts) for it.
-When you create a service account, you get a Client ID and Client Secret. which you need in order to
+When you create a service account, you get a Client ID and Client Secret, which you need in order to
 [get an access token](/sase/api/auth/post-auth-v-1-oauth-2-access-token).
 You must also use your TSG's ID when you create an access token.
 
