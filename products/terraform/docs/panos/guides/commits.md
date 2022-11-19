@@ -17,12 +17,12 @@ keywords:
 # Commit Overview
 
 As of right now, Terraform does not provide native support for commits, so
-commits are handled out-of-band.  Refer to
+commits are handled out-of-band. Refer to
 [this issue](https://github.com/PaloAltoNetworks/terraform-provider-panos/issues/6)
 for more information.
 
 Please refer to the specific commit guides depending on what type
-of commit you need to perform.  You'll want to save the source code something
+of commit you need to perform. You'll want to save the source code something
 obvious that matches it's functionality, such as `firewall-commit.go`.
 
 Compile the source code and put it somewhere in your `$PATH` (such as
@@ -35,20 +35,19 @@ $ mv firewall-commit ~/bin
 $ firewall-commit -h
 ```
 
-Finally, you can invoke this binary after `terraform apply` or `terraform
-destroy`:
+Finally, you can invoke this binary after `terraform apply` or `terraform destroy`:
 
 ```bash
 $ terraform apply && firewall-commit -config fwauth.json 'My commit comment'
 ```
 
-The first trailing CLI arg is the commit comment.  If there is
+The first trailing CLI arg is the commit comment. If there is
 no CLI arg present then no commit comment is given to PAN-OS.
 
 The authentication credentials can be given multiple ways, and if all are
 present then this is the order, from highest to lowest priority:
 
-:::caution 
+:::caution
 Providing authentication credentials via CLI argument is insecure and
 is not recommended.
 :::
