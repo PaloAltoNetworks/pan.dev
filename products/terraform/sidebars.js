@@ -13,6 +13,7 @@ module.exports = {
           label: "Information Gathering Tasks",
           items: [
             "terraform/docs/panos/tutorials/info-gather-sysinfo",
+            "terraform/docs/panos/tutorials/info-gather-secrules",
           ],
         },
         {
@@ -21,6 +22,7 @@ module.exports = {
           label: "Configuration Tasks",
           items: [
             "terraform/docs/panos/tutorials/config-secpol-and-objs",
+            "terraform/docs/panos/tutorials/config-networking",
           ],
         },
       ],
@@ -31,6 +33,7 @@ module.exports = {
       label: "How-To Guides",
       items: [
         "terraform/docs/panos/guides/commits",
+        "terraform/docs/panos/guides/panorama-config",
       ],
     },
     {
@@ -42,6 +45,7 @@ module.exports = {
         "terraform/docs/panos/info/connectivity",
         "terraform/docs/panos/info/parallelism",
         "terraform/docs/panos/info/create-before-destroy",
+        "terraform/docs/panos/info/panorama-resources",
         "terraform/docs/panos/info/panos-versions",
         "terraform/docs/panos/info/auditcomments",
       ],
