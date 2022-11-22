@@ -12,17 +12,17 @@ export const TERRAFORM_HERO_CONTENT = {
   product: 'terraform',
   header: (
     <h1>
-      <span>Palo Alto Networks</span> as Code as Terraform
+      <span>Palo Alto Networks</span> as Code with Terraform
     </h1>
   ),
   subheader: (
     <p>
-      Hashicorp's Terraform is widely used to build and deploy infrastructure safely and efficiently with high levels of automation and integration.
+      Hashicorp's Terraform is widely used to build and deploy infrastructure, safely and efficiently, with high levels of automation and integration.
     </p>
   ),
   sliderCards: [
     {
-      title: "Technology Partner of The Year",
+      title: " Hashicorp Technology Partner of The Year",
       description: "The Technology Partner Awards celebrate HashiCorp technology partners who have expanded ecosystem solutions for customers through new integrations, co-engineered solutions, and participated in joint marketing initiatives.",
       cta: {
         type: 'single',
@@ -57,18 +57,18 @@ export const TERRAFORM_HERO_CONTENT = {
 // Props used in src/components/ProductLandingPage/Providers.js
 export const TERRAFORM_PROVIDER_CONTENT = {
   header: (
-    <h1>Palo Alto Networks Terraform Providers</h1>
+    <h1>Terraform Providers from Palo Alto Networks</h1>
   ),
   subheader: (
     <p>
-      Palo Alto Networks makes Terraform providers and modules freely available to assist anyone who wants to deploy and configure their security stack as code, alongside the rest of their infrastructure.
+      Palo Alto Networks develops Terraform providers which are freely available to assist anyone who wants to deploy and configure their security stack as code, alongside the rest of their infrastructure.
     </p>
   ),
   providerCards: [
     {
-      title: "Terraform for PAN-OS",
+      title: "PAN-OS",
       version: "v.1.11.0",
-      description: "You can configure PAN-OS with Terraform, allowing your configuration to be defined and managed as code, facilitating automated operations.",
+      description: "Define and manage your network security configuration as code, including Panorama, PA-Series, VM-Series and CN-Series.",
       cta: {
         type: 'double',
         content: [
@@ -85,9 +85,9 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       },
     },
     {
-      title: "Terraform for Cloud NGFW",
+      title: "Cloud NGFW",
       version: "v.1.0.8",
-      description: "You can configure Cloud NGFW with Terraform, allowing your configuration to be defined and managed as code, facilitating automated operations.",
+      description: "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
         type: 'double',
         content: [
@@ -104,9 +104,9 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       },
     },
     {
-      title: "Terraform for Prisma Cloud",
+      title: "Prisma Cloud",
       version: "v.1.2.10",
-      description: "You can configure Prisma Cloud with Terraform, allowing your configuration to be defined and managed as code, facilitating automated operations.",
+      description: "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
         type: 'double',
         content: [
@@ -123,9 +123,9 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       },
     },
     {
-      title: "Terraform for Prisma Cloud Compute",
+      title: "Prisma Cloud Compute",
       version: "v.0.7.0",
-      description: "You can configure Prisma Cloud Compute with Terraform, allowing your configuration to be defined and managed as code, facilitating automated operations.",
+      description: "Define your cloud workload protection suing Terraform, to protect your host, container and serverless deployments in any cloud.",
       cta: {
         type: 'double',
         content: [
@@ -142,9 +142,9 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       },
     },
     {
-      title: "Terraform for Bridgecrew",
+      title: "Bridgecrew",
       version: "v0.3.7",
-      description: "You can configure Bridgecrew with Terraform, allowing your configuration to be defined and managed as code, facilitating automated operations.",
+      description: "Automate your security engineering by identifying and remediating misconfigurations and vulnerabilities, across code, secrets and images, all defined with Terraform.",
       cta: {
         type: 'double',
         content: [
@@ -170,12 +170,12 @@ export const TERRAFORM_USE_CASES_CONTENT = {
   ),
   subheader: (
     <p>
-      Palo Alto Networks makes Terraform providers and modules freely available to assist anyone who wants to deploy and configure their security stack as code, alongside the rest of their infrastructure.
+      Looking for inspiration, or just not sure where to start? Here are some common use cases where organizations have used Terraform to deploy, configure and maintain their security stack using Terraform.
     </p>
   ),
   useCaseCards: [
     {
-      title: "Define network security policy with Terraform",
+      title: "Define your network security policies with Terraform",
       cta: {
         type: "single",
         content: {
@@ -187,16 +187,20 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       links: [
         {
           path: "/terraform/docs/panos/tutorials/config-secpol-and-objs",
-          text: "PAN-OS - Guide"
+          text: "Configuring objects and rules for PAN-OS next-generation firewalls"
         },
         {
-          path: "/terraform/docs/panos/info/background",
-          text: "PAN-OS - Background"
+          path: "/terraform/docs/panos/tutorials/config-networking/",
+          text: "Defining firewall networking configuration"
+        },
+        {
+          path: "/terraform/docs/panos/guides/panorama-config/",
+          text: "Using Panorama to define configuration for multiple next-generation firewalls"
         }
       ]
     },
     {
-      title: "Construct cloud security posture as code with Terraform",
+      title: "Construct your cloud security posture as code with Terraform",
       cta: {
         type: "single",
         content: {
@@ -208,12 +212,12 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       links: [
         {
           path: "https://prisma.pan.dev/docs/cloud/cspm/tf/tf_example1",
-          text: "PC - Examples"
+          text: "Examples of Prisma Cloud Terraform usage"
         },
       ]
     },
     {
-      title: "Configure code security policies with Terraform",
+      title: "Define your policies for secure coding, secrets protection and more with Terraform",
       cta: {
         type: "single",
         content: {
@@ -225,11 +229,11 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       links: [
         {
           path: "https://bridgecrew.io/blog/bridgecrew-configuration-as-code-new-bridgecrew-terraform-provider/",
-          text: "Bridgecrew - Guide"
+          text: "Get started with the Bridgecrew Terraform provider"
         },
         {
           path: "https://github.com/bridgecrewio/terraform-provider-bridgecrew/tree/main/terraform",
-          text: "Bridgecrew - Examples"
+          text: "Examples of Bridgecrew Terraform provider usage"
         }
       ]
     },
