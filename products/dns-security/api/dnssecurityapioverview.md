@@ -3,6 +3,7 @@ id: dnssecurityapioverview
 title: DNS Security APIs
 sidebar_label: DNS Security API
 sidebar_position: 1
+slug: /dns-security/api
 keywords:
   - PAN-OS
   - Reference
