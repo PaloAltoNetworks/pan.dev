@@ -1,0 +1,159 @@
+---
+id: search-and-remove
+title: Search and Remove Configuration Items
+sidebar_label: Search and Remove
+hide_title: true
+description: Search and Remove Configuration Items
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from "../_assumptions.md";
+import LabGuidance from "/products/shared/_lab-guidance.md";
+
+# Search and Remove Configuration Items
+
+This guide (an updated version of a [previous blog post](https://live.paloaltonetworks.com/t5/automation-api-blog/ansible-using-facts-modules-to-do-updates/ba-p/275173)), describes a methodology for removing configuration elements when there are existing references. Whilst it may be possible for some organizations to declaratively define all their configuration a code, there are many times when organizations want to amend configuration without using or re-specifying the entire configuration. For example, you want to delete an address object, but before doing so, you will need to remove the address object from any address groups in which it is present.
+
+The guide will explain the methodology in the context of the address object and group example above, but the methodology could be re-used for many other scenarios where one element references another, like security and NAT policies referencing address and service objects and groups.
+
+<Assumptions />
+
+<LabGuidance />
+
+## Create playbook file and define connectivity to the firewall
+
+Create a new Ansible yaml file named `search-and-remove-address-object.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection.
+
+Also, for the purposes of this guide we are hardcoding a variable to refer to the name of the address object we wish to delete. The value for this variable could equally be passed in from Ansible Automation Platform, or via the CLI, for example: `ansible-playbook search-and-remove-address-object.yml -e "rmadr=test4"`.
+
+```yaml
+---
+- name: Search and remove an address object
+  hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+    // highlight-next-line
+    rmadr: "test4"
+
+  collections:
+    - paloaltonetworks.panos
+```
+
+## Gather all the address objects
+
+The first task gathers (using the [`gathered_filter` option](/ansible/docs/panos/info/gathered-filter/) introduced in the 2.11.0 version of the PAN-OS Collection) all the address groups in the current configuration, and stores their configuration data in the variable called `allgroups`. You will need all the address groups in order to ensure the address object gets removed from any groups in which it is present.
+
+```yaml
+- name: Get all address groups and their config
+  paloaltonetworks.panos.panos_address_group:
+    provider: "{{ device }}"
+    state: "gathered"
+    gathered_filter: "*"
+  register: allgroups
+```
+
+## Remove the address object from every group where it is present
+
+The next task is more complex. The aim is for you to search through each address group, looking for the address object which is to be deleted, and if that address object is found in an address group, remove it from that address group, leaving the rest of the address group member objects in place.
+
+```yaml
+- name: Remove address object from all groups
+  paloaltonetworks.panos.panos_address_group:
+    provider: "{{ device }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit, true) }}"
+    tag: "{{ item.tag | default(omit, true) }}"
+    static_value: "{{ item.static_value | difference([rmadr]) }}"
+  loop: "{{ allgroups.gathered }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.static_value
+    - rmadr in item.static_value
+```
+
+Each component of the task is explained below to explain the logic:
+
+- To iterate over all the address groups, you use the `panos_address_group` module, with a [`loop` statement](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html) that iterates over the `allgroups` data collected in the previous task.
+- You want to ensure the definition of the group itself does not change (except removing one member), so you replay the `name`, `description` and `tag` into the `panos_address_group` module. The `name` field is mandatory so must exist, but because `description` and `tag` are optional, you include a `default()` statement to omit that parameter (`description` or `tag`) unless `item.parameter` has a value.
+- The primary objective is achieved with the `static_value` parameter; `static_value` is a list of address groups present in the group. The `difference()` function removes the address object to be deleted, passing in the address object's value within square brackets because `difference()` expects a list not a single string.
+- The [`loop_control` option reduces the otherwise verbose output](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#limiting-loop-output-with-label) from the looping activity, such that only the names of each address groups will be seen in the execution output.
+- The [`when` option](https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html#basic-conditionals-with-when) speeds up execution of the playbook, by ensuring that the task only executes when the following two conditions are met:
+  - `item.static_value` - the address group is a static address group (as tested by the object having a `static value` defined, where as dynamic address groups do not have a `static value`)
+  - `rmadr in item.static_value` - the address groups contains the `rmadr` address object we wish to remove
+
+## Delete the address object
+
+Having removed any references to the address object within any address groups, you can now delete the address object itself:
+
+```yaml
+- name: Remove the address object
+  paloaltonetworks.panos.panos_address_object:
+    provider: "{{ device }}"
+    name: "{{ rmadr }}"
+    state: "absent"
+```
+
+## Final playbook
+
+Putting all the sections together, the playbook in entirety looks like this:
+
+```yaml
+---
+- name: Search and remove an address object
+  hosts: "firewall"
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+    rmadr: "test4"
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Get all address groups and their config
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        state: "gathered"
+        gathered_filter: "*"
+      register: allgroups
+
+    - name: Remove address object from all groups
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        name: "{{ item.name }}"
+        description: "{{ item.description | default(omit, true) }}"
+        tag: "{{ item.tag | default(omit, true) }}"
+        static_value: "{{ item.static_value | difference([rmadr]) }}"
+      loop: "{{ allgroups.gathered }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - item.static_value
+        - rmadr in item.static_value
+
+    - name: Remove the address object
+      paloaltonetworks.panos.panos_address_object:
+        provider: "{{ device }}"
+        name: "{{ rmadr }}"
+        state: "absent"
+```

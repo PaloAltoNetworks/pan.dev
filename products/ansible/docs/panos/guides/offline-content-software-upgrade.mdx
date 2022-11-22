@@ -1,0 +1,183 @@
+---
+id: offline-content-software-upgrade
+title: Upgrade Content and Software Offline
+sidebar_label: Upgrade Content and Software Offline
+hide_title: true
+description: Upgrade Content and Software Offline
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from "../_assumptions.md";
+import LabGuidance from "/products/shared/_lab-guidance.md";
+
+# Offline Content and Software Installation
+
+This guide describes the steps to perform a PAN-OS software upgrade, and a potential prerequisite content update (also known as Dynamic Updates), in an "offline" or "air-gap" scenario, where the PAN-OS device does not have access to the Internet.
+
+The default behavior for software and content installation tasks, using the `panos_software` and `panos_dynamic_updates` modules respectively from the PAN-OS collection, is for the PAN-OS device to download the required version(s) from the Internet during the task execution. There are many scenarios where this is not feasible, due to complete lack of Internet, or due to low bandwidth or high latency Internet connectivity. In these scenarios, the required software and content versions can be downloaded ahead of time from the [Customer Support Portal](https://support.paloaltonetworks.com) and the installation can proceed using these offline files instead of downloading the files from the Internet at execution time.
+
+<Assumptions />
+
+<LabGuidance />
+
+## Create playbook file and define connectivity to the firewall
+
+Create a new Ansible yaml file named `upgrade-firewall-offline.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection.
+
+Also, for the purposes of this guide we are hardcoding some variables to refer to the names of the offline files, the target version of PAN-OS, and a boolean to represent whether we want to reboot the firewall after the upgrade in order to make the new version live (sometimes this is delayed until a later change window). The values for these variables could equally be passed in from Ansible Automation Platform, or via the CLI, for example: `ansible-playbook upgrade-firewall-offline.yml -e "reboot_firewall=true"`.
+
+```yaml
+---
+- name: Upgrade firewall and content offline
+  hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+    // highlight-start
+    content_file: "panupv2-all-contents-8644-7712"
+    software_file: "PanOS_vm-10.1.8"
+    software_version: "10.1.8"
+    reboot_firewall: false
+    // highlight-end
+
+  collections:
+    - paloaltonetworks.panos
+```
+
+#
+
+#
+
+#
+
+#
+
+#
+
+#
+
+#
+
+#
+
+#
+
+#
+
+## Gather all the address objects
+
+The first task gathers (using the [`gathered_filter` option](/ansible/docs/panos/info/gathered-filter/) introduced in the 2.11.0 version of the PAN-OS Collection) all the address groups in the current configuration, and stores their configuration data in the variable called `allgroups`. You will need all the address groups in order to ensure the address object gets removed from any groups in which it is present.
+
+```yaml
+- name: Get all address groups and their config
+  paloaltonetworks.panos.panos_address_group:
+    provider: "{{ device }}"
+    state: "gathered"
+    gathered_filter: "*"
+  register: allgroups
+```
+
+## Remove the address object from every group where it is present
+
+The next task is more complex. The aim is for you to search through each address group, looking for the address object which is to be deleted, and if that address object is found in an address group, remove it from that address group, leaving the rest of the address group member objects in place.
+
+```yaml
+- name: Remove address object from all groups
+  paloaltonetworks.panos.panos_address_group:
+    provider: "{{ device }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit, true) }}"
+    tag: "{{ item.tag | default(omit, true) }}"
+    static_value: "{{ item.static_value | difference([rmadr]) }}"
+  loop: "{{ allgroups.gathered }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.static_value
+    - rmadr in item.static_value
+```
+
+Each component of the task is explained below to explain the logic:
+
+- To iterate over all the address groups, you use the `panos_address_group` module, with a [`loop` statement](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html) that iterates over the `allgroups` data collected in the previous task.
+- You want to ensure the definition of the group itself does not change (except removing one member), so you replay the `name`, `description` and `tag` into the `panos_address_group` module. The `name` field is mandatory so must exist, but because `description` and `tag` are optional, you include a `default()` statement to omit that parameter (`description` or `tag`) unless `item.parameter` has a value.
+- The primary objective is achieved with the `static_value` parameter; `static_value` is a list of address groups present in the group. The `difference()` function removes the address object to be deleted, passing in the address object's value within square brackets because `difference()` expects a list not a single string.
+- The [`loop_control` option reduces the otherwise verbose output](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#limiting-loop-output-with-label) from the looping activity, such that only the names of each address groups will be seen in the execution output.
+- The [`when` option](https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html#basic-conditionals-with-when) speeds up execution of the playbook, by ensuring that the task only executes when the following two conditions are met:
+  - `item.static_value` - the address group is a static address group (as tested by the object having a `static value` defined, where as dynamic address groups do not have a `static value`)
+  - `rmadr in item.static_value` - the address groups contains the `rmadr` address object we wish to remove
+
+## Delete the address object
+
+Having removed any references to the address object within any address groups, you can now delete the address object itself:
+
+```yaml
+- name: Remove the address object
+  paloaltonetworks.panos.panos_address_object:
+    provider: "{{ device }}"
+    name: "{{ rmadr }}"
+    state: "absent"
+```
+
+## Final playbook
+
+Putting all the sections together, the playbook in entirety looks like this:
+
+```yaml
+---
+- name: Search and remove an address object
+  hosts: "firewall"
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+    rmadr: "test4"
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Get all address groups and their config
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        state: "gathered"
+        gathered_filter: "*"
+      register: allgroups
+
+    - name: Remove address object from all groups
+      paloaltonetworks.panos.panos_address_group:
+        provider: "{{ device }}"
+        name: "{{ item.name }}"
+        description: "{{ item.description | default(omit, true) }}"
+        tag: "{{ item.tag | default(omit, true) }}"
+        static_value: "{{ item.static_value | difference([rmadr]) }}"
+      loop: "{{ allgroups.gathered }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - item.static_value
+        - rmadr in item.static_value
+
+    - name: Remove the address object
+      paloaltonetworks.panos.panos_address_object:
+        provider: "{{ device }}"
+        name: "{{ rmadr }}"
+        state: "absent"
+```
