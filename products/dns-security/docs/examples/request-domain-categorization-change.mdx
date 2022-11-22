@@ -1,0 +1,42 @@
+---
+id: request-domain-categorization-change
+title: Request Domain Categorization Change
+description: DNS Security API example showing how to submit a change request for a domain's categorization.
+slug: /threat-vault/docs/examples/dns-security/request-domain-categorization-change
+hide_title: false
+hide_table_of_contents: false
+keywords:
+  - security subscription
+---
+
+The API Reference information for retrieving domain information can be found [here](/cdss/dns-security/api/dns-security#operation/PublicApi_V1DomainChangeRequest).
+
+## Overview
+
+The DNS Security API can be used to submit batch requests to request a change for a specified domain's categorization, which is typically determine based analysis through the DNS Security subscription service and other supporting Palo Alto Networks services.
+
+Keep a few things in mind when formatting your API query:
+
+1. All the query strings in Get requests must be a URL-Encoded parameter string. If you use a space in the URL-Encoded request, you must include either a plus sign (+) or %20 to replace the space.
+2. You can specify the content type of the request body and response by specifying the Content-Type header. Some responses generate an HTTP response in addition to a JSON object.
+3. Do not embed API keys in code or application source tree files. This can inadvertently expose the API key. Instead, consider storing the API key in environmental variables or files that are excluded from your application source tree files.
+
+## Example 1: Request a categorization change for multiple domains in batch mode.
+
+When start and end dates are not specified for each domain, all available data is returned. The domains in this example request are considered to be risky or dangerous (at the time of publication - this can change as domains are reanalyzed by DNS Security), and are classified with the following current threat categories: annexpublishers.org `malware`, tipmuch.com `malware`, and classclean.net `command-and-control`.
+
+```shell-session
+curl -X POST -d '{"changeRequests": [{"comment": "This domain is safe","domain": "nomalwarehere.com","suggestedCategory": "benign"},{"comment": "Suspicious popups triggering antivirus","domain": "google.com","suggestedCategory": "malware"}]}' 'https://api.dns.service.paloaltonetworks.com/v1/domain/changerequest' \
+  -H 'X-DNS-API-APIKEY: api_key' \
+  -H 'Content-Type: application/json'
+```
+
+A successful API call returns an HTTP response code of 200, indicating success; additionally, the API provides a message confirming the request has been received.
+
+```json
+{
+    "success": true,
+    "message": "Change request has been successfully submitted."
+}
+```
+
