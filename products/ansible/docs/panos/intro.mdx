@@ -1,7 +1,7 @@
 ---
 id: intro
 title: Ansible for PAN-OS
-sidebar_label: Introduction
+sidebar_label: Ansible for PAN-OS
 hide_title: true
 description: Ansible for PAN-OS
 slug: /ansible/docs/panos

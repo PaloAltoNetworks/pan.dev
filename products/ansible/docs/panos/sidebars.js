@@ -50,14 +50,15 @@ module.exports = {
             "ansible/docs/panos/guides/panorama-push",
             "ansible/docs/panos/guides/use-config-lock",
             "ansible/docs/panos/guides/import-load-config",
+            "ansible/docs/panos/guides/csv-address-objects",
           ],
         },
-        {
-          type: "category",
-          collapsed: true,
-          label: "Operations Tasks",
-          items: ["ansible/docs/panos/guides/upgrade-single"],
-        },
+        // {
+        //   type: "category",
+        //   collapsed: true,
+        //   label: "Operations Tasks",
+        //   items: [],
+        // },
       ],
     },
     {
