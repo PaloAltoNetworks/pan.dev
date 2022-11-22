@@ -46,7 +46,7 @@ function Feeds() {
     <div className="container">
       <section className="feeds-container">
         <header className="feeds-header">
-          <h1>Latest Terraform Feeds</h1>
+          <h1>Latest Terraform News from Hashicorp</h1>
         </header>
         <div className="feeds-image-list-container">
           <div className="feeds-image-container">
