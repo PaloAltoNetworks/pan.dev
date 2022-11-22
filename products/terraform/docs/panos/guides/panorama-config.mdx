@@ -1,0 +1,266 @@
+---
+id: panorama-config
+title: Configure with Panorama
+sidebar_label: Configure with Panorama
+hide_title: true
+description: Configure with Panorama
+keywords:
+  - pan-os
+  - panos
+  - panorama
+  - xml
+  - api
+  - firewall
+  - configuration
+  - terraform
+---
+
+import Assumptions from '../_assumptions.md'
+import LabGuidance from '/products/shared/_lab-guidance.md'
+
+# Configure with Panorama
+
+In this guide, you will make configuration changes for a NGFW on Panorama. You will first create a Device Group, Template and Template Stack, and the populate them with configuration for the target NGFW. This will include networking configuration for interfaces and routing, then rules and objects for security policies.
+
+<Assumptions />
+
+<LabGuidance />
+
+## Get Terraform ready for configuration
+
+First, ensure that you have declared the PAN-OS provider for use in your Terraform configuration, and provided credentials and a hostname to target. This is discussed in the [Setting Up](../../tutorials/setup/#pan-os-provider-declaration-and-configuration) tutorial and in the [Terraform Registry](https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs#example-provider-usage).
+
+Note that the hostname used with the PAN-OS Terraform provider should be that of your Panorama.
+
+## Device Group and Template Stack Creation
+
+When working with Panorama, Device Groups and Template Stacks are used to define configuration which can be shared across multiple NGFWs. Template Stacks contain one or more Templates to achieve hierarchy of configuration items.
+
+Device Groups, Templates and Template Stacks can be created using the PAN-OS Terraform provider. They are declared like other resources:
+
+```hcl
+# Create Device Group
+resource "panos_device_group" "dg1" {
+  name        = "Lab-DG"
+  description = "Device Group for Lab Purposes"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+#Create Template and Stack
+resource "panos_panorama_template" "tpl1" {
+  name        = "Lab-TPL"
+  description = "Template for Lab Purposes"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_panorama_template_stack" "tplstack1" {
+  name        = "Lab-TPL-Stack"
+  description = "Template Stack for Lab Purposes"
+  templates   = [panos_panorama_template.tpl1.name]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+## Networking Configuration
+
+When configured with Panorama, NGFW networking configuration is defined within Templates. With a Template created in the previous step, networking configuration such as interfaces, virtual routers and routes can now be defined. Note the `panos_panorama_template.tpl1.name` reference to the Template created previously:
+
+```hcl
+# Configure Interfaces
+resource "panos_panorama_ethernet_interface" "e1" {
+  vsys        = "vsys1"
+  name        = "ethernet1/1"
+  mode        = "layer3"
+  static_ips  = ["1.2.3.5/24"]
+  enable_dhcp = false
+  // highlight-next-line
+  template    = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_panorama_ethernet_interface" "e2" {
+  vsys        = "vsys1"
+  name        = "ethernet1/2"
+  mode        = "layer3"
+  static_ips  = ["172.16.18.1/24"]
+  enable_dhcp = false
+  // highlight-next-line
+  template    = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create a Virtual Router
+resource "panos_virtual_router" "vr1" {
+  name = "new-vrouter"
+  interfaces = [
+    panos_panorama_ethernet_interface.e1.name,
+    panos_panorama_ethernet_interface.e2.name,
+  ]
+  // highlight-next-line
+  template = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create Default Route
+resource "panos_panorama_static_route_ipv4" "defaultroute" {
+  name           = "DefaultRoute"
+  virtual_router = panos_virtual_router.vr1.name
+  destination    = "0.0.0.0/0"
+  interface      = panos_panorama_ethernet_interface.e1.name
+  next_hop       = "1.2.3.1"
+  // highlight-next-line
+  template       = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+## Creating Security Zones
+
+Also created within the context of Templates when using Panorama are security zones, which will be used later within security policy rules. Again note the `panos_panorama_template.tpl1.name` reference to the Template created previously, as well as the assignment of previously interfaces to the zones:
+
+```hcl
+# Configure Security Zones
+resource "panos_zone" "internet" {
+  name = "internet"
+  mode = "layer3"
+  interfaces = [
+    // highlight-next-line
+    panos_panorama_ethernet_interface.e1.name,
+  ]
+  enable_user_id = false
+  // highlight-next-line
+  template       = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_zone" "dmz" {
+  name = "dmz"
+  mode = "layer3"
+  interfaces = [
+    // highlight-next-line
+    panos_panorama_ethernet_interface.e2.name,
+  ]
+  enable_user_id = false
+  // highlight-next-line
+  template       = panos_panorama_template.tpl1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+## Address Objects and Groups
+
+Address objects and address groups are referred to within security policy rules (firewall rules). The rules and all the referenced objects are defined either as `shared` or within Device Groups, when using Panorama. The following address objects and group configuration uses the Device Group created in earlier steps, and hence there are references to `panos_device_group.dg1.name` below:
+
+```hcl
+#Create Address Objects and Group
+resource "panos_address_object" "addobj1" {
+  name         = "AddressObject-1"
+  value        = "192.168.1.1/32"
+  // highlight-next-line
+  device_group = panos_device_group.dg1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_address_object" "addobj2" {
+  name         = "AddressObject-2"
+  value        = "192.168.1.2/32"
+  // highlight-next-line
+  device_group = panos_device_group.dg1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "panos_panorama_address_group" "addgrp1" {
+  name = "AddressGroup-1"
+  static_addresses = [
+    panos_address_object.addobj1.name,
+    panos_address_object.addobj2.name,
+  ]
+  // highlight-next-line
+  device_group = panos_device_group.dg1.name
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+## Configuring Security Rules
+
+Security rules are also configured within either a `shared` context or within the context of specific Device Groups. Again the configuration references the Device Group created in earlier steps, as well as the address group created in the previous step:
+
+```hcl
+# Create Security Policy Rules
+resource "panos_security_policy" "rules" {
+  rule {
+    name                  = "Rule-1"
+    audit_comment         = "Initial config"
+    source_zones          = [panos_zone.dmz.name]
+    // highlight-next-line
+    source_addresses      = [panos_panorama_address_group.addgrp1.name]
+    source_users          = ["any"]
+    destination_zones     = [panos_zone.internet.name]
+    destination_addresses = ["any"]
+    applications          = ["ssh"]
+    services              = ["application-default"]
+    categories            = ["any"]
+    action                = "allow"
+  }
+  rule {
+    name                  = "Rule-2"
+    audit_comment         = "Initial config"
+    source_zones          = [panos_zone.dmz.name]
+    // highlight-next-line
+    source_addresses      = [panos_panorama_address_group.addgrp1.name]
+    source_users          = ["any"]
+    destination_zones     = [panos_zone.internet.name]
+    destination_addresses = ["any"]
+    applications          = ["any"]
+    services              = ["any"]
+    categories            = ["any"]
+    action                = "deny"
+  }
+  // highlight-next-line
+  device_group = panos_device_group.dg1.name
+  rulebase     = "post-rulebase"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+```
+
+## Closing Notes
+- Almost all values were defined within the code; names of configuration items, IP addresses, and more. This is very suitable for a learning tutorial, but this approach does not scale well in production, and using variables instead is something to consider as you operationalize Terraform within your organization.

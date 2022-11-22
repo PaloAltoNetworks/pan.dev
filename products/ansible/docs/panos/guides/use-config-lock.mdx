@@ -31,7 +31,8 @@ Create a new Ansible yaml file named `changes-with-config-lock.yml`, establish a
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Make Changes with Config Lock
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:
@@ -107,7 +108,8 @@ Putting all the sections together, the playbook in entirety looks like this:
 
 ```yaml
 ---
-- hosts: '{{ target | default("firewall") }}'
+- name: Make Changes with Config Lock
+  hosts: '{{ target | default("firewall") }}'
   connection: local
 
   vars:
