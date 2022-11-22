@@ -51,14 +51,15 @@ module.exports = {
             "ansible/docs/panos/guides/use-config-lock",
             "ansible/docs/panos/guides/import-load-config",
             "ansible/docs/panos/guides/csv-address-objects",
+            "ansible/docs/panos/guides/search-and-remove",
           ],
         },
-        // {
-        //   type: "category",
-        //   collapsed: true,
-        //   label: "Operations Tasks",
-        //   items: [],
-        // },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Operations Tasks",
+          items: ["ansible/docs/panos/guides/offline-content-software-upgrade"],
+        },
       ],
     },
     {
