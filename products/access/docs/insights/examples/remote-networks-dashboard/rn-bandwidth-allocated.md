@@ -43,7 +43,6 @@ The following request payload uses the `last_n_days` and `edge_location_display_
 
 `edge_location_display_name`: String. The edge location display name is a location name.
 
-
     {
      "filter": {
        "rules": [
