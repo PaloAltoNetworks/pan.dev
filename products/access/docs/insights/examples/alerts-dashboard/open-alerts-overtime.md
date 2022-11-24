@@ -89,46 +89,36 @@ The following request payload uses the `severity_id` and `raised-time` filters:
 
 ## Request Response
 
-
     {
-     "properties": [
-       {
-         "property": "alert_id",
-         "function": "distinct_count",
-         "alias": "count"
-       }
-     ],
-     "histogram": {
-       "property": "updated_time",
-       "enableEmptyInterval": true,
-       "range": "hour",
-       "value": "1"
-     },
-     "filter": {
-        "rules": [
-         {
-           "property": "state",
-           "operator": "equals",
-           "values": [
-             "Raised"
-           ]
-         },
-         {
-           "property": "severity",
-           "operator": "not_in",
-           "values": [
-             "Notification"
-           ]
-         },
-         {
-           "property": "updated_time",
-           "operator": "between",
-           "values": [
-             1665783815889,
-             1665784714889
-           ]
-         }
+       "header": {
+           "createdAt": "2022-10-17T16:44:21Z",
+           "dataCount": 3,
+           "requestId": "72125f60-90bd-4a99-bb45-2fc22ed1eddd",
+           "queryInput": {
+               "time_range": "custom",
+               "event_time": {
+                   "from": "2022-09-14T19:39:37Z",
+                   "to": "2022-09-14T21:39:37Z",
+                   "from_epoch": 1663184377000,
+                   "to_epoch": 1663191577000
+               },
+               "histogram": true,
+               "histogram_range": "hour",
+               "histogram_value": "1"
+           },
+           "status": {
+               "subCode": 200
+           }
+       },
+       "data": [
+           {
+               "histogram_time": 1663184377000
+           },
+           {
+               "histogram_time": 1663187977000
+           },
+           {
+               "histogram_time": 1663191577000
+           }
        ]
-      }
     }
-
