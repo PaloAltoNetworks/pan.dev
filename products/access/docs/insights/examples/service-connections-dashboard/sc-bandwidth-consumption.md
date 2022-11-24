@@ -5,7 +5,7 @@ description: Service Connection Bandwidth Consumption
 sidebar_label: Service Connection Bandwidth Consumption
 ---
 
-You can view service connection bandwidth consumption for the past 24 hours using the `sc_bandwidth_consumption` resource.
+You can view service connection bandwidth consumption for the past 24 hours using the `tunnel_status` resource.
 
 The information returned by this query can also be viewed in the UI, here:
 
@@ -33,7 +33,6 @@ The information returned by this query can also be viewed in the UI, here:
 
 
 ## Request Payload
-
 
     {
      "properties": [
