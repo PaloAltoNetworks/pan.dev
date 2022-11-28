@@ -11,7 +11,7 @@ keywords:
   - API
 ---
 
-The DNS Security API provides Palo Alto Networks customers with an active [DNS Security](https://www.paloaltonetworks.com/network-security/dns-security) subscription with the ability to access and access the domains processed by DNS Security through a programmatic RESTful API.
+The DNS Security API provides Palo Alto Networks customers with an active [DNS Security](https://www.paloaltonetworks.com/network-security/dns-security) subscription with the ability to access information about domains processed by DNS Security through a programmatic RESTful API.
 
 Before using the DNS Security API, please refer to [Cloud-Delivered Security Services API Developer's docs](/cdss/docs/) for more information about using the API, including authentication details, access limits, and examples.
 
