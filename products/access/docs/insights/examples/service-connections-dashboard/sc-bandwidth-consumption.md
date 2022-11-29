@@ -1,8 +1,8 @@
 ---
 id: sc-bandwidth-consumption
-title: Service Connection Bandwidth Consumption
-description: Service Connection Bandwidth Consumption
-sidebar_label: Service Connection Bandwidth Consumption
+title: Service Connection Bandwidth Consumption Over Time
+description: Service Connection Bandwidth Consumption 
+sidebar_label: Service Connection Bandwidth Consumption Over Time
 ---
 
 You can view service connection bandwidth consumption for the past 24 hours using the `tunnel_status` resource.
