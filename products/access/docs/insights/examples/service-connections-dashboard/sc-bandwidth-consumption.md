@@ -1,11 +1,11 @@
 ---
 id: sc-bandwidth-consumption
-title: Service Connection Bandwidth Consumption
-description: Service Connection Bandwidth Consumption
-sidebar_label: Service Connection Bandwidth Consumption
+title: Service Connection Bandwidth Consumption Over Time
+description: Service Connection Bandwidth Consumption 
+sidebar_label: Service Connection Bandwidth Consumption Over Time
 ---
 
-You can view service connection bandwidth consumption for the past 24 hours using the `sc_bandwidth_consumption` resource.
+You can view service connection bandwidth consumption for the past 24 hours using the `tunnel_status` resource.
 
 The information returned by this query can also be viewed in the UI, here:
 
@@ -33,6 +33,16 @@ The information returned by this query can also be viewed in the UI, here:
 
 
 ## Request Payload
+
+The following request payload filters on `event_time` and
+[node_type](/access/docs/insights/query_filters/#node-types).
+
+The operators for `event_time` are:
+
+* `last_n_minutes` : n = 15.
+* `last_n_hours` : n = 1, 3, 24, or 48.
+* `last_n_days` : n = 7 or 30.
+
 
 
     {

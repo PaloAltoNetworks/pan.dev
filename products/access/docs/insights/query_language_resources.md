@@ -21,205 +21,66 @@ general or custom resources:
 
 The following _general_ resource queries are supported:
 
-### Connection status per remote network
+### Remote networks
 
-Use `site_current_status` with the following payload.
+ - tunnel-status. For an example, see [Remote Network Bandwidth Consumption Over Time](/access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status/).
 
-    POST https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/query/site_current_status
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
-    {
-        "properties":[
-            {"property":"site_state"},
-            { "function":"distinct_count",
-              "property":"site_name" }
-         ],
-         "filter":{
-            "rules":[
-                      {
-                        "property":"node_type",
-                        "operator":"equals",
-                        "values":[48]
-                      },
-                      {
-                        "property":"site_name",
-                        "operator":"in",
-                        “values”:[“{{site_name}}”]
-                      }
-                   ]},
-         "count":100
-    }
+### Service connections
 
-### Connection status per service connection
+- sc-bandwidth-consumption. For an example, see [ Service Connection Bandwidth Consumption](/access/docs/insights/examples/service-connections-dashboard/sc-bandwidth-consumption/).
 
-Use `site_current_status` with the following payload.
+### Alerts
 
-    POST https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/query/site_current_status
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
-    {
-        "properties":[
-              {"property":"site_state"},
-              { "function":"distinct_count",
-                "property":"site_name"}
-        ],
-        "filter":{
-            "rules":[
-                {
-                    "property":"node_type",
-                    "operator":"equals",
-                    "values":[51]
-                }]
-         },
-         "count":100
-    }
+- external-alerts-current. For an example, see [External Alerts Current](/access/docs/insights/examples/alerts-dashboard/external-alerts-current/).
 
-### Total number of alerts across the tenant
+- current-alerts-generated. For an example, see [Current Alerts Generated](/access/docs/insights/examples/alerts-dashboard/current-alerts-generated/).
 
-Use `alerts` with the following payload.
+- open-alerts-overtime. For an example, see [Open Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/open-alerts-overtime/).
 
-    POST : https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/query/alerts
-    {
-       "properties":[
-           {"property":"alert_id"},
-           {
-             "property":"alert_severity_id",
-             "sort":{"order":"desc","sequence":1}
-           },
-           {"property":"alert_severity_name"},
-           {"property":"alert_name"},
-           {"property":"alert_type_display"},
-           {"property":"edge_location_display_name"},
-           {"property":"impact_display"},
-           {
-             "property":"create_time",
-             "sort": { "order":"desc", "sequence":2}
-           },
-           { "property":"alert_status_name" }
-       ],
-       "filter":{
-            "rules":[
-                {
-                    "property":"create_time",
-                    "operator":"last_n_minutes",
-                    "values":["60"]
-                }
-       }
+- raised-alerts-over-time. For an example, see [Raised Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/raised-alerts-over-time/).
 
-}
+- cleared-alerts-over-time. For an example, see [Cleared Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/cleared-alerts-over-time/).
+
+### Prisma Access Locations
+
+- location-mu-status. For an example, see [GlobalProtect Mobile User Edge Location Status](/access/docs/insights/examples/pa-locations-dashboard/location-mu-status/).
+
+- location-rn-status. For an example, see [Remote Network Status](/access/docs/insights/examples/pa-locations-dashboard/location-rn-status/).
+
+- location-sc-status. For an example, see [Service Connection Status](/access/docs/insights/examples/pa-locations-dashboard/location-sc-status/).
+
+- location-ep-status. For an example, see [Explicit Proxy Mobile User Status](/access/docs/insights/examples/pa-locations-dashboard/location-ep-status/).
 
 ## Custom Resources
 
 The following _custom_ resource queries are supported:
 
-### Concurrent mobile users
+### Custom mobile users
 
-Use `mobileusers/mu_concurrent_connected_status` with the following payload.
+- connected-user-count. For an example, see [Connected User Count](/access/docs/insights/examples/mobile-users-dashboard/connected-user-count/).
 
-    POST https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/custom/query/mobileusers/mu_current_connected_status
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
+- current-connected-user-list. For an example, see [Current Connected User List](/access/docs/insights/examples/mobile-users-dashboard/current-connected-user-list/).
 
-    {
-     "count": 1
-    }
+- mu-users-list. For an example, see [GlobalProtect Mobile Users List](/access/docs/insights/examples/mobile-users-dashboard/mu-users-list/).
 
-### Concurent mobile users per location
+### Custom remote networks
 
-Use `mobileusers/mu_concurrent_connected_status` with the following payload.
+- rn-bandwidth-allocated. For an example, see [Remote Network Bandwidth Allocated](/access/docs/insights/examples/remote-networks-dashboard/rn-bandwidth-allocated/).
 
-    POST : https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/custom/query/mobileusers/mu_current_connected_status
+- rn-list. For an example, see [Remote Network Site List](/access/docs/insights/examples/remote-networks-dashboard/rn-list/).
 
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
-    {
-       "count":1,
-       "filter":{
-           "rules":[
-               {
-                   "property":"user_type",
-                   "operator":"in",
-                   "values":["gp"]
-               },
-               {
-                   "property":"edge_location_display_name",
-                   “operator”:”in”,"values":["{{loc}}"]
-               }
-           ]
-       }
-    }
+### Custom service connections
 
-### Mobile users service availability
+- sc-list. For an example, see [Service Connection List](/access/docs/insights/examples/service-connections-dashboard/sc_list/).
 
-Use `locations/location_mobilegateways_status` with the following payload.
+### Custom Prisma Access Locations
 
-    POST : https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/custom/query/locations/location_mobilegateways_status
+- location-gp-mobile-users-logins. For an example, see [GlobalProtect Mobile Users Login](/access/docs/insights/examples/pa-locations-dashboard/location-gp-mobile-users-logins/).
 
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
-        {
-           "properties":[
-                          {
-                             "property":"state_instance",
-                             "alias":"mu_state_instance"
-                          },
-                          {
-                             "property":"edge_location_display_name",
-                             "alias":"current_mu_locations"
-                          }
-            ],
-            "filter":{
-                "rules":[
-                          {
-                             "property":"state_instance",
-                             "operator":"in",
-                             "values":[0,1,2]
-                          },
-                          {
-                             "property":"user_type",
-                             "operator":"in",
-                             "values":["gp"]
-                          }
-                ]
-            },
-                           "count":10
-    }
+- location-rn-bandwidth. For an example, see [Remote Network Bandwidth](/access/docs/insights/examples/pa-locations-dashboard/location-rn-bandwidth/).
 
-### Mobile users service availability per location
+- location-sc-bandwidth. For an example, see [Service Connection Bandwidth Consumption](/access/docs/insights/examples/pa-locations-dashboard/location-sc-bandwidth/).
 
-Use `locations/location_mobilegateways_status` with the following payload.
+## Custom tunnels
 
-    POST: https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/custom/query/locations/location_mobilegateways_status
-    Authorization: Bearer {{jwt_token}}
-    Content-Type: application/json
-    {
-       "properties":[
-           {
-               "property":"state_instance",
-               "alias":"mu_state_instance"
-           },
-           {
-               "property":"edge_location_display_name",
-               "alias":"current_mu_locations"
-           }
-       ],
-       "filter":{
-            "rules":[
-                      {
-                       "property":"state_instance",
-                       "operator":"in","values":[0,1,2]
-                      },
-                     {
-                       "property":"user_type",
-                       "operator":"in",
-                       "values":["gp"]
-                     },
-                     {
-                        "property":"edge_location_display_name",
-                        "operator":"in",
-                        “values”:[“{{loc1}}”,”{{loc2}}}“]}]},
-                        "count":10
-                     }
-            ]
-       }
-    }
+- tunnel-list. For an example, see [Tunnel List](/access/docs/insights/examples/tunnels-dashboard/tunnel_list/).

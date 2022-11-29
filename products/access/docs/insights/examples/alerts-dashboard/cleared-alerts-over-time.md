@@ -35,6 +35,14 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
+The following request payload uses the `state`, `severity` and `updated_time` filters:
+
+`state` : The values for this filter are: 
+* `Raised` : The alert has been raised to an IT specialist's attention. 
+* `Cleared` : The alert has been cleared.
+
+`updated_time` : string, format example `2021-07-03 23:12:13 UTC`
+
     {
       "properties": [
         {

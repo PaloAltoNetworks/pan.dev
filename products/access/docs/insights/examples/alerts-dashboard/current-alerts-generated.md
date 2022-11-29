@@ -33,20 +33,8 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `state`, `severity_id` and `updated-time` filters:
-
-`state` : The values for this filter are: 
-* `Raised` : The alert has been raised to an IT specialist's attention. 
-* `Cleared` : The alert has been cleared.
-
-`severity_id` : The values for this filter are:
-* `High` : 4
-* `Medium` : 3
-* `Low` : 2
-* `Informational` : 1
-
-`updated-time` : string, format example `2021-07-03 23:12:13 UTC`
-
+The following request payload uses the `severity` filter to find all events that are not
+notifications.
 
     {
      "properties": [
