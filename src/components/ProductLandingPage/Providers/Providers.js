@@ -16,7 +16,7 @@ function Providers({ header, subheader, providerCards }) {
               cta={card.cta}
               description={card.description}
               title={card.title}
-              version={card.version}
+              releaseTagUrl={card.releaseTagUrl}
             />
           )}
         </div>

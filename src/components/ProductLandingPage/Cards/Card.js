@@ -1,8 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from '@docusaurus/Link'
 import './Card.scss'
 
-function Card({ cta, description, image, title, type, links, logo }) {
+function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
+  const [latestTag, setLatestTag] = useState('');
+
+  useEffect(async () => {
+    const response = await fetch(releaseTagUrl);
+    const data = await response.json();
+    setLatestTag(data[0].name);
+  }, [])
+
   const CardFooterCTA = ({ cta }) => {
     const { content, type } = cta
 
@@ -68,7 +76,10 @@ function Card({ cta, description, image, title, type, links, logo }) {
     return (
       <div class="info-card-container">
         <div class="info-card__body">
-          <h3>{title}</h3>
+          <h3>
+            {title}
+            {latestTag && <span className="latest-tag">{latestTag}</span>}
+          </h3>
           <p>{description}</p>
           <CardFooterCTA cta={cta} />
         </div>
