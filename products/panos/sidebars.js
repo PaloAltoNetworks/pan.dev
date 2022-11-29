@@ -16,6 +16,7 @@ module.exports = {
         "panos/docs/panpython",
         "panos/docs/panosgo",
         "panos/docs/panosphp",
+        "panos/docs/pancloudnode",
       ],
     },
     {
