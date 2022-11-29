@@ -67,7 +67,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
   providerCards: [
     {
       title: "PAN-OS",
-      version: "v.1.11.0",
+      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-panos/tags",
       description: "Define and manage your network security configuration as code, including Panorama, PA-Series, VM-Series and CN-Series.",
       cta: {
         type: 'double',
@@ -86,7 +86,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Cloud NGFW",
-      version: "v.1.0.8",
+      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-cloudngfwaws/tags",
       description: "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
         type: 'double',
@@ -105,7 +105,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud",
-      version: "v.1.2.10",
+      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-prismacloud/tags",
       description: "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
         type: 'double',
@@ -124,7 +124,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud Compute",
-      version: "v.0.7.0",
+      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-prismacloudcompute/tags",
       description: "Define your cloud workload protection suing Terraform, to protect your host, container and serverless deployments in any cloud.",
       cta: {
         type: 'double',
@@ -143,13 +143,13 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Bridgecrew",
-      version: "v0.3.7",
+      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-bridgecrew/tags",
       description: "Automate your security engineering by identifying and remediating misconfigurations and vulnerabilities, across code, secrets and images, all defined with Terraform.",
       cta: {
         type: 'double',
         content: [
           {
-            icon: "https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest",
+            link: "https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest",
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform Logo"
           },
