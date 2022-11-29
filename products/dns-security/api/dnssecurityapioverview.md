@@ -21,6 +21,6 @@ The DNS Security API is currently in `BETA`. To inquire about joining the beta o
 
 Things to consider:
 
-- To make DNS Security API POST requests, you must [retrieve your DNS Security API key](/cdss/docs/authentication), which is used to authenticate API calls. An organization (and corresponding superuser) can have a single API key at any given time, regardless of the number of users tied to the account.
+- To make DNS Security API requests, you must [retrieve your DNS Security API key](/cdss/docs/authentication), which is used to authenticate API calls. An organization (and corresponding superuser) can have a single API key at any given time, regardless of the number of users tied to the account.
 - You must have an activated and unexpired DNS Security subscription to access a DNS Security API key.
 - The number of API requests that can be submitted is throttled on a per API key basis. To control the number of requests you can make, you need to observe [DNS Security API Access Limits](/dns-security/docs/access-limits).
