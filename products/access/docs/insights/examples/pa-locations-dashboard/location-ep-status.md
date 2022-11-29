@@ -35,8 +35,8 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses filters for the `ep_state_instance`. The
-values for these filters are:
+The following request payload filters on `ep_state_instance`. The
+values for this filter are:
 
 * `0` : Instance is down.
 * `1` : Instance is up.

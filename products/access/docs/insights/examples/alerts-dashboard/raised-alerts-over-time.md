@@ -34,6 +34,10 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
+The following request payload uses the `severity` and `raised_time` filters:
+
+`raised_time` : string, format example `2021-07-03 23:12:13 UTC`
+
     {
       "properties": [
         {
