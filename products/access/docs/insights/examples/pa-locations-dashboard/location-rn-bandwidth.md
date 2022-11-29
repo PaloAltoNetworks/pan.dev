@@ -33,9 +33,9 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `last_n_days` and `edge_location_display_name` filters:
+The following request payload filters on `event_time` and `edge_location_display_name`:
 
-`last_n_days`: The values for this filter are:
+`event_time`: The operators for this filter are:
 
 * `last_n_minutes` : n = 15.
 * `last_n_hours` : n = 1, 3, 24, or 48.

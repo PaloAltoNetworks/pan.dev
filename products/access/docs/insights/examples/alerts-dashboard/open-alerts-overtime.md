@@ -34,15 +34,13 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `severity_id` and `raised-time` filters:
+The following request payload uses the `state`, `severity` and `updated_time` filters:
 
-`severity_id` : The values for this filter are:
-* `High` : 4
-* `Medium` : 3
-* `Low` : 2
-* `Informational` : 1
+`state` : The values for this filter are: 
+* `Raised` : The alert has been raised to an IT specialist's attention. 
+* `Cleared` : The alert has been cleared.
 
-`raised-time` : string, format example `2021-07-03 23:12:13 UTC`
+`updated_time` : string, format example `2021-07-03 23:12:13 UTC`
 
 
     {

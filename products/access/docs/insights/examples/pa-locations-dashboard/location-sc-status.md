@@ -33,7 +33,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses filters for `sc_state_instance`. The values for this filter are:
+The following request payload fliters on `sc_state_instance`. The values for this filter are:
 
 * `0` : Instance is down.
 * `1` : Instance is up.
