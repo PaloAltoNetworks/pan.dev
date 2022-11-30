@@ -632,6 +632,7 @@ const config = {
           "dns-security": {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
             outputDir: "products/dns-security/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",

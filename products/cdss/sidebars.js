@@ -101,6 +101,10 @@ module.exports = {
               type: "doc",
               id: "dns-security/docs/examples/request-domain-information",
             },
+            {
+              type: "doc",
+              id: "dns-security/docs/examples/request-domain-categorization-change",
+            },
           ],
         },
       ],
