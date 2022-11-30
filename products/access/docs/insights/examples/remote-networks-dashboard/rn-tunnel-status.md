@@ -5,7 +5,7 @@ description: Remote Network Bandwidth Consumption Over Time
 sidebar_label: Remote Network Bandwidth Consumption Over Time
 ---
 
-You can view the ingress, egress, average, and peak bandwidth consumption over time using the `tunnel-status` resource.
+You can view the ingress, egress, average, and peak bandwidth consumption over time using the `tunnel_status` resource.
 
 The information returned by this query can also be viewed in the UI, here:
 
@@ -15,7 +15,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 1.0 Call
 
-    POST /api/sase/v1.0/resource/tenant/{super_tenant_id}/query/rn-tunnel-status
+    POST /api/sase/v1.0/resource/tenant/{super_tenant_id}/query/tunnel_status
 
     Authorization: Bearer {{jwt_token}}
     
@@ -23,7 +23,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ### 2.0 Call
 
-    POST /api/sase/v2.0/resource/query/rn_tunnel_status
+    POST /api/sase/v2.0/resource/query/tunnel_status
 
     Prisma-Tenant:{{tenant_id}}
 
@@ -33,8 +33,9 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses a filter for `last_n_days`. You can set the event_time on the UI using the Time Range filter. The
-values for these filters are:
+The following request payload filters on 
+[node_type](/access/docs/insights/query_filters/#node-types)
+and `event_time`. The operators for `event_time` are:
 
 * `last_n_minutes` : n = 15.
 * `last_n_hours` : n = 1, 3, 24, or 48.
