@@ -34,8 +34,8 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses a filter for `last_n_days`. You can set the event_time on the UI using the Time Range filter. The
-values for these filters are:
+The following request payload filters on `event_time`. The
+operators for this filter are:
 
 * `last_n_minutes` : n = 15.
 * `last_n_hours` : n = 1, 3, 24, or 48.

@@ -33,15 +33,15 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `last_n_hours` and `node_type` filters.
+The following request payload filters on `event_time` and 
+[node_type](/access/docs/insights/query_filters/#node-types).
 
-`last_n_days`: The values for this filter are:
+The operators for `event_time` are:
 
 * `last_n_minutes` : n = 15.
 * `last_n_hours` : n = 1, 3, 24, or 48.
 * `last_n_days` : n = 7 or 30.
 
-`node_type` : Service connection node type, which is 51 in the example. 
 
     {
        "filter": {
