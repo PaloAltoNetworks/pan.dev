@@ -135,14 +135,12 @@ function ApplauseButton() {
           <span className="counter">{applause + INITIAL_COUNT}</span>
         </button>
         <p>Helpful? Show some ❤️</p>
-        <hr></hr>
       </div>
     );
   }
   return (
     <div className="applause-container">
       <p>Helpful? Show some ❤️</p>
-      <hr></hr>
     </div>
   );
 }
