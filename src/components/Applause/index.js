@@ -9,9 +9,9 @@ import {
   setDoc,
   getDoc,
   increment,
-  enableIndexedDbPersistence,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { useLocation } from "@docusaurus/router";
 import "./styles.css";
 
@@ -22,6 +22,7 @@ const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
 const firebaseConfig = {
+  apiKey: process.env.FIREBASE_APIKEY,
   projectId: "pan-dev-f1b58",
 };
 
@@ -29,6 +30,7 @@ function ApplauseButton() {
   const currentRoute = useLocation();
   const docId = Buffer.from(currentRoute.pathname).toString("base64");
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getFirestore(app);
   const docRef = doc(db, COLLECTION_ID, docId);
 
@@ -61,6 +63,15 @@ function ApplauseButton() {
   };
 
   useEffect(() => {
+    signInAnonymously(auth)
+      .then(() => {
+        console.log(auth);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
     try {
       getDoc(docRef).then((doc) => {
         if (doc.exists()) {
