@@ -46,6 +46,7 @@ function ApplauseButton() {
       docRef,
       {
         claps: increment(1),
+        path: currentRoute.pathname,
       },
       { merge: true }
     );
