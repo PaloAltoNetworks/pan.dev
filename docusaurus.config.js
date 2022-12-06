@@ -403,16 +403,9 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/api/cloud/cspm/",
+                      to: "/cloud/api",
                       label: "CSPM API",
                       icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                      label: "Getting Started",
-                      icon: "doc",
                     },
                   ],
                 },
@@ -422,16 +415,21 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/api/cloud/cwpp",
+                      to: "/cloud/api",
                       label: "CWPP API",
                       icon: "api-doc",
                     },
                   ],
-                  docs: [
+                },
+                {
+                  label: "Cloud Code Security",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                      label: "Getting Started",
-                      icon: "doc",
+                      to: "/cloud/api",
+                      label: "Cloud Code API",
+                      icon: "api-doc",
                     },
                   ],
                 },
@@ -638,6 +636,40 @@ const config = {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          cwpp: {
+            specPath: "openapi-specs/cwpp",
+            outputDir: "products/cwpp/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            /*
+            version: "22.11",
+            label: "v22.11",
+            baseUrl: "/cwpp/api/",
+            versions: {
+              22.06: {
+                specPath: "openapi-specs/cwpp/22-06",
+                outputDir: "products/cwpp/api/22-06",
+                label: "v22.06",
+                baseUrl: "/cwpp/api/22-06/",
+              },
+              22.01: {
+                specPath: "openapi-specs/cwpp/22-01",
+                outputDir: "products/cwpp/api/22-01",
+                label: "v22.01",
+                baseUrl: "/cwpp/api/22-01/",
+              },
+            },
+            */
+          },
+          cspm: {
+            specPath: "openapi-specs/cspm",
+            outputDir: "products/cspm/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          code: {
+            specPath: "openapi-specs/code",
+            outputDir: "products/code/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
         },
       },

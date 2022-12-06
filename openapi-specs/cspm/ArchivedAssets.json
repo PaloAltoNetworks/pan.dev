@@ -1,0 +1,314 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Prisma Cloud Archived Assets API Overview",
+    "description": "When you delete an asset in a cloud account that is onboarded on Prisma Cloud, the asset is marked as deleted. After 90 days, the configuration details of the deleted assets are archived. You can use the archiveList endpoint of this API to retrieve the configuration details of such assets as a compressed archive (.zip) file.\n\nThe compressed archive (.zip) files are available for 9 months, after which they are deleted.\n",
+    "version": "Latest",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Archived Assets",
+      "description": "The Archived Assets API endpoint is listed below."
+    }
+  ],
+  "paths": {
+    "/config/api/v1/tenant/{prisma_id}/archiveList": {
+      "get": {
+        "tags": ["Archived Assets"],
+        "summary": "Bulk Export Resource Archives",
+        "description": "Returns a list that has details about (and optionally, links for) the compressed archive files that contain the configuration details for assets that were deleted in the specified time period.\n\nEach archive file contains the configuration details for up to 50,000 assets that belong to a cloud account ID and were deleted on a specific day.\n\nThe returned list has a maximum of 10 items. Each item is itself an array that has details about the archive file and (optionally) a temporary presigned URL for downloading the file. If the number of archive files exceeds 10, the response includes a URL (**nextPageUrl**) that you can use to get the next 10 archive files.\n\nThis endpoint checks the date on which an asset was deleted against the specified dates. If the asset was deleted on or after the specified **start_date** and on or before the specified **end_date**, and subsequently archived, it is included in an archive file returned by this endpoint.\n\nUsers must have the “System Admin” role in Prisma Cloud to invoke this endpoint.\n\n**Rate Limits**\n\nThe following rate limits apply:\n* Request Rate Limit: 80/minute\n",
+        "operationId": "bulkExportResourceArchives",
+        "parameters": [
+          {
+            "name": "prisma_id",
+            "in": "path",
+            "description": "Your Prisma Cloud tenant ID.",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Start date (in the YYYY-MM-DD format) of the asset deletion period. If an asset was deleted on or after this date and on or before the **end_date**, and subsequently archived, it is included in one of the returned archives.",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "End date (in the YYYY-MM-DD format) of the asset deletion period. If an asset was deleted on or before this date and on or after the **start_date**, and subsequently archived, it is included in one of the returned archives.",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "include_url",
+            "in": "query",
+            "description": "This is an optional field.\nBy default, the API returns the resource archive ID, cloud account ID, and the asset deletion date for 10 compressed archive files. If set to **true**, each item in the returned list also includes the presigned URL compressed archive file. The presigned URL is valid for 10 minutes from the time they are generated.\n",
+            "required": false,
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "nextPageToken",
+            "in": "query",
+            "description": "The token to retrieve details for the next 10 compressed archive files. This token and other query parameters are included in the **nextPageUrl** returned in the response.\n",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved details for the compressed archive files for the specified time period",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BulkExporterPage" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 400,
+                  "timestamp": "string",
+                  "message": "BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 401,
+                  "timestamp": "string",
+                  "message": "UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tenant License Expired",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 403,
+                  "timestamp": "string",
+                  "message": "FORBIDDEN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong Http Method",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 405,
+                  "timestamp": "string",
+                  "message": "METHOD_NOT_ALLOWED"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Too Early to access the resource",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 425,
+                  "timestamp": "string",
+                  "message": "TOO_EARLY"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 429,
+                  "timestamp": "string",
+                  "message": "TOO_MANY_REQUESTS"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiError" },
+                "example": {
+                  "status": 500,
+                  "timestamp": "string",
+                  "message": "INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/config/api/v1/tenant/{prisma_id}/archiveList\"\n\nquerystring = {\"start_date\":\"SOME_STRING_VALUE\",\"end_date\":\"SOME_STRING_VALUE\",\"include_url\":\"SOME_BOOLEAN_VALUE\",\"nextPageToken\":\"SOME_STRING_VALUE\"}\n\nresponse = requests.request(\"GET\", url, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/config/api/v1/tenant/{prisma_id}/archiveList?start_date=SOME_STRING_VALUE&end_date=SOME_STRING_VALUE&include_url=SOME_BOOLEAN_VALUE&nextPageToken=SOME_STRING_VALUE'"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "message": { "type": "string" },
+          "debugMessage": { "type": "string" }
+        }
+      },
+      "BulkExporterPage": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "description": "An array that has a maximum of 10 items. Each item in the array is also an array that contains the resource archive ID, cloud account ID, asset deletion date, and optionally a presigned URL for the compressed archive file.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "cb8bad01-fa35-44d0-8d66-cd510d2d2fa2",
+                  "description": "Unique ID of the resource archive."
+                },
+                "cloudAccountId": {
+                  "type": "string",
+                  "example": "sample-accountid-1",
+                  "description": "Cloud account ID of the assets included in the resource archive."
+                },
+                "date": {
+                  "type": "string",
+                  "example": "2022-04-15",
+                  "description": "Date on which the assets that are included in the compressed archive file were deleted."
+                },
+                "url": {
+                  "type": "string",
+                  "example": "“https://resource-config-archives.s3.amazonaws.com/resource_config_inactive_resource_archives/prismaId/filename.txt.gz”",
+                  "description": "Presigned URL for downloading the compressed archive (.zip) file. This URL is valid for 10 minutes. If the URL expires before you can download the file, you can invoke this endpoint again to get another valid URL."
+                }
+              }
+            }
+          },
+          "nextPageUrl": {
+            "type": "string",
+            "example": "/config/api/v1/tenant/801905077827777536/archiveList?nextPageToken=MTY1OTY3NTc4NjQ5M18y&start_date=2022-04-15&end_date=2022-07-15&include_url=true",
+            "description": "The URL to retrieve details for the next 10 compressed archive files. You can use this field to get the details for the next 10 compressed archive files.\n"
+          }
+        }
+      }
+    }
+  }
+}
