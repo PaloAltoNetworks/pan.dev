@@ -26,16 +26,26 @@ function ApplauseButton() {
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
+
   const firebaseConfig = {
     apiKey: customFields.firebaseApiKey,
     projectId: "pan-dev-f1b58",
   };
+
   const currentRoute = useLocation();
   const docId = Buffer.from(currentRoute.pathname).toString("base64");
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const docRef = doc(db, COLLECTION_ID, docId);
+
+  // Only init firebase if apiKey exists
+  let app;
+  let auth;
+  let db;
+  let docRef;
+  if (customFields.firebaseApiKey) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    docRef = doc(db, COLLECTION_ID, docId);
+  }
 
   let bubbleTimer = useRef(null);
   let clickTimer = useRef(null);
@@ -62,33 +72,34 @@ function ApplauseButton() {
     setIsClicked(true);
     setHasInteracted(true);
     setTotalApplause((prevState) => prevState + 1);
-    incrementClaps();
+    app && incrementClaps();
   };
 
   useEffect(() => {
-    signInAnonymously(auth)
-      .then(() => {
-        try {
-          getDoc(docRef).then((doc) => {
-            if (doc.exists()) {
-              return setTotalApplause(doc.get("claps"));
-            } else {
-              return setTotalApplause(0);
-            }
-          });
-        } catch (err) {
-          console.error(
-            `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
-            err
-          );
-          return setTotalApplause(0);
-        }
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+    customFields.firebaseApiKey &&
+      signInAnonymously(auth)
+        .then(() => {
+          try {
+            getDoc(docRef).then((doc) => {
+              if (doc.exists()) {
+                return setTotalApplause(doc.get("claps"));
+              } else {
+                return setTotalApplause(0);
+              }
+            });
+          } catch (err) {
+            console.error(
+              `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
+              err
+            );
+            return setTotalApplause(0);
+          }
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
   }, []);
 
   useEffect(() => {
