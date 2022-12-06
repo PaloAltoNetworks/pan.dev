@@ -28,11 +28,13 @@ export default function AuthorsSide({ className }) {
   if (allAuthors.length === 0) {
     return null;
   }
+  const multipleAuthors = allAuthors.length > 1;
 
   return (
-    <>
+    <div className="padding-top--lg padding-left--md">
       <div className="row">
-        <h4>Authors: </h4>
+        {multipleAuthors && <h4>Authors </h4>}
+        {!multipleAuthors && <h4>Author </h4>}
       </div>
       {allAuthors.map((author, idx) => (
         <div className="row" key={idx}>
@@ -68,6 +70,6 @@ export default function AuthorsSide({ className }) {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }

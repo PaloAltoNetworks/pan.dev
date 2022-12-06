@@ -12,6 +12,7 @@ keywords:
   - firewall
   - configuration
   - terraform
+authors: [jholland]
 ---
 
 # Working with Multiple PAN-OS Versions
