@@ -13,6 +13,7 @@ import {
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { useLocation } from "@docusaurus/router";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import "./styles.css";
 
 const BUBBLE_THRESHOLD = 1000;
@@ -21,12 +22,14 @@ const APPLAUSE_MAX = 100000;
 const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
-  projectId: "pan-dev-f1b58",
-};
-
 function ApplauseButton() {
+  const {
+    siteConfig: { customFields },
+  } = useDocusaurusContext();
+  const firebaseConfig = {
+    apiKey: customFields.firebaseApiKey,
+    projectId: "pan-dev-f1b58",
+  };
   const currentRoute = useLocation();
   const docId = Buffer.from(currentRoute.pathname).toString("base64");
   const app = initializeApp(firebaseConfig);
@@ -65,28 +68,27 @@ function ApplauseButton() {
   useEffect(() => {
     signInAnonymously(auth)
       .then(() => {
-        console.log(auth);
+        try {
+          getDoc(docRef).then((doc) => {
+            if (doc.exists()) {
+              return setTotalApplause(doc.get("claps"));
+            } else {
+              return setTotalApplause(0);
+            }
+          });
+        } catch (err) {
+          console.error(
+            `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
+            err
+          );
+          return setTotalApplause(0);
+        }
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
       });
-    try {
-      getDoc(docRef).then((doc) => {
-        if (doc.exists()) {
-          return setTotalApplause(doc.get("claps"));
-        } else {
-          return setTotalApplause(0);
-        }
-      });
-    } catch (err) {
-      console.error(
-        `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
-        err
-      );
-      return setTotalApplause(0);
-    }
   }, []);
 
   useEffect(() => {
