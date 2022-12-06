@@ -22,7 +22,7 @@ const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_FIREBASE_APIKEY,
+  apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
   projectId: "pan-dev-f1b58",
 };
 
