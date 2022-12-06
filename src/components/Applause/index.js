@@ -17,7 +17,7 @@ import "./styles.css";
 
 const BUBBLE_THRESHOLD = 1000;
 const CLICK_THRESHOLD = 250;
-const APPLAUSE_MAX = 100;
+const APPLAUSE_MAX = 100000;
 const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
