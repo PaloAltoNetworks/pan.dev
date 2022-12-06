@@ -72,7 +72,7 @@ function ApplauseButton() {
     setIsClicked(true);
     setHasInteracted(true);
     setTotalApplause((prevState) => prevState + 1);
-    app && incrementClaps();
+    customFields.firebaseApiKey && incrementClaps();
   };
 
   useEffect(() => {
