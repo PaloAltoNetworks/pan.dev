@@ -10,6 +10,7 @@ import UseCases from '../components/ProductLandingPage/UseCases/UseCases';
 import {
   TERRAFORM_HERO_CONTENT,
   TERRAFORM_METADATA,
+  TERRAFORM_MODULES_CONTENT,
   TERRAFORM_PROVIDER_CONTENT,
   TERRAFORM_USE_CASES_CONTENT
 } from '../constants/terraform';
@@ -31,7 +32,10 @@ export default function TerraformLandingPage() {
         providerCards={TERRAFORM_PROVIDER_CONTENT.providerCards}
         subheader={TERRAFORM_PROVIDER_CONTENT.subheader}
       />
-      <Modules />
+      <Modules
+        header={TERRAFORM_MODULES_CONTENT.header}
+        modules={TERRAFORM_MODULES_CONTENT.modules}
+      />
       <UseCases
         header={TERRAFORM_USE_CASES_CONTENT.header}
         subheader={TERRAFORM_USE_CASES_CONTENT.subheader}
