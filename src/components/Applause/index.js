@@ -18,6 +18,7 @@ const {
 } = require("firebase/app-check");
 import { useLocation } from "@docusaurus/router";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import "./styles.css";
 
 const BUBBLE_THRESHOLD = 1000;
@@ -47,7 +48,11 @@ function ApplauseButton() {
   let docRef;
   let appCheck;
 
-  if (customFields.firebaseApiKey && customFields.recaptchaApiKey) {
+  if (
+    customFields.firebaseApiKey &&
+    customFields.recaptchaApiKey &&
+    ExecutionEnvironment.canUseDOM
+  ) {
     app = initializeApp(firebaseConfig);
     appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
