@@ -12,6 +12,10 @@ import {
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from "firebase/auth";
+const {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} = require("firebase/app-check");
 import { useLocation } from "@docusaurus/router";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import "./styles.css";
@@ -30,6 +34,7 @@ function ApplauseButton() {
   const firebaseConfig = {
     apiKey: customFields.firebaseApiKey,
     projectId: "pan-dev-f1b58",
+    appId: "1:899146127396:web:26d634304c08ea1d0860b1",
   };
 
   const currentRoute = useLocation();
@@ -40,8 +45,14 @@ function ApplauseButton() {
   let auth;
   let db;
   let docRef;
+  let appCheck;
+
   if (customFields.firebaseApiKey) {
     app = initializeApp(firebaseConfig);
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
+      isTokenAutoRefreshEnabled: true,
+    });
     auth = getAuth(app);
     db = getFirestore(app);
     docRef = doc(db, COLLECTION_ID, docId);
