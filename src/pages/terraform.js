@@ -1,10 +1,11 @@
 import React from 'react';
 // components
-import Feeds from '../components/ProductLandingPage/Feeds/Feeds'
-import Hero from '../components/ProductLandingPage/Hero/Hero'
+import Feeds from '../components/ProductLandingPage/Feeds/Feeds';
+import Hero from '../components/ProductLandingPage/Hero/Hero';
 import Layout from '@theme/Layout';
-import Providers from '../components/ProductLandingPage/Providers/Providers'
-import UseCases from '../components/ProductLandingPage/UseCases/UseCases'
+import Modules from '../components/ProductLandingPage/Modules/Modules';
+import Providers from '../components/ProductLandingPage/Providers/Providers';
+import UseCases from '../components/ProductLandingPage/UseCases/UseCases';
 // constants
 import {
   TERRAFORM_HERO_CONTENT,
@@ -30,6 +31,7 @@ export default function TerraformLandingPage() {
         providerCards={TERRAFORM_PROVIDER_CONTENT.providerCards}
         subheader={TERRAFORM_PROVIDER_CONTENT.subheader}
       />
+      <Modules />
       <UseCases
         header={TERRAFORM_USE_CASES_CONTENT.header}
         subheader={TERRAFORM_USE_CASES_CONTENT.subheader}
