@@ -47,7 +47,7 @@ function ApplauseButton() {
   let docRef;
   let appCheck;
 
-  if (customFields.firebaseApiKey) {
+  if (customFields.firebaseApiKey && customFields.recaptchaApiKey) {
     app = initializeApp(firebaseConfig);
     appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
