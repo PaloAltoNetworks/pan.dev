@@ -1,0 +1,1569 @@
+{
+  "components": {
+    "requestBodies": {
+      "FilterModel3": {
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/FilterModel" }
+          }
+        }
+      },
+      "FilterSuggestionModel": {
+        "content": {
+          "application/json; charset=UTF-8": {
+            "schema": { "$ref": "#/components/schemas/FilterSuggestionModel" }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "AbsoluteTimeRangeConfigModel": {
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "description": "Model for AbsoluteTimeRangeConfig",
+            "properties": {
+              "type": { "example": "absolute", "type": "string" },
+              "value": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/TimeModel" },
+                  { "description": "Time range object" }
+                ]
+              }
+            },
+            "required": ["value"],
+            "type": "object"
+          }
+        ]
+      },
+      "DecoratedResourceInfo": {
+        "description": "Model for resource info and status list",
+        "properties": {
+          "accountId": { "description": "Account ID", "type": "string" },
+          "accountName": { "description": "Account name", "type": "string" },
+          "cloudType": {
+            "description": "Cloud type",
+            "enum": ["ALL", "AWS", "AZURE", "GCP", "ALIBABA_CLOUD", "OCI"],
+            "type": "string"
+          },
+          "id": { "description": "Resource ID", "type": "string" },
+          "name": { "description": "Resource name", "type": "string" },
+          "overallPassed": {
+            "description": "All policies passed",
+            "type": "boolean"
+          },
+          "regionId": { "description": "Region ID", "type": "string" },
+          "regionName": { "description": "Region Name", "type": "string" },
+          "rrn": { "description": "RRN", "type": "string" },
+          "scannedPolicies": {
+            "description": "Scanned policies",
+            "items": { "$ref": "#/components/schemas/ScannedPolicyInfo" },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "DecoratedResourceInfoResult": {
+        "description": "Model for resource info and status list",
+        "properties": {
+          "nextPageToken": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ResourceInfoPageOption" },
+              { "description": "Use as page token to return next page of data" }
+            ]
+          },
+          "pageSize": {
+            "description": "Page size",
+            "format": "int64",
+            "type": "integer"
+          },
+          "resources": {
+            "description": "List of metadata for resources that match filter",
+            "items": { "$ref": "#/components/schemas/DecoratedResourceInfo" },
+            "type": "array"
+          },
+          "timestamp": {
+            "description": "Epoch timestamp",
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalMatchedCount": {
+            "description": "Total number of filtered resources, both scanned and unscanned",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "FilterModel": {
+        "description": "Model for Filter",
+        "properties": {
+          "detailed": { "description": "Detailed", "type": "boolean" },
+          "fields": {
+            "description": "Array of specific fields to return",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "filters": {
+            "description": "Filtering parameters",
+            "items": { "$ref": "#/components/schemas/UIFilterModel" },
+            "type": "array"
+          },
+          "groupBy": {
+            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 10,000. The default is 10,000.",
+            "type": "number"
+          },
+          "offset": {
+            "description": "The number of items to skip before selecting items to return. Default is zero",
+            "type": "number"
+          },
+          "pageToken": {
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
+            "type": "string"
+          },
+          "sortBy": {
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "timeRange": {
+            "allOf": [
+              { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+              { "description": "Time range" }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "FilterSuggestion": {
+        "description": "Model for FilterSuggestion",
+        "properties": {
+          "nameValue": {
+            "description": "Filter options",
+            "items": { "$ref": "#/components/schemas/NameValueIntegerString" },
+            "type": "array"
+          },
+          "options": {
+            "description": "Filter options, which lists all the default options for static filters or all the recent options, if any, for non-static filters",
+            "items": { "type": "string" },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "staticFilter": {
+            "description": "Filter is a static filter",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "FilterSuggestionModel": {
+        "description": "Model for Filter Suggestions",
+        "properties": {
+          "filterName": { "description": "Filter name", "type": "string" },
+          "query": {
+            "description": "Case-insensitive fuzzy search autocomplete filter. Includes only items that contain the query as a substring.",
+            "type": "string"
+          }
+        },
+        "required": ["filterName"],
+        "type": "object"
+      },
+      "InventoryFilterSuggestion": {
+        "description": "Model for InventoryFilterSuggestion",
+        "properties": {
+          "account.group": { "$ref": "#/components/schemas/FilterSuggestion" },
+          "cloud.account": { "$ref": "#/components/schemas/FilterSuggestion" },
+          "cloud.region": { "$ref": "#/components/schemas/FilterSuggestion" },
+          "cloud.service": { "$ref": "#/components/schemas/FilterSuggestion" },
+          "cloud.type": {
+            "allOf": [
+              { "$ref": "#/components/schemas/FilterSuggestion" },
+              { "readOnly": true }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "NameValueIntegerString": {
+        "properties": {
+          "id": { "format": "int32", "type": "integer" },
+          "name": { "type": "string" }
+        },
+        "type": "object"
+      },
+      "ParsedTableFilter": {
+        "description": "Model for parsed table filter",
+        "properties": {
+          "completeParameters": {
+            "items": { "$ref": "#/components/schemas/UIFilterModel" },
+            "type": "array"
+          },
+          "links": {
+            "description": "JSON query builder links",
+            "type": "string"
+          },
+          "needsOffsetUpdate": {
+            "description": "Needs offset update (for internal use)",
+            "type": "boolean"
+          },
+          "offset": {
+            "description": "Offset within query",
+            "format": "int32",
+            "type": "integer"
+          },
+          "queryRemainder": {
+            "description": "Query remainder",
+            "type": "string"
+          },
+          "suggestions": {
+            "description": "List of suggestions",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "translate": {
+            "description": "Translate (for internal use)",
+            "type": "boolean"
+          },
+          "valid": { "description": "Query is valid", "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "RelativeTimeDurationModel": {
+        "description": "Model for RelativeTimeDuration",
+        "properties": {
+          "amount": {
+            "description": "Number of time units",
+            "format": "int32",
+            "type": "integer"
+          },
+          "unit": {
+            "description": "Time unit",
+            "enum": ["minute", "hour", "day", "week", "month", "year"],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RelativeTimeRangeConfigModel": {
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "description": "Model for RelativeTimeRangeConfig",
+            "properties": {
+              "relativeTimeType": {
+                "description": "Direction in which to count time. Default = BACKWARD",
+                "enum": ["BACKWARD", "FORWARD"],
+                "type": "string"
+              },
+              "type": { "example": "relative", "type": "string" },
+              "value": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/RelativeTimeDurationModel" },
+                  { "description": "Time range object" }
+                ]
+              }
+            },
+            "required": ["value"],
+            "type": "object"
+          }
+        ]
+      },
+      "ResourceInfoPageOption": {
+        "properties": {
+          "failedEventOffset": { "type": "boolean" },
+          "lastRowIdx": { "format": "int64", "type": "integer" },
+          "limit": { "format": "int64", "type": "integer" },
+          "offset": { "format": "int64", "type": "integer" },
+          "previousTotalMatchedCount": { "format": "int64", "type": "integer" },
+          "timestamp": { "format": "int64", "type": "integer" }
+        },
+        "type": "object"
+      },
+      "ScannedPolicyInfo": {
+        "properties": {
+          "id": { "type": "string" },
+          "labels": {
+            "items": { "type": "string" },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "name": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "severity": {
+            "enum": ["INFORMATIONAL", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimeModel": {
+        "description": "Model for Time",
+        "properties": {
+          "endTime": {
+            "description": "End timestamp",
+            "format": "int64",
+            "type": "integer"
+          },
+          "startTime": {
+            "description": "Start timestamp",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TimeRangeConfigModel": {
+        "description": "See the [Time Range Model](/api/cloud/api-time-range-model) for details.\n",
+        "discriminator": {
+          "mapping": {
+            "absolute": "#/components/schemas/AbsoluteTimeRangeConfigModel",
+            "relative": "#/components/schemas/RelativeTimeRangeConfigModel",
+            "to_now": "#/components/schemas/ToNowTimeRangeConfigModel"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          { "$ref": "#/components/schemas/RelativeTimeRangeConfigModel" },
+          { "$ref": "#/components/schemas/AbsoluteTimeRangeConfigModel" },
+          { "$ref": "#/components/schemas/ToNowTimeRangeConfigModel" }
+        ],
+        "properties": {
+          "type": { "description": "Time type", "type": "string" }
+        },
+        "required": ["type"],
+        "type": "object"
+      },
+      "ToNowTimeRangeConfigModel": {
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "description": "Model for ToNowTimeRangeConfig",
+            "properties": {
+              "value": {
+                "description": "Time range object",
+                "enum": [
+                  "MINUTE",
+                  "HOUR",
+                  "DAY",
+                  "WEEK",
+                  "MONTH",
+                  "YEAR",
+                  "EPOCH",
+                  "LOGIN"
+                ],
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "UIFilterModel": {
+        "description": "Model for UIFilter",
+        "properties": {
+          "name": { "description": "Name", "type": "string" },
+          "operator": {
+            "description": "Operator",
+            "enum": ["="],
+            "type": "string"
+          },
+          "value": { "description": "Value", "type": "string" }
+        },
+        "type": "object"
+      },
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusType"
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri"
+          },
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "StatusType": {
+        "type": "object",
+        "properties": {
+          "reasonPhrase": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ChunkedAssetRequest": {
+        "required": [
+          "assetId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string",
+            "description": "Unified Asset Id or RRN (Restricted Resource Name)",
+            "example": "[rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx or unified-asset-id]"
+          },
+          "type": {
+            "type": "string",
+            "description": "Asset Query Type. The enum values are **case-insensitive.**",
+            "enum": [
+              "EXTERNAL_FINDING",
+              "RESOURCE",
+              "ALERTS",
+              "RAW_CONFIG",
+              "NETWORK",
+              "TIMELINE",
+              "EXTERNAL_INTEGRATION",
+              "ASSET_DATA_INDICATORS",
+              "RELATIONSHIPS"
+            ]
+          },
+          "findingType": {
+            "type": "array",
+            "description": "External Finding Type. Applies to **EXTERNAL_FINDING** Asset query type only. The enum values are **case-insensitive.**",
+            "items": {
+              "type": "string",
+              "description": "External Finding Types",
+              "enum": [
+                "HOST_VULNERABILITY_CVE",
+                "CONTAINER_IMAGE_VULNERABILITY_CVE",
+                "COMPLIANCE_CIS",
+                "GUARD_DUTY_HOST",
+                "GUARD_DUTY_IAM",
+                "INSPECTOR_RBA",
+                "INSPECTOR_SBP",
+                "SERVERLESS_VULNERABILITY",
+                "NETWORK_REACHABILITY",
+                "PACKAGE_VULNERABILITY",
+                "AZURE_SECURITY_CENTER_ALERTS"
+              ]
+            }
+          },
+          "riskFactors": {
+            "type": "array",
+            "description": "External Finding Risk Factors. Applies to **EXTERNAL_FINDING** Asset query type only. The enum values are **case-insensitive.**",
+            "items": {
+              "type": "string",
+              "description": "External finding risk factors",
+              "enum": [
+                "CRITICAL_SEVERITY",
+                "HIGH_SEVERITY",
+                "MEDIUM_SEVERITY",
+                "HAS_FIX",
+                "REMOTE_EXECUTION",
+                "DOS",
+                "RECENT_VULNERABILITY",
+                "EXPLOIT_EXISTS",
+                "ATTACK_COMPLEXITY_LOW",
+                "ATTACK_VECTOR_NETWORK",
+                "REACHABLE_FROM_THE_INTERNET",
+                "LISTENING_PORTS",
+                "CONTAINER_IS_RUNNING_AS_ROOT",
+                "NO_MANDATORY_SECURITY_PROFILE_APPLIED",
+                "RUNNING_AS_PRIVILEGED_CONTAINER",
+                "PACKAGE_IN_USE"
+              ]
+            }
+          },
+          "timelineItemId": {
+            "type": "string",
+            "description": "Timeline Item ID"
+          }
+        }
+      },
+      "AlertAttribute": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          },
+          "id": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          }
+        }
+      },
+      "AlertCountTuple": {
+        "required": [
+          "count",
+          "severity"
+        ],
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          }
+        }
+      },
+      "AssetResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UnifiedAsset"
+          },
+          "errors": {
+            "required": [
+              "locations",
+              "message",
+              "path",
+              "pathAsString"
+            ],
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "locations": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "extensions": {
+                "$ref": "#/components/schemas/GraphQLErrorExtensions"
+              },
+              "pathAsString": {
+                "type": "string"
+              }
+            },
+            "description": "Error Object."
+          }
+        }
+      },
+      "ExternalFinding": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "count": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cveId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "externalFindingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "findingId": {
+            "type": "string"
+          },
+          "normalizedName": {
+            "type": "string"
+          },
+          "normalizedNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nvdUrl": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "rawData": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": "string"
+          },
+          "resourceCloudId": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resourceUrl": {
+            "type": "string"
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "CRITICAL_SEVERITY",
+                "HIGH_SEVERITY",
+                "MEDIUM_SEVERITY",
+                "HAS_FIX",
+                "REMOTE_EXECUTION",
+                "DOS",
+                "RECENT_VULNERABILITY",
+                "EXPLOIT_EXISTS",
+                "ATTACK_COMPLEXITY_LOW",
+                "ATTACK_VECTOR_NETWORK",
+                "REACHABLE_FROM_THE_INTERNET",
+                "LISTENING_PORTS",
+                "CONTAINER_IS_RUNNING_AS_ROOT",
+                "NO_MANDATORY_SECURITY_PROFILE_APPLIED",
+                "RUNNING_AS_PRIVILEGED_CONTAINER",
+                "PACKAGE_IN_USE",
+                "critical_severity",
+                "high_severity",
+                "medium_severity",
+                "has_fix",
+                "remote_execution",
+                "dos",
+                "recent_vulnerability",
+                "exploit_exists",
+                "attack_complexity_low",
+                "attack_vector_network",
+                "reachable_from_the_internet",
+                "listening_ports",
+                "container_is_running_as_root",
+                "no_mandatory_security_profile_applied",
+                "running_as_privileged_container",
+                "package_in_use"
+              ]
+            }
+          },
+          "rlUpdatedOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "scanId": {
+            "type": "string"
+          },
+          "score": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "INFORMATIONAL",
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CRITICAL",
+              "ERROR",
+              "WARNING",
+              "INFO",
+              "informational",
+              "low",
+              "medium",
+              "high",
+              "critical",
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "AWS_INSPECTOR",
+              "AWS_GUARD_DUTY",
+              "TENABLE",
+              "QUALYS",
+              "PRISMA_CLOUD",
+              "AZURE_SECURITY_CENTER",
+              "PRISMACLOUD",
+              "INSPECTOR",
+              "GUARDDUTY",
+              "AZURESECURITYCENTER",
+              "aws_inspector",
+              "aws_guard_duty",
+              "tenable",
+              "qualys",
+              "prisma_cloud",
+              "azure_security_center",
+              "prismacloud",
+              "inspector",
+              "guardduty",
+              "azuresecuritycenter"
+            ]
+          },
+          "sourceData": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "NO_ERROR",
+              "ERROR",
+              "ENABLED",
+              "DISABLED",
+              "OPEN",
+              "DISMISSED",
+              "RESOLVED",
+              "DESCOPED",
+              "RISK_SCORING_ERROR",
+              "ACTIVE",
+              "CLOSED",
+              "SUPPRESSED",
+              "pending",
+              "no_error",
+              "error",
+              "enabled",
+              "disabled",
+              "open",
+              "dismissed",
+              "resolved",
+              "descoped",
+              "risk_scoring_error",
+              "active",
+              "closed",
+              "suppressed"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "HOST_VULNERABILITY_CVE",
+              "CONTAINER_IMAGE_VULNERABILITY_CVE",
+              "COMPLIANCE_CIS",
+              "GUARD_DUTY_HOST",
+              "GUARD_DUTY_IAM",
+              "INSPECTOR_RBA",
+              "INSPECTOR_SBP",
+              "SERVERLESS_VULNERABILITY",
+              "NETWORK_REACHABILITY",
+              "PACKAGE_VULNERABILITY",
+              "AZURE_SECURITY_CENTER_ALERTS",
+              "host_vulnerability_cve",
+              "container_image_vulnerability_cve",
+              "compliance_cis",
+              "guard_duty_host",
+              "guard_duty_iam",
+              "inspector_rba",
+              "inspector_sbp",
+              "serverless_vulnerability",
+              "network_reachability",
+              "package_vulnerability",
+              "azure_security_center_alerts"
+            ]
+          },
+          "updatedOn": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ExternalIntegrationAttribute": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rlUpdatedOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source": {
+            "type": "string"
+          },
+          "hasAgent": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "assetJson": {
+            "type": "object"
+          }
+        }
+      },
+      "GraphQLErrorDebugInfo": {
+        "required": [
+          "subquery",
+          "variables"
+        ],
+        "type": "object",
+        "properties": {
+          "subquery": {
+            "type": "string"
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "GraphQLErrorExtensions": {
+        "required": [
+          "classification",
+          "debugInfo",
+          "origin"
+        ],
+        "type": "object",
+        "properties": {
+          "errorType": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "INTERNAL",
+              "NOT_FOUND",
+              "UNAUTHENTICATED",
+              "PERMISSION_DENIED",
+              "BAD_REQUEST",
+              "UNAVAILABLE",
+              "FAILED_PRECONDITION"
+            ]
+          },
+          "errorDetail": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "debugInfo": {
+            "$ref": "#/components/schemas/GraphQLErrorDebugInfo"
+          },
+          "classification": {
+            "type": "string"
+          }
+        }
+      },
+      "NetworkAttribute": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "access": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "ips": {
+            "type": "string"
+          },
+          "ports": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Relationships": {
+        "required": [
+          "assetTypeId",
+          "problem",
+          "pseudoAsset"
+        ],
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "relationshipType": {
+            "type": "string"
+          },
+          "assetTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assetType": {
+            "type": "string"
+          },
+          "assetName": {
+            "type": "string"
+          },
+          "externalAssetId": {
+            "type": "string"
+          },
+          "cloudId": {
+            "type": "string"
+          },
+          "cloudName": {
+            "type": "string"
+          },
+          "pseudoAsset": {
+            "type": "boolean"
+          },
+          "region": {
+            "type": "string"
+          },
+          "cloudAccountId": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "RenderAttribute": {
+        "required": [
+          "allowDrillDown",
+          "hasExtFindingRiskFactors",
+          "hasExternalFinding",
+          "hasExternalIntegration",
+          "hasNetwork"
+        ],
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "allowDrillDown": {
+            "type": "boolean"
+          },
+          "hasNetwork": {
+            "type": "boolean"
+          },
+          "hasExternalFinding": {
+            "type": "boolean"
+          },
+          "hasExternalIntegration": {
+            "type": "boolean"
+          },
+          "hasExtFindingRiskFactors": {
+            "type": "boolean"
+          },
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          }
+        }
+      },
+      "ResourceTimelineVulnerability": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "TimelineAttribute": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "$ref": "#/components/schemas/Problem"
+          },
+          "id": {
+            "type": "string"
+          },
+          "eventName": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STATE_CHANGE",
+              "EVENT",
+              "VULNERABILITY",
+              "state_change",
+              "event",
+              "vulnerability"
+            ]
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "alertIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "firstState": {
+            "type": "boolean"
+          },
+          "similarSince": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "similarStateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "type": "string"
+          },
+          "vulnerabilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceTimelineVulnerability"
+            }
+          },
+          "previousStateId": {
+            "type": "string"
+          },
+          "discoveredTs": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UnifiedAsset": {
+        "required": [
+          "deleted"
+        ],
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "prismaId": {
+            "type": "string"
+          },
+          "appName": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "externalAssetId": {
+            "type": "string"
+          },
+          "assetTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cloudType": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "OTHER",
+              "IBM",
+              "all",
+              "aws",
+              "azure",
+              "gcp",
+              "alibaba_cloud",
+              "oci",
+              "other",
+              "ibm"
+            ]
+          },
+          "createdTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "insertTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "data": {
+            "type": "object"
+          },
+          "dynamicData": {
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": "string"
+          },
+          "regionName": {
+            "type": "string"
+          },
+          "riskGrade": {
+            "type": "string"
+          },
+          "altAssetId": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stateId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "vpcId": {
+            "type": "string"
+          },
+          "vpcExternalAssetId": {
+            "type": "string"
+          },
+          "vpcName": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "object"
+          },
+          "relationshipCounts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vulnerabilityCounts": {
+            "type": "object"
+          },
+          "accountGroup": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "assetType": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "alertsCount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlertCountTuple"
+            }
+          },
+          "alerts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlertAttribute"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Relationships"
+            }
+          },
+          "finding": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalFinding"
+            }
+          },
+          "externalIntegration": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalIntegrationAttribute"
+            }
+          },
+          "network": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkAttribute"
+            }
+          },
+          "renderAttribute": {
+            "$ref": "#/components/schemas/RenderAttribute"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineAttribute"
+            }
+          }
+        },
+        "description": "Asset Domain Service Object type."
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "The Asset Explorer APIs enable you to list resource information filters, \nautocomplete suggestions for resource information filter, and list resource scan information.\n",
+    "title": "Prisma Cloud Asset Explorer API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/filter/resource/scan_info/suggest": {
+      "get": {
+        "description": "Returns an object where the keys are supported Resource Info filters and values contain default recent options.",
+        "operationId": "get-resource-info-filters-and-options",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryFilterSuggestion"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "List Resource Info Filters",
+        "tags": ["Asset Explorer"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/filter/resource/scan_info/suggest\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/filter/resource/scan_info/suggest \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
+          }
+        ]
+      },
+      "post": {
+        "description": "Returns an object that includes a list of autocomplete suggestions for the specified resource info filter.",
+        "operationId": "get-resource-info-filter-options",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": { "$ref": "#/components/schemas/FilterSuggestionModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ParsedTableFilter" }
+              }
+            },
+            "description": "success"
+          },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "List Resource Info Filter Autocomplete Suggestions",
+        "tags": ["Asset Explorer"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/filter/resource/scan_info/suggest\"\n\npayload = {\n    \"filterName\": \"string\",\n    \"query\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/filter/resource/scan_info/suggest \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"filterName\":\"string\",\"query\":\"string\"}'"
+          }
+        ]
+      }
+    },
+    "/resource/scan_info": {
+      "get": {
+        "description": "Returns a full breakdown of passed/failed statistics and associated policies for resources.  \r\n\r\nThe query parameters enable you to add filters to your request to narrow your results.\n### Filter by Time\nThe following table has examples of common filters by time. The time filter narrows the\nresponse to resources from account onboarding until the point in time of interest.\n\nPoint in time of interest | timeAmount | timeType | timeUnit \n-------------| ---- | ----------- | -------------\n24 hours ago | 24 | **relative** | hour      \n1 week ago |  1 | **relative** | week\n1 month ago | 1 | **relative** | month        \n1 year ago | 1 | **relative** | year                \nLatest | Not required with **to_now** | **to_now** | Defaults to **epoch**\n\n### How Current is the Returned Data?\nSince Prisma Cloud relies on snapshots of data, there can be an hour or two delay between the \ntime a resource passes or fails a policy check and the reporting of that result through this method.\n\n### Filter by Cloud Type\nYou can specify more than one cloud type to request a combination of data. For \nexample **cloud.type=gcp&cloud.type=azure** returns data for both **gcp** and **azure**.\n\n### Filter by Compliance Standard, Requirement, and/or Section \nYou can also broaden your filter by specifying any of the following query parameters more than once:\n* **policy.complianceStandard**\n* **policy.complianceRequirement**\n* **policy.complianceSection**\n",
+        "operationId": "get-resource-scan-info",
+        "parameters": [
+          {
+            "description": "Time Type",
+            "in": "query",
+            "name": "timeType",
+            "required": true,
+            "schema": { "enum": ["relative", "to_now"], "type": "string" }
+          },
+          {
+            "description": "Time Amount. Required for **timeType** **relative**. Unused for **timeType** **to_now**",
+            "in": "query",
+            "name": "timeAmount",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Time Unit. Required for **timeType** **relative**. Unused for **timeType** **to_now**",
+            "in": "query",
+            "name": "timeUnit",
+            "required": false,
+            "schema": {
+              "enum": ["minute", "hour", "day", "week", "month", "year"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "enum": ["aws", "azure", "gcp", "alibaba_cloud", "oci"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Account group",
+            "in": "query",
+            "name": "account.group",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Policy compliance standard. You can specify policy.complianceStandard=* to return the data for all compliance standards.",
+            "in": "query",
+            "name": "policy.complianceStandard",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Maximum number of entries to be returned. A single API call retrieves a maximum of 10,000 resources, which is also the default.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "description": "Whether or not the resources were scanned and whether they passed or failed the scan. The default is **all**.",
+            "in": "query",
+            "name": "scan.status",
+            "required": false,
+            "schema": { "enum": ["all", "passed", "failed"], "type": "string" }
+          },
+          {
+            "description": "Token identifying the required page of data. When there are multiple pages of data, the **nextPageToken** from the response can be used in this parameter",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecoratedResourceInfoResult"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": { "description": "bad_request" },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "Resource Scan Info - GET",
+        "tags": ["Asset Explorer"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/resource/scan_info\"\n\nquerystring = {\"timeType\":\"SOME_STRING_VALUE\",\"timeAmount\":\"SOME_STRING_VALUE\",\"timeUnit\":\"SOME_STRING_VALUE\",\"cloud.account\":\"SOME_STRING_VALUE\",\"cloud.type\":\"SOME_STRING_VALUE\",\"cloud.region\":\"SOME_STRING_VALUE\",\"account.group\":\"SOME_STRING_VALUE\",\"policy.complianceStandard\":\"SOME_STRING_VALUE\",\"policy.complianceRequirement\":\"SOME_STRING_VALUE\",\"policy.complianceSection\":\"SOME_STRING_VALUE\",\"limit\":\"SOME_STRING_VALUE\",\"scan.status\":\"SOME_STRING_VALUE\",\"pageToken\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/resource/scan_info?timeType=SOME_STRING_VALUE&timeAmount=SOME_STRING_VALUE&timeUnit=SOME_STRING_VALUE&cloud.account=SOME_STRING_VALUE&cloud.type=SOME_STRING_VALUE&cloud.region=SOME_STRING_VALUE&account.group=SOME_STRING_VALUE&policy.complianceStandard=SOME_STRING_VALUE&policy.complianceRequirement=SOME_STRING_VALUE&policy.complianceSection=SOME_STRING_VALUE&limit=SOME_STRING_VALUE&scan.status=SOME_STRING_VALUE&pageToken=SOME_STRING_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
+          }
+        ]
+      },
+      "post": {
+        "description": "Returns a full breakdown of passed/failed statistics and associated policies for resources.  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter through \n[List Inventory Filters V2](/api/cloud/cspm/asset-inventory#operation/get-asset-inventory-v2-filters-and-options)\n and \n [List Inventory Dashboard Filter Autocomplete Suggestions V2](/api/cloud/cspm/asset-inventory#operation/get-asset-inventory-v2-dashboard-filter-options).\n\n### Filter by Time\nThe time filter narrows the response to resources from account onboarding until the point in time of interest.\n\n#### Time Types\n\nTime Type | Required **timeRange.value** Parameters\n----------|-----------------\n**to_now** | No **timeRange.value** parameter required\n**relative** | **timeRange.value.amount**, **timeRange.value.unit** \n**absolute** | **timeRange.value.endTime** (**timeRange.value.startTime** is ignored)\n\n### How Current is the Returned Data?\nSince Prisma Cloud relies on snapshots of data, there can be an hour or two delay between the \ntime a resource passes or fails a policy check and the reporting of that result through this method.\n",
+        "operationId": "post-resource-scan-info",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FilterModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecoratedResourceInfoResult"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": { "description": "bad_request" },
+          "404": { "description": "not_found" },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "Resource Scan Info - POST",
+        "tags": ["Asset Explorer"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/resource/scan_info\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/resource/scan_info \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+          }
+        ]
+      }
+    },
+      "/uai/v1/asset": {
+        "post": {
+          "tags": [
+            "Asset Explorer"
+          ],
+          "summary": "Get Asset",
+          "description": "Returns detailed information for the asset with the given id.\n\nThe data field in the response object contains the raw JSON blob as is received from the source cloud service provider API for the given asset.\n\nOnly the rrn parameter in the request body is used for this API. Ignore the timelineItemId and findingType fields for this API.",
+          "operationId": "asset_2",
+          "security": [{ "x-redlock-auth": [] }],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunkedAssetRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AssetResponse"
+                  }
+                }
+              }
+            }
+          },
+          "x-codeSamples": [
+            {
+              "lang": "Python + Requests",
+              "source": "import requests\n\nurl = \"https://app.prismacloud.io/uai/v1/asset\"\n\npayload = {\n    \"assetId\": \"[rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx or unified-asset-id]\",\n    \"type\": \"EXTERNAL_FINDING\",\n    \"findingType\": [\"HOST_VULNERABILITY_CVE\"],\n    \"riskFactors\": [\"CRITICAL_SEVERITY\"],\n    \"timelineItemId\": \"string\"\n}\nheaders = {\"content-type\": \"application/json\"}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            },
+            {
+              "lang": "Shell + Curl",
+              "source": "curl --request POST \\\n  --url https://app.prismacloud.io/uai/v1/asset \\\n  --header 'content-type: application/json' \\\n  --data '{\"assetId\":\"[rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx or unified-asset-id]\",\"type\":\"EXTERNAL_FINDING\",\"findingType\":[\"HOST_VULNERABILITY_CVE\"],\"riskFactors\":[\"CRITICAL_SEVERITY\"],\"timelineItemId\":\"string\"}'"
+            }
+          ]
+        }
+      }    
+  },
+  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "tags": [
+    {
+      "description": "The Asset Explorer endpoints are listed below.",
+      "name": "Asset Explorer"
+    }
+  ]
+}

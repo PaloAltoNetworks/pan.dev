@@ -1,0 +1,234 @@
+{
+  "components": {
+    "requestBodies": {},
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "AccountStatusMessage": {
+        "properties": {
+          "message": { "type": "string" },
+          "staticMessage": { "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "AwsS3FlowLogsLoggingAccountsModel": {
+        "description": "Model for AWS S3 Flow Logs Feature Logging Accounts Configuration",
+        "properties": {
+          "awsS3FlowLogsLoggingAccountId": {
+            "description": "Logging Account Internal ID",
+            "format": "int32",
+            "type": "integer"
+          },
+          "bucketIds": {
+            "description": "List of bucket Ids for the feature",
+            "items": { "format": "int32", "type": "integer" },
+            "type": "array"
+          },
+          "buckets": {
+            "description": "List of buckets for the feature",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "loggingAccountId": {
+            "description": "Account ID of the Logging Account",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AwsS3FlowLogsModel": {
+        "description": "Model for AWS S3 Flow Logs Feature Configuration",
+        "properties": {
+          "accountId": {
+            "description": "Prisma Account ID from cloud_account table",
+            "format": "int32",
+            "type": "integer"
+          },
+          "loggingAccounts": {
+            "description": "List of logging accounts with selected buckets for the given feature",
+            "items": {
+              "$ref": "#/components/schemas/AwsS3FlowLogsLoggingAccountsModel"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CloudAccountStatus": {
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "status": { "type": "string" },
+          "statusMessage": {
+            "$ref": "#/components/schemas/AccountStatusMessage"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "You can use the AWS S3 Flow Logs API for AWS S3 onboarding for organization \nand standalone accounts on all supported stacks.\n",
+    "title": "Prisma Cloud AWS S3 Flow Logs Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3": {
+      "get": {
+        "description": "Fetches AWS S3 Flow Log feature details of monitored account.",
+        "operationId": "get-aws-s3-flowlog",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/AwsS3FlowLogsModel" }
+              }
+            },
+            "description": "success"
+          },
+          "400": { "description": "invalid_parameter_value / bad_request" },
+          "401": { "description": "unauthorized_access" },
+          "404": {
+            "description": "account_not_exist_or_disabled / AWS Flow Logs S3 feature not configured"
+          },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "Fetches AWS S3 Flow Log details",
+        "tags": ["Onboarding AWS S3 Flow Logs"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3 \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
+          }
+        ]
+      },
+      "patch": {
+        "description": "Saves  AWS S3 Flow Log feature details of monitored account.",
+        "operationId": "save-aws-s3-flowlog",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AwsS3FlowLogsModel" }
+            }
+          },
+          "description": "AWS S3 Flow Logs feature",
+          "required": true
+        },
+        "responses": {
+          "201": { "description": "success" },
+          "400": {
+            "description": "invalid_parameter_value / bad_request / missing_required_parameter / Logging account and monitored account are in different partition / logging_account_bucket_not_found / AWS Flow Logs S3 feature not supported for account"
+          },
+          "401": { "description": "unauthorized_access" },
+          "404": {
+            "description": "account_not_exist_or_disabled / logging_account_not_exists"
+          },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "Saves AWS S3 Flow Log details",
+        "tags": ["Onboarding AWS S3 Flow Logs"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3\"\n\npayload = {\n    \"accountId\": 0,\n    \"loggingAccounts\": [\n        {\n            \"awsS3FlowLogsLoggingAccountId\": 0,\n            \"bucketIds\": [0],\n            \"buckets\": [\"string\"],\n            \"loggingAccountId\": \"string\"\n        }\n    ]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PATCH\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request PATCH \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3 \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountId\":0,\"loggingAccounts\":[{\"awsS3FlowLogsLoggingAccountId\":0,\"bucketIds\":[0],\"buckets\":[\"string\"],\"loggingAccountId\":\"string\"}]}'"
+          }
+        ]
+      }
+    },
+    "/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3/status": {
+      "post": {
+        "description": "Checks AWS S3 Flow Log status of monitored account.",
+        "operationId": "check-aws-s3-flowlog",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsS3FlowLogsLoggingAccountsModel"
+              }
+            }
+          },
+          "description": "AWS S3 Flow Logs feature",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/CloudAccountStatus" }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "invalid_parameter_value / bad_request / AWS Flow Logs S3 feature not supported for account"
+          },
+          "401": { "description": "unauthorized_access" },
+          "404": { "description": "invalid_account_id_format" },
+          "500": { "description": "internal_error" }
+        },
+        "security": [{ "x-redlock-auth": [] }],
+        "summary": "Checks AWS S3 Flow Log status",
+        "tags": ["Onboarding AWS S3 Flow Logs"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3/status\"\n\npayload = {\n    \"awsS3FlowLogsLoggingAccountId\": 0,\n    \"bucketIds\": [0],\n    \"buckets\": [\"string\"],\n    \"loggingAccountId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloud-accounts/aws/{accountId}/features/aws-flow-logs/s3/status \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"awsS3FlowLogsLoggingAccountId\":0,\"bucketIds\":[0],\"buckets\":[\"string\"],\"loggingAccountId\":\"string\"}'"
+          }
+        ]
+      }
+    }
+  },
+  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "tags": [
+    {
+      "description": "The AWS S3 Flow Logs endpoints are listed below.",
+      "name": "Onboarding AWS S3 Flow Logs"
+    }
+  ]
+}

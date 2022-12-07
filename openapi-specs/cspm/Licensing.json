@@ -1,0 +1,861 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Prisma Cloud License API Overview",
+    "description": "The Prisma Cloud License endpoints enable you to query your Prisma Cloud usage.",
+    "contact": {},
+    "version": "Latest"
+  },
+  "tags": [
+    {
+      "name": "Licensing",
+      "description": "The Licensing API endpoints are listed below."
+    }
+  ],
+  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "paths": {
+    "/license/api/v1/usage": {
+      "post": {
+        "tags": ["Licensing"],
+        "summary": "Usage Count By Cloud Type V1 (Deprecated)",
+        "description": "Returns a breakdown of resources used per account for a single cloud type. \n\n**Note**: This API will be deprecated soon. To ensure that your automation and scripts continue to work without disruption, use the **Usage Count By Cloud Type V2** API.\n\nYou can request usage data in one of the following formats;\n* Receive paginated usage data in the response object \n* Download usage data in a CSV file\n\n\nBy default, you will receive your paginated usage data in the response object. You can control the number of items in the \nresponse object through the **limit** request body parameter. If data beyond what's in the response object is available,\nthe response object attribute **nextPageToken** will provide a token you can set in the request parameter **pageToken** of your\nnext request to get the next page of usage data.\n\n\nTo download the usage data in a CSV file, set the following:\n* Request header: **Accept: application/octet-stream**\n* Request body parameter: **csvHeaderRequired** = **true**.\n\n\nThe following example curl command requests usage data in a CSV file:\n\n```bash\ncurl --location --request POST 'https://api.prismacloud.io/license/api/v1/usage' \\\n--header 'x-redlock-auth:<your JWT>' \\\n--header 'Content-Type: application/json' \\\n--header 'Accept: application/octet-stream' \\\n--data-raw '{\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 1,\n            \"unit\": \"month\"\n        }\n    },\n    \"accountIds\": [\n        \"123456789987\", \n        \"987654321123\"\n    ],\n    \"cloudType\": \"AWS\",\n    \"csvHeaderRequired\": true\n}'\n````\n",
+        "operationId": "license-usage-count-by-cloud-paginated_1_1",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": { "$ref": "#/components/schemas/LicenseRequestModel" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseResponseModel"
+                }
+              },
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/CsvMessage" }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_parameter_value",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              },
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/LicenseResponseModel" },
+                    { "$ref": "#/components/schemas/SpringErrorResponse" }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              },
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/LicenseResponseModel" },
+                    { "$ref": "#/components/schemas/SpringErrorResponse" }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              },
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/LicenseResponseModel" },
+                    { "$ref": "#/components/schemas/SpringErrorResponse" }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/license/api/v1/usage\"\n\nquerystring = {\"cloud_type\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"accountIds\": [\"string\"],\n    \"limit\": 10,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"value\": {\n            \"unit\": \"minute\",\n            \"amount\": 0\n        },\n        \"relativeTimeType\": \"BACKWARD\"\n    },\n    \"cloudType\": \"aws\",\n    \"csvHeaderRequired\": True,\n    \"pageToken\": \"null\",\n    \"offset\": 0\n}\nheaders = {\"content-type\": \"application/json; charset=UTF-8\"}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/license/api/v1/usage?cloud_type=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --data '{\"accountIds\":[\"string\"],\"limit\":10,\"timeRange\":{\"type\":\"relative\",\"value\":{\"unit\":\"minute\",\"amount\":0},\"relativeTimeType\":\"BACKWARD\"},\"cloudType\":\"aws\",\"csvHeaderRequired\":true,\"pageToken\":\"null\",\"offset\":0}'"
+          }
+        ]
+      }
+    },
+    "/license/api/v1/usage/time_series": {
+      "post": {
+        "tags": ["Licensing"],
+        "summary": "Resource Usage Over Time V1 (Deprecated)",
+        "description": "Get a breakdown of resource usage over time.\n\n**Note**: This API will be deprecated soon. To ensure that your automation and scripts continue to work without disruption, use the **Resource Usage Over Time V2** API.\n",
+        "operationId": "license-usage-graph_1",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountListRequestModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceUsageGraphResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_parameter_value",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/license/api/v1/usage/time_series\"\n\npayload = {\n    \"accountIds\": [\"string\"],\n    \"limit\": 100,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"value\": {\n            \"unit\": \"minute\",\n            \"amount\": 0\n        },\n        \"relativeTimeType\": \"BACKWARD\"\n    },\n    \"cloudType\": \"aws\",\n    \"csvHeaderRequired\": True\n}\nheaders = {\"content-type\": \"application/json; charset=UTF-8\"}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/license/api/v1/usage/time_series \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --data '{\"accountIds\":[\"string\"],\"limit\":100,\"timeRange\":{\"type\":\"relative\",\"value\":{\"unit\":\"minute\",\"amount\":0},\"relativeTimeType\":\"BACKWARD\"},\"cloudType\":\"aws\",\"csvHeaderRequired\":true}'"
+          }
+        ]
+      }
+    },
+    "/license/api/v2/usage": {
+      "post": {
+        "tags": ["Licensing"],
+        "summary": "Usage Count By Cloud Type V2",
+        "description": "Get a full breakdown of resources used per account for selected cloud types in a paginated way.\n\nBy default, you will receive your paginated usage data in the response object. You can control the number of items in the \nresponse object through the **limit** request body parameter. If data beyond what's in the response object is available,\nthe response object attribute **nextPageToken** will provide a token you can set in the request parameter **pageToken** of your\nnext request to get the next page of usage data.\n",
+        "operationId": "license-usage-count-by-cloud-paginated",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/LicensingUsageApiRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceUsageCountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_parameter_value",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/license/api/v2/usage\"\n\nquerystring = {\"cloud_type\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"accountIds\": [\"string\"],\n    \"limit\": 100,\n    \"cloudTypes\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"value\": {\n            \"unit\": \"minute\",\n            \"amount\": 0\n        },\n        \"relativeTimeType\": \"BACKWARD\"\n    },\n    \"pageToken\": \"null\",\n    \"offset\": 0\n}\nheaders = {\"content-type\": \"application/json; charset=UTF-8\"}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/license/api/v2/usage?cloud_type=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --data '{\"accountIds\":[\"string\"],\"limit\":100,\"cloudTypes\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"value\":{\"unit\":\"minute\",\"amount\":0},\"relativeTimeType\":\"BACKWARD\"},\"pageToken\":\"null\",\"offset\":0}'"
+          }
+        ]
+      }
+    },
+    "/license/api/v2/time_series": {
+      "post": {
+        "tags": ["Licensing"],
+        "summary": "Resource Usage Over Time V2",
+        "description": "Get a breakdown of resource usage over time.",
+        "operationId": "license-usage-graph",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/LicensingUsageApiRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceUsageGraphResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_parameter_value",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": { "$ref": "#/components/schemas/SpringErrorResponse" }
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/license/api/v2/time_series\"\n\npayload = {\n    \"accountIds\": [\"string\"],\n    \"limit\": 100,\n    \"cloudTypes\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"value\": {\n            \"unit\": \"minute\",\n            \"amount\": 0\n        },\n        \"relativeTimeType\": \"BACKWARD\"\n    },\n    \"pageToken\": \"null\",\n    \"offset\": 0\n}\nheaders = {\"content-type\": \"application/json; charset=UTF-8\"}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/license/api/v2/time_series \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --data '{\"accountIds\":[\"string\"],\"limit\":100,\"cloudTypes\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"value\":{\"unit\":\"minute\",\"amount\":0},\"relativeTimeType\":\"BACKWARD\"},\"pageToken\":\"null\",\"offset\":0}'"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountDetails": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "id": { "type": "string" }
+        }
+      },
+      "ResourceUsageCount": {
+        "type": "object",
+        "properties": {
+          "account": { "$ref": "#/components/schemas/AccountDetails" },
+          "cloudType": { "type": "string" },
+          "total": { "type": "integer", "format": "int32" },
+          "resourceTypeCount": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "format": "int32" }
+          }
+        },
+        "description": "List of items. Each item contains cloud account name and the workload count of resource type"
+      },
+      "ResourceUsageCountResponse": {
+        "type": "object",
+        "properties": {
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows for the query",
+            "format": "int32"
+          },
+          "stats": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "description": "Statistics to be shown. This contains the total workload per resource type.",
+              "format": "int32"
+            },
+            "description": "Statistics to be shown. This contains the total workload per resource type."
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items. Each item contains cloud account name and the workload count of resource type",
+            "items": { "$ref": "#/components/schemas/ResourceUsageCount" }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token to be used for next page call"
+          },
+          "planType": {
+            "type": "string",
+            "description": "PlanType of the selected time range"
+          }
+        },
+        "description": "Model containing Paginated License response"
+      },
+      "SpringErrorResponse": {
+        "required": ["error", "message", "path", "status", "timestamp"],
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "description": "timestamp" },
+          "status": {
+            "type": "integer",
+            "description": "Http status",
+            "format": "int32"
+          },
+          "error": { "type": "string", "description": "Error message" },
+          "message": { "type": "string", "description": "Error message" },
+          "path": { "type": "string", "description": "Request path" }
+        },
+        "description": "Error Response"
+      },
+      "LicensingUsageApiRequest": {
+        "required": ["accountIds", "timeRange"],
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account IDs",
+            "items": { "type": "string", "description": "List of account IDs" }
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Limit of items per request. Default is 1000.",
+            "format": "int32",
+            "example": 100
+          },
+          "cloudTypes": {
+            "type": "array",
+            "description": "List of cloud types",
+            "items": { "type": "string", "description": "List of cloud types" }
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Page token for pagination",
+            "example": "null"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset",
+            "format": "int64",
+            "example": 0
+          }
+        },
+        "description": "Licensing Usage Api request payload"
+      },
+      "RelativeTimeDurationModel": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "Time unit",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year",
+              "epoch",
+              "login",
+              "minute, hour, day, week, month, year, epoch, login"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Number of time units",
+            "format": "int32"
+          }
+        },
+        "description": "Model for RelativeTimeDuration"
+      },
+      "RelativeTimeRangeConfig": {
+        "required": ["type"],
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["relative"] },
+          "value": { "$ref": "#/components/schemas/RelativeTimeDurationModel" },
+          "relativeTimeType": { "type": "string", "enum": ["BACKWARD"] }
+        },
+        "description": "Model for RelativeTimeRangeConfig"
+      },
+      "GraphDataPoint": {
+        "type": "object",
+        "properties": {
+          "timeRange": { "$ref": "#/components/schemas/TimeRange" },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "description": "Graph resource usage by cloud type",
+                "format": "int32"
+              },
+              "description": "Graph resource usage by cloud type"
+            },
+            "description": "Graph resource usage by cloud type"
+          }
+        },
+        "description": "Graph resource usage data points"
+      },
+      "ResourceUsageGraphResponse": {
+        "type": "object",
+        "properties": {
+          "dataPoints": {
+            "type": "array",
+            "description": "Graph GraphDataPoint points",
+            "items": { "$ref": "#/components/schemas/GraphDataPoint" }
+          },
+          "workloadsPurchased": {
+            "type": "integer",
+            "description": "Purchased workload count",
+            "format": "int32"
+          },
+          "timeUnit": {
+            "type": "string",
+            "description": "Returned data in time unit",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year",
+              "epoch",
+              "login"
+            ]
+          },
+          "availableAsOf": {
+            "type": "integer",
+            "description": "Selected data end time in milli second",
+            "format": "int64"
+          }
+        },
+        "description": "Graph resource usage"
+      },
+      "TimeRange": {
+        "required": ["endTime", "startTime"],
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "object",
+            "properties": {
+              "empty": { "type": "boolean" },
+              "present": { "type": "boolean" },
+              "asLong": { "type": "integer", "format": "int64" }
+            },
+            "description": "Start Time im Millis"
+          },
+          "endTime": {
+            "type": "object",
+            "properties": {
+              "empty": { "type": "boolean" },
+              "present": { "type": "boolean" },
+              "asLong": { "type": "integer", "format": "int64" }
+            },
+            "description": "End Time im Millis"
+          }
+        },
+        "description": "Time range"
+      },
+      "CsvMessage": {
+        "type": "object",
+        "properties": {
+          "headerComments": {
+            "type": "array",
+            "description": "List of header comments",
+            "items": {
+              "type": "string",
+              "description": "List of header comments"
+            }
+          },
+          "headers": {
+            "type": "array",
+            "description": "List of headers",
+            "items": { "type": "string", "description": "List of headers" }
+          },
+          "rows": {
+            "type": "array",
+            "description": "List of rows",
+            "items": {
+              "type": "array",
+              "description": "List of rows",
+              "items": { "type": "string", "description": "List of rows" }
+            }
+          }
+        },
+        "description": "Model for CsvMessage"
+      },
+      "AccountListRequestModel": {
+        "required": ["accountIds", "timeRange"],
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account IDs",
+            "items": { "type": "string", "description": "List of account IDs" }
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Limit of items per request. Default is 1000.",
+            "format": "int32",
+            "example": 100
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud type values",
+            "example": "aws"
+          },
+          "csvHeaderRequired": {
+            "type": "boolean",
+            "description": "CSV file header",
+            "example": true
+          }
+        },
+        "description": "Model for AccountListRequest"
+      },
+      "LicenseRequestModel": {
+        "required": ["accountIds", "timeRange"],
+        "type": "object",
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account IDs",
+            "items": { "type": "string", "description": "List of account IDs" }
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Limit no of records per request",
+            "format": "int32",
+            "example": 10
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud type values",
+            "example": "aws"
+          },
+          "csvHeaderRequired": {
+            "type": "boolean",
+            "description": "CSV file header",
+            "example": true
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Page token for pagination",
+            "example": "null"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset",
+            "format": "int64",
+            "example": 0
+          }
+        },
+        "description": "Model for LicenseRequest"
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "id": { "type": "string" }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "integer", "format": "int32" },
+          "account": { "$ref": "#/components/schemas/Account" },
+          "resourceTypeCount": {
+            "type": "object",
+            "additionalProperties": { "type": "object" }
+          }
+        },
+        "description": "List of items. Each item contains cloud account name and the workload count of resource type"
+      },
+      "LicenseResponseModel": {
+        "type": "object",
+        "properties": {
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows for the query.",
+            "format": "int64"
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token to be used for next page call."
+          },
+          "items": {
+            "type": "array",
+            "description": "List of items. Each item contains cloud account name and the workload count of resource type.",
+            "items": { "$ref": "#/components/schemas/Item" }
+          },
+          "stats": { "$ref": "#/components/schemas/Stats" }
+        },
+        "description": "Model containing Paginated License response"
+      },
+      "Stats": {
+        "type": "object",
+        "properties": {
+          "stats": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "format": "int32" }
+          }
+        },
+        "description": "Statistics to be shown. This contains the total workload per resource type."
+      },
+      "OptimizeResourceCount": {
+        "type": "object",
+        "properties": {
+          "timeRange": { "$ref": "#/components/schemas/TimeRange" },
+          "planType": { "type": "string" },
+          "resourceTypeCount": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "format": "int32" }
+            }
+          }
+        }
+      },
+      "AbsoluteTimeRangeConfig": {
+        "required": ["type"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "type": "object",
+            "properties": { "value": { "$ref": "#/components/schemas/Time" } }
+          }
+        ]
+      },
+      "FromNowTimeRangeConfig": {
+        "required": ["type"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "enum": [
+                  "minute",
+                  "hour",
+                  "day",
+                  "week",
+                  "month",
+                  "year",
+                  "epoch",
+                  "login"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Time": {
+        "type": "object",
+        "properties": {
+          "startTime": { "type": "integer", "format": "int64" },
+          "endTime": { "type": "integer", "format": "int64" }
+        }
+      },
+      "TimeRangeConfigModel": {
+        "required": ["type"],
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["relative"] },
+          "value": { "$ref": "#/components/schemas/RelativeTimeDurationModel" }
+        },
+        "description": "Model for TimeRangeConfig",
+        "discriminator": { "propertyName": "type" }
+      },
+      "ToNowTimeRangeConfig": {
+        "required": ["type"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/TimeRangeConfigModel" },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "enum": [
+                  "minute",
+                  "hour",
+                  "day",
+                  "week",
+                  "month",
+                  "year",
+                  "epoch",
+                  "login"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CustomerSupportFilter": {
+        "required": ["accountIds", "accountNames", "customerName", "timeRange"],
+        "type": "object",
+        "properties": {
+          "timeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "Customer name for Support users"
+          },
+          "accountIds": {
+            "type": "array",
+            "description": "List of accountIds",
+            "items": { "type": "string", "description": "List of accountIds" }
+          },
+          "accountNames": {
+            "type": "array",
+            "description": "List of accountNames",
+            "items": { "type": "string", "description": "List of accountNames" }
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Limit of items per request. Default is 1000.",
+            "format": "int32",
+            "example": 100
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Page token for pagination",
+            "example": "null"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud type values",
+            "example": "aws"
+          },
+          "cloudTypes": {
+            "type": "array",
+            "description": "List Cloud type values",
+            "example": "aws,gcp",
+            "items": {
+              "type": "string",
+              "description": "List Cloud type values",
+              "example": "aws,gcp"
+            }
+          },
+          "csvHeaderRequired": {
+            "type": "boolean",
+            "description": "CSV file header",
+            "example": true
+          }
+        },
+        "description": "Model for CustomerSupportFilter"
+      },
+      "OptimizeSubscriptionRequest": {
+        "required": ["customerName", "timeRange"],
+        "type": "object",
+        "properties": {
+          "timeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "Customer name for Support users"
+          },
+          "supportApi": { "type": "boolean" }
+        },
+        "description": "Model for OptimizeSubscriptionPage"
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    }
+  }
+}
