@@ -43,10 +43,10 @@ function EditMetaRow({
     <>
       <hr></hr>
       <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, "row")}>
-        <div className="col">
+        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           <ApplauseButton />
         </div>
-        <div className="col">
+        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
         </div>
       </div>
