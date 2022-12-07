@@ -1,4 +1,5 @@
-import React from "react"
+import React from "react";
+import Link from "@docusaurus/Link";
 // Terraform Landing Page Constants Template
 // Usage: Define your constants with their respective data for each component and import them into your desired landing page within src/pages. Follow terraform.js for reference to how each constant can be used as props within their respective components.
 
@@ -240,4 +241,134 @@ export const TERRAFORM_USE_CASES_CONTENT = {
   ]
 }
 
-// Feeds.js 
+export const TERRAFORM_MODULES_CONTENT = {
+  header: <h1>Modules from Palo Alto Networks</h1>,
+  modules: {
+    terraform: [
+      {
+        tabLabel: "AWS",
+        title: <h2>Terraform Reusable Modules for VM-Series on AWS</h2>,
+        description: (
+          <p>
+            A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running in Amazon Web Services (AWS). It deploys VM-Series as virtual machine instances and it configures aspects such as Transit Gateway connectivity, VPCs, IAM access, Panorama virtual machine instances, and more.
+          </p>
+        ),
+        footerLogos: [
+          {
+            logoSrc: "/img/product-landing/terraform/panw-logo.svg",
+            logoAlt: "Palo Alto Networks logo",
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform logo",
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest"
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/aws-logo.png",
+            logoAlt: "Amazon Web Services logo"
+          },
+        ]
+      },
+      {
+        tabLabel: "GCP",
+        title: <h2>Terraform Reusable Modules for VM-Series on GCP</h2>,
+        description: (
+          <p>
+            A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running on Google Cloud Platform (GCP). It deploys VM-Series as virtual machine instances and it configures aspects such as Shared VPC connectivity, IAM access, Service Accounts, Panorama virtual machine instances, and more.
+          </p>
+        ),
+        footerLogos: [
+          {
+            logoSrc: "/img/product-landing/terraform/panw-logo.svg",
+            logoAlt: "Palo Alto Networks logo",
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform logo",
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest"
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/gcp-logo.svg",
+            logoAlt: "Google Cloud Platform logo"
+          },
+        ]
+      },
+      {
+        tabLabel: "Azure",
+        title: <h2>Terraform Reusable Modules for VM-Series on Azure</h2>,
+        description: (
+          <p>
+            A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running on Azure Cloud. It deploys VM-Series as virtual machines and it configures aspects such as virtual networks, subnets, network security groups, storage accounts, service principals, Panorama virtual machine instances, and more.
+          </p>
+        ),
+        footerLogos: [
+          {
+            logoSrc: "/img/product-landing/terraform/panw-logo.svg",
+            logoAlt: "Palo Alto Networks logo",
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform logo",
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest"
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/azure-logo.svg",
+            logoAlt: "Azure logo"
+          },
+        ]
+      },
+    ],
+    consulTerraform: [
+      {
+        tabLabel: "Static Address Groups",
+        title: <h2>Consul-Terraform-Sync Modules for PAN-OS</h2>,
+        description: (
+          <p>
+            This Terraform module allows users to support Dynamic Firewalling by integrating <Link to="https://www.consul.io/">Consul</Link> with Palo Alto Networks PAN-OS based <Link to="https://www.paloaltonetworks.com/network-security/next-generation-firewall">PA-Series and VM-Series NGFW</Link> devices to dynamically manage the Address Objects based on service definition in Consul catalog. In addition, this module also manages dynamic registration/de-registration of Dynamic Address Group (DAG) tags based on services in Consul catalog.
+          </p>
+        ),
+        footerLogos: [
+          {
+            logoSrc: "/img/product-landing/terraform/panw-logo.svg",
+            logoAlt: "Palo Alto Networks logo",
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform logo",
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/ag-dag-nia/panos/latest"
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/consul-logo.png",
+            logoAlt: "Azure logo",
+            linkSrc: "https://www.consul.io/"
+          },
+        ]
+      },
+      {
+        tabLabel: "Dynamic Address Groups",
+        title: <h2>Consul-Terraform-Sync Modules for PAN-OS</h2>,
+        description: (
+          <p>
+            This Terraform module allows users to support Dynamic Firewalling by integrating <Link to="https://www.consul.io/">Consul</Link> with Palo Alto Networks PAN-OS based <Link to="https://www.paloaltonetworks.com/network-security/next-generation-firewall">PA-Series and VM-Series NGFW</Link> devices to dynamically manage dynamic registration/de-registration of Dynamic Address Group (DAG) tags based on services in Consul catalog.
+          </p>
+        ),
+        footerLogos: [
+          {
+            logoSrc: "/img/product-landing/terraform/panw-logo.svg",
+            logoAlt: "Palo Alto Networks logo",
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform logo",
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/ag-dag-nia/panos/latest"
+          },
+          {
+            logoSrc: "/img/product-landing/terraform/consul-logo.png",
+            logoAlt: "Azure logo",
+            linkSrc: "https://www.consul.io/"
+          },
+        ]
+      }
+    ]
+  }
+}
