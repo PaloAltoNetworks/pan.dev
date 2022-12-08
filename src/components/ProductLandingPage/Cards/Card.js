@@ -6,14 +6,18 @@ import './Card.scss'
 function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
   const [latestTag, setLatestTag] = useState('');
 
-  useEffect(async () => {
-    try {
-      const response = await fetch(releaseTagUrl);
-      const data = await response.json();
-      setLatestTag(data[0].name);
-    } catch (error) {
-      console.log(error)
+  useEffect(() => {
+    const fetchReleaseTag = async () => {
+      try {
+        const response = await fetch(releaseTagUrl);
+        const data = await response.json();
+        setLatestTag(data[0].name);
+      } catch (e) {
+        console.log(e)
+      }
     }
+
+    fetchReleaseTag()
   }, [])
 
   const CardFooterCTA = ({ cta }) => {
