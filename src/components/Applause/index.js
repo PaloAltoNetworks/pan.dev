@@ -53,7 +53,6 @@ function ApplauseButton() {
   const isVisible = ExecutionEnvironment.canUseDOM
     ? isInViewport(containerRef)
     : true;
-  console.log(isVisible);
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
