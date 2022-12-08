@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import clsx from "clsx";
 import HandsOutline from "./assets/hands-outline.svg";
 import Hands from "./assets/hands.svg";
@@ -26,12 +26,40 @@ const APPLAUSE_MAX = 100000;
 const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
+function isInViewport(ref) {
+  const [isIntersecting, setIsIntersecting] = useState(true);
+
+  const observer = useMemo(
+    () =>
+      new IntersectionObserver(([entry]) =>
+        setIsIntersecting(entry.isIntersecting)
+      ),
+    []
+  );
+
+  useEffect(() => {
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref, observer]);
+
+  return isIntersecting;
+}
+
 function ApplauseButton() {
+  const containerRef = useRef(null);
+  const isVisible = ExecutionEnvironment.canUseDOM
+    ? isInViewport(containerRef)
+    : true;
+  console.log(isVisible);
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
 
   const firebaseConfig = {
+    apiKey: customFields.firebaseApiKey,
     projectId: "pan-dev-f1b58",
     appId: "1:899146127396:web:26d634304c08ea1d0860b1",
   };
@@ -121,32 +149,33 @@ function ApplauseButton() {
   }, [applause, active]);
 
   return (
-    <div className="applause-container">
-      <button
-        type="button"
-        className={clsx("applause-button", {
-          active,
-          inactive: !active,
-          clicked,
-          interacted: hasInteracted,
-        })}
-        onClick={handleClick}
-        disabled={applause >= APPLAUSE_MAX}
-      >
-        {hasInteracted ? (
-          <Hands className="hands" />
-        ) : (
-          <HandsOutline className="hands" />
-        )}
-        <div className={clsx("spark-container", sparkTilt)}>
-          <Spark className="spark" />
-        </div>
-        <span className="bubble">{`+${applause}`}</span>
-        <span className="counter">
-          {applause ? applause + INITIAL_COUNT : 0}
-        </span>
-      </button>
-      <p>Helpful? Show some ❤️</p>
+    <div ref={containerRef}>
+      <div className={!isVisible ? "applause-container" : ""}>
+        <button
+          type="button"
+          className={clsx("applause-button", {
+            active,
+            inactive: !active,
+            clicked,
+            interacted: hasInteracted,
+          })}
+          onClick={handleClick}
+          disabled={applause >= APPLAUSE_MAX}
+        >
+          {hasInteracted ? (
+            <Hands className="hands" />
+          ) : (
+            <HandsOutline className="hands" />
+          )}
+          <div className={clsx("spark-container", sparkTilt)}>
+            <Spark className="spark" />
+          </div>
+          <span className="bubble">{`+${applause}`}</span>
+          <span className="counter">
+            {applause ? applause + INITIAL_COUNT : 0}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
