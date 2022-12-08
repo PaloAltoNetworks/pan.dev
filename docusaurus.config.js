@@ -677,7 +677,6 @@ const config = {
     }),
   },
   customFields: {
-    firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
   },
 };
