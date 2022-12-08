@@ -11,7 +11,6 @@ import {
   increment,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously } from "firebase/auth";
 const {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider,
@@ -33,7 +32,6 @@ function ApplauseButton() {
   } = useDocusaurusContext();
 
   const firebaseConfig = {
-    apiKey: customFields.firebaseApiKey,
     projectId: "pan-dev-f1b58",
     appId: "1:899146127396:web:26d634304c08ea1d0860b1",
   };
@@ -41,24 +39,18 @@ function ApplauseButton() {
   const currentRoute = useLocation();
   const docId = Buffer.from(currentRoute.pathname).toString("base64");
 
-  // Only init firebase if apiKey exists
+  // Only init firebase if recaptchaApiKey exists
   let app;
-  let auth;
   let db;
   let docRef;
   let appCheck;
 
-  if (
-    customFields.firebaseApiKey &&
-    customFields.recaptchaApiKey &&
-    ExecutionEnvironment.canUseDOM
-  ) {
+  if (customFields.recaptchaApiKey && ExecutionEnvironment.canUseDOM) {
     app = initializeApp(firebaseConfig);
     appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
       isTokenAutoRefreshEnabled: true,
     });
-    auth = getAuth(app);
     db = getFirestore(app);
     docRef = doc(db, COLLECTION_ID, docId);
   }
@@ -88,34 +80,26 @@ function ApplauseButton() {
     setIsClicked(true);
     setHasInteracted(true);
     setTotalApplause((prevState) => prevState + 1);
-    customFields.firebaseApiKey && incrementClaps();
+    docRef && incrementClaps();
   };
 
   useEffect(() => {
-    customFields.firebaseApiKey &&
-      signInAnonymously(auth)
-        .then(() => {
-          try {
-            getDoc(docRef).then((doc) => {
-              if (doc.exists()) {
-                return setTotalApplause(doc.get("claps"));
-              } else {
-                return setTotalApplause(0);
-              }
-            });
-          } catch (err) {
-            console.error(
-              `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
-              err
-            );
+    if (customFields.recaptchaApiKey)
+      try {
+        getDoc(docRef).then((doc) => {
+          if (doc.exists()) {
+            return setTotalApplause(doc.get("claps"));
+          } else {
             return setTotalApplause(0);
           }
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
         });
+      } catch (err) {
+        console.error(
+          `Error while fetching feedback for doc at '${currentRoute.pathname}':`,
+          err
+        );
+        return setTotalApplause(0);
+      }
   }, []);
 
   useEffect(() => {
@@ -136,37 +120,32 @@ function ApplauseButton() {
     };
   }, [applause, active]);
 
-  if (applause >= 0) {
-    return (
-      <div className="applause-container">
-        <button
-          type="button"
-          className={clsx("applause-button", {
-            active,
-            inactive: !active,
-            clicked,
-            interacted: hasInteracted,
-          })}
-          onClick={handleClick}
-          disabled={applause >= APPLAUSE_MAX}
-        >
-          {hasInteracted ? (
-            <Hands className="hands" />
-          ) : (
-            <HandsOutline className="hands" />
-          )}
-          <div className={clsx("spark-container", sparkTilt)}>
-            <Spark className="spark" />
-          </div>
-          <span className="bubble">{`+${applause}`}</span>
-          <span className="counter">{applause + INITIAL_COUNT}</span>
-        </button>
-        <p>Helpful? Show some ❤️</p>
-      </div>
-    );
-  }
   return (
     <div className="applause-container">
+      <button
+        type="button"
+        className={clsx("applause-button", {
+          active,
+          inactive: !active,
+          clicked,
+          interacted: hasInteracted,
+        })}
+        onClick={handleClick}
+        disabled={applause >= APPLAUSE_MAX}
+      >
+        {hasInteracted ? (
+          <Hands className="hands" />
+        ) : (
+          <HandsOutline className="hands" />
+        )}
+        <div className={clsx("spark-container", sparkTilt)}>
+          <Spark className="spark" />
+        </div>
+        <span className="bubble">{`+${applause}`}</span>
+        <span className="counter">
+          {applause ? applause + INITIAL_COUNT : 0}
+        </span>
+      </button>
       <p>Helpful? Show some ❤️</p>
     </div>
   );
