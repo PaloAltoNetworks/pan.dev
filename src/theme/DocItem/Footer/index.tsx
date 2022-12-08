@@ -12,7 +12,7 @@ import TagsListInline, {
 } from "@theme/TagsListInline";
 
 import styles from "./styles.module.css";
-import ApplauseButton from "../../../components/Applause";
+import FloatingIsland from "../../../components/FloatingIsland";
 
 function TagsRow(props: TagsListInlineProps) {
   return (
@@ -44,7 +44,7 @@ function EditMetaRow({
       <hr></hr>
       <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, "row")}>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
-          <ApplauseButton />
+          <FloatingIsland />
         </div>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
@@ -78,7 +78,7 @@ export default function DocItemFooter(): JSX.Element | null {
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
       {canDisplayTagsRow && <TagsRow tags={tags} />}
-      {!canDisplayEditMetaRow && <ApplauseButton />}
+      {!canDisplayEditMetaRow && <FloatingIsland />}
       {canDisplayEditMetaRow && (
         <EditMetaRow
           editUrl={editUrl}

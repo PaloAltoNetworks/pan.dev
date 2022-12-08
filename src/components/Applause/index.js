@@ -26,33 +26,7 @@ const APPLAUSE_MAX = 100000;
 const INITIAL_COUNT = 0;
 const COLLECTION_ID = "_feedback_";
 
-function isInViewport(ref) {
-  const [isIntersecting, setIsIntersecting] = useState(true);
-
-  const observer = useMemo(
-    () =>
-      new IntersectionObserver(([entry]) =>
-        setIsIntersecting(entry.isIntersecting)
-      ),
-    []
-  );
-
-  useEffect(() => {
-    observer.observe(ref.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [ref, observer]);
-
-  return isIntersecting;
-}
-
 function ApplauseButton() {
-  const containerRef = useRef(null);
-  const isVisible = ExecutionEnvironment.canUseDOM
-    ? isInViewport(containerRef)
-    : true;
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
@@ -148,34 +122,28 @@ function ApplauseButton() {
   }, [applause, active]);
 
   return (
-    <div ref={containerRef}>
-      <div className={!isVisible ? "applause-container" : ""}>
-        <button
-          type="button"
-          className={clsx("applause-button", {
-            active,
-            inactive: !active,
-            clicked,
-            interacted: hasInteracted,
-          })}
-          onClick={handleClick}
-          disabled={applause >= APPLAUSE_MAX}
-        >
-          {hasInteracted ? (
-            <Hands className="hands" />
-          ) : (
-            <HandsOutline className="hands" />
-          )}
-          <div className={clsx("spark-container", sparkTilt)}>
-            <Spark className="spark" />
-          </div>
-          <span className="bubble">{`+${applause}`}</span>
-          <span className="counter">
-            {applause ? applause + INITIAL_COUNT : 0}
-          </span>
-        </button>
+    <button
+      type="button"
+      className={clsx("applause-button", {
+        active,
+        inactive: !active,
+        clicked,
+        interacted: hasInteracted,
+      })}
+      onClick={handleClick}
+      disabled={applause >= APPLAUSE_MAX}
+    >
+      {hasInteracted ? (
+        <Hands className="hands" />
+      ) : (
+        <HandsOutline className="hands" />
+      )}
+      <div className={clsx("spark-container", sparkTilt)}>
+        <Spark className="spark" />
       </div>
-    </div>
+      <span className="bubble">{`+${applause}`}</span>
+      <span className="counter">{applause ? applause + INITIAL_COUNT : 0}</span>
+    </button>
   );
 }
 
