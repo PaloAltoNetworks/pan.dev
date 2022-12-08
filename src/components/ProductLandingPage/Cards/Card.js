@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import Link from '@docusaurus/Link'
+import Image from '@theme/IdealImage';
 import './Card.scss'
 
 function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
   const [latestTag, setLatestTag] = useState('');
 
   useEffect(async () => {
-    const response = await fetch(releaseTagUrl);
-    const data = await response.json();
-    setLatestTag(data[0].name);
+    try {
+      const response = await fetch(releaseTagUrl);
+      const data = await response.json();
+      setLatestTag(data[0].name);
+    } catch (error) {
+      console.log(error)
+    }
   }, [])
 
   const CardFooterCTA = ({ cta }) => {
@@ -33,10 +38,11 @@ function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
     if (type == 'double') {
       return (
         <div className="card-cta-container">
-          {content.map(ctaInfo => {
+          {content.map((ctaInfo, i) => {
             if (ctaInfo.logoSrc) {
               return (
                 <Link
+                  key={i}
                   className="card-cta__logo-link"
                   to={ctaInfo.link}
                 >
@@ -45,7 +51,7 @@ function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
               )
             } else {
               return (
-                <Link className="card-cta__docs-link" to={ctaInfo.link}>
+                <Link key={i} className="card-cta__docs-link" to={ctaInfo.link}>
                   <span className="card-cta__text">{ctaInfo.text}</span>
                   <img src='/img/icons/arrow-forward.svg' alt="Forward arrow icon" />
                 </Link>
@@ -59,11 +65,11 @@ function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
 
   const ImageCard = ({ cta, description, image, title }) => {
     return (
-      <div class="image-card-container">
-        <div class="image-card__image">
-          <img src={image.src} alt={image.alt} />
+      <div className="image-card-container">
+        <div className="image-card__image">
+          <Image img={image.src} alt={image.alt} />
         </div>
-        <div class="image-card__body">
+        <div className="image-card__body">
           <h4>{title}</h4>
           <p>{description}</p>
           <CardFooterCTA cta={cta} />
@@ -74,8 +80,8 @@ function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
 
   const InfoCard = ({ cta, description, title }) => {
     return (
-      <div class="info-card-container">
-        <div class="info-card__body">
+      <div className="info-card-container">
+        <div className="info-card__body">
           <h3>
             {title}
             {latestTag && <span className="latest-tag">{latestTag}</span>}
@@ -89,11 +95,15 @@ function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
 
   const LinkCard = ({ cta, links, title }) => {
     return (
-      <div class="link-card-container">
-        <div class="link-card__body">
+      <div className="link-card-container">
+        <div className="link-card__body">
           <h3>{title}</h3>
-          <ul class="link-card__list">
-            {links.map(link => <li><Link to={link.path}>{link.text}</Link></li>)}
+          <ul className="link-card__list">
+            {links.map((link, i) =>
+              <li key={i}>
+                <Link to={link.path}>{link.text}</Link>
+              </li>
+            )}
           </ul>
           <CardFooterCTA cta={cta} />
         </div>

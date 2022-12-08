@@ -11,8 +11,9 @@ function Providers({ header, subheader, providerCards }) {
           {subheader}
         </header>
         <div className="provider-cards-container">
-          {providerCards.map(card =>
+          {providerCards.map((card, i) =>
             <Card
+              key={i}
               cta={card.cta}
               description={card.description}
               title={card.title}

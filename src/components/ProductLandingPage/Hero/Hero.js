@@ -18,8 +18,9 @@ function ProductHero({ product, header, subheader, sliderCards }) {
         </div>
         {sliderCards.length && <div className="product-hero__inner-right">
           <Slider className="product-hero__slider-container">
-            {sliderCards.map((card) =>
+            {sliderCards.map((card, i) =>
               <Card
+                key={i}
                 cta={card.cta}
                 description={card.description}
                 image={card.image}

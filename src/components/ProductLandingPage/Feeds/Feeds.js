@@ -50,8 +50,8 @@ function Feeds() {
         </header>
         <div className="feeds-image-list-container">
           <div className="feeds-image-container">
-            {FEEDS_IMAGE.map(feed =>
-              <Link to={feed.link}>
+            {FEEDS_IMAGE.map((feed, i) =>
+              <Link key={i} to={feed.link}>
                 <div className="feeds-image-text-wrapper">
                   <img
                     src="/img/product-landing/terraform/feeds/stock-feed.jpg"
@@ -63,8 +63,8 @@ function Feeds() {
             )}
           </div>
           <ul className="feeds-list">
-            {FEEDS.map(feed =>
-              <li className="feeds-list__item">
+            {FEEDS.map((feed, i) =>
+              <li key={i} className="feeds-list__item">
                 <Link to={feed.link}>{feed.title}</Link>
                 <img
                   className="external-icon"
