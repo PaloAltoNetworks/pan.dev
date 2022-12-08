@@ -36,7 +36,7 @@ function FloatingIsland() {
     <div ref={containerRef}>
       <div className={!isVisible ? "applause-container" : ""}>
         <ApplauseButton />
-        <EditThisPageButton />
+        {!isVisible && <EditThisPageButton />}
       </div>
     </div>
   );
