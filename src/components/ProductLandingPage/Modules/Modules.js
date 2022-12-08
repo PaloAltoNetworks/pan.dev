@@ -6,10 +6,10 @@ import './Modules.scss';
 
 function Modules({ header, modules }) {
   const renderModules = () => {
-    return Object.keys(modules).map(module => {
+    return Object.keys(modules).map((module, i) => {
       const moduleItem = modules[module];
       return (
-        <Tabs className="modules-tabs">
+        <Tabs key={i} className="modules-tabs">
           {moduleItem.map((moduleContent, i) =>
             <TabItem
               key={i}
@@ -35,6 +35,7 @@ function Modules({ header, modules }) {
                   }
                   return (
                     <img
+                      key={i}
                       className="tab-item__logo"
                       src={logoItem.logoSrc}
                       alt={logoItem.logoAlt}

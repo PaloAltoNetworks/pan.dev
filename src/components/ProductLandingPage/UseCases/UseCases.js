@@ -11,13 +11,16 @@ function UseCases({ header, subheader, useCaseCards }) {
           {subheader}
         </header>
         <div className="use-cases-cards-container">
-          {useCaseCards.map(card => {
-            return <Card
-              title={card.title}
-              links={card.links}
-              cta={card.cta}
-              type="linkCard"
-            />
+          {useCaseCards.map((card, i) => {
+            return (
+              <Card
+                key={i}
+                title={card.title}
+                links={card.links}
+                cta={card.cta}
+                type="linkCard"
+              />
+            )
           })}
         </div>
       </section>
