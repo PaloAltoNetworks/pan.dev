@@ -9,7 +9,6 @@ keywords:
   - API
 ---
 
-The Subscription Service is used to identify the subscriptions added to your tenant
-service groups.
+The Subscription Service is used to manage licenses assigned to your tenant service groups.
 
 These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
