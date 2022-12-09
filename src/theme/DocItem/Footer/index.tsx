@@ -13,6 +13,7 @@ import TagsListInline, {
 
 import styles from "./styles.module.css";
 import FloatingIsland from "../../../components/FloatingIsland";
+import ApplauseButton from "../../../components/Applause";
 
 function TagsRow(props: TagsListInlineProps) {
   return (
@@ -31,20 +32,21 @@ function TagsRow(props: TagsListInlineProps) {
 
 type EditMetaRowProps = Pick<
   DocContextValue["metadata"],
-  "editUrl" | "lastUpdatedAt" | "lastUpdatedBy" | "formattedLastUpdatedAt"
+  "editUrl" | "lastUpdatedAt" | "lastUpdatedBy" | "formattedLastUpdatedAt" | "hide_applause"
 >;
 function EditMetaRow({
   editUrl,
   lastUpdatedAt,
   lastUpdatedBy,
   formattedLastUpdatedAt,
+  hide_applause
 }: EditMetaRowProps) {
   return (
     <>
       <hr></hr>
       <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, "row")}>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
-          <FloatingIsland />
+          {!hide_applause && <ApplauseButton />}
         </div>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
@@ -62,10 +64,12 @@ export default function DocItemFooter(): JSX.Element | null {
     formattedLastUpdatedAt,
     lastUpdatedBy,
     tags,
+    frontMatter
   } = metadata;
-
+  const {hide_applause} = frontMatter
+  
   const canDisplayTagsRow = tags.length > 0;
-  const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy);
+  const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy || !hide_applause);
 
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
 
@@ -78,13 +82,14 @@ export default function DocItemFooter(): JSX.Element | null {
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
       {canDisplayTagsRow && <TagsRow tags={tags} />}
-      {!canDisplayEditMetaRow && <FloatingIsland />}
+      {canDisplayEditMetaRow && <FloatingIsland />}
       {canDisplayEditMetaRow && (
         <EditMetaRow
           editUrl={editUrl}
           lastUpdatedAt={lastUpdatedAt}
           lastUpdatedBy={lastUpdatedBy}
           formattedLastUpdatedAt={formattedLastUpdatedAt}
+          hide_applause={hide_applause}
         />
       )}
     </footer>

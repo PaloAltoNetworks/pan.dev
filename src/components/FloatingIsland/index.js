@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import ApplauseButton from "../Applause";
 import EditThisPageButton from "../EditThisPageButton";
+import { useDoc } from "@docusaurus/theme-common/internal";
 import "./styles.css";
 
 function isInViewport(ref) {
@@ -31,17 +32,30 @@ function Divider() {
 }
 
 function FloatingIsland() {
+  const { metadata } = useDoc();
+  const { editUrl, frontMatter } = metadata;
+  const { hide_applause } = frontMatter;
   const containerRef = useRef(null);
   const isVisible = ExecutionEnvironment.canUseDOM
     ? isInViewport(containerRef)
     : true;
 
+  const canDisplayAllButtons = !!(editUrl && !hide_applause);
+
   return (
     <div ref={containerRef}>
-      <div className={!isVisible ? "floating-island-container" : ""}>
-        <ApplauseButton />
-        {!isVisible && <Divider />}
-        {!isVisible && <EditThisPageButton />}
+      <div
+        className={
+          !isVisible && canDisplayAllButtons
+            ? "floating-island-container"
+            : !isVisible && !canDisplayAllButtons
+            ? "floating-island-container-single"
+            : undefined
+        }
+      >
+        {!isVisible && !hide_applause && <ApplauseButton />}
+        {!isVisible && canDisplayAllButtons && <Divider />}
+        {!isVisible && editUrl && <EditThisPageButton />}
       </div>
     </div>
   );
