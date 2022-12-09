@@ -657,7 +657,7 @@ const config = {
   ],
   stylesheets: [
     {
-      href: "https://use.fontawesome.com/releases/v5.15.0/css/all.css",
+      href: "https://use.fontawesome.com/releases/v6.2.0/css/all.css",
       type: "text/css",
       rel: "stylesheet",
     },
