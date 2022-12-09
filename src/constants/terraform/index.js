@@ -68,7 +68,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
   providerCards: [
     {
       title: "PAN-OS",
-      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-panos/tags",
+      latestTag: "v1.11.0",
       description: "Define and manage your network security configuration as code, including Panorama, PA-Series, VM-Series and CN-Series.",
       cta: {
         type: 'double',
@@ -87,7 +87,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Cloud NGFW",
-      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-cloudngfwaws/tags",
+      latestTag: "v1.0.8",
       description: "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
         type: 'double',
@@ -106,7 +106,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud",
-      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-prismacloud/tags",
+      latestTag: "v1.2.10",
       description: "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
         type: 'double',
@@ -125,7 +125,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud Compute",
-      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-prismacloudcompute/tags",
+      latestTag: "v0.7.0",
       description: "Define your cloud workload protection suing Terraform, to protect your host, container and serverless deployments in any cloud.",
       cta: {
         type: 'double',
@@ -144,7 +144,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Bridgecrew",
-      releaseTagUrl: "https://api.github.com/repos/PaloAltoNetworks/terraform-provider-bridgecrew/tags",
+      latestTag: "v0.3.7",
       description: "Automate your security engineering by identifying and remediating misconfigurations and vulnerabilities, across code, secrets and images, all defined with Terraform.",
       cta: {
         type: 'double',
