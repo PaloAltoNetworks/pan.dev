@@ -3,23 +3,7 @@ import Link from '@docusaurus/Link'
 import Image from '@theme/IdealImage';
 import './Card.scss'
 
-function Card({ cta, description, image, title, type, links, releaseTagUrl }) {
-  const [latestTag, setLatestTag] = useState('');
-
-  useEffect(() => {
-    const fetchReleaseTag = async () => {
-      try {
-        const response = await fetch(releaseTagUrl);
-        const data = await response.json();
-        setLatestTag(data[0].name);
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    fetchReleaseTag()
-  }, [])
-
+function Card({ cta, description, image, title, type, links, latestTag }) {
   const CardFooterCTA = ({ cta }) => {
     const { content, type } = cta
 
