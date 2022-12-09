@@ -26,6 +26,10 @@ function isInViewport(ref) {
   return isIntersecting;
 }
 
+function Divider() {
+  return <div className="floating-island-divider" />;
+}
+
 function FloatingIsland() {
   const containerRef = useRef(null);
   const isVisible = ExecutionEnvironment.canUseDOM
@@ -34,8 +38,9 @@ function FloatingIsland() {
 
   return (
     <div ref={containerRef}>
-      <div className={!isVisible ? "applause-container" : ""}>
+      <div className={!isVisible ? "floating-island-container" : ""}>
         <ApplauseButton />
+        {!isVisible && <Divider />}
         {!isVisible && <EditThisPageButton />}
       </div>
     </div>
