@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import ApplauseButton from "../Applause";
 import EditThisPageButton from "../EditThisPageButton";
+import { ReportAnIssueIcon } from "../Issue";
 import { useDoc } from "@docusaurus/theme-common/internal";
 import "./styles.css";
 
@@ -34,13 +35,18 @@ function Divider() {
 function FloatingIsland() {
   const { metadata } = useDoc();
   const { editUrl, frontMatter } = metadata;
-  const { hide_applause } = frontMatter;
+  const { hide_applause, hide_issue } = frontMatter;
   const containerRef = useRef(null);
   const isVisible = ExecutionEnvironment.canUseDOM
     ? isInViewport(containerRef)
     : true;
 
-  const canDisplayAllButtons = !!(editUrl && !hide_applause);
+  const canDisplayAllButtons = !!(editUrl && !hide_applause && !hide_issue);
+  const canDisplayTwoButtons = !!(
+    (editUrl && !hide_applause) ||
+    (editUrl && !hide_issue) ||
+    (!hide_applause && !hide_issue)
+  );
 
   return (
     <div ref={containerRef}>
@@ -48,14 +54,20 @@ function FloatingIsland() {
         className={
           !isVisible && canDisplayAllButtons
             ? "floating-island-container"
-            : !isVisible && !canDisplayAllButtons
+            : !isVisible && canDisplayTwoButtons
+            ? "floating-island-container-double"
+            : !isVisible && !canDisplayAllButtons && !canDisplayTwoButtons
             ? "floating-island-container-single"
             : undefined
         }
       >
         {!isVisible && !hide_applause && <ApplauseButton />}
-        {!isVisible && canDisplayAllButtons && <Divider />}
+        {!isVisible && (canDisplayAllButtons || canDisplayTwoButtons) && (
+          <Divider />
+        )}
         {!isVisible && editUrl && <EditThisPageButton />}
+        {!isVisible && canDisplayAllButtons && <Divider />}
+        {!isVisible && !hide_issue && <ReportAnIssueIcon />}
       </div>
     </div>
   );

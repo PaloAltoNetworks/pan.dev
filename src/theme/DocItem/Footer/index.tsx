@@ -5,7 +5,6 @@ import {
   useDoc,
   type DocContextValue,
 } from "@docusaurus/theme-common/internal";
-import LastUpdated from "@theme/LastUpdated";
 import EditThisPage from "@theme/EditThisPage";
 import TagsListInline, {
   type Props as TagsListInlineProps,
@@ -14,6 +13,7 @@ import TagsListInline, {
 import styles from "./styles.module.css";
 import FloatingIsland from "../../../components/FloatingIsland";
 import ApplauseButton from "../../../components/Applause";
+import {ReportAnIssue} from "../../../components/Issue";
 
 function TagsRow(props: TagsListInlineProps) {
   return (
@@ -32,14 +32,15 @@ function TagsRow(props: TagsListInlineProps) {
 
 type EditMetaRowProps = Pick<
   DocContextValue["metadata"],
-  "editUrl" | "lastUpdatedAt" | "lastUpdatedBy" | "formattedLastUpdatedAt" | "hide_applause"
+  "editUrl" | "lastUpdatedAt" | "lastUpdatedBy" | "formattedLastUpdatedAt" | "hide_applause" | "hide_issue"
 >;
 function EditMetaRow({
   editUrl,
   lastUpdatedAt,
   lastUpdatedBy,
   formattedLastUpdatedAt,
-  hide_applause
+  hide_applause,
+  hide_issue
 }: EditMetaRowProps) {
   return (
     <>
@@ -50,6 +51,9 @@ function EditMetaRow({
         </div>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
+        </div>
+        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
+          {!hide_issue && <ReportAnIssue />}
         </div>
       </div>
     </>
@@ -66,10 +70,10 @@ export default function DocItemFooter(): JSX.Element | null {
     tags,
     frontMatter
   } = metadata;
-  const {hide_applause} = frontMatter
-  
+  const {hide_applause, hide_issue} = frontMatter
+
   const canDisplayTagsRow = tags.length > 0;
-  const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy || !hide_applause);
+  const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy || !hide_applause || !hide_issue);
 
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
 
@@ -90,6 +94,7 @@ export default function DocItemFooter(): JSX.Element | null {
           lastUpdatedBy={lastUpdatedBy}
           formattedLastUpdatedAt={formattedLastUpdatedAt}
           hide_applause={hide_applause}
+          hide_issue={hide_issue}
         />
       )}
     </footer>
