@@ -49,10 +49,8 @@ function EditMetaRow({
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {!hide_applause && <ApplauseButton />}
         </div>
-        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
+        <div className={styles.docFooterEditMetaRowItemRight}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
-        </div>
-        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
           {!hide_issue && <ReportAnIssue />}
         </div>
       </div>
