@@ -172,6 +172,16 @@ const config = {
                       to: "cdl/docs/log-forwarding",
                       icon: "doc",
                     },
+                    {
+                      label: "Log Forwarding Change Log",
+                      to: "cdl/docs/logforwarding/release-notes/changelog",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Log Forwarding Release Notes",
+                      to: "cdl/docs/logforwarding/release-notes/relnotes",
+                      icon: "doc",
+                    },
                   ],
                   apiDocs: [
                     {
