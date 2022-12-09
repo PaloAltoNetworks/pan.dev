@@ -21,6 +21,11 @@ See also the [change log](/sase/docs/release-notes/changelog) for information on
 occurred in between API product releases.
 
 
+## November 2022
+
+Updated the Prisma Access Configuration API to include [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/) 
+(Global Protect) endpoints.
+
 ## Late August 2022
 
 Updates for the Aggregate Monitoring APIs:

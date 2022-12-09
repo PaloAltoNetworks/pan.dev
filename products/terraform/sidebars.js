@@ -34,6 +34,7 @@ module.exports = {
       items: [
         "terraform/docs/panos/guides/commits",
         "terraform/docs/panos/guides/panorama-config",
+        "terraform/docs/panos/guides/policy-from-yaml",
       ],
     },
     {
