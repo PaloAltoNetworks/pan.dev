@@ -391,7 +391,7 @@ const config = {
               ],
             },
             {
-              label: "Cloud Native Security",
+              label: "Prisma Cloud",
               to: "#",
               colorclass: "cloud-native-security",
               description:
@@ -406,6 +406,13 @@ const config = {
                       to: "/cloud/api",
                       label: "CSPM API",
                       icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "/cspm/docs",
+                      label: "CSPM Docs",
+                      icon: "doc",
                     },
                   ],
                 },
