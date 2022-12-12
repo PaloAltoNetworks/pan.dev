@@ -4,7 +4,7 @@ import './Providers.scss'
 
 function Providers({ header, subheader, providerCards }) {
   return (
-    <div className="providers-container">
+    <div id="providers-container" className="providers-container">
       <section className="container">
         <header className="providers-header">
           {header}

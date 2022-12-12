@@ -22,6 +22,7 @@ export default function TerraformLandingPage() {
       title={TERRAFORM_METADATA.title}
     >
       <Hero
+        anchorLink={TERRAFORM_HERO_CONTENT.anchorLink}
         header={TERRAFORM_HERO_CONTENT.header}
         product={TERRAFORM_HERO_CONTENT.product}
         sliderCards={TERRAFORM_HERO_CONTENT.sliderCards}
