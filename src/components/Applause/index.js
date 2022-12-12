@@ -90,9 +90,8 @@ function ApplauseButton() {
         getDoc(docRef).then((doc) => {
           if (doc.exists()) {
             return setTotalApplause(doc.get("claps"));
-          } else {
-            return setTotalApplause(0);
           }
+          return setTotalApplause(0);
         });
       } catch (err) {
         console.error(
@@ -101,6 +100,9 @@ function ApplauseButton() {
         );
         return setTotalApplause(0);
       }
+    return () => {
+      return setTotalApplause(0);
+    };
   }, []);
 
   useEffect(() => {
