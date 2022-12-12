@@ -62,11 +62,14 @@ function FloatingIsland() {
         }
       >
         {!isVisible && !hide_applause && <ApplauseButton />}
-        {!isVisible && (canDisplayAllButtons || canDisplayTwoButtons) && (
-          <Divider />
-        )}
+        {!isVisible &&
+          !hide_applause &&
+          (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && editUrl && <EditThisPageButton />}
-        {!isVisible && canDisplayAllButtons && <Divider />}
+        {!isVisible &&
+          editUrl &&
+          !hide_issue &&
+          (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && !hide_issue && <ReportAnIssueIcon />}
       </div>
     </div>
