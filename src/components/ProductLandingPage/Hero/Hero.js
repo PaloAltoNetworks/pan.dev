@@ -1,11 +1,12 @@
 import React from 'react'
 // components
+import Link from '@docusaurus/Link'
 import Slider from '../Slider/Slider'
 import Card from '../Cards/Card'
 // styles
 import './Hero.scss'
 
-function ProductHero({ product, header, subheader, sliderCards }) {
+function ProductHero({ anchorLink, product, header, subheader, sliderCards }) {
   return (
     <section className={`product-hero-container ${product}`}>
       <div className={`product-hero__inner-content ${product}`}>
@@ -14,7 +15,11 @@ function ProductHero({ product, header, subheader, sliderCards }) {
             {header}
             {subheader}
           </header>
-          <button className="button button--primary">Learn More</button>
+          <Link to={anchorLink}>
+            <button className="button button--primary">
+              Learn More
+            </button>
+          </Link>
         </div>
         {sliderCards.length && <div className="product-hero__inner-right">
           <Slider className="product-hero__slider-container">

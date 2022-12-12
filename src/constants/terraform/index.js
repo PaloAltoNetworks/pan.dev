@@ -10,6 +10,7 @@ export const TERRAFORM_METADATA = {
 
 // Props used in src/components/ProductLandingPage/Hero.js
 export const TERRAFORM_HERO_CONTENT = {
+  anchorLink: "#providers-container",
   product: 'terraform',
   header: (
     <h1>
