@@ -24,7 +24,7 @@ function Modules({ header, modules }) {
                   const containsLink = logoItem.linkSrc?.length ?? false;
                   if (containsLink) {
                     return (
-                      <Link key={i} className="logo-link" to={logoItem.logoSrc}>
+                      <Link key={i} className="logo-link" to={logoItem.linkSrc}>
                         <img
                           className="tab-item__logo"
                           src={logoItem.logoSrc}
