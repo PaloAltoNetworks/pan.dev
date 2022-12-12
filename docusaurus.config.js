@@ -657,7 +657,7 @@ const config = {
   ],
   stylesheets: [
     {
-      href: "https://use.fontawesome.com/releases/v5.15.0/css/all.css",
+      href: "https://use.fontawesome.com/releases/v6.2.0/css/all.css",
       type: "text/css",
       rel: "stylesheet",
     },
@@ -675,6 +675,10 @@ const config = {
         target: isServer ? "node12" : "es2017",
       },
     }),
+  },
+  customFields: {
+    firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
+    recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
   },
 };
 
