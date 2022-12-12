@@ -6,7 +6,7 @@ export function ReportAnIssueIcon() {
   const { metadata } = useDoc();
   const { title } = metadata;
   const issueTitle = `Issue/Help with "${title}"`;
-  const issueUrl = `https://github.com/PaloAltoNetworks/pan.dev/issues/new?labels=documentation&title=${issueTitle}&template=documentation_problem`;
+  const issueUrl = `https://github.com/PaloAltoNetworks/pan.dev/issues/new?labels=documentation&title=${issueTitle}&template=documentation_problem.md`;
   return (
     <a
       href={issueUrl}
@@ -23,7 +23,7 @@ export function ReportAnIssue() {
   const { metadata } = useDoc();
   const { title } = metadata;
   const issueTitle = `Issue/Help with "${title}"`;
-  const issueUrl = `https://github.com/PaloAltoNetworks/pan.dev/issues/new?labels=documentation&title=${issueTitle}&template=documentation_problem`;
+  const issueUrl = `https://github.com/PaloAltoNetworks/pan.dev/issues/new?labels=documentation&title=${issueTitle}&template=documentation_problem.md`;
   return (
     <a
       href={issueUrl}
