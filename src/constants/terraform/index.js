@@ -360,7 +360,7 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/ag-dag-nia/panos/latest"
+            linkSrc: "https://registry.terraform.io/modules/PaloAltoNetworks/dag-nia/panos/latest"
           },
           {
             logoSrc: "/img/product-landing/terraform/consul-logo.png",
