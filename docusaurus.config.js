@@ -391,15 +391,15 @@ const config = {
               ],
             },
             {
-              label: "Prisma Cloud",
+              label: "Cloud Native Security",
               to: "#",
               colorclass: "cloud-native-security",
               description:
                 "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
               products: [
                 {
-                  to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "Cloud Security Posture Management",
+                  label: "PCEE",
+                  to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
@@ -407,35 +407,33 @@ const config = {
                       label: "CSPM API",
                       icon: "api-doc",
                     },
+                    {
+                      to: "/cloud/api",
+                      label: "CWPP API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "/cloud/api",
+                      label: "CCS API",
+                      icon: "api-doc",
+                    },
                   ],
                   docs: [
                     {
                       to: "/cspm/docs",
-                      label: "CSPM Docs",
+                      label: "Docs",
                       icon: "doc",
                     },
                   ],
                 },
                 {
-                  label: "Cloud Workload Protection Platform",
+                  label: "PCCE",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
                       to: "/cloud/api",
                       label: "CWPP API",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Cloud Code Security",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "/cloud/api",
-                      label: "Cloud Code API",
                       icon: "api-doc",
                     },
                   ],
