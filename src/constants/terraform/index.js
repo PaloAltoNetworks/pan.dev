@@ -243,12 +243,13 @@ export const TERRAFORM_USE_CASES_CONTENT = {
 }
 
 export const TERRAFORM_MODULES_CONTENT = {
-  header: <h1>Modules from Palo Alto Networks</h1>,
+  header: <h1>Terraform Modules from Palo Alto Networks</h1>,
   modules: {
     terraform: [
       {
         tabLabel: "AWS",
-        title: <h2>Terraform Reusable Modules for VM-Series on AWS</h2>,
+        title: "Terraform Reusable Modules for VM-Series on AWS",
+        latestTag: "v0.4.0",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running in Amazon Web Services (AWS). It deploys VM-Series as virtual machine instances and it configures aspects such as Transit Gateway connectivity, VPCs, IAM access, Panorama virtual machine instances, and more.
@@ -272,7 +273,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       },
       {
         tabLabel: "GCP",
-        title: <h2>Terraform Reusable Modules for VM-Series on GCP</h2>,
+        title: "Terraform Reusable Modules for VM-Series on GCP",
+        latestTag: "v0.4.1",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running on Google Cloud Platform (GCP). It deploys VM-Series as virtual machine instances and it configures aspects such as Shared VPC connectivity, IAM access, Service Accounts, Panorama virtual machine instances, and more.
@@ -296,7 +298,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       },
       {
         tabLabel: "Azure",
-        title: <h2>Terraform Reusable Modules for VM-Series on Azure</h2>,
+        title: "Terraform Reusable Modules for VM-Series on Azure",
+        latestTag: "v0.5.0",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to provide control and protection to your applications running on Azure Cloud. It deploys VM-Series as virtual machines and it configures aspects such as virtual networks, subnets, network security groups, storage accounts, service principals, Panorama virtual machine instances, and more.
@@ -322,7 +325,8 @@ export const TERRAFORM_MODULES_CONTENT = {
     consulTerraform: [
       {
         tabLabel: "Static Address Groups",
-        title: <h2>Consul-Terraform-Sync Modules for PAN-OS</h2>,
+        title: "Consul-Terraform-Sync Modules for PAN-OS",
+        latestTag: "v0.1.0",
         description: (
           <p>
             This Terraform module allows users to support Dynamic Firewalling by integrating <Link to="https://www.consul.io/">Consul</Link> with Palo Alto Networks PAN-OS based <Link to="https://www.paloaltonetworks.com/network-security/next-generation-firewall">PA-Series and VM-Series NGFW</Link> devices to dynamically manage the Address Objects based on service definition in Consul catalog. In addition, this module also manages dynamic registration/de-registration of Dynamic Address Group (DAG) tags based on services in Consul catalog.
@@ -347,7 +351,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       },
       {
         tabLabel: "Dynamic Address Groups",
-        title: <h2>Consul-Terraform-Sync Modules for PAN-OS</h2>,
+        title: "Consul-Terraform-Sync Modules for PAN-OS",
+        latestTag: "v0.2.0",
         description: (
           <p>
             This Terraform module allows users to support Dynamic Firewalling by integrating <Link to="https://www.consul.io/">Consul</Link> with Palo Alto Networks PAN-OS based <Link to="https://www.paloaltonetworks.com/network-security/next-generation-firewall">PA-Series and VM-Series NGFW</Link> devices to dynamically manage dynamic registration/de-registration of Dynamic Address Group (DAG) tags based on services in Consul catalog.

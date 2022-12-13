@@ -17,7 +17,14 @@ function Modules({ header, modules }) {
               value={moduleContent.tabLabel}
               label={moduleContent.tabLabel}
             >
-              {moduleContent.title}
+              <h3>
+                {moduleContent.title}
+                {moduleContent.latestTag &&
+                  <span className="latest-tag">
+                    {moduleContent.latestTag}
+                  </span>}
+              </h3>
+
               {moduleContent.description}
               <div className="tab-item__logo-container">
                 {moduleContent.footerLogos.map((logoItem, i) => {
