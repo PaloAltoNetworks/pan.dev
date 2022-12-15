@@ -21,12 +21,13 @@ and [obtain an access token](/sase/docs/access-tokens),
 you can use the [Aggregate Monitoring API Reference](/sase/api/mt-monitor) to discover how to
 perform aggregated monitoring queries for the following resources:
 
-- [Data Resource API](/category/sase/api/mt-monitor/data-resources/): retrieve aggregated summaries and counts
+- [Data Resource API](/sase/api/mt-monitor/data-resource-api/): retrieve aggregated summaries and counts
   across all your tenants of a Prisma Access instance for threats, alerts, risky applications, URLs,
-  and upgrades.
-- [License Resource API](/category/sase/api/mt-monitor/license-resources/): retrieve aggregated lists across
+  and connectivity status.
+- [Insights Resource API](/sase/api/mt-monitor/insights-resource-api/): retrieve an aggregated list of insights, such as all upgrade statuses across tenants.
+- [License Resource API](/sase/api/mt-monitor/license-resource-api/): retrieve aggregated lists across
   Prisma Access tenants for license quotas, setup status, and utilization.
-- [Tenant Resources API](/category/sase/api/mt-monitor/tenant-resources/): list all Prisma Access tenants in
+- [Tenant Resources API](/sase/api/mt-monitor/tenant-resources-api/): list all Prisma Access tenants in
   the hierarchy.
 
 The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's 
