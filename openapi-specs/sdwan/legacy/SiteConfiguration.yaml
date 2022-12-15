@@ -181,15 +181,15 @@ components:
       properties:
         admin_up:
           description: 'Admin Up: ValidateEnum(enumClass = classOf[AdminState], message
-            = Invalid enum string., nullAllowed = false) '
+            = Invalid enum string., nullAllowed = true) '
           type: boolean
         id:
           description: Id
           type: string
         load_alarm_threshold:
           description: 'Load Alarm Threshold: Digits(fraction = 0, integer = 3, )
-            ValidateDecimal(increment = 0, max = 0, error = INVALID_VALUE_RANGE: Invalid
-            value range., min = 0) '
+            ValidateDecimal(allowZero = false, increment = 0, max = 0, error = INVALID_VALUE_RANGE:
+            Invalid value range., min = 0) '
           format: int32
           type: integer
         name:
@@ -197,13 +197,26 @@ components:
             the resource exceeds limit., min = 0) '
           type: string
         subscription_factor:
-          description: 'Subscription Factor: Digits(fraction = 1, integer = 1, ) ValidateDecimal(increment
-            = 5, max = 5, error = INVALID_VALUE_RANGE: Invalid value range., min =
-            5) '
+          description: 'Subscription Factor: Digits(fraction = 1, integer = 1, ) ValidateDecimal(allowZero
+            = false, increment = 5, max = 5, error = INVALID_VALUE_RANGE: Invalid
+            value range., min = 5) '
           format: float
           type: number
-      required:
-      - admin_up
+    HubClusterElement:
+      properties:
+        hubClusterElementNumber:
+          description: 'HubClusterElementNumber: JsonIgnore(value = true) '
+          enum:
+          - FIRST
+          - SECOND
+          - THIRD
+          type: string
+        hub_element_id:
+          description: Hub Element Id
+          type: string
+        locked:
+          description: Locked
+          type: boolean
     HubClusterMember:
       properties:
         headend1_site_ids:
@@ -249,6 +262,108 @@ components:
           items:
             $ref: '#/components/schemas/LoadFactor'
           type: array
+    HubClusterOperationV4:
+      properties:
+        hub_element_id:
+          description: Hub Element Id
+          type: string
+        id:
+          description: Id
+          type: string
+        operation:
+          description: Operation
+          type: string
+        peer_sites:
+          description: Peer Sites
+          items:
+            description: Peer Sites
+            type: string
+          type: array
+    HubClusterQueryFilterV4:
+      properties:
+        default_cluster:
+          description: Default Cluster
+          type: boolean
+        description:
+          description: Description
+          type: string
+        elements:
+          description: Elements
+          items:
+            $ref: '#/components/schemas/HubClusterElement'
+          type: array
+        id:
+          description: Id
+          type: string
+        name:
+          description: Name
+          type: string
+        peer_sites:
+          description: Peer Sites
+          items:
+            description: Peer Sites
+            type: string
+          type: array
+        site_count_alarm_threshold:
+          description: Site Count Alarm Threshold
+          type: integer
+        site_id:
+          description: Site Id
+          type: string
+        tags:
+          description: Tags
+          items:
+            description: Tags
+            type: string
+          type: array
+    HubClusterQueryV4:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/Aggregate'
+          description: Aggregate
+        dest_page:
+          description: Dest Page
+          format: int32
+          type: integer
+        getDeleted:
+          description: GetDeleted
+          type: boolean
+        group_by:
+          description: Group By
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: Id
+          type: string
+        last_query_ts:
+          description: Last Query Ts
+          format: int64
+          type: integer
+        limit:
+          description: Limit
+          format: int32
+          type: integer
+        next_query:
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: Retrieved Fields
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: Total Count
+          format: int64
+          type: integer
     HubClusterScreen:
       properties:
         admin_up:
@@ -268,6 +383,131 @@ components:
           description: Subscription Factor
           format: float
           type: number
+    HubClusterStateElement:
+      properties:
+        hubClusterElementNumber:
+          description: 'HubClusterElementNumber: JsonIgnore(value = true) '
+          enum:
+          - FIRST
+          - SECOND
+          - THIRD
+          type: string
+        hub_element_id:
+          description: Hub Element Id
+          type: string
+        locked:
+          description: Locked
+          type: boolean
+        peer_sites:
+          description: Peer Sites
+          items:
+            description: Peer Sites
+            type: string
+          type: array
+    HubClusterStatusV4:
+      properties:
+        cluster_state:
+          description: Cluster State
+          enum:
+          - cluster_update_in_progress
+          - cluster_update_completed
+          - vpn_update_in_progress
+          - vpn_update_ack_pending
+          type: string
+        elements:
+          description: Elements
+          items:
+            $ref: '#/components/schemas/HubClusterStateElement'
+          type: array
+        id:
+          description: Id
+          type: string
+        vpns_added:
+          description: Vpns Added
+          format: int32
+          type: integer
+        vpns_deleted:
+          description: Vpns Deleted
+          format: int32
+          type: integer
+    HubClusterV4:
+      properties:
+        default_cluster:
+          description: Default Cluster
+          type: boolean
+        description:
+          description: 'Description: Size(max = 4096, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
+        elements:
+          description: Elements
+          items:
+            $ref: '#/components/schemas/HubClusterElement'
+          type: array
+        id:
+          description: Id
+          type: string
+        name:
+          description: 'Name: NotBlank(error = HUB_CLUSTER_NAME_NULL_OR_EMPTY: Hub
+            Cluster name cannot be null or empty.) Size(max = 128, error = HUB_CLUSTER_NAME_EXCEEDS_LIMIT:
+            Hub Cluster name exceeds limit.(128 chars)., min = 0) '
+          type: string
+        peer_sites:
+          description: 'Peer Sites: ListString(allowDuplicate = false, allowEmpty
+            = true, allowNull = false, length = 0, listMaxSize = 2147483647, message
+            = INVALID_PEER_SITES_PRESENT, noTrim = false, regex = , required = false) '
+          items:
+            description: Peer Sites
+            type: string
+          type: array
+        site_count_alarm_threshold:
+          description: 'Site Count Alarm Threshold: PositiveOrZero(message = SITE_COUNT_ALARM_THRESHOLD_NEITHER_NULL_NOR_NON_NEGATIVE) '
+          type: integer
+        tags:
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 1024, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - peer_sites
+      - name
+    HubServiceEndpoint:
+      properties:
+        cir_bw_mbps:
+          description: Cir Bw Mbps
+          type: integer
+        service_endpoint_id:
+          description: Service Endpoint Id
+          type: string
+    HubServiceEndpointConfig:
+      properties:
+        active_service_endpoints:
+          description: Active Service Endpoints
+          items:
+            $ref: '#/components/schemas/HubServiceEndpoint'
+          type: array
+        backup_service_endpoints:
+          description: Backup Service Endpoints
+          items:
+            $ref: '#/components/schemas/HubServiceEndpoint'
+          type: array
+        id:
+          description: Id
+          type: string
+        site_id:
+          description: 'Site Id: Digits(fraction = 0, integer = 50, SITEID_INVALID)
+            NotNull '
+          type: string
+        tenant_id:
+          description: 'Tenant Id: NotNull Digits(fraction = 0, integer = 20, TENANT_ID_INVALID_0001) '
+          type: string
+      required:
+      - site_id
+      - tenant_id
     LQMConfig:
       properties:
         hub_site_ids:
@@ -356,13 +596,12 @@ components:
           description: Description
           type: string
         latitude:
-          description: 'Latitude: Range(max = 90L, error = INVALID_LATITUDE_VALUE:
-            Invalid latitude value.Shoule be between -90 to 90., min = -90L) '
+          description: 'Latitude: Range(max = 90L, INVALID_LATITUDE_VALUE, min = -90L) '
           format: float
           type: number
         longitude:
-          description: 'Longitude: Range(max = 180L, error = INVALID_LONGITUDE_VALUE:
-            Invalid longitude value.Shoule be between -180 to 180., min = -180L) '
+          description: 'Longitude: Range(max = 180L, INVALID_LONGITUDE_VALUE, min
+            = -180L) '
           format: float
           type: number
     Site:
@@ -2578,6 +2817,76 @@ info:
   version: Latest
 openapi: 3.0.0
 paths:
+  /v2.0/api/tenants/{tenant_id}/hubserviceendpoints:
+    get:
+      description: Get HubServiceEndpoints of a tenant
+      operationId: get-v2.0-api-tenants-tenant_id-hubserviceendpoints
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/HubServiceEndpointConfig'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get HubServiceEndpoints of a tenant (v2.0)
+      tags:
+      - Site Configuration
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/hubserviceendpoints:
+    get:
+      description: Get HubServiceEndpoint for a Site of a given tenant by tenant ID
+        and site ID
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-hubserviceendpoints
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubServiceEndpointConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get HubServiceEndpoint for a Site of a given tenant by tenant ID and
+        site ID (v2.0)
+      tags:
+      - Site Configuration
   /v2.0/api/tenants/{tenant_id}/sites/{site_id}/siteciphers:
     get:
       description: Get site ciphers
@@ -5630,6 +5939,401 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Get specific hub cluster state (v3.0)
+      tags:
+      - Site Configuration
+  /v4.0/api/tenants/{tenant_id}/hubclusters/query:
+    post:
+      description: Query hub clusters
+      operationId: post-v4.0-api-tenants-tenant_id-hubclusters-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HubClusterQueryV4'
+        description: Details of the hub cluster to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/HubClusterQueryFilterV4'
+                      type: array
+                  type: object
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_QUERY_OR_SORT_PARAMETERS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Query hub clusters (v4.0)
+      tags:
+      - Site Configuration
+  /v4.0/api/tenants/{tenant_id}/sites/{site_id}/hubclusters:
+    get:
+      description: Get all hub clusters
+      operationId: get-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/HubClusterV4'
+                      type: array
+                  type: object
+          description: Successful operation
+      summary: Get all hub clusters (v4.0)
+      tags:
+      - Site Configuration
+    post:
+      description: Creates a new hub cluster
+      operationId: post-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HubClusterV4'
+        description: Details of the hub cluster to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterV4'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: HUB_CLUSTER_NAME_NULL_OR_EMPTY
+                  - code: HUB_CLUSTER_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_EXCEEDS_LIMIT
+                  - code: INVALID_TAG
+                  - code: INVALID_HUB_SITE
+                  - code: HUB_CLUSTER_ELEMENT_PRESENT
+                  - code: DEFAULT_HUB_CLUSTER_EXISTS
+                  - code: HUB_CLUSTER_NAME_NOT_UNIQUE
+                  - code: HUB_CLUSTER_COUNT_IN_HUB_SITE_EXCEEDED
+                  - code: DUPLICATE_SPOKE_SITES_PRESENT
+                  - code: INVALID_PEER_SITES_PRESENT
+                  - code: SOME_SPOKE_SITES_ALREADY_MAPPED_TO_ANOTHER_CLUSTER
+                  - code: INVALID_VALUE_RANGE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Creates a new hub cluster (v4.0)
+      tags:
+      - Site Configuration
+  /v4.0/api/tenants/{tenant_id}/sites/{site_id}/hubclusters/{hub_cluster_id}:
+    delete:
+      description: Delete hub cluster
+      operationId: delete-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters-hub_cluster_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Hub Cluster Id
+        in: path
+        name: hub_cluster_id
+        required: true
+        schema:
+          description: Hub Cluster Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterV4'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: HUB_CLUSTER_NOT_FOUND
+                  - code: HUB_CLUSTER_HAS_ELEMENTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Delete hub cluster (v4.0)
+      tags:
+      - Site Configuration
+    get:
+      description: Get specific hub cluster
+      operationId: get-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters-hub_cluster_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Hub Cluster Id
+        in: path
+        name: hub_cluster_id
+        required: true
+        schema:
+          description: Hub Cluster Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterV4'
+          description: Successful operation
+        '404':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: HUB_CLUSTER_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Hub cluster not found
+      summary: Get specific hub cluster (v4.0)
+      tags:
+      - Site Configuration
+    put:
+      description: Update hub cluster
+      operationId: put-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters-hub_cluster_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Hub Cluster Id
+        in: path
+        name: hub_cluster_id
+        required: true
+        schema:
+          description: Hub Cluster Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HubClusterV4'
+        description: Details of the hub cluster to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterV4'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: HUB_CLUSTER_NAME_NULL_OR_EMPTY
+                  - code: HUB_CLUSTER_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_EXCEEDS_LIMIT
+                  - code: INVALID_TAG
+                  - code: HUB_CLUSTER_NOT_FOUND
+                  - code: DEFAULT_HUB_CLUSTER_EXISTS
+                  - code: HUB_CLUSTER_NAME_NOT_UNIQUE
+                  - code: HUB_CLUSTER_INVALID_ELEMENTS_INFO
+                  - code: DUPLICATE_SPOKE_SITES_PRESENT
+                  - code: INVALID_PEER_SITES_PRESENT
+                  - code: SOME_SPOKE_SITES_ALREADY_MAPPED_TO_ANOTHER_CLUSTER
+                  - code: HUB_CLUSTER_UNDER_MAINTENANCE
+                  - code: HUB_CLUSTER_STATUS_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Update hub cluster (v4.0)
+      tags:
+      - Site Configuration
+  /v4.0/api/tenants/{tenant_id}/sites/{site_id}/hubclusters/{hub_cluster_id}/operations:
+    post:
+      description: Operations hub cluster api
+      operationId: post-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters-hub_cluster_id-operations
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: HubCluster Id
+        in: path
+        name: hub_cluster_id
+        required: true
+        schema:
+          description: Hub Cluster Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HubClusterOperationV4'
+        description: Details of the operations to be performed on the hub cluster.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterStatusV4'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: HUB_CLUSTER_INVALID_OPERATION
+                  - code: HUB_ELEMENT_ID_NULL_OR_EMPTY
+                  - code: HUB_CLUSTER_OPERATION_SPOKE_SITES_CANNOT_BE_EMPTY
+                  - code: HUB_CLUSTER_OR_STATUS_NOT_FOUND
+                  - code: HUB_CLUSTER_EMPTY
+                  - code: HUB_CLUSTER_ELEMENT_NOT_LOCKED
+                  - code: HUB_ELEMENT_NOT_PRESENT_IN_HUB_CLUSTER
+                  - code: HUB_CLUSTER_DOES_NOT_CATER_TO_SPECIFIED_SPOKE_SITES
+                  - code: HUB_CLUSTER_NEW_HUB_ELEMENT_NOT_FOUND
+                  - code: HUB_CLUSTER_ELEMENT_DOES_NOT_CATER_TO_SPECIFIED_SPOKE_SITES
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Operations hub cluster api (v4.0)
+      tags:
+      - Site Configuration
+  /v4.0/api/tenants/{tenant_id}/sites/{site_id}/hubclusters/{id}/status:
+    get:
+      description: Get hub cluster status
+      operationId: get-v4.0-api-tenants-tenant_id-sites-site_id-hubclusters-id-status
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Hub Cluster Id
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubClusterStatusV4'
+          description: Successful operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Hub Cluster not found
+      summary: Get hub cluster status (v4.0)
       tags:
       - Site Configuration
   /v4.1/api/tenants/{tenant_id}/sites:
