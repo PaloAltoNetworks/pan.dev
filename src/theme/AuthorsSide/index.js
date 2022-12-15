@@ -31,7 +31,7 @@ export default function AuthorsSide({ className }) {
   const multipleAuthors = allAuthors.length > 1;
 
   return (
-    <div className="padding-top--lg padding-left--md">
+    <div className="padding--sm padding-left--md">
       <div className="row">
         {multipleAuthors && <h4>Authors </h4>}
         {!multipleAuthors && <h4>Author </h4>}

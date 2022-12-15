@@ -6,10 +6,10 @@ import styles from "./styles.module.css";
 export default function TOCWrapper(props) {
   return (
     <>
-      <TOC {...props} />
       <div className={styles.tocAuthors}>
         <AuthorsSide />
       </div>
+      <TOC {...props} />
     </>
   );
 }
