@@ -627,11 +627,13 @@ const config = {
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
             outputDir: "products/threat-vault/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           "dns-security": {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
             outputDir: "products/dns-security/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           cdl: {
