@@ -51,7 +51,8 @@ The following request payload uses the `state`, `severity` and `updated_time` fi
 - `Informational` : 1
 
 `updated-time` : string, format example `2021-07-03 23:12:13 UTC`
->>>>>>> 594c39d7 (files prettified)
+
+> > > > > > > 594c39d7 (files prettified)
 
 ```json
 {
