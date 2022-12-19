@@ -432,8 +432,8 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "/prisma-cloud/api",
-                      label: "CWPP API",
+                      to: "/compute/api/",
+                      label: "Compute API",
                       icon: "api-doc",
                     },
                   ],
@@ -648,25 +648,6 @@ const config = {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/cwpp/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
-            /*
-            version: "22.11",
-            label: "v22.11",
-            baseUrl: "/cwpp/api/",
-            versions: {
-              22.06: {
-                specPath: "openapi-specs/cwpp/22-06",
-                outputDir: "products/cwpp/api/22-06",
-                label: "v22.06",
-                baseUrl: "/cwpp/api/22-06/",
-              },
-              22.01: {
-                specPath: "openapi-specs/cwpp/22-01",
-                outputDir: "products/cwpp/api/22-01",
-                label: "v22.01",
-                baseUrl: "/cwpp/api/22-01/",
-              },
-            },
-            */
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -677,6 +658,28 @@ const config = {
             specPath: "openapi-specs/code",
             outputDir: "products/code/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          compute: {
+            specPath: "openapi-specs/compute",
+            outputDir: "products/compute/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            version: "22.12",
+            label: "v22.12",
+            baseUrl: "/compute/api/",
+            versions: {
+              22.01: {
+                specPath: "openapi-specs/compute/22-01",
+                outputDir: "products/compute/api/22-01",
+                label: "v22.01",
+                baseUrl: "/compute/api/22-01/",
+              },
+              22.06: {
+                specPath: "openapi-specs/compute/22-06",
+                outputDir: "products/compute/api/22-06",
+                label: "v22.06",
+                baseUrl: "/compute/api/22-06/",
+              },
+            },
           },
         },
       },
