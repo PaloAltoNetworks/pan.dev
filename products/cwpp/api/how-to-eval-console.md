@@ -1,7 +1,6 @@
 ---
 id: how-to-eval-console
 title: How to Evaluate CONSOLE
-sidebar_label: How to Evaluate CONSOLE
 ---
 
 All the example API commands in these documents specify a `<CONSOLE>` variable, which represents the address for Console.

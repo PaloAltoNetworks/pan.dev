@@ -1,7 +1,6 @@
 ---
 id: curl-examples
 title: cURL Examples
-sidebar_label: cURL Examples
 ---
 
 The cURL example for each endpoint is called with a username (`-u <USER>`) only.

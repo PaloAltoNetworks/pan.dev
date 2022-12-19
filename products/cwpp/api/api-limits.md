@@ -1,15 +1,16 @@
 ---
 id: api-limits
 title: API Limits
-sidebar_label: API Limits
 ---
 
-Paginated API requests are capped to a max of 50 returned objects because very large responses could DoS Console.
+Paginated API requests are capped to a max of 250 returned objects because very large responses could DoS Console. The default value is 50 objects per page.
 
-If the response contains more than 50 objects, cycle through the collection with the `offset` query parameter to retrieve more objects.
+
+If the response contains more than 250 objects, cycle through the collection with the `offset` query parameter to retrieve more objects.
+
 For example:
 
 ```
-https://<CONSOLE>/api/v1/images?limit=50&offset=X
+https://<CONSOLE>/api/v<VERSION>/images?limit=250&offset=X
 ```
 

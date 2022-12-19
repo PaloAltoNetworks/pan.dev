@@ -398,36 +398,36 @@ const config = {
                 "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
               products: [
                 {
-                  label: "PCEE",
+                  label: "Prisma Cloud Enterprise Edition",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "/cloud/api",
-                      label: "CSPM API",
+                      to: "/cloud/cspm",
+                      label: "Cloud Security Posture Management",
                       icon: "api-doc",
                     },
                     {
-                      to: "/cloud/api",
-                      label: "CWPP API",
+                      to: "/cloud/cwpp",
+                      label: "Cloud Workload Protection",
                       icon: "api-doc",
                     },
                     {
-                      to: "/cloud/api",
-                      label: "CCS API",
+                      to: "/cloud/code",
+                      label: "Cloud Code Security",
                       icon: "api-doc",
                     },
                   ],
                   docs: [
                     {
-                      to: "/cspm/docs",
-                      label: "Docs",
+                      to: "/cloud/docs",
+                      label: "Prisma Cloud Docs",
                       icon: "doc",
                     },
                   ],
                 },
                 {
-                  label: "PCCE",
+                  label: "Prisma Cloud Compute Edition",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
