@@ -882,6 +882,99 @@ components:
       - idp_entity_id
       - idp_domain_admin_email
       - tenant_id
+    IdpV3N3:
+      properties:
+        auto_provision_operators:
+          description: Auto Provision Operators
+          type: boolean
+        auto_provision_roles:
+          description: Auto Provision Roles
+          type: boolean
+        disabled:
+          description: Disabled
+          type: boolean
+        disabled_reason:
+          description: 'Disabled Reason: Size(max = 5000, DISABLED_REASON_INVALID_0001,
+            min = 0) Size(max = 5000, DISABLED_REASON_INVALID_0001, min = 0) '
+          type: string
+        id:
+          description: Id
+          type: string
+        idp_domain_admin_email:
+          description: 'Idp Domain Admin Email: Length(max = 1024, error = SSO_INVALID_IDP_DOMAIN_ADMIN_EMAIL:
+            Provide a valid admin email for IdP domain, min = 1) NotEmpty(error =
+            SSO_EMPTY_IDP_DOMAIN_ADMIN_EMAIL: Provide an admin email for IdP) '
+          type: string
+        idp_domains:
+          description: 'Idp Domains: ListString(allowDuplicate = false, allowEmpty
+            = true, allowNull = true, length = 128, listMaxSize = 100, error = SSO_INVALID_IDP_EMAIL_DOMAIN:
+            Provide valid and unique IdP domain(s), all in lowercase and consist of
+            letters and numbers only, noTrim = false, regex = [0-9a-z._-]+, required
+            = false) '
+          items:
+            description: Idp Domains
+            type: string
+          type: array
+        idp_entity_id:
+          description: 'Idp Entity Id: Length(max = 2048, error = SSO_INVALID_IDP_ENTITY_ID:
+            Invalid size for entity id in metadata, min = 1) NotEmpty(error = SSO_EMPTY_IDP_ENTITY_ID:
+            Provide entity id for IdP) '
+          type: string
+        idp_login_url:
+          description: 'Idp Login Url: Length(max = 2048, error = SSO_INVALID_IDP_SSO_URL:
+            Invalid size for IdP single sign on Url, min = 1) '
+          type: string
+        idp_logout_url:
+          description: 'Idp Logout Url: Length(max = 2048, error = SSO_INVALID_IDP_LOGOUT_URL:
+            Invalid size for logout url, min = 1) '
+          type: string
+        idp_metadata_b64:
+          description: 'Idp Metadata B64: Length(max = 1000000, error = SSO_INVALID_IDP_METADATA_B64:
+            Invalid size for IdP metadata, min = 1) '
+          type: string
+        inactive:
+          description: Inactive
+          type: boolean
+        inactive_reason:
+          description: 'Inactive Reason: Size(max = 5000, INACTIVE_REASON_INVALID_0001,
+            min = 0) Size(max = 5000, INACTIVE_REASON_INVALID_0001, min = 0) '
+          type: string
+        is_hob:
+          description: Is Hob
+          type: boolean
+        match_email_domain:
+          description: Match Email Domain
+          type: boolean
+        role_map:
+          type: object
+        session_timeout_s:
+          description: 'Session Timeout S: Range(max = 2147483646L, error = SSO_INVALID_SESSION_TIMEOUT_SEC:
+            Invalid range {validatedValue}. Please use a range between 180 to 2147483646
+            inclusive, min = 180L) '
+          format: int32
+          type: integer
+        sign_redirect_binding:
+          description: Sign Redirect Binding
+          type: boolean
+        sp_metadata_b64:
+          description: 'Sp Metadata B64: Length(max = 1000000, error = SSO_INVALID_SP_METADATA_B64:
+            Invalid size for service provide metadata, min = 1) '
+          type: string
+        sp_x509_b64:
+          description: 'Sp X509 B64: Length(max = 100000, error = SSO_INVALID_SP_X509_B64:
+            Invalid size for service provide x509 cert, min = 1) '
+          type: string
+        sp_x509_serial_no:
+          description: 'Sp X509 Serial No: Length(max = 1024, error = SSO_INVALID_SP_X509_SERIAL_NO:
+            Invalid size for service provide x509 serial no, min = 1) '
+          type: string
+        tenant_id:
+          description: 'Tenant Id: NotNull Digits(fraction = 0, integer = 20, TENANT_ID_INVALID_0001) '
+          type: string
+      required:
+      - idp_entity_id
+      - idp_domain_admin_email
+      - tenant_id
     LinkedAccount:
       properties:
         disabled:
@@ -6592,6 +6685,173 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update sso (v3.2)
+      tags:
+      - System Administration
+  /v3.3/api/tenants/{tenant_id}/idps:
+    get:
+      description: Get all idps
+      operationId: get-v3.3-api-tenants-tenant_id-idps
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/IdpV3N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all idps (v3.3)
+      tags:
+      - System Administration
+    post:
+      description: Create idp
+      operationId: post-v3.3-api-tenants-tenant_id-idps
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdpV3N3'
+        description: Idp details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdpV3N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create idp (v3.3)
+      tags:
+      - System Administration
+  /v3.3/api/tenants/{tenant_id}/idps/{idp_id}:
+    delete:
+      description: Delete idp
+      operationId: delete-v3.3-api-tenants-tenant_id-idps-idp_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Idp Id
+        in: path
+        name: idp_id
+        required: true
+        schema:
+          description: Idp Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdpV3N3'
+          description: Successful Operation
+      summary: Delete idp (v3.3)
+      tags:
+      - System Administration
+    get:
+      description: Get idp
+      operationId: get-v3.3-api-tenants-tenant_id-idps-idp_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Idp Id
+        in: path
+        name: idp_id
+        required: true
+        schema:
+          description: Idp Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdpV3N3'
+          description: Successful Operation
+      summary: Get idp (v3.3)
+      tags:
+      - System Administration
+    put:
+      description: Update sso
+      operationId: put-v3.3-api-tenants-tenant_id-idps-idp_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Sso Id
+        in: path
+        name: idp_id
+        required: true
+        schema:
+          description: Idp Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdpV3N3'
+        description: Sso details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdpV3N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SSO_INVALID_ETAG
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update sso (v3.3)
       tags:
       - System Administration
 servers:
