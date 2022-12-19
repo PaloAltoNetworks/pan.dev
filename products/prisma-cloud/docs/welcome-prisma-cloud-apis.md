@@ -2,7 +2,7 @@
 id: api-reference-home
 title: Welcome to the Prisma Cloud APIs
 sidebar_label: Welcome to the Prisma Cloud APIs
-slug: /cloud/api
+slug: /prisma-cloud/api
 keywords:
   - Developer
   - Prisma

@@ -3,7 +3,7 @@ id: code
 title: Code Security API
 sidebar_label: Code Security API
 hide_table_of_contents: false
-slug: /cloud/code
+slug: /prisma-cloud/code
 ---
 
 The Prisma™ Cloud Code Security API enables you to check your Infrastructure-as-Code resources against

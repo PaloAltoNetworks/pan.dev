@@ -1,7 +1,7 @@
 ---
 id: cspm-api
 title: CSPM API
-slug: /cloud/cspm
+slug: /prisma-cloud/cspm
 keywords:
   - Developer
   - Prisma
