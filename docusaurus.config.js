@@ -403,24 +403,24 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "/cloud/cspm",
+                      to: "/prisma-cloud/cspm",
                       label: "Cloud Security Posture Management",
                       icon: "api-doc",
                     },
                     {
-                      to: "/cloud/cwpp",
+                      to: "/prisma-cloud/cwpp",
                       label: "Cloud Workload Protection",
                       icon: "api-doc",
                     },
                     {
-                      to: "/cloud/code",
+                      to: "/prisma-cloud/code",
                       label: "Cloud Code Security",
                       icon: "api-doc",
                     },
                   ],
                   docs: [
                     {
-                      to: "/cloud/docs",
+                      to: "/prisma-cloud/docs",
                       label: "Prisma Cloud Docs",
                       icon: "doc",
                     },
@@ -432,7 +432,7 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "/cloud/api",
+                      to: "/prisma-cloud/api",
                       label: "CWPP API",
                       icon: "api-doc",
                     },

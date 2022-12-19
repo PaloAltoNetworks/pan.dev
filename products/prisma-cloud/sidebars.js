@@ -1,6 +1,6 @@
 module.exports = {
   prismacloudapi: [
-    "cloud/api/api-reference-home",
+    "prisma-cloud/api/api-reference-home",
     {
       type: "category",
       label: "Cloud Security Posture Management",
@@ -43,8 +43,8 @@ module.exports = {
     },
   ],
   clouddocs: [
-    "cloud/docs/home",
-    "cloud/docs/export-compliance-standard",
-    "cloud/docs/prisma-cloud-see-also",
+    "prisma-cloud/docs/home",
+    "prisma-cloud/docs/export-compliance-standard",
+    "prisma-cloud/docs/prisma-cloud-see-also",
   ],
 };
