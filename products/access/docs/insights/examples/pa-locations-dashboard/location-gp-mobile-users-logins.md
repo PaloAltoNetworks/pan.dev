@@ -33,7 +33,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload filters on both `event_time` and `edge_location_display_name`. 
+The following request payload filters on both `event_time` and `edge_location_display_name`.
 
 `event_time`:
 

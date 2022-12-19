@@ -33,7 +33,7 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload filters on 
+The following request payload filters on
 [node_type](/access/docs/insights/query_filters/#node-types)
 and `event_time`. The operators for `event_time` are:
 

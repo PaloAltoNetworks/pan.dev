@@ -13,7 +13,7 @@ import TagsListInline, {
 import styles from "./styles.module.css";
 import FloatingIsland from "../../../components/FloatingIsland";
 import ApplauseButton from "../../../components/Applause";
-import {ReportAnIssue} from "../../../components/Issue";
+import { ReportAnIssue } from "../../../components/Issue";
 
 function TagsRow(props: TagsListInlineProps) {
   return (
@@ -32,7 +32,12 @@ function TagsRow(props: TagsListInlineProps) {
 
 type EditMetaRowProps = Pick<
   DocContextValue["metadata"],
-  "editUrl" | "lastUpdatedAt" | "lastUpdatedBy" | "formattedLastUpdatedAt" | "hide_applause" | "hide_issue"
+  | "editUrl"
+  | "lastUpdatedAt"
+  | "lastUpdatedBy"
+  | "formattedLastUpdatedAt"
+  | "hide_applause"
+  | "hide_issue"
 >;
 function EditMetaRow({
   editUrl,
@@ -40,7 +45,7 @@ function EditMetaRow({
   lastUpdatedBy,
   formattedLastUpdatedAt,
   hide_applause,
-  hide_issue
+  hide_issue,
 }: EditMetaRowProps) {
   return (
     <>
@@ -66,12 +71,18 @@ export default function DocItemFooter(): JSX.Element | null {
     formattedLastUpdatedAt,
     lastUpdatedBy,
     tags,
-    frontMatter
+    frontMatter,
   } = metadata;
-  const {hide_applause, hide_issue} = frontMatter
+  const { hide_applause, hide_issue } = frontMatter;
 
   const canDisplayTagsRow = tags.length > 0;
-  const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy || !hide_applause || !hide_issue);
+  const canDisplayEditMetaRow = !!(
+    editUrl ||
+    lastUpdatedAt ||
+    lastUpdatedBy ||
+    !hide_applause ||
+    !hide_issue
+  );
 
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
 
