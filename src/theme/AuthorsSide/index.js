@@ -22,7 +22,22 @@ export default function AuthorsSide({ className }) {
   const allAuthors = [];
   authors.forEach((author) => {
     if (globalAuthors[author]) {
-      allAuthors.push(globalAuthors[author]);
+      const docAuthor = {
+        url: globalAuthors[author].url ?? "https://github.com/" + author,
+        image_url:
+          globalAuthors[author].image_url ??
+          "https://github.com/" + author + ".png",
+        name: globalAuthors[author].name ?? "",
+        title: globalAuthors[author].title ?? "",
+      };
+      allAuthors.push(docAuthor);
+    } else {
+      const new_author = {
+        url: "https://github.com" + author,
+        image_url: "https://github.com/" + author + ".png",
+        name: author,
+      };
+      allAuthors.push(new_author);
     }
   });
   if (allAuthors.length === 0) {
