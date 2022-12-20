@@ -76,6 +76,3 @@ products
 ```
 
 By default, Docusaurus is configured to (recursively) process any `*.md` or `*.mdx` files inside the `products` folder(s). _However_, under most circumstances, contributors will likely be working on content for a single product or subset of products at a time. In those cases, why build the entire site if you don't have to?
-
-
-
