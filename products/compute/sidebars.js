@@ -32,7 +32,7 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`22-01`),
     },
-    "compute/api/compute-api-reference-home",
+    "compute/api/22-01/compute-api-reference-home",
     require("./api/22-01/sidebar"),
   ],
   compute_2206: [
@@ -47,7 +47,7 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`22-06`),
     },
-    "compute/api/compute-api-reference-home",
+    "compute/api/22-06/compute-api-reference-home",
     require("./api/22-06/sidebar"),
   ],
 };
