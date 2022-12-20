@@ -33,78 +33,91 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `severity` filter to find all events that are not
-notifications.
+The following request payload uses the `state`, `severity_id` and `updated-time` filters:
 
+`state` : The values for this filter are:
+
+- `Raised` : The alert has been raised to an IT specialist's attention.
+- `Cleared` : The alert has been cleared.
+
+`severity_id` : The values for this filter are:
+
+- `High` : 4
+- `Medium` : 3
+- `Low` : 2
+- `Informational` : 1
+
+`updated-time` : string, format example `2021-07-03 23:12:13 UTC`
+
+```json
+{
+  "properties": [
     {
-     "properties": [
-       {
-         "property": "alert_id"
-       },
-       {
-         "property": "severity"
-       },
-       {
-         "property": "message",
-         "alias": "Alert_Name"
-       },
-       {
-         "property": "raised_time"
-       },
-       {
-         "property": "updated_time",
-         "sort": {
-           "order": "desc",
-           "sequence": 2
-         }
-       },
-       {
-         "property": "state",
-         "sort": {
-           "order": "desc",
-           "sequence": 1
-         }
-       },
-       {
-         "property": "category"
-       },
-       {
-         "property": "code"
-       },
-       {
-         "property": "primary_impacted_objects",
-         "alias": "Primary_Impacted_Objects",
-         "function": "to_json_string"
-       },
-       {
-         "property": "clear_reason"
-       },
-       {
-         "property": "age"
-       },
-       {
-         "property": "resource_context",
-         "alias": "related_objects",
-         "function": "to_json_string"
-       }
-     ],
-     "filter": {
-       "rules": [
-         {
-           "property": "severity",
-           "operator": "not_in",
-           "values": [
-             "Notification"
-           ]
-         }
-       ]
-     },
-     "count": 100
+      "property": "alert_id"
+    },
+    {
+      "property": "severity"
+    },
+    {
+      "property": "message",
+      "alias": "Alert_Name"
+    },
+    {
+      "property": "raised_time"
+    },
+    {
+      "property": "updated_time",
+      "sort": {
+        "order": "desc",
+        "sequence": 2
+      }
+    },
+    {
+      "property": "state",
+      "sort": {
+        "order": "desc",
+        "sequence": 1
+      }
+    },
+    {
+      "property": "category"
+    },
+    {
+      "property": "code"
+    },
+    {
+      "property": "primary_impacted_objects",
+      "alias": "Primary_Impacted_Objects",
+      "function": "to_json_string"
+    },
+    {
+      "property": "clear_reason"
+    },
+    {
+      "property": "age"
+    },
+    {
+      "property": "resource_context",
+      "alias": "related_objects",
+      "function": "to_json_string"
     }
-
+  ],
+  "filter": {
+    "rules": [
+      {
+        "property": "severity",
+        "operator": "not_in",
+        "values": ["Notification"]
+      }
+    ]
+  },
+  "count": 100
+}
+```
 
 ## Request Response
 
+```json
     {
        "header": {
            "createdAt": "2022-10-17T16:28:15Z",
@@ -243,3 +256,4 @@ notifications.
            }
        ]
     }
+```

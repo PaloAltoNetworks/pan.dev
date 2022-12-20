@@ -9,6 +9,6 @@ The [Remote Networks Dashboard](https://docs.paloaltonetworks.com/prisma/prisma-
 allows you to view your Remote Network instances in real time. You can use the Prisma Access Insights
 APIs to retrieve the following dashboard data:
 
-* [Remote Network Bandwidth Consumption Over Time](/access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status)
-* [Remote Network Bandwidth Allocated](/access/docs/insights/examples/remote-networks-dashboard/rn-bandwidth-allocated)
-* [Remote Network Site List](/access/docs/insights/examples/remote-networks-dashboard/rn-list)
+- [Remote Network Bandwidth Consumption Over Time](/access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status)
+- [Remote Network Bandwidth Allocated](/access/docs/insights/examples/remote-networks-dashboard/rn-bandwidth-allocated)
+- [Remote Network Site List](/access/docs/insights/examples/remote-networks-dashboard/rn-list)

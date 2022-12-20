@@ -9,8 +9,8 @@ The [Alerts Dashboard](https://docs.paloaltonetworks.com/prisma/prisma-access/pr
 allows you to view your Prisma Access Insights Alerts. You can use the Prisma Access Insights
 APIs to retrieve the following dashboard data:
 
-* [External Alerts Current](/access/docs/insights/examples/alerts-dashboard/external-alerts-current)
-* [Current Alerts Generated](/access/docs/insights/examples/alerts-dashboard/current-alerts-generated)
-* [Open Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/open-alerts-overtime)
-* [Raised Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/raised-alerts-over-time)
-* [Cleared Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/cleared-alerts-over-time)
+- [External Alerts Current](/access/docs/insights/examples/alerts-dashboard/external-alerts-current)
+- [Current Alerts Generated](/access/docs/insights/examples/alerts-dashboard/current-alerts-generated)
+- [Open Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/open-alerts-overtime)
+- [Raised Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/raised-alerts-over-time)
+- [Cleared Alerts Over Time](/access/docs/insights/examples/alerts-dashboard/cleared-alerts-over-time)

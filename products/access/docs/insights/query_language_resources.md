@@ -23,7 +23,7 @@ The following _general_ resource queries are supported:
 
 ### Remote networks
 
- - tunnel-status. For an example, see [Remote Network Bandwidth Consumption Over Time](/access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status/).
+- tunnel-status. For an example, see [Remote Network Bandwidth Consumption Over Time](/access/docs/insights/examples/remote-networks-dashboard/rn-tunnel-status/).
 
 ### Service connections
 
