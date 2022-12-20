@@ -33,7 +33,7 @@ export default function AuthorsSide({ className }) {
       allAuthors.push(docAuthor);
     } else {
       const new_author = {
-        url: "https://github.com" + author,
+        url: "https://github.com/" + author,
         image_url: "https://github.com/" + author + ".png",
         name: author,
       };
