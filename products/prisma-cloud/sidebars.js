@@ -44,7 +44,7 @@ module.exports = {
   ],
   clouddocs: [
     "prisma-cloud/docs/home",
-    "prisma-cloud/docs/export-compliance-standard",
+    "prisma-cloud/docs/retrieve-compliance-standard",
     "prisma-cloud/docs/prisma-cloud-see-also",
   ],
 };
