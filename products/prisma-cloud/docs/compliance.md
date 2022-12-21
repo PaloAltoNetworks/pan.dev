@@ -26,11 +26,8 @@ curl --request GET \
 Let's say, you're interested in *SOC2 Compliance Standard*:
 ```json
 ...
-    "cloudType": [
-      "aws",
-      "alibaba_cloud"
-    ]
-  },
+  // Previous compliance standard
+  //},
   {
     "id": "51a30956-9e70-4112-8551-ad69b36381b1",
     "description": "SOC2 Compliance Standard",
@@ -47,11 +44,8 @@ Let's say, you're interested in *SOC2 Compliance Standard*:
       "azure"
     ]
   },
-  {
-    "id": "7b82d292-68f6-4fb1-b277-d646dbb1fffc",
-    "description": "Secure Controls Framework (SCF) - 2022.2.1",
-    "createdBy": "Prisma Cloud System Admin",
-    "createdOn": 1669795143357,
+  //{
+  // Next Compliance Standard
 ...
 ```
 
