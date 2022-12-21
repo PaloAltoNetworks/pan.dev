@@ -10,7 +10,8 @@ This guide shows how to export a specific **compliance standard** (along with it
  - for backup
  - to import into another tenant
 
-TODO: include a link to the **authentication step** prior to the main API call sequence
+* TODO: include a link to the **authentication step** prior to the main API call sequence
+* TODO: notify about the JWT TTL?
 
 Start by [getting a list of Compliance Standards](/cspm/api/get-all-standards/) ![alt text](/icons/api-icon-pan-dev.svg) which returns all system-supported and custom compliance standards:
 

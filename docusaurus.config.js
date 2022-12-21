@@ -70,6 +70,7 @@ const config = {
     docs: {
       sidebar: {
         hideable: true,
+        autoCollapseCategories: true,
       },
     },
     algolia: {
@@ -647,7 +648,7 @@ const config = {
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/cwpp/api",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           cspm: {
             specPath: "openapi-specs/cspm",
