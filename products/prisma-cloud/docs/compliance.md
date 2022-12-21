@@ -17,14 +17,14 @@ First of all, obtain an authorization token by [Logging In](/cspm/api/app-login/
 
 Start by [getting a list of Compliance Standards](/cspm/api/get-all-standards/) ![alt text](/icons/api-icon-pan-dev.svg) which returns all system-supported and custom compliance standards:
 
-```
+```console
 curl --request GET \
 --url https://api.prismacloud.io/compliance \
 --header 'x-redlock-auth: YOUR_TOKEN'
 ```
 
 Let's say, you're interested in *SOC2 Compliance Standard*:
-```
+```json
 ...
     "cloudType": [
       "aws",
