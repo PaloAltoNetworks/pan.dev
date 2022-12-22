@@ -118,7 +118,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoAlt: "Terraform Logo"
           },
           {
-            link: "/terraform/docs/cloudngfw",
+            link: "https://registry.terraform.io/providers/PaloAltoNetworks/prismacloud/latest/docs",
             text: "Docs"
           }
         ]
@@ -137,7 +137,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoAlt: "Terraform Logo"
           },
           {
-            link: "/terraform/docs/cloudngfw",
+            link: "https://registry.terraform.io/providers/PaloAltoNetworks/prismacloudcompute/latest/docs",
             text: "Docs"
           }
         ]
@@ -156,7 +156,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
             logoAlt: "Terraform Logo"
           },
           {
-            link: "/terraform/docs/cloudngfw",
+            link: "https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest/docs",
             text: "Docs"
           }
         ]
@@ -181,7 +181,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       cta: {
         type: "single",
         content: {
-          link: "https://registry.terraform.io/search/providers?namespace=PaloAltoNetworks",
+          link: "/terraform/docs/panos",
           logoSrc: "/img/product-landing/terraform/terraform-logo.png",
           logoAlt: "Terraform Logo"
         }
@@ -189,11 +189,11 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       links: [
         {
           path: "/terraform/docs/panos/tutorials/config-secpol-and-objs",
-          text: "Configuring objects and rules for PAN-OS next-generation firewalls"
+          text: "Configuring next-generation firewall objects and rules"
         },
         {
           path: "/terraform/docs/panos/tutorials/config-networking/",
-          text: "Defining firewall networking configuration"
+          text: "Defining next-generation firewall networking configuration"
         },
         {
           path: "/terraform/docs/panos/guides/panorama-config/",
@@ -206,7 +206,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       cta: {
         type: "single",
         content: {
-          link: "https://prisma.pan.dev/docs/cloud/cspm/tf/tf_example1",
+          link: "https://prisma.pan.dev/docs/cloud/cspm/tf/provider_doc",
           logoSrc: "/img/product-landing/terraform/terraform-logo.png",
           logoAlt: "Terraform Logo"
         }
@@ -214,7 +214,7 @@ export const TERRAFORM_USE_CASES_CONTENT = {
       links: [
         {
           path: "https://prisma.pan.dev/docs/cloud/cspm/tf/tf_example1",
-          text: "Examples of Prisma Cloud Terraform usage"
+          text: "Provision compliance standard (and requirement/sections), with saved searches and policies"
         },
       ]
     },
