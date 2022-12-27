@@ -1,0 +1,311 @@
+---
+id: policy-from-yaml
+title: Configure Policy from YAML
+sidebar_label: Configure Policy from YAML
+hide_title: true
+description: Configure Policy from YAML
+keywords:
+  - pan-os
+  - panos
+  - panorama
+  - xml
+  - api
+  - firewall
+  - configuration
+  - terraform
+---
+
+import Assumptions from "../_assumptions.md";
+import LabGuidance from "/products/shared/_lab-guidance.md";
+
+# Configure Policy from YAML
+
+The Terraform provider for PAN-OS provides a mechanism for you to adopt a policy-as-code approach, and ideally the source data for your policy will not be stored with the workflow definition; that is, the data that defines the rules in the policy (the source, the destination, the action, etc) will not be hard-coded into the Terraform code itself. One common approach is to store the policy definition in a source of structured data, such as YAML, which is maintained under version control. Then, similar to a GitOps approach, a workflow or pipeline would execute whenever the policy data is modified, and update the live policy in PAN-OS reflect the changes in the data source.
+
+In this guide, you will create Terraform code which will configure your security polices (firewall rules) from a YAML file as a source of structured data for your policy definition.
+
+<Assumptions />
+
+<LabGuidance />
+
+## Get Terraform ready for configuration
+
+First, ensure that you have declared the PAN-OS provider for use in your Terraform configuration, and provided credentials and a hostname to target. This is discussed in the [Setting Up](../../tutorials/setup/#pan-os-provider-declaration-and-configuration) tutorial and in the [Terraform Registry](https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest/docs#example-provider-usage).
+
+Note that the hostname used with the PAN-OS Terraform provider should be that of your Panorama.
+
+## YAML source data
+
+For this guide, you will use a source of structured data in YAML format. For the purposes of this guide, the file is called `policy.yml` and is stored in the local directory with the Terraform code.
+
+```yaml title="policy.yml"
+security_policies:
+  - name: "Allow DNS"
+    tags:
+      - infra
+    source_zones:
+      - app
+    source_addresses:
+      - 10.0.0.0/8
+      - 192.168.0.0/16
+    destination_zones:
+      - dmz
+    destination_addresses:
+      - 8.8.8.8
+    applications:
+      - dns
+    action: "allow"
+
+  - name: "Allow Internet access for Users"
+    tags:
+      - internet
+    source_zones:
+      - users
+    source_addresses:
+      - 192.168.0.0/16
+    destination_zones:
+      - internet
+    applications:
+      - ssl
+      - web-browsing
+    action: "allow"
+
+  - name: "Access to Mgmt Network - Allow Infra Team"
+    tags:
+      - infra
+    source_zones:
+      - users
+    source_users:
+      - "domain/infra-team"
+    source_addresses:
+      - 192.168.0.0/16
+    destination_zones:
+      - mgmt
+    applications:
+      - any
+    action: "allow"
+
+  - name: "Access to Mgmt Network - Cleanup"
+    tags:
+      - infra
+    source_zones:
+      - users
+    source_addresses:
+      - 192.168.0.0/16
+    destination_zones:
+      - mgmt
+    applications:
+      - any
+    action: "deny"
+```
+
+## Create Device Group and Security Profiles
+
+The first steps define a Device Group within which you will create the rules, and any Security Profiles which the policies will refer to:
+
+```hcl
+# Create a Device Group
+resource "panos_panorama_device_group" "dg1" {
+  name        = "policy-as-code"
+  description = "example device group for policy as code demo"
+}
+
+# Create an Anti-Virus Security Profile
+resource "panos_antivirus_security_profile" "av1" {
+  name         = "AV Protection"
+  device_group = panos_panorama_device_group.dg1.name
+  description  = "Example AV profile"
+
+  decoder { name = "smtp" }
+  decoder { name = "smb" }
+  decoder { name = "pop3" }
+  decoder { name = "imap" }
+  decoder {
+    name   = "http"
+    action = "reset-both"
+  }
+  decoder { name = "http2" }
+  decoder {
+    name   = "ftp"
+    action = "reset-both"
+  }
+}
+```
+
+## Create rules from YAML source data
+
+The final part of the Terraform code creates the security policy rules within the Device Group.
+
+Here, a `for_each` loop is used to iterate over each entry within the `security_policies` list within the YAML file. Each entry is a rule, and the rule values are used to create the PAN-OS rule attributes. A `format` statement uses the implicit key of the YAML data for indexing the rules, to ensure that the rules are created in PAN-OS in the same order as they appear in the YAML source file.
+
+```hcl
+resource "panos_panorama_security_rule_group" "this" {
+
+  device_group = panos_panorama_device_group.dg1.name
+
+  dynamic "rule" {
+    for_each = { for key, policy in yamldecode(file("./policy.yml")).security_policies : format("%.4d", key) => policy }
+    content {
+      name                  = rule.value.name
+      source_zones          = lookup(rule.value, "source_zones", ["any"])
+      source_addresses      = lookup(rule.value, "source_addresses", ["any"])
+      source_users          = lookup(rule.value, "source_users", ["any"])
+      destination_zones     = lookup(rule.value, "destination_zones", ["any"])
+      destination_addresses = lookup(rule.value, "destination_addresses", ["any"])
+      applications          = lookup(rule.value, "applications", ["any"])
+      services              = lookup(rule.value, "services", ["application-default"])
+      categories            = lookup(rule.value, "categories", ["any"])
+      virus                 = panos_antivirus_security_profile.av1.name
+      action                = lookup(rule.value, "action", "allow")
+    }
+  }
+}
+```
+
+## Confirm source data is translated into PAN-OS
+
+When executing `terraform plan`, the results should show that the 4 rules defined in the `policy.yml` file have been interpreted by Terraform, and converted into PAN-OS rules, ready to be added to Panorama's candidate configuration with `terraform apply`:
+
+```hcl
+  # panos_panorama_security_rule_group.this will be created
+  + resource "panos_panorama_security_rule_group" "this" {
+      + device_group = "policy-as-code"
+      + id           = (known after apply)
+      + rulebase     = "pre-rulebase"
+      + vsys         = "vsys1"
+
+      + rule {
+          + action                = "allow"
+          + applications          = [
+              + "dns",
+            ]
+          + categories            = [
+              + "any",
+            ]
+          + destination_addresses = [
+              + "8.8.8.8",
+            ]
+          + destination_zones     = [
+              + "dmz",
+            ]
+          + log_end               = true
+          + name                  = "Z Allow DNS"
+          + services              = [
+              + "application-default",
+            ]
+          + source_addresses      = [
+              + "10.0.0.0/8",
+              + "192.168.0.0/16",
+            ]
+          + source_users          = [
+              + "any",
+            ]
+          + source_zones          = [
+              + "app",
+            ]
+          + type                  = "universal"
+          + uuid                  = (known after apply)
+          + virus                 = "AV Protection"
+        }
+      + rule {
+          + action                = "allow"
+          + applications          = [
+              + "ssl",
+              + "web-browsing",
+            ]
+          + categories            = [
+              + "any",
+            ]
+          + destination_addresses = [
+              + "any",
+            ]
+          + destination_zones     = [
+              + "internet",
+            ]
+          + log_end               = true
+          + name                  = "Allow Internet access for Users"
+          + services              = [
+              + "application-default",
+            ]
+          + source_addresses      = [
+              + "192.168.0.0/16",
+            ]
+          + source_users          = [
+              + "any",
+            ]
+          + source_zones          = [
+              + "users",
+            ]
+          + type                  = "universal"
+          + uuid                  = (known after apply)
+          + virus                 = "AV Protection"
+        }
+      + rule {
+          + action                = "allow"
+          + applications          = [
+              + "any",
+            ]
+          + categories            = [
+              + "any",
+            ]
+          + destination_addresses = [
+              + "any",
+            ]
+          + destination_zones     = [
+              + "mgmt",
+            ]
+          + log_end               = true
+          + name                  = "Access to Mgmt Network - Allow Infra Team"
+          + services              = [
+              + "application-default",
+            ]
+          + source_addresses      = [
+              + "192.168.0.0/16",
+            ]
+          + source_users          = [
+              + "domain/infra-team",
+            ]
+          + source_zones          = [
+              + "users",
+            ]
+          + type                  = "universal"
+          + uuid                  = (known after apply)
+          + virus                 = "AV Protection"
+        }
+      + rule {
+          + action                = "deny"
+          + applications          = [
+              + "any",
+            ]
+          + categories            = [
+              + "any",
+            ]
+          + destination_addresses = [
+              + "any",
+            ]
+          + destination_zones     = [
+              + "mgmt",
+            ]
+          + log_end               = true
+          + name                  = "Access to Mgmt Network - Cleanup"
+          + services              = [
+              + "application-default",
+            ]
+          + source_addresses      = [
+              + "192.168.0.0/16",
+            ]
+          + source_users          = [
+              + "any",
+            ]
+          + source_zones          = [
+              + "users",
+            ]
+          + type                  = "universal"
+          + uuid                  = (known after apply)
+          + virus                 = "AV Protection"
+        }
+```
+
+## Apply the rules to PAN-OS policy
+
+The final step is to use `terraform apply` to make your rule changes in the PAN-OS candidate configuration, ready for commit and push to your NGFWs.

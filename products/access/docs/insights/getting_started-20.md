@@ -6,7 +6,7 @@ sidebar_label: Get Started 2.0
 ---
 
 Palo Alto Networks® Prisma Access Insights APIs allows you to continuously monitor the health and
-performance of your Prisma Access environment using Insights in the Prisma Access app. 
+performance of your Prisma Access environment using Insights in the Prisma Access app.
 
 This document provides information about getting started with Prisma Access Insights 2.0 APIs. The
 2.0 APIs are intended for cloud-managed Prisma Access customers, where the tenants have been
@@ -17,10 +17,10 @@ name, and look in the **Manage Apps** section.
 ## API Request Overview
 
 The Prisma Access Insights APIs allow you to retrieve selected information from the Prisma Access
-Insights platform. All Prisma Access 2.0 API requests must use HTTPS, and they must use HTTP/1.1. 
-They also must use an access token. To obtain an access token, you use the same process as the 
+Insights platform. All Prisma Access 2.0 API requests must use HTTPS, and they must use HTTP/1.1.
+They also must use an access token. To obtain an access token, you use the same process as the
 other SASE APIs. That is, you must have a TSG and a service account that has role access to your
-Prisma Access Insights instance. To understand this process, see 
+Prisma Access Insights instance. To understand this process, see
 [Prisma SASE API Get Started](/sase/docs/getstarted).
 
 ## Base URLs
@@ -32,32 +32,31 @@ All requests go to the same base URL:
 
 `https://pa-<region>.api.prismaaccess.com`
 
-where *&lt;region&gt;* identifies your tenant's Cortex Data Lake (CDL) region. Available
+where _&lt;region&gt;_ identifies your tenant's Cortex Data Lake (CDL) region. Available
 regions are:
 
-| Region | URL |
----------|-----|
-| US | pa-us01.api.prismaaccess.com |
-| EU | pa-eu01.api.prismaaccess.com |
-| UK | pa-uk01.api.prismaaccess.com |
+| Region    | URL                          |
+| --------- | ---------------------------- |
+| US        | pa-us01.api.prismaaccess.com |
+| EU        | pa-eu01.api.prismaaccess.com |
+| UK        | pa-uk01.api.prismaaccess.com |
 | Singapore | pa-sg01.api.prismaaccess.com |
-| Canada | pa-ca01.api.prismaaccess.com |
-| Japan | pa-jp01.api.prismaaccess.com |
+| Canada    | pa-ca01.api.prismaaccess.com |
+| Japan     | pa-jp01.api.prismaaccess.com |
 | Australia | pa-au01.api.prismaaccess.com |
-| Germany | pa-de01.api.prismaaccess.com |
-| India | pa-in01.api.prismaaccess.com |
+| Germany   | pa-de01.api.prismaaccess.com |
+| India     | pa-in01.api.prismaaccess.com |
 
 You chose your region when you initially configured your Prisma Access Insights
-instance. 
+instance.
 
 ## Full API URL
 
 The full URL for an API request includes the base URL, plus the API URI described in the API
-reference documentation. For example, a customer using the US region 
+reference documentation. For example, a customer using the US region
 can query for external alerts using:
 
 `https://pa-us01.api.prismaaccess.com/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current`
-
 
 ## Sample: API Request
 
@@ -75,5 +74,4 @@ API call using the `Prisma-Tenant` custom HTTP header.
     curl -o --location "https://<TENANT_REGION_API_SERVER>/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current" \
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Prisma-Tenant <TSG_ID>" \
-        -H "Content-Type: application/json" 
-
+        -H "Content-Type: application/json"

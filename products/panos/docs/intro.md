@@ -32,8 +32,8 @@ The [PAN-OS REST API](./restapi.md) simplifies access to resources as high-level
 The [`pan-os-python` SDK framework](./pan-os-python.md) helps interact with PAN-OS devices when your chosen language is Python. It is object-oriented and mimics the traditional interaction with the device via the GUI, CLI or XML API. It is also part of the underpinnings of the [PAN-OS Ansible collection](/ansible/docs/panos/).
 
 <!---
-## ```pan-python``` (Python)
-The [```pan-python``` SDK](./pan-python.md) is a set of powerful, low-level Python packages for interacting with PAN-OS, WildFire, AutoFocus and more. It is also part of the underpinnings of the [PAN-OS Ansible collection](/ansible/docs/panos/).
+## `pan-python` (Python)
+The [`pan-python` SDK](./pan-python.md) is a set of powerful, low-level Python packages for interacting with PAN-OS, WildFire, AutoFocus and more. It is also part of the underpinnings of the [PAN-OS Ansible collection](/ansible/docs/panos/).
 -->
 
 ## `pan-os-go` (Go)
