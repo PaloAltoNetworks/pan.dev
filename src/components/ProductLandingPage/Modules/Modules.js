@@ -1,8 +1,8 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import './Modules.scss';
+import React from "react";
+import Link from "@docusaurus/Link";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import "./Modules.scss";
 
 function Modules({ header, modules }) {
   const renderModules = () => {
@@ -10,7 +10,7 @@ function Modules({ header, modules }) {
       const moduleItem = modules[module];
       return (
         <Tabs key={i} className="modules-tabs">
-          {moduleItem.map((moduleContent, i) =>
+          {moduleItem.map((moduleContent, i) => (
             <TabItem
               key={i}
               className="modules-tabs__item"
@@ -18,13 +18,26 @@ function Modules({ header, modules }) {
               label={moduleContent.tabLabel}
             >
               <h3>
-                {moduleContent.title}
-                {moduleContent.latestTag &&
-                  <span className="latest-tag">
-                    {moduleContent.latestTag}
-                  </span>}
+                {moduleContent.link ? (
+                  <Link className="tabs-item__link" to={moduleContent.link}>
+                    {moduleContent.title}
+                    {moduleContent.latestTag && (
+                      <span className="latest-tag">
+                        {moduleContent.latestTag}
+                      </span>
+                    )}
+                  </Link>
+                ) : (
+                  <>
+                    {moduleContent.title}
+                    {moduleContent.latestTag && (
+                      <span className="latest-tag">
+                        {moduleContent.latestTag}
+                      </span>
+                    )}
+                  </>
+                )}
               </h3>
-
               {moduleContent.description}
               <div className="tab-item__logo-container">
                 {moduleContent.footerLogos.map((logoItem, i) => {
@@ -38,7 +51,7 @@ function Modules({ header, modules }) {
                           alt={logoItem.logoAlt}
                         />
                       </Link>
-                    )
+                    );
                   }
                   return (
                     <img
@@ -47,26 +60,24 @@ function Modules({ header, modules }) {
                       src={logoItem.logoSrc}
                       alt={logoItem.logoAlt}
                     />
-                  )
+                  );
                 })}
               </div>
             </TabItem>
-          )}
+          ))}
         </Tabs>
-      )
-    })
-  }
+      );
+    });
+  };
 
   return (
     <div className="modules-container">
       <section className="container">
-        <header className="modules-header">
-          {header}
-        </header>
+        <header className="modules-header">{header}</header>
         {renderModules()}
       </section>
     </div>
-  )
+  );
 }
 
-export default Modules
+export default Modules;
