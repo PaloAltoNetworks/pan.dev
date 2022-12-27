@@ -6,7 +6,12 @@ slug: /access/docs/insights
 # Prisma Access Insights API
 
 Welcome to the Prisma Access Insights APIs. These APIs allow you to query your Prisma Access
-Insights tenants for data resources.
+Insights tenants for data resources. The queries that you create are retrieving information
+from a large data lake. The APIs that you use identify the data resource that you want to query.
+The payloads for these queries are JSON objects that define the actual query. For a description
+of the query language, see [/access/docs/insights/pai_query_language/](Prisma Access Insights Query Language).
+For examples of creating requests to retrieve specific information, see
+[Prisma Access Insights Examples](/access/docs/insights/examples/).
 
 There are two versions of the APIs. The Prisma Access Insights 2.0 and 1.0 APIs both allow you to
 query your Prisma Access tenant for the health of your Prisma Access network deployment.

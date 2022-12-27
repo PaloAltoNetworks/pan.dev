@@ -19,8 +19,20 @@ module.exports = {
         {
           type: "category",
           collapsed: true,
+          label: "Configuration Tasks",
+          items: [
+            "ansible/docs/panos/tutorials/config-secpol-and-objs",
+            "ansible/docs/panos/tutorials/config-networking",
+          ],
+        },
+        {
+          type: "category",
+          collapsed: true,
           label: "Operations Tasks",
-          items: ["ansible/docs/panos/tutorials/operations-checkready"],
+          items: [
+            "ansible/docs/panos/tutorials/operations-checkready",
+            "ansible/docs/panos/tutorials/operations-upgrade-firewall",
+          ],
         },
       ],
     },
@@ -36,13 +48,17 @@ module.exports = {
           items: [
             "ansible/docs/panos/guides/config-xpath",
             "ansible/docs/panos/guides/panorama-push",
+            "ansible/docs/panos/guides/use-config-lock",
+            "ansible/docs/panos/guides/import-load-config",
+            "ansible/docs/panos/guides/csv-address-objects",
+            "ansible/docs/panos/guides/search-and-remove",
           ],
         },
         {
           type: "category",
           collapsed: true,
           label: "Operations Tasks",
-          items: ["ansible/docs/panos/guides/upgrade-single"],
+          items: ["ansible/docs/panos/guides/offline-content-software-upgrade"],
         },
       ],
     },

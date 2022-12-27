@@ -1,0 +1,271 @@
+---
+id: offline-content-software-upgrade
+title: Upgrade Content and Software Offline
+sidebar_label: Upgrade Content and Software Offline
+hide_title: true
+description: Upgrade Content and Software Offline
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+---
+
+import Assumptions from "../_assumptions.md";
+import LabGuidance from "/products/shared/_lab-guidance.md";
+
+# Offline Content and Software Installation
+
+This guide describes the steps to perform a PAN-OS software upgrade, and a potential prerequisite content update (also known as Dynamic Updates), in an "offline" or "air-gap" scenario, where the PAN-OS device does not have access to the Internet.
+
+The default behavior for software and content installation tasks, using the `panos_software` and `panos_dynamic_updates` modules respectively from the PAN-OS collection, is for the PAN-OS device to download the required version(s) from the Internet during the task execution. There are many scenarios where this is not feasible, due to complete lack of Internet, or due to low bandwidth or high latency Internet connectivity. In these scenarios, the required software and content versions can be downloaded ahead of time from the [Customer Support Portal](https://support.paloaltonetworks.com) and the installation can proceed using these offline files instead of downloading the files from the Internet at execution time.
+
+<Assumptions />
+
+<LabGuidance />
+
+## Create playbook file and define connectivity to the firewall
+
+Create a new Ansible yaml file named `upgrade-firewall-offline.yml`, establish a variable block called `device` for the firewall, and reference the PAN-OS collection.
+
+Also, for the purposes of this guide we are hardcoding some variables to refer to the names of the offline files, the target version of PAN-OS, and a boolean to represent whether we want to reboot the firewall after the upgrade in order to make the new version live (sometimes this is delayed until a later change window). Instead of hardcoding, the values for these variables could be passed in from Ansible Automation Platform, or via the CLI, for example: `ansible-playbook upgrade-firewall-offline.yml -e "reboot_firewall=true"`.
+
+```yaml
+---
+- name: Upgrade firewall and content offline
+  hosts: '{{ target | default("firewall") }}'
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username | default(omit) }}"
+      password: "{{ password | default(omit) }}"
+      api_key: "{{ api_key | default(omit) }}"
+
+    // highlight-start
+    content_file: "panupv2-all-contents-8644-7712"
+    software_file: "PanOS_vm-10.1.8"
+    software_version: "10.1.8"
+    reboot_firewall: false
+    // highlight-end
+
+  collections:
+    - paloaltonetworks.panos
+```
+
+## Import and install content
+
+Each version of PAN-OS has a required minimum version of content (also known as "Dynamic Updates" or "apps") before it can be installed. Some organizations routinely upgrade content to recent versions, so this section might not be required. The first task of this playbook uploads a content file from a location accessible to the host executing Ansible. As previously mentioned, you may wish to pass in the file name and location as values at runtime.
+
+```yaml
+tasks:
+  - name: Import content file into PAN-OS
+    paloaltonetworks.panos.panos_import:
+      provider: "{{ device }}"
+      category: content
+      file: "{{ content_file }}"
+```
+
+The second task installs the content which has just been uploaded, and stores the response as this will be used to track the installation progress.
+
+```yaml
+- name: Start content installation
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><content><upgrade><install><skip-content-validity-check>yes</skip-content-validity-check><file>{{ content_file }}</file></install></upgrade></content></request>"
+    cmd_is_xml: true
+  register: contentinstall
+```
+
+## Monitor content installation progress
+
+The next task takes the response from the installation request and parses out the Job ID for the installation:
+
+```yaml
+- name: Get job ID for content install
+  community.general.xml:
+    xmlstring: "{{ contentinstall.stdout_xml }}"
+    xpath: /response[@status='success']/result/job
+    content: text
+  register: content_jobid
+```
+
+With the Job ID identified, the next task checks the progress of the job every 5 seconds, looping until the job is finished. There is logic to detect failure, the assumption being that you do not want to proceed with the PAN-OS software installation if the prerequisite content installation did not succeed.
+
+```yaml
+- name: Check content install job until completion
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<show><jobs><id>{{ content_jobid.matches[0].job }}</id></jobs></show>"
+    cmd_is_xml: true
+  register: content_result
+  until: (content_result.stdout | from_json).response.result.job.status == "FIN"
+  retries: 100
+  delay: 5
+  failed_when: (content_result.stdout | from_json).response.result.job.result == "FAIL"
+```
+
+## Import and install software
+
+Having successfully installed the prerequisite content version, you can move onto the software upgrade. The first task is to upload the software as a file from a location accessible to the host executing Ansible. As previously mentioned, you may wish to pass in the file name and location as values at runtime.
+
+```yaml
+- name: Import software image into PAN-OS
+  paloaltonetworks.panos.panos_import:
+    provider: "{{ device }}"
+    category: software
+    file: "{{ software_file }}"
+```
+
+The next tasks installs the software which has just been uploaded, and stores the response as this will be used to track the installation progress.
+
+```yaml
+- name: Install software
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "request system software install version {{ software_version }}"
+  register: softwareinstall
+```
+
+## Monitor software installation progress
+
+The next task takes the response from the installation request and parses out the Job ID for the installation:
+
+```yaml
+- name: Get job ID for software install
+  community.general.xml:
+    xmlstring: "{{ softwareinstall.stdout_xml }}"
+    xpath: /response[@status='success']/result/job
+    content: text
+  register: software_jobid
+```
+
+With the Job ID identified, the next task checks the progress of the job every 5 seconds, looping until the job is finished. There is logic to detect failure, such that the playbook execution result will accurately mirror the installation result.
+
+```yaml
+- name: Check software install job until completion
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<show><jobs><id>{{ software_jobid.matches[0].job }}</id></jobs></show>"
+    cmd_is_xml: true
+  register: software_result
+  until: (software_result.stdout | from_json).response.result.job.status == "FIN"
+  retries: 100
+  delay: 5
+  failed_when: (software_result.stdout | from_json).response.result.job.result != "OK"
+```
+
+## Reboot, if required
+
+The final task is to reboot the firewall. A reboot is required to make the new software version live, but it is optional to do the reboot directly after the software install. Hence the variable at the start of the playbook to control whether the reboot happens, and also the conditional logic here to only reboot when required. The reboot is also only performed if the software installation was completed successfully.
+
+```yaml
+- name: Reboot if requested
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><restart><system></system></restart></request>"
+    cmd_is_xml: true
+  when:
+    - reboot_firewall
+    - (software_result.stdout | from_json).response.result.job.result == "OK"
+```
+
+## Final playbook
+
+Putting all the sections together, the playbook in entirety looks like this:
+
+```yaml
+---
+- name: Upgrade firewall and content offline
+  hosts: "firewall"
+  connection: local
+
+  vars:
+    device:
+      ip_address: "{{ ip_address }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+    content_file: "panupv2-all-contents-8644-7712"
+    software_file: "PanOS_vm-10.1.8"
+    software_version: "10.1.8"
+    reboot_firewall: false
+
+  collections:
+    - paloaltonetworks.panos
+
+  tasks:
+    - name: Import content file into PAN-OS
+      paloaltonetworks.panos.panos_import:
+        provider: "{{ device }}"
+        category: content
+        file: "{{ content_file }}"
+
+    - name: Start content installation
+      paloaltonetworks.panos.panos_op:
+        provider: "{{ device }}"
+        cmd: "<request><content><upgrade><install><skip-content-validity-check>yes</skip-content-validity-check><file>{{ content_file }}</file></install></upgrade></content></request>"
+        cmd_is_xml: true
+      register: contentinstall
+
+    - name: Get job ID for content install
+      community.general.xml:
+        xmlstring: "{{ contentinstall.stdout_xml }}"
+        xpath: /response[@status='success']/result/job
+        content: text
+      register: content_jobid
+
+    - name: Check content install job until completion
+      paloaltonetworks.panos.panos_op:
+        provider: "{{ device }}"
+        cmd: "<show><jobs><id>{{ content_jobid.matches[0].job }}</id></jobs></show>"
+        cmd_is_xml: true
+      register: content_result
+      until: (content_result.stdout | from_json).response.result.job.status == "FIN"
+      retries: 100
+      delay: 5
+      failed_when: (content_result.stdout | from_json).response.result.job.result == "FAIL"
+
+    - name: Import software image into PAN-OS
+      paloaltonetworks.panos.panos_import:
+        provider: "{{ device }}"
+        category: software
+        file: "{{ software_file }}"
+
+    - name: Install software
+      paloaltonetworks.panos.panos_op:
+        provider: "{{ device }}"
+        cmd: "request system software install version {{ software_version }}"
+      register: softwareinstall
+
+    - name: Get job ID for software install
+      community.general.xml:
+        xmlstring: "{{ softwareinstall.stdout_xml }}"
+        xpath: /response[@status='success']/result/job
+        content: text
+      register: software_jobid
+
+    - name: Check software install job until completion
+      paloaltonetworks.panos.panos_op:
+        provider: "{{ device }}"
+        cmd: "<show><jobs><id>{{ software_jobid.matches[0].job }}</id></jobs></show>"
+        cmd_is_xml: true
+      register: software_result
+      until: (software_result.stdout | from_json).response.result.job.status == "FIN"
+      retries: 100
+      delay: 5
+      failed_when: (software_result.stdout | from_json).response.result.job.result != "OK"
+
+    - name: Reboot if requested
+      paloaltonetworks.panos.panos_op:
+        provider: "{{ device }}"
+        cmd: "<request><restart><system></system></restart></request>"
+        cmd_is_xml: true
+      when:
+        - reboot_firewall
+        - (software_result.stdout | from_json).response.result.job.result == "OK"
+```

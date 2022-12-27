@@ -1,0 +1,51 @@
+---
+id: request-domain-categorization-change
+title: Request Domain Categorization Change
+description: DNS Security API example showing how to submit a change request for a domain's categorization.
+hide_title: false
+hide_table_of_contents: false
+keywords:
+  - security subscription
+---
+
+The API Reference information for retrieving domain information can be found [here](/dns-security/api/public-api-v-1-domain-info).
+
+## Overview
+
+The DNS Security API can be used to submit batch requests to request a change for a specified domain's categorization, which is typically determine based analysis through the DNS Security subscription service and other supporting Palo Alto Networks services.
+
+Keep a few things in mind when formatting your API query:
+
+1. All the query strings in Get requests must be a URL-Encoded parameter string. If you use a space in the URL-Encoded request, you must include either a plus sign (+) or %20 to replace the space.
+2. You can specify the content type of the request body and response by specifying the Content-Type header. Some responses generate an HTTP response in addition to a JSON object.
+3. Do not embed API keys in code or application source tree files. This can inadvertently expose the API key. Instead, consider storing the API key in environmental variables or files that are excluded from your application source tree files.
+
+## Example 1: Request a categorization change for multiple domains in batch mode.
+
+If an email address is not specified, as in the example below, the status email sent from `no-reply-url-feedback@paloaltonetworks.com` will be sent to the email address associated with the API key used to submit the request. Each referenced domain in the change request must include a domain, the suggested category, and the reason for the category change.
+
+```shell-session
+curl -X POST -d '{"changeRequests": [{"comment": "This domain is malicious","domain": "portal.dynect.net","suggestedCategory": "malware"},{"comment": "Antivirus triggered","domain": "azr-iad1.rum.dynapis.com","suggestedCategory": "malware"}]}' 'https://api.dns.service.paloaltonetworks.com/v1/domain/changerequest' \
+  -H 'X-DNS-API-APIKEY: api_key' \
+  -H 'Content-Type: application/json'
+```
+
+A successful API call returns an HTTP response code of 200, indicating success; additionally, the API provides a message confirming the request has been received.
+
+```json
+{
+  "success": true,
+  "message": "Change request has been successfully submitted."
+}
+```
+
+Additionally, an email is sent to notify you that the request has been received:
+
+Thank you for submitting a URL re-categorization request. We will review the request and notify you via email of our decision as soon as possible.
+
+To prevent notifications from going to your spam folder, please add no-reply-url-feedback@paloaltonetworks.com to your email allow-list.
+
+Note: This is an unmonitored mailbox. Please do not reply to this email, as your response may not be received. If follow-up is required, please contact Palo Alto Networks support.
+
+Regards,
+Palo Alto Networks

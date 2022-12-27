@@ -19,11 +19,11 @@ In a POST request body, you will provide a required filter. This is a json objec
 
 In a POST request body, you will also provide required properties. This is an array of objects. Property field names will be returned in the API response. You can use one or more properties to customize the response, but you can also use most of the examples in the API reference just as they are.
 
-For example, the following POST request body for 
+For example, the following POST request body for
 [List Threat Summary](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-threats-summary/)
-contains a filter with rules of 
-[ThreatSummaryRule](#threatsummaryrule) and 
-[TimeFilter](#timefilter), and properties of 
+contains a filter with rules of
+[ThreatSummaryRule](#threatsummaryrule) and
+[TimeFilter](#timefilter), and properties of
 [ThreatSummaryProperty](#threatsummaryproperty):
 
     {
@@ -146,15 +146,15 @@ For example:
         "rule": "app_risky"
       }...
 
-### CDLStatusRule ###
+### CDLStatusRule
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | --- |
-| property | string | Property field name. Must be `status`.
-| operator | string | Operator to run on the `property` field. Must be `in`.
-| values | array of strings | Property value. Can be `Up` or `Down` when property is `status`.
+| Property | Type             | Description                                                      |
+| -------- | ---------------- | ---------------------------------------------------------------- |
+| property | string           | Property field name. Must be `status`.                           |
+| operator | string           | Operator to run on the `property` field. Must be `in`.           |
+| values   | array of strings | Property value. Can be `Up` or `Down` when property is `status`. |
 
 For example:
 
@@ -169,15 +169,15 @@ For example:
         ]
       }...
 
-### OutlierRule  ###
+### OutlierRule
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | --- |
-| property | string | Property field name. Must be `node_type`.
-| operator | string | Operator to run on the `property` field. Must be `in`.
-| values | array of strings | Property value. Can be `48` or `49` when property is `node_type`.
+| Property | Type             | Description                                                       |
+| -------- | ---------------- | ----------------------------------------------------------------- |
+| property | string           | Property field name. Must be `node_type`.                         |
+| operator | string           | Operator to run on the `property` field. Must be `in`.            |
+| values   | array of strings | Property value. Can be `48` or `49` when property is `node_type`. |
 
 For example:
 
@@ -443,14 +443,14 @@ For example:
           }
         ]
 
-### CDLStatusProperty ###
+### CDLStatusProperty
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | :--|
-| alias | string | Change a property field name to a different name of your choice.
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`state`</li><li>`location_count`</li></ul>
+| Property | Type   | Description                                                                                                                                                                 |
+| -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`state`</li><li>`location_count`</li></ul> |
 
 For example:
 
@@ -466,14 +466,14 @@ For example:
         }
       ]
 
-### GatewayStatusProperty ###
+### GatewayStatusProperty
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | :--|
-| alias | string | Change a property field name to a different name of your choice.
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`status`</li><li>`gateway_count`</li></ul>
+| Property | Type   | Description                                                                                                                                                                 |
+| -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`status`</li><li>`gateway_count`</li></ul> |
 
 For example:
 
@@ -489,14 +489,14 @@ For example:
         }
       ]
 
-### OutliersProperty ###
+### OutliersProperty
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | :--|
-| alias | string | Change a property field name to a different name of your choice.
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`site_name`</li><li>`bandwidth_consumed`</li><li>`unit`</li></ul>
+| Property | Type   | Description                                                                                                                                                                |
+| -------- | ------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| alias    | string | Change a property field name to a different name of your choice.                                                                                                           |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`site_name`</li><li>`bandwidth_consumed`</li><li>`unit`</li></ul> |
 
 For example:
 
@@ -624,13 +624,13 @@ For example:
         }
       ]
 
-### UniqueUserProperty ###
+### UniqueUserProperty
 
 Object with the following properties:
 
-| Property | Type | Description |
-| --- | --- | --- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `user_count`
+| Property | Type   | Description                                                                                                   |
+| -------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: `user_count` |
 
 For example:
 
