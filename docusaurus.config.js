@@ -558,6 +558,7 @@ const config = {
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: {
               groupPathsBy: "tag",
             },

@@ -41,7 +41,10 @@ function FeaturedCard({ colorclass, description, label, products }) {
   }
 
   const leftProductColumn = products.slice(0, Math.floor(products.length / 2));
-  const rightProductColumn = products.slice(Math.floor(products.length / 2), products.length);
+  const rightProductColumn = products.slice(
+    Math.floor(products.length / 2),
+    products.length
+  );
 
   return (
     <div className={clsx("featured-card-container", colorclass)}>

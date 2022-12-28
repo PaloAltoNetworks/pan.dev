@@ -33,25 +33,28 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-    {
-     "count": 5
-    }
-
+```json
+{
+  "count": 5
+}
+```
 
 ## Request Response
 
-    {
-       "header": {
-           "createdAt": "2022-10-13T18:28:45Z",
-           "dataCount": 1,
-           "requestId": "4c7d9811-59be-43e6-9e40-c59167acd69b",
-           "status": {
-               "subCode": 200
-           }
-       },
-       "data": [
-           {
-               "user_count": 1
-           }
-       ]
+```json
+{
+  "header": {
+    "createdAt": "2022-10-13T18:28:45Z",
+    "dataCount": 1,
+    "requestId": "4c7d9811-59be-43e6-9e40-c59167acd69b",
+    "status": {
+      "subCode": 200
     }
+  },
+  "data": [
+    {
+      "user_count": 1
+    }
+  ]
+}
+```
