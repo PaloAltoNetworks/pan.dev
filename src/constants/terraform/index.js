@@ -278,8 +278,6 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc:
-              "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest",
           },
           {
             logoSrc: "/img/product-landing/terraform/aws-logo.png",
@@ -310,8 +308,6 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc:
-              "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest",
           },
           {
             logoSrc: "/img/product-landing/terraform/gcp-logo.svg",
@@ -342,8 +338,6 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc:
-              "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest",
           },
           {
             logoSrc: "/img/product-landing/terraform/azure-logo.svg",
@@ -380,13 +374,10 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc:
-              "https://registry.terraform.io/modules/PaloAltoNetworks/ag-dag-nia/panos/latest",
           },
           {
             logoSrc: "/img/product-landing/terraform/consul-logo.png",
             logoAlt: "Azure logo",
-            linkSrc: "https://www.consul.io/",
           },
         ],
       },
@@ -416,13 +407,10 @@ export const TERRAFORM_MODULES_CONTENT = {
           {
             logoSrc: "/img/product-landing/terraform/terraform-logo.png",
             logoAlt: "Terraform logo",
-            linkSrc:
-              "https://registry.terraform.io/modules/PaloAltoNetworks/dag-nia/panos/latest",
           },
           {
             logoSrc: "/img/product-landing/terraform/consul-logo.png",
             logoAlt: "Azure logo",
-            linkSrc: "https://www.consul.io/",
           },
         ],
       },
