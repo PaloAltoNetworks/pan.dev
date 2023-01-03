@@ -39,29 +39,47 @@ function Modules({ header, modules }) {
                 )}
               </h3>
               {moduleContent.description}
-              <div className="tab-item__logo-container">
-                {moduleContent.footerLogos.map((logoItem, i) => {
-                  const containsLink = logoItem.linkSrc?.length ?? false;
-                  if (containsLink) {
+              <div className="tab-item__footer-container">
+                <div className="tab-item__logo-container">
+                  {moduleContent.footerLogos.map((logoItem, i) => {
+                    const containsLink = logoItem.linkSrc?.length ?? false;
+                    if (containsLink) {
+                      return (
+                        <Link
+                          key={i}
+                          className="logo-link"
+                          to={logoItem.linkSrc}
+                        >
+                          <img
+                            className="tab-item__logo"
+                            src={logoItem.logoSrc}
+                            alt={logoItem.logoAlt}
+                          />
+                        </Link>
+                      );
+                    }
                     return (
-                      <Link key={i} className="logo-link" to={logoItem.linkSrc}>
-                        <img
-                          className="tab-item__logo"
-                          src={logoItem.logoSrc}
-                          alt={logoItem.logoAlt}
-                        />
-                      </Link>
+                      <img
+                        key={i}
+                        className="tab-item__logo"
+                        src={logoItem.logoSrc}
+                        alt={logoItem.logoAlt}
+                      />
                     );
-                  }
-                  return (
-                    <img
-                      key={i}
-                      className="tab-item__logo"
-                      src={logoItem.logoSrc}
-                      alt={logoItem.logoAlt}
-                    />
-                  );
-                })}
+                  })}
+                </div>
+                <a
+                  href={moduleContent.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="tab-item__link"
+                >
+                  <span class="card-cta__text">Learn More</span>
+                  <img
+                    src="/img/icons/arrow-forward.svg"
+                    alt="Forward arrow icon"
+                  />
+                </a>
               </div>
             </TabItem>
           ))}
