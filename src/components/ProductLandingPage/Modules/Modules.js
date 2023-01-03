@@ -42,8 +42,8 @@ function Modules({ header, modules }) {
               <div className="tab-item__footer-container">
                 <div className="tab-item__logo-container">
                   {moduleContent.footerLogos.map((logoItem, i) => {
-                    const containsLink = logoItem.linkSrc?.length ?? false;
-                    if (containsLink) {
+                    const containsLogoLink = logoItem.linkSrc?.length ?? false;
+                    if (containsLogoLink) {
                       return (
                         <Link
                           key={i}
@@ -68,18 +68,15 @@ function Modules({ header, modules }) {
                     );
                   })}
                 </div>
-                <a
-                  href={moduleContent.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="tab-item__link"
-                >
-                  <span class="card-cta__text">Learn More</span>
-                  <img
-                    src="/img/icons/arrow-forward.svg"
-                    alt="Forward arrow icon"
-                  />
-                </a>
+                {moduleContent.link && (
+                  <Link to={moduleContent.link} className="tab-item__link">
+                    <span class="card-cta__text">Learn More</span>
+                    <img
+                      src="/img/icons/arrow-forward.svg"
+                      alt="Forward arrow icon"
+                    />
+                  </Link>
+                )}
               </div>
             </TabItem>
           ))}
