@@ -23,7 +23,7 @@ function Feeds() {
   );
   const mediumImageFeeds = filteredMediumTerraform.slice(0, 2);
   const mediumFeeds = filteredMediumTerraform.slice(2, 6);
-  console.log(mediumFeeds);
+
   const FeedItem = ({ feeds, imageFeeds }) => {
     const hasFeeds = feeds.length > 0;
     const hasImageFeeds = imageFeeds.length > 0;
