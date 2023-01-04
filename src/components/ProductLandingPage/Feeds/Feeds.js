@@ -23,35 +23,42 @@ function Feeds() {
   );
   const mediumImageFeeds = filteredMediumTerraform.slice(0, 2);
   const mediumFeeds = filteredMediumTerraform.slice(2, 6);
-
+  console.log(mediumFeeds);
   const FeedItem = ({ feeds, imageFeeds }) => {
+    const hasFeeds = feeds.length > 0;
+    const hasImageFeeds = imageFeeds.length > 0;
+
     return (
       <div className="feeds-image-list-container">
-        <div className="feeds-image-container">
-          {imageFeeds.map((feed, i) => (
-            <Link key={i} to={feed.link}>
-              <div className="feeds-image-text-wrapper">
+        {hasImageFeeds && (
+          <div className="feeds-image-container">
+            {imageFeeds.map((feed, i) => (
+              <Link key={i} to={feed.link}>
+                <div className="feeds-image-text-wrapper">
+                  <img
+                    src="/img/product-landing/terraform/feeds/stock-feed.jpg"
+                    alt={feed.title}
+                  />
+                  <h3 className="feeds__title">{feed.title}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+        {hasFeeds && (
+          <ul className="feeds-list">
+            {feeds.map((feed, i) => (
+              <li key={i} className="feeds-list__item">
+                <Link to={feed.link}>{feed.title}</Link>
                 <img
-                  src="/img/product-landing/terraform/feeds/stock-feed.jpg"
-                  alt={feed.title}
+                  className="external-icon"
+                  src="/img/icons/external-icon.png"
+                  alt="External icon"
                 />
-                <h3 className="feeds__title">{feed.title}</h3>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <ul className="feeds-list">
-          {feeds.map((feed, i) => (
-            <li key={i} className="feeds-list__item">
-              <Link to={feed.link}>{feed.title}</Link>
-              <img
-                className="external-icon"
-                src="/img/icons/external-icon.png"
-                alt="External icon"
-              />
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   };
