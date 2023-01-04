@@ -70,7 +70,7 @@ function Modules({ header, modules }) {
                 </div>
                 {moduleContent.link && (
                   <Link to={moduleContent.link} className="tab-item__link">
-                    <span class="card-cta__text">Learn More</span>
+                    <span>Learn More</span>
                     <img
                       src="/img/icons/arrow-forward.svg"
                       alt="Forward arrow icon"
