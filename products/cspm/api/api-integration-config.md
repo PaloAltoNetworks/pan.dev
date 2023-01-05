@@ -1,10 +1,9 @@
 ---
 id: api-integration-config
-title: Prisma Cloud Integration API Configurations 
+title: Prisma Cloud Integration API Configurations
 sidebar_label: Integration Configurations
-hide_table_of_contents: false
+slug: /prisma-cloud/api/cspm/integration-config
 ---
-
 
 The Prisma Cloud integration API endpoints enable you to receive Prisma Cloud alerts in external systems. The [integration endpoint documentation](/api/cloud/cspm/integrations) describes request and response details for each endpoint.
 
@@ -23,13 +22,13 @@ Note that Prisma Cloud supports this integration for only alerts 2.0-enabled ten
 To add an Amazon S3 integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `aws_s3`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-s3Uri | Amazon S3 bucket URI | string | _required_
-region | AWS region where the S3 bucket resides | string | _required_
-roleArn | Role ARN associated with the IAM role on Prisma Cloud | string | _required_
-externalId | External ID associated with the IAM role on Prisma Cloud. Any new or updated value must be a unique 128-bit UUID. | string | _required_
-rollUpInterval | Time at which batching of Prisma Cloud alerts would roll up. Valid values are in minutes: 15, 30, 60, 180. | string | Default is 60
+| Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| s3Uri          | Amazon S3 bucket URI                                                                                              | string     | _required_                |
+| region         | AWS region where the S3 bucket resides                                                                            | string     | _required_                |
+| roleArn        | Role ARN associated with the IAM role on Prisma Cloud                                                             | string     | _required_                |
+| externalId     | External ID associated with the IAM role on Prisma Cloud. Any new or updated value must be a unique 128-bit UUID. | string     | _required_                |
+| rollUpInterval | Time at which batching of Prisma Cloud alerts would roll up. Valid values are in minutes: 15, 30, 60, 180.        | string     | Default is 60             |
 
 To update an Amazon S3 integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -41,17 +40,16 @@ To test an Amazon S3 integration, make your request as described in
 
 ```json
 {
- "integrationType": "aws_s3",
- "name": "",
- "description": "",
- "enabled": true,
- "integrationConfig":
- {
-     "s3Uri": "",
-     "region": "",
-     "roleArn": "",
-     "externalId": "",
-     "rollUpInterval": 60
+  "integrationType": "aws_s3",
+  "name": "",
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": "",
+    "rollUpInterval": 60
   }
 }
 ```
@@ -60,22 +58,21 @@ To test an Amazon S3 integration, make your request as described in
 
 ```json
 {
- "integrationType": "aws_s3",
- "name": "",
- "integrationConfig":
- {
-     "s3Uri": "",
-     "region": "",
-     "roleArn": "",
-     "externalId": "",
-     "rollUpInterval": 60
+  "integrationType": "aws_s3",
+  "name": "",
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": "",
+    "rollUpInterval": 60
   }
 }
 ```
 
 ### Amazon SQS
 
-Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service.  Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs.html), you can use an API request to add the Amazon SQS integration to Prisma Cloud.
+Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service. Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs.html), you can use an API request to add the Amazon SQS integration to Prisma Cloud.
 
 #### Add, Update, or Test an Amazon SQS Integration
 
@@ -83,41 +80,40 @@ To add an Amazon SQS integration, make the request as described in [Add Integrat
 
 The `integrationConfig` parameter contains the following key/value pairs when you are using IAM access keys:
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-queueUrl | The Queue URL you used when you configured Prisma Cloud in Amazon SQS | string | _required_
-moreInfo | true=specific IAM credentials are specified for SQS queue access | boolean | Default is **false**
-accessKey | AWS access key belonging to AWS IAM credentials meant for SQS queue access | string | Default is access provided during onboarding of AWS cloud account to which SQS queue belongs
-secretKey | AWS secret key for the given access key | string | Default is access provided during onboarding of AWS cloud account to which SQS queue belongs
+| Key       | Value Description                                                          | Value Type | Default Value or Required                                                                    |
+| --------- | -------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| queueUrl  | The Queue URL you used when you configured Prisma Cloud in Amazon SQS      | string     | _required_                                                                                   |
+| moreInfo  | true=specific IAM credentials are specified for SQS queue access           | boolean    | Default is **false**                                                                         |
+| accessKey | AWS access key belonging to AWS IAM credentials meant for SQS queue access | string     | Default is access provided during onboarding of AWS cloud account to which SQS queue belongs |
+| secretKey | AWS secret key for the given access key                                    | string     | Default is access provided during onboarding of AWS cloud account to which SQS queue belongs |
 
 The `integrationConfig` parameter contains the following key/value pairs when you are using the IAM Role associated with Prisma Cloud:
 
-Key  |  Value Description | Value Type | Default Value or Required
-        -----| ------------------ | ---------- | -------------
-queueUrl | The Queue URL you used when you configured Prisma Cloud in Amazon SQS | string | _required_
-moreInfo | true=specific IAM credentials are specified for SQS queue access | boolean | Default is **false**
-roleArn | Role ARN associated with the IAM role on Prisma Cloud | string |  _required_
-externalId | External ID associated with the IAM role on Prisma Cloud. New or updated value must be a unique 128-bit UUID | string | _required_
+| Key        | Value Description                                                                                            | Value Type | Default Value or Required |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------- |
+| queueUrl   | The Queue URL you used when you configured Prisma Cloud in Amazon SQS                                        | string     | _required_                |
+| moreInfo   | true=specific IAM credentials are specified for SQS queue access                                             | boolean    | Default is **false**      |
+| roleArn    | Role ARN associated with the IAM role on Prisma Cloud                                                        | string     | _required_                |
+| externalId | External ID associated with the IAM role on Prisma Cloud. New or updated value must be a unique 128-bit UUID | string     | _required_                |
 
 To update an Amazon SQS integration, make your request as described in [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig.queueUrl` is mutable.
 
-To test an Amazon SQS integration, make the request with the corresponding request body described  in [Test Integration](/api/cloud/cspm/integrations#operation/test-integration).
+To test an Amazon SQS integration, make the request with the corresponding request body described in [Test Integration](/api/cloud/cspm/integrations#operation/test-integration).
 
 ##### Example Request Body to Add or Test an Amazon SQS Integration with IAM Access Keys
 
 ```json
 {
-    "description": "",
-    "enabled": true,
-    "integrationConfig":
-    {
-        "queueUrl": "",
-        "moreInfo": true,
-        "accessKey": "",
-        "secretKey": ""
-    },
-    "integrationType": "amazon_sqs",
-    "name": ""
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "queueUrl": "",
+    "moreInfo": true,
+    "accessKey": "",
+    "secretKey": ""
+  },
+  "integrationType": "amazon_sqs",
+  "name": ""
 }
 ```
 
@@ -125,17 +121,16 @@ To test an Amazon SQS integration, make the request with the corresponding reque
 
 ```json
 {
-    "description": "",
-    "enabled": true,
-    "integrationConfig":
-    {
-        "queueUrl": "",
-        "moreInfo": true,
-        "roleArn": "",
-        "externalId": ""
-    },
-    "integrationType": "amazon_sqs",
-    "name": ""
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "queueUrl": "",
+    "moreInfo": true,
+    "roleArn": "",
+    "externalId": ""
+  },
+  "integrationType": "amazon_sqs",
+  "name": ""
 }
 ```
 
@@ -149,17 +144,17 @@ To add an Azure Service Bus queue integration, make your request as described in
 
 If you want to use the service principal-based access provided when the Azure cloud account was onboarded to Prisma Cloud, then the `integrationConfig` parameter contains the following key/value pairs.
 
-Key | Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-accountId | Azure account ID with service principal to which the Azure Service Bus queue belongs | string | _required_
-queueUrl | The URL configured in the Azure Service Bus queue where Prisma sends alerts | string | _required_
+| Key       | Value Description                                                                    | Value Type | Default Value or Required |
+| --------- | ------------------------------------------------------------------------------------ | ---------- | ------------------------- |
+| accountId | Azure account ID with service principal to which the Azure Service Bus queue belongs | string     | _required_                |
+| queueUrl  | The URL configured in the Azure Service Bus queue where Prisma sends alerts          | string     | _required_                |
 
 If you want to use a role with limited permissions, then the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-connectionString | Azure Shared Access String connection string | string | _required_
-queueUrl | The URL configured in the Azure Service Bus queue where Prisma sends alerts | string | _required_
+| Key              | Value Description                                                           | Value Type | Default Value or Required |
+| ---------------- | --------------------------------------------------------------------------- | ---------- | ------------------------- |
+| connectionString | Azure Shared Access String connection string                                | string     | _required_                |
+| queueUrl         | The URL configured in the Azure Service Bus queue where Prisma sends alerts | string     | _required_                |
 
 To update an Azure Service Bus queue integration, make your request as described in [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Only parameter `integrationConfig.queueUrl` is mutable.
 
@@ -169,15 +164,14 @@ To test an Azure Service Bus queue integration, make your request as described i
 
 ```json
 {
-    "description": "",
-    "enabled": true,
-    "integrationConfig":
-    {
-        "accountId": "",
-        "queueUrl": ""
-    },
-    "integrationType": "azure_service_bus_queue",
-    "name": ""
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "accountId": "",
+    "queueUrl": ""
+  },
+  "integrationType": "azure_service_bus_queue",
+  "name": ""
 }
 ```
 
@@ -185,15 +179,14 @@ To test an Azure Service Bus queue integration, make your request as described i
 
 ```json
 {
-    "description": "",
-    "enabled": true,
-     "integrationConfig":
-    {
-        "accountId": "",
-        "queueUrl": ""
-    },
-    "integrationType": "azure_service_bus_queue",
-    "name": ""
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "accountId": "",
+    "queueUrl": ""
+  },
+  "integrationType": "azure_service_bus_queue",
+  "name": ""
 }
 ```
 
@@ -206,10 +199,10 @@ Prisma Cloud integrates with Cortex XSOAR to send alerts to Cortex XSOAR for res
 To add a Cortex XSOAR integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `demisto`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-hostUrl | The Cortex XSOAR instance FQDN/IP&mdash;either the name or the IP address of the instance | string | _required_
-apiKey | The consumer key you configured when you created the Prisma Cloud application access in your Cortex XSOAR environment. | string | _required_
+| Key     | Value Description                                                                                                      | Value Type | Default Value or Required |
+| ------- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| hostUrl | The Cortex XSOAR instance FQDN/IP&mdash;either the name or the IP address of the instance                              | string     | _required_                |
+| apiKey  | The consumer key you configured when you created the Prisma Cloud application access in your Cortex XSOAR environment. | string     | _required_                |
 
 To update a Cortex XSOAR integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -220,8 +213,7 @@ To update a Cortex XSOAR integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "apiKey": "",
     "hostUrl": ""
   },
@@ -239,10 +231,10 @@ Prisma Cloud integrates with Google Cloud Security Command Center (SCC) to send 
 To add a Google Cloud SCC integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `google_cscc`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-orgId | GCP organization ID | string | _required_
-sourceId | GCP source ID for the service account you used to onboard your GCP organization to Prisma Cloud | string | _required_
+| Key      | Value Description                                                                               | Value Type | Default Value or Required |
+| -------- | ----------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| orgId    | GCP organization ID                                                                             | string     | _required_                |
+| sourceId | GCP source ID for the service account you used to onboard your GCP organization to Prisma Cloud | string     | _required_                |
 
 To update a Google Cloud SCC integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -256,8 +248,7 @@ To test a Google Cloud SCC integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "orgId": "",
     "sourceId": ""
   },
@@ -275,9 +266,9 @@ Prisma Cloud integrates with Microsoft Teams to send Microsoft Teams alerts for 
 To add a Microsoft Teams integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `microsoft_teams`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-url | Webhook URL | string | _required_
+| Key | Value Description | Value Type | Default Value or Required |
+| --- | ----------------- | ---------- | ------------------------- |
+| url | Webhook URL       | string     | _required_                |
 
 To update a Microsoft Teams integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -291,8 +282,7 @@ To test a Microsoft Teams integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "url": ""
   },
   "integrationType": "microsoft_teams",
@@ -309,10 +299,10 @@ Prisma Cloud integrates with Okta to send alerts to Okta for resource misconfigu
 To add an Okta integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `okta`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-domain | Okta domain name | string | _required_
-apiToken | The authentication API token for Okta. The token must be of type Read-Only Admin.| string | _required_
+| Key      | Value Description                                                                 | Value Type | Default Value or Required |
+| -------- | --------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| domain   | Okta domain name                                                                  | string     | _required_                |
+| apiToken | The authentication API token for Okta. The token must be of type Read-Only Admin. | string     | _required_                |
 
 To update an Okta integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -326,8 +316,7 @@ To test an Okta integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "domain": "",
     "apiToken": ""
   },
@@ -345,9 +334,9 @@ Integration with PagerDuty aids alerting, on-call scheduling, escalation policie
 To add a PagerDuty integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter for a PagerDuty integration is `pager_duty`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-integrationKey | PagerDuty integration key | string | _required_
+| Key            | Value Description         | Value Type | Default Value or Required |
+| -------------- | ------------------------- | ---------- | ------------------------- |
+| integrationKey | PagerDuty integration key | string     | _required_                |
 
 To update a PagerDuty integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -361,8 +350,7 @@ To test a PagerDuty integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig": 
-  {
+  "integrationConfig": {
     "integrationKey": ""
   },
   "integrationType": "pager_duty",
@@ -374,11 +362,11 @@ To test a PagerDuty integration, make your request as described in
 
 ```json
 {
-    "name": "",
-    "integrationType": "pager_duty",
-    "integrationConfig": {
-        "integrationKey": ""
-    }
+  "name": "",
+  "integrationType": "pager_duty",
+  "integrationConfig": {
+    "integrationKey": ""
+  }
 }
 ```
 
@@ -391,11 +379,11 @@ Prisma Cloud integrates with the Qualys platform to ingest and visualize vulnera
 To add a Qualys integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter for a Qualys integration is `qualys`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-login | Qualys login | string | _required_
-baseUrl | Qualys Security Operations Center server API URL (without **http(s)**) | string | _required_
-password | Qualys password | string |  _required_
+| Key      | Value Description                                                      | Value Type | Default Value or Required |
+| -------- | ---------------------------------------------------------------------- | ---------- | ------------------------- |
+| login    | Qualys login                                                           | string     | _required_                |
+| baseUrl  | Qualys Security Operations Center server API URL (without **http(s)**) | string     | _required_                |
+| password | Qualys password                                                        | string     | _required_                |
 
 To update a Qualys integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -409,8 +397,7 @@ To test a Qualys integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "baseUrl": "",
     "login": "",
     "password": ""
@@ -429,12 +416,12 @@ Integrate Prisma Cloud with ServiceNow and get automatically notified about Pris
 To add a ServiceNow integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter for a ServiceNow integration is `service_now`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-hostUrl | ServiceNow URL | string | _required_. For [Update](/api/cloud/cspm/integrations#operation/update-integration-v1), not mutable.
-login | ServiceNow login | string | _required_
-password | ServiceNow password for login | string |  _required_
-tables | Array of key/value pairs that identify the ServiceNow module tables with which to integrate. The possible keys are: `incident`, `sn_si_incident`, `em_event`.<br/>The possible values for each key are: `true`, `false` | array of objects |  _required_
+| Key      | Value Description                                                                                                                                                                                                       | Value Type       | Default Value or Required                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------- |
+| hostUrl  | ServiceNow URL                                                                                                                                                                                                          | string           | _required_. For [Update](/api/cloud/cspm/integrations#operation/update-integration-v1), not mutable. |
+| login    | ServiceNow login                                                                                                                                                                                                        | string           | _required_                                                                                           |
+| password | ServiceNow password for login                                                                                                                                                                                           | string           | _required_                                                                                           |
+| tables   | Array of key/value pairs that identify the ServiceNow module tables with which to integrate. The possible keys are: `incident`, `sn_si_incident`, `em_event`.<br/>The possible values for each key are: `true`, `false` | array of objects | _required_                                                                                           |
 
 To update a ServicNow integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable except for
@@ -449,16 +436,15 @@ To test a ServiceNow integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "hostUrl": "",
     "login": "",
     "password": "",
-    "tables":[
-      {"incident": false},
-      {"sn_si_incident": false},
-      {"em_event": false}
-      ]
+    "tables": [
+      { "incident": false },
+      { "sn_si_incident": false },
+      { "em_event": false }
+    ]
   },
   "integrationType": "service_now",
   "name": ""
@@ -471,16 +457,15 @@ To test a ServiceNow integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig": 
-  {
-    "hostUrl": "", 
+  "integrationConfig": {
+    "hostUrl": "",
     "login": "",
     "password": "",
     "tables": [
-      {"incident": false},
-      {"sn_si_incident": false},
-      {"em_event": false}
-      ]
+      { "incident": false },
+      { "sn_si_incident": false },
+      { "em_event": false }
+    ]
   },
   "integrationType": "service_now",
   "name": ""
@@ -496,9 +481,9 @@ Prisma Cloud integrates with Slack to post instant messages to your Slack channe
 To add a Slack integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `slack`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-webhookUrl | Slack webhook URL starting with `https://hooks.slack.com/` | string | _required_
+| Key        | Value Description                                          | Value Type | Default Value or Required |
+| ---------- | ---------------------------------------------------------- | ---------- | ------------------------- |
+| webhookUrl | Slack webhook URL starting with `https://hooks.slack.com/` | string     | _required_                |
 
 To update a Slack integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -512,8 +497,7 @@ To test a Slack integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "webhookUrl": "https://hooks.slack.com/services/ABC123"
   },
   "integrationType": "slack",
@@ -530,14 +514,14 @@ Prisma Cloud integrates with Snowflake.
 To add a Snowflake integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `snowflake`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-hostUrl | Snowflake user name | string | _required_
-pipename | Snowpipe name | string | _required_
-stagingIntegrationId | Integration ID of staging S3 integration | string | _required_
-privateKey | Snowflake user private key | string | _required_
-passphrase | Private key passphrase. For encryption. | string | _optional_
-rollUpInterval | Defined time in minutes on which batching of alerts would roll up. Valid values: 15, 30, 60, 180 | integer | Default is 60
+| Key                  | Value Description                                                                                | Value Type | Default Value or Required |
+| -------------------- | ------------------------------------------------------------------------------------------------ | ---------- | ------------------------- |
+| hostUrl              | Snowflake user name                                                                              | string     | _required_                |
+| pipename             | Snowpipe name                                                                                    | string     | _required_                |
+| stagingIntegrationId | Integration ID of staging S3 integration                                                         | string     | _required_                |
+| privateKey           | Snowflake user private key                                                                       | string     | _required_                |
+| passphrase           | Private key passphrase. For encryption.                                                          | string     | _optional_                |
+| rollUpInterval       | Defined time in minutes on which batching of alerts would roll up. Valid values: 15, 30, 60, 180 | integer    | Default is 60             |
 
 To update a Snowflake integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -553,8 +537,7 @@ To test a Snowflake integration, make your request as described in
   "name": "",
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "stagingIntegrationId": "",
     "hostUrl": "",
     "username": "",
@@ -572,8 +555,7 @@ To test a Snowflake integration, make your request as described in
 {
   "integrationType": "snowflake",
   "name": "",
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "stagingIntegrationId": "",
     "hostUrl": "",
     "username": "",
@@ -594,11 +576,11 @@ Prisma Cloud integrates with Splunk to send Splunk alerts for resource misconfig
 To add a Splunk integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `splunk`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-authToken | Splunk HTTP event collector | string | _required_
-url | Splunk HTTP event collector URL | string | _required_
-sourceType | Splunk source type  | string | Default is **_json**
+| Key        | Value Description               | Value Type | Default Value or Required |
+| ---------- | ------------------------------- | ---------- | ------------------------- |
+| authToken  | Splunk HTTP event collector     | string     | _required_                |
+| url        | Splunk HTTP event collector URL | string     | _required_                |
+| sourceType | Splunk source type              | string     | Default is **\_json**     |
 
 To update a Splunk integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -612,8 +594,7 @@ To test a Splunk integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "authToken": "",
     "url": ""
   },
@@ -631,10 +612,10 @@ Prisma Cloud integrates with Tenable to send alerts to Tenable for resource misc
 To add a Tenable integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter is `tenable`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-accessKey | Access key from Tenable.io | string | _required_
-secretKey | Secret key from Tenable.io | string | _required_
+| Key       | Value Description          | Value Type | Default Value or Required |
+| --------- | -------------------------- | ---------- | ------------------------- |
+| accessKey | Access key from Tenable.io | string     | _required_                |
+| secretKey | Secret key from Tenable.io | string     | _required_                |
 
 To update a Tenable integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -648,8 +629,7 @@ To test a Tenable integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig":
-  {
+  "integrationConfig": {
     "accessKey": "",
     "secretKey": ""
   },
@@ -667,10 +647,10 @@ The webhook integration enables you to pass information in a JSON format to any 
 To add a webhook integration, make your request as described in
 [Add Integration](/api/cloud/cspm/integrations#operation/create-integration-v1). As part of the request body, the `integrationType` parameter for a webhook integration is `webhook`, and the `integrationConfig` parameter contains the following key/value pairs.
 
-Key  |  Value Description | Value Type | Default Value or Required
------| ------------------ | ---------- | -------------
-url | Webhook URL | string | _required_
-authToken | The authentication token for the event collector | string | _required_
+| Key       | Value Description                                | Value Type | Default Value or Required |
+| --------- | ------------------------------------------------ | ---------- | ------------------------- |
+| url       | Webhook URL                                      | string     | _required_                |
+| authToken | The authentication token for the event collector | string     | _required_                |
 
 To update a webhook integration, make your request as described in
 [Update Integration](/api/cloud/cspm/integrations#operation/update-integration-v1). Parameter `integrationConfig` is mutable.
@@ -684,9 +664,8 @@ To test a webhook integration, make your request as described in
 {
   "description": "",
   "enabled": true,
-  "integrationConfig": 
-  {
-    "authToken": "", 
+  "integrationConfig": {
+    "authToken": "",
     "url": ""
   },
   "integrationType": "webhook",
@@ -698,10 +677,10 @@ To test a webhook integration, make your request as described in
 
 ```json
 {
-    "name": "",
-    "integrationType": "webhook",
-    "integrationConfig": {
-        "url": ""
-    }
+  "name": "",
+  "integrationType": "webhook",
+  "integrationConfig": {
+    "url": ""
+  }
 }
 ```

@@ -2,6 +2,7 @@
 id: api-errors
 title: Prisma Cloud API Error Responses
 sidebar_label: Error Responses
+slug: /prisma-cloud/api/cspm/errors
 ---
 
 The Prisma Cloud REST API requests for Cloud Security Posture Management (CSPM) return standard

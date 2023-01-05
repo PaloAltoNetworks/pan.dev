@@ -1,6 +1,7 @@
 ---
 id: how-to-eval-console
 title: How to Evaluate CONSOLE
+slug: /prisma-cloud/api/cwpp/evaluate-console
 ---
 
 All the example API commands in these documents specify a `<CONSOLE>` variable, which represents the address for Console.
@@ -16,24 +17,23 @@ To find your `<CONSOLE>` path for a SaaS environment:
 
 <img src="/img/console-saas.png" alt="console" width="100%"/>
 
-
 ## For Self-hosted Installations
 
 For self-hosted environments, the Prisma Cloud Compute API is exposed on port `8083` (HTTPS).
 This port is specified at install time in `twistlock.cfg`.
 
-* **(Default) Kubernetes installations:** Console service is exposed by a LoadBalancer.
-	
-	The value for `<CONSOLE>` is the LoadBalancer followed by port `8083`:
+- **(Default) Kubernetes installations:** Console service is exposed by a LoadBalancer.
 
-	```
-	https://<LOAD_BALANCER>:8083
-	```
+  The value for `<CONSOLE>` is the LoadBalancer followed by port `8083`:
 
-* **Onebox installations:** Console installed on a stand-alone host.
+  ```
+  https://<LOAD_BALANCER>:8083
+  ```
 
-	The value for `<CONSOLE>` is the IP address or DNS name of the host followed by port `8083`:
+- **Onebox installations:** Console installed on a stand-alone host.
 
-	```
-	https://<IP_ADDRESS>:8083
-	```
+  The value for `<CONSOLE>` is the IP address or DNS name of the host followed by port `8083`:
+
+  ```
+  https://<IP_ADDRESS>:8083
+  ```

@@ -1,12 +1,13 @@
 ---
 id: curl-examples
 title: cURL Examples
+slug: /prisma-cloud/api/cwpp/curl-examples
 ---
 
 The cURL example for each endpoint is called with a username (`-u <USER>`) only.
 The cURL command can be modified to use any of the following:
 
-* **Authentication Token:** Use the `-H` option to pass the authentication token from the `/api/v1/authenticate` endpoint into the request header.
+- **Authentication Token:** Use the `-H` option to pass the authentication token from the `/api/v1/authenticate` endpoint into the request header.
 
 For example, replace `<ACCESS_TOKEN>` with the token from the `/api/v1/authenticate` endpoint.
 
@@ -17,7 +18,7 @@ $ curl -k \
 https://<CONSOLE>/api/v1/<ENDPOINT_PATH>
 ```
 
-* **Username and Password:** Use the `-u` and `-p` options to include the username and password, eliminating the need to enter a password in a secondary step.
+- **Username and Password:** Use the `-u` and `-p` options to include the username and password, eliminating the need to enter a password in a secondary step.
 
 For example, replace `<USER>` with the username string and `<PASSWORD>` with the password string.
 
@@ -29,7 +30,7 @@ $ curl -k \
 https://<CONSOLE>/api/v1/<ENDPOINT_PATH>
 ```
 
-* **Username Only:** This will require the user's password to be entered as a secondary step.
+- **Username Only:** This will require the user's password to be entered as a secondary step.
 
 For example, replace `<USER>` with the username string.
 

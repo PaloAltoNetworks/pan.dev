@@ -1,7 +1,7 @@
 ---
 id: cspm-api
 title: CSPM API
-slug: /prisma-cloud/cspm
+slug: /prisma-cloud/api/cspm
 keywords:
   - Developer
   - Prisma
@@ -42,8 +42,8 @@ The CSPM API uses the standard HTTP methods `GET`, `POST`, `PUT`, `PATCH`, and `
 
 You can retrieve certain CSPM resources through either a `GET` or a `POST` request. Examples include but are not limited to alert lists, compliance posture, and some asset inventory lists. While both methods result in the same response, use `POST` if:
 
-* You don’t want to include your request parameters in the request URL.
-* Your request parameters are complex and, therefore, easier to define in the body of a `POST` request.
+- You don’t want to include your request parameters in the request URL.
+- Your request parameters are complex and, therefore, easier to define in the body of a `POST` request.
 
 ### Required Request Headers
 
@@ -53,13 +53,13 @@ See [Headers](/api/cloud/api-headers) for information about required request hea
 
 Both query and request body parameters can include certain CSPM common data models. The following sections provide details about their use:
 
-* The [Time Range Model](/api/cloud/api-time-range-model) enables you to specify windows of time.
-* The [Integration Configurations](/api/cloud/api-integration-config) are specific to API requests that [add](/api/cloud/cspm/integrations#operation/save-integration), [update](/api/cloud/cspm/integrations#operation/update-integration), or [test](/api/cloud/cspm/integrations#operation/test-integration) a third-party integration with Prisma Cloud.
+- The [Time Range Model](/api/cloud/api-time-range-model) enables you to specify windows of time.
+- The [Integration Configurations](/api/cloud/api-integration-config) are specific to API requests that [add](/api/cloud/cspm/integrations#operation/save-integration), [update](/api/cloud/cspm/integrations#operation/update-integration), or [test](/api/cloud/cspm/integrations#operation/test-integration) a third-party integration with Prisma Cloud.
 
 ### Error Responses
 
 See [Error Responses](/api/cloud/api-errors) for information about error handling.
 
-
 ## Stay Up to Date
-Check the [status notifications](https://status.paloaltonetworks.com/) for the Prisma Cloud release schedule to stay up to date with the new features and functionality. 
+
+Check the [status notifications](https://status.paloaltonetworks.com/) for the Prisma Cloud release schedule to stay up to date with the new features and functionality.
