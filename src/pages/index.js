@@ -35,7 +35,7 @@ function Home() {
         >
           <HomepageBanner
             imgSrc={exploreImageSrc}
-            text="Explore our Developer Docs"
+            text="Explore our Developer Docs!"
           />
           <Featured />
           <BackToTopButton />
