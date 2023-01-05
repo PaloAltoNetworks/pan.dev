@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "../Cards/Card";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -36,7 +37,10 @@ function Feeds() {
               <Link key={i} to={feed.link}>
                 <div className="feeds-image-text-wrapper">
                   <img
-                    src="/img/product-landing/terraform/feeds/stock-feed.jpg"
+                    src={
+                      feed.thumbnail ||
+                      "/img/product-landing/terraform/feeds/stock-feed.jpg"
+                    }
                     alt={feed.title}
                   />
                   <h3 className="feeds__title">{feed.title}</h3>

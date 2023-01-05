@@ -1,55 +1,58 @@
-import React, { useEffect, useState } from 'react'
-import Link from '@docusaurus/Link'
-import Image from '@theme/IdealImage';
-import './Card.scss'
+import React, { useEffect, useState } from "react";
+import Link from "@docusaurus/Link";
+import Image from "@theme/IdealImage";
+import "./Card.scss";
 
 function Card({ cta, description, image, title, type, links, latestTag }) {
   const CardFooterCTA = ({ cta }) => {
-    const { content, type } = cta
+    const { content, type } = cta;
 
-    if (type === 'single') {
+    if (type === "single") {
       if (content.logoSrc) {
         return (
           <Link className="card-cta__single-link" to={content.link}>
-            <img className="card-cta__logo" src={content.logoSrc} alt={content.logoAlt} />
+            <img
+              className="card-cta__logo"
+              src={content.logoSrc}
+              alt={content.logoAlt}
+            />
           </Link>
-        )
+        );
       }
 
       return (
         <Link className="card-cta__single-link" to={content.link}>
           {content.text}
         </Link>
-      )
+      );
     }
 
-    if (type == 'double') {
+    if (type == "double") {
       return (
         <div className="card-cta-container">
           {content.map((ctaInfo, i) => {
             if (ctaInfo.logoSrc) {
               return (
-                <Link
-                  key={i}
-                  className="card-cta__logo-link"
-                  to={ctaInfo.link}
-                >
+                <Link key={i} className="card-cta__logo-link" to={ctaInfo.link}>
                   <img className="card-cta__logo" src={ctaInfo.logoSrc} />
                 </Link>
-              )
+              );
             } else {
               return (
                 <Link key={i} className="card-cta__docs-link" to={ctaInfo.link}>
                   <span className="card-cta__text">{ctaInfo.text}</span>
-                  <img src='/img/icons/arrow-forward.svg' alt="Forward arrow icon" />
+                  <img
+                    src="/img/icons/arrow-forward.svg"
+                    alt="Forward arrow icon"
+                  />
                 </Link>
-              )
+              );
             }
           })}
         </div>
-      )
+      );
     }
-  }
+  };
 
   const ImageCard = ({ cta, description, image, title }) => {
     return (
@@ -59,12 +62,12 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
         </div>
         <div className="image-card__body">
           <h4>{title}</h4>
-          <p>{description}</p>
-          <CardFooterCTA cta={cta} />
+          {description && <p>{description}</p>}
+          {cta && <CardFooterCTA cta={cta} />}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const InfoCard = ({ cta, description, title }) => {
     return (
@@ -74,12 +77,12 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
             {title}
             {latestTag && <span className="latest-tag">{latestTag}</span>}
           </h3>
-          <p>{description}</p>
-          <CardFooterCTA cta={cta} />
+          {description && <p>{description}</p>}
+          {cta && <CardFooterCTA cta={cta} />}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const LinkCard = ({ cta, links, title }) => {
     return (
@@ -87,17 +90,17 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
         <div className="link-card__body">
           <h3>{title}</h3>
           <ul className="link-card__list">
-            {links.map((link, i) =>
+            {links.map((link, i) => (
               <li key={i}>
                 <Link to={link.path}>{link.text}</Link>
               </li>
-            )}
+            ))}
           </ul>
           <CardFooterCTA cta={cta} />
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderCard = () => {
     if (type === "imageCard") {
@@ -108,19 +111,15 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
           image={image}
           title={title}
         />
-      )
+      );
     } else if (type === "linkCard") {
-      return (
-        <LinkCard title={title} links={links} cta={cta} />
-      )
+      return <LinkCard title={title} links={links} cta={cta} />;
     } else {
-      return <InfoCard cta={cta} description={description} title={title} />
+      return <InfoCard cta={cta} description={description} title={title} />;
     }
-  }
+  };
 
-  return (
-    <>{renderCard()}</>
-  )
+  return <>{renderCard()}</>;
 }
 
-export default Card
+export default Card;
