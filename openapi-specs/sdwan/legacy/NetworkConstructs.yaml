@@ -14,6 +14,25 @@ components:
           - avg
           - sum
           type: string
+    BaseCustomDHCPOptions:
+      properties:
+        option_definition:
+          description: 'Option Definition: NotEmpty(groups = [classOf[Definition]],
+            error = DHCPSERVER_CONFIG_CUSTOM_OPTIONS_DEF_UNSUPPORTED: Custom option
+            definition is not supported) Size(groups = [classOf[Definition]], max
+            = 1024, error = DHCPSERVER_CONFIG_OPTION_DEF_EXCEEDS_LIMIT: Custom option
+            definition length exceeeds maximum limit, min = 0) '
+          type: string
+        option_value:
+          description: 'Option Value: NotEmpty(groups = [classOf[Value]], error =
+            DHCPSERVER_CONFIG_CUSTOM_OPTIONS_VAL_UNSUPPORTED: Custom option value
+            is not supported) Size(groups = [classOf[Value]], max = 8192, error =
+            DHCPSERVER_CONFIG_OPTION_VAL_EXCEEDS_LIMIT: Custom option value length
+            exceeds maximum limit, min = 0) '
+          type: string
+      required:
+      - option_value
+      - option_definition
     BulkResponse:
       properties:
         count:
@@ -71,26 +90,97 @@ components:
       - reforwarding_policy
     DHCPServer:
       properties:
-        domain_name:
-          description: Domain Name
+        broadcast_address:
+          description: 'Broadcast Address: IPv4(error = DHCPSERVER_CONFIG_INVALID_BROADCAST_ADDR:
+            Invalid IPv4 broadcast address., regexp = [/0-9.]*) '
           type: string
-        domain_name_servers:
-          description: Domain Name Servers
+        custom_options:
+          description: 'Custom Options: Valid '
           items:
-            description: Domain Name Servers
+            $ref: '#/components/schemas/BaseCustomDHCPOptions'
+          type: array
+        default_lease_time:
+          description: 'Default Lease Time: Min(error = DHCPSERVER_CONFIG_UNSUPPORTED_DEFAULT_LEASE_TIME:
+            Default lease time should be between 300 and 2^32-1 seconds respectively.,
+            value = 300L) Max(error = DHCPSERVER_CONFIG_UNSUPPORTED_DEFAULT_LEASE_TIME:
+            Default lease time should be between 300 and 2^32-1 seconds respectively.,
+            value = 4294967295L) '
+          format: int64
+          type: integer
+        description:
+          description: 'Description: Size(max = 256, error = DHCPSERVER_CONFIG_DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds the maximum limit., min = 0) '
+          type: string
+        disabled:
+          description: Disabled
+          type: boolean
+        dns_servers:
+          description: 'Dns Servers: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = DHCPSERVER_CONFIG_INVALID_DNS_LIST: Invalid IPv4 nameservers addresses.,
+            required = false, type = IP) Size(max = 3, error = DHCPSERVER_CONFIG_DNS_ENTRIES_EXCEEDS_LIMIT:
+            Name servers count exceeds the maximum limit, min = 0) '
+          items:
+            description: Dns Servers
             type: string
           type: array
-        ip_address_pool:
-          description: Ip Address Pool
+        domain_name:
+          description: 'Domain Name: Size(max = 256, error = DHCPSERVER_CONFIG_INVALID_DOMAIN_NAME:
+            Domain name exceeds the maximum limit., min = 0) '
+          type: string
+        gateway:
+          description: 'Gateway: IPAddress(allowEmpty = true, allowLinkLocal = false,
+            allowNull = true, bcast = DENY, defaultRoute = false, dnsCheck = false,
+            error = DHCPSERVER_CONFIG_INVALID_GATEWAY_ADDR: Invalid IPv4 gateway address.,
+            type = IP) '
+          type: string
+        id:
+          description: Id
+          type: string
+        ip_ranges:
+          description: 'Ip Ranges: NotNull(error = DHCPSERVER_CONFIG_IP_RANGE_MISSING:
+            Provide valid IPv4 address range for defined subnet.) Size(max = 2147483647,
+            error = DHCPSERVER_CONFIG_IP_RANGE_MISSING: Provide valid IPv4 address
+            range for defined subnet., min = 1) Valid '
           items:
-            $ref: '#/components/schemas/IPAddressPool'
+            $ref: '#/components/schemas/IPRange'
           type: array
-        lease_expiry_time:
-          description: Lease Expiry Time
+        max_lease_time:
+          description: 'Max Lease Time: Min(error = DHCPSERVER_CONFIG_UNSUPPORTED_MAX_LEASE_TIME:
+            Max lease time should be between 300 and 2^32-1 seconds respectively.,
+            value = 300L) Max(error = DHCPSERVER_CONFIG_UNSUPPORTED_MAX_LEASE_TIME:
+            Max lease time should be between 300 and 2^32-1 seconds respectively.,
+            value = 4294967295L) '
+          format: int64
           type: integer
-        lease_renew_time:
-          description: Lease Renew Time
-          type: integer
+        network_context_id:
+          description: 'Network Context Id: Digits(fraction = 0, integer = 50, error
+            = INVALID_NETWORK_CTX_ID: Invalid network ctrx id.) '
+          type: string
+        static_mappings:
+          description: 'Static Mappings: Valid '
+          items:
+            $ref: '#/components/schemas/StaticMapping'
+          type: array
+        subnet:
+          description: 'Subnet: NotNull(error = DHCPSERVER_CONFIG_INVALID_SUBNET_ADDR:
+            Invalid IPv4 subnet address.) IPAddress(allowEmpty = true, allowLinkLocal
+            = false, allowNull = true, bcast = DENY, defaultRoute = false, dnsCheck
+            = false, error = DHCPSERVER_CONFIG_INVALID_SUBNET_ADDR: Invalid IPv4 subnet
+            address., type = PREFIXCIDR) '
+          type: string
+        tags:
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = DHCPSERVER_CONFIG_INVALID_TAGS:
+            Tags config is invalid- maximum 10 tags are supported, tag should not
+            exceed maximum limit of 128 characters, it should not have duplicates.,
+            noTrim = false, regex = [^,\\s]+, required = false) '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - ip_ranges
+      - subnet
     ESPGroup:
       properties:
         force_encapsulation:
@@ -193,18 +283,25 @@ components:
           type: string
       required:
       - xauth_type
-    IPAddressPool:
+    IPRange:
       properties:
-        end:
-          description: 'End: IPAddress(allowEmpty = true, allowLinkLocal = false,
-            allowNull = true, bcast = DENY, defaultRoute = false, dnsCheck = false,
-            INVALID_IP, type = IP) '
+        end_ip:
+          description: 'End Ip: NotNull(error = DHCPSERVER_CONFIG_IP_RANGE_MISSING:
+            Provide valid IPv4 address range for defined subnet.) IPAddress(allowEmpty
+            = true, allowLinkLocal = false, allowNull = true, bcast = DENY, defaultRoute
+            = false, dnsCheck = false, error = DHCPSERVER_CONFIG_IP_RANGE_INVALID_IP:
+            Invalid IPv4 address provided for IP ranges., type = IP) '
           type: string
-        start:
-          description: 'Start: IPAddress(allowEmpty = true, allowLinkLocal = false,
-            allowNull = true, bcast = DENY, defaultRoute = false, dnsCheck = false,
-            INVALID_IP, type = IP) '
+        start_ip:
+          description: 'Start Ip: NotNull(error = DHCPSERVER_CONFIG_IP_RANGE_MISSING:
+            Provide valid IPv4 address range for defined subnet.) IPAddress(allowEmpty
+            = true, allowLinkLocal = false, allowNull = true, bcast = DENY, defaultRoute
+            = false, dnsCheck = false, error = DHCPSERVER_CONFIG_IP_RANGE_INVALID_IP:
+            Invalid IPv4 address provided for IP ranges., type = IP) '
           type: string
+      required:
+      - end_ip
+      - start_ip
     IPSECAuthentication:
       properties:
         certificate:
@@ -1110,6 +1207,32 @@ components:
             description: Tags
             type: string
           type: array
+    StaticMapping:
+      properties:
+        ip_address:
+          description: 'Ip Address: NotNull(error = DHCPSERVER_CONFIG_STATIC_MAPPING_MISSING:
+            Provide all required attributes for static mappings.) IPAddress(allowEmpty
+            = true, allowLinkLocal = false, allowNull = true, bcast = DENY, defaultRoute
+            = false, dnsCheck = false, error = DHCPSERVER_CONFIG_INVALID_STATIC_MAPPING_IP:
+            Invalid IPv4 address provided for static mapping, type = IP) '
+          type: string
+        mac:
+          description: 'Mac: NotNull(error = DHCPSERVER_CONFIG_STATIC_MAPPING_MISSING:
+            Provide all required attributes for static mappings.) MACAddressFiveColons(error
+            = DHCPSERVER_CONFIG_INVALID_STATIC_MAPPING_MAC_ADDR: Invalid mac address
+            provided for static mapping) '
+          type: string
+        name:
+          description: 'Name: NotNull(error = DHCPSERVER_CONFIG_STATIC_MAPPING_MISSING:
+            Provide all required attributes for static mappings.) Size(max = 256,
+            error = DHCPSERVER_CONFIG_STATIC_MAPPING_NAME_EXCEEDS_LIMIT: Static Mapping
+            name execeeds the maximum limit, min = 0) Pattern(error = DHCPSERVER_CONFIG_STATIC_MAPPING_UNSUPPORTED_NAME:
+            Provide valid static mapping name, regexp = ^[a-zA-Z0-9]+(([a-zA-Z0-9\\-_])|(\\.?[a-zA-Z0-9\\-]))*\\.?$) '
+          type: string
+      required:
+      - ip_address
+      - mac
+      - name
     VPNLinkConfiguration:
       properties:
         keep_alive_failure_count:

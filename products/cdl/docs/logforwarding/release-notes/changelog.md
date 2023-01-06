@@ -11,6 +11,6 @@ keywords:
 
 # Cortex Data Lake Log Forwarding API Changelog
 
-| Date               | Description                                                  |
-| ------------------ | ------------------------------------------------------------ |
+| Date               | Description                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------- |
 | September 23, 2022 | First public release of the Log Forwarding API for managed security service providers. |
