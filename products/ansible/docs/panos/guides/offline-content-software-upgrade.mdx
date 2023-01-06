@@ -62,23 +62,23 @@ Also, for the purposes of this guide we are hardcoding some variables to refer t
 Each version of PAN-OS has a required minimum version of content (also known as "Dynamic Updates" or "apps") before it can be installed. Some organizations routinely upgrade content to recent versions, so this section might not be required. The first task of this playbook uploads a content file from a location accessible to the host executing Ansible. As previously mentioned, you may wish to pass in the file name and location as values at runtime.
 
 ```yaml
-  tasks:
-    - name: Import content file into PAN-OS
-      paloaltonetworks.panos.panos_import:
-        provider: "{{ device }}"
-        category: content
-        file: "{{ content_file }}"
+tasks:
+  - name: Import content file into PAN-OS
+    paloaltonetworks.panos.panos_import:
+      provider: "{{ device }}"
+      category: content
+      file: "{{ content_file }}"
 ```
 
 The second task installs the content which has just been uploaded, and stores the response as this will be used to track the installation progress.
 
 ```yaml
-    - name: Start content installation
-      paloaltonetworks.panos.panos_op:
-        provider: "{{ device }}"
-        cmd: "<request><content><upgrade><install><skip-content-validity-check>yes</skip-content-validity-check><file>{{ content_file }}</file></install></upgrade></content></request>"
-        cmd_is_xml: true
-      register: contentinstall
+- name: Start content installation
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><content><upgrade><install><skip-content-validity-check>yes</skip-content-validity-check><file>{{ content_file }}</file></install></upgrade></content></request>"
+    cmd_is_xml: true
+  register: contentinstall
 ```
 
 ## Monitor content installation progress
@@ -86,50 +86,49 @@ The second task installs the content which has just been uploaded, and stores th
 The next task takes the response from the installation request and parses out the Job ID for the installation:
 
 ```yaml
-    - name: Get job ID for content install
-      community.general.xml:
-        xmlstring: "{{ contentinstall.stdout_xml }}"
-        xpath: /response[@status='success']/result/job
-        content: text
-      register: content_jobid
+- name: Get job ID for content install
+  community.general.xml:
+    xmlstring: "{{ contentinstall.stdout_xml }}"
+    xpath: /response[@status='success']/result/job
+    content: text
+  register: content_jobid
 ```
 
 With the Job ID identified, the next task checks the progress of the job every 5 seconds, looping until the job is finished. There is logic to detect failure, the assumption being that you do not want to proceed with the PAN-OS software installation if the prerequisite content installation did not succeed.
 
 ```yaml
-    - name: Check content install job until completion
-      paloaltonetworks.panos.panos_op:
-        provider: "{{ device }}"
-        cmd: "<show><jobs><id>{{ content_jobid.matches[0].job }}</id></jobs></show>"
-        cmd_is_xml: true
-      register: content_result
-      until: (content_result.stdout | from_json).response.result.job.status == "FIN"
-      retries: 100
-      delay: 5
-      failed_when: (content_result.stdout | from_json).response.result.job.result == "FAIL"
+- name: Check content install job until completion
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<show><jobs><id>{{ content_jobid.matches[0].job }}</id></jobs></show>"
+    cmd_is_xml: true
+  register: content_result
+  until: (content_result.stdout | from_json).response.result.job.status == "FIN"
+  retries: 100
+  delay: 5
+  failed_when: (content_result.stdout | from_json).response.result.job.result == "FAIL"
 ```
-
 
 ## Import and install software
 
 Having successfully installed the prerequisite content version, you can move onto the software upgrade. The first task is to upload the software as a file from a location accessible to the host executing Ansible. As previously mentioned, you may wish to pass in the file name and location as values at runtime.
 
 ```yaml
-    - name: Import software image into PAN-OS
-      paloaltonetworks.panos.panos_import:
-        provider: "{{ device }}"
-        category: software
-        file: "{{ software_file }}"
+- name: Import software image into PAN-OS
+  paloaltonetworks.panos.panos_import:
+    provider: "{{ device }}"
+    category: software
+    file: "{{ software_file }}"
 ```
 
 The next tasks installs the software which has just been uploaded, and stores the response as this will be used to track the installation progress.
 
 ```yaml
-    - name: Install software
-      paloaltonetworks.panos.panos_op:
-        provider: "{{ device }}"
-        cmd: "request system software install version {{ software_version }}"
-      register: softwareinstall
+- name: Install software
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "request system software install version {{ software_version }}"
+  register: softwareinstall
 ```
 
 ## Monitor software installation progress
@@ -137,43 +136,42 @@ The next tasks installs the software which has just been uploaded, and stores th
 The next task takes the response from the installation request and parses out the Job ID for the installation:
 
 ```yaml
-    - name: Get job ID for software install
-      community.general.xml:
-        xmlstring: "{{ softwareinstall.stdout_xml }}"
-        xpath: /response[@status='success']/result/job
-        content: text
-      register: software_jobid
+- name: Get job ID for software install
+  community.general.xml:
+    xmlstring: "{{ softwareinstall.stdout_xml }}"
+    xpath: /response[@status='success']/result/job
+    content: text
+  register: software_jobid
 ```
 
 With the Job ID identified, the next task checks the progress of the job every 5 seconds, looping until the job is finished. There is logic to detect failure, such that the playbook execution result will accurately mirror the installation result.
 
 ```yaml
-    - name: Check software install job until completion
-      paloaltonetworks.panos.panos_op:
-        provider: "{{ device }}"
-        cmd: "<show><jobs><id>{{ software_jobid.matches[0].job }}</id></jobs></show>"
-        cmd_is_xml: true
-      register: software_result
-      until: (software_result.stdout | from_json).response.result.job.status == "FIN"
-      retries: 100
-      delay: 5
-      failed_when: (software_result.stdout | from_json).response.result.job.result != "OK"
+- name: Check software install job until completion
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<show><jobs><id>{{ software_jobid.matches[0].job }}</id></jobs></show>"
+    cmd_is_xml: true
+  register: software_result
+  until: (software_result.stdout | from_json).response.result.job.status == "FIN"
+  retries: 100
+  delay: 5
+  failed_when: (software_result.stdout | from_json).response.result.job.result != "OK"
 ```
-
 
 ## Reboot, if required
 
 The final task is to reboot the firewall. A reboot is required to make the new software version live, but it is optional to do the reboot directly after the software install. Hence the variable at the start of the playbook to control whether the reboot happens, and also the conditional logic here to only reboot when required. The reboot is also only performed if the software installation was completed successfully.
 
 ```yaml
-    - name: Reboot if requested
-      paloaltonetworks.panos.panos_op:
-        provider: "{{ device }}"
-        cmd: "<request><restart><system></system></restart></request>"
-        cmd_is_xml: true
-      when:
-         - reboot_firewall
-         - (software_result.stdout | from_json).response.result.job.result == "OK"
+- name: Reboot if requested
+  paloaltonetworks.panos.panos_op:
+    provider: "{{ device }}"
+    cmd: "<request><restart><system></system></restart></request>"
+    cmd_is_xml: true
+  when:
+    - reboot_firewall
+    - (software_result.stdout | from_json).response.result.job.result == "OK"
 ```
 
 ## Final playbook
@@ -268,6 +266,6 @@ Putting all the sections together, the playbook in entirety looks like this:
         cmd: "<request><restart><system></system></restart></request>"
         cmd_is_xml: true
       when:
-         - reboot_firewall
-         - (software_result.stdout | from_json).response.result.job.result == "OK"
+        - reboot_firewall
+        - (software_result.stdout | from_json).response.result.job.result == "OK"
 ```

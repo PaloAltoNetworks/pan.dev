@@ -14,7 +14,7 @@ keywords:
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Dec 5, 2022     | Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.                                            |
-| Nov 22, 2022     | Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints.                                                                        |
+| Nov 22, 2022    | Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints.                                                                         |
 | Nov 1, 2022     | Published [Prisma Access Insights examples](/access/docs/insights/examples/).                                                                                                         |
 | Oct 24, 2022    | New endpoints and query filters for the [aggregate monitoring APIs](/sase/docs/release-notes/release-notes/#late-august-2022).                                                        |
 | Oct 12, 2022    | The Cortex Data Lake [Log Forwarding APIs](/cdl/docs/log-forwarding/) now use the same common authentication mechanism as is used by most SASE APIs.                                  |
