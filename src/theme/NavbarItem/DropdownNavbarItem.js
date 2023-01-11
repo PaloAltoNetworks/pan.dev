@@ -314,6 +314,7 @@ function DropdownNavbarItemMobile({
             >
               {products.map((product, j) => (
                 <li
+                  key={j}
                   className={clsx("menu__list-item", {
                     "menu__list-item--collapsed": j !== productIdx,
                   })}
@@ -339,30 +340,40 @@ function DropdownNavbarItemMobile({
                     className="menu__list"
                     collapsed={j !== productIdx}
                   >
-                    <NavbarNavLink
-                      className={clsx("menu__link section__title")}
-                      label={"Docs"}
-                      onClick={(e) => e.preventDefault()}
-                    />
-                    {product.docs.map((productDoc) => (
-                      <NavbarNavLink
-                        className={clsx("menu__link menu__link--sublist")}
-                        label={productDoc.label}
-                        to={productDoc.to}
-                      />
-                    ))}
-                    <NavbarNavLink
-                      className={clsx("menu__link section__title")}
-                      label={"API Reference"}
-                      onClick={(e) => e.preventDefault()}
-                    />
-                    {product.apiDocs.map((apiDoc) => (
-                      <NavbarNavLink
-                        className={clsx("menu__link menu__link--sublist")}
-                        label={apiDoc.label}
-                        to={apiDoc.to}
-                      />
-                    ))}
+                    {product.docs && (
+                      <>
+                        <NavbarNavLink
+                          className={clsx("menu__link section__title")}
+                          label={"Docs"}
+                          onClick={(e) => e.preventDefault()}
+                        />
+                        {product.docs.map((productDoc, i) => (
+                          <NavbarNavLink
+                            key={i}
+                            className={clsx("menu__link menu__link--sublist")}
+                            label={productDoc.label}
+                            to={productDoc.to}
+                          />
+                        ))}
+                      </>
+                    )}
+                    {product.apiDocs && (
+                      <>
+                        <NavbarNavLink
+                          className={clsx("menu__link section__title")}
+                          label={"API Reference"}
+                          onClick={(e) => e.preventDefault()}
+                        />
+                        {product.apiDocs.map((apiDoc, i) => (
+                          <NavbarNavLink
+                            key={i}
+                            className={clsx("menu__link menu__link--sublist")}
+                            label={apiDoc.label}
+                            to={apiDoc.to}
+                          />
+                        ))}
+                      </>
+                    )}
                   </Collapsible>
                 </li>
               ))}
