@@ -2,7 +2,7 @@
 id: api-time-range-model
 title: Prisma Cloud CSPM API Time Range Model
 sidebar_label: Time Range Model
-slug: /prisma-cloud/api/cspm/time-range-model
+slug: /prisma-cloud/api/cspm/api-time-range-model
 ---
 
 Some Prisma Cloud Cloud Security Posture Management (CSPM) API request or response objects include a time range model. Depending on the endpoint, this model can describe a time range in different ways. The examples below illustrate the different uses of this model.
@@ -86,12 +86,12 @@ The following time range model descriptions apply only to the endpoints listed b
 
 - Compliance:
 
-  - [Compliance posture](/api/cloud/cspm/compliance-posture)
-  - [Compliance reports](/api/cloud/cspm/reports)
+  - [Compliance posture](/cspm/api/compliance-posture)
+  - [Compliance reports](/cspm/api/reports)
 
 - Asset Inventory:
-  - [Asset inventory](/api/cloud/cspm/asset-inventory)
-  - [Resource (asset) explorer](/api/cloud/cspm/resource-explorer)
+  - [Asset inventory](/cspm/api/asset-inventory)
+  - [Resource (asset) explorer](/cspm/api/resource-explorer)
 
 ### Absolute Time for Compliance and Asset Inventory
 
@@ -147,7 +147,7 @@ to the endpoint URL. An example of a query string is: `&timeType=to_now&timeUnit
 
 ## Alert Dismissal Time Range Model
 
-The time range model for alert dismissal is special because it denotes a point of time in the future. The following time model descriptions apply only to [Dismiss Alerts](/api/cloud/cspm/alerts#operation/dismiss-alerts).
+The time range model for alert dismissal is special because it denotes a point of time in the future. The following time model descriptions apply only to [Dismiss Alerts](/cspm/api/dismiss-alerts/).
 
 - [Absolute Time for Alert Dismissal](#absolute-time-for-alert-dismissal)
 - [Relative Time for Alert Dismissal](#relative-time-for-alert-dismissal)

@@ -15,7 +15,7 @@ enables you to:
 - Manage Code Security suppression rules
 - Fix or suppress Code Security policy violations
 
-Use the [CSPM Policy API](/api/cloud/cspm/policy) to create and manage Code Security build policies.
+Use the [CSPM Policy API](/cspm/api/policy) to create and manage Code Security build policies.
 
 See [Prisma Cloud Code Security](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security.html) for more information.
 

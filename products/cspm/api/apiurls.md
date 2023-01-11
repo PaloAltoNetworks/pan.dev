@@ -2,7 +2,7 @@
 id: api-urls
 title: Prisma Cloud API URLs
 sidebar_label: URLs
-slug: /prisma-cloud/api/cspm/urls
+slug: /prisma-cloud/api/cspm/api-urls
 keywords:
   - Developer
   - Prisma

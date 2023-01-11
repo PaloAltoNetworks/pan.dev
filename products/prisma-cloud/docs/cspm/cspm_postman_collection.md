@@ -1,5 +1,5 @@
 ---
-id: cspm_postman_collection
+id: cspm-postman-collection
 title: Postman Collection - CSPM
 sidebar_label: Postman Collection
 description: Use the postman collection to learn the Prisma Cloud APIs
