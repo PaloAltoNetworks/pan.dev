@@ -672,6 +672,16 @@ const config = {
         docItemComponent: "@theme/ApiItem",
       },
     ],
+    [
+      '@docusaurus/plugin-ideal-image',
+      {
+        quality: 80,
+        max: 450, // max resized image's size.
+        min: 300, // min resized image's size. if original is lower, use that size.
+        steps: 2, // the max number of images generated between min and max (inclusive)
+        disableInDev: false,
+      },
+    ],
   ],
   stylesheets: [
     {
