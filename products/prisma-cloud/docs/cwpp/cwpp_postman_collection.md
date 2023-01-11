@@ -3,6 +3,7 @@ id: cwpp_postman_collection
 title: Postman Collection - CWPP
 sidebar_label: Postman Collection
 description: Use the postman collection to learn the Prisma Cloud APIs
+sidebar_position: 8
 ---
 
 :::note

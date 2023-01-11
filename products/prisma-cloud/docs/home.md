@@ -3,6 +3,7 @@ id: home
 title: Prisma Cloud Overview
 description: Prisma Cloud API docs for Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWPP), and Cloud Code Security (CCS)
 slug: /prisma-cloud/docs
+sidebar_position: 1
 keywords:
   - Prisma Cloud
   - Prisma Cloud API
