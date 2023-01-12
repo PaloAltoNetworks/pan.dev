@@ -21,12 +21,12 @@ To have the right privileges for a CSPM API request, you must have a [Prisma Clo
 To have the right authorization for a CSPM API request, follow the high-level steps below:
 
 1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
-2. Make a CSPM API request to [log in](/api/cloud/cspm/login#operation/app-login) . A successful request returns a JSON Web Token (JWT).
+2. Make a CSPM API request to [log in](/cspm/api/app-login) . A successful request returns a JSON Web Token (JWT).
 
 Almost all CSPM API requests use this JWT for authorization.
-Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/api/cloud/cspm/login#operation/extend-session).
+Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/cspm/api/extend-session).
 
-See [Getting Started](/docs/cloud/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/api/cloud/cspm/login#operation/app-login) to obtain a JWT token.
+See [Getting Started](/docs/cloud/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login) to obtain a JWT token.
 
 ## Components of a CSPM Request
 
@@ -34,7 +34,7 @@ The sections below describe the components of a successful CSPM API request.
 
 ### Base URL
 
-The base URL of your CSPM API request depends on the region of your Prisma Cloud tenant and is similar to your Prisma Cloud administrative console URL. See [URLs](/api/cloud/api-urls) for a list of Prisma Cloud console URLs and corresponding CSPM API base URLs.
+The base URL of your CSPM API request depends on the region of your Prisma Cloud tenant and is similar to your Prisma Cloud administrative console URL. See [URLs](/prisma-cloud/api/cspm/api-urls) for a list of Prisma Cloud console URLs and corresponding CSPM API base URLs.
 
 ### HTTP Methods
 
@@ -47,18 +47,18 @@ You can retrieve certain CSPM resources through either a `GET` or a `POST` reque
 
 ### Required Request Headers
 
-See [Headers](/api/cloud/api-headers) for information about required request headers.
+See [Headers](/prisma-cloud/api/cspm/api-headers) for information about required request headers.
 
 ### Request Parameters and Common Data Models
 
 Both query and request body parameters can include certain CSPM common data models. The following sections provide details about their use:
 
-- The [Time Range Model](/api/cloud/api-time-range-model) enables you to specify windows of time.
-- The [Integration Configurations](/api/cloud/api-integration-config) are specific to API requests that [add](/api/cloud/cspm/integrations#operation/save-integration), [update](/api/cloud/cspm/integrations#operation/update-integration), or [test](/api/cloud/cspm/integrations#operation/test-integration) a third-party integration with Prisma Cloud.
+- The [Time Range Model](/prisma-cloud/api/cspm/api-time-range-model) enables you to specify windows of time.
+- The [Integration Configurations](/prisma-cloud/api/cspm/api-integration-config) are specific to API requests that [add](/cspm/api/save-integration), [update](/cspm/api/update-integration), or [test](/cspm/api/test-integration) a third-party integration with Prisma Cloud.
 
 ### Error Responses
 
-See [Error Responses](/api/cloud/api-errors) for information about error handling.
+See [Error Responses](/prisma-cloud/api/cspm/api-errors) for information about error handling.
 
 ## Stay Up to Date
 

@@ -2,7 +2,7 @@
 id: api-headers
 title: Code Security API Headers
 sidebar_label: Headers
-slug: /prisma-cloud/api/code/headers
+slug: /prisma-cloud/api/code/api-headers
 keywords:
   - Developer
   - Prisma
@@ -15,5 +15,5 @@ The following table lists the HTTP headers required for a Prisma Cloud Code Secu
 
 | HTTP Header     | Value                                                                                                                                                            |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authorization` | Your JSON Web Token (JWT). Find your JWT in the response object of a successful [login request](/api/cloud/cspm/login#operation/app-login).                      |
+| `authorization` | Your JSON Web Token (JWT). Find your JWT in the response object of a successful [login request](/cspm/api/app-login/).                                           |
 | `Content-Type`  | This header is required for requests that have request body parameters. The value is usually `application/json`, but see each request for specific requirements. |
