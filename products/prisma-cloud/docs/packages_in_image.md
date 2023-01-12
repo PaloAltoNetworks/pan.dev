@@ -1,5 +1,5 @@
 ---
-id: List vulnerable package names in an image
+id: list-vulnerable-package
 title: List vulnerable package names in an image
 ---
 

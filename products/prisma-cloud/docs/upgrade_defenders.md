@@ -1,5 +1,5 @@
 ---
-id: Upgrade outdated Defenders
+id: upgrade-outdated-defenders
 title: Upgrade outdated Defenders
 ---
 
