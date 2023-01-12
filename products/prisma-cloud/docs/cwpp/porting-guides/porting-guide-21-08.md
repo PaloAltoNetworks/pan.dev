@@ -6,12 +6,10 @@ sidebar_label: 21.08 Porting Guide
 
 This article outlines important differences in the Compute API between 21.08 and 21.04.
 
-
 ## Versioned API
 
 Supported endpoints are now versioned.
-For more inforamtion, see [supported endpoints](/api/cloud/cwpp/stable-endpoints).
-
+For more inforamtion, see [supported endpoints](/prisma-cloud/api/cwpp/stable-endpoints/).
 
 ## Deprecated endpoints
 

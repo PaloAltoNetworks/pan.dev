@@ -35,7 +35,7 @@ To have the right authorization for a Code Security API request, follow the high
 
 All the Code Security API requests use this JWT in the API request [header](/prisma-cloud/api/code/api-headers) for authorization. Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/cspm/api/extend-session/).
 
-See [Getting Started](/docs/cloud/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login/) to obtain a JWT token.
+See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login/) to obtain a JWT token.
 
 ## Components of a Code Security Request
 

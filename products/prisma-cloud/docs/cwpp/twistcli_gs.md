@@ -68,7 +68,7 @@ The criteria for passing or failing a scan can be refined with vulnerability and
 
 Scan reports can viewed in Prisma Cloud Console. Log into Console, and then go to **Monitor > Vulnerabilities > Twistcli Scans**. The visual report in Console is the best way for humans to parse the results.
 You can also retrieve a JSON representation of the data shown in Console using the Prisma Cloud API. The following example curl command calls the API with Basic authentication to fetch the results of a scan.
-For more information on accessing the API, see <a href="/docs/cloud/cwpp/cwpp-gs" target="_self">Accessing the API</a>
+For more information on accessing the API, see <a href="/prisma-cloud/docs/cwpp/cwpp-gs" target="_self">Accessing the API</a>
 
 ```bash
 $ curl \
@@ -330,7 +330,7 @@ test/myapp:latest    c9821d90e9089ad2    high        (CIS_Docker_CE_v1.1.0 - 4.1
 
 2. This generates output to stdout with the result of your scan. If you need to retrieve the results of your scan in JSON format, this can be done using the API.
 
-- You will be making API calls. For more information, refer to <a href="/docs/cloud/cwpp/cwpp-gs" target="_self">Accessing the API</a>
+- You will be making API calls. For more information, refer to <a href="/prisma-cloud/docs/cwpp/cwpp-gs" target="_self">Accessing the API</a>
 - Call the API with authentication (demonstrated here using Basic authentication) to fetch the results of the scan.
 
 ```bash
