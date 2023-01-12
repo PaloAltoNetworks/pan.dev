@@ -230,7 +230,7 @@ const config = {
                     },
                     {
                       to: "https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api",
-                      label: "Wildfire API",
+                      label: "WildFire API",
                       icon: "api-doc",
                     },
                   ],
@@ -673,7 +673,7 @@ const config = {
       },
     ],
     [
-      '@docusaurus/plugin-ideal-image',
+      "@docusaurus/plugin-ideal-image",
       {
         quality: 80,
         max: 450, // max resized image's size.
