@@ -3,6 +3,9 @@ tmp=$(mktemp)
 jq '.tags |= [{"name":"Anomalies", "description":"something"}] | .paths[][].tags[] = "Anomalies"' Anomalies.json > "$tmp" && mv "$tmp" Anomalies.json
 
 for file in *.json; do
+    sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions-access/\/cspm\/api\/get-permissions-access-with-post/g" $file
+    sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions/\/cspm\/api\/get-permissions-with-post/g" $file
+
     sed -i "" "s/\/api\/cloud\/cspm\/.*#operation\//\/cspm\/api\//g" $file
     sed -i "" "s/\/api\/cloud\/cspm\/.*#operation\//\/cspm\/api\//g" $file
 
