@@ -29,6 +29,13 @@ const config = {
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
   themeConfig: {
+    metadata: [
+      {
+        "http-equiv": "Content-Security-Policy",
+        content:
+          "default-src 'self'; script-src 'report-sample' 'self' 'unsafe-eval' https://www.google-analytics.com/analytics.js https://www.googletagmanager.com/gtag/js; style-src 'report-sample' 'self' https://fonts.googleapis.com https://use.fontawesome.com; object-src 'none'; base-uri 'self'; connect-src 'self'; font-src 'self' data: https://fonts.gstatic.com https://use.fontawesome.com; frame-src 'self'; img-src 'self' data: https://cdn-images-1.medium.com https://medium.com https://www.datocms-assets.com https://www.google-analytics.com; manifest-src 'self'; media-src 'self'; worker-src 'none';",
+      },
+    ],
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
     },
