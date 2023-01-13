@@ -38,7 +38,8 @@ const config = {
           object-src 'none'; 
           base-uri 'self'; 
           font-src 'self' data: https://fonts.gstatic.com https://use.fontawesome.com; 
-          img-src 'self' data: https://cdn-images-1.medium.com https://medium.com https://www.datocms-assets.com https://www.google-analytics.com pan.dev raw.githubusercontent.com; worker-src 'none';
+          img-src 'self' data: https://cdn-images-1.medium.com https://medium.com https://www.datocms-assets.com https://www.google-analytics.com https://pan.dev https://raw.githubusercontent.com https://googletagmanager.com; 
+          worker-src 'none';
           connect-src https://www.google-analytics.com https://api.sase.paloaltonetworks.com https://cors.pan.dev https://api.threatvault.paloaltonetworks.com https://api.dns.service.paloaltonetworks.com
           `,
       },
