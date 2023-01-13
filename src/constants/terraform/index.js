@@ -25,7 +25,23 @@ export const TERRAFORM_HERO_CONTENT = {
   ),
   sliderCards: [
     {
-      title: " Hashicorp Technology Partner of The Year",
+      title: "The New Cloud Operating Model - White Paper",
+      description:
+        "Scale and secure your cloud operations with HashiCorp and Palo Alto Networks. This new white paper lays out the advantages and considerations for people, processes, and tools.",
+      cta: {
+        type: "single",
+        content: {
+          link: "https://www.hashicorp.com/resources/the-cloud-operating-model-with-palo-alto-networks-and-hashicorp",
+          text: "See More",
+        },
+      },
+      image: {
+        src: "/img/product-landing/terraform/cloud-op-model.png",
+        alt: "Technology Partner of The Year",
+      },
+    },
+    {
+      title: "Hashicorp Technology Partner of The Year",
       description:
         "The Technology Partner Awards celebrate HashiCorp technology partners who have expanded ecosystem solutions for customers through new integrations, co-engineered solutions, and participated in joint marketing initiatives.",
       cta: {
