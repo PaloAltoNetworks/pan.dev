@@ -5,13 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import Layout from "@theme/Layout";
 import React from "react";
+import clsx from "clsx";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import BackToTopButton from "@theme/BackToTopButton";
 import Featured from "../components/Featured";
-import HomepageHero from "../components/HompageHero/HomepageHero";
 import HomepageBanner from "../components/HomepageBanner/HomepageBanner";
+import HomepageHero from "../components/HompageHero/HomepageHero";
+import Image from "@theme/IdealImage";
+import Layout from "@theme/Layout";
+import Link from "@docusaurus/Link";
 import Medium from "../components/Medium";
 import styles from "./styles.module.css";
 
@@ -20,6 +23,31 @@ function Home() {
   const { siteConfig = {} } = context;
   const exploreImageSrc = "img/homepage-banner/1.svg";
   const blogImageSrc = "img/homepage-banner/2.svg";
+
+  const partnerTools = [
+    {
+      colorClass: "terraform",
+      title: "Palo Alto Networks as Code with Terraform",
+      description:
+        "Hashicorp's Terraform is widely used to build and deploy infrastructure, safely and efficiently, with high levels of automation and integration.",
+      cta: {
+        text: "Learn More",
+        src: "/terraform",
+      },
+      logo: "/img/terraform-logo.png",
+    },
+    {
+      colorClass: "ansible",
+      title: "Ansible at Palo Alto Networks",
+      description:
+        "The collection of Ansible modules for PAN-OS has been officially certified by the Red Hat Ansible team (list of Ansible certified content) since version 2.12.2.",
+      cta: {
+        text: "Learn More",
+        src: "/ansible",
+      },
+      logo: "/img/ansible-logo.png",
+    },
+  ];
 
   return (
     <Layout
@@ -39,6 +67,30 @@ function Home() {
           />
           <Featured />
           <BackToTopButton />
+        </section>
+        <section className="container">
+          <HomepageBanner text="Explore our Partnered Tools" />
+          <div className={styles.toolsContainer}>
+            {partnerTools.map((partner, i) => {
+              return (
+                <div
+                  key={i}
+                  className={clsx(styles.toolCardContainer, partner.colorClass)}
+                >
+                  <h2 className={styles.toolCardTitle}>{partner.title}</h2>
+                  <p className={styles.toolCardDescription}>
+                    {partner.description}
+                  </p>
+                  <div className={styles.toolCardFooter}>
+                    <Link className={styles.toolCardLink} to={partner.cta.src}>
+                      <span>{partner.cta.text}</span>
+                    </Link>
+                    <Image img={partner.logo} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </section>
         <section>
           <HomepageBanner
