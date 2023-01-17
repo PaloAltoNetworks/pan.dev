@@ -69,7 +69,7 @@ function Home() {
           <BackToTopButton />
         </section>
         <section className="container">
-          <HomepageBanner text="Explore our Partnered Tools" />
+          <HomepageBanner text="Explore our Partner Tools" />
           <div className={styles.toolsContainer}>
             {partnerTools.map((partner, i) => {
               return (
