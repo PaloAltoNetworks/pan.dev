@@ -40,7 +40,7 @@ const config = {
           font-src 'self' data: https://fonts.gstatic.com https://use.fontawesome.com; 
           img-src 'self' data: https://cdn-images-1.medium.com https://medium.com https://www.datocms-assets.com https://www.google-analytics.com https://pan.dev https://raw.githubusercontent.com https://googletagmanager.com; 
           worker-src 'none';
-          connect-src https://www.google-analytics.com https://*.paloaltonetworks.com https://cors.pan.dev
+          connect-src https://www.google-analytics.com https://*.paloaltonetworks.com https://cors.pan.dev https://*.algolia.net
           `,
       },
     ],
