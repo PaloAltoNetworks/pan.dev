@@ -11,9 +11,8 @@ keywords:
 
 # Welcome to the Aggregate Monitoring APIs
 
-Welcome to the Aggregate Monitoring APIs. To use these APIs, you must be a new Managed
-Security Service Provider (MSSP) customer as of March 2022 and must have configured your multitenant
-hierarchy for a new deployment of Prisma Access.
+Welcome to the Aggregate Monitoring APIs. These APIs are available to customers that utilize Cloud
+Management for service onboarding, configuration, and operations.
 
 After you [create a tenant service group](/sase/docs/tenant-service-groups),
 [create a service account](/sase/docs/service-accounts),
@@ -57,6 +56,8 @@ filters and properties](/sase/docs/filters) that you need to use in the request 
 
 ## X-PANW-Region Header Parameter
 
-The `X-PANW-Region` header parameter is the region you chose when setting up your tenant. It must be one of the following: `de`, `americas`, `europe`, `uk`, `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake (CDL) region specified.
+The `X-PANW-Region` header parameter is the region you chose when setting up your tenant. It must be one of the following:
+`de`, `americas`, `europe`, `uk`, `sg`, `ca`, `jp`, `au`, `in`. The API will then return details from the specified
+Cortex Data Lake (CDL) region.
 
 If you need to verify which region to use, you can [list tenant hierarchy](/sase/api/mt-monitor/get-mt-monitor-v-1-agg-custom-tenant-hierarchy) to see the region in the response.
