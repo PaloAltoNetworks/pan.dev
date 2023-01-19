@@ -33,15 +33,14 @@ const config = {
       {
         "http-equiv": "Content-Security-Policy",
         content: `default-src 'self'; 
-          script-src 'report-sample' 'self' 'strict-dynamic' 'sha256-HEXSlCvj5t1knUX5S9reED7mj347MrX5NNWmhVKV3AY=' 'sha256-LJv39KYSfXELQ23XLwGsxKqh55fWlLAveXNhE4GJztE=' 'sha256-zkIfJey2QJSMWsoE/xLvQ6GebR1o8N9s0f9cjTQ7mS0=' https://www.google-analytics.com/analytics.js https://www.googletagmanager.com/gtag/js; 
+          script-src 'report-sample' 'self' 'sha256-HEXSlCvj5t1knUX5S9reED7mj347MrX5NNWmhVKV3AY=' 'sha256-LJv39KYSfXELQ23XLwGsxKqh55fWlLAveXNhE4GJztE=' 'sha256-zkIfJey2QJSMWsoE/xLvQ6GebR1o8N9s0f9cjTQ7mS0=' https://www.google-analytics.com/analytics.js https://www.googletagmanager.com/gtag/js; 
           style-src 'report-sample' 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com pan.dev; 
           object-src 'none'; 
           base-uri 'self'; 
           font-src 'self' data: https://fonts.gstatic.com https://use.fontawesome.com; 
           img-src 'self' data: https://cdn-images-1.medium.com https://medium.com https://www.datocms-assets.com https://www.google-analytics.com https://pan.dev https://raw.githubusercontent.com https://googletagmanager.com; 
           worker-src 'none';
-          connect-src https://www.google-analytics.com https://*.paloaltonetworks.com https://cors.pan.dev https://*.algolia.net https://firestore.googleapis.com
-          require-trusted-types-for 'script';
+          connect-src https://www.google-analytics.com https://*.paloaltonetworks.com https://cors.pan.dev https://*.algolia.net https://firestore.googleapis.com;
           `,
       },
     ],
