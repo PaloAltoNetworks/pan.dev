@@ -1,5 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 function SliderComponent(props) {
   const defaultSettings = {
@@ -36,8 +38,8 @@ function SliderComponent(props) {
   return (
     <Slider {...defaultSettings} {...props}>
       {props.children}
-    </Slider >
-  )
+    </Slider>
+  );
 }
 
-export default SliderComponent
+export default SliderComponent;
