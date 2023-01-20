@@ -1,9 +1,7 @@
 import Link from "@docusaurus/Link";
 import clsx from "clsx";
 import React from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
+import Slider from "../Slider/Slider";
 import "./Slider.scss";
 import styles from "./styles.module.css";
 
@@ -12,15 +10,8 @@ const blogs = blog_json.items.slice(0, 9);
 
 function Medium() {
   const sliderSettings = {
-    autoplay: true,
-    autoplaySpeed: 7500,
-    dots: true,
-    infinite: true,
-    speed: 850,
     slidesToShow: 3,
     slidesToScroll: 3,
-    nextArrow: <img src="/icons/slider-arrow-forward.svg" />,
-    prevArrow: <img src="/icons/slider-arrow-back.svg" />,
     responsive: [
       {
         breakpoint: 1024,
