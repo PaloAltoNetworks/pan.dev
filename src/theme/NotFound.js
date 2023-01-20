@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { PageMetadata } from "@docusaurus/theme-common";
+import Image from "@theme/IdealImage";
 import Layout from "@theme/Layout";
-import algoliaSearch from "algoliasearch/lite";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import { useLocation } from "@docusaurus/router";
 import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import SearchBar from "@theme/SearchBar";
+import algoliaSearch from "algoliasearch/lite";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { PageMetadata } from "@docusaurus/theme-common";
+import { useLocation } from "@docusaurus/router";
 
 export default function NotFound() {
   const {
@@ -50,7 +51,7 @@ export default function NotFound() {
               <div className="container">
                 <div className="row">
                   <div className="col col--4">
-                    <img src="/img/404_Page.svg" />
+                    <Image img="/img/404_Page.svg" alt="Page not found" />
                   </div>
                   <div className="col col--8">
                     <h1 className="hero__title">

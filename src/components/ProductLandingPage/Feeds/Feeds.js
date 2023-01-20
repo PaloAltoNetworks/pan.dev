@@ -1,5 +1,5 @@
 import React from "react";
-import Card from "../Cards/Card";
+import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -36,8 +36,8 @@ function Feeds() {
             {imageFeeds.map((feed, i) => (
               <Link key={i} to={feed.link}>
                 <div className="feeds-image-text-wrapper">
-                  <img
-                    src={
+                  <Image
+                    img={
                       feed.thumbnail ||
                       "/img/product-landing/terraform/feeds/stock-feed.jpg"
                     }
@@ -54,9 +54,9 @@ function Feeds() {
             {feeds.map((feed, i) => (
               <li key={i} className="feeds-list__item">
                 <Link to={feed.link}>{feed.title}</Link>
-                <img
+                <Image
                   className="external-icon"
-                  src="/img/icons/external-icon.png"
+                  img="/img/icons/external-icon.png"
                   alt="External icon"
                 />
               </li>

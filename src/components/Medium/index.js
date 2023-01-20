@@ -1,7 +1,8 @@
-import Link from "@docusaurus/Link";
-import clsx from "clsx";
 import React from "react";
+import Image from "@theme/IdealImage";
+import Link from "@docusaurus/Link";
 import Slider from "../Slider/Slider";
+import clsx from "clsx";
 import "./Slider.scss";
 import styles from "./styles.module.css";
 
@@ -46,8 +47,8 @@ function Medium() {
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
-          <img
-            src={blog.thumbnail}
+          <Image
+            img={blog.thumbnail}
             alt={blog.title}
             className={styles.blogImage}
           />
