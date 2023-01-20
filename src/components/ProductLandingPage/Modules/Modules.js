@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -50,19 +51,19 @@ function Modules({ header, modules }) {
                           className="logo-link"
                           to={logoItem.linkSrc}
                         >
-                          <img
+                          <Image
                             className="tab-item__logo"
-                            src={logoItem.logoSrc}
+                            img={logoItem.logoSrc}
                             alt={logoItem.logoAlt}
                           />
                         </Link>
                       );
                     }
                     return (
-                      <img
+                      <Image
                         key={i}
                         className="tab-item__logo"
-                        src={logoItem.logoSrc}
+                        img={logoItem.logoSrc}
                         alt={logoItem.logoAlt}
                       />
                     );
@@ -71,8 +72,8 @@ function Modules({ header, modules }) {
                 {moduleContent.link && (
                   <Link to={moduleContent.link} className="tab-item__link">
                     <span>Learn More</span>
-                    <img
-                      src="/img/icons/arrow-forward.svg"
+                    <Image
+                      img="/img/icons/arrow-forward.svg"
                       alt="Forward arrow icon"
                     />
                   </Link>
