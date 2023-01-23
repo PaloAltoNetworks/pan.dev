@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "@theme/IdealImage";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import SearchBar from "@theme/SearchBar";
@@ -51,7 +50,7 @@ export default function NotFound() {
               <div className="container">
                 <div className="row">
                   <div className="col col--4">
-                    <Image img="/img/404_Page.svg" alt="Page not found" />
+                    <img src="/img/404_Page.svg" alt="Page not found" />
                   </div>
                   <div className="col col--8">
                     <h1 className="hero__title">

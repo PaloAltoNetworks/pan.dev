@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "@theme/IdealImage";
 import "./HomepageHero.scss";
 
 function HomepageHero() {
@@ -13,15 +12,15 @@ function HomepageHero() {
           </h1>
         </div>
         <div className="hero-image-container">
-          <Image
+          <img
             className="hero-image__logo"
-            img="img/PANW_Parent_Logo_Black.svg"
+            src="img/PANW_Parent_Logo_Black.svg"
           />
         </div>
       </header>
-      <Image
+      <img
         className="hero-image__illustration"
-        img="img/homepage-hero/hero-1.svg"
+        src="img/homepage-hero/hero-1.svg"
       />
     </div>
   );
