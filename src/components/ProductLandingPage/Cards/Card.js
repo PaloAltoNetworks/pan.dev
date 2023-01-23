@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "@docusaurus/Link";
-import Image from "@theme/IdealImage";
 import "./Card.scss";
 
 function Card({ cta, description, image, title, type, links, latestTag }) {
@@ -58,7 +57,7 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
     return (
       <div className="image-card-container">
         <div className="image-card__image">
-          <Image img={image.src} alt={image.alt} />
+          <img src={image.src} alt={image.alt} />
         </div>
         <div className="image-card__body">
           <h4>{title}</h4>

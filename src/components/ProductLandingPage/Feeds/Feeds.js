@@ -1,5 +1,4 @@
 import React from "react";
-import Card from "../Cards/Card";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
