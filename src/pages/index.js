@@ -12,7 +12,6 @@ import BackToTopButton from "@theme/BackToTopButton";
 import Featured from "../components/Featured";
 import HomepageBanner from "../components/HomepageBanner/HomepageBanner";
 import HomepageHero from "../components/HompageHero/HomepageHero";
-import Image from "@theme/IdealImage";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import Medium from "../components/Medium";
@@ -85,7 +84,7 @@ function Home() {
                     <Link className={styles.toolCardLink} to={partner.cta.src}>
                       <span>{partner.cta.text}</span>
                     </Link>
-                    <Image img={partner.logo} />
+                    <img src={partner.logo} />
                   </div>
                 </div>
               );

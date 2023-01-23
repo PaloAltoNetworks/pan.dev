@@ -1,7 +1,7 @@
-import Link from "@docusaurus/Link";
-import clsx from "clsx";
 import React from "react";
+import Link from "@docusaurus/Link";
 import Slider from "../Slider/Slider";
+import clsx from "clsx";
 import "./Slider.scss";
 import styles from "./styles.module.css";
 
