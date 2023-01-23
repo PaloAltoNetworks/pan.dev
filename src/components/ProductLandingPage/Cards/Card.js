@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "@docusaurus/Link";
-import Image from "@theme/IdealImage";
 import "./Card.scss";
 
 function Card({ cta, description, image, title, type, links, latestTag }) {
@@ -11,9 +10,9 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
       if (content.logoSrc) {
         return (
           <Link className="card-cta__single-link" to={content.link}>
-            <Image
+            <img
               className="card-cta__logo"
-              img={content.logoSrc}
+              src={content.logoSrc}
               alt={content.logoAlt}
             />
           </Link>
@@ -34,15 +33,15 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
             if (ctaInfo.logoSrc) {
               return (
                 <Link key={i} className="card-cta__logo-link" to={ctaInfo.link}>
-                  <Image className="card-cta__logo" img={ctaInfo.logoSrc} />
+                  <img className="card-cta__logo" src={ctaInfo.logoSrc} />
                 </Link>
               );
             } else {
               return (
                 <Link key={i} className="card-cta__docs-link" to={ctaInfo.link}>
                   <span className="card-cta__text">{ctaInfo.text}</span>
-                  <Image
-                    img="/img/icons/arrow-forward.svg"
+                  <img
+                    src="/img/icons/arrow-forward.svg"
                     alt="Forward arrow icon"
                   />
                 </Link>
@@ -58,7 +57,7 @@ function Card({ cta, description, image, title, type, links, latestTag }) {
     return (
       <div className="image-card-container">
         <div className="image-card__image">
-          <Image img={image.src} alt={image.alt} />
+          <img src={image.src} alt={image.alt} />
         </div>
         <div className="image-card__body">
           <h4>{title}</h4>

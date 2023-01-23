@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "@theme/IdealImage";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -15,7 +14,7 @@ function SliderComponent(props) {
       aria-disabled={currentSlide === 0 ? true : false}
       type="button"
     >
-      <Image img="/icons/slider-arrow-back.svg" />
+      <img src="/icons/slider-arrow-back.svg" />
     </button>
   );
 
@@ -30,7 +29,7 @@ function SliderComponent(props) {
       aria-disabled={currentSlide === slideCount - 1 ? true : false}
       type="button"
     >
-      <Image img="/icons/slider-arrow-forward.svg" />
+      <img src="/icons/slider-arrow-forward.svg" />
     </button>
   );
 
