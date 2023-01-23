@@ -43,7 +43,6 @@ function Medium() {
   };
 
   const BlogCard = ({ blog }) => {
-    console.log({ blog });
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
