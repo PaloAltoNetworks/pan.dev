@@ -514,6 +514,110 @@ components:
           type: array
       required:
       - mroutes
+    MulticastSourceSideRp:
+      properties:
+        id:
+          description: Id
+          type: string
+        source_side_rps:
+          description: Source Side Rps
+          items:
+            $ref: '#/components/schemas/SourceSideRp'
+          type: array
+        source_site_id:
+          description: Source Site Id
+          type: string
+    MulticastSourceSideRpQuery:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/Aggregate'
+          description: Aggregate
+        dest_page:
+          description: Dest Page
+          format: int32
+          type: integer
+        getDeleted:
+          description: GetDeleted
+          type: boolean
+        group_by:
+          description: Group By
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: Id
+          type: string
+        last_query_ts:
+          description: Last Query Ts
+          format: int64
+          type: integer
+        limit:
+          description: Limit
+          format: int32
+          type: integer
+        next_query:
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: Retrieved Fields
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: Total Count
+          format: int64
+          type: integer
+    MulticastSourceSideRpQueryFilter:
+      properties:
+        id:
+          description: Id
+          type: string
+        source_side_rps:
+          description: Source Side Rps
+          items:
+            $ref: '#/components/schemas/SourceSideRp'
+          type: array
+        source_site_id:
+          description: Source Site Id
+          type: string
+    MulticastSourceSiteConfig:
+      properties:
+        id:
+          description: Id
+          type: string
+        site_configs:
+          description: 'Site Configs: Valid NotNull(message = MULTICAST_INVALID_SOURCE_SITE_CONFIG)
+            ListObject(allowDuplicate = true, allowEmpty = false, allowNull = false,
+            listMaxSize = 64, message = MULTICAST_INVALID_SITE_CONFIG_LIST, required
+            = false) '
+          items:
+            $ref: '#/components/schemas/SiteConfig'
+          type: array
+      required:
+      - site_configs
+    MulticastSourceSiteConfigScreen:
+      properties:
+        id:
+          description: Id
+          type: string
+        site_configs:
+          description: 'Site Configs: Valid NotNull(message = MULTICAST_INVALID_SOURCE_SITE_CONFIG)
+            ListObject(allowDuplicate = true, allowEmpty = false, allowNull = false,
+            listMaxSize = 64, message = MULTICAST_INVALID_SITE_CONFIG_LIST, required
+            = false) '
+          items:
+            $ref: '#/components/schemas/SiteConfig'
+          type: array
+      required:
+      - site_configs
     MulticastStatusQuery:
       properties:
         aggregate:
@@ -760,6 +864,32 @@ components:
           type: array
       required:
       - paths
+    SiteConfig:
+      properties:
+        group_ipv4_prefix:
+          description: Group Ipv4 Prefix
+          type: string
+        source_ipv4_address:
+          description: Source Ipv4 Address
+          type: string
+    SourceSideGroup:
+      properties:
+        ipv4_prefix:
+          description: Ipv4 Prefix
+          type: string
+        source_ipv4_address:
+          description: Source Ipv4 Address
+          type: string
+    SourceSideRp:
+      properties:
+        groups:
+          description: Groups
+          items:
+            $ref: '#/components/schemas/SourceSideGroup'
+          type: array
+        ipv4_address:
+          description: Ipv4 Address
+          type: string
     WANPath:
       properties:
         label:
@@ -1433,6 +1563,341 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Updates Multicast RP config (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps:
+    get:
+      description: 'Get multicast source side RPs API.
+
+        '
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSideRp'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Source Side RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps/query:
+    post:
+      description: 'API to query multicast source side RPs.
+
+        '
+      operationId: post-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSideRpQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSideRpQueryFilter'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_INPUT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Multicast Source Side RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps/{rp_id}:
+    get:
+      description: Get multicast source side RP API
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps-rp_id
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Rp Id
+        in: path
+        name: rp_id
+        required: true
+        schema:
+          description: Rp Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSideRp'
+          description: Successful Operation
+      summary: Get multicast source side RP (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiteconfigs:
+    get:
+      description: Get multicast source site configs API
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSiteConfig'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get multicast source site configs (v2.0)
+      tags:
+      - Multicast
+    post:
+      description: "Use the API to create multicast source site configs. \n"
+      operationId: post-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSiteConfigScreen'
+        description: Details of the multicast source site config to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: DUPLICATE_MULTICAST_SOURCE_SITE_GRP_IPV4_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Multicast Source Site Config (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiteconfigs/{config_id}:
+    delete:
+      description: Delete multicast source site config API
+      operationId: delete-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Source Site Config ID
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '404':
+          description: Not Found
+      summary: Delete multicast source site config (v2.0)
+      tags:
+      - Multicast
+    get:
+      description: Get multicast source site config API
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Source Site Config ID
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '404':
+          description: Not Found
+      summary: Get multicast source site config (v2.0)
+      tags:
+      - Multicast
+    put:
+      description: Update multicast source site config API
+      operationId: put-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site ID
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Source Site Config ID
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSiteConfigScreen'
+        description: Details of the multicast source site config to be updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: DUPLICATE_MULTICAST_SOURCE_SITE_GRP_IPV4_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          description: Not Found
+      summary: Update multicast source site config (v2.0)
       tags:
       - Multicast
   /v2.1/api/tenants/{tenant_id}/pathgroups:
