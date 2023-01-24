@@ -43,6 +43,23 @@ function Medium() {
   };
 
   const BlogCard = ({ blog }) => {
+    const getFirstParagraph = (blogContent) => {
+      let firstParagraph = null;
+      let div = document.createElement("div");
+      div.innerHTML = blogContent;
+      let elements = div.childNodes;
+
+      // Find the first paragraph element in the blog content
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].nodeName === "P") {
+          firstParagraph = elements[i].innerText;
+          break;
+        }
+      }
+
+      return firstParagraph;
+    };
+
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
@@ -62,7 +79,7 @@ function Medium() {
           <br />
           <div className="avatar__intro margin-left--none">
             <div className={styles.content}>
-              <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+              <p>{getFirstParagraph(blog.content)}</p>
             </div>
           </div>
         </div>
