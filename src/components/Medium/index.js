@@ -1,4 +1,5 @@
 import React from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 import Link from "@docusaurus/Link";
 import Slider from "../Slider/Slider";
 import clsx from "clsx";
@@ -79,7 +80,9 @@ function Medium() {
           <br />
           <div className="avatar__intro margin-left--none">
             <div className={styles.content}>
-              <p>{getFirstParagraph(blog.content)}</p>
+              <BrowserOnly>
+                {() => <p>{getFirstParagraph(blog.content)}</p>}
+              </BrowserOnly>
             </div>
           </div>
         </div>
