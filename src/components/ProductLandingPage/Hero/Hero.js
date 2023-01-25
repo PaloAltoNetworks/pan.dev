@@ -1,7 +1,7 @@
 import React from "react";
 // components
 import Link from "@docusaurus/Link";
-import Slider from "../Slider/Slider";
+import Slider from "../../Slider/Slider";
 import Card from "../Cards/Card";
 // styles
 import "./Hero.scss";

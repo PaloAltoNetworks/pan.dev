@@ -713,16 +713,6 @@ const config = {
         docItemComponent: "@theme/ApiItem",
       },
     ],
-    [
-      "@docusaurus/plugin-ideal-image",
-      {
-        quality: 80,
-        max: 450, // max resized image's size.
-        min: 300, // min resized image's size. if original is lower, use that size.
-        steps: 2, // the max number of images generated between min and max (inclusive)
-        disableInDev: false,
-      },
-    ],
   ],
   stylesheets: [
     {
@@ -748,6 +738,7 @@ const config = {
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
+    errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };
 
