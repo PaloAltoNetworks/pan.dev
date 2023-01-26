@@ -14,7 +14,7 @@ keywords:
   - firewall
   - configuration
   - automation
-  - convertion
+  - conversion
 
 image: /expedition/img/expedition.png
 ---
@@ -31,9 +31,9 @@ window.location.reload()
 
 <br/>
 
-In this section we present a workflow example for bulk change apply Security Profile group to all allowed security rules in a PAN-OS configuraiton.
+In this section we present a workflow example for bulk change apply Security Profile group to all allowed security rules in a PAN-OS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
@@ -44,10 +44,10 @@ flowchart TB
     E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
     F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
     G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> H["Create a filter for all allowed security rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
-    H["Create a filter for all allowed scecurity rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+    H["Create a filter for all allowed security rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
     I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
-    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group"]
-    K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group" ] --> L["Bulk Change Apply SPG to all allowed rules<br/> PUT https://localhost/api/v1/project/{project_id}/policy/security"]
+    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Get Security Profile Group ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group"]
+    K["Get Security Profile Group ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group" ] --> L["Bulk Change Apply SPG to all allowed rules<br/> PUT https://localhost/api/v1/project/{project_id}/policy/security"]
 ```
 
 ### Step 1. Obtain the API Keys
@@ -60,7 +60,7 @@ Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agen
 
 ### Step 3. Add PAN-OS Device
 
-Making a POST call to the Device route, we can create a Devive with a desired name.
+Making a POST call to the Device route, we can create a Device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -129,7 +129,7 @@ print("*****Upload PAN-OS config into device*****\n")
 
 ### Step 4. Upload PAN-OS config into device
 
-After devcie has been created , the next step will be uploading your pan-os config to associate with the device.
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
 
 API syntax for upload PAN-OS config into device :
 
@@ -268,7 +268,7 @@ print(statusmessage)
 
 ### Step 7. Get Source ID of the config file
 
-In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represnet the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
+In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
 API syntax for the step:
 
@@ -299,7 +299,7 @@ print("PAN-OS config source_id is: " + source_id)
 
 ### Step 8. Create a filter for all allowed security rules
 
-In this step, we will create a filter for all security rules that have action "allowed" . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific exmaple, we are sending the request body contains below data, In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
+In this step, we will create a filter for all security rules that have action "allowed" . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific example, we are sending the request body contains below data, In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
 
 ```json
 data = {
@@ -451,9 +451,9 @@ print("Print the Filter Execution Result")
 </TabItem>
 </Tabs>
 
-### Step 11. Get Security Profile Grop ID
+### Step 11. Get Security Profile Group ID
 
-In order to apply the secruity profile group to the security policy, we will need to find out the object ID of the secruity profile group first. In the example, we will parse the first object ID from the response.
+In order to apply the security profile group to the security policy, we will need to find out the object ID of the security profile group first. In the example, we will parse the first object ID from the response.
 
 API syntax for the step:
 
@@ -484,7 +484,7 @@ print(SPG_ID)
 
 ### Step 12. Bulk Change Apply SPG to all allowed rules
 
-The final step we perform a bulk change to apply the secruity profile group to all allowed rules.
+The final step we perform a bulk change to apply the security profile group to all allowed rules.
 
 API syntax for the step:
 

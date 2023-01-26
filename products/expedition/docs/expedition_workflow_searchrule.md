@@ -1,9 +1,9 @@
 ---
 id: expedition_workflow_searchrule
-title: List security rules contain specific subnet
-sidebar_label: List Security Rules contain specific subnet
+title: List security rules containing a specific subnet
+sidebar_label: List security rules containing a specific subnet
 hide_title: false
-description: List Security Rules contain specific subnet
+description: List security rules containing a specific subnet
 keywords:
   - pan-os
   - panos
@@ -14,7 +14,7 @@ keywords:
   - firewall
   - configuration
   - automation
-  - convertion
+  - conversion
   - filter
 
 image: /expedition/img/expedition.png
@@ -32,9 +32,9 @@ window.location.reload()
 
 <br/>
 
-In this section we present a workflow example for filter security rules that contain specific subnet in a PAN-OS configuraiton.
+In this section we present a workflow example for filtering security rules containing a specific subnet in a PAN-OS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
@@ -62,7 +62,7 @@ Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agen
 
 ### Step 3. Add PAN-OS Device
 
-Making a POST call to the Device route, we can create a Devive with a desired name.
+Making a POST call to the Device route, we can create a device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -131,7 +131,7 @@ print("*****Upload PAN-OS config into device*****\n")
 
 ### Step 4. Upload PAN-OS config into device
 
-After devcie has been created , the next step will be uploading your pan-os config to associate with the device.
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
 
 API syntax for upload PAN-OS config into device :
 
@@ -240,7 +240,7 @@ response = r.json()
 jobState = json.dumps(response["data"]["state"])
 percentage = float(jobState) * 100
 print(
-    "Import PAN-OS configuration from devie to Project: "
+    "Import PAN-OS configuration from device to Project: "
     + str(round(percentage, 2))
     + "%\n"
 )
@@ -270,7 +270,7 @@ print(statusmessage)
 
 ### Step 7. Get Source ID of the config file
 
-In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represnet the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
+In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
 API syntax for the step:
 
@@ -301,11 +301,11 @@ print("PAN-OS config source_id is: " + source_id)
 
 ### Step 8. Create combined filters for security rules contain specific subnet
 
-In this step, we will create total 6 filters to fitler all security rules that contain subnet 10.0. Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters.
+In this step, we will create total 6 filters to filter all security rules that contain subnet 10.0. Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters.
 
 #### 1st Filter
 
-In this specific exmaple, we are going to create the frist filter that filter address objects contain ip address "10.1" in the value. Sending the request body contains below data:
+In this specific example, we are going to create the first filter that filter address objects contain ip address "10.1" in the value. Sending the request body contains below data:
 
 ```json
 data = {
@@ -353,7 +353,7 @@ values={[
 
 #### 2nd Filter
 
-In this specific exmaple, we are going to create the 2nd filter that filter address group objects contain member match first filter.  
+In this specific example, we are going to create the 2nd filter that filter address group objects contain member match first filter.  
 Sending the request body contains below data:
 
 ```json
@@ -396,7 +396,7 @@ values={[
 
 #### 3rd Filter
 
-In this specific exmaple, we are going to create the 3rd filter that combine 1st and 2nd filter we created in the previous steps.
+In this specific example, we are going to create the 3rd filter that combine 1st and 2nd filter we created in the previous steps.
 Sending the request body contains below data:
 
 ```json
@@ -724,7 +724,7 @@ print("***** Print the Collection that contain rules with specific subnets *****
 </TabItem>
 </Tabs>
 
-The response will be similar to below which listed all security rules with source or destination address contain 10.1 .
+The response will be similar to below which listed all security rules with source or destination address containing 10.1 .
 
 ```json
 ** ** * Print the Collection that contain rules with specific subnets ** ** * {

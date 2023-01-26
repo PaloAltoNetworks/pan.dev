@@ -14,7 +14,7 @@ keywords:
   - firewall
   - configuration
   - automation
-  - convertion
+  - conversion
 image: /expedition/img/expedition.png
 ---
 
@@ -29,9 +29,9 @@ window.location.reload()
 }
 <br/>
 
-In this section we present a workflow example to remove unused address, address group, servcie and service group objects in a PAN-OS configuraiton.
+In this section we present a workflow example to remove unused address, address group, service and service group objects in a PAN-OS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
@@ -58,7 +58,7 @@ Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agen
 
 ### Step 3. Add PAN-OS Device
 
-Making a POST call to the Device route, we can create a Devive with a desired name.
+Making a POST call to the Device route, we can create a Device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -127,7 +127,7 @@ print("*****Upload PAN-OS config into device*****\n")
 
 ### Step 4. Upload PAN-OS config into device
 
-After devcie has been created , the next step will be uploading your pan-os config to associate with the device.
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
 
 API syntax for upload PAN-OS config into device :
 
@@ -236,7 +236,7 @@ response = r.json()
 jobState = json.dumps(response["data"]["state"])
 percentage = float(jobState) * 100
 print(
-    "Import PAN-OS configuration from devie to Project: "
+    "Import PAN-OS configuration from device to Project: "
     + str(round(percentage, 2))
     + "%\n"
 )
@@ -266,7 +266,7 @@ print(statusmessage)
 
 ### Step 7. Get Source ID of the config file
 
-In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represnet the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
+In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
 API syntax for the step:
 
@@ -297,7 +297,7 @@ print("PAN-OS config source_id is: " + source_id)
 
 ### Step 8. Create a filter for unused objects
 
-In this step, we will create a filter for unused address & address group objects . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific exmaple, we are sending the request body contains below data, this filter will filter on address, address group , service and service group objects that's are not being referenced in security policy and NAT policy. In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
+In this step, we will create a filter for unused address & address group objects . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific example, we are sending the request body contains below data, this filter will filter on address, address group , service and service group objects that's are not being referenced in security policy and NAT policy. In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
 
 ```json
 data = {
@@ -322,7 +322,7 @@ values={[
 
 ```python
 def Filter():
-    print("create a filter for unused address, address group,servcie, servcie group objects")
+    print("create a filter for unused address, address group,service, service group objects")
     url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
     data = {
      "name": "unused_objects",
@@ -481,7 +481,7 @@ print("Print the Collection Content")
 
 ### Step 12. Delete the Collection Content
 
-This step we will delete the collection content, which will remove all unused address, address group, service, servcie group objects in the configuration file.
+This step we will delete the collection content, which will remove all unused address, address group, service, service group objects in the configuration file.
 
 API syntax for the step:
 
