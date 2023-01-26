@@ -27,13 +27,6 @@ localStorage.setItem('defaultLanguage', lang)
 window.location.reload()
 }
 }
-
-**Choose language for code snippet**
-
-<a className="button button--primary" onClick={() => SetLanguage('python')}>Python</a>&nbsp;
-<a className="button button--info" onClick={() => SetLanguage('php')}>Php</a>&nbsp;
-<a className="button button--danger" onClick={() => SetLanguage('go')}>Go</a>
-<br/>
 <br/>
 
 In this section we present a workflow example to remove unused address, address group, servcie and service group objects in a PAN-OS configuraiton.
@@ -42,7 +35,7 @@ Below flowhart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
-A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
+A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
 B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
 C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
 D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
@@ -99,8 +92,6 @@ API syntax for creating a new device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -131,10 +122,6 @@ else:
 print("*****Upload PAN-OS config into device*****\n")
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -152,8 +139,6 @@ API syntax for upload PAN-OS config into device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -174,10 +159,6 @@ else:
     print(result)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -195,8 +176,6 @@ API syntax for creating a new project:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -217,45 +196,6 @@ if success == "true":
 print("\n")
 ```
 
-</TabItem> 
-<TabItem value="go">
-
-```go
-package main
-import "fmt"
-
-func main() {
-    //TODO
-}
-```
-
-</TabItem> 
-<TabItem value="php">
-
-```php
-
-echo "\n";
-echo "CREATE NEW PROJECT\n";
-$data = ["project"=> $projectName];
-$url = 'https://'.$ip.'/api/v1/project';
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-curl_setopt($curl, CURLOPT_HTTPHEADER,$hed);
-curl_setopt($curl,CURLOPT_POST, TRUE);
-curl_setopt($curl,CURLOPT_POSTFIELDS, $data);
-curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-$response = curl_exec($curl);
-$jsonResponse = json_decode($response);
-$success = $jsonResponse->Contents->success;
-if ($success=='true'){
-    print_r($response);
-    $projectId = $jsonResponse->Contents->response->data->content->id;
-    print_r($jsonResponse->Contents->response->{'response-messages'}->messages[0]->message);
-}
-echo "\n";
-```
-
 </TabItem>
 </Tabs>
 
@@ -273,8 +213,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -323,10 +261,6 @@ statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
 print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -344,8 +278,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -360,10 +292,6 @@ source_id = json.dumps(response["data"]["source"][0]["id"])
 print("PAN-OS config source_id is: " + source_id)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -388,8 +316,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -410,10 +336,6 @@ def Filter():
     print("your filter ID is " + filterID)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -431,8 +353,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -487,10 +407,6 @@ def ExecuteFilter():
     print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -508,8 +424,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -532,10 +446,6 @@ print("Print the Filter Execution Result")
     Collection_ID = json.dumps(response["data"]["id"])
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -553,8 +463,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -568,10 +476,6 @@ print("Print the Collection Content")
     print(response)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -589,8 +493,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -604,9 +506,5 @@ response=r.json()
 print(response)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>

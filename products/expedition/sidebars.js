@@ -28,6 +28,7 @@ module.exports = {
             "expedition/docs/expedition_workflow_migration",
             "expedition/docs/expedition_workflow_removeunused",
             "expedition/docs/expedition_workflow_bulkchange",
+            "expedition/docs/expedition_workflow_searchrule",
           ],
         },
       ],

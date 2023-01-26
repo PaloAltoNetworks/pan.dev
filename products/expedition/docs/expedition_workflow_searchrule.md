@@ -1,9 +1,9 @@
 ---
-id: expedition_workflow_bulkchange
-title: Bulk Change to apply SPG Workflow
-sidebar_label: Bulk Change to apply SPG
+id: expedition_workflow_searchrule
+title: List security rules contain specific subnet
+sidebar_label: List Security Rules contain specific subnet
 hide_title: false
-description: Bulk Change to apply SPG Workflow
+description: List Security Rules contain specific subnet
 keywords:
   - pan-os
   - panos
@@ -15,6 +15,7 @@ keywords:
   - configuration
   - automation
   - convertion
+  - filter
 
 image: /expedition/img/expedition.png
 ---
@@ -31,7 +32,7 @@ window.location.reload()
 
 <br/>
 
-In this section we present a workflow example for bulk change apply Security Profile group to all allowed security rules in a PAN-OS configuraiton.
+In this section we present a workflow example for filter security rules that contain specific subnet in a PAN-OS configuraiton.
 
 Below flowhart demo the workflow and the related API calls in each of the steps:
 
@@ -43,11 +44,12 @@ flowchart TB
     D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
     E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
     F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
-    G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> H["Create a filter for all allowed security rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
-    H["Create a filter for all allowed scecurity rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+    G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> H["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
+    H["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
     I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
-    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group"]
-    K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group" ] --> L["Bulk Change Apply SPG to all allowed rules<br/> PUT https://localhost/api/v1/project/{project_id}/policy/security"]
+    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
+    K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
+
 ```
 
 ### Step 1. Obtain the API Keys
@@ -297,14 +299,20 @@ print("PAN-OS config source_id is: " + source_id)
 </TabItem>
 </Tabs>
 
-### Step 8. Create a filter for all allowed security rules
+### Step 8. Create combined filters for security rules contain specific subnet
 
-In this step, we will create a filter for all security rules that have action "allowed" . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific exmaple, we are sending the request body contains below data, In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
+In this step, we will create total 6 filters to fitler all security rules that contain subnet 10.0. Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters.
+
+#### 1st Filter
+
+In this specific exmaple, we are going to create the frist filter that filter address objects contain ip address "10.1" in the value. Sending the request body contains below data:
 
 ```json
 data = {
-     "name": "all allowed rules",
-     "filter": "[security_rule] action equals  \"allow\"",
+    "name":'Addressobject_with_specific_subnet',
+    "reference":'Addressobject_with_specific_subnet',
+    "description": 'addressobject_with_subnet_10.1.',
+    "filter": "[address] ipaddress contains \"10.1\"",
     }
 ```
 
@@ -313,7 +321,7 @@ API syntax for the step:
 | Method  | Route                                                                       | Parameters                                                                                                              |
 | ------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"name"**:filter_name,**"filter"**:filter} </small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[security_rule] action equals \"allow\""} </small>             |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\""} </small>               |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -323,34 +331,269 @@ values={[
 <TabItem value="python">
 
 ```python
-def Filter():
-    print("create a filter to list all allowed rules")
+    print("Create filter to filter address objects contain "10.1"")
     url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
     data = {
-     "name": "all allowed rules",
-     "filter": "[security_rule] action equals  \"allow\"",
+        "name":'Addressobject_with_specific_subnet',
+        "reference":'Addressobject_with_specific_subnet',
+        "description": 'addressobject_with_subnet_10.1.',
+        "filter": "[address] ipaddress contains \"10.1\"",
+
     }
     r = requests.post(url, data=data, verify=False, headers=hed)
     response = r.json()
     print(response)
     global filterID
-    filterID = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID)
+    filterID_1 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_1)
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 9. Execute the filter
+#### 2nd Filter
 
-After create a filter, we will execute the filter based on filter_Id , in the request body, you will need to provide "source_id" obtained from the previous step as required parameter.
+In this specific exmaple, we are going to create the 2nd filter that filter address group objects contain member match first filter.  
+Sending the request body contains below data:
+
+```json
+data = {
+    "name" :'Addressgroupobject_with_specific_subnet',
+    "reference" :'Addressgroupobject_with_specific_subnet',
+    "description" : 'addressgroupobject_with_subnet_10.1.',
+    "filter" : "[address_group] member contains filter Addressobject_with_specific_subnet",
+    }
+```
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+    print("Create filter to filter address-group with member contain first filter")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    data = {
+        "name" :'Addressgroupobject_with_specific_subnet',
+        "reference" :'Addressgroupobject_with_specific_subnet',
+        "description" : 'addressgroupobject_with_subnet_10.1.',
+        "filter" : "[address_group] member contains filter Addressobject_with_specific_subnet",
+
+    }
+    r = requests.post(url, data=data, verify=False, headers=hed)
+    response = r.json()
+    print(response)
+    global filterID
+    filterID_2 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_2)
+
+```
+
+</TabItem>
+</Tabs>
+
+#### 3rd Filter
+
+In this specific exmaple, we are going to create the 3rd filter that combine 1st and 2nd filter we created in the previous steps.
+Sending the request body contains below data:
+
+```json
+data = {
+
+    "name" : 'combinefilter1and2',
+    "reference" : 'combinefilter1and2',
+    "description" :  'address/addressgroupobject_with_subnet_10.1.',
+    "filter" : "filter Addressobject_with_specific_subnet or filter Addressgroupobject_with_specific_subnet",
+
+    }
+```
+
+When we combine two single filter , we will use syntax below:
+
+**<i>filter</i>** filter_name1 **or** **<i>filter</i>** filter_name2
+
+Example in this case will be:
+**<i>filter</i>** Addressobject_with_specific_subnet **or** **<i>filter</i>** Addressgroupobject_with_specific_subnet
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+    print("Combine filter1 and filter 2\n")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    data = {
+        "name" := 'combinefilter1and2',
+        "reference" : 'combinefilter1and2',
+        "description" :  'address/addressgroupobject_with_subnet_10.1.',
+        "filter" : "filter Addressobject_with_specific_subnet or filter Addressgroupobject_with_specific_subnet",
+
+    }
+    r = requests.post(url, data=data, verify=False, headers=hed)
+    response = r.json()
+    print(response)
+    global filterID
+    filterID_3 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_3)
+
+```
+
+</TabItem>
+</Tabs>
+
+#### 4th Filter
+
+We are going to create the 4th filter to filter any security rules contain source address match 3rd filter
+
+Sending the request body contains below data:
+
+```json
+data = {
+
+    "name" :'securityrule_with_specific_source_subnet',
+    "reference" :'securityrule_with_specific_source_subnet',
+    "description" : 'securityrule_with_src_subnet_10.1',
+    "filter" : "[security_rule] source_address contains filter combinefilter1and2 ",
+
+    }
+```
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+    print("Create filter to filter security rules source match filter 3\n")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    data = {
+        "name" :'securityrule_with_specific_source_subnet',
+        "reference" :'securityrule_with_specific_source_subnet',
+        "description" : 'securityrule_with_src_subnet_10.1',
+        "filter" : "[security_rule] source_address contains filter combinefilter1and2 ",
+
+    }
+    r = requests.post(url, data=data, verify=False, headers=hed)
+    response = r.json()
+    print(response)
+    global filterID
+    filterID_4 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_4)
+
+```
+
+</TabItem>
+</Tabs>
+
+#### 5th Filter
+
+We are going to create the 5th filter to filter any security rules contain destination address match 3rd filter
+Sending the request body contains below data:
+
+```json
+data = {
+
+    "name" :'securityrule_with_specific_dst_subnet',
+    "reference" :'securityrule_with_specific_dst_subnet',
+    "description" : 'securityrule_with_dst_subnet_10.1',
+    "filter" :  "[security_rule] destination_address contains filter combinefilter1and2 ",
+
+    }
+```
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+    print("Create filter to filter security rules destination match filter 3\n")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    data = {
+
+        "name" :'securityrule_with_specific_dst_subnet',
+        "reference" :'securityrule_with_specific_dst_subnet',
+        "description" : 'securityrule_with_dst_subnet_10.1',
+        "filter" :  "[security_rule] destination_address contains filter combinefilter1and2 ",
+
+    }
+    r = requests.post(url, data=data, verify=False, headers=hed)
+    response = r.json()
+    print(response)
+    global filterID
+    filterID_5 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_5)
+
+```
+
+</TabItem>
+</Tabs>
+
+#### 6th Filter
+
+We are going to create our final filter to combine filter 4 & 5, which will filter all security rules contain either source address or destination address that contain 10.1.
+Sending the request body contains below data:
+
+```json
+data = {
+
+    "name" : 'Combinefilter4_5',
+    "reference" : 'Combinefilter4_5',
+    "description" : 'securityrule_with_source_or_destination_contain_subnet_10.1',
+    "filter" :  "filter securityrule_with_specific_source_subnet or filter securityrule_with_specific_dst_subnet ",
+
+    }
+```
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+    print("Create filter to filter security rules destination match filter 3\n")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    data = {
+
+        "name" : 'Combinefilter4_5',
+        "reference" : 'Combinefilter4_5',
+        "description" : 'securityrule_with_source_or_destination_contain_subnet_10.1',
+        "filter" :  "filter securityrule_with_specific_source_subnet or filter securityrule_with_specific_dst_subnet ",
+
+    }
+    r = requests.post(url, data=data, verify=False, headers=hed)
+    response = r.json()
+    print(response)
+    global filterID
+    filterID_6 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
+    print("your filter ID is " + filterID_6)
+
+```
+
+</TabItem>
+</Tabs>
+
+### Step 9. Execute the final filter
+
+After create the final filter, we will execute the filter based on filter_Id ,in our example , filter_Id will be "6" in the request body, you will need to provide "source_id" obtained from the previous step as required parameter.
 
 API syntax for the step:
 
 | Method  | Route                                                                                           | Parameters                                                                                                                                                   |
 | ------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id<br/>in_body<br/> {**"source_id"**: source_id of the PAN-OS config file} </small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter/1/execute`</small>                     | <small>{**"source_id"**: "23564"} </small>                                                                                                                   |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/execute`</small>                     | <small>{**"source_id"**: "23564"} </small>                                                                                                                   |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -369,7 +612,7 @@ def ExecuteFilter():
         + "/api/v1/project/"
         + projectId
         + "/tools/filter/"
-        + filterID
+        + filterID_6
         + "/execute"
     )
     r = requests.post(url, data=data, verify=False, headers=hed)
@@ -421,7 +664,7 @@ API syntax for the step:
 | Method  | Route                                                                                          | Parameters                                                                          |
 | ------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | GET     | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter/1/result`</small>                     |                                                                                     |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/result`</small>                     |                                                                                     |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -438,7 +681,7 @@ print("Print the Filter Execution Result")
         + "/api/v1/project/"
         + projectId
         + "/tools/filter/"
-        + filterID
+        + filterID_6
         + "/result"
     )
     r = requests.get(url, verify=False, headers=hed)
@@ -451,16 +694,16 @@ print("Print the Filter Execution Result")
 </TabItem>
 </Tabs>
 
-### Step 11. Get Security Profile Grop ID
+### Step 11. Print the Collection Content
 
-In order to apply the secruity profile group to the security policy, we will need to find out the object ID of the secruity profile group first. In the example, we will parse the first object ID from the response.
+After the filter is executed , we can print the collection content using below API call.
 
 API syntax for the step:
 
-| Method  | Route                                                                               | Parameters                                                |
-| ------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| GET     | <small>`https://localhost/api/v1/project/{project_id}/object/profile_group`</small> | <small>_in url_<br/> **"project_id"**:project_Id </small> |
-| example | <small>`https://localhost/api/v1/project/22/object/profile_group`</small>           |                                                           |
+| Method  | Route                                                                                             | Parameters                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| GET     | <small>`https://localhost/api/v1/project/{project_id}/collection/{Collection_Id}/content`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"collection_id"**:collection_Id</small> |
+| example | <small>`https://localhost/api/v1/project/22/collection/20793/content`</small>                     |                                                                                             |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -470,46 +713,54 @@ values={[
 <TabItem value="python">
 
 ```python
-print("Get Security Profile group")
-url = "https://" + ip + "/api/v1/project/" + projectId + "/object/profile_group"
-r = requests.get(url,verify=False, headers=hed)
-response=r.json()
-print(response)
-SPG_ID=json.dumps(response["data"]["profile_group"][0]["id"])
-print(SPG_ID)
+print("***** Print the Collection that contain rules with specific subnets *****")
+    url = "https://" + ip + "/api/v1/project/" + projectId + "/collection/" + Collection_ID + "/content"
+    print(url)
+    r = requests.get(url, verify=False, headers=hed)
+    response = r.json()
+    print(response)
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 12. Bulk Change Apply SPG to all allowed rules
+The response will be similar to below which listed all security rules with source or destination address contain 10.1 .
 
-The final step we perform a bulk change to apply the secruity profile group to all allowed rules.
-
-API syntax for the step:
-
-| Method  | Route                                                                          | Parameters                                                                                                                                         |
-| ------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PUT     | <small>`https://localhost/api/v1/project/{project_id}/policy/security`</small> | <small>_in url_<br/> **"project_id"**:project_Id <br/>in_body<br/> {**"add[profile][0]"**: object_id of the SPG, **"id"**: collection_id} </small> |
-| example | <small>`https://localhost/api/v1/project/22/policy/security`</small>           | <small>{**"add[profile][0]"**: "11714", **"id"**:"20793"} </small>                                                                                 |
-
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
-values={[
-{ label: 'Python', value: 'python', },
-]
-}>  
-<TabItem value="python">
-
-```python
-print("Bulk Change Apply SPG to all allowed rules")
-url = "https://" + ip + "/api/v1/project/" + projectId + "/policy/security"
-print(url)
-data = {"add[profile][0]": int(SPG_ID), "id": int(Collection_ID)}
-print(data)
-r = requests.put(url, data=data, verify=False, headers=hed)
-response = r.json()
-print(response)
+```json
+** ** * Print the Collection that contain rules with specific subnets ** ** * {
+    'data': {
+        'id': 3111,
+        'editable': False,
+        'filter_id': 6,
+        'type': 'filter',
+        'content': [{
+            'object_id': 3091,
+            'name': 'Testrule1',
+            'object_type': 'security_rule',
+            'vsys_name': 'vsys1',
+            'vsys': 2968,
+            'source_name': 'pa220running-config',
+            'source': 2966
+        }, {
+            'object_id': 3092,
+            'name': 'Testrule2',
+            'object_type': 'security_rule',
+            'vsys_name': 'vsys1',
+            'vsys': 2968,
+            'source_name': 'pa220running-config',
+            'source': 2966
+        }, {
+            'object_id': 3093,
+            'name': 'Testrule2-1',
+            'object_type': 'security_rule',
+            'vsys_name': 'vsys1',
+            'vsys': 2968,
+            'source_name': 'pa220running-config',
+            'source': 2966
+        }],
+        'name': 'collection_filter_6',
+        'description': 'Collection for filter Combinefilter4_5'
+    },
+    'messages': [],
+    'success': True
 ```
-
-</TabItem>
-</Tabs>
