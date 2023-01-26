@@ -449,7 +449,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "/compute/api/",
-                      label: "Compute API",
+                      label: "Compute Edition API",
                       icon: "api-doc",
                     },
                   ],
