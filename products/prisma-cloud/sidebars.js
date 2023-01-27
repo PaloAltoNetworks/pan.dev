@@ -23,9 +23,6 @@ module.exports = {
       items: [
         "cwpp/api/cwpp-home",
         "cwpp/api/stable-endpoints",
-        "cwpp/api/curl-examples",
-        "cwpp/api/how-to-eval-console",
-        "cwpp/api/api-limits",
         require("../cwpp/api/sidebar"),
       ],
     },
