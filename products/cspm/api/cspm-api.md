@@ -26,7 +26,7 @@ To have the right authorization for a CSPM API request, follow the high-level st
 Almost all CSPM API requests use this JWT for authorization.
 Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/cspm/api/extend-session).
 
-See [Getting Started](/docs/cloud/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login) to obtain a JWT token.
+See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login) to obtain a JWT token.
 
 ## Components of a CSPM Request
 

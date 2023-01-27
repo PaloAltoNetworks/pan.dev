@@ -15,7 +15,7 @@ keywords:
   - configuration
   - automation
   - migration
-  - convertion
+  - conversion
 
 image: /expedition/img/expedition.png
 ---
@@ -30,21 +30,13 @@ window.location.reload()
 }
 }
 
-**Choose language for code snippet**
-
-<a className="button button--primary" onClick={() => SetLanguage('python')}>Python</a>&nbsp;
-<a className="button button--info" onClick={() => SetLanguage('php')}>Php</a>&nbsp;
-<a className="button button--danger" onClick={() => SetLanguage('go')}>Go</a>
-<br/>
-<br/>
-
 In this section we present a workflow example to migrate a third party vendor configuration into a PANOS configuration.
 
 Below flowhart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
-    A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
+    A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
     B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
     C[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> D["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/{project_id}/migration"]
     D["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/{project_id}/migration"] --> E["Upload the 3rd party vendor config to migration<br/>  POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/upload/{vendorname}"]
@@ -78,7 +70,6 @@ API syntax for creating a new project:
 values={[
 { label: 'Python', value: 'python', },
 { label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -98,18 +89,6 @@ if success == "true":
     projectId = json.dumps(response['data']['id'])
     print("Your project-ID is", str(projectId) + " \n")
 print("\n")
-```
-
-</TabItem> 
-<TabItem value="go">
-
-```go
-package main
-import "fmt"
-
-func main() {
-    //TODO
-}
 ```
 
 </TabItem> 
@@ -161,8 +140,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -178,10 +155,6 @@ migrationId = json.dumps(response["data"]["id"])
 deviceId = json.dumps(response["data"]["device_id"])
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -204,17 +177,14 @@ Available vendorname parameter can be used in the path are below:
 **checkpoint** (For checkpoint config < v. R80)  
 **checkpoint_r80** (For checkpoint config >= v. R80)  
 **fortinet**  
-**srx**
-**netscreen**
+**srx**  
+**netscreen**  
 **stonesoft**  
-**sidewinder**
 :::
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -232,10 +202,6 @@ r = requests.post(url, data=data, verify=False, files=files, headers=hed)
 response = r.json()
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -253,8 +219,6 @@ API syntax for Converting 3rd party vendors' configurations:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -270,10 +234,6 @@ jobId = json.dumps(response["data"]["job_id"])
 wait_for_job(jobId)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -291,8 +251,6 @@ The API syntax for Importing the converted PAN-OS Configuration into the project
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -309,9 +267,5 @@ print("CHECK configuration upload status...........")
 wait_for_job(jobId)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>

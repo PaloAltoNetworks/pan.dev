@@ -219,6 +219,21 @@ const config = {
                       label: "DNS Security API",
                       icon: "api-doc",
                     },
+                    {
+                      to: "https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/dlp-api-resources",
+                      label: "Data Loss Prevention API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-api",
+                      label: "SaaS Security API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api",
+                      label: "WildFire API",
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -434,7 +449,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "/compute/api/",
-                      label: "Compute API",
+                      label: "Compute Edition API",
                       icon: "api-doc",
                     },
                   ],
@@ -698,16 +713,6 @@ const config = {
         docItemComponent: "@theme/ApiItem",
       },
     ],
-    [
-      "@docusaurus/plugin-ideal-image",
-      {
-        quality: 80,
-        max: 450, // max resized image's size.
-        min: 300, // min resized image's size. if original is lower, use that size.
-        steps: 2, // the max number of images generated between min and max (inclusive)
-        disableInDev: false,
-      },
-    ],
   ],
   stylesheets: [
     {
@@ -733,6 +738,7 @@ const config = {
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
+    errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };
 

@@ -26,6 +26,6 @@ see the [Prisma Cloud administration documentation](https://docs.paloaltonetwork
 
 #### Want to contribute? See something missing?
 
-###### Visit our [Contributing Guide](/docs/contributing) or look for the "Edit this page" or "Report an Issue" button at the bottom of our docs pages
+###### Visit our [Contributing Guide](/contributing) or look for the "Edit this page" or "Report an Issue" button at the bottom of our docs pages
 
 :::
