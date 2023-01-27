@@ -419,25 +419,15 @@ const config = {
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "/prisma-cloud/api/cspm",
-                      label: "Cloud Security Posture Management",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "/prisma-cloud/api/cwpp",
-                      label: "Cloud Workload Protection",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "/prisma-cloud/api/code",
-                      label: "Cloud Code Security",
+                      to: "/prisma-cloud/api",
+                      label: "Prisma Cloud",
                       icon: "api-doc",
                     },
                   ],
                   docs: [
                     {
                       to: "/prisma-cloud/docs",
-                      label: "Prisma Cloud Docs",
+                      label: "API Workflows",
                       icon: "doc",
                     },
                   ],
@@ -449,7 +439,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "/compute/api/",
-                      label: "Compute Edition API",
+                      label: "Compute Edition",
                       icon: "api-doc",
                     },
                   ],

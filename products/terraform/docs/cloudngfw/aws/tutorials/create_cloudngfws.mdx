@@ -1,0 +1,350 @@
+---
+id: create-cloudngfws
+title: Create Cloud NGFW Resources
+sidebar_label: Create Cloud NGFWs
+hide_title: true
+description: Create Cloud NGFW Resources
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - terraform
+  - cloudngfw
+---
+
+# Create Cloud NGFWs
+
+:::important
+This is a multi-section tutorial, with dependencies between each section. Please perform each section in order, per the links on the left-hand sidebar.
+:::
+
+## Objective
+
+In this next part of the tutorial, the objective is to use Terraform to create Cloud NGFW resources, the enforcement points between the two lab DMZ subnets you have deployed. The committed rulestack from the previous section will then be attached to the Cloud NGFW resources.
+
+## Assumptions and Lab Guidance
+
+Please ensure you have read and understood the [assumptions](/terraform/docs/cloudngfw/aws/tutorials/intro/#assumptions) and [lab guideance](terraform/docs/cloudngfw/aws/tutorials/intro/#important---work-in-a-lab-environment-first) at the start of this multi-section tutorial.
+
+## Select and configure Terraform Providers
+
+First, create a `providers.tf` file, in a directory called `02_cloudngfw_resources`. This file defines any Terraform providers you will use, and configures them appropriately. Here we define the AWS and Cloud NGFW providers.
+
+```hcl title="02_cloudngfw_resources/providers.tf"
+terraform {
+  required_providers {
+    cloudngfwaws = {
+      source  = "paloaltonetworks/cloudngfwaws"
+      version = "1.0.8"
+    }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.5"
+    }
+  }
+}
+
+# Configure AWS Provider
+provider "aws" {
+  region     = local.aws_region
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+}
+
+# Configure Cloud NGFW Provider
+provider "cloudngfwaws" {
+  host    = "api.${local.aws_region}.aws.cloudngfw.paloaltonetworks.com"
+  region  = local.aws_region
+  lfa_arn = local.cloudngfw_role_arn
+  lra_arn = local.cloudngfw_role_arn
+}
+```
+
+## Define input variables
+
+Create a `variables.tf` file in the `02_cloudngfw_resources` directory. Some values are all retrieved from the outputs of the first section of this tutorial, where you created your AWS infrastructure.
+
+```hcl title="02_cloudngfw_resources/variables.tf"
+# AWS Provider Variables
+variable "aws_access_key" {
+  type = string
+}
+
+variable "aws_secret_key" {
+  type = string
+}
+
+# Build path to AWS Infrastructure's Terraform state
+data "terraform_remote_state" "aws_infra" {
+  backend = "local"
+  config = {
+    path = "../00_aws_infra/terraform.tfstate"
+  }
+}
+
+# Build path to Cloud NGFW Rulestack's Terraform state
+data "terraform_remote_state" "cloudngfw_rulestack" {
+  backend = "local"
+  config = {
+    path = "../01_cloudngfw_rulestacks_rules/terraform.tfstate"
+  }
+}
+
+# Variables - values retrieved from previous Terraform deployment, using the deployment's state as declared above
+locals {
+  projectname            = data.terraform_remote_state.aws_infra.outputs.projectname
+  aws_account_id         = data.terraform_remote_state.aws_infra.outputs.aws_account_id
+  aws_region             = data.terraform_remote_state.aws_infra.outputs.aws_region
+  aws_vpc_id             = data.terraform_remote_state.aws_infra.outputs.vpc_id
+  cloudngfw_role_arn     = data.terraform_remote_state.aws_infra.outputs.cloudngfw_role_arn
+  cloudngfw_subnet_id    = data.terraform_remote_state.aws_infra.outputs.cloudngfw_subnet_id
+  dmz1_subnet_cidr_block = data.terraform_remote_state.aws_infra.outputs.dmz1_subnet_cidr_block
+  dmz2_subnet_cidr_block = data.terraform_remote_state.aws_infra.outputs.dmz2_subnet_cidr_block
+  dmz1_routetable_id     = data.terraform_remote_state.aws_infra.outputs.dmz1_routetable_id
+  dmz2_routetable_id     = data.terraform_remote_state.aws_infra.outputs.dmz2_routetable_id
+  rulestack_name         = data.terraform_remote_state.cloudngfw_rulestack.outputs.rulestack_name
+  cloudwatch_log_group   = data.terraform_remote_state.aws_infra.outputs.cloudwatch_log_group
+}
+```
+
+## Define Cloud NGFW resources
+
+The next file, `main.tf`, defines the Cloud NGFW resources for this VPC. Rulestack assignment and logging destination are also defined:
+
+```hcl title="02_cloudngfw_resources/main.tf"
+# Create Cloud NGFW resources (managed next-generation firewall instances)
+resource "cloudngfwaws_ngfw" "the_cloud_ngfw" {
+  name        = "${local.projectname}-cloudngfw-instance"
+  vpc_id      = local.aws_vpc_id
+  account_id  = local.aws_account_id
+  description = "First NGFW resource for Project ${local.projectname}"
+
+  endpoint_mode = "ServiceManaged"
+  subnet_mapping {
+    subnet_id = local.cloudngfw_subnet_id
+  }
+
+  rulestack = local.rulestack_name
+
+  tags = {
+    project = "${local.projectname}"
+  }
+}
+
+resource "cloudngfwaws_ngfw_log_profile" "the_logging" {
+  ngfw       = cloudngfwaws_ngfw.the_cloud_ngfw.name
+  account_id = cloudngfwaws_ngfw.the_cloud_ngfw.account_id
+
+  log_destination {
+    destination_type = "CloudWatchLogs"
+    destination      = "PaloAltoCloudNGFW"
+    log_type         = "TRAFFIC"
+  }
+}
+```
+
+## Define required outputs
+
+The final file for this section, `outputs.tf`, defines which values Terraform should present and make available at the end of the `apply` phase. With this output you will be able to see the status of the Cloud NGFW resources.
+
+```hcl title="02_cloudngfw_resources/outputs.tf"
+# Cloud NGFW Overall Status
+output "cloudngfw_status" {
+  value = cloudngfwaws_ngfw.the_cloud_ngfw.status[0]
+}
+```
+
+## Terraform init
+
+With all the files above in place, ensure you are in the `02_cloudngfw_resources` directory, then execute `terraform init` to initialize the Terraform working directory and download the required providers. Your output should look similar to this:
+
+```hcl
+Initializing the backend...
+
+Initializing provider plugins...
+- terraform.io/builtin/terraform is built in to Terraform
+- Finding paloaltonetworks/cloudngfwaws versions matching "1.0.8"...
+- Finding hashicorp/aws versions matching "~> 4.5"...
+- Installing paloaltonetworks/cloudngfwaws v1.0.8...
+- Installed paloaltonetworks/cloudngfwaws v1.0.8 (signed by a HashiCorp partner, key ID D1B17746D294B5C8)
+- Installing hashicorp/aws v4.52.0...
+- Installed hashicorp/aws v4.52.0 (signed by HashiCorp)
+```
+
+## Terraform plan
+
+Next, run `terraform plan` to view the upcoming changes Terraform would make next in order to perform the commit operation. The output should look similar to this, truncated for brevity:
+
+```hcl
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # cloudngfwaws_ngfw.the_cloud_ngfw will be created
+  + resource "cloudngfwaws_ngfw" "the_cloud_ngfw" {
+      + account_id                       = "296803593844"
+      + app_id_version                   = (known after apply)
+      + automatic_upgrade_app_id_version = true
+      + description                      = "First NGFW resource for Project Lab"
+      + endpoint_mode                    = "ServiceManaged"
+      + endpoint_service_name            = (known after apply)
+.
+.
+.
+.
+.
+      + subnet_mapping {
+          + subnet_id = "subnet-0755fad05e6e25011"
+        }
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+```
+
+## Terraform apply
+
+If you are happy with the plan, as described in the output from the previous step, instruct Terraform to create the AWS infrastructure with `terraform apply --auto-approve`. The output will look like this:
+
+```hcl
+cloudngfwaws_ngfw.the_cloud_ngfw: Creating...
+cloudngfwaws_ngfw.the_cloud_ngfw: Creation complete after 8s [id=296803593844:Lab-cloudngfw-instance]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cloudngfw_overall_status = {
+  "attachment" = tolist([])
+  "failure_reason" = ""
+  "firewall_status" = "CREATING"
+  "rulestack_status" = ""
+}
+```
+
+Note that the `firewall_status` is listed as "CREATING". At this stage, Cloud NGFW resources are being created for your AWS environment, and this will take 10-15 minutes to complete. You can get an update on the creation status with `terraform refresh`. At completion, the output from `terraform refresh` should look like this:
+
+```hcl
+Outputs:
+
+cloudngfw_status = {
+  "attachment" = tolist([
+    {
+      "endpoint_id" = "vpce-06aedff8576af4fc1"
+      "rejected_reason" = ""
+      "status" = "ACCEPTED"
+      "subnet_id" = "subnet-0755fad05e6e25011"
+    },
+  ])
+  "failure_reason" = ""
+  "firewall_status" = "CREATE_COMPLETE"
+  "rulestack_status" = "Success"
+}
+```
+
+Note that `firewall_status` is "CREATE_COMPLETE", `rulestack_status` is "Success", and for the attachment of the VPC endpoint the status is "ACCEPTED".
+
+## Define AWS Routing
+
+Now the Cloud NFGW resources are successfully created, the rulestack is live on the Cloud NGFW, and the VPC endpoint is attached, you can start to steer traffic in and out of Cloud NGFW as an enforcement point betweeen subnets. Add the following to the bottom of your `02_cloudngfw_resources/main.tf` file:
+
+```hcl
+# Create routes to steer traffic into Cloud NGFW (uncomment once Cloud NGFW is successfully deployed with VPC endpoint(s))
+resource "aws_route" "to_dmz2" {
+  route_table_id         = local.dmz1_routetable_id
+  destination_cidr_block = local.dmz2_subnet_cidr_block
+  vpc_endpoint_id        = cloudngfwaws_ngfw.the_cloud_ngfw.status[0].attachment[0].endpoint_id
+}
+
+resource "aws_route" "to_dmz1" {
+  route_table_id         = local.dmz2_routetable_id
+  destination_cidr_block = local.dmz1_subnet_cidr_block
+  vpc_endpoint_id        = cloudngfwaws_ngfw.the_cloud_ngfw.status[0].attachment[0].endpoint_id
+}
+```
+
+The `main.tf` file should now look like this (with the new lines highlighted):
+
+```hcl title="02_cloudngfw_resources/main.tf"
+# Create Cloud NGFW resources (managed next-generation firewall instances)
+resource "cloudngfwaws_ngfw" "the_cloud_ngfw" {
+  name        = "${local.projectname}-cloudngfw-instance"
+  vpc_id      = local.aws_vpc_id
+  account_id  = local.aws_account_id
+  description = "First NGFW resource for Project ${local.projectname}"
+
+  endpoint_mode = "ServiceManaged"
+  subnet_mapping {
+    subnet_id = local.cloudngfw_subnet_id
+  }
+
+  rulestack = local.rulestack_name
+
+  tags = {
+    project = "${local.projectname}"
+  }
+}
+
+resource "cloudngfwaws_ngfw_log_profile" "the_logging" {
+  ngfw       = cloudngfwaws_ngfw.the_cloud_ngfw.name
+  account_id = cloudngfwaws_ngfw.the_cloud_ngfw.account_id
+
+  log_destination {
+    destination_type = "CloudWatchLogs"
+    destination      = "PaloAltoCloudNGFW"
+    log_type         = "TRAFFIC"
+  }
+}
+
+// highlight-start
+# Create routes to steer traffic into Cloud NGFW (uncomment once Cloud NGFW is successfully deployed with VPC endpoint(s))
+resource "aws_route" "to_dmz2" {
+  route_table_id         = local.dmz1_routetable_id
+  destination_cidr_block = local.dmz2_subnet_cidr_block
+  vpc_endpoint_id        = cloudngfwaws_ngfw.the_cloud_ngfw.status[0].attachment[0].endpoint_id
+}
+
+resource "aws_route" "to_dmz1" {
+  route_table_id         = local.dmz2_routetable_id
+  destination_cidr_block = local.dmz1_subnet_cidr_block
+  vpc_endpoint_id        = cloudngfwaws_ngfw.the_cloud_ngfw.status[0].attachment[0].endpoint_id
+}
+// highlight-end
+```
+
+Perform a `terraform plan`, it should show the changes are the addition of the two routes that steer traffic between the two subnets, via Cloud NGFW:
+
+```hcl
+Terraform will perform the following actions:
+
+  # aws_route.to_dmz1 will be created
+  + resource "aws_route" "to_dmz1" {
+      + destination_cidr_block = "10.1.2.0/24"
+      + id                     = (known after apply)
+      + instance_id            = (known after apply)
+      + instance_owner_id      = (known after apply)
+      + network_interface_id   = (known after apply)
+      + origin                 = (known after apply)
+      + route_table_id         = "rtb-0736c9daf172a34e3"
+      + state                  = (known after apply)
+      + vpc_endpoint_id        = "vpce-06aedff8576af4fc1"
+    }
+
+  # aws_route.to_dmz2 will be created
+  + resource "aws_route" "to_dmz2" {
+      + destination_cidr_block = "10.1.3.0/24"
+      + id                     = (known after apply)
+      + instance_id            = (known after apply)
+      + instance_owner_id      = (known after apply)
+      + network_interface_id   = (known after apply)
+      + origin                 = (known after apply)
+      + route_table_id         = "rtb-0edaccb9e710214a4"
+      + state                  = (known after apply)
+      + vpc_endpoint_id        = "vpce-06aedff8576af4fc1"
+    }
+```
+
+Perform a `terraform apply --auto-approve` to make the routing changes.

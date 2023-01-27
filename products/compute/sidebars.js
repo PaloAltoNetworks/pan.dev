@@ -18,6 +18,10 @@ module.exports = {
       value: versionCrumb(`22-12`),
     },
     "compute/api/compute-api-reference-home",
+    "compute/api/access-api-self-hosted",
+    "compute/api/set-up-console",
+    "compute/api/access-api-self-hosted",
+    "compute/api/set-up-console",
     require("./api/sidebar"),
   ],
   compute_2201: [
@@ -33,6 +37,8 @@ module.exports = {
       value: versionCrumb(`22-01`),
     },
     "compute/api/22-01/compute-api-reference-home",
+    "compute/api/22-01/access-api-self-hosted",
+    "compute/api/22-01/set-up-console",
     require("./api/22-01/sidebar"),
   ],
   compute_2206: [
@@ -48,6 +54,8 @@ module.exports = {
       value: versionCrumb(`22-06`),
     },
     "compute/api/22-06/compute-api-reference-home",
+    "compute/api/22-06/access-api-self-hosted",
+    "compute/api/22-06/set-up-console",
     require("./api/22-06/sidebar"),
   ],
 };
