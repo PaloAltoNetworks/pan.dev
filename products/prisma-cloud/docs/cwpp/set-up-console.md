@@ -1,20 +1,19 @@
 ---
 id: set-up-console
 title: Set Up Console
-sidebar_label: Set Up Console
 ---
 
-After first installing Prisma Cloud Compute Console, you must create an initial admin user and set up your license.
+After first installing Prisma Cloud Compute console, you must create an initial admin user and set up your license.
 The Prisma Cloud API provides endpoints to complete the set up of a freshly installed Console.
 
 :::note
-This section pertains to Compute Edition (self-hosted) Consoles only.
+This section pertains to the Prisma Cloud Compute Edition consoles only.
 :::
 
 ## Create your first admin user
 
 After Console is first installed, you must create the first admin user.
-To do this, use the _/api/v1/signup_ endpoint.
+To do this, use the [Signup](/compute/api/post-signup/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 The following example curl command creates the initial admin user named butterbean.
 
@@ -35,8 +34,9 @@ Console isn't functional until you provide your license key.
 The Prisma Cloud API provides an endpoint for setting up your license.
 
 In this procedure, you access the Prisma Cloud API using an auth token.
+
+=======
 You could also access the API using basic authentication.
-For more information, see xref:../api/access_api.adoc[Access the API].
 
 :::note
 Prisma Cloud provides a single license that protects a specific number of nodes.
@@ -52,7 +52,10 @@ For example, if you have licensed 100 nodes and you have deployed to 10 separate
 ```
 $ curl -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"admin"}'  \
+  https://localhost:8083/api/vVERSION/authenticate
+=======
   https://localhost:8083/api/v1/authenticate
+>>>>>>> 75d5f8f3 (Major rearrange of all the items in the /docs):products/prisma-cloud/docs/cwpp/set-up-console.md
 { "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." }
 ```
 

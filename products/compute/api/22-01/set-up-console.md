@@ -34,6 +34,11 @@ Console isn't functional until you provide your license key.
 The Prisma Cloud API provides an endpoint for setting up your license.
 
 In this procedure, you access the Prisma Cloud API using an auth token.
+<<<<<<< HEAD:products/compute/api/22-01/set-up-console.md
+=======
+You could also access the API using basic authentication.
+For more information, see xref:../api/access_api.adoc[Access the API].
+>>>>>>> 75d5f8f3 (Major rearrange of all the items in the /docs):products/prisma-cloud/docs/cwpp/set-up-console.md
 
 :::note
 Prisma Cloud provides a single license that protects a specific number of nodes.
@@ -49,7 +54,11 @@ For example, if you have licensed 100 nodes and you have deployed to 10 separate
 ```
 $ curl -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"admin"}'  \
+<<<<<<< HEAD:products/compute/api/22-01/set-up-console.md
   https://localhost:8083/api/vVERSION/authenticate
+=======
+  https://localhost:8083/api/v1/authenticate
+>>>>>>> 75d5f8f3 (Major rearrange of all the items in the /docs):products/prisma-cloud/docs/cwpp/set-up-console.md
 { "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." }
 ```
 
