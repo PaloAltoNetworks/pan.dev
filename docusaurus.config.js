@@ -437,7 +437,7 @@ const config = {
                   docs: [
                     {
                       to: "/prisma-cloud/docs",
-                      label: "Prisma Cloud Docs",
+                      label: "API Workflows",
                       icon: "doc",
                     },
                   ],

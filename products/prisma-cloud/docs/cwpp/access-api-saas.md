@@ -1,8 +1,8 @@
 ---
 id: access-api-saas
-title: Access the API (SaaS)
-sidebar_label: Access the API (SaaS)
-sidebar_position: 3
+title: Access the API
+sidebar_label: Access the API
+sidebar_position: 2
 ---
 
 To access the Compute API, you must first get your Compute Console's address.
