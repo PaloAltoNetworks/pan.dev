@@ -1,7 +1,13 @@
 ---
 id: access-api-saas
+<<<<<<< HEAD:products/cwpp/api/access-api-saas.md
 title: Access the Prisma Cloud Enterprise Edition (PCEE) APIs
 sidebar_label: Access the API
+=======
+title: Access the API
+sidebar_label: Access the API
+sidebar_position: 2
+>>>>>>> 75d5f8f3 (Major rearrange of all the items in the /docs):products/prisma-cloud/docs/cwpp/access-api-saas.md
 ---
 
 To access the Compute API, you must first get your Compute Console's address.
