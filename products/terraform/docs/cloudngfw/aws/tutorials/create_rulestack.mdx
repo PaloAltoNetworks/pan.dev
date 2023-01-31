@@ -1,0 +1,262 @@
+---
+id: create-rulestack
+title: Create Rulestack
+sidebar_label: Create Rulestack
+hide_title: true
+description: Create Rulestack
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - terraform
+  - cloudngfw
+---
+
+# Create Rulestack and Rules
+
+:::important
+This is a multi-section tutorial, with dependencies between each section. Please perform each section in order, per the links on the left-hand sidebar.
+:::
+
+## Objective
+
+In this next part of the tutorial, the objective is to start using Terraform for Cloud NGFW, by creating a rulestack and some rules to allow traffic between the two lab hosts.
+
+## Assumptions and Lab Guidance
+
+Please ensure you have read and understood the [assumptions](/terraform/docs/cloudngfw/aws/tutorials/intro/#assumptions) and [lab guideance](terraform/docs/cloudngfw/aws/tutorials/intro/#important---work-in-a-lab-environment-first) at the start of this multi-section tutorial.
+
+## Select and configure Terraform Providers
+
+First, create a `providers.tf` file, in a directory called `01_cloudngfw_rulestacks_rules`. This file defines any Terraform providers you will use, and configures them appropriately. Here we define just the Cloud NGFW provider.
+
+```hcl title="01_cloudngfw_rulestacks_rules/providers.tf"
+terraform {
+  required_providers {
+    cloudngfwaws = {
+      source  = "paloaltonetworks/cloudngfwaws"
+      version = "1.0.8"
+    }
+  }
+}
+
+provider "cloudngfwaws" {
+  host    = "api.${local.aws_region}.aws.cloudngfw.paloaltonetworks.com"
+  region  = local.aws_region
+  lfa_arn = local.cloudngfw_role_arn
+  lra_arn = local.cloudngfw_role_arn
+}
+```
+
+## Define input variables
+
+Create a `variables.tf` file in the `01_cloudngfw_rulestacks_rules` directory, where all the variables for Cloud NGFW are defined. The values for variables are retrieved from the outputs of the first section of this tutorial, where you created your AWS infrastructure.
+
+```hcl title="01_cloudngfw_rulestacks_rules/variables.tf"
+# Build path to AWS Infrastructure's Terraform state
+data "terraform_remote_state" "aws_infra" {
+  backend = "local"
+  config = {
+    path = "../00_aws_infra/terraform.tfstate"
+  }
+}
+
+# Variables - values retrieved from previous Terraform deployment, using the deployment's state as declared above
+locals {
+  projectname        = data.terraform_remote_state.aws_infra.outputs.projectname
+  aws_account_id     = data.terraform_remote_state.aws_infra.outputs.aws_account_id
+  aws_region         = data.terraform_remote_state.aws_infra.outputs.aws_region
+  cloudngfw_role_arn = data.terraform_remote_state.aws_infra.outputs.cloudngfw_role_arn
+  host1_private_ip   = data.terraform_remote_state.aws_infra.outputs.host1_private_ip
+  host2_private_ip   = data.terraform_remote_state.aws_infra.outputs.host2_private_ip
+}
+```
+
+## Define AWS infrastructure
+
+The next file, `main.tf`, defines a Cloud NGFW rulestack, and two rules for the rulestack, along with IP Prefix objects to represent the two lab hosts.
+
+```hcl title="01_cloudngfw_rulestacks_rules/main.tf"
+# Create a Rulestack
+resource "cloudngfwaws_rulestack" "the_rulestack" {
+  name        = "${local.projectname}-rulestack"
+  scope       = "Local"
+  account_id  = local.aws_account_id
+  description = "Made with Terraform for ${local.projectname} Project"
+
+  profile_config {
+    anti_spyware  = "BestPractice"
+    anti_virus    = "BestPractice"
+    vulnerability = "BestPractice"
+    file_blocking = "BestPractice"
+    url_filtering = "BestPractice"
+  }
+
+  tags = {
+    project = "${local.projectname}"
+  }
+}
+
+# Create prefix lists for the EC2 hosts in AWS
+resource "cloudngfwaws_prefix_list" "host1" {
+  rulestack   = cloudngfwaws_rulestack.the_rulestack.name
+  name        = "${local.projectname}-host1"
+  description = "Made with Terraform for ${local.projectname} Project"
+  prefix_list = [
+    local.host1_private_ip
+  ]
+  audit_comment = "Initial config"
+}
+
+resource "cloudngfwaws_prefix_list" "host2" {
+  rulestack   = cloudngfwaws_rulestack.the_rulestack.name
+  name        = "${local.projectname}-host2"
+  description = "Made with Terraform for ${local.projectname} Project"
+  prefix_list = [
+    local.host2_private_ip
+  ]
+  audit_comment = "Initial config"
+}
+
+# Create security rules to allow hosts to ping each other
+resource "cloudngfwaws_security_rule" "rule1" {
+  rulestack   = cloudngfwaws_rulestack.the_rulestack.name
+  rule_list   = "LocalRule"
+  priority    = 101
+  name        = "Rule1"
+  description = "Made with Terraform for ${local.projectname} Project"
+  source {
+    prefix_lists = [cloudngfwaws_prefix_list.host1.name]
+  }
+  destination {
+    prefix_lists = [cloudngfwaws_prefix_list.host2.name]
+  }
+  applications = ["ping"]
+  protocol     = "application-default"
+  category {}
+  action        = "Allow"
+  logging       = true
+  audit_comment = "Initial config"
+
+  tags = {
+    project = "${local.projectname}"
+  }
+
+  enabled = true
+}
+
+resource "cloudngfwaws_security_rule" "rule2" {
+  rulestack   = cloudngfwaws_rulestack.the_rulestack.name
+  rule_list   = "LocalRule"
+  priority    = 102
+  name        = "Rule2"
+  description = "Made with Terraform for ${local.projectname} Project"
+  source {
+    prefix_lists = [cloudngfwaws_prefix_list.host2.name]
+  }
+  destination {
+    prefix_lists = [cloudngfwaws_prefix_list.host1.name]
+  }
+  applications = ["ping"]
+  protocol     = "application-default"
+  category {}
+  action        = "Allow"
+  logging       = true
+  audit_comment = "Initial config"
+
+  tags = {
+    project = "${local.projectname}"
+  }
+
+  enabled = true
+}
+```
+
+## Define required outputs
+
+The final file for this section, `outputs.tf`, defines which values Terraform should present and make available at the end of the `apply` phase. You will use these values in later sections of this tutorial.
+
+```hcl title="01_cloudngfw_rulestacks_rules/outputs.tf"
+output "rulestack_name" {
+  value = cloudngfwaws_rulestack.the_rulestack.name
+}
+```
+
+## Terraform init
+
+With all the files above in place, ensure you are in the `01_cloudngfw_rulestacks_rules` directory, then execute `terraform init` to initialize the Terraform working directory and download the required providers. Your output should look similar to this:
+
+```hcl
+Initializing the backend...
+
+Initializing provider plugins...
+- terraform.io/builtin/terraform is built in to Terraform
+- Finding paloaltonetworks/cloudngfwaws versions matching "1.0.8"...
+- Installing paloaltonetworks/cloudngfwaws v1.0.8...
+- Installed paloaltonetworks/cloudngfwaws v1.0.8 (signed by a HashiCorp partner, key ID D1B17746D294B5C8)
+```
+
+## Terraform plan
+
+Next, run `terraform plan` to view the upcoming changes Terraform would make next. The output here will be substantial, it should look similar to this, truncated for brevity:
+
+```hcl
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # cloudngfwaws_prefix_list.host1 will be created
+  + resource "cloudngfwaws_prefix_list" "host1" {
+      + audit_comment = "Initial config"
+      + description   = "Made with Terraform for Lab Project"
+      + id            = (known after apply)
+      + name          = "Lab-host1"
+      + prefix_list   = [
+          + "10.1.2.10",
+        ]
+      + rulestack     = "Lab-rulestack"
+      + scope         = "Local"
+.
+.
+.
+.
+.
+      + source {
+          + prefix_lists = [
+              + "Lab-host2",
+            ]
+        }
+    }
+
+Plan: 5 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + rulestack_name = "Lab-rulestack"
+```
+
+## Terraform apply
+
+If you are happy with the plan, as described in the output from the previous step, instruct Terraform to create the AWS infrastructure with `terraform apply --auto-approve`. The output will look like this, again truncated for brevity:
+
+```hcl
+cloudngfwaws_rulestack.the_rulestack: Creating...
+cloudngfwaws_rulestack.the_rulestack: Creation complete after 7s [id=Local:Lab-rulestack]
+cloudngfwaws_prefix_list.host2: Creating...
+cloudngfwaws_prefix_list.host1: Creating...
+cloudngfwaws_prefix_list.host1: Creation complete after 6s [id=Local:Lab-rulestack:Lab-host1]
+cloudngfwaws_prefix_list.host2: Creation complete after 6s [id=Local:Lab-rulestack:Lab-host2]
+cloudngfwaws_security_rule.rule1: Creating...
+cloudngfwaws_security_rule.rule2: Creating...
+cloudngfwaws_security_rule.rule1: Creation complete after 8s [id=Local:Lab-rulestack:LocalRule:101]
+cloudngfwaws_security_rule.rule2: Creation complete after 8s [id=Local:Lab-rulestack:LocalRule:102]
+
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+rulestack_name = "Lab-rulestack"
+```
