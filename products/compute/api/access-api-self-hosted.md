@@ -1,8 +1,7 @@
 ---
 id: access-api-self-hosted
-title: Access the API (Self-Hosted)
-sidebar_label: Access the API (Self-Hosted)
-sidebar_position: 2
+title: Access the Prisma Cloud Compute Edition (PCCE) APIs
+slug: /compute/api
 ---
 
 The Prisma Cloud API is exposed on the host that runs Console on port 8083 (HTTPS).
@@ -73,7 +72,7 @@ The curl command can handle basic auth for you with the `--user` option.
 
 To access the API using a token:
 
-1. Retrieve a token from the api/vVERSION/authenticate endpoint with your user credentials.
+1. Retrieve a token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
 
 By default, access tokens are valid for 30 minutes. You can set the validity period in Console under **Manage** > **Authentication** > **Logon**.
 

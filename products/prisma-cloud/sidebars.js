@@ -22,6 +22,7 @@ module.exports = {
       collapsed: true,
       items: [
         "cwpp/api/cwpp-home",
+        "cwpp/api/access-api-saas",
         "cwpp/api/stable-endpoints",
         require("../cwpp/api/sidebar"),
       ],
