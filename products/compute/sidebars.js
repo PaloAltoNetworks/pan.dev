@@ -20,6 +20,8 @@ module.exports = {
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
     "compute/api/set-up-console",
+    "compute/api/access-api-self-hosted",
+    "compute/api/set-up-console",
     require("./api/sidebar"),
   ],
   compute_2201: [
