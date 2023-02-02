@@ -90,7 +90,7 @@ To start using the Prisma SD-WAN Python SDK, we need to first include the Prisma
 
     import cloudgenix
     #Instantiate Cloudgenix API object
-    cgx_session = cloudgenix.API(https://api.elcapitan.cloudgenix.com, ssl_verify=False)
+    cgx_session = cloudgenix.API("https://api.elcapitan.cloudgenix.com", ssl_verify=False)
 
 The Prisma SD-WAN SDK supports two methods of authentication to the controller; either via a username and password, or via a generated authentication token.
 
