@@ -22,7 +22,7 @@ This article provides a comparison between the parameters of the two modules, in
 
 ## Unchanged Parameters
 
-The following parameters are unchanged when moving from the old module to the new:
+The following parameter names are unchanged when moving from the old module to the new (some default values change, see **bold** text in the table below):
 
 | Parameter     | Description                                                                                                                                                                                                                            |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -42,9 +42,9 @@ The following parameters are unchanged when moving from the old module to the ne
 | serial_number | The serial number of a firewall to use for targeted commands. If ip_address is not a Panorama PAN-OS device, then this param is ignored.                                                                                               |
 | username      | The username to use for authentication. This is ignored if api_key is specified.                                                                                                                                                       |
 | rulebase      | The rulebase in which the rule is to exist. If left unspecified, this defaults to pre-rulebase for Panorama. For NGFW, this is always set to be rulebase.                                                                              |
-| service       | The service.                                                                                                                                                                                                                           |
+| service       | The service. **NOTE: Default value changes from `"any"` to `null`**                                                                                                                                                                    |
 | target        | Applicable for Panorama only.<br/>Apply this rule exclusively to the listed firewall serial numbers.                                                                                                                                   |
-| to_interface  | Egress interface from route lookup.                                                                                                                                                                                                    |
+| to_interface  | Egress interface from route lookup. **NOTE: Default value changes from `"any"` to `null`**                                                                                                                                             |
 | uuid          | The rule UUID.<br/>Note that this is currently more of a read-only field.<br/>Usage of the UUID cannot currently take the place of using the rule name as the primary identifier.                                                      |
 | vsys          | The vsys this object belongs to.                                                                                                                                                                                                       |
 
@@ -66,7 +66,7 @@ When moving from the old module to the new, the following parameters are depreca
 
 ## Changed Parameters
 
-The following parameters have changed when comparing the new module to the old module. Both old and new parameter names are listed for comparison and migration purposes:
+The following parameters have changed when comparing the new module to the old module. Both old and new parameter names are listed for comparison and migration purposes (some default values change, see **bold** text in the table below):
 
 | Old Parameter Name        | New Parameter Name                           | Description                                                                                                                                                                                                                                                  |
 | ------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -78,7 +78,7 @@ The following parameters have changed when comparing the new module to the old m
 | dnat_dynamic_port         | destination_dynamic_translated_port          | Dynamic destination translated port.                                                                                                                                                                                                                         |
 | dnat_port                 | destination_translated_port                  | Static translated destination port number.                                                                                                                                                                                                                   |
 | rule_name                 | name                                         | Name of the rule.                                                                                                                                                                                                                                            |
-| snat_address_type         | source_translation_address_type              | For source_translation_type=dynamic-ip-and-port or or source_translation_type=dynamic-ip.<br/>Address type.<br/>Choices:<br/>`"interface-address"`<br/>`"translated-address"`                                                                                |
+| snat_address_type         | source_translation_address_type              | For source_translation_type=dynamic-ip-and-port or or source_translation_type=dynamic-ip.<br/>Address type.<br/>Choices:<br/>`"interface-address"`<br/>`"translated-address"` **NOTE: Default value changes from `"interface-address"` to `null`**           |
 | snat_bidirectional        | source_translation_static_bi_directional     | For source_translation_type=static-ip.<br/>Allow reverse translation from translated address to original address.<br/>Choices:<br/>`false`<br/>`true`                                                                                                        |
 | snat_dynamic_address      | source_translation_translated_addresses      | For source_translation_address_type=translated-address.<br/>Translated addresses of the source address translation.                                                                                                                                          |
 | snat_interface            | source_translation_interface                 | For source_translation_address_type=interface-address.<br/>Interface of the source address.                                                                                                                                                                  |
