@@ -99,3 +99,7 @@ For details about query components, see [Prisma Access Insights Query Language](
 ## What are the possible filter values?
 
 For information about filter values, see [Query Language Filters](/access/docs/insights/query_filters/).
+
+## How can I ensure that the access token is using the correct credentials?
+
+If the access token is incorrect, the API request may not go through, and the resulting error code indicates an invalid authorization code. To test an access token for the correct credentials, see [Access Tokens](/sase/docs/access-tokens/).
