@@ -25,7 +25,7 @@ The information returned by this query can also be viewed in the UI, here:
 
     POST /api/sase/v2.0/resource/query/prisma_sase_external_alerts_current
 
-    Prisma-Tenant:{{tenant_id}}
+    Prisma-Tenant:{{tsg_id}}
 
     Authorization: Bearer {{jwt_token}}
 
@@ -33,26 +33,21 @@ The information returned by this query can also be viewed in the UI, here:
 
 ## Request Payload
 
-The following request payload uses the `state`, `severity` and `updated_time` filters:
+The following request payload uses the `state`, `severity`, and `updated_time` filters:
 
 `state` : The values for this filter are:
 
 - `Raised` : The alert has been raised to an IT specialist's attention.
 - `Cleared` : The alert has been cleared.
 
-<<<<<<< HEAD
+`severity` : The values for this filter are:
+
+- `4` : High severity
+- `3` : Medium severity
+- `2` : Low severity
+- `1` : Informational alert
+
 `updated_time` : string, format example `2021-07-03 23:12:13 UTC`
-=======
-`severity_id` : The values for this filter are:
-
-- `High` : 4
-- `Medium` : 3
-- `Low` : 2
-- `Informational` : 1
-
-`updated-time` : string, format example `2021-07-03 23:12:13 UTC`
-
-> > > > > > > 594c39d7 (files prettified)
 
 ```json
 {
