@@ -49,7 +49,7 @@ For example, if you have licensed 100 nodes and you have deployed to 10 separate
 ```
 $ curl -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"admin"}'  \
-  https://localhost:8083/api/v1/authenticate
+  https://localhost:8083/api/vVERSION/authenticate
 { "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." }
 ```
 

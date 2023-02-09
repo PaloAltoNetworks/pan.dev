@@ -1,8 +1,7 @@
 ---
 id: access-api-saas
-title: Access the API
+title: Access the Prisma Cloud Enterprise Edition (PCEE) APIs
 sidebar_label: Access the API
-sidebar_position: 2
 ---
 
 To access the Compute API, you must first get your Compute Console's address.
@@ -33,7 +32,7 @@ We recommend that you renew the Compute token every 5 minutes (half the lifetime
 
    1. Under **Path to Console**, click **Copy**.
 
-1. Retrieve a token from the api/vVERSION/authenticate endpoint with your user credentials.
+1. Retrieve a token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
    Tokens are valid for 24 hours.
 
 ```bash
