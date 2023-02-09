@@ -111,7 +111,7 @@ When the field type requires a date or time, use one of the following supported 
 
 - between date1, date2
 
-  Time range, starting at date1 and ending at date2. Specify the date in the format epoc-time.
+  Time range, starting at date1 and ending at date2. Specify the date in the format epoch-time.
 
 - last_n_days
 
@@ -215,7 +215,7 @@ See [Prisma Access Locations](https://docs.paloaltonetworks.com/prisma/prisma-ac
 | CONNECTED        | Mobile user in connected state |
 | CONNECT_CONTINUE |                                |
 
-### Alert Severity
+### Severity (Alerts)
 
 | Severity ID   | Severity ID Mapping Values |
 | ------------- | -------------------------- |
@@ -223,3 +223,15 @@ See [Prisma Access Locations](https://docs.paloaltonetworks.com/prisma/prisma-ac
 | Medium        | 3                          |
 | Low           | 2                          |
 | Informational | 1                          |
+
+### Alert Filter Details
+
+| Alert Filter | Description                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| alert_id     | Unique alert ID                                                                                                                  |
+| raised_time  | example: 2021-07-02 23:12:13 UTC                                                                                                 |
+| updated_time | example: 2021-07-03 23:12:13 UTC                                                                                                 |
+| state        | Values can be Raised or Cleared                                                                                                  |
+| category     | Alert category, such as Remote Networks (RN), Service Connections (SC)                                                           |
+| code         | Unique alert code, such as AL_SC_PRIMARY_TUNNEL_DOWN                                                                             |
+| customerApp  | (optional) If set to True, only external alerts are processed. If set to False, both external and internal alerts are processed. |
