@@ -13,7 +13,7 @@ This section pertains to the Prisma Cloud Compute Edition consoles only.
 ## Create your first admin user
 
 After Console is first installed, you must create the first admin user.
-To do this, use the [Signup](/compute/api/post-signup/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+To do this, use the [Signup user](/compute/api/post-signup/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 The following example curl command creates the initial admin user named butterbean.
 
