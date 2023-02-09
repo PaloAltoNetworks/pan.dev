@@ -50,7 +50,7 @@ Example:
 
   Match a value greater than the specified number.
 
-- greater_or_equal &lt;_value_&gt;
+- greater*or_equal &lt;\_value*&gt;
 
   Match a value greater than or equal to the specified number.
 
@@ -62,15 +62,15 @@ Example:
 
   Match a value less than the specified number.
 
-- less_or_equal &lt;_value_&gt;
+- less*or_equal &lt;\_value*&gt;
 
   Match a value less than or equal to the specified number.
 
-- not_equal &lt;_value_&gt;
+- not*equal &lt;\_value*&gt;
 
   Match all values except the specified number.
 
-- not_in &lt;_value_&gt;[, &lt;_value_&gt; ...]
+- not*in &lt;\_value*&gt;[, &lt;_value_&gt; ...]
 
   Match all values except those that contain the specified number. To specify more than one number,
   separate them with commas.
@@ -96,11 +96,11 @@ Example:
 
   Match a value in an array. To specify more than one number, separate them with commas.
 
-- not_equal &lt;_value_&gt;
+- not*equal &lt;\_value*&gt;
 
   Match all values except the specified string.
 
-- not_in &lt;_value_&gt;[, &lt;_value_&gt; ...]
+- not*in &lt;\_value*&gt;[, &lt;_value_&gt; ...]
 
   Match all values except those that contain the specified string. To specify more than one string,
   separate them with commas.

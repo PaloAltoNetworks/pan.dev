@@ -74,10 +74,11 @@ $ curl -H "Authorization: Bearer $TOKEN" \
   https://localhost:8083/api/v1/settings/license
 ```
 
-The result should be 200 OK with an empty body "{}".
----
+## The result should be 200 OK with an empty body "{}".
+
 id: set-up-console
 title: Set Up Console
+
 ---
 
 After first installing Prisma Cloud Compute console, you must create an initial admin user and set up your license.
@@ -151,10 +152,11 @@ $ curl -H "Authorization: Bearer $TOKEN" \
   https://localhost:8083/api/v1/settings/license
 ```
 
-The result should be 200 OK with an empty body "{}".
----
+## The result should be 200 OK with an empty body "{}".
+
 id: set-up-console
 title: Set Up Console
+
 ---
 
 After first installing Prisma Cloud Compute console, you must create an initial admin user and set up your license.
