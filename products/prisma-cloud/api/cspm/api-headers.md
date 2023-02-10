@@ -2,7 +2,6 @@
 id: api-headers
 title: Prisma Cloud API Headers
 sidebar_label: Headers
-slug: /prisma-cloud/api/cspm/api-headers
 keywords:
   - Developer
   - Prisma

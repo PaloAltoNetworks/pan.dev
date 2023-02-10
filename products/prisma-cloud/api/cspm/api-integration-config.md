@@ -2,7 +2,6 @@
 id: api-integration-config
 title: Prisma Cloud Integration API Configurations
 sidebar_label: Integration Configurations
-slug: /prisma-cloud/api/cspm/api-integration-config
 ---
 
 The Prisma Cloud integration API endpoints enable you to receive Prisma Cloud alerts in external systems. The [integration endpoint documentation](/cspm/api/integrations) describes request and response details for each endpoint.

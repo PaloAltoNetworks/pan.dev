@@ -2,7 +2,6 @@
 id: api-time-range-model
 title: Prisma Cloud CSPM API Time Range Model
 sidebar_label: Time Range Model
-slug: /prisma-cloud/api/cspm/api-time-range-model
 ---
 
 Some Prisma Cloud Cloud Security Posture Management (CSPM) API request or response objects include a time range model. Depending on the endpoint, this model can describe a time range in different ways. The examples below illustrate the different uses of this model.

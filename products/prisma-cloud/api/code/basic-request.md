@@ -2,7 +2,6 @@
 id: basic-request
 title: Code Security API Request Basics
 sidebar_label: API Request Basics
-slug: /prisma-cloud/api/code/basic-request
 keywords:
   - Developer
   - Prisma
