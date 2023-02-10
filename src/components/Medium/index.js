@@ -1,9 +1,8 @@
-import Link from "@docusaurus/Link";
-import clsx from "clsx";
 import React from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
+import BrowserOnly from "@docusaurus/BrowserOnly";
+import Link from "@docusaurus/Link";
+import Slider from "../Slider/Slider";
+import clsx from "clsx";
 import "./Slider.scss";
 import styles from "./styles.module.css";
 
@@ -12,15 +11,8 @@ const blogs = blog_json.items.slice(0, 9);
 
 function Medium() {
   const sliderSettings = {
-    autoplay: true,
-    autoplaySpeed: 7500,
-    dots: true,
-    infinite: true,
-    speed: 850,
     slidesToShow: 3,
     slidesToScroll: 3,
-    nextArrow: <img src="/icons/slider-arrow-forward.svg" />,
-    prevArrow: <img src="/icons/slider-arrow-back.svg" />,
     responsive: [
       {
         breakpoint: 1024,
@@ -52,6 +44,23 @@ function Medium() {
   };
 
   const BlogCard = ({ blog }) => {
+    const getFirstParagraph = (blogContent) => {
+      let firstParagraph = null;
+      let div = document.createElement("div");
+      div.innerHTML = blogContent;
+      let elements = div.childNodes;
+
+      // Find the first paragraph element in the blog content
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].nodeName === "P") {
+          firstParagraph = elements[i].innerText;
+          break;
+        }
+      }
+
+      return firstParagraph;
+    };
+
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
@@ -71,7 +80,9 @@ function Medium() {
           <br />
           <div className="avatar__intro margin-left--none">
             <div className={styles.content}>
-              <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+              <BrowserOnly>
+                {() => <p>{getFirstParagraph(blog.content)}</p>}
+              </BrowserOnly>
             </div>
           </div>
         </div>

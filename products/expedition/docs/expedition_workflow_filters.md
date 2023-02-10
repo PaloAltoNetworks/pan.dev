@@ -15,7 +15,8 @@ keywords:
   - configuration
   - automation
   - migration
-  - convertion
+  - conversion
+  - filter
 
 image: /expedition/img/expedition.png
 ---
@@ -29,14 +30,6 @@ localStorage.setItem('defaultLanguage', lang)
 window.location.reload()
 }
 }
-
-**Choose language for code snippet**
-
-<a className="button button--primary" onClick={() => SetLanguage('python')}>Python</a>&nbsp;
-<a className="button button--info" onClick={() => SetLanguage('php')}>Php</a>&nbsp;
-<a className="button button--danger" onClick={() => SetLanguage('go')}>Go</a>
-<br/>
-<br/>
 
 In this section we will learn on the usage of `predefined filters`, `simple filters`,
 `complex filters` and `combination filters`; as well on the task related to their creation, monitoring on their execution state and collection of filtered results.
@@ -213,8 +206,6 @@ Defining a syntax here is not that simple since multiple combinations can be don
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -288,8 +279,6 @@ Updates the parameters of a specific filter
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -359,8 +348,6 @@ Everytime a filter is modified, it will be marked as potentially_invalid, since 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -421,8 +408,6 @@ The successful Json response will be similar to the following:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -484,8 +469,6 @@ The successful Json response will be similar to the following:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -551,8 +534,6 @@ The successful Json response will be similar to the following:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -662,8 +643,6 @@ The successful Json response will be similar to the following:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">

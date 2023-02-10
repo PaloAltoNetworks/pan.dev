@@ -14,7 +14,7 @@ keywords:
   - firewall
   - configuration
   - automation
-  - convertion
+  - conversion
 
 image: /expedition/img/expedition.png
 ---
@@ -29,31 +29,25 @@ window.location.reload()
 }
 }
 
-**Choose language for code snippet**
-
-<a className="button button--primary" onClick={() => SetLanguage('python')}>Python</a>&nbsp;
-<a className="button button--info" onClick={() => SetLanguage('php')}>Php</a>&nbsp;
-<a className="button button--danger" onClick={() => SetLanguage('go')}>Go</a>
-<br/>
 <br/>
 
-In this section we present a workflow example to for bulk change on appling Security Profile group to all allowed security rules in a PAN-OS configuraiton.
+In this section we present a workflow example for bulk change apply Security Profile group to all allowed security rules in a PAN-OS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
-    A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
+    A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
     B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
     C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
     D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
     E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
     F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
     G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> H["Create a filter for all allowed security rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
-    H["Create a filter for all allowed scecurity rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+    H["Create a filter for all allowed security rules<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
     I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
-    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group"]
-    K["Get Security Profile Grop ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group" ] --> L["Bulk Change Apply SPG to all allowed rules<br/> PUT https://localhost/api/v1/project/{project_id}/policy/security"]
+    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Get Security Profile Group ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group"]
+    K["Get Security Profile Group ID<br/> GET https://localhost/api/v1/project/{project_id}/object/profile_group" ] --> L["Bulk Change Apply SPG to all allowed rules<br/> PUT https://localhost/api/v1/project/{project_id}/policy/security"]
 ```
 
 ### Step 1. Obtain the API Keys
@@ -66,7 +60,7 @@ Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agen
 
 ### Step 3. Add PAN-OS Device
 
-Making a POST call to the Device route, we can create a Devive with a desired name.
+Making a POST call to the Device route, we can create a Device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -100,8 +94,6 @@ API syntax for creating a new device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -132,16 +124,12 @@ else:
 print("*****Upload PAN-OS config into device*****\n")
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 4. Upload PAN-OS config into device
 
-After devcie has been created , the next step will be uploading your pan-os config to associate with the device.
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
 
 API syntax for upload PAN-OS config into device :
 
@@ -153,8 +141,6 @@ API syntax for upload PAN-OS config into device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -175,10 +161,6 @@ else:
     print(result)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -196,8 +178,6 @@ API syntax for creating a new project:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -218,45 +198,6 @@ if success == "true":
 print("\n")
 ```
 
-</TabItem> 
-<TabItem value="go">
-
-```go
-package main
-import "fmt"
-
-func main() {
-    //TODO
-}
-```
-
-</TabItem> 
-<TabItem value="php">
-
-```php
-
-echo "\n";
-echo "CREATE NEW PROJECT\n";
-$data = ["project"=> $projectName];
-$url = 'https://'.$ip.'/api/v1/project';
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-curl_setopt($curl, CURLOPT_HTTPHEADER,$hed);
-curl_setopt($curl,CURLOPT_POST, TRUE);
-curl_setopt($curl,CURLOPT_POSTFIELDS, $data);
-curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-$response = curl_exec($curl);
-$jsonResponse = json_decode($response);
-$success = $jsonResponse->Contents->success;
-if ($success=='true'){
-    print_r($response);
-    $projectId = $jsonResponse->Contents->response->data->content->id;
-    print_r($jsonResponse->Contents->response->{'response-messages'}->messages[0]->message);
-}
-echo "\n";
-```
-
 </TabItem>
 </Tabs>
 
@@ -274,8 +215,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -324,16 +263,12 @@ statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
 print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 7. Get Source ID of the config file
 
-In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represnet the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
+In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
 API syntax for the step:
 
@@ -345,8 +280,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -361,16 +294,12 @@ source_id = json.dumps(response["data"]["source"][0]["id"])
 print("PAN-OS config source_id is: " + source_id)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 8. Create a filter for all allowed security rules
 
-In this step, we will create a filter for all security rules that have action "allowed" . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific exmaple, we are sending the request body contains below data, In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
+In this step, we will create a filter for all security rules that have action "allowed" . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific example, we are sending the request body contains below data, In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
 
 ```json
 data = {
@@ -389,8 +318,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -411,10 +338,6 @@ def Filter():
     print("your filter ID is " + filterID)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -432,8 +355,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -488,10 +409,6 @@ def ExecuteFilter():
     print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -509,8 +426,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -533,16 +448,12 @@ print("Print the Filter Execution Result")
     Collection_ID = json.dumps(response["data"]["id"])
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
-### Step 11. Get Security Profile Grop ID
+### Step 11. Get Security Profile Group ID
 
-In order to apply the secruity profile group to the security policy, we will need to find out the object ID of the secruity profile group first. In the example, we will parse the first object ID from the response.
+In order to apply the security profile group to the security policy, we will need to find out the object ID of the security profile group first. In the example, we will parse the first object ID from the response.
 
 API syntax for the step:
 
@@ -554,8 +465,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -570,16 +479,12 @@ SPG_ID=json.dumps(response["data"]["profile_group"][0]["id"])
 print(SPG_ID)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 12. Bulk Change Apply SPG to all allowed rules
 
-The final step we perform a bulk change to apply the secruity profile group to all allowed rules.
+The final step we perform a bulk change to apply the security profile group to all allowed rules.
 
 API syntax for the step:
 
@@ -591,8 +496,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -608,9 +511,5 @@ response = r.json()
 print(response)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
