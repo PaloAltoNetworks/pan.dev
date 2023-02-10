@@ -30,9 +30,9 @@ We recommend that you renew the Compute token every 5 minutes (half the lifetime
 
    1. Go to **Compute > Manage > System > Utilities**.
 
-   1. Under **Path to Console**, click **Copy**.
+   2. Under **Path to Console**, click **Copy**.
 
-1. Retrieve a token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
+2. Retrieve a token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
    Tokens are valid for 24 hours.
 
 ```bash
@@ -58,7 +58,7 @@ $ curl \
 }
 ```
 
-1. Call the Prisma Cloud API, submitting the token in the Authorization field of the HTTP header of your request.
+3. Call the Prisma Cloud API, submitting the token in the Authorization field of the HTTP header of your request.
 
 For example, test the connection by retrieving your compliance policies.
 

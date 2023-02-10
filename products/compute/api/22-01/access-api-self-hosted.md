@@ -3,7 +3,7 @@ id: access-api-self-hosted
 title: Access the Prisma Cloud Compute Edition (PCCE) APIs
 ---
 
-The Prisma Cloud API is exposed on the host that runs Console on port 8083 (HTTPS).
+The Prisma Cloud Compute API is exposed on the host that runs Console on port 8083 (HTTPS).
 The port is specified at install time in _twistlock.cfg_.
 
 All example commands specify a variable called `CONSOLE`, which represents the address for your Console.
@@ -12,13 +12,13 @@ The address for your Console depends on how you installed it.
 For Onebox installs, where you install Console on a stand-alone host, the value for `CONSOLE` is the IP address or DNS name of the host.
 HTTPS access to Console is servered on port 8083, so the full address would be:
 
-```
+```bash
 CONSOLE = https://<IPADDR>:8083
 ```
 
 For the default Kubernetes installation procedure, the Console service is exposed by a LoadBalancer, and so the address for `CONSOLE` is
 
-```
+```bash
 CONSLE = https://<LOAD_BALANCER>:8083
 ```
 
@@ -49,12 +49,12 @@ The basic token is a Base64 encoded string of type username:password.
 1. Generate the Base64 encoding of your username and password.
    Assume your username is api, and your password is api.
 
-```
+```bash
 $ echo -n "api:api" | openssl base64
 YXBpOmFwaQ==
 ```
 
-1. To access any other endpoint, set the Authorization field of your HTTP header to Basic and add the encoded string.
+2. To access any other endpoint, set the Authorization field of your HTTP header to Basic and add the encoded string.
    For example, to get all your runtime container policies:
 
 ```bash
@@ -71,7 +71,7 @@ The curl command can handle basic auth for you with the `--user` option.
 
 To access the API using a token:
 
-1. Retrieve a token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
+1. Retrieve a token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
 
 By default, access tokens are valid for 30 minutes. You can set the validity period in Console under **Manage** > **Authentication** > **Logon**.
 
@@ -87,7 +87,7 @@ $ curl \
 }
 ```
 
-If you integrated Prisma Cloud Console with Active Directory, and you're using the sAMAccountName _user identifier_, escape the backslash in the `DOMAIN\sAMAccountName` username value.
+If you integrated Prisma Cloud Compute Console with Active Directory, and you're using the sAMAccountName _user identifier_, escape the backslash in the `DOMAIN\sAMAccountName` username value.
 For example:
 
 ```bash
@@ -100,8 +100,8 @@ $ curl \
 }
 ```
 
-1. Call the Prisma Cloud API, submitting the token in the Authorization field in the HTTP header of your request.
-   For example, test connection to the API using the _/api/vVERSION/policies_ endpoint:
+2. Call the Prisma Cloud Compute API, submitting the token in the Authorization field in the HTTP header of your request.
+   For example, test connection to the API using the [Get Runtime Container Policies](/compute/api/get-policies-runtime-container/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
 
 ```bash
 $ curl --insecure \
@@ -115,12 +115,12 @@ You can retrieve a token using client certificates issued by your public key inf
 
 **Prerequisites:**
 
-- You have configured Prisma Cloud Console with your [server certificate](https://docs.paloaltonetworks.com/prisma/prisma-cloud/21.04/prisma-cloud-compute-edition-admin/authentication/use_custom_certs_for_auth.html).
+- You have configured Prisma Cloud Compute Console with your server certificate.
   Go to **Manage > Authentication > Certificates > TLS certificate for Console**, and upload your certificate (cat the cert and private key into a single file).
 
 1. Install your client certificate on your local machine.
 
-1. Request a token using your client certificate.
+2. Request a token using your client certificate.
 
 ```bash
 $ curl --insecure \
@@ -132,7 +132,7 @@ $ curl --insecure \
 }
 ```
 
-1. Call the Prisma Cloud API, submitting the token in the Authorization field in the HTTP header of your request.
+3. Call the Prisma Cloud Compute API, submitting the token in the Authorization field in the HTTP header of your request.
    For example, to get all policies:
 
 ```bash

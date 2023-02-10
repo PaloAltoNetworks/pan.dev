@@ -20,26 +20,8 @@ module.exports = {
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
     "compute/api/set-up-console",
-    "compute/api/access-api-self-hosted",
-    "compute/api/set-up-console",
+    "compute/api/stable-endpoints",
     require("./api/sidebar"),
-  ],
-  compute_2201: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(computeVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`22-01`),
-    },
-    "compute/api/22-01/compute-api-reference-home",
-    "compute/api/22-01/access-api-self-hosted",
-    "compute/api/22-01/set-up-console",
-    require("./api/22-01/sidebar"),
   ],
   compute_2206: [
     {
@@ -56,6 +38,25 @@ module.exports = {
     "compute/api/22-06/compute-api-reference-home",
     "compute/api/22-06/access-api-self-hosted",
     "compute/api/22-06/set-up-console",
+    "compute/api/22-06/stable-endpoints",
     require("./api/22-06/sidebar"),
+  ],
+  compute_2201: [
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionSelector(computeVersions),
+      className: "version-button",
+    },
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionCrumb(`22-01`),
+    },
+    "compute/api/22-01/compute-api-reference-home",
+    "compute/api/22-01/access-api-self-hosted",
+    "compute/api/22-01/set-up-console",
+    "compute/api/22-01/stable-endpoints",
+    require("./api/22-01/sidebar"),
   ],
 };

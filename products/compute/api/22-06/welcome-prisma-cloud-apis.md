@@ -24,7 +24,7 @@ To find the the version of Prisma Cloud Workload Protection that you're running:
 
 1. Log into your Prisma Cloud Compute console.
 
-1. Click the bell icon in the top right of the page.
+2. Click the bell icon in the top right of the page.
 
    The drop-down shows the currently running version:
 
@@ -42,16 +42,16 @@ This port is specified at install time in `twistlock.cfg`.
 
   The value for `<CONSOLE>` is the LoadBalancer followed by port `8083`:
 
-  ```
-  https://<LOAD_BALANCER>:8083
+  ```bash
+  $ https://<LOAD_BALANCER>:8083
   ```
 
 - **Onebox installations:** Console installed on a stand-alone host.
 
   The value for `<CONSOLE>` is the IP address or DNS name of the host followed by port `8083`:
 
-  ```
-  https://<IP_ADDRESS>:8083
+  ```bash
+  $ https://<IP_ADDRESS>:8083
   ```
 
 The cURL example for each endpoint is called with a username (`-u <USER>`) only.
@@ -109,8 +109,8 @@ If the response contains more than 250 objects, cycle through the collection wit
 
 For example:
 
-```
-https://<CONSOLE>/api/v<VERSION>/images?limit=250&offset=X
+```bash
+$ https://<CONSOLE>/api/v<VERSION>/images?limit=250&offset=X
 ```
 
 ### View parameter descriptions

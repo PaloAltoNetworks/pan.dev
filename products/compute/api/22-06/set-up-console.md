@@ -17,7 +17,7 @@ To do this, use the [Signup](/compute/api/post-signup/) ![alt text](/icons/api-i
 
 The following example curl command creates the initial admin user named butterbean.
 
-```
+```bash
 $ curl -k \
   -H 'Content-Type: application/json' \
   -X POST \
@@ -44,30 +44,30 @@ There is need to get a new license when building out new environments with Prism
 For example, if you have licensed 100 nodes and you have deployed to 10 separate tenants, each with its own Console, use the same license key for each instance of Console.
 :::
 
-1. Get an auth token.
+1. Get an auth token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
-```
+```bash
 $ curl -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"admin"}'  \
   https://localhost:8083/api/vVERSION/authenticate
 { "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." }
 ```
 
-1. Set environment variables for your auth token and license key.
+2. Set environment variables for your auth token and license key.
 
-```
+```bash
 $ echo $LICENSE_KEY
 {"key":"your license key here"}
 ```
 
-```
+```bash
 $ echo $TOKEN
 eyJ0eXAiOiJK...
 ```
 
-1. Execute the command referencing these vars to set the license.
+3. Execute the command referencing these vars to set the license using the [License](/compute/api/post-settings-license/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
-```
+```bash
 $ curl -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d $LICENSE_KEY \
