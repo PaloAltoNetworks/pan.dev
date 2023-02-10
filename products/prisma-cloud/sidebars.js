@@ -81,6 +81,7 @@ module.exports = {
           label: "Resource Query Language (RQL)",
           href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-rql-reference/rql-reference.html",
         },
+        "prisma-cloud/docs/twistcli_gs",
         {
           type: "category",
           label: "RQL",
