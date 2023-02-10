@@ -1,6 +1,6 @@
 ---
 id: twistcli_gs
-title: Getting Start with twistcli
+title: Getting Started with twistcli
 sidebar_label: Use twistcli
 sidebar_position: 6
 ---
