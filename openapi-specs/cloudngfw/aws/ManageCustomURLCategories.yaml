@@ -285,6 +285,37 @@ components:
       - UrlTargets
       title: CustomURLCategory
       type: object
+    DescribeCustomURLCategoryResponse.CustomURLCategoryDB:
+      additionalProperties: false
+      properties:
+        URLCategoryEntry:
+          $ref: '#/components/schemas/DescribeCustomURLCategoryResponse.CustomURLCategory'
+          description: 'The custom URL category entry.
+
+            '
+        operation:
+          description: 'Custom URL operation.
+
+            '
+          enum:
+          - add
+          - update
+          - delete
+          title: Operation
+          type: string
+        pk:
+          title: Pk
+          type: string
+        sk:
+          maxLength: 29
+          pattern: ^[a-zA-Z][0-9a-zA-Z-]*$
+          title: Sk
+          type: string
+      required:
+      - pk
+      - sk
+      title: CustomURLCategoryDB
+      type: object
     DescribeCustomURLCategoryResponse.ResponseData:
       additionalProperties: false
       properties:
@@ -297,12 +328,12 @@ components:
           title: Rulestackname
           type: string
         URLCategoryCandidate:
-          $ref: '#/components/schemas/DescribeCustomURLCategoryResponse.CustomURLCategory'
+          $ref: '#/components/schemas/DescribeCustomURLCategoryResponse.CustomURLCategoryDB'
           description: 'The custom URL candidate.
 
             '
         URLCategoryRunning:
-          $ref: '#/components/schemas/DescribeCustomURLCategoryResponse.CustomURLCategory'
+          $ref: '#/components/schemas/DescribeCustomURLCategoryResponse.CustomURLCategoryDB'
           description: 'The custom URLs on run state.
 
             '
@@ -347,55 +378,6 @@ components:
             '
       title: ListCustomURLCategoriesResponse
       type: object
-    ListCustomURLCategoriesResponse.CustomURLCategory:
-      additionalProperties: false
-      properties:
-        Action:
-          description: 'The custom URL action.
-
-            '
-          title: Action
-          type: string
-        AuditComment:
-          description: "Audit remarks.    \n"
-          title: Auditcomment
-          type: string
-        Description:
-          description: "The custom URL description. \n"
-          maxLength: 255
-          title: Description
-          type: string
-        UpdateToken:
-          description: 'Refresh token.
-
-            '
-          title: Updatetoken
-          type: string
-        UrlTargets:
-          description: "Custom URL destination. \n"
-          items:
-            maxLength: 255
-            type: string
-          title: Urltargets
-          type: array
-      required:
-      - UrlTargets
-      title: CustomURLCategory
-      type: object
-    ListCustomURLCategoriesResponse.CustomURLCategoryDescribe:
-      additionalProperties: false
-      properties:
-        CustomURLCategory:
-          $ref: '#/components/schemas/ListCustomURLCategoriesResponse.CustomURLCategory'
-          description: 'Details of the custom URL category.
-
-            '
-        Name:
-          description: "Name of the custom URL category. \n"
-          title: Name
-          type: string
-      title: CustomURLCategoryDescribe
-      type: object
     ListCustomURLCategoriesResponse.ResponseData:
       additionalProperties: false
       properties:
@@ -407,11 +389,13 @@ components:
             type: string
           title: Categoriescandidate
           type: array
-        CategoriesCandidateDescribe:
-          description: "Details of the custom URL category candidate.        \n"
+        CategoriesPreDefined:
+          description: 'Predefined URL category candidate
+
+            '
           items:
-            $ref: '#/components/schemas/ListCustomURLCategoriesResponse.CustomURLCategoryDescribe'
-          title: Categoriescandidatedescribe
+            type: string
+          title: Categoriespredefined
           type: array
         CategoriesRunning:
           description: 'Custom URLs on run state.
@@ -420,14 +404,6 @@ components:
           items:
             type: string
           title: Categoriesrunning
-          type: array
-        CategoriesRunningDescribe:
-          description: 'Details of the custom URLs on run state.
-
-            '
-          items:
-            $ref: '#/components/schemas/ListCustomURLCategoriesResponse.CustomURLCategoryDescribe'
-          title: Categoriesrunningdescribe
           type: array
         CategoriesUncommitted:
           description: 'Uncommitted custom URLs.
@@ -444,9 +420,6 @@ components:
             next request.
 
             '
-          maxLength: 2048
-          minLength: 1
-          pattern: ^[-0-9A-Za-z:\/+=]+$
           title: Nexttoken
           type: string
         RuleStackName:
@@ -630,15 +603,15 @@ components:
       type: object
 info:
   contact: {}
-  description: "Palo Alto Networks provides a set of predefined URL filtering categories.\
-    \  \nYou can also specify your own URL filtering categories using a customer URL\
-    \ category object. For example, create a custom list of URLs that you want to\
-    \ use as match criteria in a Security policy rule. \nYou can use the custom URL\
-    \ categories as a security policy match criteria.  \n\nFor more information, refer\
-    \ to the following links.\n- [Where Can I Find a Complete List of PAN-DB URL Filtering\
-    \ Categories?](https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA10g000000Cm5hCAC)\n\
+  description: "You can use the custom URL categories as a security policy match criteria.\
+    \ You can specify your own URL filtering categories using a customer URL category\
+    \ object. For example, create a custom list of URLs that you want to use as match\
+    \ criteria in a Security policy rule.\n\nPalo Alto Networks provides a set of\
+    \ predefined URL filtering categories. Refer the following links for more information.\n\
+    - [Complete List of PAN-DB URL Filtering Categories?](https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA10g000000Cm5hCAC)\n\
     - [Palo Alto Networks URL filtering](https://urlfiltering.paloaltonetworks.com/)\n\
-    - [Create a custom URL category for Cloud NGFW on AWS](https://docs.paloaltonetworks.com/cloud-ngfw/aws/cloud-ngfw-on-aws/rules-and-rulestacks/cloud-ngfw-security-rule-objects/create-a-custom-url-category-for-cloud-ngfw-on-aws)\n"
+    - [Create a custom URL category for Cloud NGFW on AWS](https://docs.paloaltonetworks.com/cloud-ngfw/aws/cloud-ngfw-on-aws/rules-and-rulestacks/cloud-ngfw-security-rule-objects/create-a-custom-url-category-for-cloud-ngfw-on-aws)\n\
+    \ \n"
   title: Manage Custom URL Categories
   version: 1.0.0
 openapi: 3.0.3
@@ -700,16 +673,6 @@ paths:
         schema:
           default: false
           title: Uncommitted
-          type: boolean
-      - description: 'Details of the uncommitted rulestacks.
-
-          '
-        in: query
-        name: describe
-        required: false
-        schema:
-          default: false
-          title: Describe
           type: boolean
       - description: 'The maximum number of custom URL categories you want Cloud NGFW
           to return for this request.

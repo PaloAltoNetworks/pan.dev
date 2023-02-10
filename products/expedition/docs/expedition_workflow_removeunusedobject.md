@@ -14,7 +14,7 @@ keywords:
   - firewall
   - configuration
   - automation
-  - convertion
+  - conversion
 image: /expedition/img/expedition.png
 ---
 
@@ -27,22 +27,15 @@ localStorage.setItem('defaultLanguage', lang)
 window.location.reload()
 }
 }
-
-**Choose language for code snippet**
-
-<a className="button button--primary" onClick={() => SetLanguage('python')}>Python</a>&nbsp;
-<a className="button button--info" onClick={() => SetLanguage('php')}>Php</a>&nbsp;
-<a className="button button--danger" onClick={() => SetLanguage('go')}>Go</a>
-<br/>
 <br/>
 
-In this section we present a workflow example to remove unused address, address group, servcie and service group objects in a PAN-OS configuraiton.
+In this section we present a workflow example to remove unused address, address group, service and service group objects in a PAN-OS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
-A[Obtain the API Keys<br/> POST https://localhost/api/v1/login ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
+A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
 B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
 C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
 D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
@@ -65,7 +58,7 @@ Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agen
 
 ### Step 3. Add PAN-OS Device
 
-Making a POST call to the Device route, we can create a Devive with a desired name.
+Making a POST call to the Device route, we can create a Device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -99,8 +92,6 @@ API syntax for creating a new device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -131,16 +122,12 @@ else:
 print("*****Upload PAN-OS config into device*****\n")
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 4. Upload PAN-OS config into device
 
-After devcie has been created , the next step will be uploading your pan-os config to associate with the device.
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
 
 API syntax for upload PAN-OS config into device :
 
@@ -152,8 +139,6 @@ API syntax for upload PAN-OS config into device :
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -174,10 +159,6 @@ else:
     print(result)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -195,8 +176,6 @@ API syntax for creating a new project:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -217,45 +196,6 @@ if success == "true":
 print("\n")
 ```
 
-</TabItem> 
-<TabItem value="go">
-
-```go
-package main
-import "fmt"
-
-func main() {
-    //TODO
-}
-```
-
-</TabItem> 
-<TabItem value="php">
-
-```php
-
-echo "\n";
-echo "CREATE NEW PROJECT\n";
-$data = ["project"=> $projectName];
-$url = 'https://'.$ip.'/api/v1/project';
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-curl_setopt($curl, CURLOPT_HTTPHEADER,$hed);
-curl_setopt($curl,CURLOPT_POST, TRUE);
-curl_setopt($curl,CURLOPT_POSTFIELDS, $data);
-curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-$response = curl_exec($curl);
-$jsonResponse = json_decode($response);
-$success = $jsonResponse->Contents->success;
-if ($success=='true'){
-    print_r($response);
-    $projectId = $jsonResponse->Contents->response->data->content->id;
-    print_r($jsonResponse->Contents->response->{'response-messages'}->messages[0]->message);
-}
-echo "\n";
-```
-
 </TabItem>
 </Tabs>
 
@@ -273,8 +213,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -298,7 +236,7 @@ response = r.json()
 jobState = json.dumps(response["data"]["state"])
 percentage = float(jobState) * 100
 print(
-    "Import PAN-OS configuration from devie to Project: "
+    "Import PAN-OS configuration from device to Project: "
     + str(round(percentage, 2))
     + "%\n"
 )
@@ -323,16 +261,12 @@ statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
 print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 7. Get Source ID of the config file
 
-In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represnet the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
+In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
 API syntax for the step:
 
@@ -344,8 +278,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -360,16 +292,12 @@ source_id = json.dumps(response["data"]["source"][0]["id"])
 print("PAN-OS config source_id is: " + source_id)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 8. Create a filter for unused objects
 
-In this step, we will create a filter for unused address & address group objects . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific exmaple, we are sending the request body contains below data, this filter will filter on address, address group , service and service group objects that's are not being referenced in security policy and NAT policy. In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
+In this step, we will create a filter for unused address & address group objects . Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters. In this specific example, we are sending the request body contains below data, this filter will filter on address, address group , service and service group objects that's are not being referenced in security policy and NAT policy. In the json response, you will get a filter_id , this filter_id will be used in the subsequent steps.
 
 ```json
 data = {
@@ -388,15 +316,13 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
 
 ```python
 def Filter():
-    print("create a filter for unused address, address group,servcie, servcie group objects")
+    print("create a filter for unused address, address group,service, service group objects")
     url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
     data = {
      "name": "unused_objects",
@@ -410,10 +336,6 @@ def Filter():
     print("your filter ID is " + filterID)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -431,8 +353,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -487,10 +407,6 @@ def ExecuteFilter():
     print(statusmessage)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -508,8 +424,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -532,10 +446,6 @@ print("Print the Filter Execution Result")
     Collection_ID = json.dumps(response["data"]["id"])
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
@@ -553,8 +463,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -568,16 +476,12 @@ print("Print the Collection Content")
     print(response)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>
 
 ### Step 12. Delete the Collection Content
 
-This step we will delete the collection content, which will remove all unused address, address group, service, servcie group objects in the configuration file.
+This step we will delete the collection content, which will remove all unused address, address group, service, service group objects in the configuration file.
 
 API syntax for the step:
 
@@ -589,8 +493,6 @@ API syntax for the step:
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
 { label: 'Python', value: 'python', },
-{ label: 'Php', value: 'php', },
-{ label: 'Go', value: 'go', },
 ]
 }>  
 <TabItem value="python">
@@ -604,9 +506,5 @@ response=r.json()
 print(response)
 ```
 
-</TabItem> 
-<TabItem value="go">  
-</TabItem> 
-<TabItem value="php"> 
 </TabItem>
 </Tabs>

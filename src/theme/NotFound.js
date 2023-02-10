@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { PageMetadata } from "@docusaurus/theme-common";
 import Layout from "@theme/Layout";
-import algoliaSearch from "algoliasearch/lite";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import { useLocation } from "@docusaurus/router";
 import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import SearchBar from "@theme/SearchBar";
+import algoliaSearch from "algoliasearch/lite";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { PageMetadata } from "@docusaurus/theme-common";
+import { useLocation } from "@docusaurus/router";
 
 export default function NotFound() {
   const {
@@ -50,7 +50,7 @@ export default function NotFound() {
               <div className="container">
                 <div className="row">
                   <div className="col col--4">
-                    <img src="/img/404_Page.svg" />
+                    <img src="/img/404_Page.svg" alt="Page not found" />
                   </div>
                   <div className="col col--8">
                     <h1 className="hero__title">
@@ -109,6 +109,18 @@ export default function NotFound() {
               </div>
             </div>
           )}
+          <div className="padding-vert--lg padding--lg">
+            <div className="row">
+              <div className="col col--12 col--offset-1">
+                <h2>Still not finding what you're looking for?</h2>
+                <p>
+                  Visit our{" "}
+                  <a href="https://docs.paloaltonetworks.com">TechDocs</a> site
+                  for additional API and product documentation.{" "}
+                </p>
+              </div>
+            </div>
+          </div>
         </main>
       </Layout>
     </>

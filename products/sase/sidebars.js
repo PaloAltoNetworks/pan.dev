@@ -125,9 +125,9 @@ module.exports = {
                 "access/docs/insights/examples/alerts-dashboard/alerts-dashboard",
                 "access/docs/insights/examples/alerts-dashboard/external-alerts-current",
                 "access/docs/insights/examples/alerts-dashboard/current-alerts-generated",
-                "access/docs/insights/examples/alerts-dashboard/open-alerts-overtime",
-                "access/docs/insights/examples/alerts-dashboard/raised-alerts-over-time",
-                "access/docs/insights/examples/alerts-dashboard/cleared-alerts-over-time",
+                "access/docs/insights/examples/alerts-dashboard/open-alerts",
+                "access/docs/insights/examples/alerts-dashboard/raised-alerts",
+                "access/docs/insights/examples/alerts-dashboard/cleared-alerts",
               ],
             },
             {

@@ -218,6 +218,21 @@ const config = {
                       label: "DNS Security API",
                       icon: "api-doc",
                     },
+                    {
+                      to: "https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/dlp-api-resources",
+                      label: "Data Loss Prevention API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-api",
+                      label: "SaaS Security API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api",
+                      label: "WildFire API",
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -682,6 +697,7 @@ const config = {
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
+    errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };
 
