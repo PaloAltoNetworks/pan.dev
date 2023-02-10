@@ -85,12 +85,12 @@ The following time range model descriptions apply only to the endpoints listed b
 
 - Compliance:
 
-  - [Compliance posture](/cspm/api/compliance-posture)
-  - [Compliance reports](/cspm/api/reports)
+  - [Compliance posture](/prisma-cloud/api/cspm/compliance-posture)
+  - [Compliance reports](/prisma-cloud/api/cspm/reports)
 
 - Asset Inventory:
-  - [Asset inventory](/cspm/api/asset-inventory)
-  - [Resource (asset) explorer](/cspm/api/resource-explorer)
+  - [Asset inventory](/prisma-cloud/api/cspm/asset-inventory)
+  - [Resource (asset) explorer](/prisma-cloud/api/cspm/resource-explorer)
 
 ### Absolute Time for Compliance and Asset Inventory
 
@@ -146,7 +146,7 @@ to the endpoint URL. An example of a query string is: `&timeType=to_now&timeUnit
 
 ## Alert Dismissal Time Range Model
 
-The time range model for alert dismissal is special because it denotes a point of time in the future. The following time model descriptions apply only to [Dismiss Alerts](/cspm/api/dismiss-alerts/).
+The time range model for alert dismissal is special because it denotes a point of time in the future. The following time model descriptions apply only to [Dismiss Alerts](/prisma-cloud/api/cspm/dismiss-alerts/).
 
 - [Absolute Time for Alert Dismissal](#absolute-time-for-alert-dismissal)
 - [Relative Time for Alert Dismissal](#relative-time-for-alert-dismissal)

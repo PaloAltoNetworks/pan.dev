@@ -57,9 +57,9 @@ This port is specified at install time in `twistlock.cfg`.
 The cURL example for each endpoint is called with a username (`-u <USER>`) only.
 The cURL command can be modified to use any of the following:
 
-- **Authentication Token:** Use the `-H` option to pass the authentication token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint into the request header.
+- **Authentication Token:** Use the `-H` option to pass the authentication token from the [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint into the request header.
 
-For example, replace `<ACCESS_TOKEN>` with the token from the [Authenticating a user](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+For example, replace `<ACCESS_TOKEN>` with the token from the [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 ```bash
 $ curl -k \

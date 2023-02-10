@@ -71,7 +71,7 @@ The curl command can handle basic auth for you with the `--user` option.
 
 To access the API using a token:
 
-1. Retrieve a token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
+1. Retrieve a token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
 
 By default, access tokens are valid for 30 minutes. You can set the validity period in Console under **Manage** > **Authentication** > **Logon**.
 

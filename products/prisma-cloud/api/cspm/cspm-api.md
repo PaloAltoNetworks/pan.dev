@@ -21,12 +21,12 @@ To have the right privileges for a CSPM API request, you must have a [Prisma Clo
 To have the right authorization for a CSPM API request, follow the high-level steps below:
 
 1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
-2. Make a CSPM API request to [log in](/cspm/api/app-login) . A successful request returns a JSON Web Token (JWT).
+2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
 
 Almost all CSPM API requests use this JWT for authorization.
-Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/cspm/api/extend-session).
+Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/prisma-cloud/api/cspm/extend-session).
 
-See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login) to obtain a JWT token.
+See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/prisma-cloud/api/cspm/app-login) to obtain a JWT token.
 
 ## Components of a CSPM Request
 
@@ -54,7 +54,7 @@ See [Headers](/prisma-cloud/api/cspm/api-headers) for information about required
 Both query and request body parameters can include certain CSPM common data models. The following sections provide details about their use:
 
 - The [Time Range Model](/prisma-cloud/api/cspm/api-time-range-model) enables you to specify windows of time.
-- The [Integration Configurations](/prisma-cloud/api/cspm/api-integration-config) are specific to API requests that [add](/cspm/api/save-integration), [update](/cspm/api/update-integration), or [test](/cspm/api/test-integration) a third-party integration with Prisma Cloud.
+- The [Integration Configurations](/prisma-cloud/api/cspm/api-integration-config) are specific to API requests that [add](/prisma-cloud/api/cspm/save-integration), [update](/prisma-cloud/api/cspm/update-integration), or [test](/prisma-cloud/api/cspm/test-integration) a third-party integration with Prisma Cloud.
 
 ### Error Responses
 

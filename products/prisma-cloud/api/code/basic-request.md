@@ -30,11 +30,11 @@ To have the right privileges to make a Code Security API request, you must set u
 To have the right authorization for a Code Security API request, follow the high-level steps below:
 
 1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
-2. Make a CSPM API request to [log in](/cspm/api/app-login) . A successful request returns a JSON Web Token (JWT).
+2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
 
-All the Code Security API requests use this JWT in the API request [header](/prisma-cloud/api/code/api-headers) for authorization. Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/cspm/api/extend-session/).
+All the Code Security API requests use this JWT in the API request [header](/prisma-cloud/api/code/api-headers) for authorization. Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/prisma-cloud/api/cspm/extend-session/).
 
-See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/cspm/api/app-login/) to obtain a JWT token.
+See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obtain an access key and to [log in](/prisma-cloud/api/cspm/app-login/) to obtain a JWT token.
 
 ## Components of a Code Security Request
 

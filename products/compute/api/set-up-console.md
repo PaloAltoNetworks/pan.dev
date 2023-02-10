@@ -44,7 +44,7 @@ There is need to get a new license when building out new environments with Prism
 For example, if you have licensed 100 nodes and you have deployed to 10 separate tenants, each with its own Console, use the same license key for each instance of Console.
 :::
 
-1. Get an auth token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+1. Get an auth token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 ```bash
 $ curl -H "Content-Type: application/json" \

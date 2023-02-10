@@ -32,7 +32,7 @@ We recommend that you renew the Compute token every 5 minutes (half the lifetime
 
    2. Under **Path to Console**, click **Copy**.
 
-2. Retrieve a token from the [Authenticate](/cwpp/api/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
+2. Retrieve a token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your user credentials.
    Tokens are valid for 24 hours.
 
 ```bash
