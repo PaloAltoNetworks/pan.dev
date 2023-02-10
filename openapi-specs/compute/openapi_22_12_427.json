@@ -2481,6 +2481,10 @@
             "description": "MonitorServiceAccounts indicates whether to monitor service accounts.\n",
             "type": "boolean"
           },
+          "talos": {
+            "description": "Talos indicates if the daemonset is to be deployed on a Talos Linux k8s cluster.\n",
+            "type": "boolean"
+          },
           "tolerations": {
             "description": "Tolerations is a list of tolerations for the defender deamonset - optional.\n",
             "items": {
@@ -3316,6 +3320,10 @@
           },
           "tasClusterID": {
             "description": "TAS cluster ID where Defender runs. This is typically set to the Cloud controller's API address.\n",
+            "type": "string"
+          },
+          "tasFoundation": {
+            "description": "TASFoundation is the foundation the Defender is running on.\n",
             "type": "string"
           },
           "type": {
@@ -8131,6 +8139,12 @@
           "os": {
             "description": "OS is the operating system distribution.\n",
             "type": "string"
+          },
+          "owaspAPITop10": {
+            "$ref": "#/components/schemas/waas.OWASPAPITop10"
+          },
+          "owaspTop10": {
+            "$ref": "#/components/schemas/waas.OWASPTop10"
           },
           "profileId": {
             "description": "ProfileID is the profile of the audit.\n",
@@ -14871,6 +14885,10 @@
             "description": "MonitorServiceAccounts indicates whether to monitor service accounts.\n",
             "type": "boolean"
           },
+          "talos": {
+            "description": "Talos indicates if the daemonset is to be deployed on a Talos Linux k8s cluster.\n",
+            "type": "boolean"
+          },
           "taskName": {
             "description": "TaskName is the name used for the task definition.\n",
             "type": "string"
@@ -17148,6 +17166,13 @@
             "description": "Method is the HTTP method of the API request.\n",
             "type": "string"
           },
+          "owaspAPIAttacks": {
+            "description": "OWASPAPIAttacks are the OWASP API Top10 attacks that were found on the API.\n",
+            "items": {
+              "$ref": "#/components/schemas/waas.OWASPAPITop10"
+            },
+            "type": "array"
+          },
           "path": {
             "description": "Path is the path of the API request.\n",
             "type": "string"
@@ -17182,6 +17207,13 @@
             "description": "ResponseContentType is the response content type.\n",
             "type": "string"
           },
+          "responseSensitiveData": {
+            "description": "ResponseSensitiveData indicated this path may be used with sensitive data attached in response.\n",
+            "items": {
+              "$ref": "#/components/schemas/string"
+            },
+            "type": "array"
+          },
           "responseSizeDistribution": {
             "$ref": "#/components/schemas/waas.SizeRangeDistribution"
           },
@@ -17190,7 +17222,7 @@
             "type": "integer"
           },
           "sensitiveData": {
-            "description": "SensitiveData indicated this path may be used with sensitive data attached.\n",
+            "description": "RequestSensitiveData indicated this path may be used with sensitive data attached in request.\n",
             "items": {
               "$ref": "#/components/schemas/string"
             },
@@ -17922,6 +17954,10 @@
             "description": "Method is the API method.\n",
             "type": "string"
           },
+          "owaspAPIAttacks": {
+            "description": "OWASPAPIAttacks indicates whether OWASP API Top-10 attacks were found on the API.\n",
+            "type": "boolean"
+          },
           "path": {
             "description": "Path is the API path.\n",
             "type": "string"
@@ -17937,6 +17973,10 @@
             "description": "RequiresAuthentication indicated this path requires authentication to access.\n",
             "type": "boolean"
           },
+          "responseSensitiveData": {
+            "description": "ResponseSensitiveData indicated this path may be used with sensitive data attached in response.\n",
+            "type": "boolean"
+          },
           "riskFactors": {
             "$ref": "#/components/schemas/vuln.RiskFactors"
           },
@@ -17949,7 +17989,7 @@
             "type": "string"
           },
           "sensitiveData": {
-            "description": "SensitiveData indicated this path may be used with sensitive data attached.\n",
+            "description": "SensitiveData indicated this path may be used with sensitive data attached in request.\n",
             "type": "boolean"
           },
           "servers": {
@@ -18095,8 +18135,20 @@
             "description": "Field in HTTP request.\n",
             "type": "string"
           },
+          "keyPattern": {
+            "description": "Match and scrub by keys, relevant when location is not defined.\n",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/waas.ExceptionLocation"
+          },
+          "response": {
+            "description": "Indicates that sensitive data should be checked in response, only relevant for pattern based sensitive data rule.\n",
+            "type": "boolean"
+          },
+          "valuePattern": {
+            "description": "Match and scrub by values, relevant when location is not defined.\n",
+            "type": "boolean"
           }
         },
         "type": "object"
@@ -18481,6 +18533,31 @@
           }
         },
         "type": "object"
+      },
+      "waas.OWASPAPITop10": {
+        "description": "OWASPAPITop10 represents OWASP API top 10 attacks",
+        "enum": [
+          [
+            "excessiveDataExposure",
+            "lackOfResources&RateLimiting",
+            "brokenFunctionLevelAuthorization",
+            "securityMisconfiguration",
+            "injection"
+          ]
+        ],
+        "type": "string"
+      },
+      "waas.OWASPTop10": {
+        "description": "OWASPTop10 represents OWASP top 10 attacks",
+        "enum": [
+          [
+            "brokenAccessControl",
+            "cryptographicFailures",
+            "injection",
+            "insecureDesign"
+          ]
+        ],
+        "type": "string"
       },
       "waas.OpenAPIScan": {
         "description": "OpenAPIScan represents the OpenAPI file scan",
@@ -19184,6 +19261,10 @@
             "description": "Field in HTTP request.\n",
             "type": "string"
           },
+          "keyPattern": {
+            "description": "Match and scrub by keys, relevant when location is not defined.\n",
+            "type": "boolean"
+          },
           "location": {
             "$ref": "#/components/schemas/waas.ExceptionLocation"
           },
@@ -19212,12 +19293,20 @@
             "description": "Previous name of the rule. Required for rule renaming.\n",
             "type": "string"
           },
+          "response": {
+            "description": "Indicates that sensitive data should be checked in response, only relevant for pattern based sensitive data rule.\n",
+            "type": "boolean"
+          },
           "sensitiveData": {
             "description": "SensitiveData indicates this spec is used for marking APIs as using sensitive data for API discovery.\n",
             "type": "boolean"
           },
           "skipLogScrubbing": {
             "description": "SkipLogScrubbing indicates this spec is not used for log scrubbing.\n",
+            "type": "boolean"
+          },
+          "valuePattern": {
+            "description": "Match and scrub by values, relevant when location is not defined.\n",
             "type": "boolean"
           }
         },
@@ -19609,7 +19698,7 @@
   },
   "info": {
     "title": "Prisma Cloud Compute API",
-    "version": "22.12.415"
+    "version": "v22.12.427"
   },
   "openapi": "3.0.3",
   "paths": {
@@ -21300,6 +21389,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -21768,6 +21881,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -22224,6 +22361,30 @@
             "name": "eventID",
             "schema": {
               "description": "EventID is the event IDs filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
               "items": {
                 "$ref": "#/components/schemas/string"
               },
@@ -22705,6 +22866,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -23173,6 +23358,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -23629,6 +23838,30 @@
             "name": "eventID",
             "schema": {
               "description": "EventID is the event IDs filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
               "items": {
                 "$ref": "#/components/schemas/string"
               },
@@ -24110,6 +24343,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -24578,6 +24835,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -25032,6 +25313,30 @@
             "name": "eventID",
             "schema": {
               "description": "EventID is the event IDs filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
               "items": {
                 "$ref": "#/components/schemas/string"
               },
@@ -25513,6 +25818,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -25981,6 +26310,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -26435,6 +26788,30 @@
             "name": "eventID",
             "schema": {
               "description": "EventID is the event IDs filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
               "items": {
                 "$ref": "#/components/schemas/string"
               },
@@ -26916,6 +27293,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -27384,6 +27785,30 @@
               },
               "type": "array"
             }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
           }
         ],
         "responses": {
@@ -27840,6 +28265,30 @@
             "name": "eventID",
             "schema": {
               "description": "EventID is the event IDs filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+            "in": "query",
+            "name": "owaspTop10",
+            "schema": {
+              "description": "OWASPTop10 is the OWASP top 10 filter.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
+            "in": "query",
+            "name": "owaspAPITop10",
+            "schema": {
+              "description": "OWASPAPITop10 is the OWASP API top 10 filter.\n",
               "items": {
                 "$ref": "#/components/schemas/string"
               },
@@ -38185,6 +38634,18 @@
             }
           },
           {
+            "description": "Scopes the query by TAS foundations.\n",
+            "in": "query",
+            "name": "tasFoundations",
+            "schema": {
+              "description": "Scopes the query by TAS foundations.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
             "description": "Scopes the query to defenders which are using old certificate.\n",
             "in": "query",
             "name": "usingOldCA",
@@ -38216,6 +38677,14 @@
             "description": "Indicates whether to return only defenders running on ARM64 architecture.\n",
             "in": "query",
             "name": "isARM64",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Indicates whether to return only defenders running as VPC Observer.\n",
+            "in": "query",
+            "name": "isVPCObserver",
             "schema": {
               "type": "boolean"
             }
@@ -38494,6 +38963,18 @@
             }
           },
           {
+            "description": "Scopes the query by TAS foundations.\n",
+            "in": "query",
+            "name": "tasFoundations",
+            "schema": {
+              "description": "Scopes the query by TAS foundations.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
             "description": "Scopes the query to defenders which are using old certificate.\n",
             "in": "query",
             "name": "usingOldCA",
@@ -38525,6 +39006,14 @@
             "description": "Indicates whether to return only defenders running on ARM64 architecture.\n",
             "in": "query",
             "name": "isARM64",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Indicates whether to return only defenders running as VPC Observer.\n",
+            "in": "query",
+            "name": "isVPCObserver",
             "schema": {
               "type": "boolean"
             }
@@ -39198,6 +39687,18 @@
             }
           },
           {
+            "description": "Scopes the query by TAS foundations.\n",
+            "in": "query",
+            "name": "tasFoundations",
+            "schema": {
+              "description": "Scopes the query by TAS foundations.\n",
+              "items": {
+                "$ref": "#/components/schemas/string"
+              },
+              "type": "array"
+            }
+          },
+          {
             "description": "Scopes the query to defenders which are using old certificate.\n",
             "in": "query",
             "name": "usingOldCA",
@@ -39229,6 +39730,14 @@
             "description": "Indicates whether to return only defenders running on ARM64 architecture.\n",
             "in": "query",
             "name": "isARM64",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Indicates whether to return only defenders running as VPC Observer.\n",
+            "in": "query",
+            "name": "isVPCObserver",
             "schema": {
               "type": "boolean"
             }
@@ -49919,6 +50428,29 @@
         },
         "operationId": "get-util-arm64-twistcli",
         "summary": "Download ARM64 twistcli"
+      }
+    },
+    "/api/v22.12/util/osx/arm64/twistcli": {
+      "get": {
+        "description": "Download twistcli-darwin.zip",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Util"
+        ],
+        "x-prisma-cloud-target-env": {
+          "permission": "downloads",
+          "saas": true,
+          "self-hosted": true
+        },
+        "operationId": "get-util-osx-arm64-twistcli",
+        "summary": " Download"
       }
     },
     "/api/v22.12/util/osx/twistcli": {
