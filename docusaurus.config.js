@@ -653,17 +653,17 @@ const config = {
           },
           cwpp: {
             specPath: "openapi-specs/cwpp",
-            outputDir: "products/cwpp/api",
+            outputDir: "products/prisma-cloud/api/cwpp",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           cspm: {
             specPath: "openapi-specs/cspm",
-            outputDir: "products/cspm/api",
+            outputDir: "products/prisma-cloud/api/cspm",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           code: {
             specPath: "openapi-specs/code",
-            outputDir: "products/code/api",
+            outputDir: "products/prisma-cloud/api/code",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           compute: {

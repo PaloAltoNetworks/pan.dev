@@ -2,7 +2,6 @@
 id: api-headers
 title: Code Security API Headers
 sidebar_label: Headers
-slug: /prisma-cloud/api/code/api-headers
 keywords:
   - Developer
   - Prisma
