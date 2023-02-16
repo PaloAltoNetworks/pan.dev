@@ -6,6 +6,22 @@ if [ -f "Anomalies.json" ]; then
     jq '.tags |= [{"name":"Anomalies", "description":"temporary description - will be overwritten anyway!"}] | .paths[][].tags[] = "Anomalies"' Anomalies.json > "$tmp" && mv "$tmp" Anomalies.json
 fi
 
+# replace the global tags in the IAM file
+if [ -f "IAM.json" ]; then
+    echo "updating IAM.json"
+
+    tmp=$(mktemp)
+    jq '.tags |= [{"name":"IAM", "description":"temporary description - will be overwritten anyway!"}] | .paths[][].tags[] = "IAM"' IAM.json > "$tmp" && mv "$tmp" IAM.json
+fi
+
+# replace the global tags in the IAM IDP file
+if [ -f "IAMIdp.json" ]; then
+    echo "updating IAMIdp.json"
+
+    tmp=$(mktemp)
+    jq '.tags |= [{"name":"IAM IDP", "description":"temporary description - will be overwritten anyway!"}] | .paths[][].tags[] = "IAM IDP"' IAMIdp.json > "$tmp" && mv "$tmp" IAMIdp.json
+fi
+
 for file in *.json; do
     sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions-access/\/prisma-cloud\/api\/cspm\/get-permissions-access-with-post/g" $file
     sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions/\/prisma-cloud\/api\/cspm\/get-permissions-with-post/g" $file
