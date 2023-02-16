@@ -25,6 +25,11 @@ module.exports = {
           label: "Cloud NGFW for AWS",
           href: "https://docs.paloaltonetworks.com/cloud-ngfw/aws/cloud-ngfw-on-aws",
         },
+        {
+          type: "link",
+          label: "Terraform for Cloud NGFW",
+          href: "/terraform/docs/cloudngfw/",
+        },
       ],
     },
   ],
