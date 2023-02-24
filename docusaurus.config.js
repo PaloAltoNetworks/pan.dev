@@ -650,7 +650,7 @@ const config = {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
             outputDir: "products/dns-security/api",
             proxy: "https://cors.pan.dev",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
