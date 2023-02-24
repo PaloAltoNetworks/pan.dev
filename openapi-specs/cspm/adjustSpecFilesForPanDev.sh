@@ -4,6 +4,9 @@ if [ -f "Anomalies.json" ]; then
 
     tmp=$(mktemp)
     jq '.tags |= [{"name":"Anomalies", "description":"temporary description - will be overwritten anyway!"}] | .paths[][].tags[] = "Anomalies"' Anomalies.json > "$tmp" && mv "$tmp" Anomalies.json
+
+    # TEMPORARILY change the operationId getPolicies -> get-policies-anomalies
+    sed -i "" "s/getPolicies/get-policies-anomalies/g" Anomalies.json
 fi
 
 # replace the global tags in the IAM file
@@ -48,5 +51,5 @@ for file in *.json; do
     jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file > "$tmp" && mv "$tmp" $file
 
     # add server urls
-    jq '.servers |= . + [{"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' $file > "$tmp" && mv "$tmp" $file
+    # jq '.servers |= . + [{"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' $file > "$tmp" && mv "$tmp" $file
 done
