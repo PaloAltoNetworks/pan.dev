@@ -88,7 +88,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
   providerCards: [
     {
       title: "PAN-OS",
-      latestTag: "v1.11.0",
+      latestTag: "v1.11.1",
       description:
         "Define and manage your network security configuration as code, including Panorama, PA-Series, VM-Series and CN-Series.",
       cta: {
@@ -108,7 +108,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Cloud NGFW",
-      latestTag: "v1.0.8",
+      latestTag: "v1.0.10",
       description:
         "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
@@ -128,7 +128,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud",
-      latestTag: "v1.2.10",
+      latestTag: "v1.2.11",
       description:
         "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
@@ -275,7 +275,7 @@ export const TERRAFORM_MODULES_CONTENT = {
         tabLabel: "AWS",
         title: "Terraform Reusable Modules for VM-Series on AWS",
         link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest",
-        latestTag: "v0.4.0",
+        latestTag: "v0.4.1",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
@@ -305,7 +305,7 @@ export const TERRAFORM_MODULES_CONTENT = {
         tabLabel: "GCP",
         title: "Terraform Reusable Modules for VM-Series on GCP",
         link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest",
-        latestTag: "v0.4.1",
+        latestTag: "v0.5.0",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
@@ -335,7 +335,7 @@ export const TERRAFORM_MODULES_CONTENT = {
         tabLabel: "Azure",
         title: "Terraform Reusable Modules for VM-Series on Azure",
         link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest",
-        latestTag: "v0.5.0",
+        latestTag: "v0.5.1",
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
