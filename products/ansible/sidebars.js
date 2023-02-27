@@ -69,6 +69,7 @@ module.exports = {
       items: [
         "ansible/docs/panos/info/background",
         "ansible/docs/panos/info/connectivity",
+        "ansible/docs/panos/info/pan-os-rbac",
         "ansible/docs/panos/info/gathered-filter",
         "ansible/docs/panos/info/nat_rule_v3",
       ],
