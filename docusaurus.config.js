@@ -70,6 +70,7 @@ const config = {
     docs: {
       sidebar: {
         hideable: true,
+        autoCollapseCategories: true,
       },
     },
     algolia: {
@@ -413,40 +414,33 @@ const config = {
                 "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
               products: [
                 {
-                  to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "Cloud Security Posture Management",
+                  label: "Prisma Cloud Enterprise Edition",
+                  to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/api/cloud/cspm/",
-                      label: "CSPM API",
+                      to: "/prisma-cloud/api",
+                      label: "Prisma Cloud",
                       icon: "api-doc",
                     },
                   ],
                   docs: [
                     {
-                      to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                      label: "Getting Started",
+                      to: "/prisma-cloud/docs",
+                      label: "API Workflows",
                       icon: "doc",
                     },
                   ],
                 },
                 {
-                  label: "Cloud Workload Protection Platform",
+                  label: "Prisma Cloud Compute Edition",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
-                      to: "https://prisma.pan.dev/api/cloud/cwpp",
-                      label: "CWPP API",
+                      to: "/compute/api/",
+                      label: "Compute Edition",
                       icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                      label: "Getting Started",
-                      icon: "doc",
                     },
                   ],
                 },
@@ -656,6 +650,45 @@ const config = {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          cwpp: {
+            specPath: "openapi-specs/cwpp",
+            outputDir: "products/prisma-cloud/api/cwpp",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          cspm: {
+            specPath: "openapi-specs/cspm",
+            outputDir: "products/prisma-cloud/api/cspm",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
+          code: {
+            specPath: "openapi-specs/code",
+            outputDir: "products/prisma-cloud/api/code",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
+          compute: {
+            specPath: "openapi-specs/compute",
+            outputDir: "products/compute/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            version: "22.12",
+            label: "v22.12",
+            baseUrl: "/compute/api/",
+            versions: {
+              22.01: {
+                specPath: "openapi-specs/compute/22-01",
+                outputDir: "products/compute/api/22-01",
+                label: "v22.01",
+                baseUrl: "/compute/api/22-01/",
+              },
+              22.06: {
+                specPath: "openapi-specs/compute/22-06",
+                outputDir: "products/compute/api/22-06",
+                label: "v22.06",
+                baseUrl: "/compute/api/22-06/",
+              },
+            },
           },
         },
       },
