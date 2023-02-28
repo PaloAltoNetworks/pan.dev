@@ -671,7 +671,7 @@ const config = {
           compute: {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             version: "22.12",
             label: "v22.12",
             baseUrl: "/compute/api/",
