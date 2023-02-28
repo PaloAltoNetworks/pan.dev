@@ -120,6 +120,9 @@
           "alertRule.name": {
             "$ref": "#/components/schemas/FilterSuggestion"
           },
+          "asset.class": {
+            "$ref": "#/components/schemas/FilterSuggestion"
+          },
           "buildtime.resourceName": {
             "$ref": "#/components/schemas/FilterSuggestion"
           },
@@ -152,6 +155,9 @@
             "$ref": "#/components/schemas/FilterSuggestion"
           },
           "git.repository": {
+            "$ref": "#/components/schemas/FilterSuggestion"
+          },
+          "iac.framework": {
             "$ref": "#/components/schemas/FilterSuggestion"
           },
           "malware": {
@@ -474,6 +480,61 @@
         },
         "type": "object"
       },
+      "AlertRulePolicyFilter": {
+        "description": "Model for Alert Rule Policy Filter",
+        "properties": {
+          "availablePolicyFilters": {
+            "description": "List of available Alert Rule Policy Filters",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "cloud.type": {
+            "description": "Cloud Type Filter",
+            "items": {
+              "enum": [
+                "ALL",
+                "AWS",
+                "AZURE",
+                "GCP",
+                "ALIBABA_CLOUD",
+                "OCI",
+                "IBM"
+              ],
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "policy.complianceStandard": {
+            "description": "Compliance Standard Filter",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "policy.label": {
+            "description": "Policy Label Filter",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "policy.severity": {
+            "description": "Policy Severity Filter",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "type": "object"
+      },
       "AlertStatusChangeRequestModel": {
         "description": "Model for Alert Status Change Request",
         "properties": {
@@ -593,9 +654,11 @@
           "status": {
             "description": "Job status",
             "enum": [
+              "COMPLETED",
+              "FAILED",
               "IN_PROGRESS",
               "READY_TO_DOWNLOAD",
-              "FAILED"
+              "SUBMITTED"
             ],
             "readOnly": true,
             "type": "string"
@@ -1041,6 +1104,9 @@
             "type": "array",
             "uniqueItems": true
           },
+          "infoMsg": {
+            "type": "string"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/AlertModel"
@@ -1154,6 +1220,13 @@
             "description": "true=enabled. false=disabled.",
             "type": "boolean"
           },
+          "findingTypes": {
+            "description": "Finding Type",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "labels": {
             "description": "Labels",
             "items": {
@@ -1202,7 +1275,8 @@
                 "network",
                 "ueba",
                 "permissions",
-                "network_config"
+                "network_config",
+                "identity"
               ],
               "type": "string"
             },
@@ -1221,7 +1295,8 @@
               "iam",
               "workload_vulnerability",
               "workload_incident",
-              "waas_event"
+              "waas_event",
+              "attack_path"
             ],
             "type": "string"
           },
@@ -1339,6 +1414,13 @@
             "description": "true=enabled. false=disabled.",
             "type": "boolean"
           },
+          "findingTypes": {
+            "description": "Finding Type",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "labels": {
             "description": "Labels",
             "items": {
@@ -1391,7 +1473,8 @@
                 "network",
                 "ueba",
                 "permissions",
-                "network_config"
+                "network_config",
+                "identity"
               ],
               "type": "string"
             },
@@ -1410,7 +1493,8 @@
               "iam",
               "workload_vulnerability",
               "workload_incident",
-              "waas_event"
+              "waas_event",
+              "attack_path"
             ],
             "type": "string"
           },
@@ -1872,6 +1956,16 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "alertRulePolicyFilter": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AlertRulePolicyFilter"
+              },
+              {
+                "description": "Policy Filters for the Alert Rule"
+              }
+            ]
           },
           "excludedAccounts": {
             "description": "List of excluded accounts",
@@ -2505,11 +2599,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -2900,11 +2994,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/v2/alert\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/v2/alert\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/v2/alert?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/v2/alert?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -3219,11 +3313,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/policy\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/policy\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert/policy?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert/policy?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -3335,11 +3429,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/dismiss\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"dismissalNote\": \"string\",\n    \"dismissalTimeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    },\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"relativeTimeType\": \"BACKWARD\",\n            \"type\": \"relative\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/dismiss\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"dismissalNote\": \"string\",\n    \"dismissalTimeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    },\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"type\": \"relative\",\n            \"relativeTimeType\": \"BACKWARD\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/dismiss \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"dismissalNote\":\"string\",\"dismissalTimeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}},\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/dismiss \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"dismissalNote\":\"string\",\"dismissalTimeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}},\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
           }
         ]
       }
@@ -3465,11 +3559,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/reopen\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"dismissalNote\": \"string\",\n    \"dismissalTimeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    },\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"relativeTimeType\": \"BACKWARD\",\n            \"type\": \"relative\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/reopen\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"dismissalNote\": \"string\",\n    \"dismissalTimeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    },\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"type\": \"relative\",\n            \"relativeTimeType\": \"BACKWARD\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/reopen \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"dismissalNote\":\"string\",\"dismissalTimeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}},\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/reopen \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"dismissalNote\":\"string\",\"dismissalTimeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}},\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
           }
         ]
       }
@@ -3582,11 +3676,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/jobs\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/jobs\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/jobs \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/jobs \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -3737,11 +3831,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/csv\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/csv\"\n\nquerystring = {\"detailed\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert/csv?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/alert/csv?detailed=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -3886,11 +3980,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/policy/jobs\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"relativeTimeType\": \"BACKWARD\",\n        \"type\": \"relative\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/policy/jobs\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/policy/jobs \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/policy/jobs \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
           }
         ]
       }
@@ -4029,11 +4123,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/remediation\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"relativeTimeType\": \"BACKWARD\",\n            \"type\": \"relative\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/alert/remediation\"\n\npayload = {\n    \"alerts\": [\"string\"],\n    \"filter\": {\n        \"detailed\": True,\n        \"fields\": [\"string\"],\n        \"filters\": [\n            {\n                \"name\": \"string\",\n                \"operator\": \"=\",\n                \"value\": \"string\"\n            }\n        ],\n        \"groupBy\": [\"string\"],\n        \"limit\": 0,\n        \"offset\": 0,\n        \"pageToken\": \"string\",\n        \"sortBy\": [\"string\"],\n        \"timeRange\": {\n            \"type\": \"relative\",\n            \"relativeTimeType\": \"BACKWARD\",\n            \"value\": {\n                \"amount\": 0,\n                \"unit\": \"minute\"\n            }\n        }\n    },\n    \"policies\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/remediation \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"relativeTimeType\":\"BACKWARD\",\"type\":\"relative\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/alert/remediation \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"alerts\":[\"string\"],\"filter\":{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}},\"policies\":[\"string\"]}'"
           }
         ]
       }
