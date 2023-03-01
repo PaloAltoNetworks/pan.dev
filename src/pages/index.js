@@ -20,7 +20,6 @@ import styles from "./styles.module.css";
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
-  const exploreImageSrc = "img/homepage-banner/1.svg";
   const blogImageSrc = "img/homepage-banner/2.svg";
 
   const partnerTools = [
