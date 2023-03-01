@@ -60,10 +60,6 @@ function Home() {
           id="developer-docs-section"
           className={styles.featuredContainer}
         >
-          <HomepageBanner
-            imgSrc={exploreImageSrc}
-            text="Explore our Developer Docs"
-          />
           <Featured />
           <BackToTopButton />
         </section>
