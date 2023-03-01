@@ -99,6 +99,93 @@ const config = {
           megaNav: true,
           items: [
             {
+              label: "Cloud Native Security",
+              to: "#",
+              colorclass: "cloud-native-security",
+              description:
+                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
+              products: [
+                {
+                  label: "Prisma Cloud Enterprise Edition",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "/prisma-cloud/api",
+                      label: "Prisma Cloud",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "/prisma-cloud/docs",
+                      label: "API Workflows",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Cloud Compute Edition",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "/compute/api/",
+                      label: "Compute Edition",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Security Operations",
+              to: "#",
+              colorclass: "security-operations",
+              description:
+                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
+              products: [
+                {
+                  to: "#",
+                  label: "Cortex XSOAR",
+                  logoClass: "xsoar",
+                  apiDocs: [
+                    {
+                      label: "XSOAR (Demisto) API",
+                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Cortex XSOAR Developer Hub",
+                      to: "https://xsoar.pan.dev/docs/welcome",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cortex",
+                  to: "#",
+                  logoClass: "cortex",
+                  apiDocs: [
+                    {
+                      label: "Expander API",
+                      to: "https://cortex.pan.dev/api/expander/annotations-api",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Xpanse Python SDK",
+                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               label: "Network Security",
               to: "#",
               colorclass: "network-security",
@@ -401,93 +488,6 @@ const config = {
                       to: "sdwan/api/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              label: "Cloud Native Security",
-              to: "#",
-              colorclass: "cloud-native-security",
-              description:
-                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
-              products: [
-                {
-                  label: "Prisma Cloud Enterprise Edition",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "/prisma-cloud/api",
-                      label: "Prisma Cloud",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      to: "/prisma-cloud/docs",
-                      label: "API Workflows",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Prisma Cloud Compute Edition",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "/compute/api/",
-                      label: "Compute Edition",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              label: "Security Operations",
-              to: "#",
-              colorclass: "security-operations",
-              description:
-                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
-              products: [
-                {
-                  to: "#",
-                  label: "Cortex XSOAR",
-                  logoClass: "xsoar",
-                  apiDocs: [
-                    {
-                      label: "XSOAR (Demisto) API",
-                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      label: "Cortex XSOAR Developer Hub",
-                      to: "https://xsoar.pan.dev/docs/welcome",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Cortex",
-                  to: "#",
-                  logoClass: "cortex",
-                  apiDocs: [
-                    {
-                      label: "Expander API",
-                      to: "https://cortex.pan.dev/api/expander/annotations-api",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      label: "Xpanse Python SDK",
-                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                      icon: "doc",
                     },
                   ],
                 },
