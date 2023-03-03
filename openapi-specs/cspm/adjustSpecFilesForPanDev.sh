@@ -48,7 +48,10 @@ for file in *.json; do
 
     # rewrite the GLOBAL tag description
     tmp=$(mktemp)
-    jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file > "$tmp" && mv "$tmp" $file
+    jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file | \
+       
+    # delete code snippets
+    jq '.paths |= del(.[][]."x-codeSamples")' > "$tmp" && mv "$tmp" $file
 
     # add server urls
     # jq '.servers |= . + [{"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' $file > "$tmp" && mv "$tmp" $file
