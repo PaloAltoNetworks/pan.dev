@@ -51,8 +51,8 @@ for file in *.json; do
     jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file | \
        
     # delete code snippets
-    jq '.paths |= del(.[][]."x-codeSamples")' > "$tmp" && mv "$tmp" $file
+    jq '.paths |= del(.[][]."x-codeSamples")' | \
 
     # add server urls
-    # jq '.servers |= . + [{"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' $file > "$tmp" && mv "$tmp" $file
+    jq '.servers |= [{"url":"https://api.prismacloud.io"}, {"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' > "$tmp" && mv "$tmp" $file
 done
