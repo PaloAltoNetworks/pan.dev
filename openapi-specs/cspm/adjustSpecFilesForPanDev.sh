@@ -48,7 +48,7 @@ for file in *.json; do
 
     # rewrite the GLOBAL tag description
     tmp=$(mktemp)
-    jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file | \
+    jq '.info.description as $tag_desc | .tags[]?.description |= $tag_desc' $file | \
        
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
