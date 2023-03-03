@@ -54,5 +54,20 @@ for file in *.json; do
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
     # add server urls
-    jq '.servers |= [{"url":"https://api.prismacloud.io"}, {"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' > "$tmp" && mv "$tmp" $file
+    jq '.servers |= [{"url":"https://api.prismacloud.io"}, {"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' | \
+
+    # add securityScheme to every spec file
+    jq '.components.securitySchemes |= { "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }}' | \
+
+    # add security field to every endpoint
+    jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" $file
 done
+
+# app-login endpoint isn't supposed to be protected
+tmp=$(mktemp)
+jq '.paths |= del(.["/login"][].security)' Login.json > "$tmp" && mv "$tmp" Login.json
