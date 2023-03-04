@@ -176,6 +176,43 @@
         ],
         "type": "object"
       },
+      "DLPInventoryL4ViewModel": {
+        "description": "Model for DLP Inventory L4 Objects View",
+        "properties": {
+          "endTime": {
+            "description": "End time of the record",
+            "format": "int64",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DLPInventoryViewModel"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Total records per page",
+            "format": "int64",
+            "type": "integer"
+          },
+          "page": {
+            "description": "page number for the records",
+            "format": "int64",
+            "type": "integer"
+          },
+          "startTime": {
+            "description": "Start time of the record",
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalItems": {
+            "description": "Total Items",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "DLPInventoryObjectClassificationReport": {
         "description": "Model class for classification report",
         "properties": {
@@ -384,6 +421,90 @@
             "type": "integer"
           }
         },
+        "type": "object"
+      },
+      "DLPInventoryObjectL4FilterModel": {
+        "description": "Model for DLP inventory paginated filters",
+        "properties": {
+          "detailed": {
+            "description": "Detailed",
+            "type": "boolean"
+          },
+          "fields": {
+            "description": "Array of specific fields to return",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "filters": {
+            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
+            "items": {
+              "$ref": "#/components/schemas/UIFilterModel"
+            },
+            "type": "array"
+          },
+          "groupBy": {
+            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Records per page",
+            "format": "int32",
+            "type": "integer"
+          },
+          "offset": {
+            "description": "The number of items to skip before selecting items to return. Default is zero",
+            "type": "number"
+          },
+          "orderBy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderBy"
+              },
+              {
+                "description": "Sorting column and sort type"
+              }
+            ]
+          },
+          "page": {
+            "description": "Page Number",
+            "format": "int64",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
+            "type": "string"
+          },
+          "searchTerm": {
+            "description": "search on objects",
+            "type": "string"
+          },
+          "sortBy": {
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "timeRange": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeConfigModel"
+              },
+              {
+                "description": "Time range"
+              }
+            ]
+          }
+        },
+        "required": [
+          "limit",
+          "page"
+        ],
         "type": "object"
       },
       "DLPInventoryResourceExplorer": {
@@ -718,6 +839,19 @@
           },
           "name": {
             "description": "Identifier name",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "OrderBy": {
+        "properties": {
+          "asc": {
+            "description": "sort by ascending",
+            "type": "boolean"
+          },
+          "column": {
+            "description": "order by column name",
             "type": "string"
           }
         },
@@ -1082,6 +1216,45 @@
           }
         ],
         "summary": "List Inventory Objects",
+        "tags": [
+          "Data Security Inventory"
+        ]
+      }
+    },
+    "/dlp/api/v1/inventory/objects/aggregate/l4": {
+      "post": {
+        "description": "Lists a paginated list of objects at L4 level. This is to fasten the response while listing the bucket objects",
+        "operationId": "get-inventory-objects-l4",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/DLPInventoryObjectL4FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/DLPInventoryL4ViewModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Paginated Inventory Objects at Level 4",
         "tags": [
           "Data Security Inventory"
         ]
