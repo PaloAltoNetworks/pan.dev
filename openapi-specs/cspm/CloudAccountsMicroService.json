@@ -25,9 +25,9 @@
         "tags": [
           "Cloud Accounts"
         ],
-        "description": "Generate and Download the CFT/Terraform Templates",
-        "summary": "CHANGE ME",
-        "operationId": "generateTemplate",
+        "summary": "Generate and Download the CFT Template",
+        "description": "Generate and Download the CFT Template",
+        "operationId": "generate-cft-template-aws",
         "requestBody": {
           "content": {
             "application/json": {
@@ -135,9 +135,9 @@
         "tags": [
           "Cloud Accounts"
         ],
-        "description": "Generate the CFT/Terraform Templates Link",
-        "summary": "CHANGE ME TOO",
-        "operationId": "generateTemplateAndReturnCFTLink",
+        "summary": "Generate the CFT Template Link",
+        "description": "Generate the CFT Template Link",
+        "operationId": "generate-cft-template-link",
         "requestBody": {
           "content": {
             "application/json": {
@@ -250,7 +250,7 @@
     "/cas/v1/features/cloud/{cloud_type}": {
       "post": {
         "tags": ["Cloud Accounts"],
-        "summary": "Get supported features for the cloud type",
+        "summary": "Fetch supported features for the cloud type",
         "description": "A successful response returns *supportedFeatures* key that has the list of features supported for the cloud type. \n\n  **NOTE**: \\\"Cloud Visibility Compliance and Governance\\\" is returned by default for all supported cloud types in the response. Do not pass this as a supported feature in any cloud account API.",
         "operationId": "fetch-supported-features",
         "parameters": [{
@@ -364,12 +364,7 @@
             }
           }
         },
-        "x-public": "true",
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ]
+        "x-public": "true"
       }
     }
   },
@@ -995,19 +990,27 @@
         }
       },
       "FeaturesAvailableRequest": {
+        "required": ["accountType"],
         "type": "object",
         "properties": {
           "accountType": {
-            "type": "string"
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": ["account", "organization", "masterServiceAccount", "tenant"]
           },
           "deploymentType": {
-            "type": "string"
+            "type": "string",
+            "description": "*Applicable only for cloud_type: **azure**.*\n\n * **azure** -  Account type is commercial\n\n * **azure_gov** - Account type is Government on Prisma Commercial and Government stacks.\n\n * **azure_china** - Prisma China Stack.",
+            "enum": ["azure", "azure_gov", "azure_china"]
           },
           "awsPartition": {
-            "type": "string"
+            "type": "string",
+            "description": "*Applicable only for cloud_type: **aws** on Prisma Government Stack(**app.gov.prismacloud.io**) given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
+            "enum": ["us-east-1", "us-gov-west-1"]
           },
           "rootSyncEnabled": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "*Applicable only for cloud_type: **azure** and accountType: **tenant***\n\n In order to get supported features for accountType \\\"tenant\\\" and its associated **management groups** and **subscriptions**, rootSyncEnabled must be set to true"
           }
         }
       },
@@ -1629,30 +1632,33 @@
         }
       },
       "AWSTemplateGenRequest": {
+        "required": ["accountId", "accountType"],
         "type": "object",
         "properties": {
           "accountType": {
-            "type": "string"
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": ["account", "organization"]
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Account Id"
           },
           "awsPartition": {
-            "type": "string"
+            "type": "string",
+            "description": "*Applicable only for Prisma Government Stack(**app.gov.prismacloud.io**) and given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
+            "enum": ["us-east-1", "us-gov-west-1"]
           },
           "features": {
             "uniqueItems": true,
             "type": "array",
+            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call [Features API](prisma-cloud/api/cspm/fetch-supported-features/)",
+            "example": ["Remediation"],
             "items": {
-              "type": "string"
+              "type": "string",
+              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call [Features API](prisma-cloud/api/cspm/fetch-supported-features/)",
+              "example": "[\"Remediation\"]"
             }
-          },
-          "templateFormatType": {
-            "type": "string",
-            "enum": [
-              "terraform",
-              "cft"
-            ]
           }
         }
       },
