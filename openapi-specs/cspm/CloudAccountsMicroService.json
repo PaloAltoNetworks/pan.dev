@@ -25,8 +25,8 @@
         "tags": [
           "Cloud Accounts"
         ],
-        "summary": "Get supported features for the cloud type",
-        "description": "A successful response returns *supportedFeatures* key that has the list of features supported for the cloud type. \n\n  **NOTE**: \\\"Cloud Visibility Compliance and Governance\\\" is returned by default for all supported cloud types in the response. Do not pass this as a supported feature in any cloud account API.",
+        "summary": "Fetch Supported Features For Cloud Type",
+        "description": "Lists the features supported (*supportedFeatures* key in response object) for the specified cloud type. \n\n  **NOTE**: The supportedFeatures returns \"Cloud Visibility Compliance and Governance\" string by default. Do not explicitly pass this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account, Generate and Download the CFT Template, etc).",
         "operationId": "fetch-supported-features",
         "parameters": [
           {
@@ -158,8 +158,8 @@
         "tags": [
           "Cloud Accounts"
         ],
-        "summary": "Generate and Download the CFT Template",
-        "description": "Generate and Download the CFT Template",
+        "summary": "Generate and Download the AWS CFT Template",
+        "description": "Generates the AWS CFT template. The Generated CFT template includes Prisma Cloud generated externalId and the permissions based on selected features.",
         "operationId": "generate-cft-template-aws",
         "requestBody": {
           "content": {
@@ -269,9 +269,9 @@
         "tags": [
           "Cloud Accounts"
         ],
-        "summary": "Generate the CFT Template Link",
-        "description": "Generate the CFT Template Link",
-        "operationId": "generate-cft-template-link",
+        "summary": "Generate the AWS CFT Template Link",
+        "description": "Generates the AWS Cloudformation Stack Quick create link with s3 presigned CFT URL. The Generated CFT template includes Prisma Cloud generated externalId and the permissions based on selected features.\n\n To create the IAM role, the response *createStackLinkWithS3PresignedUrl* value can be directly used given if you are already logged in to your AWS management console. Else extract the actual s3 presigned CFT URL from the response *createStackLinkWithS3PresignedUrl*  value by splitting at *templateURL=* and url decoding the right side part. \n\n  **NOTE**: The response *createStackLinkWithS3PresignedUrl* link is valid for 1hr",
+        "operationId": "generate-cft-template-link-aws",
         "requestBody": {
           "content": {
             "application/json": {
@@ -952,37 +952,23 @@
         }
       },
       "FeaturesAvailableRequest": {
-        "required": [
-          "accountType"
-        ],
+        "required": ["accountType"],
         "type": "object",
         "properties": {
           "accountType": {
             "type": "string",
-            "description": "Cloud Account Type",
-            "enum": [
-              "account",
-              "organization",
-              "masterServiceAccount",
-              "tenant"
-            ]
+            "description": "Cloud Account Type. Supported values based on cloud_type are given below. \n\n * account, organization - cloud_type: **aws**\n\n * account, organization, masterServiceAccount - cloud_type: **gcp**\n\n * account, organization, tenant - cloud_type: **azure**",
+            "enum": ["account", "organization", "masterServiceAccount", "tenant"]
           },
           "deploymentType": {
             "type": "string",
             "description": "*Applicable only for cloud_type: **azure**.*\n\n * **azure** -  Account type is commercial\n\n * **azure_gov** - Account type is Government on Prisma Commercial and Government stacks.\n\n * **azure_china** - Prisma China Stack.",
-            "enum": [
-              "azure",
-              "azure_gov",
-              "azure_china"
-            ]
+            "enum": ["azure", "azure_gov", "azure_china"]
           },
           "awsPartition": {
             "type": "string",
             "description": "*Applicable only for cloud_type: **aws** on Prisma Government Stack(**app.gov.prismacloud.io**) given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
-            "enum": [
-              "us-east-1",
-              "us-gov-west-1"
-            ]
+            "enum": ["us-east-1", "us-gov-west-1"]
           },
           "rootSyncEnabled": {
             "type": "boolean",
@@ -994,21 +980,27 @@
         "type": "object",
         "properties": {
           "cloudType": {
-            "type": "string"
+            "type": "string",
+            "description": "Cloud Type"
           },
           "deploymentType": {
-            "type": "string"
+            "type": "string",
+            "description": "Cloud Account Deployment Type. global, gov, or china"
           },
           "accountType": {
-            "type": "string"
+            "type": "string",
+            "description": "Account Type"
           },
           "licenseType": {
-            "type": "string"
+            "type": "string",
+            "description": "Customer License type."
           },
           "supportedFeatures": {
             "type": "array",
+            "description": "List of supported feature names.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "description": "List of supported feature names."
             }
           }
         }
@@ -1929,19 +1921,13 @@
         }
       },
       "AWSTemplateGenRequest": {
-        "required": [
-          "accountId",
-          "accountType"
-        ],
+        "required": ["accountId", "accountType"],
         "type": "object",
         "properties": {
           "accountType": {
             "type": "string",
             "description": "Cloud Account Type",
-            "enum": [
-              "account",
-              "organization"
-            ]
+            "enum": ["account", "organization"]
           },
           "accountId": {
             "type": "string",
@@ -1950,21 +1936,16 @@
           "awsPartition": {
             "type": "string",
             "description": "*Applicable only for Prisma Government Stack(**app.gov.prismacloud.io**) and given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
-            "enum": [
-              "us-east-1",
-              "us-gov-west-1"
-            ]
+            "enum": ["us-east-1", "us-gov-west-1"]
           },
           "features": {
             "uniqueItems": true,
             "type": "array",
-            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call [Features API](/prisma-cloud/api/cspm/fetch-supported-features/)",
-            "example": [
-              "Remediation"
-            ],
+            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Supported Features API](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "example": ["Remediation"],
             "items": {
               "type": "string",
-              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call [Features API](/prisma-cloud/api/cspm/fetch-supported-features/)",
+              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Supported Features API](/prisma-cloud/api/cspm/fetch-supported-features)**",
               "example": "[\"Remediation\"]"
             }
           }
@@ -2447,7 +2428,7 @@
         "properties": {
           "createStackLinkWithS3PresignedUrl": {
             "type": "string",
-            "description": "Create CFN Stack direct console url."
+            "description": "AWS Cloudformation Stack Quick Create link."
           },
           "externalId": {
             "type": "string"
