@@ -1,0 +1,378 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Command Center Vulnerability Swim Lane APIs",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Command Center",
+      "description": "Command Center Vulnerability Swim Lane APIs",
+      "x-public": "true"
+    }
+  ],
+  "paths": {
+    "/commandcenter/v1/top-vulnerabilities": {
+      "post": {
+        "tags": [
+          "Command Center"
+        ],
+        "summary": "List Top Vulnerabilities",
+        "description": "Gets the data for the top 5 hosts and top 5 images with highest number of vulnerabilities, based on the type for the request time, accounts and account groups",
+        "operationId": "command-center-list-top-vulnerabilities",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-redlock-auth",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VulnerabilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/commandcenter/v1/vulnerabilities/summary": {
+      "post": {
+        "tags": [
+          "Command Center"
+        ],
+        "summary": "List Total Vulnerable Images and Hosts",
+        "description": "Gets the summary data for all the vulnerable images and hosts, for the request time, accounts and account groups",
+        "operationId": "command-center-list-total-vulnerable-images-hosts",
+        "parameters": [
+          {
+            "name": "x-redlock-auth",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VulnerabilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalVulnerabilitiesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Error"
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/FilterType"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "FilterType": {
+        "enum": [
+          "account.group",
+          "cloud.account"
+        ],
+        "type": "string"
+      },
+      "TimeRangeConfig": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          }
+        }
+      },
+      "TotalVulnerabilitiesByType": {
+        "type": "object",
+        "properties": {
+          "images": {
+            "$ref": "#/components/schemas/VulnerabilityCounts"
+          },
+          "hosts": {
+            "$ref": "#/components/schemas/VulnerabilityCounts"
+          },
+          "totalBySeverity": {
+            "$ref": "#/components/schemas/VulnerabilityCounts"
+          }
+        }
+      },
+      "TotalVulnerabilitiesResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TotalVulnerabilitiesByType"
+          },
+          "date": {
+            "type": "string"
+          },
+          "ts": {
+            "format": "int64",
+            "type": "integer"
+          }
+        }
+      },
+      "VulnerabilityCounts": {
+        "type": "object",
+        "properties": {
+          "totalCriticalVulnerabilities": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalHighVulnerabilities": {
+            "format": "int64",
+            "type": "integer"
+          }
+        }
+      },
+      "VulnerabilityRequest": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/TimeRangeConfig"
+          }
+        }
+      },
+      "VulnerabilityResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VulnerableAssets"
+            }
+          },
+          "date": {
+            "type": "string"
+          },
+          "ts": {
+            "format": "int64",
+            "type": "integer"
+          }
+        }
+      },
+      "VulnerableAssets": {
+        "type": "object",
+        "properties": {
+          "unifiedAssetId": {
+            "type": "string"
+          },
+          "resourceName": {
+            "type": "string"
+          },
+          "numCriticalVulnerabilities": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "numHighVulnerabilities": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalVulnerabilities": {
+            "format": "int64",
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    }
+  ]
+}
