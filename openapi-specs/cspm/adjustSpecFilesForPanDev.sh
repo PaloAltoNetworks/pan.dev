@@ -71,3 +71,6 @@ done
 # app-login endpoint isn't supposed to be protected
 tmp=$(mktemp)
 jq '.paths |= del(.["/login"][].security)' Login.json > "$tmp" && mv "$tmp" Login.json
+
+# update the list of all the endpoints (summary for engineering to peek at what's published)
+jq -f list-operations-with-ids.jq *.json | jq '.[]' | jq -s -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > consolidated_spec/all_endpoints.csv
