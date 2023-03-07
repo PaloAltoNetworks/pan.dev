@@ -33,7 +33,7 @@ This separation of concerns, allows each module to evolve and improve the overal
 The modules are:
 
 - **Expedition Web API**: Exposes all the Expedition functionalities via an Application Program Interface that offers high level of scripting and automation
-- **Expedition Web UI**: Provides a web interface that offers access to all Expedition functionalities with a low learning curve\_
+- **Expedition Web UI**: Provides a web interface that offers access to all Expedition functionalities with a low learning curve
 - **Expedition Converter**: In charge of parsing and translating third party vendors' configurations into PANOS firewalls and Panoramas
 - **Expedition Analytics**: Offers functionalities for traffic log analytics, rule improvement suggestions, and other "data analytics"-related tasks
 

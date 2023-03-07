@@ -26,7 +26,7 @@ The information returned by this query can also be viewed in the UI, here:
 
     POST /api/sase/v2.0/resource/custom/query/locations/location_sc_bandwidth
 
-    Prisma-Tenant:{{tenant_id}}
+    Prisma-Tenant:{{tsg_id}}
 
     Authorization: Bearer {{jwt_token}}
 
