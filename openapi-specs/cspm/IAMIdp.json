@@ -1,0 +1,202 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "IAM IDP Security API Overview",
+    "description": "Prisma Cloud identity and access management (IAM) security integrates with the identity \nprovider (IdP) service Okta to ingest single sign-on (SSO) data for the effective permissions \ncalculation in the IAM Security module.\n\n\nSee [Integrate Prisma Cloud with Okta](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/prisma-cloud-iam-security/integrate-prisma-cloud-with-okta.html#id2990b78d-1bdc-4090-a716-d899e62db060)\nfor more information.\n",
+    "version": "Latest",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    }
+  ],
+  "tags": [
+    {
+      "name": "IAM IDP",
+      "description": "Prisma Cloud identity and access management (IAM) security integrates with the identity \nprovider (IdP) service Okta to ingest single sign-on (SSO) data for the effective permissions \ncalculation in the IAM Security module.\n\n\nSee [Integrate Prisma Cloud with Okta](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/prisma-cloud-iam-security/integrate-prisma-cloud-with-okta.html#id2990b78d-1bdc-4090-a716-d899e62db060)\nfor more information.\n"
+    }
+  ],
+  "paths": {
+    "/api/v1/idp/integration/test": {
+      "post": {
+        "tags": [
+          "IAM IDP"
+        ],
+        "summary": "Test IDP Integration",
+        "operationId": "test-integration-with-post",
+        "description": "Tests whether or not an integration with Okta is valid.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Unique ID of your choice to identify the test. Will override the request parameter **id**.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model for Integration DTO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationValidatorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/api/v1/idp/integration/test\"\n\nquerystring = {\"id\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"id\": \"test_id\",\n    \"integrationConfig\": {\n        \"apiToken\": \"11111111111111\",\n        \"domain\": \"my-domain.okta.com\"\n    },\n    \"integrationType\": \"OKTA_IDP\",\n    \"name\": \"Integration_name\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/api/v1/idp/integration/test?id=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"id\":\"test_id\",\"integrationConfig\":{\"apiToken\":\"11111111111111\",\"domain\":\"my-domain.okta.com\"},\"integrationType\":\"OKTA_IDP\",\"name\":\"Integration_name\"}'"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "IntegrationConfig": {
+        "description": "Model for Integration Config",
+        "required": [
+          "apiToken",
+          "domain"
+        ],
+        "type": "object",
+        "properties": {
+          "apiToken": {
+            "type": "string",
+            "description": "Your Okta API token",
+            "example": "11111111111111"
+          },
+          "domain": {
+            "type": "string",
+            "description": "your Okta domain",
+            "example": "my-domain.okta.com"
+          }
+        }
+      },
+      "IntegrationDto": {
+        "description": "Model for Integration DTO",
+        "required": [
+          "integrationConfig",
+          "integrationType",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID of your choice to identify the test",
+            "example": "test_id"
+          },
+          "integrationConfig": {
+            "$ref": "#/components/schemas/IntegrationConfig"
+          },
+          "integrationType": {
+            "type": "string",
+            "description": "Integration type",
+            "example": "OKTA_IDP",
+            "enum": [
+              "OKTA_IDP"
+            ]
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "description": "Last modified time (default: N.A.)",
+            "format": "int32",
+            "readOnly": true,
+            "example": 120
+          },
+          "name": {
+            "type": "string",
+            "description": "Integration name",
+            "example": "Integration_name"
+          }
+        }
+      },
+      "IntegrationValidatorResponse": {
+        "description": "Model for Integration Validator Response",
+        "type": "object",
+        "properties": {
+          "errorMessages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseStatus"
+            }
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResponseStatus": {
+        "description": "Model for Response Status",
+        "type": "object",
+        "properties": {
+          "i18nKey": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "info",
+              "warning"
+            ]
+          },
+          "subject": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

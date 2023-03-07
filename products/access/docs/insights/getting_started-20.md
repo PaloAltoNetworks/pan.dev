@@ -63,6 +63,8 @@ can query for external alerts using:
 **Note** You must provide the TSG_ID that you specified for the scope of your access token in the
 API call using the `Prisma-Tenant` custom HTTP header.
 
+**Note** The `Bearer` keyword must be present before the auth token itself.
+
     #!/bin/bash
        echo "  "
     #

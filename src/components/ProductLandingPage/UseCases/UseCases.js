@@ -1,6 +1,6 @@
-import React from 'react'
-import Card from '../Cards/Card'
-import './UseCases.scss'
+import React from "react";
+import Card from "../Cards/Card";
+import "./UseCases.scss";
 
 function UseCases({ header, subheader, useCaseCards }) {
   return (
@@ -20,12 +20,12 @@ function UseCases({ header, subheader, useCaseCards }) {
                 cta={card.cta}
                 type="linkCard"
               />
-            )
+            );
           })}
         </div>
       </section>
     </div>
-  )
+  );
 }
 
-export default UseCases
+export default UseCases;
