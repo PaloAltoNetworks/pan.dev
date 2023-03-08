@@ -54,7 +54,11 @@ for file in *.json; do
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
     # add server urls
-    jq '.servers |= [{"url":"https://api.prismacloud.io"}, {"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' | \
+    jq '.servers |= [
+        {"url":"https://api.prismacloud.io"},
+        {"url":"https://api2.prismacloud.io"},
+        {"url":"https://api3.prismacloud.io"},
+        {"url":"https://api4.prismacloud.io"}]' | \
 
     # add securityScheme to every spec file
     jq '.components.securitySchemes |= { "x-redlock-auth": {
