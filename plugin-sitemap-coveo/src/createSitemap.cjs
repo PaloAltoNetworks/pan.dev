@@ -30,6 +30,7 @@ function traverse(crumbs, coveo_metadata, routePath) {
         }
       }
       traverse(crumbs, coveo_metadata, routePath);
+      break;
     }
   }
   return coveo_metadata;
