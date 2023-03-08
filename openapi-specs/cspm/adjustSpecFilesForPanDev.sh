@@ -49,7 +49,7 @@ for file in *.json; do
     # rewrite the GLOBAL tag description
     tmp=$(mktemp)
     jq '.info.description as $tag_desc | .tags[]?.description |= $tag_desc' $file | \
-       
+    
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
@@ -58,7 +58,18 @@ for file in *.json; do
         {"url":"https://api.prismacloud.io"},
         {"url":"https://api2.prismacloud.io"},
         {"url":"https://api3.prismacloud.io"},
-        {"url":"https://api4.prismacloud.io"}]' | \
+        {"url":"https://api4.prismacloud.io"},
+        {"url":"https://api.anz.prismacloud.io"},
+        {"url":"https://api.eu.prismacloud.io"},
+        {"url":"https://api2.eu.prismacloud.io"},
+        {"url":"https://api.gov.prismacloud.io"},
+        {"url":"https://api.prismacloud.cn"},
+        {"url":"https://api.ca.prismacloud.io"},
+        {"url":"https://api.sg.prismacloud.io"},
+        {"url":"https://api.uk.prismacloud.io"},
+        {"url":"https://api.ind.prismacloud.io"},
+        {"url":"https://api.jp.prismacloud.io"},
+        {"url":"https://api.fr.prismacloud.io"}]' | \
 
     # add securityScheme to every spec file
     jq '.components.securitySchemes |= { "x-redlock-auth": {
