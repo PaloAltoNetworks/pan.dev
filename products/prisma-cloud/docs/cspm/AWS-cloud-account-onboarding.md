@@ -137,7 +137,7 @@ Extract the S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* ke
   
   **Note: The link is valid for 1hr. Regenerate the link if it gets expired.**
 
-2. Alternatively, use [Generate and Download the AWS CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws/[generateTemplate]) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
+2. Alternatively, use [Generate and Download the AWS CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
 
 *Sample Request*
