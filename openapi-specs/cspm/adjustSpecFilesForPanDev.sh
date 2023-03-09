@@ -48,8 +48,44 @@ for file in *.json; do
 
     # rewrite the GLOBAL tag description
     tmp=$(mktemp)
-    jq '.info.description as $tag_desc | .tags[].description |= $tag_desc' $file > "$tmp" && mv "$tmp" $file
+    jq '.info.description as $tag_desc | .tags[]?.description |= $tag_desc' $file | \
+    
+    # delete code snippets
+    jq '.paths |= del(.[][]."x-codeSamples")' | \
 
     # add server urls
-    # jq '.servers |= . + [{"url":"https://api2.prismacloud.io"}, {"url":"https://api3.prismacloud.io"}, {"url":"https://api4.prismacloud.io"}]' $file > "$tmp" && mv "$tmp" $file
+    jq '.servers |= [
+        {"url":"https://api.prismacloud.io"},
+        {"url":"https://api2.prismacloud.io"},
+        {"url":"https://api3.prismacloud.io"},
+        {"url":"https://api4.prismacloud.io"},
+        {"url":"https://api.anz.prismacloud.io"},
+        {"url":"https://api.eu.prismacloud.io"},
+        {"url":"https://api2.eu.prismacloud.io"},
+        {"url":"https://api.gov.prismacloud.io"},
+        {"url":"https://api.prismacloud.cn"},
+        {"url":"https://api.ca.prismacloud.io"},
+        {"url":"https://api.sg.prismacloud.io"},
+        {"url":"https://api.uk.prismacloud.io"},
+        {"url":"https://api.ind.prismacloud.io"},
+        {"url":"https://api.jp.prismacloud.io"},
+        {"url":"https://api.fr.prismacloud.io"}]' | \
+
+    # add securityScheme to every spec file
+    jq '.components.securitySchemes |= { "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }}' | \
+
+    # add security field to every endpoint
+    jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" $file
 done
+
+# app-login endpoint isn't supposed to be protected
+tmp=$(mktemp)
+jq '.paths |= del(.["/login"][].security)' Login.json > "$tmp" && mv "$tmp" Login.json
+
+# update the list of all the endpoints (summary for engineering to peek at what's published)
+jq -f list-operations-with-ids.jq *.json | jq '.[]' | jq -s -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > consolidated_spec/all_endpoints.csv

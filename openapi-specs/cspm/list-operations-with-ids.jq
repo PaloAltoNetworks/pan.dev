@@ -35,20 +35,20 @@
       path: $path, # Using the variable defined on line 4
       summary: .value.summary?,
       operationId: .value.operationId,
-      tags: .value.tags?[0],
-      deprecated: .value.deprecated?
+      tags: .value.tags?[0]
+      #deprecated: .value.deprecated?
     }
   )[] # Flattens array to avoid having an array 
       # of array of {path, method, summary, deprecated}
 ) # Now we have an array of {path, method, summary, deprecated}
 # 3 - Outputs tab separated raw text
 #-----------------------------------
-| map( # Applies a transformation to each element
-  #.method + " | " + 
-  .operationId #+ " | " +
-  #.path + " | " +
-  #.tags + " | " +
-  #.summary +
-  #(if .deprecated then " (deprecated)" else "" end)
-)
-[] # Flattens array for raw output
+#| map( # Applies a transformation to each element
+#  .method + " | " + 
+#  .operationId + " | " +
+#  .path + " | " +
+#  .tags + " | " +
+#  .summary +
+#  (if .deprecated then " (deprecated)" else "" end)
+#)
+#[] # Flattens array for raw output
