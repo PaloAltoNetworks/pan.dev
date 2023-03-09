@@ -117,7 +117,7 @@
             "type": "array"
           },
           "filters": {
-            "description": "Filtering parameters",
+            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
             "items": {
               "$ref": "#/components/schemas/UIFilterModel"
             },
@@ -154,8 +154,7 @@
             "enum": [
               1,
               2,
-              3,
-              4
+              3
             ],
             "format": "int32",
             "type": "integer"
@@ -174,6 +173,43 @@
         "required": [
           "tableLevel"
         ],
+        "type": "object"
+      },
+      "DLPInventoryL4ViewModel": {
+        "description": "Model for DLP Inventory L4 Objects View",
+        "properties": {
+          "endTime": {
+            "description": "End time of the record",
+            "format": "int64",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DLPInventoryViewModel"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Total records per page",
+            "format": "int64",
+            "type": "integer"
+          },
+          "page": {
+            "description": "page number for the records",
+            "format": "int64",
+            "type": "integer"
+          },
+          "startTime": {
+            "description": "Start time of the record",
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalItems": {
+            "description": "Total Items",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
         "type": "object"
       },
       "DLPInventoryObjectClassificationReport": {
@@ -384,6 +420,90 @@
             "type": "integer"
           }
         },
+        "type": "object"
+      },
+      "DLPInventoryObjectL4FilterModel": {
+        "description": "Model for DLP inventory paginated filters",
+        "properties": {
+          "detailed": {
+            "description": "Detailed",
+            "type": "boolean"
+          },
+          "fields": {
+            "description": "Array of specific fields to return",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "filters": {
+            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
+            "items": {
+              "$ref": "#/components/schemas/UIFilterModel"
+            },
+            "type": "array"
+          },
+          "groupBy": {
+            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Records per page",
+            "format": "int32",
+            "type": "integer"
+          },
+          "offset": {
+            "description": "The number of items to skip before selecting items to return. Default is zero",
+            "type": "number"
+          },
+          "orderBy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderBy"
+              },
+              {
+                "description": "Sorting column and sort type"
+              }
+            ]
+          },
+          "page": {
+            "description": "Page Number",
+            "format": "int64",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
+            "type": "string"
+          },
+          "searchTerm": {
+            "description": "search on objects",
+            "type": "string"
+          },
+          "sortBy": {
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "timeRange": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TimeRangeConfigModel"
+              },
+              {
+                "description": "Time range"
+              }
+            ]
+          }
+        },
+        "required": [
+          "limit",
+          "page"
+        ],
         "type": "object"
       },
       "DLPInventoryResourceExplorer": {
@@ -723,6 +843,19 @@
         },
         "type": "object"
       },
+      "OrderBy": {
+        "properties": {
+          "asc": {
+            "description": "sort by ascending",
+            "type": "boolean"
+          },
+          "column": {
+            "description": "order by column name",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "RelativeTimeDurationModel": {
         "description": "Model for RelativeTimeDuration",
         "properties": {
@@ -951,16 +1084,6 @@
         "summary": "Get Data Usage",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/data-scanned\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/data-scanned \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -1006,16 +1129,6 @@
         "summary": "Get Classification Report V2",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/object/data-classification/reportv2\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/object/data-classification/reportv2 \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1062,23 +1175,13 @@
         "summary": "Get Classification Report",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/object/data-classification/report\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/object/data-classification/report \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
     "/dlp/api/v1/inventory/objects/aggregate": {
       "post": {
-        "description": "Lists data for objects. The response data depends on the table level you specify in the request body parameters.  \r\n\r\nThe **tableLevel** and **groupBy** request body parameters determine which \nresponse object fields a successful API request returns.\n\nIF **tableLevel** is **1** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": ,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n``` \nIf **tableLevel** is **1** and **groupBy** is specified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.region\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.account\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.region\", \"cloud.account\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 20,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.account\", \"cloud.region\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.region\", \"cloud.service\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.account\", \"cloud.region\", \"cloud.service\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **4**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"objectName\": \"\",\n    \"objectExposure\": \"\",\n    \"objectOwner\": \"\",\n    \"contentType\": \"\",\n    \"dataProfiles\": \"\",\n    \"dataPatterns\": \"\",\n    \"malware\": \"\",\n    \"metadataScannedTime\": 0, \n    \"malwareScannedTime\": 0, \n    \"dssScannedTime\": 0, \n    \"dssSnippetStatus\": \"\",\n    \"dssSnippetCreatedOn\": \"\",\n    \"dssSnippetViewed\": false\n  }\n]\n```                                                                                          \n",
-        "operationId": "get-inventory-objects",
+        "description": "Lists resources. The response data depends on the table level you specify in the request body parameters.  \r\n\r\nThe **tableLevel** and **groupBy** request body parameters determine which \nresponse object fields a successful API request returns.\n\nIF **tableLevel** is **1** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": ,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n``` \nIf **tableLevel** is **1** and **groupBy** is specified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.region\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.account\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **2** and **groupBy** = **[\"cloud.region\", \"cloud.account\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"totalResources\": 0,\n    \"publicResources\": 0,\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 20,\n    \"alerts\": 0\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** is unspecified, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.account\", \"cloud.region\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.region\", \"cloud.service\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\nIf **tableLevel** is **3** and **groupBy** = **[\"cloud.account\", \"cloud.region\", \"cloud.service\"]**, the response properties are as shown below:\n```json\n[\n  {\n    \"cloudType\": \"\",\n    \"accountName\": \"\",\n    \"regionName\": \"\",\n    \"serviceName\": \"\",\n    \"resourceName\": \"\",\n    \"publicResource\": \"\",\n    \"totalObjects\": 0,\n    \"publicObjects\": 0,\n    \"sensitiveObjects\": 0,\n    \"malwareObjects\": 0,\n    \"alerts\": 0,\n    \"bucketRrn\":\"\"\n  }\n]\n```\n",
+        "operationId": "get-inventory-resources",
         "requestBody": {
           "content": {
             "application/json; charset=UTF-8": {
@@ -1111,19 +1214,48 @@
             "x-redlock-auth": []
           }
         ],
-        "summary": "List Inventory Objects",
+        "summary": "List Inventory Resources",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"tableLevel\": 1,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"tableLevel\":1,\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
+        ]
+      }
+    },
+    "/dlp/api/v1/inventory/objects/aggregate/l4": {
+      "post": {
+        "description": "Lists a paginated list of objects at L4 level. This is to fasten the response while listing the bucket objects",
+        "operationId": "get-inventory-objects-l4",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/DLPInventoryObjectL4FilterModel"
+              }
+            }
           }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/DLPInventoryL4ViewModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Paginated Inventory Objects at Level 4",
+        "tags": [
+          "Data Security Inventory"
         ]
       }
     },
@@ -1166,16 +1298,6 @@
         "summary": "Get Inventory Object Details",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/object/details\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/object/details \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1218,16 +1340,6 @@
         "summary": "Get Object Counts by Classification",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/by-classification\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"tableLevel\": 1,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/by-classification \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"tableLevel\":1,\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
-          }
         ]
       }
     },
@@ -1270,16 +1382,6 @@
         "summary": "Get Aggregate Alert Data by Classification",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/alerts/by-classification\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"tableLevel\": 1,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/alerts/by-classification \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"tableLevel\":1,\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
-          }
         ]
       }
     },
@@ -1319,16 +1421,6 @@
         "summary": "Get Aggregate Data by History",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/history\"\n\npayload = {\n    \"detailed\": True,\n    \"fields\": [\"string\"],\n    \"filters\": [\n        {\n            \"name\": \"string\",\n            \"operator\": \"=\",\n            \"value\": \"string\"\n        }\n    ],\n    \"groupBy\": [\"string\"],\n    \"limit\": 0,\n    \"offset\": 0,\n    \"pageToken\": \"string\",\n    \"sortBy\": [\"string\"],\n    \"tableLevel\": 1,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/objects/aggregate/history \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"detailed\":true,\"fields\":[\"string\"],\"filters\":[{\"name\":\"string\",\"operator\":\"=\",\"value\":\"string\"}],\"groupBy\":[\"string\"],\"limit\":0,\"offset\":0,\"pageToken\":\"string\",\"sortBy\":[\"string\"],\"tableLevel\":1,\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
-          }
         ]
       }
     },
@@ -1382,16 +1474,6 @@
         "summary": "Get Malware Report",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/object/malware/report/hash/{fileHash}\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/object/malware/report/hash/{fileHash} \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1431,16 +1513,6 @@
         "summary": "Get Inventory Resource Details",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/resource/details\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/resource/details \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1480,16 +1552,6 @@
         "summary": "Get Inventory Resource Objects",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/resource/objects\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/resource/objects \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1532,16 +1594,6 @@
         "summary": "Generate Snippet",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/snippet\"\n\npayload = {\n    \"objectId\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/snippet \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"objectId\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -1595,16 +1647,6 @@
         "summary": "Get Snippet",
         "tags": [
           "Data Security Inventory"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/inventory/snippet/objects/{objectId}/datapattern/{dataPatternId}\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/dlp/api/v1/inventory/snippet/objects/{objectId}/datapattern/{dataPatternId} \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     }
@@ -1612,6 +1654,48 @@
   "servers": [
     {
       "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
     }
   ],
   "tags": [
