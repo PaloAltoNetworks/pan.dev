@@ -29,13 +29,13 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 2. Generate *CFT* and *External ID* using Prisma Cloud *CFT Generation API* and create *IAM Role* using the generated CFT.
 3. Use Prisma Cloud *Save API* to onboard the account by passing the *IAM Role ARN* and other parameters in the request payload.
 
-![](/prisma-cloud/cloud-accounts/img/aws-cloud-account-onboarding-workflow-automation.png)
+![](/img/aws-cloud-account-onboarding-workflow-automation.png)
 
 
 
 ### 1. Fetch *Supported Features* for cloud type and account type
 
-  To get the list of supported features, call [Fetch Supported Features Endpoint](https://pan.dev/prisma-cloud/api/cspm/fetch-supported-features/) with the required payload.<br/>
+  To get the list of supported features, call [Fetch Supported Features Endpoint](/prisma-cloud/api/cspm/fetch-supported-features/) ![alt text](/icons/api-icon-pan-dev.svg) with the required payload.<br/>
 
   The response contains supportedFeatures key whose value contains supported feature names.
 
@@ -76,7 +76,7 @@ curl --location --request POST
 
 ### 2. Generate AWS *CFT* and create *IAM Role*.
 
- 1. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](https://pan.dev/prisma-cloud/api/cspm/generate-cft-template-link-aws/). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
+ 1. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
  The response contains createStackLinkWithS3PresignedUrl key whose value can be used to create IAM role via AWS CloudFormation stack.<br /> 
 
  For example, to get CFT stack creation console login link for accountId, accountType, and required features selected from the supported features API:
@@ -137,7 +137,7 @@ Extract the S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* ke
   
   **Note: The link is valid for 1hr. Regenerate the link if it gets expired.**
 
-2. Alternatively, use [Generate and Download the AWS CFT Template Endpoint](https://pan.dev/prisma-cloud/api/cspm/generate-cft-template-link-aws/[generateTemplate]) to get the CFT template in response.<br/> 
+2. Alternatively, use [Generate and Download the AWS CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws/[generateTemplate]) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
 
 *Sample Request*
@@ -510,7 +510,7 @@ curl --location --request POST
 
 3. Onboard your AWS account on to Prisma Cloud
 
-Invoke the [Add AWS Cloud Account](https://pan.dev/prisma-cloud/api/cspm/add-aws-cloud-account/) Endpoint with the IAM Role ARN created in the above steps, required features state, and other payload.
+Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) Endpoint with the IAM Role ARN created in the above steps, required features state, and other payload.
 
 *Sample Request* - For onboarding a standalone AWS account:
 
