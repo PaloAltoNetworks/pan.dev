@@ -100,4 +100,78 @@ module.exports = {
       ],
     },
   ],
+  terraformvmseries: [
+    // "terraform/docs/vm-series/reference-architectures",
+    {
+      type: "category",
+      collapsed: true,
+      label: "VM-Series Reference Architectures",
+      link: {
+        type: "doc",
+        id: "terraform/docs/vm-series/reference-architectures",
+      },
+      items: [
+        {
+          type: "category",
+          collapsed: true,
+          label: "AWS",
+          // link: {
+          //   type: 'generated-index',
+          //   title: 'AWS Reference Architectures',
+          //   description: 'AWS Reference Architectures',
+          //   slug: 'terraform/docs/vm-series/aws/reference-architectures',
+          // },
+          link: {
+            type: "doc",
+            id: "terraform/docs/vm-series/aws/reference-architectures",
+          },
+          items: [
+            "terraform/docs/vm-series/aws/reference-architectures/shared",
+            "terraform/docs/vm-series/aws/reference-architectures/gwlb",
+            "terraform/docs/vm-series/aws/reference-architectures/tgw",
+          ],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Azure",
+          // link: {
+          //   type: 'generated-index',
+          //   title: 'Azure Reference Architectures',
+          //   description: 'Azure Reference Architectures',
+          //   slug: 'terraform/docs/vm-series/azure/reference-architectures',
+          // },
+          link: {
+            type: "doc",
+            id: "terraform/docs/vm-series/azure/reference-architectures",
+          },
+          items: [
+            "terraform/docs/vm-series/azure/reference-architectures/shared",
+            "terraform/docs/vm-series/azure/reference-architectures/gwlb",
+            "terraform/docs/vm-series/azure/reference-architectures/tgw",
+          ],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "GCP",
+          // link: {
+          //   type: 'generated-index',
+          //   title: 'GCP Reference Architectures',
+          //   description: 'GCP Reference Architectures',
+          //   slug: 'terraform/docs/vm-series/gcp/reference-architectures',
+          // },
+          link: {
+            type: "doc",
+            id: "terraform/docs/vm-series/gcp/reference-architectures",
+          },
+          items: [
+            "terraform/docs/vm-series/gcp/reference-architectures/shared",
+            "terraform/docs/vm-series/gcp/reference-architectures/gwlb",
+            "terraform/docs/vm-series/gcp/reference-architectures/tgw",
+          ],
+        },
+      ],
+    },
+  ],
 };
