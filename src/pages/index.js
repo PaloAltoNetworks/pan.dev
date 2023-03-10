@@ -20,7 +20,6 @@ import styles from "./styles.module.css";
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
-  const exploreImageSrc = "img/homepage-banner/1.svg";
   const blogImageSrc = "img/homepage-banner/2.svg";
 
   const partnerTools = [
@@ -60,10 +59,6 @@ function Home() {
           id="developer-docs-section"
           className={styles.featuredContainer}
         >
-          <HomepageBanner
-            imgSrc={exploreImageSrc}
-            text="Explore our Developer Docs"
-          />
           <Featured />
           <BackToTopButton />
         </section>
