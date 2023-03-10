@@ -1,6 +1,6 @@
 ---
 id: aws-cloud-account-onboarding
-title: Set Up Prisma Cloud IAM Role for AWS Cloud Accounts using Automation
+title: AWS Cloud Account Onboarding on to Prisma Cloud using Automation
 ---
 
 This guide shows how to automate AWS Cloud Account onboarding on Prisma Cloud.
@@ -35,9 +35,9 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 
 ### 1. Fetch *Supported Features* for cloud type and account type
 
-  To get the list of supported features, call [Fetch Supported Features Endpoint](/prisma-cloud/api/cspm/fetch-supported-features/) ![alt text](/icons/api-icon-pan-dev.svg) with the required payload.<br/>
+  To get the list of supported features, call [Fetch Supported Features](/prisma-cloud/api/cspm/fetch-supported-features/) ![alt text](/icons/api-icon-pan-dev.svg) with the required payload.<br/>
 
-  The response contains supportedFeatures key whose value contains supported feature names.
+  The response contains *supportedFeatures* key whose value contains supported feature names.
 
   *NOTE*: The supportedFeatures returns "*Cloud Visibility Compliance and Governance*" string by default. Do not explicitly pass this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account,Generate and Download the AWS CFT Template, etc).
 
@@ -76,68 +76,69 @@ curl --location --request POST
 
 ### 2. Generate AWS *CFT* and create *IAM Role*.
 
- 1. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
+ **1**. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
  The response contains createStackLinkWithS3PresignedUrl key whose value can be used to create IAM role via AWS CloudFormation stack.<br /> 
 
  For example, to get CFT stack creation console login link for accountId, accountType, and required features selected from the supported features API:
 
-*Sample Request*
-```
-curl --location --request POST 
-'https://api.prismacloud.io/cas/v1/aws_template/presigned_url' \
---header 'accept: application/json' \
---header 'accept-language: en-GB,en;q=0.9' \
---header 'content-type: application/json' \
---header 'x-redlock-auth: <token>' \
---data-raw '{
-   "accountId": "<accountId>",
-   "accountType": "account",
-   "features": [
-       "Agentless Scanning",
-       "Auto Protect",
-       "Remediation",
-       "Serverless Function Scanning"
-   ]
-}'
-```
+  *Sample Request*
+  ```
+  curl --location --request POST 
+  'https://api.prismacloud.io/cas/v1/aws_template/presigned_url' \
+  --header 'accept: application/json' \
+  --header 'accept-language: en-GB,en;q=0.9' \
+  --header 'content-type: application/json' \
+  --header 'x-redlock-auth: <YOUR_TOKEN>' \
+  --data-raw '{
+    "accountId": "<accountId>",
+    "accountType": "account",
+    "features": [
+        "Agentless Scanning",
+        "Auto Protect",
+        "Remediation",
+        "Serverless Function Scanning"
+    ]
+  }'
+  ```
 
-*Sample Response*
-```
-{
-    "createStackLinkWithS3PresignedUrl":
-    "https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=PrismaCloudApp&templateURL=https%3A%2F%2Fonboarding-templates-app2-s3.s3.us-east-2.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe",
-      "externalId": "302bf9ab-b110-4588-8c8f-3bea9051a4d3",
-      "eventBridgeRuleNamePrefix":
-    "prisma-cloud-eb-o-806775452214917120-*"
-}
-```
+  *Sample Response*
+  ```
+  {
+      "createStackLinkWithS3PresignedUrl":
+      "https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=PrismaCloudApp&templateURL=https%3A%2F%2Fonboarding-templates-app2-s3.s3.us-east-2.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe",
+        "externalId": "302bf9ab-b110-4588-8c8f-3bea9051a4d3",
+        "eventBridgeRuleNamePrefix":
+      "prisma-cloud-eb-o-806775452214917120-*"
+  }
+  ```
 
 
-Extract the S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* key by splitting at *templateURL=* and decoding the last index value of the split (right side of the split). You can use the extracted decoded S3 CFT link to create or update the IAM role CloudFormation stack.
+  Extract the S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* key by splitting at *templateURL=* and decoding the last index value of the split (right side of the split). You can use the extracted decoded S3 CFT link to create or update the IAM role CloudFormation stack.
 
   The extraction steps are shown below:<br /> 
   **a**.  Split *createStackLinkWithS3PresignedUrl* at *templateURL=* and get the last index value of the split (i.e right side of the split) to get urlencoded link.<br/><br/>
-    Sample encoded S3 CFT URL:
-    ```
-    https%3A%2F%2Fonboarding-templates-app2-s3.s3.us-east-2.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
-    ```
+      *Sample encoded S3 CFT URL*<br /> 
+      ```
+      
+      https%3A%2F%2Fonboarding-templates-app2-s3.s3.us-east-2.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
+      
+      ```
 
   **b**. *urldecode* the above link to get S3 link for AWS CFT <br/><br/>
-    Sample URL decoded S3 CFT Link:
+      *Sample URL decoded S3 CFT Link*:
 
-    ```
-    https://onboarding-templates-app2-s3.s3.us-east-2.amazonaws.com/806775452214917120/375187248419/prisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%2BHLNaBC04UuD%2BFoaADqcqmgIIkv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwxODg2MTk5NDI3OTIiDG%2FM2%2FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%2B4bJnpD4kgyK2anzh9TRaJILcTF384mg%2FkO71PYQYrOHzw3%2FyqRUGLmJ715%2FU9Lz%2BPynFx%2B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%2Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%2BWbHO1%2FfIazMS7NPtqAwr%2Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%2Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%2Bo6qgCoH%2FxrbHAsY4LEmFNgxm2I%2FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%2BV1&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230301T163039Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3597&X-Amz-Credential=ASIASX2U75OEE4QNMK7F%2F20230301%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
-    ```
+      
+      https://onboarding-templates-app2-s3.s3.us-east-2.amazonaws.com/806775452214917120/375187248419/prisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%2BHLNaBC04UuD%2BFoaADqcqmgIIkv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwxODg2MTk5NDI3OTIiDG%2FM2%2FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%2B4bJnpD4kgyK2anzh9TRaJILcTF384mg%2FkO71PYQYrOHzw3%2FyqRUGLmJ715%2FU9Lz%2BPynFx%2B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%2Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%2BWbHO1%2FfIazMS7NPtqAwr%2Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%2Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%2Bo6qgCoH%2FxrbHAsY4LEmFNgxm2I%2FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%2BV1&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230301T163039Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3597&X-Amz-Credential=ASIASX2U75OEE4QNMK7F%2F20230301%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
+    
 
 
-  c. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terrafrom, or any other programming tools can be used to create Cloudformation Stack.
-
-  If you are onboarding AWS organization, then *OrganizationalUnitIds* param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root link for more info.<br/>
-  Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member role should get created on all the accounts the organization has access to.
+  **c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terrafrom, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
+    If you are onboarding AWS organization, then *OrganizationalUnitIds* param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root link for more info.<br/>
+    Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member role should get created on all the accounts the organization has access to.
   
   **Note: The link is valid for 1hr. Regenerate the link if it gets expired.**
 
-2. Alternatively, use [Generate and Download the AWS CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
+**2**. Alternatively, use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
 
 *Sample Request*
@@ -147,7 +148,7 @@ curl --location --request POST
 --header 'accept: */*' \
 --header 'accept-language: en-GB,en;q=0.9' \
 --header 'content-type: application/json' \
---header 'x-redlock-auth: <token>' \
+--header 'x-redlock-auth: <YOUR_TOKEN>' \
 --data-raw '{
    "accountId": "<accountId>",
    "accountType": "account",
@@ -508,15 +509,15 @@ curl --location --request POST
 ```
 
 
-3. Onboard your AWS account on to Prisma Cloud
+### 3. Onboard your AWS account on to Prisma Cloud
 
-Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) Endpoint with the IAM Role ARN created in the above steps, required features state, and other payload.
+Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) with the IAM Role ARN created in the above steps, required features state, and other payload.
 
 *Sample Request* - For onboarding a standalone AWS account:
 
 ```
 curl --location --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
---header 'x-redlock-auth: <token>' \
+--header 'x-redlock-auth: <YOUR_TOKEN>' \
 --header 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
