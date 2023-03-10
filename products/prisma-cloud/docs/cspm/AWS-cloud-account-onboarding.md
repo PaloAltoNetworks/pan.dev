@@ -43,18 +43,14 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 
   *Sample Request* to get features for accountType: account on app stack: 
 
-```
-{
-curl --location --request POST
-'https://api.prismacloud.io/cas/v1/features/cloud/aws' \
+```console
+curl --request POST 'https://api.prismacloud.io/cas/v1/features/cloud/aws' \
 --header 'accept: application/json' \
---header 'accept-language: en-GB,en;q=0.9' \
 --header 'content-type: application/json' \
 --header 'x-redlock-auth: <YOUR_TOKEN>' \
 --data-raw '{
    "accountType": "account"
 }'
-}
 ```
 
 *Sample Response*
@@ -79,14 +75,12 @@ curl --location --request POST
  **1**. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
  The response contains createStackLinkWithS3PresignedUrl key whose value can be used to create IAM role via AWS CloudFormation stack.<br /> 
 
- For example, to get CFT stack creation console login link for accountId, accountType, and required features selected from the supported features API:
+ For example, to get CFT stack creation Quick create Stack link for accountType:account, and required features selected from the supported features API:
 
   *Sample Request*
-  ```
-  curl --location --request POST 
-  'https://api.prismacloud.io/cas/v1/aws_template/presigned_url' \
+  ```console
+  curl --request POST 'https://api.prismacloud.io/cas/v1/aws_template/presigned_url' \
   --header 'accept: application/json' \
-  --header 'accept-language: en-GB,en;q=0.9' \
   --header 'content-type: application/json' \
   --header 'x-redlock-auth: <YOUR_TOKEN>' \
   --data-raw '{
@@ -132,7 +126,7 @@ curl --location --request POST
     
 
 
-  **c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terrafrom, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
+  **c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terraform, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
     If you are onboarding AWS organization, then *OrganizationalUnitIds* param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root link for more info.<br/>
     Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member role should get created on all the accounts the organization has access to.
   
@@ -142,11 +136,9 @@ curl --location --request POST
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
 
 *Sample Request*
-```
-curl --location --request POST 
-'https://api.prismacloud.io/cas/v1/aws_template' \
+```console
+curl --request POST 'https://api.prismacloud.io/cas/v1/aws_template' \
 --header 'accept: */*' \
---header 'accept-language: en-GB,en;q=0.9' \
 --header 'content-type: application/json' \
 --header 'x-redlock-auth: <YOUR_TOKEN>' \
 --data-raw '{
@@ -161,7 +153,7 @@ curl --location --request POST
 }'
 ```
 
-*Sample Response* - The response contains CFT content. You must save it with *.template* extension. Use the CFT Template to create AWS cloudformation stack programmatically using Boto3, Terrafrom, or any other programming tools. 
+*Sample Response* - The response contains CFT content. You must save it with *.template* extension. Use the CFT Template to create AWS cloudformation stack programmatically using Boto3, Terraform, or any other programming tools. 
 
 ```
 {
@@ -511,16 +503,15 @@ curl --location --request POST
 
 ### 3. Onboard your AWS account on to Prisma Cloud
 
-Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) with the IAM Role ARN created in the above steps, required features state, and other payload.
+Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) with the IAM Role ARN created in the above step, required features state, and other payload.
 
 *Sample Request* - For onboarding a standalone AWS account:
 
 ```
-curl --location --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
---header 'x-redlock-auth: <YOUR_TOKEN>' \
---header 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36' \
+curl -v --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
+--header 'x-redlock-auth: <YOUR_TOKEN>' \
 --data-raw '{
    "accountId": "<accountId>",
    "accountType": "account",
@@ -528,7 +519,7 @@ curl --location --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
    "groupIds": [
        "<groupId>"
    ],
-   "name": "<account name as to be added in prisma>",
+   "name": "<account name to be added in prisma>",
    "roleArn": "<iam-role-arn>",
    "features": [
        {
