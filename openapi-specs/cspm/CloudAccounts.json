@@ -10,6 +10,17 @@
           }
         }
       },
+      "AwsCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
       "GcpResourceControllerRequestModel": {
         "content": {
           "application/json": {
@@ -46,19 +57,7 @@
         "description": "Cloud Account",
         "required": true
       },
-      "get-cloud-account-statusBody": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "additionalProperties": {
-                "type": "object"
-              },
-              "type": "object"
-            }
-          }
-        }
-      },
-      "get-list-of-children-under-parent-awsBody": {
+      "get-list-of-children-under-parent-aws-legacyBody": {
         "content": {
           "application/json": {
             "schema": {
@@ -497,7 +496,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -656,7 +655,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -719,6 +718,68 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "AwsCloudAccountRequestModel": {
+        "description": "Model containing the request for AWS Standalone and Org Cloud Account",
+        "properties": {
+          "accountId": {
+            "description": "AWS Account ID",
+            "type": "string"
+          },
+          "accountType": {
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization",
+              "account"
+            ],
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "description": "*Applicable only for accountType: **organization**.*\n\n This is the Default Account Group ID for the AWS organization and its member accounts.",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Cloud Account Status. Whether or not the account is enabled",
+            "type": "boolean"
+          },
+          "features": {
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, call **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "groupIds": {
+            "description": "Account Group Ids for this account",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "hierarchySelection": {
+            "description": "*Applicable only for accountType: **organization**.*\n\n Include/Exclude a list of AWS Organization Units (OU), AWS accounts, and AWS Organizations to onboard under this organization.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "Name to be used for the account on the Prisma Cloud platform (must be unique)",
+            "type": "string"
+          },
+          "roleArn": {
+            "description": "AWS Role ARN",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "accountType",
+          "name",
+          "roleArn"
+        ],
         "type": "object"
       },
       "AwsCloudOrgModel": {
@@ -829,7 +890,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -845,7 +906,7 @@
           "hierarchySelection": {
             "description": "List of selected resources for hierarchy selection",
             "items": {
-              "$ref": "#/components/schemas/HierarchySelectionModel"
+              "$ref": "#/components/schemas/HierarchySelection"
             },
             "type": "array"
           },
@@ -958,6 +1019,83 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "AwsOrgAncestorRequestModel": {
+        "description": "Model containing the request for AWS Org Ancestors",
+        "properties": {
+          "accountId": {
+            "description": "AWS Account ID",
+            "type": "string"
+          },
+          "accountType": {
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization"
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Cloud Account Status. Whether or not the account is enabled",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Name",
+            "type": "string"
+          },
+          "resourceIds": {
+            "description": "Array of resource IDs (account IDs and/or OU IDs)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "roleArn": {
+            "description": "AWS Role ARN",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "accountType",
+          "resourceIds",
+          "roleArn"
+        ],
+        "type": "object"
+      },
+      "AwsOrgChildrenRequestModel": {
+        "description": "Model containing the request for AWS Org Children",
+        "properties": {
+          "accountId": {
+            "description": "AWS Account ID",
+            "type": "string"
+          },
+          "accountType": {
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization"
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Cloud Account Status. Whether or not the account is enabled",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Name",
+            "type": "string"
+          },
+          "roleArn": {
+            "description": "AWS Role ARN",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "accountType",
+          "roleArn"
+        ],
         "type": "object"
       },
       "AwsOrgTreeNode": {
@@ -1138,7 +1276,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -1279,7 +1417,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -1522,7 +1660,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -1707,7 +1845,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -1831,23 +1969,20 @@
         },
         "type": "object"
       },
-      "FeatureItem": {
+      "Feature": {
         "description": "Model for Feature",
         "properties": {
-          "displayName": {
-            "description": "displayName",
-            "type": "string"
-          },
-          "mode": {
-            "description": "mode",
-            "type": "string"
-          },
           "name": {
-            "description": "name",
+            "description": "Feature name obtained from **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "example": "Remediation",
             "type": "string"
           },
           "state": {
-            "description": "state",
+            "description": "Feature state. Whether to be enabled or disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
             "type": "string"
           }
         },
@@ -1943,7 +2078,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -2084,7 +2219,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -2184,15 +2319,16 @@
         },
         "type": "object"
       },
-      "HierarchySelectionModel": {
+      "HierarchySelection": {
         "description": "Model for HierarchySelection",
         "properties": {
           "displayName": {
             "description": "Display name",
+            "example": "Root",
             "type": "string"
           },
           "nodeType": {
-            "description": "Node type",
+            "description": "Member account Node type. Supported values based on cloud_type are given below. \n\n * ORG, OU, or ACCOUNT - cloud_type: **aws**\n\n * ORG, FOLDER, or PROJECT - cloud_type: **gcp**\n\n * SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT - cloud_type: **azure**",
             "enum": [
               "ORG",
               "FOLDER",
@@ -2206,11 +2342,12 @@
             "type": "string"
           },
           "resourceId": {
-            "description": "Resource ID",
+            "description": "Resource ID. \n\nNote you must escape any double quotes in the resource ID with a backslash",
+            "example": "root",
             "type": "string"
           },
           "selectionType": {
-            "description": "Selection type",
+            "description": "Organization Member accounts Selection type",
             "enum": [
               "ALL",
               "INCLUDE",
@@ -2341,7 +2478,7 @@
           "features": {
             "description": "Features",
             "items": {
-              "$ref": "#/components/schemas/FeatureItem"
+              "$ref": "#/components/schemas/Feature"
             },
             "type": "array",
             "uniqueItems": true
@@ -2674,16 +2811,6 @@
         "summary": "List Cloud Accounts",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud\"\n\nquerystring = {\"excludeAccountGroupDetails\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/cloud?excludeAccountGroupDetails=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -2756,16 +2883,6 @@
         "summary": "List Cloud Account Names - GET",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/name\"\n\nquerystring = {\"onlyActive\":\"SOME_BOOLEAN_VALUE\",\"accountGroupIds\":\"SOME_ARRAY_VALUE\",\"cloudType\":\"SOME_STRING_VALUE\",\"includeOthers\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/cloud/name?onlyActive=SOME_BOOLEAN_VALUE&accountGroupIds=SOME_ARRAY_VALUE&cloudType=SOME_STRING_VALUE&includeOthers=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       },
       "post": {
@@ -2834,16 +2951,6 @@
         "summary": "List Cloud Account Names - POST",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/name\"\n\nquerystring = {\"onlyActive\":\"SOME_BOOLEAN_VALUE\",\"cloudType\":\"SOME_STRING_VALUE\",\"includeOthers\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"accountGroupIds\": [\"string\"],\n    \"accountIds\": [\"string\"],\n    \"aggregate\": True,\n    \"cloudType\": \"string\",\n    \"csvHeaderRequired\": True,\n    \"filterKey\": \"string\",\n    \"filterValue\": \"string\",\n    \"groupBy\": \"string\",\n    \"limit\": 0,\n    \"timeRange\": {\n        \"type\": \"relative\",\n        \"relativeTimeType\": \"BACKWARD\",\n        \"value\": {\n            \"amount\": 0,\n            \"unit\": \"minute\"\n        }\n    }\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud/name?onlyActive=SOME_BOOLEAN_VALUE&cloudType=SOME_STRING_VALUE&includeOthers=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountGroupIds\":[\"string\"],\"accountIds\":[\"string\"],\"aggregate\":true,\"cloudType\":\"string\",\"csvHeaderRequired\":true,\"filterKey\":\"string\",\"filterValue\":\"string\",\"groupBy\":\"string\",\"limit\":0,\"timeRange\":{\"type\":\"relative\",\"relativeTimeType\":\"BACKWARD\",\"value\":{\"amount\":0,\"unit\":\"minute\"}}}'"
-          }
         ]
       }
     },
@@ -2917,16 +3024,6 @@
         "summary": "List Cloud Org Accounts",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/{id}/project\"\n\nquerystring = {\"excludeAccountGroupDetails\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}/{id}/project?excludeAccountGroupDetails=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -2977,16 +3074,6 @@
         "summary": "List Cloud Types",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/type\"\n\nquerystring = {\"onlyAccessible\":\"SOME_BOOLEAN_VALUE\",\"includeOthers\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/cloud/type?onlyAccessible=SOME_BOOLEAN_VALUE&includeOthers=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -3035,16 +3122,6 @@
         "summary": "List Cloud Account Owners",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{id}/owners\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/cloud/{id}/owners \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -3115,16 +3192,6 @@
         "summary": "Add Cloud Account",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}\"\n\nquerystring = {\"skipStatusChecks\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}?skipStatusChecks=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     },
@@ -3160,16 +3227,6 @@
         "summary": "Generate Zipped Terraform Script (OCI)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/oci/terraform\"\n\npayload = {\n    \"accountId\": \"string\",\n    \"generateKeys\": True,\n    \"groupName\": \"string\",\n    \"policyName\": \"string\",\n    \"userName\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud/oci/terraform \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountId\":\"string\",\"generateKeys\":true,\"groupName\":\"string\",\"policyName\":\"string\",\"userName\":\"string\"}'"
-          }
         ]
       }
     },
@@ -3234,16 +3291,6 @@
         "summary": "Cloud Account Info",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/{id}\"\n\nquerystring = {\"includeGroupInfo\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}/{id}?includeGroupInfo=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       },
       "put": {
@@ -3322,16 +3369,6 @@
         "summary": "Update Cloud Account",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/{id}\"\n\nquerystring = {\"skipStatusChecks\":\"SOME_BOOLEAN_VALUE\"}\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request PUT \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}/{id}?skipStatusChecks=SOME_BOOLEAN_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       },
       "delete": {
@@ -3390,16 +3427,6 @@
         "summary": "Delete Cloud Account",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/{id}\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"DELETE\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request DELETE \\\n  --url https://api.prismacloud.io/cloud/{cloud_type}/{id} \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       },
       "patch": {
@@ -3469,16 +3496,6 @@
         "summary": "Patch Cloud Account",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/{id}\"\n\npayload = {\n    \"enabled\": False,\n    \"groupIds\": [\"string\"],\n    \"updateChildrenStatus\": False\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PATCH\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request PATCH \\\n  --url https://api.prismacloud.io/cloud/{cloud_type}/{id} \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"enabled\":false,\"groupIds\":[\"string\"],\"updateChildrenStatus\":false}'"
-          }
         ]
       }
     },
@@ -3526,16 +3543,6 @@
         "summary": "List Account Status Details",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/account/{accountId}/config/status\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/account/{accountId}/config/status \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -3602,16 +3609,6 @@
         "summary": "Get Cloud Account Status",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/status/{cloud_type}\"\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud/status/{cloud_type} \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     },
@@ -3668,16 +3665,6 @@
         "summary": "Update Cloud Account Status",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{id}/status/{enabled}\"\n\nquerystring = {\"updateChildren\":\"SOME_BOOLEAN_VALUE\"}\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"PATCH\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request PATCH \\\n  --url 'https://api.prismacloud.io/cloud/{id}/status/{enabled}?updateChildren=SOME_BOOLEAN_VALUE' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -3713,7 +3700,7 @@
             "content": {
               "application/json; charset=UTF-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/HierarchySelectionModel"
+                  "$ref": "#/components/schemas/HierarchySelection"
                 }
               }
             },
@@ -3737,16 +3724,6 @@
         "summary": "Get Saved Resource Hierarchy (GCP)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/accounts/{account_id}/hierarchy\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/cloud/{cloud_type}/accounts/{account_id}/hierarchy \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
@@ -3853,16 +3830,6 @@
         "summary": "List Children of Parent (GCP)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/gcp/parent/{parent_id}/children\"\n\nquerystring = {\"projectNextPageToken\":\"SOME_STRING_VALUE\",\"projectPageSize\":\"SOME_INTEGER_VALUE\",\"folderNextPageToken\":\"SOME_STRING_VALUE\",\"folderPageSize\":\"SOME_INTEGER_VALUE\",\"parentType\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"cloudAccount\": {\"accountId\": \"string\"},\n    \"credentials\": {\n        \"auth_provider_x509_cert_url\": \"string\",\n        \"auth_uri\": \"string\",\n        \"client_email\": \"string\",\n        \"client_id\": \"string\",\n        \"client_x509_cert_url\": \"string\",\n        \"private_key\": \"string\",\n        \"private_key_id\": \"string\",\n        \"project_id\": \"string\",\n        \"token_uri\": \"string\",\n        \"type\": \"string\"\n    }\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud/gcp/parent/{parent_id}/children?projectNextPageToken=SOME_STRING_VALUE&projectPageSize=SOME_INTEGER_VALUE&folderNextPageToken=SOME_STRING_VALUE&folderPageSize=SOME_INTEGER_VALUE&parentType=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"cloudAccount\":{\"accountId\":\"string\"},\"credentials\":{\"auth_provider_x509_cert_url\":\"string\",\"auth_uri\":\"string\",\"client_email\":\"string\",\"client_id\":\"string\",\"client_x509_cert_url\":\"string\",\"private_key\":\"string\",\"private_key_id\":\"string\",\"project_id\":\"string\",\"token_uri\":\"string\",\"type\":\"string\"}}'"
-          }
         ]
       }
     },
@@ -3962,16 +3929,6 @@
         "summary": "List Folders of Parent (GCP)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/parent/{parent_id}/folders\"\n\nquerystring = {\"nextPageToken\":\"SOME_STRING_VALUE\",\"pageSize\":\"SOME_INTEGER_VALUE\",\"parentType\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"cloudAccount\": {\"accountId\": \"string\"},\n    \"credentials\": {\n        \"auth_provider_x509_cert_url\": \"string\",\n        \"auth_uri\": \"string\",\n        \"client_email\": \"string\",\n        \"client_id\": \"string\",\n        \"client_x509_cert_url\": \"string\",\n        \"private_key\": \"string\",\n        \"private_key_id\": \"string\",\n        \"project_id\": \"string\",\n        \"token_uri\": \"string\",\n        \"type\": \"string\"\n    }\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}/parent/{parent_id}/folders?nextPageToken=SOME_STRING_VALUE&pageSize=SOME_INTEGER_VALUE&parentType=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"cloudAccount\":{\"accountId\":\"string\"},\"credentials\":{\"auth_provider_x509_cert_url\":\"string\",\"auth_uri\":\"string\",\"client_email\":\"string\",\"client_id\":\"string\",\"client_x509_cert_url\":\"string\",\"private_key\":\"string\",\"private_key_id\":\"string\",\"project_id\":\"string\",\"token_uri\":\"string\",\"type\":\"string\"}}'"
-          }
         ]
       }
     },
@@ -4074,16 +4031,6 @@
         "summary": "List Projects of Parent (GCP)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/parent/{parent_id}/projects\"\n\nquerystring = {\"nextPageToken\":\"SOME_STRING_VALUE\",\"pageSize\":\"SOME_INTEGER_VALUE\",\"parentType\":\"SOME_STRING_VALUE\"}\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud/{cloud_type}/parent/{parent_id}/projects?nextPageToken=SOME_STRING_VALUE&pageSize=SOME_INTEGER_VALUE&parentType=SOME_STRING_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     },
@@ -4158,16 +4105,6 @@
         "summary": "List Ancestors (GCP)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud/{cloud_type}/accounts/{account_id}/ancestors\"\n\npayload = {\"resourceIds\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud/{cloud_type}/accounts/{account_id}/ancestors \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"resourceIds\":[\"string\"]}'"
-          }
         ]
       }
     },
@@ -4229,16 +4166,6 @@
         "summary": "List Children of Parent (Azure)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{parent_id}/children\"\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{parent_id}/children \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     },
@@ -4301,16 +4228,6 @@
         "summary": "List Ancestors (Azure)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{account_id}/ancestors\"\n\npayload = {\"resourceIds\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{account_id}/ancestors \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"resourceIds\":[\"string\"]}'"
-          }
         ]
       }
     },
@@ -4360,16 +4277,6 @@
         "summary": "Check Data Security Preconditions (AWS Org)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/v1/config/awsorg/status\"\n\npayload = {\n    \"accountId\": \"string\",\n    \"externalId\": \"string\",\n    \"roleArn\": \"string\",\n    \"snsTopicArn\": \"string\",\n    \"tenantId\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/v1/config/awsorg/status \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountId\":\"string\",\"externalId\":\"string\",\"roleArn\":\"string\",\"snsTopicArn\":\"string\",\"tenantId\":\"string\"}'"
-          }
         ]
       }
     },
@@ -4409,16 +4316,6 @@
         "summary": "Add Data Security Config (AWS Org)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/config/v2\"\n\npayload = {\n    \"accountId\": \"string\",\n    \"cloudType\": \"AWS\",\n    \"masterExternalId\": \"string\",\n    \"masterRoleArn\": \"string\",\n    \"memberExternalId\": \"string\",\n    \"memberRoleName\": \"string\",\n    \"scanOption\": \"Full\",\n    \"snsTopicArn\": \"string\",\n    \"storageUUID\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/dlp/api/config/v2 \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountId\":\"string\",\"cloudType\":\"AWS\",\"masterExternalId\":\"string\",\"masterRoleArn\":\"string\",\"memberExternalId\":\"string\",\"memberRoleName\":\"string\",\"scanOption\":\"Full\",\"snsTopicArn\":\"string\",\"storageUUID\":\"string\"}'"
-          }
         ]
       },
       "put": {
@@ -4456,16 +4353,6 @@
         "summary": "Update Data Security Config (AWS Org)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/config/v2\"\n\npayload = {\n    \"accountId\": \"string\",\n    \"cloudType\": \"AWS\",\n    \"masterExternalId\": \"string\",\n    \"masterRoleArn\": \"string\",\n    \"memberExternalId\": \"string\",\n    \"memberRoleName\": \"string\",\n    \"scanOption\": \"Full\",\n    \"snsTopicArn\": \"string\",\n    \"storageUUID\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json; charset=UTF-8\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request PUT \\\n  --url https://api.prismacloud.io/dlp/api/config/v2 \\\n  --header 'content-type: application/json; charset=UTF-8' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"accountId\":\"string\",\"cloudType\":\"AWS\",\"masterExternalId\":\"string\",\"masterRoleArn\":\"string\",\"memberExternalId\":\"string\",\"memberRoleName\":\"string\",\"scanOption\":\"Full\",\"snsTopicArn\":\"string\",\"storageUUID\":\"string\"}'"
-          }
         ]
       }
     },
@@ -4507,23 +4394,13 @@
         "summary": "Get Data Security Config (AWS Org)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/dlp/api/config/v2/{accountId}\"\n\nheaders = {\"x-redlock-auth\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url https://api.prismacloud.io/dlp/api/config/v2/{accountId} \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE'"
-          }
         ]
       }
     },
     "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{parent_id}/children": {
       "post": {
-        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.  \r\n\r\n### Request Body\nThe table below lists the required request body parameters.\n\nParameter  | Type | Description \n-----------| ---- | -----------\naccountId | string | AWS account ID \nname | string | Account on  Prisma Cloud  \nroleArn | string | Amazon Resource Name (ARN) for the account \naccountType | string | Type of the given account, for example **organization** \nmemberRoleStatus | boolean | memberRoleStatus | boolean | **true**: The member role created using stack set exists in all the member accounts. All the Org accounts will be added.<br/>**false**: Only the master account will be added. | Default is existing value\n\n#### Request Body Example\n```json\n{\n    \"accountId\": \"\",\n    \"name\": \"\",\n    \"roleArn\": \"\",\n    \"accountType\": \"\",\n    \"memberRoleStatus\": true\n}\n```\n",
-        "operationId": "get-list-of-children-under-parent-aws",
+        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws-legacy",
         "parameters": [
           {
             "description": "Parent OU ID",
@@ -4610,26 +4487,16 @@
             "x-redlock-auth": []
           }
         ],
-        "summary": "List Children of Parent (AWS)",
+        "summary": "List Children of Parent (AWS) - Legacy",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{parent_id}/children\"\n\nquerystring = {\"accountNextPageToken\":\"SOME_STRING_VALUE\",\"accountFetchCount\":\"SOME_INTEGER_VALUE\",\"ouNextPageToken\":\"SOME_STRING_VALUE\",\"ouFetchCount\":\"SOME_INTEGER_VALUE\"}\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{parent_id}/children?accountNextPageToken=SOME_STRING_VALUE&accountFetchCount=SOME_INTEGER_VALUE&ouNextPageToken=SOME_STRING_VALUE&ouFetchCount=SOME_INTEGER_VALUE' \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     },
     "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{account_id}/ancestors": {
       "post": {
-        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of projects and/or folders each of which is mapped to an array of ancestor resource IDs.  \r\n\r\n### Request Body\nThe table below lists the required request body parameters.\n\nParameter  | Type | Description\n-----------| ---- | -----------\naccountId | string | AWS account ID\nname | string  | Account name on Prisma Cloud\nroleArn | string | Amazon Resource Name (ARN) for the account\naccountType | string | Type of the given account, for example **organization**\nmemberRoleStatus | boolean | memberRoleStatus | boolean | **true**: The member role created using stack set exists in all the member accounts. All the Org accounts will be added.<br/>**false**: Only the master account will be added. | Default is existing value\nresourceIds | array of strings | Array of resource IDs. A resource ID can be an AWS account ID, an AWS Organization ID or an AWS Organization Unit (OU) ID\n\n#### Request Body Example\n```json\n{\n    \"accountId\": \"\",\n    \"name\": \"\",\n    \"roleArn\": \"\",\n    \"accountType\": \"\",\n    \"memberRoleStatus\": true\n    \"resourceIds\": [\"\", \"\", \"\"]\n}\n```\n",
-        "operationId": "get-ancestors-for-given-members-ous",
+        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous-legacy",
         "parameters": [
           {
             "description": "Account ID",
@@ -4684,19 +4551,334 @@
             "x-redlock-auth": []
           }
         ],
+        "summary": "List Ancestors (AWS) - Legacy",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/aws_account": {
+      "post": {
+        "description": "Onboard a new aws cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the externalId and AWS CFT template by calling either **[Generate and Download the CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**",
+        "operationId": "add-aws-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add AWS Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{id}": {
+      "put": {
+        "description": "Update information related to aws cloud account.",
+        "operationId": "update-aws-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          },
+          "500": {
+            "description": "not_found / internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update AWS Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/aws": {
+      "post": {
+        "description": "Lists status messages of the specified AWS cloud account.",
+        "operationId": "get-aws-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get AWS Cloud Account Status",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{parent_id}/children": {
+      "post": {
+        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws",
+        "parameters": [
+          {
+            "description": "Parent OU ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The page token to request the next page of accounts. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "accountNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of accounts to return. An  **accountFetchCount** of 0 returns a nextPageToken but no accounts.",
+            "in": "query",
+            "name": "accountFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The page token to request next set of OUs. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "ouNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of OUs to return. An **ouFetchCount** of 0 returns a nextPageToken but no OUs.",
+            "in": "query",
+            "name": "ouFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgChildrenRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsListChildrenApiResponseModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "permission_error / bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Children of Parent (AWS)",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{account_id}/ancestors": {
+      "post": {
+        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgAncestorRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AwsNodeModel"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
         "summary": "List Ancestors (AWS)",
         "tags": [
           "Cloud Accounts"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{account_id}/ancestors\"\n\npayload = {\n    \"property1\": {},\n    \"property2\": {}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"x-redlock-auth\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{account_id}/ancestors \\\n  --header 'content-type: application/json' \\\n  --header 'x-redlock-auth: REPLACE_KEY_VALUE' \\\n  --data '{\"property1\":{},\"property2\":{}}'"
-          }
         ]
       }
     }
@@ -4704,6 +4886,48 @@
   "servers": [
     {
       "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
     }
   ],
   "tags": [
