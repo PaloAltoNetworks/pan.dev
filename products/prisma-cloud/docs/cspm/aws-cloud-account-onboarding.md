@@ -119,7 +119,7 @@ https://onboarding-templates-app2-s3.s3.us-east-2.amazonaws.com/8067754522149171
     If you are onboarding AWS organization, then *OrganizationalUnitIds* param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root link for more info.<br/>
     Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member role should get created on all the accounts the organization has access to.
   
-  **Note: The link is valid for one hour. Regenerate the link if it expires.**
+> **Note:** The link is valid for one hour. Regenerate the link if it expires.
 
 **2**. Alternatively, use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
