@@ -17,7 +17,7 @@ First of all, obtain an authorization token by [Logging In](/prisma-cloud/api/cs
 
 Start by [getting a list of Compliance Standards](/prisma-cloud/api/cspm/get-all-standards/) ![alt text](/icons/api-icon-pan-dev.svg) which returns all system-supported and custom compliance standards:
 
-```console
+```bash
 curl --request GET \
 --url https://api.prismacloud.io/compliance \
 --header 'x-redlock-auth: YOUR_TOKEN'
@@ -52,7 +52,7 @@ Let's say, you're interested in _SOC2 Compliance Standard_:
 
 Pick a **compliance standard** from the returned array(in this case _SOC2 Compliance Standard_), grab its `id`(in this case `51a30956-9e70-4112-8551-ad69b36381b1`) and pass it as a `complianceId` path parameter to [List Compliance Requirements](/prisma-cloud/api/cspm/get-requirements/) ![alt text](/icons/api-icon-pan-dev.svg):
 
-```
+```bash
 curl --request GET \
 --url https://api.prismacloud.io/compliance/51a30956-9e70-4112-8551-ad69b36381b1/requirement \
 --header 'x-redlock-auth: YOUR_TOKEN'
@@ -62,7 +62,7 @@ This will return a list of **all compliance requirements** for the **SOC 2 Compl
 
 The `id` field in the response can be used to get a list of all requirement sections for the **SOC 2 Compliance Standard**. Just pass it as a path parameter to [List Compliance Requirement Sections](/prisma-cloud/api/cspm/get-sections/) ![alt text](/icons/api-icon-pan-dev.svg):
 
-```
+```bash
 curl --request GET \
 --url https://api.prismacloud.io/compliance/8f8ccc5f-ff06-42c6-8d84-24fb8a133665/section \
 --header 'x-redlock-auth: YOUR_TOKEN'
@@ -70,7 +70,7 @@ curl --request GET \
 
 Finally, use [List Policies](/prisma-cloud/api/cspm/get-policies-v-2/) ![alt text](/icons/api-icon-pan-dev.svg) to get all available policies for the **SOC 2 Compliance Standard** by setting `policy.complianceStandard` _query string parameter_ with the **Compliance Standard Name** you've acquired earlier (in this case url-encoded value for `SOC 2` is `SOC%202`):
 
-```
+```bash
 curl --request GET \
 --url 'https://api.prismacloud.io/v2/policy?policy.complianceStandard=SOC%202' \
 --header 'x-redlock-auth: YOUR_TOKEN'
