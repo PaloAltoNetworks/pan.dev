@@ -1,6 +1,6 @@
 ---
 id: manage-saved-search
-title: Manage Saved Search
+title: Manage a Saved Search
 ---
 
 This guide shows how to update an existing **saved search** in three simple steps by going through a valid sample scenario.
@@ -77,7 +77,7 @@ In our sample case the value for **search id** is `"84b809a9-5535-401a-8d78-e726
 
 ## Update/Convert a Recent Search to a Saved Search by providing name/description
 
-Pass the **search id** obtained in the previous step(`"84b809a9-5535-401a-8d78-e7264cdc3d9a"`) (along with the `name` and `description` you'd like for the new saved search) to the [Save Search Query](/prisma-cloud/api/cspm/search-history-save/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint. 
+Pass the **search id** obtained in the previous step `"84b809a9-5535-401a-8d78-e7264cdc3d9a"` (along with the `name` and `description` you'd like for the new saved search) to the [Save Search Query](/prisma-cloud/api/cspm/search-history-save/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint. 
 
 > **NOTE:** the same **search id** is now a *path parameter*
 
