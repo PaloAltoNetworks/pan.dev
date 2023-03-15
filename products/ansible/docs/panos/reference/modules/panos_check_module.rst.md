@@ -1,0 +1,483 @@
+orphan  
+
+<div id="ansible_collections.paloaltonetworks.panos.panos_check_module">
+
+</div>
+
+# paloaltonetworks.panos.panos_check module -- Checks is a PAN-OS device is ready for configuration.
+
+<div className="note">
+
+<div className="title">
+
+Note
+
+</div>
+
+This module is part of the [paloaltonetworks.panos
+collection](https://galaxy.ansible.com/paloaltonetworks/panos) (version
+2.13.1).
+
+To install it, use:
+`ansible-galaxy collection install paloaltonetworks.panos`. You need
+further requirements to be able to use this module, see
+`Requirements <ansible_collections.paloaltonetworks.panos.panos_check_module_requirements>`
+for details.
+
+To use it in a playbook, specify: `paloaltonetworks.panos.panos_check`.
+
+</div>
+
+<div className="rst-class">
+
+ansible-version-added
+
+</div>
+
+New in paloaltonetworks.panos 1.0.0
+
+<div className="contents" local="" depth="1">
+
+</div>
+
+## Synopsis
+
+- Checks to see if the autocommit job has succeeded on a PAN-OS device.
+
+## Requirements
+
+The below requirements are needed on the host that executes this module.
+
+- pan-python
+- pandevice
+
+## Parameters
+
+<div className="rst-class">
+
+ansible-option-table
+
+</div>
+
+<table>
+<thead>
+<tr className="header">
+<th>Parameter</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-api_key"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-api_key">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>api_key</strong></p>
+<a className="ansibleOptionLink" href="#parameter-api_key" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The API key to use instead of generating it using <em>username</em> /
+<em>password</em>.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-initial_delay"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-initial_delay">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>initial_delay</strong></p>
+<a className="ansibleOptionLink" href="#parameter-initial_delay" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>Length of time (in seconds) to wait before doing any readiness
+checks.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">0</code></p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-interval"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-interval">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>interval</strong></p>
+<a className="ansibleOptionLink" href="#parameter-interval" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>Length of time (in seconds) to wait between checks.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">0</code></p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-ip_address"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-ip_address">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ip_address</strong></p>
+<a className="ansibleOptionLink" href="#parameter-ip_address" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The IP address or hostname of the PAN-OS device being configured.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-password"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-password">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>password</strong></p>
+<a className="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The password to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-port"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-port">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>port</strong></p>
+<a className="ansibleOptionLink" href="#parameter-port" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The port number to connect to the PAN-OS device on.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">443</code></p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>provider</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">dictionary</span></p>
+<p><span className="ansible-option-versionadded">added in
+paloaltonetworks.panos 1.0.0</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>A dict object containing connection details.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/api_key"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/api_key">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>api_key</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/api_key" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The API key to use instead of generating it using <em>username</em> /
+<em>password</em>.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/ip_address"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/ip_address">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ip_address</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/ip_address" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The IP address or hostname of the PAN-OS device being configured.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/password"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/password">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>password</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/password" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The password to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/port"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/port">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>port</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/port" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The port number to connect to the PAN-OS device on.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">443</code></p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/serial_number"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/serial_number">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>serial_number</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/serial_number" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The serial number of a firewall to use for targeted commands. If
+<em>ip_address</em> is not a Panorama PAN-OS device, then this param is
+ignored.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/username"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-provider/username">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>username</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/username" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The username to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text"
+role="ansible-option-default">"admin"</code></p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-timeout"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-timeout">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>timeout</strong></p>
+<a className="ansibleOptionLink" href="#parameter-timeout" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>Length of time (in seconds) to wait for jobs to finish.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">60</code></p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-username"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_check_module__parameter-username">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>username</strong></p>
+<a className="ansibleOptionLink" href="#parameter-username" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The username to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text"
+role="ansible-option-default">"admin"</code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+## Notes
+
+<div className="note">
+
+<div className="title">
+
+Note
+
+</div>
+
+\- Panorama is supported. - Checkmode is not supported. - PAN-OS
+connectivity should be specified using *provider* or the classic PAN-OS
+connectivity params (*ip_address*, *username*, *password*, *api_key*,
+and *port*). If both are present, then the classic params are ignored.
+
+</div>
+
+## Examples
+
+``` yaml+jinja
+# Single check.
+- name: check if ready
+  panos_check:
+    provider: '{{ provider }}'
+    timeout: 0
+
+# Wait 2 minutes, then check every 5 seconds for 10 minutes.
+- name: wait for reboot
+  panos_check:
+    provider: '{{ provider }}'
+    initial_delay: 120
+    interval: 5
+    timeout: 600
+```
+
+### Authors
+
+- Luigi Mori (@jtschichold)
+- Ivan Bojer (@ivanbojer)
+- Garfield Lee Freeman (@shinmog)
+- Michael Richardson (@mrichardson03)
+
+### Collection links
+
+<p className="ansible-links">
+  <a href="https://github.com/PaloAltoNetworks/pan-os-ansible/issues"  target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/PaloAltoNetworks/pan-os-ansible"  target="_blank" rel="noopener external">Repository (Sources)</a>
+</p>

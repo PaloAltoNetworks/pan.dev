@@ -1,0 +1,835 @@
+orphan  
+
+<div id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module">
+
+</div>
+
+# paloaltonetworks.panos.panos_virtual_router_facts module -- Retrieves virtual router information
+
+<div className="note">
+
+<div className="title">
+
+Note
+
+</div>
+
+This module is part of the [paloaltonetworks.panos
+collection](https://galaxy.ansible.com/paloaltonetworks/panos) (version
+2.13.1).
+
+To install it, use:
+`ansible-galaxy collection install paloaltonetworks.panos`. You need
+further requirements to be able to use this module, see
+`Requirements <ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module_requirements>`
+for details.
+
+To use it in a playbook, specify:
+`paloaltonetworks.panos.panos_virtual_router_facts`.
+
+</div>
+
+<div className="rst-class">
+
+ansible-version-added
+
+</div>
+
+New in paloaltonetworks.panos 1.0.0
+
+<div className="contents" local="" depth="1">
+
+</div>
+
+## DEPRECATED
+
+Removed in  
+version 3.0.0
+
+Why  
+Updating module design to network resource modules.
+
+Alternative  
+Use
+`paloaltonetworks.panos.panos\_virtual\_router <ansible_collections.paloaltonetworks.panos.panos_virtual_router_module>`
+with *state=gathered*
+
+## Synopsis
+
+- Retrieves information on virtual routers from a firewall or Panorama.
+
+## Requirements
+
+The below requirements are needed on the host that executes this module.
+
+- pan-python
+- pandevice
+
+## Parameters
+
+<div className="rst-class">
+
+ansible-option-table
+
+</div>
+
+<table>
+<thead>
+<tr className="header">
+<th>Parameter</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-api_key"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-api_key">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>api_key</strong></p>
+<a className="ansibleOptionLink" href="#parameter-api_key" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The API key to use instead of generating it using <em>username</em> /
+<em>password</em>.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-ip_address"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-ip_address">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ip_address</strong></p>
+<a className="ansibleOptionLink" href="#parameter-ip_address" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The IP address or hostname of the PAN-OS device being configured.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-name"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-name">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>name</strong></p>
+<a className="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>Name of the virtual router.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-password"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-password">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>password</strong></p>
+<a className="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The password to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-port"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-port">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>port</strong></p>
+<a className="ansibleOptionLink" href="#parameter-port" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The port number to connect to the PAN-OS device on.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">443</code></p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>provider</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">dictionary</span></p>
+<p><span className="ansible-option-versionadded">added in
+paloaltonetworks.panos 1.0.0</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>A dict object containing connection details.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/api_key"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/api_key">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>api_key</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/api_key" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The API key to use instead of generating it using <em>username</em> /
+<em>password</em>.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/ip_address"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/ip_address">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ip_address</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/ip_address" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The IP address or hostname of the PAN-OS device being configured.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/password"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/password">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>password</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/password" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The password to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/port"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/port">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>port</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/port" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The port number to connect to the PAN-OS device on.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text" role="ansible-option-default">443</code></p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/serial_number"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/serial_number">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>serial_number</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/serial_number" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The serial number of a firewall to use for targeted commands. If
+<em>ip_address</em> is not a Panorama PAN-OS device, then this param is
+ignored.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-provider/username"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-provider/username">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>username</strong></p>
+<a className="ansibleOptionLink" href="#parameter-provider/username" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>The username to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text"
+role="ansible-option-default">"admin"</code></p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-template"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-template">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>template</strong></p>
+<a className="ansibleOptionLink" href="#parameter-template" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>(Panorama only) The template this operation should target. Mutually
+exclusive with <em>template_stack</em>.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-template_stack"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-template_stack">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>template_stack</strong></p>
+<a className="ansibleOptionLink" href="#parameter-template_stack" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>(Panorama only) The template stack this operation should target.
+Mutually exclusive with <em>template</em>.</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="parameter-username"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__parameter-username">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>username</strong></p>
+<a className="ansibleOptionLink" href="#parameter-username" title="Permalink to this option"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p><strong>Deprecated</strong></p>
+<p>Use <em>provider</em> to specify PAN-OS connectivity instead.</p>
+<hr/>
+<p>The username to use for authentication. This is ignored if
+<em>api_key</em> is specified.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-default-bold">Default:</span> <code
+className="interpreted-text"
+role="ansible-option-default">"admin"</code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+## Notes
+
+<div className="note">
+
+<div className="title">
+
+Note
+
+</div>
+
+\- Panorama is supported. - Check mode is not supported. - PAN-OS
+connectivity should be specified using *provider* or the classic PAN-OS
+connectivity params (*ip_address*, *username*, *password*, *api_key*,
+and *port*). If both are present, then the classic params are ignored. -
+If the PAN-OS to be configured is Panorama, either *template* or
+*template_stack* must be specified.
+
+</div>
+
+## Examples
+
+``` yaml+jinja
+# Get information on a specific virtual router
+- name: Get vr3 info
+  panos_virtual_router_facts:
+    provider: '{{ provider }}'
+    name: 'vr3'
+  register: ans
+
+# Get the config of all virtual routers
+- name: Get all virtual routers
+  panos_virtual_router_facts:
+    provider: '{{ provider }}'
+  register: vrlist
+```
+
+## Return Values
+
+Common return values are documented `here <common_return_values>`, the
+following are the fields unique to this module:
+
+<div className="rst-class">
+
+ansible-option-table
+
+</div>
+
+<table>
+<thead>
+<tr className="header">
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>spec</strong></p>
+<a className="ansibleOptionLink" href="#return-spec" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">complex</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>The spec of the specified virtual router.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span> When
+<em>name</em> is specified.</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ebgp"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ebgp">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ebgp</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ebgp" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ibgp"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ibgp">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ibgp</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ibgp" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ospf_ext"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ospf_ext">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ospf_ext</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ospf_ext" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ospf_int"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ospf_int">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ospf_int</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ospf_int" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ospfv3_ext"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ospfv3_ext">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ospfv3_ext</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ospfv3_ext" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_ospfv3_int"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_ospfv3_int">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_ospfv3_int</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_ospfv3_int" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_rip"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_rip">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_rip</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_rip" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_static"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_static">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_static</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_static" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/ad_static_ipv6"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/ad_static_ipv6">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>ad_static_ipv6</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/ad_static_ipv6" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">integer</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Admin distance for this protocol.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/interface"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/interface">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>interface</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/interface" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">list</span> / <span
+className="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>List of interfaces</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="even">
+<td><div className="ansible-option-indent"></div><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-spec/name"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-spec/name">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>name</strong></p>
+<a className="ansibleOptionLink" href="#return-spec/name" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">string</span></p>
+</div></td>
+<td><div className="ansible-option-indent-desc"></div><div className="ansible-option-cell">
+<p>Virtual router name.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span>
+success</p>
+</div></td>
+</tr>
+<tr className="odd">
+<td><div className="ansible-option-cell">
+<div className="ansibleOptionAnchor" id="return-vrlist"></div>
+<div
+id="ansible_collections.paloaltonetworks.panos.panos_virtual_router_facts_module__return-vrlist">
+<div className="rst-class">
+<p>ansible-option-title</p>
+</div>
+</div>
+<p><strong>vrlist</strong></p>
+<a className="ansibleOptionLink" href="#return-vrlist" title="Permalink to this return value"></a>
+<div className="rst-class">
+<p>ansible-option-type-line</p>
+</div>
+<p><span className="ansible-option-type">list</span> / <span
+className="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div className="ansible-option-cell">
+<p>List of virtual router specs.</p>
+<div className="rst-class">
+<p>ansible-option-line</p>
+</div>
+<p><span className="ansible-option-returned-bold">Returned:</span> When
+<em>name</em> is not specified.</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+## Status
+
+- This module will be removed in version 3.0.0. *\[deprecated\]*
+- For more information see [DEPRECATED](#deprecated).
+
+### Authors
+
+- Garfield Lee Freeman (@shinmog)
+
+### Collection links
+
+<p className="ansible-links">
+  <a href="https://github.com/PaloAltoNetworks/pan-os-ansible/issues"  target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/PaloAltoNetworks/pan-os-ansible"  target="_blank" rel="noopener external">Repository (Sources)</a>
+</p>
