@@ -21,7 +21,7 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 :::
 
 ## The steps to Onboard AWS Account
-- [The steps to Onboard AWS Account/Organization](#the-steps-to-onboard-aws-account)
+- [The steps to Onboard AWS Account](#the-steps-to-onboard-aws-account)
   - [1. Fetch *Supported Features* for cloud type and account type](#1-fetch-supported-features-for-cloud-type-and-account-type)
   - [2. Generate AWS *CFT* and create *IAM Role*](#2-generate-aws-cft-and-create-iam-role)
   - [3. Onboard your AWS account on to Prisma Cloud](#3-onboard-your-aws-account-on-to-prisma-cloud)
@@ -120,8 +120,7 @@ https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/12345678
 
   **2.1.c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terraform, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
 
-<details>
-  <summary>Sample code snippet to create Cloudformation Stack using boto3</summary>
+Sample code snippet to create Cloudformation Stack using boto3
 
   ```python
   import boto3
@@ -144,15 +143,13 @@ https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/12345678
   cloud_formation_client.create_stack(StackName=stack_name, TemplateURL=s3_urldecoded_cft_template_path,
                                                   Parameters=parameters, Capabilities=capabilities)
   ```
-</details>
   
 > **Note:** The link is valid for one hour. Regenerate the link if it expires.
 
 **2.2**. Alternatively, use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="account"
 
-<details>
-  <summary>Sample Request</summary>
+Sample Request
 
   ```bash
   curl --request POST 'https://api.prismacloud.io/cas/v1/aws_template' \
@@ -170,12 +167,11 @@ For example, To get CFT for the required features selected from the previous sup
     ]
   }'
   ```
-</details>
+
 
 The **response** contains CFT content. Save it with `*.template` extension and use it to create AWS cloudformation stack programmatically (e.g. using Boto3, Terraform)
 
-<details>
-  <summary>Sample Response</summary>
+Sample Response
 
   ```json
   {
@@ -521,7 +517,6 @@ The **response** contains CFT content. Save it with `*.template` extension and u
     }
   }
   ```
-</details>
 
 
 ### 3. Onboard your AWS account on to Prisma Cloud
@@ -529,8 +524,7 @@ Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/
 
 `features` param in request payload: The Security Capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled by default. Hence, Do not include this in features. An empty features list can also be sent which indicates that the default capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled.
 
-<details>
-  <summary>A sample request to onboard a Single AWS account</summary>
+A sample request to onboard a Single AWS account
 
   ```bash
   curl -v --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
@@ -566,11 +560,6 @@ Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/
     ]
   }'
   ```
-</details>
-
-<details>
-  <summary>Sample Response</summary>
+Sample Response
 
   200 (Success)
-
-</details>
