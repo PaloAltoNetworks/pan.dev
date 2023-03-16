@@ -3,7 +3,7 @@ id: aws-cloud-organization-onboarding
 title: Automate AWS Cloud Organization Onboarding
 ---
 
-To successfully onboard an AWS Organization in Prisma Cloud, create an IAM Roles in your AWS Organization account and member accounts that has a trusted relationship with Prisma Cloud AWS Account. Prisma Cloud uses IAM Role ARN to *AssumeRole* in to your AWS Organization and member accounts and ingest various configurations and logs.
+To successfully onboard an AWS Organization in Prisma Cloud, create IAM Roles in your AWS Organization account and member accounts that has a trusted relationship with Prisma Cloud AWS Account. Prisma Cloud uses IAM Role ARN to *AssumeRole* in to your AWS Organization and member accounts and ingest various configurations and logs.
 
 > **Recommended**: Use *Terraform* to onboard AWS cloud accounts. Refer
 [AWS organization](https://registry.terraform.io/providers/PaloAltoNetworks/prismacloud/latest/docs/resources/org_cloud_account_v2) onboarding guide.
@@ -33,9 +33,9 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 
 To get the list of supported features, call [Fetch Supported Features](/prisma-cloud/api/cspm/fetch-supported-features/) ![alt text](/icons/api-icon-pan-dev.svg) and refer to the `supportedFeatures` field in the response body.<br/>
 
-> **NOTE:** The `supportedFeatures` contain "*Cloud Visibility Compliance and Governance*" feature string and Security capabilities under this feature are enabled by default. Hence, Do not include this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account,Generate and Download the AWS CFT Template, etc).
+> **NOTE:** The `supportedFeatures` contain "*Cloud Visibility Compliance and Governance*" feature which is enabled by default. Hence, do not include this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account,Generate and Download the AWS CFT Template, etc).
 
-*Sample Request* to get features for accountType: organization on app stack: 
+*Sample Request* to get features for accountType: organization: 
 
 ```bash
 curl --request POST 'https://api.prismacloud.io/cas/v1/features/cloud/aws' \
@@ -67,10 +67,10 @@ curl --request POST 'https://api.prismacloud.io/cas/v1/features/cloud/aws' \
 ### 2. Generate AWS *CFT* and create *IAM Role*
 Generate *CFT* and *External ID* using Prisma Cloud *CFT Generation API* and create *IAM Role* using the generated CFT.
 
-**2.1**. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
+**2.1**. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated link contains CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
 The response contains `createStackLinkWithS3PresignedUrl` key whose value can be used to create IAM role via AWS CloudFormation stack.<br /> 
 
-For example, to get CFT stack creation Quick create Stack link for accountType:organization, and required features selected from the supported features API:
+For example, to get CFT Quick create Stack link for accountType:organization, and required features selected from the supported features API:
 
 *Sample Request*
 ```bash
@@ -121,15 +121,16 @@ https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/12345678
 
   **2.1.c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terraform, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
   `OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
-  Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member role should get created on all the accounts that the organization has access to.
+  Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
 
-  :::info
+:::info
 
-  - The IAM roles created in member accounts will be of the format: `*<Organization-iam-role-name>-member*`
+- The IAM roles created in member accounts will be of the format: `<organization-iam-role-name>-member`
 
-  :::
+:::
 
-Sample code snippet to create Cloudformation Stack using boto3
+<details>
+  <summary>Sample code snippet to create Cloudformation Stack using boto3</summary>
 
   ```python
   import boto3
@@ -161,13 +162,17 @@ Sample code snippet to create Cloudformation Stack using boto3
   cloud_formation_client.create_stack(StackName=stack_name, TemplateURL=s3_urldecoded_cft_template_path,
                                                   Parameters=parameters, Capabilities=capabilities)
   ```
-  
-> **Note:** The link is valid for one hour. Regenerate the link if it expires.
+</details>
+
+
+> **NOTE:** The link is valid for one hour. Regenerate the link if it expires.
+
 
 **2.2**. Alternatively, use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
 For example, To get CFT for the required features selected from the previous supported features API and for accountType="organization"
 
-Sample Request
+<details>
+  <summary>Sample Request</summary>
 
   ```bash
   curl --request POST 'https://api.prismacloud.io/cas/v1/aws_template' \
@@ -185,10 +190,12 @@ Sample Request
     ]
   }'
   ```
+</details>
 
 The **response** contains CFT content. Save it with `*.template` extension and use it to create AWS cloudformation stack programmatically (e.g. using Boto3, Terraform)
 
-Sample Response
+<details>
+  <summary>Sample Response</summary>
 
   ```json
   {
@@ -1578,14 +1585,16 @@ Sample Response
   }
 }
   ```
+</details>
 
 
 ### 3. Onboard your AWS Organization on to Prisma Cloud
 Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) with the *IAM Role ARN* created in the previous step, required features state, and other payload.
 
-`features` param in request payload: The Security Capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled by default. Hence, Do not include this in features. An empty features list can also be sent which indicates that the default capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled.
+`features` param in request payload: The "*Cloud Visibility Compliance and Governance*" feature is enabled by default. Hence, do not include this in features. An empty features list can also be sent which indicates that the default capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled.
 
-A sample request to onboard an AWS Organization
+<details>
+  <summary>A sample request to onboard an AWS Organization</summary>
 
   ```bash
   curl -v --request POST 'https://api.prismacloud.io/cas/v1/aws_account' \
@@ -1620,17 +1629,21 @@ A sample request to onboard an AWS Organization
             "state": "enabled"
         }
     ],
-    hierarchySelection": [
+    "hierarchySelection": [
       {
         "displayName": "Root",
         "nodeType": "ORG",
         "resourceId": "root",
         "selectionType": "ALL"
       }
-    ],
+    ]
   }'
   ```
+</details>
 
-Sample Response
+<details>
+  <summary>Sample Response</summary>
 
   200 (Success)
+
+</details>
