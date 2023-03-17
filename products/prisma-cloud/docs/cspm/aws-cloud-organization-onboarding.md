@@ -11,6 +11,81 @@ To successfully onboard an AWS Organization in Prisma Cloud, create IAM Roles in
 To Onboard using other automation tools(such as python, etc), follow the steps listed below:
 
 
+<details>
+  <summary>A complete code example for AWS Cloud Organization Onboarding</summary>
+
+  ```python
+  import requests, json, boto3, urllib.parse
+  ​
+  # 1. Fetch Supported Features for cloud type and account type
+  url = "https://api.prismacloud.io/cas/v1/features/cloud/aws"
+  ​
+  payload = json.dumps({
+    "accountType": "organization"
+  })
+  headers = {
+    'accept': 'application/json',
+    'content-type': 'application/json',
+    'x-redlock-auth': '<YOUR_TOKEN>'
+  }
+  ​
+  response = requests.request("POST", url, headers=headers, data=payload)
+  ​
+  features = response.json()['supportedFeatures']
+  features_without_default = features.remove('Cloud Visibility Compliance and Governance')
+  ​
+  # 2. Generate AWS CFT and create IAM Role
+  url = "https://api.prismacloud.io/cas/v1/aws_template/presigned_url"
+  ​
+  payload = json.dumps({
+    "accountId": "<accountId>",
+    "accountType": "organization",
+    "features": features_without_default
+  })
+  headers = {
+    'accept': 'application/json',
+    'content-type': 'application/json',
+    'x-redlock-auth': '<YOUR_TOKEN>'
+  }
+  ​
+  response = requests.request("POST", url, headers=headers, data=payload)
+  ​
+  response = response.json()
+  ​
+  createStackLinkWithS3PresignedUrl = response['createStackLinkWithS3PresignedUrl']
+  ​
+  # Extracted urldecoded s3 cft link
+  s3_presigned_cft_link = urllib.parse.unquote(createStackLinkWithS3PresignedUrl.split("templateURL=")[-1])
+  ​
+  stack_name = 'PrismaCloudOrganizationRole'  # Change if needed
+  ​
+  # 3. Onboard your AWS Organization to Prisma Cloud
+  cloud_formation_client = boto3.client('cloudformation')
+  #  Provide the organizational root OU ID (prefix r-) to create  IAM role for all the member accounts under the
+  #  Organization,else provide a comma-separated list of OU IDs (prefix ou-)
+  OrganizationalUnitIds = "<OrganizationalUnitIds>"
+  cloud_formation_client = boto3.client('cloudformation')
+  parameters = [
+      {
+          'ParameterKey': "PrismaCloudRoleName",
+          'ParameterValue': stack_name,
+          'UsePreviousValue': False,
+      },
+      {
+          'ParameterKey': "OrganizationalUnitIds",
+          'ParameterValue': OrganizationalUnitIds,
+          'UsePreviousValue': False,
+      }
+  ]
+  capabilities = ['CAPABILITY_NAMED_IAM']
+  ​
+  cloud_formation_client.create_stack(StackName=stack_name, TemplateURL=s3_presigned_cft_link,
+                                                  Parameters=parameters, Capabilities=capabilities)
+  ​
+  # Wait till stack is created
+  ```
+</details>
+
 ***Prerequisite***: Obtain an authorization token by [Logging In](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg)
 
 :::info
