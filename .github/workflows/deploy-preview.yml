@@ -5,9 +5,53 @@ on:
     branches: [ master ]
 
 jobs:
+  precheck:
+    name: Precheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    outputs:
+      is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
+    steps:
+      - name: Check if actor is org member
+        id: is-org-member
+        run:  echo "is-org-member-result=$(gh api -X GET orgs/PaloAltoNetworks/memberships/${{ github.actor }} | jq -r .message)" >> "$GITHUB_OUTPUT"
+    env:
+      GH_TOKEN: ${{ secrets.PAT }}
+
   analyze:
-    if: github.repository_owner	== 'PaloAltoNetworks'
+    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
     name: Analyze
+    needs: precheck
+    runs-on: pan-dev-runner
+    permissions:
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+  analyze_unsafe:
+    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
+    name: Analyze Unsafe
+    needs: precheck
     runs-on: pan-dev-runner
     environment: default
     permissions:
@@ -35,7 +79,10 @@ jobs:
 
   build:
     name: Build
-    needs: analyze
+    needs: [analyze, analyze_unsafe]
+    if: |
+      !failure() && !cancelled() && 
+      (success('analyze') || success('analyze_unsafe'))
     runs-on: pan-dev-runner
     permissions:
       contents: read
@@ -56,13 +103,13 @@ jobs:
         run: yarn --prefer-offline
 
       - name: Include netsec
-        if: contains( github.event.pull_request.labels.*.name, 'netsec')
+        if: contains(github.event.pull_request.labels.*.name, 'netsec')
         run: |
           echo "Including 'netsec' in build..."
           echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible" >> $GITHUB_ENV
 
       - name: Include sase
-        if: contains( github.event.pull_request.labels.*.name, 'sase')
+        if: contains(github.event.pull_request.labels.*.name, 'sase')
         run: |
           echo "Including 'sase' in build..."
           if [ $PRODUCTS_INCLUDE != '' ]
@@ -73,7 +120,7 @@ jobs:
           fi
 
       - name: Include contributing
-        if: contains( github.event.pull_request.labels.*.name, 'contributing')
+        if: contains(github.event.pull_request.labels.*.name, 'contributing')
         run: |
           echo "Including 'contributing' in build..."
           if [ $PRODUCTS_INCLUDE != '' ]
@@ -94,6 +141,7 @@ jobs:
   deploy:
     name: Deploy
     needs: build
+    if: ${{ !failure() && !cancelled() }}
     runs-on: pan-dev-runner
 
     steps:
