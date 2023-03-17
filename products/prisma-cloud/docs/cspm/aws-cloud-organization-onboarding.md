@@ -28,7 +28,7 @@ There are **three** main steps to Onboard an AWS Organization
   - [First option: via generating CFT s3 URL](#first-option-via-generating-cft-s3-url)
     - [Extract the S3 Presigned CFT URL](#extract-the-s3-presigned-cft-url)
   - [Second option: via obtaining CFT in the response](#second-option-via-obtaining-cft-in-the-response)
-- [3. Onboard your AWS account to Prisma Cloud](#3-onboard-your-aws-account-to-prisma-cloud)
+- [3. Onboard your AWS Organization to Prisma Cloud](#3-onboard-your-aws-organization-to-prisma-cloud)
 
 ![](/img/aws-cloud-account-onboarding-workflow-automation.png)
 
@@ -133,9 +133,11 @@ https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/12345678
   ```
 </details>
 
-Use the **extracted s3 link** to create or update the *IAM role* using AWS *CloudFormation Stack*.<br/><br/>
-`OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
-Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
+Use the **extracted s3 link** to create or update the *IAM role* using AWS *CloudFormation Stack*.
+
+Provide a **required** `OrganizationalUnitIds` parameter in the CFT to create Organization stack. This will create member roles for the specified OrganizationalUnitIds. Specify the organizational root OU ID (prefix `r-`) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix `ou-`). Refer to [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.
+  
+*Example:* `OrganizationalUnitIds = "r-abcd"`. "r-abcd" is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
 
 :::info
 
@@ -1603,8 +1605,9 @@ The **response** will contain the actual CFT template. Save it with `*.template`
   ```
 </details>
 
-`OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
-Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
+Provide a **required** `OrganizationalUnitIds` parameter in the CFT to create Organization stack. This will create member roles for the specified OrganizationalUnitIds. Specify the organizational root OU ID (prefix `r-`) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix `ou-`). Refer to [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.
+  
+*Example:* `OrganizationalUnitIds = "r-abcd"`. "r-abcd" is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
 
 :::info
 
