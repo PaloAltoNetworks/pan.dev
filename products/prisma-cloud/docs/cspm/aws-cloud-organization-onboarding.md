@@ -21,19 +21,22 @@ To Onboard using other automation tools(such as python, etc), follow the steps l
 
 :::
 
-## The steps to Onboard AWS Organization
-- [The steps to Onboard AWS Organization](#the-steps-to-onboard-aws-organization)
-  - [1. Fetch *Supported Features* for cloud type and account type](#1-fetch-supported-features-for-cloud-type-and-account-type)
-  - [2. Generate AWS *CFT* and create *IAM Role*](#2-generate-aws-cft-and-create-iam-role)
-  - [3. Onboard your AWS Organization on to Prisma Cloud](#3-onboard-your-aws-organization-on-to-prisma-cloud)
+There are **three** main steps to Onboard an AWS Organization
+
+- [1. Fetch *Supported Features* for cloud type and account type](#1-fetch-supported-features-for-cloud-type-and-account-type)
+- [2. Generate AWS *CFT* and create *IAM Role*](#2-generate-aws-cft-and-create-iam-role)
+  - [First option: via generating CFT s3 URL](#first-option-via-generating-cft-s3-url)
+    - [Extract the S3 Presigned CFT URL](#extract-the-s3-presigned-cft-url)
+  - [Second option: via obtaining CFT in the response](#second-option-via-obtaining-cft-in-the-response)
+- [3. Onboard your AWS account to Prisma Cloud](#3-onboard-your-aws-account-to-prisma-cloud)
 
 ![](/img/aws-cloud-account-onboarding-workflow-automation.png)
 
-### 1. Fetch *Supported Features* for cloud type and account type
+## 1. Fetch *Supported Features* for cloud type and account type
 
 To get the list of supported features, call [Fetch Supported Features](/prisma-cloud/api/cspm/fetch-supported-features/) ![alt text](/icons/api-icon-pan-dev.svg) and refer to the `supportedFeatures` field in the response body.<br/>
 
-> **NOTE:** The `supportedFeatures` contain "*Cloud Visibility Compliance and Governance*" feature which is enabled by default. Hence, do not include this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account,Generate and Download the AWS CFT Template, etc).
+> **NOTE:** The `supportedFeatures` contain "*Cloud Visibility Compliance and Governance*" which is enabled by default. Hence, do not include this string as a feature in the request body param in any cloud account API(Like in Add AWS Cloud Account, Update AWS Cloud Account,Generate and Download the AWS CFT Template, etc).
 
 *Sample Request* to get features for accountType: organization: 
 
@@ -64,13 +67,16 @@ curl --request POST 'https://api.prismacloud.io/cas/v1/features/cloud/aws' \
 }
 ```
 
-### 2. Generate AWS *CFT* and create *IAM Role*
-Generate *CFT* and *External ID* using Prisma Cloud *CFT Generation API* and create *IAM Role* using the generated CFT.
+## 2. Generate AWS *CFT* and create *IAM Role*
+There are two options here.
 
-**2.1**. To generate the AWS CFT and External ID, call [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg). The Generated link contains CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.<br /> 
-The response contains `createStackLinkWithS3PresignedUrl` key whose value can be used to create IAM role via AWS CloudFormation stack.<br /> 
+### First option: via generating CFT s3 URL
 
-For example, to get CFT Quick create Stack link for accountType:organization, and required features selected from the supported features API:
+Call the [Generate the AWS CFT Template Link](/prisma-cloud/api/cspm/generate-cft-template-link-aws/) ![alt text](/icons/api-icon-pan-dev.svg) to generate CFT on s3 storage. The CFT will include Prisma Cloud generated `externalId` and the permissions based on selected features.
+
+Use the value of `createStackLinkWithS3PresignedUrl` property in the response to create IAM role via AWS CloudFormation stack.
+
+For example, to get CFT Quick create Stack link for `"accountType": "organization"`, and required `features` selected from the supported features API:
 
 *Sample Request*
 ```bash
@@ -95,33 +101,41 @@ curl --request POST 'https://api.prismacloud.io/cas/v1/aws_template/presigned_ur
 {
     "createStackLinkWithS3PresignedUrl":
     "https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=PrismaCloudApp&templateURL=https%3A%2F%2Fonboarding-templates-app-s3.s3.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe",
-      "externalId": "302bf9ab-b110-4588-8c8f-3bea9051a4d3",
-      "eventBridgeRuleNamePrefix":
-    "prisma-cloud-eb-o-123456789012345678-*"
+      "externalId": "302bf9ab-b110-4588-8c8f-3bea9051a4d3"
 }
 ```
 
-Extract the S3 Presigned CFT URL from the `createStackLinkWithS3PresignedUrl` key by splitting at *templateURL=* and decoding the last index value of the split (right side of the split). You can use the extracted decoded S3 CFT link to create or update the IAM role CloudFormation stack.
+#### Extract the S3 Presigned CFT URL
+Extract the value of `templateURL` query string parameter from the `createStackLinkWithS3PresignedUrl` field of the response body.
 
-The extraction steps are shown below:<br /> 
-**2.1.a**.  Split `createStackLinkWithS3PresignedUrl` at *templateURL=* and get the last index value of the split (i.e right side of the split) to get urlencoded link.<br/><br/>
-    *Sample encoded S3 CFT URL*<br /> 
+In our case the **encoded** *S3 CFT URL* looks like this:
 
 ```
 https%3A%2F%2Fonboarding-templates-app-s3.s3.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
 ```
 
-**2.1.b**. *urldecode* the above link to get S3 link for AWS CFT <br/><br/>
-
-*Sample URL decoded S3 CFT Link*:
+After **url decoding** it, we get:
 
 ```     
 https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/123456789012/prisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%2BHLNaBC04UuD%2BFoaADqcqmgIIkv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwxODg2MTk5NDI3OTIiDG%2FM2%2FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%2B4bJnpD4kgyK2anzh9TRaJILcTF384mg%2FkO71PYQYrOHzw3%2FyqRUGLmJ715%2FU9Lz%2BPynFx%2B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%2Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%2BWbHO1%2FfIazMS7NPtqAwr%2Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%2Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%2Bo6qgCoH%2FxrbHAsY4LEmFNgxm2I%2FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%2BV1&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230301T163039Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3597&X-Amz-Credential=ASIASX2U75OEE4QNMK7F%2F20230301%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe
 ```
 
-  **2.1.c**. Use the above extracted decoded s3 link to create or update the *IAM role* using AWS *CloudFormation Stack*. Boto3, Terraform, or any other programming tools can be used to create Cloudformation Stack.<br/><br/>
-  `OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
-  Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
+<details>
+  <summary>Sample Python code snippet to extract the S3 Presigned CFT URL</summary>
+
+  ```python
+  import urllib.parse
+
+  # createStackLinkWithS3PresignedUrl from the API response.
+  createStackLinkWithS3PresignedUrl = "https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=PrismaCloudApp&templateURL=https%3A%2F%2Fonboarding-templates-app-s3.s3.amazonaws.com%2F806775452214917120%2F375187248419%2Fprisma-cloud-aws-iam-role-1268a9df-5f25-4585-be8c-3ebcc03b1d1d.template%3FX-Amz-Security-Token%3DIQoJb3JpZ2luX2VjEOj%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMiJHMEUCIQC94GEu53jRfuZbrpIaWHTCofG27p2CGIE1ob0I0Us36AIgR0HNScAWkWTEQcChWWwEOO7%252BHLNaBC04UuD%252BFoaADqcqmgIIkv%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FARAFGgwxODg2MTk5NDI3OTIiDG%252FM2%252FpFS97HXwnx0yruAR1VhsSiWGMF8AhNHRUHjcVfpdwa%252B4bJnpD4kgyK2anzh9TRaJILcTF384mg%252FkO71PYQYrOHzw3%252FyqRUGLmJ715%252FU9Lz%252BPynFx%252B6lx23M1CIvroaIBDqr9BFlcefepluy6xiso7oDMI46n8LCUBXUq5NGAcY4heDAVYXvwD5KSMiBytK%252Bct8r4G7R2bxrBm30GAkMhvPjEyhstrSFxheQqe3ZS429LYqpWgOoHiOFonn28R4NkJLEg027gPxpTKsqqiGysTymaDs4hHe7tRAG55L2YPsShoMe2SaWfTehivX%252BWbHO1%252FfIazMS7NPtqAwr%252Fv9nwY6nQEWKSoO7JUCkXAKDTIYrKV%252Bl5WG9YP2HLaL62OvMhicZE5lWLDeYL4%252Bo6qgCoH%252FxrbHAsY4LEmFNgxm2I%252FlK7KF6ugEsPHf33XnYgcN0a4VG7POoPyfk0RbNy6j002Guikcg3wieuROfF4NpnwrjvYfhbB2VM95Vpd1lhPRiqIxMJXIPNHwMQUu9t4ro6W0cRQUQVf5xpUBV1JC8%252BV1%26X-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20230301T163039Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Expires%3D3597%26X-Amz-Credential%3DASIASX2U75OEE4QNMK7F%252F20230301%252Fus-east-2%252Fs3%252Faws4_request%26X-Amz-Signature%3D75b43898503df3d757e8512d90a58c6f1c6de00b209403aa21cd28704fed7dfe"
+  
+  s3_presigned_cft_link = urllib.parse.unquote(createStackLinkWithS3PresignedUrl.split("templateURL=")[-1])
+  ```
+</details>
+
+Use the **extracted s3 link** to create or update the *IAM role* using AWS *CloudFormation Stack*.<br/><br/>
+`OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
+Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
 
 :::info
 
@@ -167,9 +181,11 @@ https://onboarding-templates-app-s3.s3.amazonaws.com/123456789012345678/12345678
 
 > **NOTE:** The link is valid for one hour. Regenerate the link if it expires.
 
+### Second option: via obtaining CFT in the response
 
-**2.2**. Alternatively, use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in response.<br/> 
-For example, To get CFT for the required features selected from the previous supported features API and for accountType="organization"
+Use [Generate and Download the AWS CFT Template](/prisma-cloud/api/cspm/generate-cft-template-aws) ![alt text](/icons/api-icon-pan-dev.svg) to get the CFT template in the response instead of an s3 link.
+
+For example, To get CFT for the required features selected from the previous supported features API and for `accountType: "organization"`
 
 <details>
   <summary>Sample Request</summary>
@@ -192,7 +208,7 @@ For example, To get CFT for the required features selected from the previous sup
   ```
 </details>
 
-The **response** contains CFT content. Save it with `*.template` extension and use it to create AWS cloudformation stack programmatically (e.g. using Boto3, Terraform)
+The **response** will contain the actual CFT template. Save it with `*.template` extension and use it to create AWS cloudformation stack programmatically (e.g. using Boto3, Terraform)
 
 <details>
   <summary>Sample Response</summary>
@@ -1587,11 +1603,19 @@ The **response** contains CFT content. Save it with `*.template` extension and u
   ```
 </details>
 
+`OrganizationalUnitIds` param should be provided for Organization stack creation in the CFT for creating member roles on the specified OrganizationalUnitIds. Provide the organizational root OU ID (prefix r-) to run it for all the accounts under the Organization, else provide a comma-separated list of OU IDs (prefix ou-). Refer [AWS Organization details Guide](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_details.html#orgs_view_root) for more info.<br/>
+Example: OrganizationalUnitIds = "r-abcd" // r-abcd is the AWS organizational root OU ID for the ORG account which indicates that member roles should get created on all the accounts that the organization has access to.
 
-### 3. Onboard your AWS Organization on to Prisma Cloud
+:::info
+
+- The IAM roles created in member accounts will be of the format: `<organization-iam-role-name>-member`
+
+:::
+
+## 3. Onboard your AWS Organization to Prisma Cloud
 Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg) with the *IAM Role ARN* created in the previous step, required features state, and other payload.
 
-`features` param in request payload: The "*Cloud Visibility Compliance and Governance*" feature is enabled by default. Hence, do not include this in features. An empty features list can also be sent which indicates that the default capabilities under "*Cloud Visibility Compliance and Governance*" feature are enabled.
+> The "Cloud Visibility Compliance and Governance" value of the `features` property in the request body is enabled by default. Hence, do not include this in the features field. An empty features list indicates that the default capabilities under "Cloud Visibility Compliance and Governance" are **enabled**.
 
 <details>
   <summary>A sample request to onboard an AWS Organization</summary>
@@ -1641,9 +1665,7 @@ Invoke the [Add AWS Cloud Account](/prisma-cloud/api/cspm/add-aws-cloud-account/
   ```
 </details>
 
-<details>
-  <summary>Sample Response</summary>
-
+Sample Response
+```
   200 (Success)
-
-</details>
+```
