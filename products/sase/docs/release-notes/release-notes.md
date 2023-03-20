@@ -22,7 +22,7 @@ occurred in between API product releases.
 
 ## November 2022
 
-Updated the Prisma Access Configuration API to include [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/)
+Updated the Prisma Access Configuration API to include [Mobile Agent](/access/api/prisma-access-config/mobile-agent/)
 (Global Protect) endpoints.
 
 ## Late August 2022
@@ -49,14 +49,14 @@ Updates for the Aggregate Monitoring APIs:
 - Update to the Aggregate Monitoring APIs, including:
 
   - Added the required `X-PANW-Region` header parameter.
-  - Added new [DataResources](/category/sase/api/mt-monitor/data-resources/) endpoints:
+  - Added new [DataResources](/sase/api/mt-monitor/data-resource-api/) endpoints:
     - [mt/monitor/v1/agg/alerts](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-alerts)
     - [mt/monitor/v1/agg/applicationUsage](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-applicationusage)
     - [mt/monitor/v1/agg/applications](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-applications)
     - [mt/monitor/v1/agg/resource](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-resource)
     - [mt/monitor/v1/agg/threats](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-threats)
     - [mt/monitor/v1/agg/urlLogs](/sase/api/mt-monitor/post-mt-monitor-v-1-agg-urllogs)
-  - Moved `mt/monitor/v1/agg/custom/upgrades/list` to [InsightsResources](/category/sase/api/mt-monitor/insights-resources/).
+  - Moved `mt/monitor/v1/agg/custom/upgrades/list` to [InsightsResources](/sase/api/mt-monitor/insights-resource-api/).
   - Renamed query filters to user-friendly names.
   - Removed the `license_type` query parameter.
 
@@ -69,8 +69,7 @@ Updates for the Aggregate Monitoring APIs:
 - Added `shared-infrastructure-settings`, `internal-dns-servers`, and `service-connections`
   endpoints to the [Prisma Access Configuration APIs](/access/api/prisma-access-config/). These are
   grouped under `Service Setup` which is renamed from `Remote Networks`.
-- Removed the API Server Status APIs from [Prisma Access Insights](/category/access/api/insights/1.0/v-1-0/data-resource/) as they are not intended for
-  customer consumption.
+- Removed the API Server Status APIs from [Prisma Access Insights](/category/access/api/insights/v-2-0/data-resource/) as they are not intended for customer consumption.
 
 ## April 2022
 
