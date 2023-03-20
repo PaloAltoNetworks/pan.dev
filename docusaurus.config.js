@@ -70,6 +70,7 @@ const config = {
     docs: {
       sidebar: {
         hideable: true,
+        autoCollapseCategories: true,
       },
     },
     algolia: {
@@ -97,6 +98,93 @@ const config = {
           className: "margin-left--lg",
           megaNav: true,
           items: [
+            {
+              label: "Cloud Native Security",
+              to: "#",
+              colorclass: "cloud-native-security",
+              description:
+                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
+              products: [
+                {
+                  label: "Prisma Cloud Enterprise Edition",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "/prisma-cloud/api",
+                      label: "Prisma Cloud",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      to: "/prisma-cloud/docs",
+                      label: "API Workflows",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Cloud Compute Edition",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "/compute/api/",
+                      label: "Compute Edition",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Security Operations",
+              to: "#",
+              colorclass: "security-operations",
+              description:
+                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
+              products: [
+                {
+                  to: "#",
+                  label: "Cortex XSOAR",
+                  logoClass: "xsoar",
+                  apiDocs: [
+                    {
+                      label: "XSOAR (Demisto) API",
+                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Cortex XSOAR Developer Hub",
+                      to: "https://xsoar.pan.dev/docs/welcome",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Cortex",
+                  to: "#",
+                  logoClass: "cortex",
+                  apiDocs: [
+                    {
+                      label: "Expander API",
+                      to: "https://cortex.pan.dev/api/expander/annotations-api",
+                      icon: "api-doc",
+                    },
+                  ],
+                  docs: [
+                    {
+                      label: "Xpanse Python SDK",
+                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
             {
               label: "Network Security",
               to: "#",
@@ -216,6 +304,21 @@ const config = {
                     {
                       to: "/dns-security/api",
                       label: "DNS Security API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/dlp-api-resources",
+                      label: "Data Loss Prevention API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-api",
+                      label: "SaaS Security API",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api",
+                      label: "WildFire API",
                       icon: "api-doc",
                     },
                   ],
@@ -390,100 +493,6 @@ const config = {
                 },
               ],
             },
-            {
-              label: "Cloud Native Security",
-              to: "#",
-              colorclass: "cloud-native-security",
-              description:
-                "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
-              products: [
-                {
-                  to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                  label: "Cloud Security Posture Management",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "https://prisma.pan.dev/api/cloud/cspm/",
-                      label: "CSPM API",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      to: "https://prisma.pan.dev/docs/cloud/cspm/cspm-gs",
-                      label: "Getting Started",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Cloud Workload Protection Platform",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "https://prisma.pan.dev/api/cloud/cwpp",
-                      label: "CWPP API",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      to: "https://prisma.pan.dev/docs/cloud/cwpp/cwpp-gs",
-                      label: "Getting Started",
-                      icon: "doc",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              label: "Security Operations",
-              to: "#",
-              colorclass: "security-operations",
-              description:
-                "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
-              products: [
-                {
-                  to: "#",
-                  label: "Cortex XSOAR",
-                  logoClass: "xsoar",
-                  apiDocs: [
-                    {
-                      label: "XSOAR (Demisto) API",
-                      to: "https://xsoar.pan.dev/docs/reference/api/demisto-class",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      label: "Cortex XSOAR Developer Hub",
-                      to: "https://xsoar.pan.dev/docs/welcome",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Cortex",
-                  to: "#",
-                  logoClass: "cortex",
-                  apiDocs: [
-                    {
-                      label: "Expander API",
-                      to: "https://cortex.pan.dev/api/expander/annotations-api",
-                      icon: "api-doc",
-                    },
-                  ],
-                  docs: [
-                    {
-                      label: "Xpanse Python SDK",
-                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
-                      icon: "doc",
-                    },
-                  ],
-                },
-              ],
-            },
           ],
         },
         {
@@ -554,6 +563,7 @@ const config = {
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: {
               groupPathsBy: "tag",
             },
@@ -634,12 +644,51 @@ const config = {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
             outputDir: "products/dns-security/api",
             proxy: "https://cors.pan.dev",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          cwpp: {
+            specPath: "openapi-specs/cwpp",
+            outputDir: "products/prisma-cloud/api/cwpp",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          cspm: {
+            specPath: "openapi-specs/cspm",
+            outputDir: "products/prisma-cloud/api/cspm",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
+          code: {
+            specPath: "openapi-specs/code",
+            outputDir: "products/prisma-cloud/api/code",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
+          compute: {
+            specPath: "openapi-specs/compute",
+            outputDir: "products/compute/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            version: "22.12",
+            label: "v22.12",
+            baseUrl: "/compute/api/",
+            versions: {
+              22.01: {
+                specPath: "openapi-specs/compute/22-01",
+                outputDir: "products/compute/api/22-01",
+                label: "v22.01",
+                baseUrl: "/compute/api/22-01/",
+              },
+              22.06: {
+                specPath: "openapi-specs/compute/22-06",
+                outputDir: "products/compute/api/22-06",
+                label: "v22.06",
+                baseUrl: "/compute/api/22-06/",
+              },
+            },
           },
         },
       },
@@ -681,6 +730,7 @@ const config = {
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
+    errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };
 

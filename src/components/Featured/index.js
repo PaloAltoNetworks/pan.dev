@@ -79,7 +79,10 @@ function FeaturedCardIndex() {
   const featuredCards = items[0].items;
 
   return (
-    <div className="featured-container container">
+    <div
+      className="featured-container container"
+      aria-label="Explore our Developer Docs"
+    >
       {featuredCards?.length && (
         <div className="featured-cards-container">
           {featuredCards.map((props, idx) => (

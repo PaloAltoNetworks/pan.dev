@@ -65,17 +65,25 @@ module.exports = {
       collapsed: false,
       label: "AWS",
       items: [
-        // {
-        //   type: "category",
-        //   collapsed: true,
-        //   label: "Getting Started Tutorials",
-        //   items: ["terraform/cloudngfw/aws/tutorials/tutorial"],
-        // },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Getting Started Tutorial",
+          items: [
+            "terraform/docs/cloudngfw/aws/tutorials/intro",
+            "terraform/docs/cloudngfw/aws/tutorials/prepare-aws",
+            "terraform/docs/cloudngfw/aws/tutorials/prepare-cloudngfw",
+            "terraform/docs/cloudngfw/aws/tutorials/create-rulestack",
+            "terraform/docs/cloudngfw/aws/tutorials/commit-rulestack",
+            "terraform/docs/cloudngfw/aws/tutorials/create-cloudngfws",
+            "terraform/docs/cloudngfw/aws/tutorials/review",
+          ],
+        },
         // {
         //   type: "category",
         //   collapsed: true,
         //   label: "How-To Guides",
-        //   items: ["terraform/cloudngfw/aws/guides/guide"],
+        //   items: ["terraform/docs/cloudngfw/aws/guides/guide"],
         // },
         // {
         //   type: "category",

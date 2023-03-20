@@ -5,9 +5,25 @@ on:
     branches: [ master ]
 
 jobs:
+  precheck:
+    name: Precheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    outputs:
+      is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
+    steps:
+      - name: Check if actor is org member
+        id: is-org-member
+        run:  echo "is-org-member-result=$(gh api -X GET orgs/PaloAltoNetworks/memberships/${{ github.actor }} | jq -r .message)" >> "$GITHUB_OUTPUT"
+    env:
+      GH_TOKEN: ${{ secrets.PAT }}
+
   analyze:
-    if: github.repository_owner	== 'PaloAltoNetworks'
+    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
     name: Analyze
+    needs: precheck
     runs-on: pan-dev-runner
     permissions:
       contents: read
@@ -20,54 +36,80 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
+
+  analyze_unsafe:
+    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
+    name: Analyze Unsafe
+    needs: precheck
+    runs-on: pan-dev-runner
+    environment: default
+    permissions:
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
 
   build:
     name: Build
-    needs: analyze
+    needs: [analyze, analyze_unsafe]
+    if: |
+      !failure() && !cancelled() && 
+      (success('analyze') || success('analyze_unsafe'))
     runs-on: pan-dev-runner
     permissions:
       contents: read
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: '18'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --prefer-offline
 
       - name: Include netsec
-        if: contains( github.event.pull_request.labels.*.name, 'netsec')
+        if: contains(github.event.pull_request.labels.*.name, 'netsec')
         run: |
           echo "Including 'netsec' in build..."
           echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible" >> $GITHUB_ENV
 
       - name: Include sase
-        if: contains( github.event.pull_request.labels.*.name, 'sase')
+        if: contains(github.event.pull_request.labels.*.name, 'sase')
         run: |
           echo "Including 'sase' in build..."
           if [ $PRODUCTS_INCLUDE != '' ]
@@ -78,7 +120,7 @@ jobs:
           fi
 
       - name: Include contributing
-        if: contains( github.event.pull_request.labels.*.name, 'contributing')
+        if: contains(github.event.pull_request.labels.*.name, 'contributing')
         run: |
           echo "Including 'contributing' in build..."
           if [ $PRODUCTS_INCLUDE != '' ]
@@ -89,7 +131,7 @@ jobs:
           fi
 
       - name: Build site
-        run: REACT_APP_FIREBASE_APIKEY=${{ secrets.FIREBASE_APIKEY }} REACT_APP_RECAPTCHA_APIKEY=${{ secrets.RECAPTCHA_APIKEY }} yarn build-github && zip -r build.zip build
+        run: yarn build-github && zip -r build.zip build
 
       - uses: actions/upload-artifact@v3
         with:
@@ -99,11 +141,18 @@ jobs:
   deploy:
     name: Deploy
     needs: build
+    if: ${{ !failure() && !cancelled() }}
     runs-on: pan-dev-runner
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
 
       - uses: actions/download-artifact@v3
         with:
@@ -112,12 +161,9 @@ jobs:
       - name: Unzip build artifact
         run: unzip build.zip
 
-      - name: Install firebase-tools
-        run: yarn add firebase-tools@11.13.0
-
       - name: Deploy to Firebase
         id: deploy_preview
-        uses: FirebaseExtended/action-hosting-deploy@276388dd6c2cde23455b30293105cc866c22282d # v0.6-alpha
+        uses: FirebaseExtended/action-hosting-deploy@4d0d0023f1d92b9b7d16dda64b3d7abd2c98974b # v0.7.0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'
