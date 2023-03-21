@@ -599,6 +599,11 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ztna: {
+            specPath: "openapi-specs/access/ztna",
+            outputDir: "products/access/api/ztna",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
           sub: {
             specPath: "openapi-specs/sase/subscription",
             outputDir: "products/sase/api/subscription",
