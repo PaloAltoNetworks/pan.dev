@@ -4,6 +4,8 @@ title: Partial Builds
 hide_title: true
 sidebar_label: Partial Builds
 description: How to speed up development and production builds.
+authors:
+  - sserrata
 ---
 
 ## Products Include

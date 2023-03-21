@@ -16,6 +16,11 @@ export default function AuthorsSide({ className }) {
   const { metadata } = useDoc();
   const authors = metadata.frontMatter.authors ?? [];
   const authorsCount = authors.length;
+
+  const handleOnError = (e) => {
+    e.target.src = "/img/avatars/dev.png"; // Fallback img in case of 404.
+  };
+
   if (authorsCount === 0) {
     return null;
   }
@@ -60,6 +65,7 @@ export default function AuthorsSide({ className }) {
                   className="avatar__photo"
                   src={author.image_url}
                   alt={author.name}
+                  onError={handleOnError}
                 />
               </MaybeLink>
             )}

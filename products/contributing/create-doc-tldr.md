@@ -3,6 +3,10 @@ id: create-doc-tldr
 title: Create a Doc, But Faster
 sidebar_label: Create a Doc Fast Mode
 sidebar_position: 7
+authors:
+  - csestito
+  - sserrata
+  - blindaa121
 ---
 
 If at any point you need a deeper explanation, see the docs above in the sidebar
