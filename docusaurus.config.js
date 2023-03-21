@@ -393,6 +393,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/ztna/ztna-connector-apis",
+                      label: "ZTNA Connector",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc",
