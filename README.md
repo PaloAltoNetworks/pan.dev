@@ -17,11 +17,11 @@ PAN.dev is the home for developer-focused documentation at Palo Alto Networks.
 
 PAN.dev was created to deliver a better developer experience to our developer community by aggregating developer-focused content, simplifying the doc authoring experience, and providing content in a more consumable medium.
 
-**Who can contribute?**
+**Who can contribute to PAN.dev?**
 
 Anyone! We made pan.dev open source so all members of the community can author, edit, and open issues on our docs.
 
-**How can I contribute?**
+**How can I contribute to PAN.dev?**
 
 We have a [contributing guide](https://pan.dev/contributing). Docs are authored in markdown an easy-to-write plain text markup language (the same format used for readme's and slack!).
 

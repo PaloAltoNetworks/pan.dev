@@ -4,6 +4,7 @@ title: pan-os-python
 sidebar_label: pan-os-python (Python)
 hide_title: true
 description: pan-os-python (Python)
+authors: [sserrata]
 keywords:
   - pan-os
   - panos

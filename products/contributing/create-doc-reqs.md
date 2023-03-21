@@ -3,6 +3,10 @@ id: create-doc-reqs
 title: Create a Doc Starter
 sidebar_position: 2
 sidebar_label: Requirements
+authors:
+  - csestito
+  - sserrata
+  - blindaa121
 ---
 
 :::tip

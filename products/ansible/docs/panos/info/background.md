@@ -12,6 +12,7 @@ keywords:
   - firewall
   - configuration
   - ansible
+authors: [jholland]
 ---
 
 # Ansible and PAN-OS

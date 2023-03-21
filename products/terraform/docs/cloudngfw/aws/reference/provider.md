@@ -11,6 +11,7 @@ keywords:
   - configuration
   - terraform
   - aws
+authors: [jholland]
 ---
 
 # Provider Reference

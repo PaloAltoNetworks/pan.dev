@@ -12,6 +12,7 @@ keywords:
   - firewall
   - configuration
   - terraform
+authors: [jholland]
 ---
 
 # Provider Reference

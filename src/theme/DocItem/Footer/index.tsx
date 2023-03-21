@@ -94,6 +94,7 @@ export default function DocItemFooter(): JSX.Element | null {
     <footer
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
+      <div className="row "> <p><b>Want to contribute to pan.dev?</b> Check out our <a href="/contributing">contributing guide.</a></p></div>
       {canDisplayTagsRow && <TagsRow tags={tags} />}
       {canDisplayEditMetaRow && <FloatingIsland />}
       {canDisplayEditMetaRow && (
