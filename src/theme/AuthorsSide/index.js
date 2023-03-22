@@ -4,6 +4,7 @@ import { useDoc } from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
 // Component responsible for the authors layout
 import globalAuthors from "@site/authors.json";
+import dev from "@site/static/img/avatars/dev.png"; //Ensure we have the fallback image
 
 function MaybeLink(props) {
   if (props.href) {
@@ -18,7 +19,7 @@ export default function AuthorsSide({ className }) {
   const authorsCount = authors.length;
 
   const handleOnError = (e) => {
-    e.target.src = "/img/avatars/dev.png"; // Fallback img in case of 404.
+    e.target.src = dev; // Fallback img in case of 404.
   };
 
   if (authorsCount === 0) {
