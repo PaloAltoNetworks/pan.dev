@@ -12,7 +12,7 @@ keywords:
   - firewall
   - configuration
   - terraform
-authors: [jholland]
+authors: [jamesholland-uk]
 ---
 
 # How Terraform connects to PAN-OS

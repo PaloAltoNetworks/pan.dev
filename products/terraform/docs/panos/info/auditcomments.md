@@ -12,7 +12,7 @@ keywords:
   - firewall
   - configuration
   - terraform
-authors: [jholland]
+authors: [jamesholland-uk]
 ---
 
 # Audit Comment Logic for All Policy Rules

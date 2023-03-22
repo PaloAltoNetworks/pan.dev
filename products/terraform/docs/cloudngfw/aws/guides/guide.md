@@ -11,5 +11,5 @@ keywords:
   - configuration
   - terraform
   - aws
-authors: [jholland]
+authors: [jamesholland-uk]
 ---

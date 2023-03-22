@@ -12,7 +12,7 @@ keywords:
   - firewall
   - configuration
   - terraform
-authors: [jholland]
+authors: [jamesholland-uk]
 ---
 
 # Using create_before_destroy

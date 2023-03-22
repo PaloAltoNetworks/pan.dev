@@ -12,7 +12,7 @@ keywords:
   - firewall
   - configuration
   - ansible
-authors: [jholland]
+authors: [jamesholland-uk]
 ---
 
 # Information Gathering with Gathered Filter
