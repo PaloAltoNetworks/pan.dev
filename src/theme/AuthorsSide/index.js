@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { useDoc } from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
 // Component responsible for the authors layout
-import globalAuthors from "../../../authors.json";
+import globalAuthors from "@site/authors.json";
 
 function MaybeLink(props) {
   if (props.href) {
@@ -32,8 +32,8 @@ export default function AuthorsSide({ className }) {
         image_url:
           globalAuthors[author].image_url ??
           "https://github.com/" + author + ".png",
-        name: globalAuthors[author].name ?? "",
-        title: globalAuthors[author].title ?? "",
+        name: globalAuthors[author].name ?? author,
+        title: globalAuthors[author].title ?? null,
       };
       allAuthors.push(docAuthor);
     } else {
@@ -59,35 +59,31 @@ export default function AuthorsSide({ className }) {
       {allAuthors.map((author, idx) => (
         <div className="row" key={idx}>
           <div className={clsx("avatar margin-bottom--sm", className)}>
-            {author.image_url && (
-              <MaybeLink href={author.url} className="avatar__photo-link">
-                <img
-                  className="avatar__photo"
-                  src={author.image_url}
-                  alt={author.name}
-                  onError={handleOnError}
-                />
-              </MaybeLink>
-            )}
-            {author.name && (
-              <div
-                className="avatar__intro"
-                itemProp="author"
-                itemScope
-                itemType="https://schema.org/Person"
-              >
-                <div className="avatar__name">
-                  <MaybeLink href={author.url} itemProp="url">
-                    <span itemProp="name">{author.name}</span>
-                  </MaybeLink>
-                </div>
-                {author.title && (
-                  <small className="avatar__subtitle" itemProp="description">
-                    {author.title}
-                  </small>
-                )}
+            <MaybeLink href={author.url} className="avatar__photo-link">
+              <img
+                className="avatar__photo"
+                src={author.image_url}
+                alt={author.name}
+                onError={handleOnError}
+              />
+            </MaybeLink>
+            <div
+              className="avatar__intro"
+              itemProp="author"
+              itemScope
+              itemType="https://schema.org/Person"
+            >
+              <div className="avatar__name">
+                <MaybeLink href={author.url} itemProp="url">
+                  <span itemProp="name">{author.name}</span>
+                </MaybeLink>
               </div>
-            )}
+              {author.title && (
+                <small className="avatar__subtitle" itemProp="description">
+                  {author.title}
+                </small>
+              )}
+            </div>
           </div>
         </div>
       ))}
