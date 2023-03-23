@@ -30,8 +30,8 @@ export default function AuthorsSide({ className }) {
     if (globalAuthors[author]) {
       const docAuthor = {
         url: globalAuthors[author].url ?? "https://github.com/" + author,
-        image_url:
-          globalAuthors[author].image_url ??
+        image_path:
+          globalAuthors[author].image_path ??
           "https://github.com/" + author + ".png",
         name: globalAuthors[author].name ?? author,
         title: globalAuthors[author].title ?? null,
@@ -40,7 +40,7 @@ export default function AuthorsSide({ className }) {
     } else {
       const new_author = {
         url: "https://github.com/" + author,
-        image_url: "https://github.com/" + author + ".png",
+        image_path: "https://github.com/" + author + ".png",
         name: author,
       };
       allAuthors.push(new_author);
@@ -63,7 +63,7 @@ export default function AuthorsSide({ className }) {
             <MaybeLink href={author.url} className="avatar__photo-link">
               <img
                 className="avatar__photo"
-                src={author.image_url}
+                src={author.image_path}
                 alt={author.name}
                 onError={handleOnError}
               />
