@@ -87,6 +87,7 @@ export default function DocItemFooter(): JSX.Element | null {
   );
 
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
+  const canDisplayAuthorsSide = toc?.length < 1 && authors?.length > 0
 
   if (!canDisplayFooter) {
     return null;
@@ -99,8 +100,12 @@ export default function DocItemFooter(): JSX.Element | null {
     <footer
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
-      {toc.length < 1 && authors.length > 0 && <AuthorsSide className="col--6"/>}
-      <div className="row "> <p><b>Want to contribute to pan.dev?</b> Check out our <a href="/contributing">contributing guide.</a></p></div>
+      {canDisplayAuthorsSide && <AuthorsSide className="col--6"/>}
+      <div className="row">
+        <p>
+          <b>Want to contribute to pan.dev?</b> Check out our <a href="/contributing">contributing guide.</a>
+        </p>
+      </div>
       {canDisplayTagsRow && <TagsRow tags={tags} />}
       {canDisplayEditMetaRow && <FloatingIsland />}
       {canDisplayEditMetaRow && (
