@@ -14,6 +14,8 @@ import styles from "./styles.module.css";
 import FloatingIsland from "../../../components/FloatingIsland";
 import ApplauseButton from "../../../components/Applause";
 import { ReportAnIssue } from "../../../components/Issue";
+import AuthorsSide from "@theme/AuthorsSide";
+import TOCCollapsibleWrapper from "@theme/TOCCollapsible"
 
 function TagsRow(props: TagsListInlineProps) {
   return (
@@ -64,7 +66,7 @@ function EditMetaRow({
 }
 
 export default function DocItemFooter(): JSX.Element | null {
-  const { metadata } = useDoc();
+  const { metadata, toc } = useDoc();
   const {
     editUrl,
     lastUpdatedAt,
@@ -73,7 +75,7 @@ export default function DocItemFooter(): JSX.Element | null {
     tags,
     frontMatter,
   } = metadata;
-  const { hide_applause, hide_issue } = frontMatter;
+  const { hide_applause, hide_issue, authors } = frontMatter;
 
   const canDisplayTagsRow = tags.length > 0;
   const canDisplayEditMetaRow = !!(
@@ -90,10 +92,14 @@ export default function DocItemFooter(): JSX.Element | null {
     return null;
   }
 
+  console.log(toc);
+  console.log(authors);
+
   return (
     <footer
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
+      {toc.length < 1 && authors.length > 0 && <AuthorsSide className="col--6"/>}
       <div className="row "> <p><b>Want to contribute to pan.dev?</b> Check out our <a href="/contributing">contributing guide.</a></p></div>
       {canDisplayTagsRow && <TagsRow tags={tags} />}
       {canDisplayEditMetaRow && <FloatingIsland />}

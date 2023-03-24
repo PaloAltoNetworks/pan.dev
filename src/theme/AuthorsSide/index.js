@@ -57,39 +57,41 @@ export default function AuthorsSide({ className }) {
         {multipleAuthors && <h4>Authors </h4>}
         {!multipleAuthors && <h4>Author </h4>}
       </div>
-      {allAuthors.map((author, idx) => (
-        <div className="row" key={idx}>
-          <div className="authors-avatar__container">
-            <div className={clsx("avatar margin-bottom--sm", className)}>
-              <MaybeLink href={author.url} className="avatar__photo-link">
-                <img
-                  className="avatar__photo"
-                  src={author.image_path}
-                  alt={author.name}
-                  onError={handleOnError}
-                />
-              </MaybeLink>
-              <div
-                className="avatar__intro"
-                itemProp="author"
-                itemScope
-                itemType="https://schema.org/Person"
-              >
-                <div className="avatar__name">
-                  <MaybeLink href={author.url} itemProp="url">
-                    <span itemProp="name">{author.name}</span>
-                  </MaybeLink>
+      <div className="row">
+        {allAuthors.map((author, idx) => (
+          <div className={clsx("col", className)} key={idx}>
+            <div className="authors-avatar__container">
+              <div className={clsx("avatar margin-bottom--sm", className)}>
+                <MaybeLink href={author.url} className="avatar__photo-link">
+                  <img
+                    className="avatar__photo"
+                    src={author.image_path}
+                    alt={author.name}
+                    onError={handleOnError}
+                  />
+                </MaybeLink>
+                <div
+                  className="avatar__intro"
+                  itemProp="author"
+                  itemScope
+                  itemType="https://schema.org/Person"
+                >
+                  <div className="avatar__name">
+                    <MaybeLink href={author.url} itemProp="url">
+                      <span itemProp="name">{author.name}</span>
+                    </MaybeLink>
+                  </div>
+                  {author.title && (
+                    <small className="avatar__subtitle" itemProp="description">
+                      {author.title}
+                    </small>
+                  )}
                 </div>
-                {author.title && (
-                  <small className="avatar__subtitle" itemProp="description">
-                    {author.title}
-                  </small>
-                )}
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
