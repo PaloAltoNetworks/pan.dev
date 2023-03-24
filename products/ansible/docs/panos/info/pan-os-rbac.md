@@ -12,6 +12,7 @@ keywords:
   - firewall
   - configuration
   - ansible
+authors: [ jamesholland-uk ]
 ---
 
 # Ansible and PAN-OS Role-Based Access Control

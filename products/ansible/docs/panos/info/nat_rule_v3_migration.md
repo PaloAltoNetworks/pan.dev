@@ -12,6 +12,7 @@ keywords:
   - firewall
   - configuration
   - ansible
+authors: [ jamesholland-uk ]
 ---
 
 # Migrating to v3.0.x panos_nat_rule
