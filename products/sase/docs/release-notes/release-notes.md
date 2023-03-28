@@ -22,7 +22,7 @@ occurred in between API product releases.
 
 ## March 2023
 
-Updated the Prisma Access Configuration API to include new endpoints for
+Updated the Prisma Access Configuration APIs to include new endpoints for
 [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/),
 [Local User Groups](/category/access/api/prisma-access-config/local-user-groups/),
 [Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/),
@@ -33,7 +33,7 @@ support a cloud (CIE) authentication profile.
 
 A [new API](/access/api/prisma-access-config/post-sse-config-v-1-enable/)
 is available in [InfrastructureSettings](/category/access/api/prisma-access-config/infrastructure-settings/) 
-that performs the same set up functions as does the user interface when a new Prisma Access tenant is on-boarded.
+that creates the same default values as does the user interface when a new Prisma Access tenant is on-boarded.
 
 The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
 
