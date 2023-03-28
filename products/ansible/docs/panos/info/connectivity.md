@@ -12,7 +12,7 @@ keywords:
   - firewall
   - configuration
   - ansible
-authors: [jamesholland-uk, csestito, charlessestito]
+authors: [jamesholland-uk, csestito]
 ---
 
 # How Ansible connects to PAN-OS

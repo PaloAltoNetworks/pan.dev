@@ -100,7 +100,7 @@ export default function DocItemFooter(): JSX.Element | null {
     <footer
       className={clsx(ThemeClassNames.docs.docFooter, "docusaurus-mt-lg")}
     >
-      {canDisplayAuthorsSide && <AuthorsSide className="col--6"/>}
+      {canDisplayAuthorsSide && <AuthorsSide />}
       <div className="row">
         <p>
           <b>Want to contribute to pan.dev?</b> Check out our <a href="/contributing">contributing guide.</a>
