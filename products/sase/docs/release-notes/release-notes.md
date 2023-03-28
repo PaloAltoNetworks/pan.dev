@@ -28,11 +28,14 @@ Updated the Prisma Access Configuration API to include new endpoints for
 [Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/),
 and [BGP Routing](/category/access/api/prisma-access-config/bgp-routing/).
 
-Also created a [new API](/access/api/prisma-access-config/post-sse-config-v-1-enable/)
-that performs the same setup functions as does the user interface when a
-new Prisma Access tenant is on-boarded.
+[Authentication Profiles](/category/access/api/prisma-access-config/authentication-profiles/) now
+support a cloud (CIE) authentication profile.
 
-Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
+A [new API](/access/api/prisma-access-config/post-sse-config-v-1-enable/)
+is available in [InfrastructureSettings](/category/access/api/prisma-access-config/infrastructure-settings/) 
+that performs the same set up functions as does the user interface when a new Prisma Access tenant is on-boarded.
+
+The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
 
 ## November 2022
 
