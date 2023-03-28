@@ -229,14 +229,18 @@ components:
       required: false
       schema:
         type: number
-    uuid-required:
-      description: 'The resource''s unique identifier.
+    position:
+      description: 'The position of a security rule
 
         '
-      in: path
-      name: id
+      in: query
+      name: position
       required: true
       schema:
+        default: pre
+        enum:
+        - pre
+        - post
         type: string
   responses:
     access_errors:
@@ -333,8 +337,6 @@ components:
           schema:
             $ref: '#/components/schemas/generic_error'
       description: General Errors
-    http_created:
-      description: Created
     http_ok:
       description: Ok
     not_found:
@@ -347,6 +349,36 @@ components:
             $ref: '#/components/schemas/generic_error'
       description: Not Found
   schemas:
+    bgp-routing:
+      properties:
+        accept_route_over_SC:
+          type: boolean
+        add_host_route_to_ike_peer:
+          type: boolean
+        backbone_routing:
+          enum:
+          - no-asymmetric-routing
+          - asymmetric-routing-only
+          - asymmetric-routing-with-load-share
+          type: string
+        outbound_routes_for_services:
+          items:
+            type: string
+          type: array
+        routing_preference:
+          oneOf:
+          - properties:
+              default:
+                type: object
+            title: default
+          - properties:
+              hot_potato_routing:
+                type: object
+            title: hot_potato_routing
+          type: object
+        withdraw_static_route:
+          type: boolean
+      type: object
     error_detail_cause_info:
       properties:
         code:
@@ -370,93 +402,31 @@ components:
         _request_id:
           type: string
       type: object
-    objects-tags:
-      properties:
-        color:
-          enum:
-          - Red
-          - Green
-          - Blue
-          - Yellow
-          - Copper
-          - Orange
-          - Purple
-          - Gray
-          - Light Green
-          - Cyan
-          - Light Gray
-          - Blue Gray
-          - Lime
-          - Black
-          - Gold
-          - Brown
-          - Olive
-          - Maroon
-          - Red-Orange
-          - Yellow-Orange
-          - Forest Green
-          - Turquoise Blue
-          - Azure Blue
-          - Cerulean Blue
-          - Midnight Blue
-          - Medium Blue
-          - Cobalt Blue
-          - Violet Blue
-          - Blue Violet
-          - Medium Violet
-          - Medium Rose
-          - Lavender
-          - Orchid
-          - Thistle
-          - Peach
-          - Salmon
-          - Magenta
-          - Red Violet
-          - Mahogany
-          - Burnt Sienna
-          - Chestnut
-          type: string
-        comments:
-          maxLength: 1023
-          minLength: 0
-          type: string
-        id:
-          description: uuid of the resource
-          example: abcd-1234
-          readOnly: true
-          type: string
-        name:
-          maxLength: 127
-          type: string
-      required:
-      - name
-      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
       type: http
 info:
   contact: {}
-  description: 'Manages [tags](https://docs.paloaltonetworks.com/network-security/security-policy/objects/tags).
+  description: 'Manages [BGP Routing](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-panorama-admin/prisma-access-advanced-deployments/service-connection-advanced-deployments/route-preferences-for-service-connection-traffic).
 
     '
-  title: Tag Management
+  title: BGP Routing
   version: '1.0'
   x-logo:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
-  /sse/config/v1/tags:
+  /sse/config/v1/bgp-routing:
     get:
-      description: 'Get tags.
-
-        '
-      operationId: get-sse-config-v1-tags
+      description: Retrieve BGP routing.
+      operationId: get-sse-config-v1-bgp-routing
       parameters:
       - $ref: '#/components/parameters/limit-optional'
       - $ref: '#/components/parameters/offset-optional'
-      - $ref: '#/components/parameters/name-optional'
+      - $ref: '#/components/parameters/position'
       - $ref: '#/components/parameters/folder'
+      - $ref: '#/components/parameters/name-optional'
       responses:
         '200':
           content:
@@ -466,7 +436,7 @@ paths:
                   data:
                     allOf:
                     - items:
-                        $ref: '#/components/schemas/objects-tags'
+                        $ref: '#/components/schemas/bgp-routing'
                       type: array
                   limit:
                     default: 200
@@ -477,7 +447,7 @@ paths:
                   total:
                     type: number
                 type: object
-          description: List of address groups
+          description: Bgp routing under service connection folder
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -490,114 +460,20 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: List tags
+      summary: Retrieve BGP Routing
       tags:
-      - Tags
-    post:
-      description: 'Create a tag.
-
-        '
-      operationId: post-sse-config-v1-tags
-      parameters:
-      - $ref: '#/components/parameters/folder'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/objects-tags'
-        description: The tag you want to create
-      responses:
-        '201':
-          $ref: '#/components/responses/http_created'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Create a tag
-      tags:
-      - Tags
-  /sse/config/v1/tags/{id}:
-    delete:
-      description: 'Delete a tag.
-
-        '
-      operationId: delete-sse-config-v1-tags-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
-      responses:
-        '200':
-          $ref: '#/components/responses/http_ok'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Delete a tag
-      tags:
-      - Tags
-    get:
-      description: 'Get a [tag](https://docs.paloaltonetworks.com/network-security/security-policy/objects/tags)
-        by ID.
-
-        '
-      operationId: get-sse-config-v1-tags-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - items:
-                    $ref: '#/components/schemas/objects-tags'
-                  type: array
-          description: Get the tag by id.
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        default:
-          $ref: '#/components/responses/default_errors'
-      security:
-      - Bearer: []
-      summary: Get a tag by ID
-      tags:
-      - Tags
+      - BGPRouting
     put:
-      description: 'Modify a tag.
+      description: 'Modify bgp routing.
 
         '
-      operationId: put-sse-config-v1-tags-id
-      parameters:
-      - $ref: '#/components/parameters/uuid-required'
+      operationId: put-sse-config-v1-bgp-routing
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/objects-tags'
-        description: The tag you want to edit
+              $ref: '#/components/schemas/bgp-routing'
+        description: The bgp-routing to edit
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -615,10 +491,10 @@ paths:
           $ref: '#/components/responses/default_errors'
       security:
       - Bearer: []
-      summary: Edit a tag
+      summary: Edit bgp routing
       tags:
-      - Tags
+      - BGPRouting
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- name: Tags
+- name: BGPRouting

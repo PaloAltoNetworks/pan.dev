@@ -20,9 +20,23 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## March 2023
+
+Updated the Prisma Access Configuration API to include new endpoints for
+[Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/),
+[Local User Groups](/category/access/api/prisma-access-config/local-user-groups/),
+[Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/),
+and [BGP Routing](/category/access/api/prisma-access-config/bgp-routing/).
+
+Also created a [new API](/access/api/prisma-access-config/post-sse-config-v-1-enable/)
+that performs the same setup functions as does the user interface when a
+new Prisma Access tenant is on-boarded.
+
+Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
+
 ## November 2022
 
-Updated the Prisma Access Configuration API to include [Mobile Agent](/access/api/prisma-access-config/mobile-agent/)
+Updated the Prisma Access Configuration API to include [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/)
 (Global Protect) endpoints.
 
 ## Late August 2022
