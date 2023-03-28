@@ -108,7 +108,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Cloud NGFW",
-      latestTag: "v1.0.10",
+      latestTag: "v2.0.1",
       description:
         "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
@@ -128,7 +128,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud",
-      latestTag: "v1.2.11",
+      latestTag: "v1.3.2",
       description:
         "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
