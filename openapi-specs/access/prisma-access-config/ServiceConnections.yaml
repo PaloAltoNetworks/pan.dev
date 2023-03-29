@@ -229,6 +229,19 @@ components:
       required: false
       schema:
         type: number
+    position:
+      description: 'The position of a security rule
+
+        '
+      in: query
+      name: position
+      required: true
+      schema:
+        default: pre
+        enum:
+        - pre
+        - post
+        type: string
     uuid-required:
       description: 'The resource''s unique identifier.
 
@@ -347,6 +360,36 @@ components:
             $ref: '#/components/schemas/generic_error'
       description: Not Found
   schemas:
+    bgp-routing:
+      properties:
+        accept_route_over_SC:
+          type: boolean
+        add_host_route_to_ike_peer:
+          type: boolean
+        backbone_routing:
+          enum:
+          - no-asymmetric-routing
+          - asymmetric-routing-only
+          - asymmetric-routing-with-load-share
+          type: string
+        outbound_routes_for_services:
+          items:
+            type: string
+          type: array
+        routing_preference:
+          oneOf:
+          - properties:
+              default:
+                type: object
+            title: default
+          - properties:
+              hot_potato_routing:
+                type: object
+            title: hot_potato_routing
+          type: object
+        withdraw_static_route:
+          type: boolean
+      type: object
     error_detail_cause_info:
       properties:
         code:
@@ -468,6 +511,81 @@ info:
     url: pan-logo.png
 openapi: 3.0.0
 paths:
+  /sse/config/v1/bgp-routing:
+    get:
+      description: Retrieve BGP routing.
+      operationId: get-sse-config-v1-bgp-routing
+      parameters:
+      - $ref: '#/components/parameters/limit-optional'
+      - $ref: '#/components/parameters/offset-optional'
+      - $ref: '#/components/parameters/position'
+      - $ref: '#/components/parameters/folder'
+      - $ref: '#/components/parameters/name-optional'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    allOf:
+                    - items:
+                        $ref: '#/components/schemas/bgp-routing'
+                      type: array
+                  limit:
+                    default: 200
+                    type: number
+                  offset:
+                    default: 0
+                    type: number
+                  total:
+                    type: number
+                type: object
+          description: Bgp routing under service connection folder
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Retrieve BGP routing
+      tags:
+      - ServiceConnections
+    put:
+      description: Update BGP routing.
+      operationId: put-sse-config-v1-bgp-routing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bgp-routing'
+        description: The bgp-routing to edit
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Update BGP routing
+      tags:
+      - ServiceConnections
   /sse/config/v1/service-connections:
     get:
       description: List all service connections.
