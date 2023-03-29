@@ -22,20 +22,22 @@ occurred in between API product releases.
 
 ## March 2023
 
-Updated the Prisma Access Configuration APIs to include new endpoints for
-[Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/),
-[Local User Groups](/category/access/api/prisma-access-config/local-user-groups/),
-[Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/),
-and [BGP Routing](/category/access/api/prisma-access-config/bgp-routing/).
+The Prisma Access Configuration APIs are updated with new APIs and changes to existing APIs.
 
-[Authentication Profiles](/category/access/api/prisma-access-config/authentication-profiles/) now
-support a cloud (CIE) authentication profile.
+* [/sse/config/v1/authentication-profiles](/category/access/api/prisma-access-config/authentication-profiles/) now supports a cloud (CIE) authentication profile.
+* The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
+* [/sse/config/v1/enable](/access/api/prisma-access-config/post-sse-config-v-1-enable/) is added to
+  support API-based on-boarding of Prisma Access tenants. It creates the same default values as does
+  the user interface when a new Prisma Access tenant is on-boarded.
+* [Local User Groups](/category/access/api/prisma-access-config/local-user-groups/) APIs are added.
+* [Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/) APIs are added.
+* APIs for BGP Routing are added to [Service Connections](/category/access/api/prisma-access-config/service-connections/).
+* [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/) now includes:
+  * [/sse/config/v1/mobile-agent/agent-versions](/access/api/prisma-access-config/get-sse-config-v-1-mobile-agent-agent-versions/) to retrieve available agent versions.
+  * [/sse/config/v1/mobile-agent/agent-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-agent-profiles/) to manage custom agent profiles.
+  * [/sse/config/v1/mobile-agent/tunnel-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-tunnel-profiles/) to manage custom tunnel profiles.
 
-A [new API](/access/api/prisma-access-config/post-sse-config-v-1-enable/)
-is available in [InfrastructureSettings](/category/access/api/prisma-access-config/infrastructure-settings/) 
-that creates the same default values as does the user interface when a new Prisma Access tenant is on-boarded.
 
-The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
 
 ## November 2022
 
