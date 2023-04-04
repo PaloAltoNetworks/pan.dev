@@ -7,7 +7,7 @@
 #   - jq (install with brew: "brew install jq")
 
 # Usage:
-#   e.g. "bash cspm_pick_out_public_and_ga_endpoints.sh input.json 22121 > openapi.json"
+#   e.g. "bash filter.sh input.json > openapi.json"
 
 if [ $# -ne 1 ]; then
     echo "Expecting exactly 1 argument: input file(json format)"
