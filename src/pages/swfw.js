@@ -10,13 +10,6 @@ import { SWFW_HERO_CONTENT, SWFW_METADATA } from "../constants/swfw";
 import "./swfw.scss";
 
 export default function SWFWLandingPage() {
-  const cardStyles = {
-    display: "flex",
-    justifyContent: "center",
-    gridGap: "35px",
-    /* margin: 0 auto; */
-  };
-
   return (
     <Layout description={SWFW_METADATA.description} title={SWFW_METADATA.title}>
       <Hero
@@ -28,8 +21,13 @@ export default function SWFWLandingPage() {
       />
       <div className="providers-container">
         <div className="container swfw-container">
+          <h1>Choose your provider</h1>
           <Tabs className="swfw-tabs-container">
-            <TabItem className="swfw-tabs__item-aws" label="aws" value="aws">
+            <TabItem
+              attributes={{ className: "swfw-tabs__item-aws" }}
+              label=""
+              value=""
+            >
               {/* AWS Cards */}
               {/* 3 sections
               - Software Firewall Reference Architectures with Terraform
@@ -38,7 +36,8 @@ export default function SWFWLandingPage() {
               */}
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  Software Firewall Reference Architectures with Terraform
+                  Software Firewall Reference Architectures <br /> with
+                  Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
@@ -60,30 +59,39 @@ export default function SWFWLandingPage() {
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
                   <strong>Deploy</strong> your own Software Firewall
-                  architecture with Terraform
+                  architecture <br /> with Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">AWS Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      AWS Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">Cloud NGFW</h3>
-                    <h3>AWS Modules v?.?.?</h3>
+                    <h3>
+                      AWS Modules{" "}
+                      <span className="card-title__latest-tag">v?.?.?</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                 </div>
               </section>
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  <strong>Configure</strong> your Software Firewall with
+                  <strong>Configure</strong> your Software Firewall <br /> with
                   Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">AWS Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      AWS Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Define and manage your VM-Series network security
                       configuration as code
@@ -92,7 +100,10 @@ export default function SWFWLandingPage() {
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">AWS Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      AWS Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Deploy and configure NGFW functionality as a cloud-native
                       service
@@ -103,14 +114,15 @@ export default function SWFWLandingPage() {
               </section>
             </TabItem>
             <TabItem
-              className="swfw-tabs__item-azure"
-              label="azure"
+              attributes={{ className: "swfw-tabs__item-azure" }}
+              label=""
               value="azure"
             >
               {/* Azure */}
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  Software Firewall Reference Architectures with Terraform
+                  Software Firewall Reference Architectures <br /> with
+                  Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
@@ -132,30 +144,39 @@ export default function SWFWLandingPage() {
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
                   <strong>Deploy</strong> your own Software Firewall
-                  architecture with Terraform
+                  architecture <br /> with Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">Azure Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      Azure Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">Cloud NGFW</h3>
-                    <h3>Azure Modules v?.?.?</h3>
+                    <h3>
+                      Azure Modules{" "}
+                      <span className="card-title__latest-tag">v?.?.?</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                 </div>
               </section>
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  <strong>Configure</strong> your Software Firewall with
+                  <strong>Configure</strong> your Software Firewall <br /> with
                   Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">Azure Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      Azure Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Define and manage your VM-Series network security
                       configuration as code
@@ -164,7 +185,10 @@ export default function SWFWLandingPage() {
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">Azure Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      Azure Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Deploy and configure NGFW functionality as a cloud-native
                       service
@@ -174,11 +198,16 @@ export default function SWFWLandingPage() {
                 </div>
               </section>
             </TabItem>
-            <TabItem className="swfw-tabs__item-gcp" label="gcp" value="gcp">
+            <TabItem
+              attributes={{ className: "swfw-tabs__item-gcp" }}
+              label=""
+              value="gcp"
+            >
               {/* GCP */}
-              <section className="swfw-cards-section-container">
+              <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  Software Firewall Reference Architectures with Terraform
+                  Software Firewall Reference Architectures <br /> with
+                  Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
@@ -197,33 +226,42 @@ export default function SWFWLandingPage() {
                   </div>
                 </div>
               </section>
-              <section className="swfw-cards-section-container">
+              <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
                   <strong>Deploy</strong> your own Software Firewall
-                  architecture with Terraform
+                  architecture <br /> with Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">GCP Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      GCP Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">Cloud NGFW</h3>
-                    <h3>GCP Modules v?.?.?</h3>
+                    <h3>
+                      GCP Modules{" "}
+                      <span className="card-title__latest-tag">v?.?.?</span>
+                    </h3>
                     <div className="card-item__footer-logos"></div>
                   </div>
                 </div>
               </section>
               <section className="swfw-cards-section">
                 <h2 className="swfw-card-section-header">
-                  <strong>Configure</strong> your Software Firewall with
+                  <strong>Configure</strong> your Software Firewall <br /> with
                   Terraform
                 </h2>
                 <div className="swfw-cards-container">
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">GCP Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      GCP Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Define and manage your VM-Series network security
                       configuration as code
@@ -232,7 +270,10 @@ export default function SWFWLandingPage() {
                   </div>
                   <div className="swfw-info-card-container">
                     <h3 className="card-item__title">VM-Series</h3>
-                    <h3 className="card-item__title">GCP Modules v0.4.1</h3>
+                    <h3 className="card-item__title">
+                      GCP Modules{" "}
+                      <span className="card-title__latest-tag">v0.4.1</span>
+                    </h3>
                     <p className="card-item__description">
                       Deploy and configure NGFW functionality as a cloud-native
                       service
