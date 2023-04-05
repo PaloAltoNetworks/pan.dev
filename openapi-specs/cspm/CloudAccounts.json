@@ -21,6 +21,17 @@
         "description": "Cloud Account",
         "required": true
       },
+      "AzureCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
       "GcpResourceControllerRequestModel": {
         "content": {
           "application/json": {
@@ -1153,6 +1164,70 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "AzureCloudAccountRequestModel": {
+        "description": "Model containing the request for Azure Standalone and Tenant Cloud Account",
+        "properties": {
+          "clientId": {
+            "description": "Application (Client) ID",
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "description": "*Required only for accountType: **tenant**.*\n\n This is the Default Account Group ID for the Azure Tenant and its Management Groups/Subscriptions.",
+            "type": "string"
+          },
+          "environmentType": {
+            "description": "* **azure** -  Commercial deployment type.\nApplicable for Prisma Commercial and Government stacks\n\n * **azure_gov** - Government deployment type.\nApplicable for Prisma Commercial and Government stacks..\n\n * **azure_china** - Applicable for Prisma China Stack.",
+            "enum": [
+              "azure",
+              "azure_gov",
+              "azure_china"
+            ],
+            "type": "string"
+          },
+          "features": {
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, call **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "hierarchySelection": {
+            "description": "*Required only for accountType: **tenant**.*\n\n Include or Exclude a list of Azure Management Groups and Azure Subscriptions to onboard under this Tenant.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            },
+            "type": "array"
+          },
+          "key": {
+            "description": "Application key/client secret",
+            "type": "string"
+          },
+          "monitorFlowLogs": {
+            "description": "If set to true, it ingests Network Security Group Flow Logs to Prisma Cloud",
+            "type": "boolean"
+          },
+          "rootSyncEnabled": {
+            "description": "*Applicable only for accountType: **tenant***\n\n In order to onboard the **tenant** and its associated **management groups** and **subscriptions**, ```rootSyncEnabled``` must be set to ```true```",
+            "type": "boolean"
+          },
+          "servicePrincipalId": {
+            "description": "Service Principal ID",
+            "type": "string"
+          },
+          "tenantId": {
+            "description": "Directory (Tenant) ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientId",
+          "environmentType",
+          "key",
+          "tenantId"
+        ],
         "type": "object"
       },
       "AzureHierarchyNodeModel": {
@@ -2328,7 +2403,7 @@
             "type": "string"
           },
           "nodeType": {
-            "description": "Member account Node type. Supported values based on cloud_type are given below. \n\n * ORG, OU, or ACCOUNT - cloud_type: **aws**\n\n * ORG, FOLDER, or PROJECT - cloud_type: **gcp**\n\n * SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT - cloud_type: **azure**",
+            "description": "Member account Node type. Supported values based on cloud_type are given below. \n\n **aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
             "enum": [
               "ORG",
               "FOLDER",
@@ -2342,12 +2417,12 @@
             "type": "string"
           },
           "resourceId": {
-            "description": "Resource ID. \n\nNote you must escape any double quotes in the resource ID with a backslash",
+            "description": "To get the list of resource IDs and its details, see List Children of Parent. \n\nNote you must escape any double quotes in the resource ID with a backslash",
             "example": "root",
             "type": "string"
           },
           "selectionType": {
-            "description": "Organization Member accounts Selection type",
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
             "enum": [
               "ALL",
               "INCLUDE",
@@ -2363,6 +2438,10 @@
         "properties": {
           "folderNextPageToken": {
             "description": "Next page token for folder",
+            "type": "string"
+          },
+          "organizationName": {
+            "description": "Organization name",
             "type": "string"
           },
           "projectNextPageToken": {
@@ -4877,6 +4956,117 @@
           }
         ],
         "summary": "List Ancestors (AWS)",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/azure_account": {
+      "post": {
+        "description": "Onboard a new azure cloud account onto the Prisma Cloud platform. \n\n**Prerequisite**: Generate and download the Terraform template by calling Generate and Download the Azure Terraform Template. \n\n**Note**: For Azure China, Terraform template generation is not supported. You must create the app registration and the required roles manually.",
+        "operationId": "add-azure-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add Azure Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/azure_account/{account_id}": {
+      "put": {
+        "description": "Update the cloud account that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-azure-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "not_found / internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Azure Cloud Account",
         "tags": [
           "Cloud Accounts"
         ]
