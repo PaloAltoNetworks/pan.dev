@@ -32,6 +32,17 @@
         "description": "Cloud Account",
         "required": true
       },
+      "GcpCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
       "GcpResourceControllerRequestModel": {
         "content": {
           "application/json": {
@@ -1546,18 +1557,43 @@
       "CloudAccount": {
         "properties": {
           "accountId": {
-            "description": "GCP organization resource ID",
+            "description": "Organization resource ID if `accountType` is **organization**.\n\n Project ID if `accountType` is **account** or **masterServiceAccount**.",
             "type": "string"
           },
           "accountType": {
-            "description": "Cloud Account Type",
+            "description": "Cloud Account Type.\n\n**account**: GCP Project \n\n**organization**: GCP Organization\n\n**masterServiceAccount**: Onboards all GCP projects that are accessible by the service account.",
             "enum": [
-              "ORGANIZATION"
+              "account",
+              "masterServiceAccount",
+              "organization"
             ],
-            "readOnly": true,
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enable or disable this account on Prisma Cloud.\n\n Default value: **false**",
+            "type": "boolean"
+          },
+          "groupIds": {
+            "description": "List of Account Groups that must be mapped to this account. To get the account group ids,call **[List Account Groups](prisma-cloud/api/cspm/get-account-groups/)** API",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "Account name for the GCP account that will be onboarded on Prisma Cloud. (must be unique)",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "ID of the project.\n\nGet the project ID from the credentials json file that is generated from the GCP Terraform template. ",
             "type": "string"
           }
         },
+        "required": [
+          "accountId",
+          "accountType",
+          "name"
+        ],
         "type": "object"
       },
       "CloudAccountConfigStatusView": {
@@ -1991,7 +2027,7 @@
         "type": "object"
       },
       "Credentials": {
-        "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account",
+        "description": "Add contents of the JSON file, which contains the credentials, that is generated from the GCP Terraform template.",
         "properties": {
           "auth_provider_x509_cert_url": {
             "type": "string"
@@ -2061,6 +2097,81 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "GcpCloudAccountRequestModel": {
+        "description": "Model containing the request for GCP Standalone, Organization and Master Service Account",
+        "properties": {
+          "accountGroupCreationMode": {
+            "description": "Default value: **MANUAL**\n\n**MANUAL**: Account will be mapped to the account group mentioned in `defaultAccountGroupId`.\n\n**AUTO**: Automatically creates account groups for each top-level folder in the hierarchy.\n\n**RECURSIVE**: Automatically creates account groups for the folders that are nested within the GCP organization hierarchy.\n\nApplicable only if the `accountType` is **organization**.",
+            "enum": [
+              "MANUAL",
+              "AUTO",
+              "RECURSIVE"
+            ],
+            "type": "string"
+          },
+          "cloudAccount": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CloudAccount"
+              },
+              {
+                "description": "cloudAccount"
+              }
+            ]
+          },
+          "compressionEnabled": {
+            "description": "Enable or disable compressed network flow log generation.\n\nDefault value: **false**",
+            "type": "boolean"
+          },
+          "credentials": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Credentials"
+              },
+              {
+                "description": "credentials"
+              }
+            ]
+          },
+          "dataflowEnabledProject": {
+            "description": "Project ID where the Dataflow API is enabled .\n\nRequired if `compressionEnabled` is set to **true** and if the `accountType` is **organization**.\n\nOptional if the `accountType` is **account** or **masterServiceAccount**",
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "description": "Applicable only\n\n* If `accountType` is **organization** and `accountGroupCreationMode` is **MANUAL**.\n\n* If `accountType` is **masterServiceAccount**.",
+            "type": "string"
+          },
+          "features": {
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, see **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "flowLogStorageBucket": {
+            "description": "Cloud Storage Bucket name that is used store the flow logs.",
+            "type": "string"
+          },
+          "hierarchySelection": {
+            "description": "Applicable only if `accountType` is **organization**. \n\nInclude/Exclude a list of GCP folders, GCP projects under the organization.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            },
+            "type": "array"
+          },
+          "organizationName": {
+            "description": "GCP Organization name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cloudAccount",
+          "credentials",
+          "defaultAccountGroupId"
+        ],
         "type": "object"
       },
       "GcpCloudOrgModel": {
@@ -2398,12 +2509,12 @@
         "description": "Model for HierarchySelection",
         "properties": {
           "displayName": {
-            "description": "Display name",
+            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
             "example": "Root",
             "type": "string"
           },
           "nodeType": {
-            "description": "Member account Node type. Supported values based on cloud_type are given below. \n\n **aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
+            "description": "Member account node type. Supported values based on cloud type: \n\n**aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
             "enum": [
               "ORG",
               "FOLDER",
@@ -2417,7 +2528,7 @@
             "type": "string"
           },
           "resourceId": {
-            "description": "To get the list of resource IDs and its details, see List Children of Parent. \n\nNote you must escape any double quotes in the resource ID with a backslash",
+            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) \n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
             "example": "root",
             "type": "string"
           },
@@ -4355,7 +4466,7 @@
         ],
         "summary": "Check Data Security Preconditions (AWS Org)",
         "tags": [
-          "Data Security Onboarding"
+          "Cloud Accounts"
         ]
       }
     },
@@ -4394,7 +4505,7 @@
         ],
         "summary": "Add Data Security Config (AWS Org)",
         "tags": [
-          "Data Security Onboarding"
+          "Cloud Accounts"
         ]
       },
       "put": {
@@ -4431,7 +4542,7 @@
         ],
         "summary": "Update Data Security Config (AWS Org)",
         "tags": [
-          "Data Security Onboarding"
+          "Cloud Accounts"
         ]
       }
     },
@@ -4472,7 +4583,7 @@
         ],
         "summary": "Get Data Security Config (AWS Org)",
         "tags": [
-          "Data Security Onboarding"
+          "Cloud Accounts"
         ]
       }
     },
@@ -5012,15 +5123,66 @@
         ]
       }
     },
-    "/cas/v1/azure_account/{account_id}": {
+    "/cas/v1/gcp_account": {
+      "post": {
+        "description": "Onboard a new gcp cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the GCP credentials by calling **[Generate and Download the GCP Terraform template](/prisma-cloud/api/cspm/generate-template-link-gcp)** API",
+        "operationId": "add-gcp-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add GCP Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/gcp_account/{id}": {
       "put": {
-        "description": "Update the cloud account that has been onboarded onto the Prisma Cloud platform.",
-        "operationId": "update-azure-cloud-account",
+        "description": "Update the GCP cloud account information that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-gcp-cloud-account",
         "parameters": [
           {
             "description": "Account ID",
             "in": "path",
-            "name": "account_id",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -5040,7 +5202,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
               }
             }
           },
@@ -5066,7 +5228,7 @@
             "x-redlock-auth": []
           }
         ],
-        "summary": "Update Azure Cloud Account",
+        "summary": "Update GCP Cloud Account",
         "tags": [
           "Cloud Accounts"
         ]
