@@ -109,6 +109,47 @@ components:
                         type: string
                         description: "The release time when the threat signature was last released with WildFire package."
                         example: "2022-06-14T16:56:15Z"
+    EdlDataList:
+      type: object
+      properties:
+        version:
+          type: string
+          description: "The version of the release."
+          example: "4030"
+        name:
+          type: string
+          description: "The name of the predefined EDL."
+          example: "panw-known-ip-list"
+        ipaddr:
+          type: string
+          description: "The IP address."
+          example: "45.154.14.235"
+    GetEdlSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "The response status."
+          example: true
+        link:
+          type: array
+          description: "The pagination information of the results."
+          items:
+            $ref: "#/components/schemas/Pagination"
+        count:
+          type: integer
+          description: "The total number of entries found."
+          example: 1
+        data:
+          type: array
+          description: "The data of the response."
+          items:
+            $ref: '#/components/schemas/EdlDataList'
+        message:
+          type: string
+          description: "Generic response message."
+          example: "Successful"
+
     Pagination:
       type: object
       properties:
@@ -403,11 +444,22 @@ paths:
           schema:
             enum: [content]
             type: string
-        - description:
-            "The release version (ex. 8446) or content version (ex. 8446-6886)\
-            \ of the release notes.\n\n---\n```\ncurl -v -H 'X-API-KEY: API_KEY' \\\n\
-            \  'https://api.threatvault.paloaltonetworks.com/service/v1/release-notes?type=content&version=8446-6886'\n\
-            ```\n"
+        - description: "
+            The release version (ex. 8446) or content version (ex. 8446-6886) of the release notes.
+            
+            \n\n---\n```\ncurl -v -H 'X-API-KEY: API_KEY' 'https://api.threatvault.paloaltonetworks.com/service/v1/release-notes?type=content&version=8446-6886'\n\
+            ```\n
+            
+            Use latest for latest release version:
+            
+            \n\n---\n```\ncurl -v -H 'X-API-KEY: API_KEY' 'https://api.threatvault.paloaltonetworks.com/service/v1/release-notes?type=content&version=latest'\n\
+            ```\n
+            "
+
+
+
+
+            
           in: query
           name: version
           required: true
@@ -1133,6 +1185,195 @@ paths:
         - X-API-KEY: []
       summary: Request Threat Signature Release History
       tags: [Threat Prevention]
+
+
+  /edl:
+    get:
+      operationId: edl
+      description: |
+        A GET request to retrieve the predefined external dynamic lists by name and version.
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+            - panw-known-ip-list
+            - panw-highrisk-ip-list
+            - panw-torexit-ip-list
+            - panw-bulletproof-ip-list
+        description: |
+          Provides the EDL by the name.
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?name=panw-known-ip-list&version=latest'
+          ```
+
+      - name: ipaddr
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Provides the EDL of the IP address.
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?ipaddr=185.130.5.207'
+          ```
+
+      - name: version
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Provides the EDL by the specific AV package version.
+
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?name=panw-highrisk-ip-list&version=4024'
+          ```
+    
+          Use "latest" for latest release version:
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?ipaddr=185.130.5.207&version=latest'
+          ```
+
+      - name: listformat
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+            - array
+        description: |
+          Optional field to provide more convenient way to ingest the EDL.
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?name=panw-known-ip-list&version=latest&listformat=array'
+          ```
+
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Optional parameter. The maximum number of results to return in each page.
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?name=panw-known-ip-list&version=latest&limit=5'
+          ```
+
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Optional parameter. The starting position of the query in relation to the complete set of the unpaginated results.
+    
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/edl?name=panw-torexit-ip-list&version=latest&limit=5&offset=5'
+          ```
+      responses:
+        "200":
+          description: Request succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    items:
+                      $ref: "#/components/schemas/GetEdlSuccessResponse"
+          headers:
+            X-Day-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per day.
+              example: 2000
+              schema: { type: integer }
+            X-Day-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one day).
+              schema: { type: integer }
+            X-Day-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one day) resets.
+              schema: { type: integer }
+            X-Minute-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per minute.
+              example: 200
+              schema: { type: integer }
+            X-Minute-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one minute).
+              schema: { type: integer }
+            X-Minute-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one minute) resets.
+              schema: { type: integer }
+        4XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response message., example: Error
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Client related error response
+        5XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response message., example: Error
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Server related error response          
+      security:
+        - X-API-KEY: []
+      summary: Request Pre-Defined EDL List Content
+      tags: [Threat Prevention]
+
+
 servers:
   - { url: "https://api.threatvault.paloaltonetworks.com/service/v1" }
 tags:
