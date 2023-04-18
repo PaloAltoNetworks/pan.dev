@@ -40,7 +40,6 @@
             }
           }
         },
-        "description": "Cloud Account",
         "required": true
       },
       "GcpResourceControllerRequestModel": {
@@ -2117,7 +2116,7 @@
                 "$ref": "#/components/schemas/CloudAccount"
               },
               {
-                "description": "cloudAccount"
+                "required": true
               }
             ]
           },
@@ -2131,7 +2130,7 @@
                 "$ref": "#/components/schemas/Credentials"
               },
               {
-                "description": "credentials"
+                "required": "true"
               }
             ]
           },
@@ -2140,7 +2139,7 @@
             "type": "string"
           },
           "defaultAccountGroupId": {
-            "description": "Applicable only\n\n* If `accountType` is **organization** and `accountGroupCreationMode` is **MANUAL**.\n\n* If `accountType` is **masterServiceAccount**.",
+            "description": "Applicable only if `accountType` is **organization** and `accountGroupCreationMode` is **MANUAL** or if `accountType` is **masterServiceAccount**.",
             "type": "string"
           },
           "features": {
@@ -2509,7 +2508,7 @@
         "description": "Model for HierarchySelection",
         "properties": {
           "displayName": {
-            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: **[List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/)** \n\n **gcp**: **[List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/)**. Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: **[List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)**",
             "example": "Root",
             "type": "string"
           },
@@ -2528,7 +2527,7 @@
             "type": "string"
           },
           "resourceId": {
-            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) \n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: **[List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/)** \n\n **gcp**: **[List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/)** \n\n**azure**: **[List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)**",
             "example": "root",
             "type": "string"
           },
@@ -5123,6 +5122,111 @@
         ]
       }
     },
+    "/cas/v1/azure_account/{account_id}": {
+      "put": {
+        "description": "Update the cloud account that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-azure-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "not_found / internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Azure Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/azure": {
+      "post": {
+        "description": "Lists the status of a Azure Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-azure-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Azure Cloud Account Status",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
     "/cas/v1/gcp_account": {
       "post": {
         "description": "Onboard a new gcp cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the GCP credentials by calling **[Generate and Download the GCP Terraform template](/prisma-cloud/api/cspm/generate-template-link-gcp)** API",
@@ -5146,7 +5250,6 @@
               }
             }
           },
-          "description": "Cloud Account",
           "required": true
         },
         "responses": {
@@ -5206,7 +5309,6 @@
               }
             }
           },
-          "description": "Cloud Account",
           "required": true
         },
         "responses": {
@@ -5229,6 +5331,52 @@
           }
         ],
         "summary": "Update GCP Cloud Account",
+        "tags": [
+          "Cloud Accounts"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/gcp": {
+      "post": {
+        "description": "Lists the status of a GCP Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-gcp-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get GCP Cloud Account Status",
         "tags": [
           "Cloud Accounts"
         ]
