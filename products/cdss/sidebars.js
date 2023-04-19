@@ -84,7 +84,7 @@ module.exports = {
             },
             {
               type: "doc",
-              id: "threat-vault/docs/examples/get-predefined-EDL-content",
+              id: "threat-vault/docs/examples/get-predefined-edl-content",
             },
             {
               type: "doc",
