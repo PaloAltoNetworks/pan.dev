@@ -18,7 +18,15 @@ The Compute API is versioned as follows:
 
 Where:
 
-- `v1` - Always points to the latest API. This represents a larger set of APIs. Only eight v1 endpoints are supported and documented.
+- `v1` - Always points to the latest API. This represents a larger set of APIs. Only the following v1 endpoints are supported and documented:
+  - api/v1/certs/ca.pem, get
+  - api/v1/certs/server-certs.sh, get
+  - api/v1/registry/webhook/webhook, delete
+  - api/v1/registry/webhook/webhook, post
+  - api/v1/settings/license, post
+  - api/v1/signup, post
+  - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
+  - api/v1/util/tas-tile, get
 - `vVersion` - Points to a version-specific API, where `Version` specifies the major and minor parts of a release's version string.
 
 As a best practice, update your scripts to use the version-specific API endpoints to ensure that your implementation is fully supported.
