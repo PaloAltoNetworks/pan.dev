@@ -32,7 +32,7 @@ window.location.reload()
 
 In this section we present a workflow example to migrate a third party vendor configuration into a PANOS configuration.
 
-Below flowhart demo the workflow and the related API calls in each of the steps:
+Below flowchart demo the workflow and the related API calls in each of the steps:
 
 ```mermaid
 flowchart TB
