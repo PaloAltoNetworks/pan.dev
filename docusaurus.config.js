@@ -672,15 +672,15 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "22.12",
-            label: "v22.12",
+            version: "30.00",
+            label: "v30.00",
             baseUrl: "/compute/api/",
             versions: {
-              22.01: {
-                specPath: "openapi-specs/compute/22-01",
-                outputDir: "products/compute/api/22-01",
-                label: "v22.01",
-                baseUrl: "/compute/api/22-01/",
+              22.12: {
+                specPath: "openapi-specs/compute/22-12",
+                outputDir: "products/compute/api/22-12",
+                label: "v22.12",
+                baseUrl: "/compute/api/22-12/",
               },
               22.06: {
                 specPath: "openapi-specs/compute/22-06",
