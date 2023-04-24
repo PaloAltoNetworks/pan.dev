@@ -674,18 +674,21 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             version: "30.00",
             label: "v30.00",
+            showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
               22.12: {
                 specPath: "openapi-specs/compute/22-12",
                 outputDir: "products/compute/api/22-12",
                 label: "v22.12",
+                showExtensions: true,
                 baseUrl: "/compute/api/22-12/",
               },
               22.06: {
                 specPath: "openapi-specs/compute/22-06",
                 outputDir: "products/compute/api/22-06",
                 label: "v22.06",
+                showExtensions: true,
                 baseUrl: "/compute/api/22-06/",
               },
             },
