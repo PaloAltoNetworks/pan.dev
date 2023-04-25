@@ -13,4 +13,5 @@ keywords:
 | Date            | Description                                                                                                             |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | August 08, 2022 | First public release of the Threat Vault API for Threat Prevention and Advanced Threat Prevention subscription holders. |
-| August 23, 2022 | First public `BETA` release of the DNS Security API for DNS Security subscription holders.                              |
+| August 23, 2022 | First public `BETA` release of the DNS Security API for DNS Security subscription holders. |
+| April 23, 2023 | The Threat Vault API now supports retrieval of [predefined EDL](https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/policy/use-an-external-dynamic-list-in-policy/built-in-edls.html) ([external dynamic list](https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/policy/use-an-external-dynamic-list-in-policy/external-dynamic-list.html)) content. |
