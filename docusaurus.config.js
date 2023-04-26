@@ -393,6 +393,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/ztna/ztna-connector-apis",
+                      label: "ZTNA Connector",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc",
@@ -598,6 +603,11 @@ const config = {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
+          },
+          ztna: {
+            specPath: "openapi-specs/access/ztna",
+            outputDir: "products/access/api/ztna",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           sub: {
             specPath: "openapi-specs/sase/subscription",
