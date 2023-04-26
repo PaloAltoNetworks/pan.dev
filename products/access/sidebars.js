@@ -39,4 +39,5 @@ module.exports = {
     "access/api/prisma-access-config/config-api",
     require("./api/prisma-access-config/sidebar"),
   ],
+  ztna: [require("./api/ztna/sidebar")],
 };

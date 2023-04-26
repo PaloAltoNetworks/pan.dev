@@ -54,10 +54,5 @@ For example, using curl:
 Depending on the query and the [query parameter](/sase/docs/parameters), there are also [query
 filters and properties](/sase/docs/filters) that you need to use in the request body.
 
-## X-PANW-Region Header Parameter
+For information about the `X-PANW-Region` header, see [About x-panw-region](/sase/docs/api-call/#about-x-panw-region).
 
-The `X-PANW-Region` header parameter is the region you chose when setting up your tenant. It must be one of the following:
-`de`, `americas`, `europe`, `uk`, `sg`, `ca`, `jp`, `au`, `in`. The API will then return details from the specified
-Cortex Data Lake (CDL) region.
-
-If you need to verify which region to use, you can [list tenant hierarchy](/sase/api/mt-monitor/get-mt-monitor-v-1-agg-custom-tenant-hierarchy) to see the region in the response.
