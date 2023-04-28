@@ -684,6 +684,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             version: "30.00",
             label: "v30.00",
+            showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
               22.12: {

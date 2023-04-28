@@ -34,6 +34,12 @@ For the version-specific APIs, you will have access to the API Reference and Rel
 
 When using the version-specific endpoints, you will need to update your automation scripts approximately once-a- year to stay in sync with the product [support lifecycle](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/upgrade/support_lifecycle.html).
 
+Starting with version 30.xx, each maintenance release (like 30.01, 30.02, and so on) may contain new features and improvements. As a result, the URLs for the APIs will be updated to reflect the version. 
+
+You can use different .xx versions of the API at the same time for your automation requirements as we’ll continue to support backward compatibility for two major including minor (maintenance) release versions behind the current one (n-2). For example, while on build 30.01, you can continue to use the API paths such as api/v30.00, api/v22.12, and api/v22.06 due to backward compatibility.
+
+Though we recommend you to update scripts to use the current or new API paths, you won't need to worry about making changes to your code immediately when a new major or minor (maintenance) release is announced.
+
 **Note**: If you have a mixed environment of different version Defenders, then use the version of the API that matches the earliest version.
 
 If you use the /v1 APIs, Palo Alto Networks recommends that you consider revising your scripts to target the versioned API endpoints.
