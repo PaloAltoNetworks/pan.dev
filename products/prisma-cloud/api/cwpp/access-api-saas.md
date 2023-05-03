@@ -67,3 +67,7 @@ $ curl \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
   "https://<CONSOLE>/api/v<VERSION>/policies/compliance/container"
 ```
+> _**Note**_: You can also use the Prisma Cloud trusted login to access Prisma Cloud Compute APIs.
+> 1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
+> 2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) ![alt text](/icons/api-icon-pan-dev.svg) . A successful request returns a JSON Web Token (JWT).
+> 3. Use the JWT token to access Compute APIs.
