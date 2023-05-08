@@ -67,3 +67,22 @@ $ curl \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
   "https://<CONSOLE>/api/v<VERSION>/policies/compliance/container"
 ```
+
+### Accessing the API using Prisma Cloud login token
+
+Use the following method when you want to access Compute APIs from your Prisma Cloud user account:
+
+1. Retrieve a token from the [CSPM Login](/pan.dev/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your CSPM user credentials.
+
+```bash
+$ curl --location 'https://<PRISMA CLOUD URL>/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{"username":"user","password":"password","customerName":"customer_name"}' | jq .token
+```
+
+2. Use the token to call any Compute API. For example:
+
+```bash
+curl --location 'https://<CONSOLE>/api/v<VERSION>/version' \
+--header 'x-redlock-auth: token'
+```
