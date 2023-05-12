@@ -498,6 +498,25 @@ const config = {
                 },
               ],
             },
+            {
+              label: "Partner Integrations",
+              to: "#",
+              colorclass: "sase",
+              description: "Discover technology partner integrations.",
+              products: [
+                {
+                  label: "Splunk",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Splunk App/Add-on",
+                      to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
