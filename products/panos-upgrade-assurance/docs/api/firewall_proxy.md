@@ -354,6 +354,52 @@ __Returns__
 }
 ```
 
+### `FirewallProxy.get_support_license`
+
+```python
+def get_support_license() -> dict
+```
+
+Get support license information from update servers.
+
+The actual API command is `request support check`.
+
+This method fetches the response in XML format:
+
+```xml
+<SupportInfoResponse>
+    <Links>
+    <Link>
+        <Title>Contact Us</Title>
+        <Url>https://www.paloaltonetworks.com/company/contact-us.html</Url>
+    </Link>
+    <Link>
+        <Title>Support Home</Title>
+        <Url>https://www.paloaltonetworks.com/support/tabs/overview.html</Url>
+    </Link>
+    <Link>
+        <Title>Manage Cases</Title>
+        <Url>https://support.paloaltonetworks.com/pa-portal/index.php?option=com_pan&task=viewcases&Itemid=100</Url>
+    </Link>
+    </Links>
+<Support>
+    <Contact>
+        <Contact>Click the contact link at right.</Contact>
+    </Contact>
+    <ExpiryDate>December 31, 2023</ExpiryDate>
+    <SupportLevel>Premium</SupportLevel>
+    <SupportDescription>24 x 7 phone support; advanced replacement hardware service</SupportDescription>
+</Support>
+</SupportInfoResponse>
+```
+
+__Returns__
+
+`dict`: Partial information extracted from the response formatted as `dict`, it includes:
+
+- the expiry date,
+- the support level.
+
 ### `FirewallProxy.get_routes`
 
 ```python

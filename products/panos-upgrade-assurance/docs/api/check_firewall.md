@@ -18,6 +18,10 @@ Used when passed configuration does not meet the data type requirements.
 
 Used when requested image version is not available for downloading.
 
+## class `UpdateServerConnectivityException`
+
+Used when connection to the Update Server cannot be established.
+
 ## class `CheckFirewall`
 
 Class responsible for running readiness checks and creating Firewall state snapshots.
@@ -160,6 +164,26 @@ __Returns__
 
 * [`CheckStatus.SUCCESS`](/panos-upgrade-assurance/docs/api/utils#class-checkstatus) if no license is expired,
 * [`CheckStatus.FAIL`](/panos-upgrade-assurance/docs/api/utils#class-checkstatus) otherwise.
+
+### `CheckFirewall.check_active_support_license`
+
+```python
+def check_active_support_license() -> CheckResult
+```
+
+Check active support license with update server.
+
+__Raises__
+
+* `UpdateServerConnectivityException`: Thrown when a connection to an update server cannot be established during support license verification.
+
+__Returns__
+
+`dict`: Object of [`CheckResult`](/panos-upgrade-assurance/docs/api/utils#class-checkresult) class taking value of:
+
+* [`CheckStatus.SUCCESS`](/panos-upgrade-assurance/docs/api/utils#class-checkstatus) if the support license is not expired,
+* [`CheckStatus.FAIL`](/panos-upgrade-assurance/docs/api/utils#class-checkstatus) otherwise,
+* [`CheckStatus.ERROR`](/panos-upgrade-assurance/docs/api/utils#class-checkstatus) when no information about the support license expiration date can be found in response from the firewall.
 
 ### `CheckFirewall.check_critical_session`
 
