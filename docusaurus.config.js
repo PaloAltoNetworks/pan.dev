@@ -501,7 +501,7 @@ const config = {
             {
               label: "Partner Integrations",
               to: "#",
-              colorclass: "sase",
+              colorclass: "partner-integrations",
               description: "Discover technology partner integrations.",
               products: [
                 {
