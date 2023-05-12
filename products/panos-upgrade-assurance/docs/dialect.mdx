@@ -1,0 +1,58 @@
+---
+id: dialect
+title: Config Parser's dialect
+sidebar_label: Config Parser's dialect
+description: Config Parser's dialect
+hide_title: true
+custom_edit_url: null
+keywords:
+  - pan-os
+  - panos
+  - sdk
+  - api
+  - python
+  - firewall
+  - upgrade
+  - upgrade assurance
+---
+
+# `ConfigParser` class Dialect
+
+The [`ConfigParser`][cfgprs] class is used throughout the project. It assumes and understands a specific dialect, hence it's vital to know it and understand it.
+
+Below are the concepts of that dialect:
+
+* all configuration elements passed to the [`ConfigParser`][cfgprs] class are bundled in a list,
+* all configuration elements are case-sensitive,
+* if an element is `str`, it is the name of an element,
+* if an element is `dict`, the key is treated as the name of the element and the value is simply a configuration for this element,
+* the `all` item is equal to all items from the valid configuration elements,
+* an empty list is the same as the list containing only the `all` item,
+* excluding elements are supported by prefixing an item with an exclamation mark, for example, `'!config'` will skip the `'config'` element.
+
+  These elements are called `not-elements`. They are useful when combined with `all`.
+  For example: a list of: `['all', '!tcp']` or simply `['!tcp']` would take all valid elements except for `tcp`.
+  
+  Having that said:
+
+* a list containing only `not-elements` is treated as if `'all'` would have been specified explicitly,
+* order does not matter,
+* you can override elements implicitly specified with `all`. This means that:
+  * when:
+    * the following list is passed:
+
+      ``` yaml
+      [
+          'all', 
+          { 'content_version': {
+              'version': '1234-5678'}
+          }
+      ]
+      ```
+
+    * `content_version` is a valid element
+  * then:
+    * `all` is expanded to all valid elements but
+    * `content_version` is skipped during expansion (since an explicit definition for it is already available).
+
+[cfgprs]: /panos-upgrade-assurance/docs/api/utils#class-configparser

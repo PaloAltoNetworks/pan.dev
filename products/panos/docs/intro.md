@@ -13,6 +13,7 @@ keywords:
   - api
   - firewall
   - configuration
+  - upgrade assurance
 ---
 
 # PAN-OS APIs and SDKs
@@ -30,6 +31,10 @@ The [PAN-OS REST API](./restapi.md) simplifies access to resources as high-level
 ## `pan-os-python` (Python)
 
 The [`pan-os-python` SDK framework](./pan-os-python.md) helps interact with PAN-OS devices when your chosen language is Python. It is object-oriented and mimics the traditional interaction with the device via the GUI, CLI or XML API. It is also part of the underpinnings of the [PAN-OS Ansible collection](/ansible/docs/panos/).
+
+## `panos-upgrade-assurance` (Python)
+
+The [`panos-upgrade-assurance`](/panos-upgrade-assurance/docs/) package is meant to provide a set of classes and methods that can be used to do run PAN-OS upgrade readiness checks. It's prepared in a form that make is easy to wrap it in an Ansible module or XSOAR integration. It's directly depended on [`pan-os-python`](#pan-os-python-python) package.
 
 <!---
 ## `pan-python` (Python)
