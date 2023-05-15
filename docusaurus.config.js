@@ -607,7 +607,7 @@ const config = {
           ztna: {
             specPath: "openapi-specs/access/ztna",
             outputDir: "products/access/api/ztna",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           sub: {
             specPath: "openapi-specs/sase/subscription",
