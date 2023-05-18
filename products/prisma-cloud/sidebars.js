@@ -18,24 +18,13 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Cloud Workload Protection - 30.01",
+      label: "Cloud Workload Protection",
       collapsed: true,
       items: [
         "prisma-cloud/api/cwpp/cwpp-home",
         "prisma-cloud/api/cwpp/access-api-saas",
         "prisma-cloud/api/cwpp/stable-endpoints",
         require("./api/cwpp/sidebar"),
-      ],
-    },
-    {
-      type: "category",
-      label: "Cloud Workload Protection - 30.00",
-      collapsed: true,
-      items: [
-        "prisma-cloud/api/cwpp/30-00/cwpp-home",
-        "prisma-cloud/api/cwpp/30-00/access-api-saas",
-        "prisma-cloud/api/cwpp/30-00/stable-endpoints",
-        require("./api/cwpp/30-00/sidebar"),
       ],
     },
     {

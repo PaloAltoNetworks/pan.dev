@@ -35,10 +35,11 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`30-00`),
     },
+    "compute/api/30-00/compute-api-reference-home",
     "compute/api/30-00/access-api-self-hosted",
     "compute/api/30-00/set-up-console",
     "compute/api/30-00/stable-endpoints",
-    require("./api/sidebar"),
+    require("./api/30-00/sidebar"),
   ],
   compute_2212: [
     {
