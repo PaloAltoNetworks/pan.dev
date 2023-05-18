@@ -724,6 +724,12 @@ const config = {
       rel: "stylesheet",
     },
   ],
+  scripts: [
+    {
+      src: "https://assets.adobedtm.com/9273d4aedcd2/b9b0ac3add2f/launch-a24de682dd3b.min.js",
+      async: true,
+    },
+  ],
   onDuplicateRoutes: "warn",
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
