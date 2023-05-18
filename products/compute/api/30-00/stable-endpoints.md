@@ -23,6 +23,7 @@ Where:
   - api/v1/certs/server-certs.sh, get
   - api/v1/registry/webhook/webhook, delete
   - api/v1/registry/webhook/webhook, post
+  - api/v1/settings/license, post
   - api/v1/signup, post
   - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
   - api/v1/util/tas-tile, get

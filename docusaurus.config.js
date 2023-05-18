@@ -664,6 +664,7 @@ const config = {
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
+            showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           cspm: {
@@ -682,11 +683,17 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "30.00",
-            label: "v30.00",
+            version: "30.01",
+            label: "v30.01",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
+              30.0: {
+                specPath: "openapi-specs/compute/30-00",
+                outputDir: "products/compute/api/30-00",
+                label: "v30.00",
+                baseUrl: "/compute/api/30-00/",
+              },
               22.12: {
                 specPath: "openapi-specs/compute/22-12",
                 outputDir: "products/compute/api/22-12",

@@ -18,13 +18,24 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Cloud Workload Protection",
+      label: "Cloud Workload Protection - 30.01",
       collapsed: true,
       items: [
         "prisma-cloud/api/cwpp/cwpp-home",
         "prisma-cloud/api/cwpp/access-api-saas",
         "prisma-cloud/api/cwpp/stable-endpoints",
         require("./api/cwpp/sidebar"),
+      ],
+    },
+    {
+      type: "category",
+      label: "Cloud Workload Protection - 30.00",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/cwpp/30-00/cwpp-home",
+        "prisma-cloud/api/cwpp/30-00/access-api-saas",
+        "prisma-cloud/api/cwpp/30-00/stable-endpoints",
+        require("./api/cwpp/30-00/sidebar"),
       ],
     },
     {
@@ -109,12 +120,12 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30-00/prisma-cloud-compute-edition-admin.html",
+              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30/prisma-cloud-compute-edition-admin.html",
             },
             {
               type: "link",
               label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30-00/prisma-cloud-compute-edition-release-notes/release-information",
+              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30/prisma-cloud-compute-edition-release-notes/release-information",
             },
           ],
         },

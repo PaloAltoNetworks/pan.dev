@@ -5,6 +5,24 @@ const {
 } = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
 
 module.exports = {
+  compute_3001: [
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionSelector(computeVersions),
+      className: "version-button",
+    },
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionCrumb(`30-01`),
+    },
+    "compute/api/compute-api-reference-home",
+    "compute/api/access-api-self-hosted",
+    "compute/api/set-up-console",
+    "compute/api/stable-endpoints",
+    require("./api/sidebar"),
+  ],
   compute_3000: [
     {
       type: "html",
@@ -17,10 +35,9 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`30-00`),
     },
-    "compute/api/compute-api-reference-home",
-    "compute/api/access-api-self-hosted",
-    "compute/api/set-up-console",
-    "compute/api/stable-endpoints",
+    "compute/api/30-00/access-api-self-hosted",
+    "compute/api/30-00/set-up-console",
+    "compute/api/30-00/stable-endpoints",
     require("./api/sidebar"),
   ],
   compute_2212: [
