@@ -666,6 +666,18 @@ const config = {
             outputDir: "products/prisma-cloud/api/cwpp",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            version: "30.01",
+            label: "30.01",
+            showExtensions: true,
+            baseUrl: "/prisma-cloud/api/",
+            versions: {
+              30.0: {
+                specPath: "openapi-specs/cwpp/30-00",
+                outputDir: "products/prisma-cloud/api/30-00",
+                label: "v30.00",
+                baseUrl: "/prisma-cloud/api/30-00/",
+              },
+            },
           },
           cspm: {
             specPath: "openapi-specs/cspm",
