@@ -1,6 +1,8 @@
 ---
 id: stable-endpoints
 title: Supported Endpoints
+sidebar_label: Supported Endpoints
+slug: /compute/api/30-00
 ---
 
 With every release the Compute APIs are versioned to indicate the release number to which they correspond.

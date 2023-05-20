@@ -23,24 +23,6 @@ module.exports = {
     "compute/api/stable-endpoints",
     require("./api/sidebar"),
   ],
-  compute_3000: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(computeVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`30-00`),
-    },
-    "compute/api/30-00/compute-api-reference-home",
-    "compute/api/30-00/access-api-self-hosted",
-    "compute/api/30-00/set-up-console",
-    "compute/api/30-00/stable-endpoints",
-    require("./api/30-00/sidebar"),
-  ],
   compute_2212: [
     {
       type: "html",
@@ -76,5 +58,16 @@ module.exports = {
     "compute/api/22-06/set-up-console",
     "compute/api/22-06/stable-endpoints",
     require("./api/22-06/sidebar"),
+  ],
+  compute_minor: [
+    {
+      type: "category",
+      label: "Compute - 30.00",
+      collapsed: true,
+      items: [
+        "compute/api/30-00/stable-endpoints",
+        require("./api/30-00/sidebar"),
+      ],
+    },
   ],
 };
