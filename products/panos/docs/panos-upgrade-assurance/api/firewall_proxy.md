@@ -1,11 +1,10 @@
 ---
-id: firewall-proxy
+id: firewall_proxy
 sidebar_label: firewall_proxy module
 title: firewall_proxy
 hide_title: true
 custom_edit_url: null
 ---
-
 ## class `CommandRunFailedException`
 
 Used when a command run on a device does not return the `success` status.
@@ -30,7 +29,7 @@ Used when parsing free disk size information.
 
 Class representing a Firewall.
 
-Proxy in this class means that it is between the *high level* [`CheckFirewall`](/panos-upgrade-assurance/docs/api/check-firewall#class-checkfirewall) class and a device itself.
+Proxy in this class means that it is between the *high level* [`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class and a device itself.
 Inherits the [Firewall][fw] class but adds methods to interpret XML API commands. The class constructor is also inherited from the [Firewall][fw] class.
 
 All interaction with a device are read-only. Therefore, a less privileged user can be used.
@@ -56,11 +55,13 @@ This is just a wrapper around the [`Firewall.op()`](https://pan-os-python.readth
 
 __Parameters__
 
+
 - __cmd__ (`str`): The actual XML API command to be run on the device. Can be either a free form or an XML formatted command.
 - __cmd_in_xml__ (`bool`): (defaults to `False`) Set to `True` if the command is XML-formatted.
 - __return_xml__ (`bool`): (defaults to `False`) When set to `True`, the return data is an [`XML object`](https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element) instead of a python dictionary.
 
 __Raises__
+
 
 - `CommandRunFailedException`: An exception is raised if the command run status returned by a device is not successful.
 - `MalformedResponseException`: An exception is raised when a response is not parsable, no `result` element is found in the XML response.
@@ -81,6 +82,7 @@ The actual API command run is `check pending-changes`.
 
 __Returns__
 
+
 `bool`: `True` when there are pending changes, `False` otherwise.
 
 ### `FirewallProxy.is_full_commit_required`
@@ -95,6 +97,7 @@ The actual API command run is `check full-commit-required`.
 
 __Returns__
 
+
 `bool`: `True` when a full commit is required, `False` otherwise.
 
 ### `FirewallProxy.is_panorama_configured`
@@ -108,6 +111,7 @@ Check if a device is configured with Panorama.
 The actual API command run is `show panorama-status`.
 
 __Returns__
+
 
 `bool`: `True` when Panorama IPs are configured, `False` otherwise.
 
@@ -148,10 +152,13 @@ If none of this formats is met, `MalformedResponseException` exception is thrown
 
 __Raises__
 
+
 - `PanoramaConfigurationMissingException`: Exception being raised when this check is run against a device with no Panorama configured.
 - `MalformedResponseException`: Exception being raised when response from device does not meet required format.
 
+
 __Returns__
+
 
 `bool`: `True` when connection is up, `False` otherwise.
 
@@ -166,6 +173,7 @@ Get high-availability configuration status.
 The actual API command is `show high-availability state`.
 
 __Returns__
+
 
 `dict`: Information about HA pair and its status as retrieved from the current (local) device. Sample output:
 
@@ -301,16 +309,18 @@ The actual API command run is `show interface "hardware"`.
 
 __Raises__
 
+
 - `MalformedResponseException`: Exception when no `hw` entry is available in the response.
 
 __Returns__
+
 
 `dict`: Status of the configured network interfaces. Sample output:
 
 ```yaml
 {
-    'ethernet1/1': 'down', 
-    'ethernet1/2': 'down', 
+    'ethernet1/1': 'down',
+    'ethernet1/2': 'down',
     'ethernet1/3': 'up'
 }
 ```
@@ -326,6 +336,7 @@ Get device licenses.
 The actual API command is `request license info`.
 
 __Returns__
+
 
 `dict`: Licenses available on a device.. Sample output:
 
@@ -395,6 +406,7 @@ This method fetches the response in XML format:
 
 __Returns__
 
+
 `dict`: Partial information extracted from the response formatted as `dict`, it includes:
 
 - the expiry date,
@@ -412,9 +424,9 @@ The actual API command is `show routing route`.
 
 In the returned `dict` the key is made of three route properties delimited with an underscore (`_`) in the following order:
 
-- virtual router name,
-- destination CIDR,
-- network interface name if one is available, empty string otherwise.
+* virtual router name,
+* destination CIDR,
+* network interface name if one is available, empty string otherwise.
 
 The key does not provide any meaningful information, it's there only to introduce uniqueness for each entry. All properties that make a key are also available in the value of a dictionary element. Sample output:
 
@@ -445,6 +457,7 @@ The key does not provide any meaningful information, it's there only to introduc
 
 __Returns__
 
+
 `dict`: Routes information.
 
 ### `FirewallProxy.get_arp_table`
@@ -459,8 +472,8 @@ The actual API command is `<show><arp><entry name = 'all'/></arp></show>`.
 
 In the returned `dict` the key is made of two properties delimited with an underscore (`_`) in the following order:
 
-- interface name,
-- IP address.
+* interface name,
+* IP address.
 
 The key does not provide any meaningful information, it's there only to introduce uniqueness for each entry. All properties that make a key are also available in the value of a dictionary element. Sample output:
 
@@ -487,6 +500,7 @@ The key does not provide any meaningful information, it's there only to introduc
 
 __Returns__
 
+
 `dict`: ARP table entries.
 
 ### `FirewallProxy.get_sessions`
@@ -500,6 +514,7 @@ Get information about currently running sessions.
 The actual API command run is `show session all`.
 
 __Returns__
+
 
 `list`: Information about the current sessions. Sample output:
 
@@ -548,12 +563,13 @@ Get basic session statistics.
 
 The actual API command is `show session info`.
 
-__NOTE__
+**NOTE**
 This is raw output. Names of stats are the same as returned by API. No translation is made on purpose. The output of this command might vary depending on the version of PanOS.
 
 For meaning and available statistics, refer to the official PanOS documentation.
 
 __Returns__
+
 
 `dict`: Session stats in a form of a dictionary. Sample output:
 
@@ -624,6 +640,7 @@ The actual API command run is `show running tunnel flow all`.
 
 __Returns__
 
+
 `dict`: Information about the configured tunnels. Sample output (with only one IPSec tunnel configured):
 
 ```yaml
@@ -661,14 +678,16 @@ The actual API command run is `request content upgrade check`.
 
 Values returned by API are not ordered. This method tries to reorder them and find the highest available Content DB version. The following assumptions are made:
 
-- versions are always increasing,
-- both components of the version string are numbers.
+* versions are always increasing,
+* both components of the version string are numbers.
 
 __Raises__
+
 
 - `ContentDBVersionsFormatException`: An exception is thrown when the Content DB version does not match the expected format.
 
 __Returns__
+
 
 `str`: The latest available content version. Sample output:
 
@@ -687,6 +706,7 @@ Get the currently installed Content DB version.
 The actual API command is `show system info`.
 
 __Returns__
+
 
 `str`: Current Content DB version. Sample output:
 
@@ -736,6 +756,7 @@ The actual return value of this method can differ depending on whether the NTP s
 
 __Returns__
 
+
 `dict`: The NTP synchronization configuration.
 
 ### `FirewallProxy.get_disk_utilization`
@@ -749,6 +770,7 @@ Get the disk utilization (in MB) and parse it to a machine readable format.
 The actual API command is `show system disk-space`.
 
 __Returns__
+
 
 `dict`: Disk free space in MBytes. Sample output:
 
@@ -776,6 +798,7 @@ Get information on the available to download PanOS image versions.
 The actual API command is `request system software check`.
 
 __Returns__
+
 
 `dict`: Detailed information on available images. Sample output:
 
@@ -821,6 +844,7 @@ The actual API command is `show clock`.
 
 __Returns__
 
+
 `dict`: The clock information represented as a dictionary. Sample output:
 
 ```yaml
@@ -846,6 +870,7 @@ The actual API command is `show clock more`.
 
 __Returns__
 
+
 `dict`: The clock information represented as a dictionary. Sample output:
 
 ```yaml
@@ -858,3 +883,4 @@ __Returns__
     'day_of_week': 'Wed'
 }
 ```
+

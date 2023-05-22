@@ -5,7 +5,6 @@ title: utils
 hide_title: true
 custom_edit_url: null
 ---
-
 ## class `UnknownParameterException`
 
 Used when one of the requested configuration parameters processed by [`ConfigParser`](#class-configparser) is not a valid parameter.
@@ -18,13 +17,13 @@ Used when a variable does not meet data type requirements.
 
 Class mapping check configuration strings for commonly used variables.
 
-Readiness checks configuration passed to the [`CheckFirewall`](/panos-upgrade-assurance/docs/api/check-firewall#class-checkfirewall) class is in a form of a list of strings. These strings are compared in several places to parse the configuration and set the proper checks. This class is used to avoid hardcoding these strings. It maps the actual configuration string to a variable that can be referenced in the code.
+Readiness checks configuration passed to the [`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class is in a form of a list of strings. These strings are compared in several places to parse the configuration and set the proper checks. This class is used to avoid hardcoding these strings. It maps the actual configuration string to a variable that can be referenced in the code.
 
 ## class `SnapType`
 
 Class mapping the snapshot configuration strings to the commonly used variables.
 
-Snapshot configuration passed to the [`CheckFirewall`](/panos-upgrade-assurance/docs/api/check-firewall#class-checkfirewall) class is in a form of a list of strings. These strings are compared in several places to parse the configuration and set proper snapshots.
+Snapshot configuration passed to the [`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class is in a form of a list of strings. These strings are compared in several places to parse the configuration and set proper snapshots.
 This class is used to avoid hardcoding these strings. It maps the actual configuration string to a variable that can be referenced in the code.
 
 ## class `CheckStatus`
@@ -47,12 +46,13 @@ It provides two types of information:
 * `status` which represents information about the check outcome,
 * `reason` a reason behind the particular outcome, this comes in handy when a check fails.
 
-Most of the [`CheckFirewall`](/panos-upgrade-assurance/docs/api/check-firewall#class-checkfirewall) methods use this class to store the return values, but mostly internally. The [`CheckFirewall.run_readiness_checks()`](/panos-upgrade-assurance/docs/api/check-firewall#checkfirewallrun_readiness_checks) method translates this class into the python primitives: `str` and `bool`.
+Most of the [`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) methods use this class to store the return values, but mostly internally. The [`CheckFirewall.run_readiness_checks()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_readiness_checks) method translates this class into the python primitives: `str` and `bool`.
 
 __Attributes__
 
-* `status (CheckStatus)`: Holds the status of a check. See [`CheckStatus`](#class-checkstatus) class for details.
-* `reason (str)`: Holds a reason explaining why a check fails. Provides no value if the check is successful.
+
+- `status (CheckStatus)`: Holds the status of a check. See [`CheckStatus`](#class-checkstatus) class for details.
+- `reason (str)`: Holds a reason explaining why a check fails. Provides no value if the check is successful.
 
 ### `CheckResult.__str__`
 
@@ -63,6 +63,7 @@ def __str__()
 This class' string representation.
 
 __Returns__
+
 
 `str`: a string combined from the `self.status` and `self.reason` variables. Provides a human readable representation of the class. Perfect to provide a reason for a particular check outcome.
 
@@ -76,6 +77,7 @@ Class' boolean representation.
 
 __Returns__
 
+
 `bool`: a boolean value interpreting the value of the current `state`:
 
 * `True` when `status` [`CheckStatus.SUCCESS`](#class-checkstatus)
@@ -86,11 +88,12 @@ __Returns__
 Class responsible for parsing the provided configuration.
 
 This class is universal, meaning it parses configuration provided as the list of strings or dictionaries and verifies it against the list of valid configuration items.
-There are no hardcoded items against which the configuration is checked. This class is used in many places in this package and it uses a specific [`dialect`](/panos-upgrade-assurance/docs/dialect).
+There are no hardcoded items against which the configuration is checked. This class is used in many places in this package and it uses a specific [`dialect`](/panos/docs/panos-upgrade-assurance/dialect).
 
 __Attributes__
 
-* `_requested_config_names (set)`: Contains only element names of the requested configuration. When no requested configuration is passed (implicit `'all'`), this is equal to `self.valid_elements`.
+
+- `_requested_config_names (set)`: Contains only element names of the requested configuration. When no requested configuration is passed (implicit `'all'`), this is equal to `self.valid_elements`.
 
 ### `ConfigParser.__init__`
 
@@ -104,17 +107,19 @@ ConfigParser constructor.
 Introduces some initial verification logic:
 
 * `valid_elements` is converted to `set` - this way we get rid of all duplicates,
-* if `requested_config` is `None` we immediately treat it as if `all`  was passed implicitly (see [`dialect`](/panos-upgrade-assurance/docs/dialect)) - it's expanded to `valid_elements`
+* if `requested_config` is `None` we immediately treat it as if `all`  was passed implicitly (see [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)) - it's expanded to `valid_elements`
 * `_requested_config_names` is introduced as `requested_config` stripped of any element configurations. Additionally, we do verification if elements of this variable match `valid_elements`. An exception is thrown if not.
 
 __Parameters__
 
-* __valid_elements__ (`iterable`): Valid elements against which we check the requested config.
-* __requested_config__ (`list, optional`): (defaults to `None`) A list of requested configuration items with an optional configuration.
+
+- __valid_elements__ (`iterable`): Valid elements against which we check the requested config.
+- __requested_config__ (`list, optional`): (defaults to `None`) A list of requested configuration items with an optional configuration.
 
 __Raises__
 
-* `UnknownParameterException`: An exception is raised when a requested configuration element is not one of the valid elements.
+
+- `UnknownParameterException`: An exception is raised when a requested configuration element is not one of the valid elements.
 
 ### `ConfigParser._is_element_included`
 
@@ -124,11 +129,12 @@ def _is_element_included(element: str) -> bool
 
 Method verifying if a config element is a correct (supported) value.
 
-This method can also handle `not-elements` (see [`dialect`](/panos-upgrade-assurance/docs/dialect)).
+This method can also handle `not-elements` (see [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)).
 
 __Parameters__
 
-* __element__ (`str`): The config element to verify. This can be a `not-element`. This parameter is verified against `self.valid_elements` `set`. Key word `'all'` is also accepted.
+
+- __element__ (`str`): The config element to verify. This can be a `not-element`. This parameter is verified against `self.valid_elements` `set`. Key word `'all'` is also accepted.
 
 __Returns__
 
@@ -147,13 +153,16 @@ If a config element is a string, the actual config element is returned. For elem
 
 __Parameters__
 
-* __config__ (`str, dict`): A config element to provide a name for.
+
+- __config__ (`str, dict`): A config element to provide a name for.
 
 __Raises__
 
-* `WrongDataTypeException`: Thrown when config does not meet requirements.
+
+- `WrongDataTypeException`: Thrown when config does not meet requirements.
 
 __Returns__
+
 
 `str`: The config element name.
 
@@ -179,7 +188,7 @@ Parse the input config and return a machine-usable configuration.
 
 The parsed configuration retains element types. This means that an element of a dictionary type will remain a dictionary in the parsed config.
 
-This method handles most of the [`dialect`](/panos-upgrade-assurance/docs/dialect)'s logic.
+This method handles most of the [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)'s logic.
 
 __Returns__
 
@@ -195,13 +204,16 @@ Interpret `yes`/`no` as booleans.
 
 __Parameters__
 
-* __boolstr__ (`str`): `yes` or `no`, a typical device response for simple boolean-like queries.
+
+- __boolstr__ (`str`): `yes` or `no`, a typical device response for simple boolean-like queries.
 
 __Raises__
 
-* `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes` or `no`.
+
+- `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes` or `no`.
 
 __Returns__
+
 
 `bool`: `True` for *yes*, `False` for *no*.
 
@@ -215,5 +227,7 @@ Print reports in human friendly format.
 
 __Parameters__
 
-* __report__ (`dict`): Dict with reports from tests.
-* __indent_level__ (`int`): Indentation level.
+
+- __report__ (`dict`): Dict with reports from tests.
+- __indent_level__ (`int`): Indentation level.
+

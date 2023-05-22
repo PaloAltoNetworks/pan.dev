@@ -1,11 +1,10 @@
 ---
-id: snapshot-compare
+id: snapshot_compare
 sidebar_label: snapshot_compare module
 title: snapshot_compare
 hide_title: true
 custom_edit_url: null
 ---
-
 ## class `MissingKeyException`
 
 Used when an exception about the missing keys in a dictionary is thrown.
@@ -22,8 +21,8 @@ Used when a snapshot element contains different properties in both snapshots.
 
 Class comparing snapshots of Firewall Nodes.
 
-This object can be used to compare two Firewall snapshots made with the [CheckFirewall.run_snapshots()](/panos-upgrade-assurance/docs/api/check-firewall#checkfirewallrun_snapshots) method and present results of this comparison.
-Its main purpose is to compare two snapshots made with the [`CheckFirewall`](/panos-upgrade-assurance/docs/api/check-firewall#class-checkfirewall) class. However, the code is generic enough to compare any two dictionaries as long as they follow the schema below:
+This object can be used to compare two Firewall snapshots made with the [CheckFirewall.run_snapshots()](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots) method and present results of this comparison.
+Its main purpose is to compare two snapshots made with the [`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class. However, the code is generic enough to compare any two dictionaries as long as they follow the schema below:
 
 ```yaml
 {
@@ -40,9 +39,10 @@ Where:
 
 __Attributes__
 
-* `_functions_mapping (dict)`: Internal variable containing the map of all valid report types mapped to the specific methods.
 
-This mapping is used to verify the requested report and to map the report to an actual method that will eventually run. Keys in this dictionary are report names as defined in the [`SnapType`](/panos-upgrade-assurance/docs/api/utils#class-snaptype) class. Essentially, these are the same values that one would specify when creating a snapshot with the [CheckFirewall.run_snapshots()](/panos-upgrade-assurance/docs/api/check-firewall#checkfirewallrun_snapshots) method. Values are references to the methods that will run.
+- `_functions_mapping (dict)`: Internal variable containing the map of all valid report types mapped to the specific methods.
+
+This mapping is used to verify the requested report and to map the report to an actual method that will eventually run. Keys in this dictionary are report names as defined in the [`SnapType`](/panos/docs/panos-upgrade-assurance/api/utils#class-snaptype) class. Essentially, these are the same values that one would specify when creating a snapshot with the [CheckFirewall.run_snapshots()](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots) method. Values are references to the methods that will run.
 
 ### `SnapshotCompare.__init__`
 
@@ -57,8 +57,9 @@ Initializes an object by storing both snapshots to be compared.
 
 __Parameters__
 
-* __left_snapshot__ (`dict`): First snapshot dictionary to be compared, usually the older one, for example a pre-upgrade snapshot.
-* __right_snapshot__ (`dict`): Second snapshot dictionary to be compared, usually the newer one, for example a post-upgrade snapshot.
+
+- __left_snapshot__ (`dict`): First snapshot dictionary to be compared, usually the older one, for example a pre-upgrade snapshot.
+- __right_snapshot__ (`dict`): Second snapshot dictionary to be compared, usually the newer one, for example a post-upgrade snapshot.
 
 ### `SnapshotCompare.compare_snapshots`
 
@@ -73,22 +74,25 @@ This is a single point of entry to generate a comparison report. It takes both r
 
 __Parameters__
 
-* __reports__ (`list, optional`): A list of reports - snapshot state areas with optional configuration. This parameter follows the  [`dialect`](/panos-upgrade-assurance/docs/dialect) of [`ConfigParser`](/panos-upgrade-assurance/docs/api/utils#class-configparser) class.
 
-    The reports list is essentially the list of keys present in the snapshots. These keys, however, are the state areas specified when the snapshot is made with the [`CheckFirewall.run_snapshots()`](/panos-upgrade-assurance/docs/api/check-firewall#checkfirewallrun_snapshots) method. This means that the reports list is basically the list of state areas. The only difference is that for reports, it is possible to specify an additional configuration. This means that the list can be specified in two ways, as `str` or `dict` (in the same manner as for [`CheckFirewall.run_readiness_checks()`](/panos-upgrade-assurance/docs/api/check-firewall#checkfirewallrun_readiness_checks)).
+- __reports__ (`list, optional`): A list of reports - snapshot state areas with optional configuration. This parameter follows the  [`dialect`](/panos/docs/panos-upgrade-assurance/dialect) of [`ConfigParser`](/panos/docs/panos-upgrade-assurance/api/utils#class-configparser) class.
+
+    The reports list is essentially the list of keys present in the snapshots. These keys, however, are the state areas specified when the snapshot is made with the [`CheckFirewall.run_snapshots()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots) method. This means that the reports list is basically the list of state areas. The only difference is that for reports, it is possible to specify an additional configuration. This means that the list can be specified in two ways, as `str` or `dict` (in the same manner as for [`CheckFirewall.run_readiness_checks()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_readiness_checks)).
 
     For the elements specified as
 
-  * `str` - the element value is the name of the report (state area),
-  * `dict` - the element contains the report name (state area) and the key value and report configuration as the element value.
+    * `str` - the element value is the name of the report (state area),
+    * `dict` - the element contains the report name (state area) and the key value and report configuration as the element value.
 
-    Refer to the [documentation on reporting](/panos-upgrade-assurance/docs/configuration-details#reports) for details on the currently available snapshot areas and optional parameters that can be configured for them.
+    Refer to the [documentation on reporting](/panos/docs/panos-upgrade-assurance/configuration-details#reports) for details on the currently available snapshot areas and optional parameters that can be configured for them.
 
 __Raises__
 
-* `WrongDataTypeException`: An exception is raised when the configuration in a data type is different than `str` or `dict`.
+
+- `WrongDataTypeException`: An exception is raised when the configuration in a data type is different than `str` or `dict`.
 
 __Returns__
+
 
 `dict`: Result of comparison in a form of the Python dictionary. Keys in this dictionary are again state areas where values depend on the actual comparison method that was run.
 
@@ -105,13 +109,15 @@ This method looks for a given key in two dictionaries. Its main purpose is to as
 
 __Parameters__
 
-* __left_dict__ (`dict`): 1st dictionary to verify.
-* __right_dict__ (`dict`): 2nd dictionary to verify.
-* __key__ (`str`): Key name to check.
+
+- __left_dict__ (`dict`): 1st dictionary to verify.
+- __right_dict__ (`dict`): 2nd dictionary to verify.
+- __key__ (`str`): Key name to check.
 
 __Raises__
 
-* `MissingKeyException`: when key is not available in at least one snapshot.
+
+- `MissingKeyException`: when key is not available in at least one snapshot.
 
 ### `SnapshotCompare.calculate_change_percentage`
 
@@ -130,7 +136,7 @@ The format of the returned value is the following:
 
 ```yaml
 {
-    passed: bool, 
+    passed: bool,
     change_percentage: float,
     change_threshold: float
 }
@@ -138,23 +144,26 @@ The format of the returned value is the following:
 
 Where:
 
-* `passed` is an information if the test passed:
-  * `True` if difference is lower or equal to threshold,
-  * `False` otherwise,
-* the actual difference represented as percentage,
-* the originally requested threshold (for reporting purposes).
+- `passed` is an information if the test passed:
+    - `True` if difference is lower or equal to threshold,
+    - `False` otherwise,
+- the actual difference represented as percentage,
+- the originally requested threshold (for reporting purposes).
 
 __Parameters__
 
-* __first_value__ (`int, str`): First value to compare.
-* __second_value__ (`int, str`): Second value to compare.
-* __threshold__ (`float, str`): Maximal difference between values given as percentage.
+
+- __first_value__ (`int, str`): First value to compare.
+- __second_value__ (`int, str`): Second value to compare.
+- __threshold__ (`float, str`): Maximal difference between values given as percentage.
 
 __Raises__
 
-* `WrongDataTypeException`: An exception is raised when the threshold value is not between `0` and `100` (typical percentage boundaries).
+
+- `WrongDataTypeException`: An exception is raised when the threshold value is not between `0` and `100` (typical percentage boundaries).
 
 __Returns__
+
 
 `dict`: A dictionary with the comparison results.
 
@@ -190,7 +199,7 @@ By default dictionaries are compared by going down all nested levels, to the poi
 }
 ```
 
-The bottom most level keys are: `virtual-router`, `destination`, `nexthop`, `metric`, `flags`, `age`, `interface`, `route-table`. This list follows [`ConfigParser`](/panos-upgrade-assurance/docs/api/utils#class-configparser) [`dialect`](/panos-upgrade-assurance/docs/dialect).
+The bottom most level keys are: `virtual-router`, `destination`, `nexthop`, `metric`, `flags`, `age`, `interface`, `route-table`. This list follows [`ConfigParser`](/panos/docs/panos-upgrade-assurance/api/utils#class-configparser) [`dialect`](/panos/docs/panos-upgrade-assurance/dialect).
 
 The difference between dictionaries is calculated from three perspectives:
 
@@ -198,11 +207,11 @@ The difference between dictionaries is calculated from three perspectives:
 2. are there any keys in the 2nd (right) dictionary that are not present in the 1st (left) - this is represented under the `added` key in the results.
 3. for the keys that are present in both dictionaries, are values for these keys the same or different - this is represented under the `changed` key in the results.
 
-This is a __recursive__ method. When calculating changed values, if a value for the key is `dict`, we run the method again on that dictionary - we go down one level in the nested structure. We do that to a point where the value is of the `str` type.
+This is a **recursive** method. When calculating changed values, if a value for the key is `dict`, we run the method again on that dictionary - we go down one level in the nested structure. We do that to a point where the value is of the `str` type.
 Therefore, when the final comparison results are presented, the `changed` key usually contains a nested results structure. This means it contains a dictionary with the `missing`, `added`, and `changed` keys.
 Each comparison perspective contains the `passed` property that immediately informs if this comparison gave any results (`False`) or not (`True`).
 
-__Example.__
+**Example.**
 
 Let's assume we want to compare two dictionaries of the following structure:
 
@@ -266,15 +275,18 @@ The result of this comparison would look like this:
 
 __Parameters__
 
-* __left_side_to_compare__ (`dict`): 1st dictionary to compare. When this method is triggered by [`compare_snapshots()`](#snapshotcomparecompare_snapshots), the dictionary comes from the `self.left_snap` snapshot.
-* __right_side_to_compare__ (`dict`): 2nd dictionary to compare, comes from the self.right_snap snapshot. When this method is triggered by [`compare_snapshots()`](#snapshotcomparecompare_snapshots), the dictionary comes from the `self.right_snap` snapshot.
-* __properties__ (`list(str), optional`): The list of properties used to compare two dictionaries.
+
+- __left_side_to_compare__ (`dict`): 1st dictionary to compare. When this method is triggered by [`compare_snapshots()`](#snapshotcomparecompare_snapshots), the dictionary comes from the `self.left_snap` snapshot.
+- __right_side_to_compare__ (`dict`): 2nd dictionary to compare, comes from the self.right_snap snapshot. When this method is triggered by [`compare_snapshots()`](#snapshotcomparecompare_snapshots), the dictionary comes from the `self.right_snap` snapshot.
+- __properties__ (`list(str), optional`): The list of properties used to compare two dictionaries.
 
 __Raises__
 
-* `WrongDataTypeException`: Thrown when one of the `properties` elements has a wrong data type.
+
+- `WrongDataTypeException`: Thrown when one of the `properties` elements has a wrong data type.
 
 __Returns__
+
 
 `dict`: Summary of the differences between dictionaries. The output has the following format:
 
@@ -330,11 +342,12 @@ To illustrate that, the `passed` flag added by this method is marked with an arr
 }
 ```
 
-__NOTE__ that this method operated on the passed dictionary directly.
+**NOTE** that this method operated on the passed dictionary directly.
 
 __Parameters__
 
-* __result__ (`dict`): A dictionary for which the `passed` property should be calculated.
+
+- __result__ (`dict`): A dictionary for which the `passed` property should be calculated.
 
 ### `SnapshotCompare.get_diff_and_threshold`
 
@@ -412,13 +425,15 @@ In the example above, you can also see a nested dictionary produced by the [`cal
 
 __Parameters__
 
-* __report_type__ (`str`): Name of report (type) that has to be compared. Basically this is a snapshot state area, for example `nics`, `routes`, etc.
 
-* __properties__ (`list(str), optional`): (defaults to `None`) An optional list of properties to include or exclude when comparing snapshots. This parameter is passed directly to the [`calculate_diff_on_dicts()`](#snapshotcomparecalculate_diff_on_dicts) method. For details on this method parameters, see the [documentation](#snapshotcomparecalculate_diff_on_dicts) for this method.
+- __report_type__ (`str`): Name of report (type) that has to be compared. Basically this is a snapshot state area, for example `nics`, `routes`, etc.
 
-* __count_change_threshold__ (`int, float, optional`): (defaults to `None`) The maximum difference between number of changed elements in each snapshot (as percentage).
+- __properties__ (`list(str), optional`): (defaults to `None`) An optional list of properties to include or exclude when comparing snapshots. This parameter is passed directly to the [`calculate_diff_on_dicts()`](#snapshotcomparecalculate_diff_on_dicts) method. For details on this method parameters, see the [documentation](#snapshotcomparecalculate_diff_on_dicts) for this method.
+
+- __count_change_threshold__ (`int, float, optional`): (defaults to `None`) The maximum difference between number of changed elements in each snapshot (as percentage).
 
 __Returns__
+
 
 `dict`: Comparison results.
 
@@ -460,9 +475,9 @@ A good example is a change in the session count. The snapshot for this area is a
 
 This method:
 
-* sweeps through all the session types provided in the `thresholds` variable,
-* calculates the actual difference,
-* compares the actual difference with the threshold value (percentage) for a particular session type.
+- sweeps through all the session types provided in the `thresholds` variable,
+- calculates the actual difference,
+- compares the actual difference with the threshold value (percentage) for a particular session type.
 
 It takes as parameter a list of dictionaries describing elements to compare, in a form of:
 
@@ -474,11 +489,11 @@ It takes as parameter a list of dictionaries describing elements to compare, in 
 
 Where:
 
-* `element_type` is a key which value we are going to compare,
-* `threshold_value` is a percentage value provided as either `int` or `float`. If the list is empty, the method will return `None`.
+- `element_type` is a key which value we are going to compare,
+- `threshold_value` is a percentage value provided as either `int` or `float`. If the list is empty, the method will return `None`.
 
-:::warning
-This list __does not support__ [`ConfigParser`](/panos-upgrade-assurance/docs/api/utils#class-configparser) [`dialect`](/panos-upgrade-assurance/docs/dialect).
+:::caution
+This list **does not support** [`ConfigParser`](/panos/docs/panos-upgrade-assurance/api/utils#class-configparser) [`dialect`](/panos/docs/panos-upgrade-assurance/dialect).
 :::
 
 Below there is a sample list for the `sessions_stat` dictionary shown above that would calculate differences for the TCP and UDP sessions:
@@ -492,13 +507,16 @@ Below there is a sample list for the `sessions_stat` dictionary shown above that
 
 __Parameters__
 
-* __thresholds__ (`list`): (defaults to `None`) The list of elements to compare with thresholds.
+
+- __thresholds__ (`list`): (defaults to `None`) The list of elements to compare with thresholds.
 
 __Raises__
 
-* `SnapshotSchemeMismatchException`: Thrown when a snapshot element has a different set of properties in both snapshots.
+
+- `SnapshotSchemeMismatchException`: Thrown when a snapshot element has a different set of properties in both snapshots.
 
 __Returns__
+
 
 `dict`: The result of difference compared against a threshold. The result for each value is in the same form as returned by the [`calculate_change_percentage()`](#snapshotcomparecalculate_change_percentage) method. For the examples above, the return value would be:
 
@@ -517,3 +535,4 @@ __Returns__
     'passed': False
 }
 ```
+
