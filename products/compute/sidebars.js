@@ -62,7 +62,7 @@ module.exports = {
   compute_minor: [
     {
       type: "category",
-      label: "Compute - 30.00",
+      label: "Prisma Cloud Compute Edition - 30.00",
       collapsed: true,
       items: [
         "compute/api/30-00/stable-endpoints",

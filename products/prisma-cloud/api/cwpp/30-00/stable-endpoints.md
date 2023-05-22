@@ -12,6 +12,11 @@ With API versioning, as your Console is upgraded to newer versions, you can cont
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
 
+### Latest API Versions of Prisma Cloud Enterprise Edition
+
+If you're looking for latest version of Prisma Cloud Enterprise Edition, visit the following link:
+
+* [Prisma Cloud Enterprise Edition - Latest](/prisma-cloud/api/cwpp/)
 ## Versioning
 
 The Compute API is versioned as follows:

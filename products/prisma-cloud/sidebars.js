@@ -42,7 +42,7 @@ module.exports = {
   cwpp_minor: [
     {
       type: "category",
-      label: "Cloud Workload Protection - 30.00",
+      label: "Prisma Cloud Enterprise Edition - 30.00",
       collapsed: true,
       items: [
         "prisma-cloud/api/cwpp/30-00/stable-endpoints",
