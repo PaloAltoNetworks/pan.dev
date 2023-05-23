@@ -109,7 +109,7 @@ Some things to check to get WildFire data into Splunk:
 
 ### Datamodel Build Problems {#datamodel}
 
-If using App 6.0 or higher, use the [Datamodel Audit](https://splunk.paloaltonetworks.com/dashboards.html#datamodel) dashboard to get visibility into the datamodels and what they are storing.
+If using App 6.0 or higher, use the Datamodel Audit dashboard to get visibility into the datamodels and what they are storing.
 
 If the build percentage is stuck at less than 95%, the cause might be limited resources on the Splunk server being consumed by other apps. Try disabling unused apps, removing acceleration from other datamodels, or adding hardware resources. Splunk Enterprise Security uses an exceptional amount of compute resources which can starve the datamodels of other apps like the Palo Alto Networks App.  If Enterprise Security is installed on the same server as the Palo Alto Networks App, try separating them to different servers so they don't compete for compute resources.
 
