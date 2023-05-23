@@ -505,17 +505,6 @@ const config = {
               description: "Discover technology partner integrations.",
               products: [
                 {
-                  label: "Terraform",
-                  to: "#",
-                  docs: [
-                    {
-                      label: "Terraform",
-                      to: "terraform/docs/panos",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
                   label: "Ansible",
                   to: "#",
                   docs: [
@@ -533,6 +522,17 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Terraform",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Terraform",
+                      to: "terraform/docs/panos",
                       icon: "doc",
                     },
                   ],

@@ -141,7 +141,7 @@ To troubleshoot the API Key Validation health check, follow these steps:
    - Ensure that the API key has the necessary privileges to access the desired resources or perform specific operations.
    - Check if any recent changes to the API key permissions may have caused the validation failures.
 
-6. **Reach out to Cortex XDR Support:**
+6. **Getting Help:**
    - If the above steps do not resolve the API key validation issue, consider contacting the Cortex XDR support team.
    - Provide them with the necessary details, including error codes, logs, and any troubleshooting steps you have already performed.
    - Collaborate with their support team to diagnose and resolve the problem.
