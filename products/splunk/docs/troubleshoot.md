@@ -21,7 +21,7 @@ When upgrading any app in Splunk, configuration created by the Splunk administra
 
 **All dashboards have no data**
 
-Perform a search for `eventtype=pan` with 'All time' as the timeframe. If logs show up, then verify the timestamp of the logs is correct. If it is wrong, check that the clock and timezone on the Firewall/Panorama matches the Splunk server, or use NTP on both. See [Time and Timezone Problems](/troubleshoot.md#time-and-timezone-problems "Time and Timezone Problems") below for more detail.
+Perform a search for `eventtype=pan` with 'All time' as the timeframe. If logs show up, then verify the timestamp of the logs is correct. If it is wrong, check that the clock and timezone on the Firewall/Panorama matches the Splunk server, or use NTP on both. See [Time and Timezone Problems](#time-and-timezone-problems "Time and Timezone Problems") below for more detail.
 
 **Only 'Overview' or 'Real-time Event Feed' dashboard has data**
 
@@ -65,7 +65,7 @@ Firewall/Panorama and Traps always output logs without a timezone, so the timezo
 
 Splunk always interprets Palo Alto Networks logs as the timezone of the Splunk server \(or container\).
 
-Therefor, if a Splunk server and Firewall have the same timezone, then the timestamp will be interpreted correctly by Splunk.  If they have different timezones, then the interpreted time will be offset by the difference in the timezones.  You can overcome this by creating a `local/props.conf` file that explicitly [sets the timezone](http://docs.splunk.com/Documentation/SplunkCloud/6.6.3/Data/Applytimezoneoffsetstotimestamps) for the logs.  For example, if Splunk is set to UTC and the Firewall is set to EST, then configure a local `props.conf` file to interpret the Firewall logs as EST, as they will incorrectly be interpreted as UTC by default.
+Therefor, if a Splunk server and Firewall have the same timezone, then the timestamp will be interpreted correctly by Splunk.  If they have different timezones, then the interpreted time will be offset by the difference in the timezones.  You can overcome this by creating a `local/props.conf` file that explicitly [sets the timezone](https://docs.splunk.com/Documentation/SplunkCloud/9.0.2303/Data/Applytimezoneoffsetstotimestamps) for the logs.  For example, if Splunk is set to UTC and the Firewall is set to EST, then configure a local `props.conf` file to interpret the Firewall logs as EST, as they will incorrectly be interpreted as UTC by default.
 
 An example timezone setting in `props.conf` might look like this:
 
@@ -85,7 +85,7 @@ If your logs are not getting converted to these other sourcetypes and are instea
 1. Use the correct log format. For Firewall or Panorama logs, use the default syslog format. For Traps logs use CEF format.
 2. For UDP logs, try adding `no_appending_timestamp = true` to your `inputs.conf`.
 3. Ensure the Palo Alto Networks Add-on is installed on all Indexers and Heavy Forwarders, and configure the `inputs.conf` on the node receiving the logs.
-4. If you're using syslog-ng or another syslog collector with a Splunk Heavy or Universal Forwarder, then syslog-ng can add a prefix to the logs which interferes with parsing. Follow the directions at [Syslog-ng and Universal Forwarder](/universal-forwarder.md) to configure syslog-ng to omit this prefix.
+4. If you're using syslog-ng or another syslog collector with a Splunk Heavy or Universal Forwarder, then syslog-ng can add a prefix to the logs which interferes with parsing. Follow the directions at [Syslog-ng and Universal Forwarder](../universal-forwarder) to configure syslog-ng to omit this prefix.
 
 ### No WildFire Data
 
@@ -99,7 +99,7 @@ The [WildFire dashboard](/dashboards#wildfire) is empty or no WildFire data is a
 
 Some things to check to get WildFire data into Splunk:
 
-* If upgrading to App 5.3 or higher from a version before 5.3, you must set the WildFire API key in the Add-on Setup Screen, even if you previously set it in the App. See the [release notes](release-notes.md#app-53) for more information.
+* If upgrading to App 5.3 or higher from a version before 5.3, you must set the WildFire API key in the Add-on Setup Screen, even if you previously set it in the App. See the [release notes](release-notes#app-53) for more information.
 * Verify there are WildFire Submission logs in the Monitor tab on the Firewall/Panorama
 * Verify WildFire logs are enabled in the Log Forwarding Profile on the Security policy rule which is generating WildFire events
 * Verify WildFire events are received by Splunk with this search: `eventtype=pan_wildfire`
