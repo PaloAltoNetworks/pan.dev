@@ -39,6 +39,17 @@ module.exports = {
       ],
     },
   ],
+  cwpp_minor: [
+    {
+      type: "category",
+      label: "Prisma Cloud Enterprise Edition - 30.00",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/cwpp/30-00/stable-endpoints",
+        require("./api/cwpp/30-00/sidebar"),
+      ],
+    },
+  ],
   clouddocs: [
     "prisma-cloud/docs/home",
     {
@@ -109,12 +120,12 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30-00/prisma-cloud-compute-edition-admin.html",
+              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30/prisma-cloud-compute-edition-admin.html",
             },
             {
               type: "link",
               label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30-00/prisma-cloud-compute-edition-release-notes/release-information",
+              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30/prisma-cloud-compute-edition-release-notes/release-information",
             },
           ],
         },

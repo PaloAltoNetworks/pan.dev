@@ -9,7 +9,12 @@ The version-specific APIs are supported for the subsequent two major releases.
 With API versioning, as your Console is upgraded to newer versions, you can continue to use older versioned APIs with stability and migrate to newer version APIs at your convenience within the N-2 support lifecycle.
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
+### Previous API Versions of Prisma Cloud Compute Edition
 
+All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
+If you're looking for previous minor or maintenance release versions, visit the following link:
+
+* [Prisma Cloud Compute Edition - 30.00](/compute/api/30-00/)
 ## Versioning
 
 The Compute API is versioned as follows:
@@ -23,7 +28,6 @@ Where:
   - api/v1/certs/server-certs.sh, get
   - api/v1/registry/webhook/webhook, delete
   - api/v1/registry/webhook/webhook, post
-  - api/v1/settings/license, post
   - api/v1/signup, post
   - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
   - api/v1/util/tas-tile, get
