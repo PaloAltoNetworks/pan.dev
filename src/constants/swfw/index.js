@@ -1,9 +1,9 @@
 import React from "react";
-import Link from "@docusaurus/Link";
 
 export const SWFW_METADATA = {
-  title: "Palo Alto Networks as Code with Terraform",
-  description: "Palo Alto Networks as Code with Terraform",
+  title: "Software Firewall with Terraform",
+  description:
+    "Palo Alto Networks as Code, deploy, configure, and orchestrate hybrid-cloud security with Terraform",
 };
 
 export const SWFW_HERO_CONTENT = {
@@ -11,63 +11,117 @@ export const SWFW_HERO_CONTENT = {
   product: "terraform",
   header: (
     <h1>
-      <span>Palo Alto Networks</span> as Code with Terraform
+      <span>Reference Architectures</span> Software NGFW with Terraform
     </h1>
   ),
   subheader: (
     <p>
-      Hashicorp's Terraform is widely used to build and deploy infrastructure,
-      safely and efficiently, with high levels of automation and integration.
+      Leverage tested Reference Architectures and Terraform modules for easy and
+      successful deployment of your Software NGFW
     </p>
   ),
-  sliderCards: [
-    {
-      title: "The New Cloud Operating Model - White Paper",
-      description:
-        "Scale and secure your cloud operations with HashiCorp and Palo Alto Networks. This new white paper lays out the advantages and considerations for people, processes, and tools.",
-      cta: {
-        type: "single",
-        content: {
-          link: "https://www.hashicorp.com/resources/the-cloud-operating-model-with-palo-alto-networks-and-hashicorp",
-          text: "See More",
-        },
-      },
-      image: {
-        src: "/img/product-landing/terraform/cloud-op-model.png",
-        alt: "Technology Partner of The Year",
-      },
-    },
-    {
-      title: "Hashicorp Technology Partner of The Year",
-      description:
-        "The Technology Partner Awards celebrate HashiCorp technology partners who have expanded ecosystem solutions for customers through new integrations, co-engineered solutions, and participated in joint marketing initiatives.",
-      cta: {
-        type: "single",
-        content: {
-          link: "https://www.hashicorp.com/blog/announcing-the-2022-hashicorp-technology-partner-award-winners",
-          text: "See More",
-        },
-      },
-      image: {
-        src: "/img/product-landing/terraform/technology-partner-award.jpg",
-        alt: "Technology Partner of The Year",
-      },
-    },
-    {
-      title: "Terraform 1.3 Improves Extensibility and Maintainability",
-      description:
-        "Now generally available, HashiCorp Terraform 1.3 introduces optional object type attributes with defaults, and enhancements to moved blocks, improving extensibility and maintainability of Terraform modules.",
-      cta: {
-        type: "single",
-        content: {
-          link: "https://www.hashicorp.com/blog/terraform-1-3-improves-extensibility-and-maintainability-of-terraform-modules",
-          text: "See More",
-        },
-      },
-      image: {
-        src: "/img/product-landing/terraform/terraform-article.jpeg",
-        alt: "Technology Partner of The Year",
-      },
-    },
-  ],
 };
+
+export const SWFW_CLOUDS = [
+  {
+    title: "AWS",
+    subtitle: "For VM-Series and CloudNGFW",
+    link: "/terraform/docs/swfw/aws/vmseries/overview/",
+    text: "Palo Alto Networks validated Reference Architectures for your AWS environment using Terraform. Deploy, configure, and orchestrate VM-Series NGFW instances and CloudNGFW service.",
+  },
+  {
+    title: "Azure",
+    subtitle: "For VM-Series and CloudNGFW",
+    link: "/terraform/docs/swfw/azure/vmseries/overview/",
+    text: "Some amazing Azure text here",
+  },
+  {
+    title: "GCP",
+    subtitle: "For VM-Series",
+    link: "/terraform/docs/swfw/gcp/vmseries/overview/",
+    text: ",",
+  },
+];
+
+export const SWFW_LINKS = [
+  {
+    title: (
+      <>
+        <span className="highlight">Deploy</span> VM-Series
+      </>
+    ),
+    subtitle: "Terraform Modules to deploy a custom secure architecture",
+    links: [
+      {
+        text: "Modules for AWS",
+        url: "/terraform/docs/swfw/aws/vmseries/modules/",
+      },
+      {
+        text: "Modules for Azure",
+        url: "/terraform/docs/swfw/azure/vmseries/modules/",
+      },
+      {
+        text: "Modules for GCP",
+        url: "/terraform/docs/swfw/gcp/vmseries/modules/",
+      },
+    ],
+  },
+  {
+    title: (
+      <>
+        <span className="highlight">Configure</span> VM-Series
+      </>
+    ),
+    subtitle: "Leverage Terraform to declare firewall policy",
+    links: [
+      {
+        text: "Provider for PAN-OS",
+        url: "/terraform/docs/panos/",
+      },
+    ],
+  },
+  {
+    title: (
+      <>
+        <span className="highlight">Orchestrate</span> CloudNGFW
+      </>
+    ),
+    subtitle: "NGFW as a Service deployed and managed by Terraform",
+    links: [
+      {
+        text: "Provider for CloudNGFW for AWS",
+        url: "/terraform/docs/cloudngfw/",
+      },
+      {
+        text: "Modules for CloudNGFW for AWS",
+        url: "terraform/docs/cloudngfw/aws/modules/",
+      },
+      {
+        text: "Modules for CloudNGFW for Azure",
+        url: "terraform/docs/cloudngfw/azure/modules/",
+      },
+    ],
+  },
+  {
+    title: (
+      <>
+        <span className="highlight">Learn</span> More
+      </>
+    ),
+    subtitle: "Find out more ways to automate security",
+    links: [
+      {
+        text: "Palo Alto Networks and Terraform",
+        url: "/terraform/",
+      },
+      // {
+      //   text: "Palo Alto Networks and Consul",
+      //   url: "#",
+      // },
+      // {
+      //   text: "Automation Community",
+      //   url: "#",
+      // },
+    ],
+  },
+];
