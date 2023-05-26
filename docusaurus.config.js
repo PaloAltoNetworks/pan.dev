@@ -534,10 +534,6 @@ const config = {
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
         },
-        gtag: {
-          trackingID: "GTM-PLXD79N",
-          anonymizeIP: true,
-        },
       },
     ],
   ],
@@ -714,6 +710,12 @@ const config = {
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      require.resolve("./docusaurus-plugin-gtm/index.js"),
+      {
+        gtm: "GTM-PLXD79N",
       },
     ],
   ],
