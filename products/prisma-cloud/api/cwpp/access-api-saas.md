@@ -72,7 +72,7 @@ $ curl \
 
 Use the following method when you want to access Compute APIs from your Prisma Cloud user account:
 
-1. Retrieve a token from the [CSPM Login](/pan.dev/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your CSPM user credentials.
+1. Retrieve a token from the [CSPM Login](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint with your CSPM user credentials.
 
 ```bash
 $ curl --location 'https://<PRISMA CLOUD URL>/login' \

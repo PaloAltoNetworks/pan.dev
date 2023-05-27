@@ -28,6 +28,7 @@ Where:
 - `v1` - Always points to the latest API. This represents a larger set of APIs. Only the following v1 endpoints are supported and documented:
   - api/v1/certs/ca.pem, get
   - api/v1/certs/server-certs.sh, get
+  - api/v1/cloud/discovery/entities, get
   - api/v1/registry/webhook/webhook, delete
   - api/v1/registry/webhook/webhook, post
   - api/v1/settings/license, post
