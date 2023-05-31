@@ -19,11 +19,9 @@ export const SWFW_HERO_CONTENT = {
     <>
       <p>
         Leverage validated <span>Reference Architectures</span> and Terraform
-        modules for easy and successful deployment of your Software NGFW
-      </p>
-      <p>
-        Use pre-built <span>Terraform modules</span> to deploy a software NGFW
-        in your cloud environment
+        modules for easy and successful deployment of your Software NGFW, or use
+        pre-built <span>Terraform modules</span> to easily deploy a software
+        NGFW in a custom cloud architecture.
       </p>
     </>
   ),
