@@ -393,6 +393,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/ztna/ztna-connector-apis",
+                      label: "ZTNA Connector",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc",
@@ -529,10 +534,6 @@ const config = {
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
         },
-        gtag: {
-          trackingID: "GTM-PLXD79N",
-          anonymizeIP: true,
-        },
       },
     ],
   ],
@@ -599,6 +600,11 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ztna: {
+            specPath: "openapi-specs/access/ztna",
+            outputDir: "products/access/api/ztna",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sub: {
             specPath: "openapi-specs/sase/subscription",
             outputDir: "products/sase/api/subscription",
@@ -654,7 +660,16 @@ const config = {
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
+            showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+          },
+          cwpp_minor: {
+            specPath: "openapi-specs/cwpp/30-00",
+            outputDir: "products/prisma-cloud/api/cwpp/30-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/30-00/",
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -672,15 +687,16 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "22.12",
-            label: "v22.12",
+            version: "30.01",
+            label: "v30.01",
+            showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
-              22.01: {
-                specPath: "openapi-specs/compute/22-01",
-                outputDir: "products/compute/api/22-01",
-                label: "v22.01",
-                baseUrl: "/compute/api/22-01/",
+              22.12: {
+                specPath: "openapi-specs/compute/22-12",
+                outputDir: "products/compute/api/22-12",
+                label: "v22.12",
+                baseUrl: "/compute/api/22-12/",
               },
               22.06: {
                 specPath: "openapi-specs/compute/22-06",
@@ -689,6 +705,13 @@ const config = {
                 baseUrl: "/compute/api/22-06/",
               },
             },
+          },
+          compute_minor: {
+            specPath: "openapi-specs/compute/30-00",
+            outputDir: "products/compute/api/30-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-00/",
           },
         },
       },
@@ -703,6 +726,12 @@ const config = {
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      require.resolve("./docusaurus-plugin-gtm/index.js"),
+      {
+        gtm: "GTM-PLXD79N",
       },
     ],
   ],

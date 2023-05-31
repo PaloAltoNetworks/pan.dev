@@ -20,6 +20,17 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## April 2023
+
+Added [ZTNA Connector](/access/api/ztna/ztna-connector-apis/) APIs.
+
+Updated the [Prisma Access Configuration](/access/api/prisma-access-config/)
+APIs with a hotfix. The `region_ipv6` object is no longer part of the payload
+for [POST /sse/config/v1/mobile-agent/infrastructure-settings](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-infrastructure-settings/).
+
+
+Added a [usage note](/sase/docs/api-call/#unified-prisma-sd-wan-usage) for the Unified Prisma SD-WAN APIs.
+
 ## March 2023
 
 The Prisma Access Configuration APIs are updated with new APIs and changes to existing APIs.

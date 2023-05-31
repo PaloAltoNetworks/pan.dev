@@ -1,6 +1,8 @@
 ---
 id: stable-endpoints
 title: Supported Endpoints
+sidebar_label: Supported Endpoints
+slug: /prisma-cloud/api/cwpp/30-00
 ---
 
 With every release the Compute APIs are versioned to indicate the release number to which they correspond.
@@ -10,6 +12,11 @@ With API versioning, as your Console is upgraded to newer versions, you can cont
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
 
+### Latest API Versions of Prisma Cloud Enterprise Edition
+
+If you're looking for latest version of Prisma Cloud Enterprise Edition, visit the following link:
+
+* [Prisma Cloud Enterprise Edition - Latest](/prisma-cloud/api/cwpp/)
 ## Versioning
 
 The Compute API is versioned as follows:
@@ -18,7 +25,16 @@ The Compute API is versioned as follows:
 
 Where:
 
-- `v1` - Always points to the latest API. This represents a larger set of APIs. Only eight v1 endpoints are supported and documented.
+- `v1` - Always points to the latest API. This represents a larger set of APIs. Only the following v1 endpoints are supported and documented:
+  - api/v1/certs/ca.pem, get
+  - api/v1/certs/server-certs.sh, get
+  - api/v1/cloud/discovery/entities, get
+  - api/v1/registry/webhook/webhook, delete
+  - api/v1/registry/webhook/webhook, post
+  - api/v1/settings/license, post
+  - api/v1/signup, post
+  - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
+  - api/v1/util/tas-tile, get
 - `vVersion` - Points to a version-specific API, where `Version` specifies the major and minor parts of a release's version string. The version exists as a soft link to /v1 but only /vVersion is a supported way to access the endpoint.
 
 As a best practice, update your scripts to use the version-specific API endpoints to ensure that your implementation is fully supported.
