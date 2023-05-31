@@ -334,7 +334,13 @@ const config = {
                       icon: "doc",
                     },
                   ],
-                  apiDocs: [],
+                  apiDocs: [
+                    {
+                      to: "expedition/api/expedition-api/",
+                      label: "Expedition API",
+                      icon: "api-doc",
+                    },
+                  ],
                 },
               ],
             },
