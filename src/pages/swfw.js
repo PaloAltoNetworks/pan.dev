@@ -17,8 +17,12 @@ import LinkList from "../components/LinkList";
 
 export default function SWFWLandingPage() {
   return (
-    <Layout description={SWFW_METADATA.description} title={SWFW_METADATA.title}>
-      <div className={`swfw-landing-page-wrapper`}>
+    <Layout
+      description={SWFW_METADATA.description}
+      title={SWFW_METADATA.title}
+      wrapperClassName="swfw-landing-page"
+    >
+      <div className="swfw-landing-page__container">
         <section className={`product-hero-container swfw swfw-hero-container`}>
           <div className={`product-hero__inner-content swfw`}>
             <div className={`product-hero__inner-left swfw`}>
