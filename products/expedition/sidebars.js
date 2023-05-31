@@ -31,6 +31,12 @@ module.exports = {
             "expedition/docs/expedition_workflow_searchrule",
           ],
         },
+        {
+          type: "category",
+          collapsed: false,
+          label: "API Reference",
+          items: [require("./api/sidebar")],
+        },
       ],
     },
     "expedition/docs/expedition_contact",

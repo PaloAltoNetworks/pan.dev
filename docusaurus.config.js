@@ -713,6 +713,11 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/30-00/",
           },
+          expedition: {
+            specPath: "openapi-specs/expedition/api-docs.yaml",
+            outputDir: "products/expedition/api",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
         },
       },
     ],
