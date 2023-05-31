@@ -9,16 +9,18 @@ export const SWFW_METADATA = {
 export const SWFW_HERO_CONTENT = {
   anchorLink: "#providers-container",
   product: "terraform",
-  header: (
-    <h1>
-      <span>Reference Architectures</span> Software NGFW with Terraform
-    </h1>
-  ),
+  header: <h1>Software NGFW with Terraform</h1>,
   subheader: (
-    <p>
-      Leverage tested Reference Architectures and Terraform modules for easy and
-      successful deployment of your Software NGFW
-    </p>
+    <>
+      <p>
+        Leverage tested <span>Reference Architectures</span> and Terraform
+        modules for easy and successful deployment of your Software NGFW
+      </p>
+      <p>
+        Use pre-built <span>Terraform modules</span> to deploy a software NGFW
+        in your way for your cloud environment
+      </p>
+    </>
   ),
 };
 
@@ -27,19 +29,19 @@ export const SWFW_CLOUDS = [
     title: "AWS",
     subtitle: "For VM-Series and CloudNGFW",
     link: "/terraform/docs/swfw/aws/vmseries/overview/",
-    text: "Palo Alto Networks validated Reference Architectures for your AWS environment using Terraform. Deploy, configure, and orchestrate VM-Series NGFW instances and CloudNGFW service.",
+    text: "Deploy and Configure VM-Series or Cloud NGFW as a code on the AWS Platform using the Terraform examples and modules that help you realize the Palo Alto Networks validated Reference Architectures. These examples help you deploy and configure the the entire firewall infrastructure that includes the VPCs, subnets, security groups, route rules, gateway load balancer, transit gateway along with a VM-Series firewall cluster",
   },
   {
     title: "Azure",
     subtitle: "For VM-Series and CloudNGFW",
     link: "/terraform/docs/swfw/azure/vmseries/overview/",
-    text: "Some amazing Azure text here",
+    text: "Deploy and Configure VM-Series or Cloud NGFW as a code on the Azure Platform using the Terraform examples and modules that help you realize the Palo Alto Networks validated Reference Architectures. These examples deploy the the entire firewall infrastructure that includes the VNets, subnets, network security groups, route rules, load balancers along with a VM-Series firewall cluster",
   },
   {
     title: "GCP",
     subtitle: "For VM-Series",
     link: "/terraform/docs/swfw/gcp/vmseries/overview/",
-    text: ",",
+    text: "Deploy and Configure VM-Series or Cloud NGFW as a code on the Google Cloud Platform using the Terraform examples and modules that help you realize the Palo Alto Networks validated Reference Architectures. These examples deploy the the entire firewall infrastructure that includes the VPCs, subnets, Firewall rules , route rules, load balancers, along with a VM-Series firewall cluster",
   },
 ];
 
@@ -83,10 +85,10 @@ export const SWFW_LINKS = [
   {
     title: (
       <>
-        <span className="highlight">Orchestrate</span> CloudNGFW
+        <span className="highlight">Deploy and Configure</span> CloudNGFW
       </>
     ),
-    subtitle: "NGFW as a Service deployed and managed by Terraform",
+    subtitle: "NGFW as a Service managed by Palo Alto Networks",
     links: [
       {
         text: "Provider for CloudNGFW for AWS",
