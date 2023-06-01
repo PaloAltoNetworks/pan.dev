@@ -34,7 +34,7 @@ The modules are:
 
 - **Expedition Web API**: Exposes all the Expedition functionalities via an Application Program Interface that offers high level of scripting and automation
 - **Expedition Web UI**: Provides a web interface that offers access to all Expedition functionalities with a low learning curve
-- **Expedition Converter**: In charge of parsing and translating third party vendors' configurations into PANOS firewalls and Panoramas
+- **Expedition Parser**: In charge of parsing and translating third party vendors' configurations into PANOS firewalls and Panoramas
 - **Expedition Analytics**: Offers functionalities for traffic log analytics, rule improvement suggestions, and other "data analytics"-related tasks
 
 As most of the Web APIs, Expedition has exposed the functionalities making use of routes and HTTP verbs.
@@ -72,13 +72,11 @@ The documentation is based on the Swagger framework, and is provided in each Exp
 ```
 
 In order to be able to consume the different API methods, it is necessary to have a valid session (for authentication and authorization).
-This can be performed in Swagger by making a first request to the /api/v1/login route.
+This can be performed in Swagger by making a first request to the /api/v1/generate_api_key route.
 A request is made by clicking on the selected route to call, activate the interactive mode via the button `Try it out`,
 entering the required parameters and clicking on `Execute`.
 Expedition provides an initial administrator user that can be also used for testing.
 The defaults are login: **admin** and password: **paloalto** and are already presented in Swagger.
-
-![Auth](/expedition/img/auth.png "Auth")
 
 In this case, we will get a response containing an `api_key` that can be attached to future requests to validate the user’s session and permissions.
 
@@ -93,17 +91,8 @@ After this login activity, all future requests will be authenticated using the p
 
 Alternatively , you could also do it via your script:
 
-Make a `POST` request to the Expedition’s hostname or IP address using the administrative credentials, where you will have to replace the fields _YourExpeditionIP_, _username_ and _password_ with your actual values.
+Make a `POST` request to the Expedition’s hostname or IP address using the administrative credentials, where you will have to replace the fields _YourExpeditionIP_, _username_ and _password_ with your actual values. Refer to the [Obtaining the API Keys](creating_credentials.mdx) section to obtain a valid API key stored in the `hed` variable.  
 
-```shell-session
-curl -X POST -k "https://localhost/api/v1/login" -H "accept: application/json" -H "Content-Type: application/json" -H "X-CSRF-TOKEN: " -d "{\"username\":\"<username>\”,\”password\":\"<password>\”}”
-```
-
-Example of the curl command:
-
-```shell-session
-curl -X POST -k "https://localhost/api/v1/login" -H "accept: application/json" -H "Content-Type: application/json" -H "X-CSRF-TOKEN: " -d "{\"username\":\"admin\",\"password\":\"paloalto\"}"
-```
 
 A successful API call returns, within the Contents section, `status="success"` along with the API key within the `api_key` element, found under `Contents->response->data->content`:
 
@@ -167,22 +156,3 @@ A successful API call returns, within the Contents section, `status="success"` a
     }
   }
 }
-```
-
-Below is a sample Python script to show you how to login to Expedition-API endpoint and save the API key in variable, `hed`, so you can reference it in your subsequent API calls.
-
-```python
-import json
-import requests
-import urllib3
-
-data = {"username":"admin", "password":"paloalto"}
-r = requests.post('https://localhost/api/v1/login', data=data, verify=False)
-response=r.json()
-apiKey = json.dumps(response['Contents']['response']['data']['content']['api_key'])
-auth_token = apiKey[1:-1]
-print(auth_token)
-print('')
-
-hed = {'Authorization': 'Bearer ' + auth_token}
-```
