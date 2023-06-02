@@ -38,31 +38,27 @@ Below flowchart demo the workflow and the related API calls in each of the steps
 
 ```mermaid
 flowchart TB
-    A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]
-    B[Start the Agent<br/> POST https://localhost/api/v1/agent/start]  --> C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
-    C[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]
-    D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"]--> E[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
-    E[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
-    F["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
-    G["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> H["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
-    H["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
-    I["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"]
-    J["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result"] --> K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
-    K["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
+    A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
+    B[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> C["Create an Expedition Project<br/> POST https://localhost/api/v1/project" ]
+    C["Create an Expedition Project<br/> POST https://localhost/api/v1/project" ] --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]
+    D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"] --> E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
+    E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
+    F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
+    G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> H["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+    H["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success"]
+    I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success"] --> J["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
 
-```
+```  
+
+<br/>  
 
 ### Step 1. Obtain the API Keys
 
 Refer to [Obtaining the API Keys](creating_credentials.mdx) section to obtain a valid API key stored in the `hed` variable.
 
-### Step 2. Start the Expedition Agent
+### Step 2. Add PAN-OS Device
 
-Refer to [Managing Expedition's Agent](/expedition/docs/managing_expedition_agent) section to start the agent and be able to perform imports into a project.
-
-### Step 3. Add PAN-OS Device
-
-Making a POST call to the Device route, we can create a device with a desired name.
+Making a POST call to the Device route, we can create a Device with a desired name.
 Notice that we attach the credentials `hed` in the CURL headers to present our credentials and verify we have permission to create a device.
 
 API syntax for creating a new device :
@@ -106,13 +102,14 @@ panosip = '1.1.1.1'
 serialnumber = '123412'
 devicetype = "pa220"
 pandescription = 'test'
-url = "https://" + ip + "/api/v1/device"
+url = "https://localhost/api/v1/device"
 data = {
     "name": devicename,
     "serial": serialnumber,
     "hostname": panosip,
     "type": devicetype,
     "description": pandescription,
+    "port":device_port
 }
 r = requests.post(url, data=data, verify=False, headers=hed)
 response = r.json()
@@ -127,52 +124,15 @@ print("*****Upload PAN-OS config into device*****\n")
 ```
 
 </TabItem>
-</Tabs>
+</Tabs>  
 
-### Step 4. Upload PAN-OS config into device
-
-After device has been created , the next step will be uploading your pan-os config to associate with the device.
-
-API syntax for upload PAN-OS config into device :
-
-| Method  | Route                                                                      | Path Parameters                             |
-| ------- | -------------------------------------------------------------------------- | ------------------------------------------- |
-| POST    | <small>"https://localhost/api/v1/device/{device_id}/upload_config"</small> | <small>**"device_id"**: "device_id"</small> |
-| Example | <small>"https://localhost/api/v1/device/23/upload_config"</small>          | 23                                          |
-
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
-values={[
-{ label: 'Python', value: 'python', },
-]
-}>  
-<TabItem value="python">
-
-```python
-print("*****Upload PAN-OS config into device*****\n")
-file = '/Users/user1/Downloads/panoramabase.xml'
-panosconfig = open(file, "rb")
-files = {"config": panosconfig}
-url = 'https://' + ip + '/api/v1/device/{0}/upload_config'.format(int(DeviceId))
-r = requests.post(url, files=files, verify=False, headers=hed)
-response = r.json()
-success = json.dumps(response["success"])
-if success == "true":
-    print("Pan-OS config uploaded to the device successfully\n")
-else:
-    result = json.dumps(response["messages"][0]["message"])
-    print(result)
-```
-
-</TabItem>
-</Tabs>
-
-### Step 5. Create an Expedition Project
+### Step 3. Create an Expedition Project
 
 In the large amount of automation cases, we will require having an Expedition project. Making a POST call to the project route, we can create a project with a desired name.
 
 API syntax for creating a new project:
 
-| Method  | EndPoint                                          | Parameters                                                                                        |
+| Method  | Route                                             | Parameters                                                                                        |
 | ------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>{ **"project"**:"project1", **"description"**:"Project for testing" }</small> |
 | example | <small>`https://localhost/api/v1/project`</small> | <small>{"project":"MyLittleProject", "description":"A migration project"}</small>                 |
@@ -185,34 +145,76 @@ values={[
 <TabItem value="python">
 
 ```python
-print("*****Create a new Expedition Project*****\n")
-projectName = input("Please enter project name: (Needs to start with letters): ")
-print(" \n")
-data = {"name": projectName, "device_id[0]": DeviceId}
-url="https://" + ip + "/api/v1/project"
-r = requests.post(url,data=data, verify=False, headers=hed)
+print("***** Create new project *****\n")
+
+url = "https://localhost/api/v1/project"
+data = {
+    "name": PROJECT_NAME,
+    "description": PROJECT_DESCRIPTION,
+    "device_id[0]": DeviceId,
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
 response = r.json()
 success = json.dumps(response["success"])
 if success == "true":
     print("New project created successfully" + " \n")
-    projectId = json.dumps(response['data']['id'])
-    print("Your project-ID is", str(projectId) + " \n")
-print("\n")
+    ProjectId = int(json.dumps(response['data']['id']))
+    print("Your Project-ID is " + str(ProjectId) + " \n")
+else:
+    print("Unable to create the project")
+
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 6. Import the PAN-OS configuration of your device to the project
+### Step 4. Upload PAN-OS config into device
 
-This step will associate the device with project. The API response will contain a job ID , you can then use API call to check job status. Please refer to checking job status [Checking Job Status](managing_jobs.mdx#checking-job-status) section
+After device has been created , the next step will be uploading your pan-os config to associate with the device.
+
+API syntax for upload PAN-OS config into device :
+
+| Method  | Route                                                                      | Path Parameters                           |
+| ------- | -------------------------------------------------------------------------- | ----------------------------------------- |
+| POST    | <small>"https://localhost/api/v1/device/{device_id}/upload_config"</small> | <small>**"device_id"**: device_Id</small> |
+| Example | <small>"https://localhost/api/v1/device/23/upload_config"</small>          |                                           |
+
+<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+values={[
+{ label: 'Python', value: 'python', },
+]
+}>  
+<TabItem value="python">
+
+```python
+print("*****Upload PAN-OS config into device*****\n")
+Vendorfile = open(PANOS_CONFIG_PATH, 'rb')
+files = {'config': Vendorfile}
+url= 'https://localhost/api/v1/device/'+str(DeviceId)+'/upload_config'
+r = requests.post(url, files=files, data=data, verify=False, headers=hed)
+response = r.json()
+success = json.dumps(response["success"])
+if success == "true":
+    print("Upload configuration successfully" + " \n")
+else:
+    print("Unable to upload the configuration")
+    print(response)
+```
+
+</TabItem>
+</Tabs>
+
+
+### Step 5. Import the PAN-OS configuration of your device to the project
+
+This step will associate the device with project. The API response will contain a job ID , you can then use API call to check job status. Please refer to checking job status [Checking Job Status](managing_jobs.mdx#checking-job-status) section .
 
 API syntax for the step:
 
-| Method  | EndPoint                                                                   | Parameters                                                                                                 |
-| ------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/project_id/import/device`</small> | <small>_in url_<br/> **"project_id"**:"project_id"<br/>in_body<br/> {**"device_id"**:"device_id" }</small> |
-| example | <small>`https://localhost/api/v1/project/22/import/device`</small>         | <small>{"device_id":"23""}</small>                                                                         |
+| Method  | Route                                                                        | Parameters                                                                                             |
+| ------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/import/device`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"device_id"**:device_Id }</small> |
+| example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>{"device_id":"23""}</small>                                                                     |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -223,52 +225,29 @@ values={[
 
 ```python
 print("*****Import the PAN-OS configuration of your device to the project\n")
-url = "https://" + ip + "/api/v1/project/{0}/import/device".format(int(projectId))
-print(url)
-data = {"device_id": DeviceId}
-r = requests.post(url, data=data, verify=False, headers=hed)
+url = 'https://localhost/api/v1/project/'+str(ProjectId)+'/import/device'
+data = {
+    "device_id": DeviceId,
+}
+r = requests.post(url, verify=False, headers=hed, data=data)
 response = r.json()
-jobId = json.dumps(response["data"]["job_id"])
-jobFinished = False
-print("CHECK configuration upload status...........")
-r = requests.get(
-    "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
-    verify=False,
-    headers=hed,
-)
-response = r.json()
-jobState = json.dumps(response["data"]["state"])
-percentage = float(jobState) * 100
-print(
-    "Import PAN-OS configuration from device to Project: "
-    + str(round(percentage, 2))
-    + "%\n"
-)
-# Wait until job is done
-while jobState != "1":
-    sleep(5)
-    r = requests.get(
-        "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
-        verify=False,
-        headers=hed,
-    )
-    response = r.json()
-    jobState = json.dumps(response["data"]["state"])
-    percentage = float(jobState) * 100
-    print(
-        "PAN-OS configuration has been imported to Project: "
-        + str(round(percentage, 2))
-        + "%\n"
-    )
-response = r.json()
-statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
-print(statusmessage)
+success = json.dumps(response["success"])
+if success == "true":
+    jobId =  json.dumps(response['data']['job_id'])
+    print("Job id: "+jobId)
+    print("***** Wait for job to finish *****")
+    wait_for_job(EXPEDITION_URL+"job/" + jobId + "?complete=true", jobId, hed)
+
+else:
+    print(response)
+    print("Unable to import configuration ")
+
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 7. Get Source ID of the config file
+### Step 6. Get Source ID of the config file
 
 In this step, we will make a API call to get **source_id** of the config file that's been imported to the project. After this API call, you will parse the response that contains **source_id**. The **source_id** represent the pan-os config file that you would like to work on, and it will be used in the subsequent API calls.
 
@@ -288,20 +267,49 @@ values={[
 
 ```python
 print("Get Source_ID of the config file")
-url = "https://" + ip + "/api/v1/project/" + projectId + "/source"
-r = requests.get(url, data=data, verify=False, headers=hed)
+url = 'https://localhost/api/v1/project/'+str(ProjectId)+'/source'
+r = requests.get(url, verify=False, headers=hed)
 response = r.json()
-print(response)
-source_id = json.dumps(response["data"]["source"][0]["id"])
-print("PAN-OS config source_id is: " + source_id)
+success = json.dumps(response["success"])
+if success == "true":
+    sourceId =  json.dumps(response['data']['source'][0]['id'])
+    print("Source id: "+sourceId)
+
+else:
+    print("Unable to get sources ")
 ```
 
 </TabItem>
-</Tabs>
+</Tabs>  
 
-### Step 8. Create combined filters for security rules contain specific subnet
+### Step 7. Create combined filters for security rules contain specific subnet
 
 In this step, we will create total 6 filters to filter all security rules that contain subnet 10.0. Please refer to the [Expedition-API Filters ](expedition_workflow_filters.md) section for details on filters.
+
+Here are the Filter variables used in creating each of the filter:  
+
+```json
+# Filter variables
+FILTER_NAME_1 = 'Addressobject_with_specific_subnet'
+FILTER_DESCRIPTION_1 = 'addressobject_with_subnet_10.1.'
+FILTER_OBJECT_1 = "[address] ipaddress contains \"10.1\""
+FILTER_NAME_2 = 'Addressgroupobject_with_specific_subnet'
+FILTER_DESCRIPTION_2 = 'addressgroupobject_with_subnet_10.1.'
+FILTER_OBJECT_2 = "[address_group] member contains filter Addressobject_with_specific_subnet.success "
+FILTER_NAME_3 = 'combinefilter1and2'
+FILTER_DESCRIPTION_3 = 'address/addressgroupobject_with_subnet_10.1.'
+FILTER_OBJECT_3 = "filter Addressobject_with_specific_subnet.success or filter Addressgroupobject_with_specific_subnet.success"
+FILTER_NAME_4 = 'securityrule_with_specific_source_subnet'
+FILTER_DESCRIPTION_4 = 'securityrule_with_src_subnet_10.1'
+FILTER_OBJECT_4 = "[security_rule] source_address contains filter combinefilter1and2.success "
+FILTER_NAME_5 = 'securityrule_with_specific_dst_subnet'
+FILTER_DESCRIPTION_5 = 'securityrule_with_dst_subnet_10.1'
+FILTER_OBJECT_5 = "[security_rule] destination_address contains filter combinefilter1and2.success "
+FILTER_NAME_6 = 'Combinefilter4_5'
+FILTER_DESCRIPTION_6 = 'securityrule_with_source_or_destination_contain_subnet_10.1'
+FILTER_OBJECT_6 = "filter securityrule_with_specific_source_subnet.success or filter securityrule_with_specific_dst_subnet.success "
+```
+
 
 #### 1st Filter
 
@@ -309,10 +317,11 @@ In this specific example, we are going to create the first filter that filter ad
 
 ```json
 data = {
-    "name":'Addressobject_with_specific_subnet',
-    "reference":'Addressobject_with_specific_subnet',
-    "description": 'addressobject_with_subnet_10.1.',
-    "filter": "[address] ipaddress contains \"10.1\"",
+    "name":FILTER_NAME_1,
+    "reference":FILTER_NAME_1,
+    "description": FILTER_DESCRIPTION_1,
+    "filter": FILTER_OBJECT_1,
+    "source":sourceId
     }
 ```
 
@@ -320,8 +329,8 @@ API syntax for the step:
 
 | Method  | Route                                                                       | Parameters                                                                                                              |
 | ------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"name"**:filter_name,**"filter"**:filter} </small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\""} </small>               |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"name"**:filter_name,**"filter"**:filter, **"reference"**:filter_reference,**"source"**:sourceId}</small> |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\"",**"reference"**: "all allowed rules", **"source"** :4486} </small>               |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -331,21 +340,20 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Create filter to filter address objects contain "10.1"")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-        "name":'Addressobject_with_specific_subnet',
-        "reference":'Addressobject_with_specific_subnet',
-        "description": 'addressobject_with_subnet_10.1.',
-        "filter": "[address] ipaddress contains \"10.1\"",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_1 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_1)
+print("Create filter to search addresses with specific value \n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_1,
+    "reference": FILTER_NAME_1,
+    "description": FILTER_DESCRIPTION_1,
+    "filter": FILTER_OBJECT_1,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_1 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_1)
 ```
 
 </TabItem>
@@ -353,15 +361,16 @@ values={[
 
 #### 2nd Filter
 
-In this specific example, we are going to create the 2nd filter that filter address group objects contain member match first filter.  
+In this specific example, we are going to create the 2nd filter that filter address group objects contain member match first filter result.  
 Sending the request body contains below data:
 
 ```json
 data = {
-    "name" :'Addressgroupobject_with_specific_subnet',
-    "reference" :'Addressgroupobject_with_specific_subnet',
-    "description" : 'addressgroupobject_with_subnet_10.1.',
-    "filter" : "[address_group] member contains filter Addressobject_with_specific_subnet",
+    "name":FILTER_NAME_2,
+    "reference":FILTER_NAME_2,
+    "description": FILTER_DESCRIPTION_2,
+    "filter": FILTER_OBJECT_2,
+    "source":sourceId
     }
 ```
 
@@ -373,22 +382,21 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Create filter to filter address-group with member contain first filter")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-        "name" :'Addressgroupobject_with_specific_subnet',
-        "reference" :'Addressgroupobject_with_specific_subnet',
-        "description" : 'addressgroupobject_with_subnet_10.1.',
-        "filter" : "[address_group] member contains filter Addressobject_with_specific_subnet",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_2 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_2)
-
+# Create filter to filter address-group with member contain first filter
+print("Create filter to filter address-group with member contain first filter\n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_2,
+    "reference": FILTER_NAME_2,
+    "description": FILTER_DESCRIPTION_2,
+    "filter": FILTER_OBJECT_2,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_2 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_2)
 ```
 
 </TabItem>
@@ -402,20 +410,20 @@ Sending the request body contains below data:
 ```json
 data = {
 
-    "name" : 'combinefilter1and2',
-    "reference" : 'combinefilter1and2',
-    "description" :  'address/addressgroupobject_with_subnet_10.1.',
-    "filter" : "filter Addressobject_with_specific_subnet or filter Addressgroupobject_with_specific_subnet",
+    "name":FILTER_NAME_3,
+    "reference":FILTER_NAME_3,
+    "description": FILTER_DESCRIPTION_3,
+    "filter": FILTER_OBJECT_3,
+    "source":sourceId
 
     }
+
 ```
 
-When we combine two single filter , we will use syntax below:
+When we combine two single filters , we will use syntax below:
 
-**<i>filter</i>** filter_name1 **or** **<i>filter</i>** filter_name2
+**<i>filter</i>** filter_name1.success **or** **<i>filter</i>** filter_name2.success  
 
-Example in this case will be:
-**<i>filter</i>** Addressobject_with_specific_subnet **or** **<i>filter</i>** Addressgroupobject_with_specific_subnet
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -425,21 +433,21 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Combine filter1 and filter 2\n")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-        "name" := 'combinefilter1and2',
-        "reference" : 'combinefilter1and2',
-        "description" :  'address/addressgroupobject_with_subnet_10.1.',
-        "filter" : "filter Addressobject_with_specific_subnet or filter Addressgroupobject_with_specific_subnet",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_3 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_3)
+# combinefilter1&2
+print("Combine filter1 and filter 2\n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_3,
+    "reference": FILTER_NAME_3,
+    "description": FILTER_DESCRIPTION_3,
+    "filter": FILTER_OBJECT_3,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_3 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_3)
 
 ```
 
@@ -455,10 +463,11 @@ Sending the request body contains below data:
 ```json
 data = {
 
-    "name" :'securityrule_with_specific_source_subnet',
-    "reference" :'securityrule_with_specific_source_subnet',
-    "description" : 'securityrule_with_src_subnet_10.1',
-    "filter" : "[security_rule] source_address contains filter combinefilter1and2 ",
+    "name":FILTER_NAME_4,
+    "reference":FILTER_NAME_4,
+    "description": FILTER_DESCRIPTION_4,
+    "filter": FILTER_OBJECT_4,
+    "source":sourceId
 
     }
 ```
@@ -471,21 +480,21 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Create filter to filter security rules source match filter 3\n")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-        "name" :'securityrule_with_specific_source_subnet',
-        "reference" :'securityrule_with_specific_source_subnet',
-        "description" : 'securityrule_with_src_subnet_10.1',
-        "filter" : "[security_rule] source_address contains filter combinefilter1and2 ",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_4 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_4)
+# Filter security rules source contains filter 3
+print("Create filter to filter security rules source match filter 3\n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_4,
+    "reference": FILTER_NAME_4,
+    "description": FILTER_DESCRIPTION_4,
+    "filter": FILTER_OBJECT_4,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_4 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_4)
 
 ```
 
@@ -500,10 +509,11 @@ Sending the request body contains below data:
 ```json
 data = {
 
-    "name" :'securityrule_with_specific_dst_subnet',
-    "reference" :'securityrule_with_specific_dst_subnet',
-    "description" : 'securityrule_with_dst_subnet_10.1',
-    "filter" :  "[security_rule] destination_address contains filter combinefilter1and2 ",
+    "name": FILTER_NAME_5,
+    "reference": FILTER_NAME_5,
+    "description": FILTER_DESCRIPTION_5,
+    "filter": FILTER_OBJECT_5,
+    "source": sourceId
 
     }
 ```
@@ -516,22 +526,21 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Create filter to filter security rules destination match filter 3\n")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-
-        "name" :'securityrule_with_specific_dst_subnet',
-        "reference" :'securityrule_with_specific_dst_subnet',
-        "description" : 'securityrule_with_dst_subnet_10.1',
-        "filter" :  "[security_rule] destination_address contains filter combinefilter1and2 ",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_5 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_5)
+# Filter security rules destination contains filter 3
+print("Create filter to filter security rules destination match filter 3\n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_5,
+    "reference": FILTER_NAME_5,
+    "description": FILTER_DESCRIPTION_5,
+    "filter": FILTER_OBJECT_5,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_5 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_5)
 
 ```
 
@@ -544,12 +553,13 @@ We are going to create our final filter to combine filter 4 & 5, which will filt
 Sending the request body contains below data:
 
 ```json
-data = {
+data = {  
 
-    "name" : 'Combinefilter4_5',
-    "reference" : 'Combinefilter4_5',
-    "description" : 'securityrule_with_source_or_destination_contain_subnet_10.1',
-    "filter" :  "filter securityrule_with_specific_source_subnet or filter securityrule_with_specific_dst_subnet ",
+    "name": FILTER_NAME_6,
+    "reference": FILTER_NAME_6,
+    "description": FILTER_DESCRIPTION_6,
+    "filter": FILTER_OBJECT_6,
+    "source": sourceId
 
     }
 ```
@@ -562,29 +572,28 @@ values={[
 <TabItem value="python">
 
 ```python
-    print("Create filter to filter security rules destination match filter 3\n")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
-    data = {
-
-        "name" : 'Combinefilter4_5',
-        "reference" : 'Combinefilter4_5',
-        "description" : 'securityrule_with_source_or_destination_contain_subnet_10.1',
-        "filter" :  "filter securityrule_with_specific_source_subnet or filter securityrule_with_specific_dst_subnet ",
-
-    }
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global filterID
-    filterID_6 = json.dumps(response["data"]["last_history_entry"]["filter_id"])
-    print("your filter ID is " + filterID_6)
+# Combine filter4 with filter5
+print("Combine filter4 and filter 5\n")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter"
+data = {
+    "name": FILTER_NAME_6,
+    "reference": FILTER_NAME_6,
+    "description": FILTER_DESCRIPTION_6,
+    "filter": FILTER_OBJECT_6,
+    "source": sourceId
+}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+print(response)
+filter_id_6 = json.dumps(int(response['data']['last_history_entry']['filter_id']))
+print('Your Filter ID is :' + filter_id_6)
 
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 9. Execute the final filter
+### Step 8. Execute the final filter
 
 After create the final filter, we will execute the filter based on filter_Id ,in our example , filter_Id will be "6" in the request body, you will need to provide "source_id" obtained from the previous step as required parameter.
 
@@ -603,59 +612,28 @@ values={[
 <TabItem value="python">
 
 ```python
-def ExecuteFilter():
-    print("execute the filter")
-    data = {"source_id": source_id}
-    url = (
-     "https://"
-        + ip
-        + "/api/v1/project/"
-        + projectId
-        + "/tools/filter/"
-        + filterID_6
-        + "/execute"
-    )
-    r = requests.post(url, data=data, verify=False, headers=hed)
-    response = r.json()
+print("***** Execute filter 6 ")
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter/{str(filter_id_6)}/execute"
+data = {"source_id": sourceId}
+r = requests.post(url, data=data, verify=False, headers=hed)
+response = r.json()
+jobId = json.dumps(response["data"]["job_id"])
+success = json.dumps(response["success"])
+if success == "true":
+    jobId = json.dumps(response['data']['job_id'])
+    print("Job id: " + jobId)
+    print("***** Wait for job to finish *****")
+    wait_for_job(EXPEDITION_URL+"job/" + jobId + "?complete=true", jobId, hed)
+else:
     print(response)
-    jobId = json.dumps(response["data"]["job_id"])
-    jobFinished = False
-    print("CHECK filter execute status...........")
-    r = requests.get(
-    "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
-    verify=False,
-    headers=hed,
-    )
-    response = r.json()
-    print(response)
-    jobState = json.dumps(response["data"]["state"])
-    percentage = float(jobState) * 100
-    print("Execute filter........: " + str(round(percentage, 2)) + "%\n")
-
-    # Wait until job is done
-    while jobState != "1":
-        sleep(5)
-        r = requests.get(
-         "https://" + ip + "/api/v1/job/" + jobId + "?complete=true",
-            verify=False,
-            headers=hed,
-        )
-        response = r.json()
-        print(response)
-        jobState = json.dumps(response["data"]["state"])
-        print(jobState)
-        percentage = float(jobState) * 100
-        print("Filter execute...... " + str(round(percentage, 2)) + "%\n")
-    response = r.json()
-    print(response)
-    statusmessage = json.dumps(response["data"]["task"][0]["statusMessage"])
-    print(statusmessage)
+    print("Unable to execute filter ")
+    raise RuntimeError("Unable to execute filter ")
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 10. Print the filter execution result
+### Step 9. Print the filter execution result
 
 After the filter is executed , we can view the result using below API call. The result should contain all the objects that matches with the filter. From the response, you will parse the **collection_Id** to be used in the subsequent API call.
 
@@ -663,8 +641,8 @@ API syntax for the step:
 
 | Method  | Route                                                                                          | Parameters                                                                          |
 | ------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| GET     | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/result`</small>                     |                                                                                     |
+| GET     | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/success`</small>                     |                                                                                     |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -674,27 +652,20 @@ values={[
 <TabItem value="python">
 
 ```python
+# Get filter result
 print("Print the Filter Execution Result")
-    url = (
-        "https://"
-        + ip
-        + "/api/v1/project/"
-        + projectId
-        + "/tools/filter/"
-        + filterID_6
-        + "/result"
-    )
-    r = requests.get(url, verify=False, headers=hed)
-    response = r.json()
-    print(response)
-    global Collection_ID
-    Collection_ID = json.dumps(response["data"]["id"])
+url = f"https://localhost/api/v1/project/{str(projectId)}/tools/filter/{str(filter_id_6)}/success"
+r = requests.get(url, verify=False, headers=hed)
+response = r.json()
+print(response)
+Collection_ID = json.dumps(response["data"]["id"])
+print('Your Collection ID is :' + Collection_ID)
 ```
 
 </TabItem>
 </Tabs>
 
-### Step 11. Print the Collection Content
+### Step 10. Print the Collection Content
 
 After the filter is executed , we can print the collection content using below API call.
 
@@ -713,12 +684,12 @@ values={[
 <TabItem value="python">
 
 ```python
+# Print the Collection Content
 print("***** Print the Collection that contain rules with specific subnets *****")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/collection/" + Collection_ID + "/content"
-    print(url)
-    r = requests.get(url, verify=False, headers=hed)
-    response = r.json()
-    print(response)
+url = f"https://{EXPEDITION_IP}/api/v1/project/{str(projectId)}/collection/{Collection_ID}/content"
+r = requests.get(url, verify=False, headers=hed)
+response = r.json()
+print(response)
 ```
 
 </TabItem>
@@ -727,40 +698,6 @@ print("***** Print the Collection that contain rules with specific subnets *****
 The response will be similar to below which listed all security rules with source or destination address containing 10.1 .
 
 ```json
-** ** * Print the Collection that contain rules with specific subnets ** ** * {
-    'data': {
-        'id': 3111,
-        'editable': False,
-        'filter_id': 6,
-        'type': 'filter',
-        'content': [{
-            'object_id': 3091,
-            'name': 'Testrule1',
-            'object_type': 'security_rule',
-            'vsys_name': 'vsys1',
-            'vsys': 2968,
-            'source_name': 'pa220running-config',
-            'source': 2966
-        }, {
-            'object_id': 3092,
-            'name': 'Testrule2',
-            'object_type': 'security_rule',
-            'vsys_name': 'vsys1',
-            'vsys': 2968,
-            'source_name': 'pa220running-config',
-            'source': 2966
-        }, {
-            'object_id': 3093,
-            'name': 'Testrule2-1',
-            'object_type': 'security_rule',
-            'vsys_name': 'vsys1',
-            'vsys': 2968,
-            'source_name': 'pa220running-config',
-            'source': 2966
-        }],
-        'name': 'collection_filter_6',
-        'description': 'Collection for filter Combinefilter4_5'
-    },
-    'messages': [],
-    'success': True
+***** Print the Collection that contain rules with specific subnets *****
+{'data': {'id': 4982, 'editable': False, 'filter_id': 16, 'type': 'filter', 'content': [{'object_id': 4926, 'name': 'Testrule1', 'object_type': 'security_rule', 'vsys_name': 'vsys1', 'vsys': 4802, 'source_name': 'pa220running-config', 'source': 4800}, {'object_id': 4927, 'name': 'Testrule2', 'object_type': 'security_rule', 'vsys_name': 'vsys1', 'vsys': 4802, 'source_name': 'pa220running-config', 'source': 4800}, {'object_id': 4928, 'name': 'Testrule2-1', 'object_type': 'security_rule', 'vsys_name': 'vsys1', 'vsys': 4802, 'source_name': 'pa220running-config', 'source': 4800}], 'name': 'success', 'description': 'Collection to store success objects from task Combinefilter4_5'}, 'messages': [], 'success': True}
 ```
