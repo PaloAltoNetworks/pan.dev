@@ -12,7 +12,7 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Dedicated VM-Series
+sidebar_label: Dedicated Firewall Option
 title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture,
   Dedicated Inbound NGFW Option'
 ---

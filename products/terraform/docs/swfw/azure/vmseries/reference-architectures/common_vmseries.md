@@ -12,7 +12,7 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Common VM-Series
+sidebar_label: Common Firewall Option
 title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture.
   Common NGFW Option'
 ---

@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: VPC Peering Common
+sidebar_label: Common Firewall Option
 title: 'Reference Architecture with Terraform: VM-Series in GCP, Centralized Architecture,
   Common NGFW Option'
 ---
