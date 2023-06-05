@@ -15,7 +15,9 @@ function CloudCard({ title, subtitle, text, link }) {
           <h2>{subtitle}</h2>
         </div>
       </div>
-      <p className="cloud-card__inner-content">{text}</p>
+      <div className="cloud-card__inner-context">
+        <p>{text}</p>
+      </div>
       <div className="cloud-card__inner-footer">
         <Link to={link} className="tab-item__link">
           <span>Learn More</span>
