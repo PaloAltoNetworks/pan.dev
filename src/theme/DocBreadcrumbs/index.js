@@ -72,19 +72,69 @@ function HomeBreadcrumbItem() {
     </li>
   );
 }
-export default function DocBreadcrumbs() {
-  const breadcrumbs = useSidebarBreadcrumbs();
-  if (breadcrumbs) {
-    const path = breadcrumbs[breadcrumbs.length - 1]?.href;
-    var product = "";
-    if (path) {
-      for (var prop in crumbs) {
-        if (path.includes(crumbs[prop].href)) {
-          product = crumbs[prop].label;
+
+function productCrumbLink(productCrumb) {
+  // Only link the product breadcrumb if it's `make_link` is true
+  return productCrumb.make_link ? productCrumb.href : undefined;
+}
+
+function linkedProductCrumb(productCrumb) {
+  // Assign the link, only if asked for. This is to preserve existing
+  // functionality until opt-in
+  return { ...productCrumb, href: productCrumbLink(productCrumb) };
+}
+
+/**
+ * Generate product and intermediate breadcrumbs for a given path.
+ *
+ * Traverse over the crumbs.json file to find the product breadcrumb
+ * and any intermediate breadcrumbs that should go between the
+ * homepage breadcrumb on the left and the breadcrumbs from docusaurus.
+ *
+ * @param {string} path
+ * @param {*} crumbs
+ *
+ * @returns {Array} An array of intermediate breadcrumbs
+ */
+function generateIntermediateBreadcrumbs(path, crumbs) {
+  if (!path) {
+    return [];
+  }
+  // Check children of product
+  for (const productCrumb of Object.values(crumbs)) {
+    if (productCrumb.children) {
+      for (const childCrumb of productCrumb.children) {
+        // Being careful here to retain existing functionality until
+        // opt-in with `add_crumb` or a specific `match` value
+        if (
+          path.startsWith(childCrumb.match) ||
+          (childCrumb.add_crumb && path.startsWith(childCrumb.href))
+        ) {
+          if (!childCrumb.add_crumb || path === childCrumb.href) {
+            return [linkedProductCrumb(productCrumb)];
+          } else {
+            return [linkedProductCrumb(productCrumb), childCrumb];
+          }
         }
       }
     }
   }
+  // None of the children match, so check the products themselves
+  for (const crumb of Object.values(crumbs)) {
+    if (path.startsWith(crumb.href)) {
+      return [linkedProductCrumb(crumb)];
+    }
+  }
+  return [];
+}
+
+export default function DocBreadcrumbs() {
+  const sidebarBreadcrumbs = useSidebarBreadcrumbs() || [];
+  const path = sidebarBreadcrumbs[sidebarBreadcrumbs.length - 1]?.href;
+  const breadcrumbs = [
+    ...generateIntermediateBreadcrumbs(path, crumbs),
+    ...sidebarBreadcrumbs,
+  ];
   const homePageRoute = useHomePageRoute();
   if (!breadcrumbs) {
     return null;
@@ -107,13 +157,6 @@ export default function DocBreadcrumbs() {
         itemType="https://schema.org/BreadcrumbList"
       >
         {homePageRoute && <HomeBreadcrumbItem />}
-        {product && (
-          <BreadcrumbsItem>
-            <div className="breadcrumbs__link breadcrumbs__product">
-              {product}
-            </div>
-          </BreadcrumbsItem>
-        )}
         {breadcrumbs.map((item, idx) => {
           const isLast = idx === breadcrumbs.length - 1;
           return (
