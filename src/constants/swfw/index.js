@@ -97,14 +97,14 @@ export const SWFW_LINKS = [
         text: "Provider for CloudNGFW for AWS",
         url: "/terraform/docs/cloudngfw/",
       },
-      {
-        text: "Modules for CloudNGFW for AWS",
-        url: "terraform/docs/cloudngfw/aws/modules/",
-      },
-      {
-        text: "Modules for CloudNGFW for Azure",
-        url: "terraform/docs/cloudngfw/azure/modules/",
-      },
+      // {
+      //   text: "Modules for CloudNGFW for AWS",
+      //   url: "terraform/docs/cloudngfw/aws/modules/",
+      // },
+      // {
+      //   text: "Modules for CloudNGFW for Azure",
+      //   url: "terraform/docs/cloudngfw/azure/modules/",
+      // },
     ],
   },
   {
