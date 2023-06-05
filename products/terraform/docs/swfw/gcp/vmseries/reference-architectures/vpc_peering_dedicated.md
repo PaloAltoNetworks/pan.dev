@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: VPC Peering Dedicated
+sidebar_label: Dedicated Firewall Option
 title: 'Reference Architecture with Terraform: VM-Series in GCP, Centralized Architecture,
   Dedicated Inbound NGFW Option'
 ---
