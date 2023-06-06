@@ -3,11 +3,11 @@ id: splunk-intro
 title: Introductions 
 hide_title: true
 sidebar_position: 1
-sidebar_label: Introductions
+sidebar_label: Splunk App/Add-on
 slug: /splunk/docs/
 ---
 
-<img src="/splunk/img/logos.png" class="no-shadow" />
+![Splunk Logos](/splunk/img/logos.png)
 
 About the App
 -------------
@@ -33,25 +33,25 @@ The **Palo Alto Networks App** and **Add-on** have different features that are d
 
 **Palo Alto Networks App**
 
--   Dashboards to track adversary attacks, incidents, SaaS application usage, user activity, system health, configuration changes for audits, malware, GlobalProtect VPN, and other Palo Alto Networks specific features.
--   Advanced correlations in each dashboard
--   Datamodels with pivots for easy access to data and visualizations
--   Leverage [AutoFocus](/splunk/docs/autofocus-and-minemeld) to prioritize attacks and investigations and search for IOC's
--   Splunk [Adaptive Response](/splunk/docs/adaptive-response) integration for automated action and remediation
--   [Sync user login events with User-ID](/splunk/docs/userid)
--   [Use Adaptive Response to share context with Dynamic Address Groups](/splunk/docs/adaptive-response)
--   [Update metadata from content packs](/splunk/docs/lookups#contentpack)
--   [Special searchbar commands](/splunk/docs/commands)
--   Macros for easy access to logs
+- Dashboards to track adversary attacks, incidents, SaaS application usage, user activity, system health, configuration changes for audits, malware, GlobalProtect VPN, and other Palo Alto Networks specific features.
+- Advanced correlations in each dashboard
+- Datamodels with pivots for easy access to data and visualizations
+- Leverage [AutoFocus](/splunk/docs/autofocus-and-minemeld) to prioritize attacks and investigations and search for IOC's
+- Splunk [Adaptive Response](/splunk/docs/adaptive-response) integration for automated action and remediation
+- [Sync user login events with User-ID](/splunk/docs/userid)
+- [Use Adaptive Response to share context with Dynamic Address Groups](/splunk/docs/adaptive-response)
+- [Update metadata from content packs](/splunk/docs/lookups#contentpack)
+- [Special searchbar commands](/splunk/docs/commands)
+- Macros for easy access to logs
 
 **Palo Alto Networks Add-on**
 
--   Fully [Common Information Model](/splunk/docs/enterprise-security) (CIM) compliant and designed for use with [Splunk Enterprise Security](/splunk/docs/enterprise-security)
--   Field extraction for Palo Alto Networks logs from [Firewalls, Panorama, Traps Endpoint Security](/splunk/docs/firewalls-panorama), and [Aperture SaaS Application Security](https://www.paloaltonetworks.com/products/secure-the-cloud/aperture)
--   Leverage threat intelligence from [MineMeld and AutoFocus](/splunk/docs/autofocus-and-minemeld)
--   [IP Classification](/splunk/docs/lookups) tailored to your network environment
--   [Designate SaaS applications](/splunk/docs/lookups#saas) as sanctioned or unsanctioned for your organization
--   App and Threat metadata from the Palo Alto Networks content and signature packs
+- Fully [Common Information Model](/splunk/docs/enterprise-security) (CIM) compliant and designed for use with [Splunk Enterprise Security](/splunk/docs/enterprise-security)
+- Field extraction for Palo Alto Networks logs from [Firewalls, Panorama, Traps Endpoint Security](/splunk/docs/firewalls-panorama), and [Aperture SaaS Application Security](https://www.paloaltonetworks.com/products/secure-the-cloud/aperture)
+- Leverage threat intelligence from [MineMeld and AutoFocus](/splunk/docs/autofocus-and-minemeld)
+- [IP Classification](/splunk/docs/lookups) tailored to your network environment
+- [Designate SaaS applications](/splunk/docs/lookups#saas) as sanctioned or unsanctioned for your organization
+- App and Threat metadata from the Palo Alto Networks content and signature packs
 
 Requirements
 ------------

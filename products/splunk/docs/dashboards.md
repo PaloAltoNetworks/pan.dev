@@ -12,7 +12,7 @@ The All Incidents dashboard summarizes all the incidents from all other dashboar
 
 ###### Prioritize Investigations
 
-Most organizations get more incidents than can feasably be investigated so prioritization is crucial. The incident feed offers methods to prioritize incidents by severity, action taken, and AutoFocus tag. An incident tagged by AutoFocus threat intelligence is a critical attack from a known threat actor, campaign, or malware family. Incidents with an AutoFocus tag should be investigated.
+Most organizations get more incidents than can feasibly be investigated so prioritization is crucial. The incident feed offers methods to prioritize incidents by severity, action taken, and AutoFocus tag. An incident tagged by AutoFocus threat intelligence is a critical attack from a known threat actor, campaign, or malware family. Incidents with an AutoFocus tag should be investigated.
 
 ###### Take Action
 
@@ -21,7 +21,7 @@ Most organizations get more incidents than can feasably be investigated so prior
 
 ###### Incident Trend Graphs
 
-Each of the 'per hour' incident trendlines at the top of the All Incidents dashboard pulls from a different kind of log or product.  To populate all the trendlines and thus see all possible incidents, ensure you're sending the needed logs from the right product to populate each incident trend. The following table shows the product and log required for each incident trend, and the Splunk search to bring up these kinds of logs. You can use this search to determine if these logs are in your Splunk index.
+Each of the 'per hour' incident trend lines at the top of the All Incidents dashboard pulls from a different kind of log or product.  To populate all the trend lines and thus see all possible incidents, ensure you're sending the needed logs from the right product to populate each incident trend. The following table shows the product and log required for each incident trend, and the Splunk search to bring up these kinds of logs. You can use this search to determine if these logs are in your Splunk index.
 
 | Incident Trend \(per hour\) | Product Required | Splunk Search Macros |
 | :--- | :--- | :--- |
@@ -89,7 +89,7 @@ The WildFire Submissions dashboard enables you to track submission of new sample
 
 ## User Behavior {#user}
 
-Track anamalous user behavior such as unacceptable web browsing, protocol tunneling, data leakage, and non-standard application usage. Use filters to create a report for a specific user.
+Track anomalous user behavior such as unacceptable web browsing, protocol tunneling, data leakage, and non-standard application usage. Use filters to create a report for a specific user.
 
 | Product Required |  |
 | :--- | :--- |
@@ -97,9 +97,9 @@ Track anamalous user behavior such as unacceptable web browsing, protocol tunnel
 
 ## SaaS Activity {#saas-activity}
 
-Track sanctioned and unsanctionend SaaS activity. Know who is storing critical data in unsanctioned SaaS applications in your organization, and track activity in sanctioned SaaS applications with Aperture.
+Track sanctioned and unsanctioned SaaS activity. Know who is storing critical data in unsanctioned SaaS applications in your organization, and track activity in sanctioned SaaS applications with Aperture.
 
-To declare SaaS Applications as sanctioned or unsanctioned, [set the sanctioned apps](/lookups.md#saas) in the `lookups/sanctioned_saas.csv` lookup table in the Palo Alto Networks Add-on.
+To declare SaaS Applications as sanctioned or unsanctioned, [set the sanctioned apps](../lookups#saas) in the `lookups/sanctioned_saas.csv` lookup table in the Palo Alto Networks Add-on.
 
 ## SaaS Security {#saas-security}
 
@@ -139,4 +139,3 @@ Do this by deleting the file `$SPLUNK_HOME/etc/apps/SplunkforPaloAltoNetworks/de
 ## Datamodel Audit {#datamodel}
 
 Monitor the size, health, and acceleration of the Palo Alto Networks datamodels. This is an excellent tool for troubleshooting dashboards to see why data isn't showing up. All the dashboards except the Real-time Event Feed leverage the datamodel.
-

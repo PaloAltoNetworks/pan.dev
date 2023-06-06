@@ -13,13 +13,13 @@ Secure the network domain. Syslog network and system health events to Splunk.
 
 - [More information about Next-generation Firewall](https://www.paloaltonetworks.com/products/secure-the-network/next-generation-firewall)
 - [More information about Panorama](https://www.paloaltonetworks.com/products/management/panorama)
-- [Bring Firewall and Panorama data into Splunk](/firewalls-panorama.md)
+- [Bring Firewall and Panorama data into Splunk](../firewalls-panorama)
 
 #### Cortex XDR
 
 Advanced threat detection. View Cortex XDR incidents in Splunk via API.
 - [More information about Cortex XDR](https://www.paloaltonetworks.com/cortex/cortex-xdr)
-- [View Cortex XDR Incidents in Splunk](/cortex-hec.md)
+- [View Cortex XDR Incidents in Splunk](../cortex-hec)
 
 
 #### Cortex Data Lake via HTTP Event Collector(HEC)
@@ -27,21 +27,21 @@ Advanced threat detection. View Cortex XDR incidents in Splunk via API.
 Cloud based log management. Collect events directly from Cortex Data Lake using HTTP Event Collector(HEC).
 
 - [More information about Cortex Data Lake](https://www.paloaltonetworks.com/cortex/cortex-data-lake)
-- [Retrieve Cortex Data Lake Logs](/cortex-hec.md)
+- [Retrieve Cortex Data Lake Logs](../cortex-hec)
 
 #### IOT Security
 
 Comprehensive IOT security. Collect IoT alerts and vulnerabilities via API.
 
 - [More information about IoT Security](https://www.paloaltonetworks.com/network-security/iot-security)
-- [Bring IOT Security into Splunk](/iot-security.md)
+- [Bring IOT Security into Splunk](../iot-security)
  
 #### Aperture
 
 Secure your enterprise SaaS application. Splunk reaches out to the Aperture logging API to collect incidents and activity from your SaaS apps.
 
-- [More information about Aperture SaaS Pretection](https://www.paloaltonetworks.com/products/secure-the-cloud/aperture)
-- [Bring Aperture data into Splunk](/aperture.md)
+- [More information about Aperture SaaS Protection](https://www.paloaltonetworks.com/products/secure-the-cloud/aperture)
+- [Bring Aperture data into Splunk](../aperture)
 
 #### AutoFocus and MineMeld
 :::caution Deprecated
@@ -54,7 +54,7 @@ Threat Intelligence to help prioritize and contextualize the rest of your data i
 
 - [More information about AutoFocus](https://www.paloaltonetworks.com/products/secure-the-network/subscriptions/autofocus)
 - [More information about MineMeld](https://www.paloaltonetworks.com/products/secure-the-network/subscriptions/minemeld)
-- [Bring AutoFocus and MineMeld data into Splunk](/autofocus-and-minemeld.md)
+- [Bring AutoFocus and MineMeld data into Splunk](../autofocus-and-minemeld)
 
 #### Traps Endpoint Protection
 
@@ -67,5 +67,5 @@ Traps Endpoint has been deprecated and replaced with Cortex XDR.
 Secure the endpoint domain. Syslog endpoint security and operations events to Splunk.
 
 - [More information about Traps Endpoint Protection](https://www.paloaltonetworks.com/products/secure-the-endpoint/traps)
-- [Bring Traps data into Splunk](/firewalls-panorama.md)
+- [Bring Traps data into Splunk](../firewalls-panorama)
 
