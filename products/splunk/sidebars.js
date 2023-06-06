@@ -2,9 +2,16 @@ module.exports = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   splunkSideBar: [
     "splunk/docs/splunk-intro",
-    "splunk/docs/webinars-videos",
-    "splunk/docs/faq",
-    "splunk/docs/release-notes",
+    {
+      type: "category",
+      label: "OVERVIEW",
+      collapsed: false,
+      items: [
+        "splunk/docs/webinars-videos",
+        "splunk/docs/faq",
+        "splunk/docs/release-notes",
+      ],
+    },
     {
       type: "category",
       label: "GETTING STARTED",
