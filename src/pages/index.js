@@ -25,7 +25,7 @@ function Home() {
   const partnerTools = [
     {
       colorClass: "terraform",
-      title: " Software Firewall deployment with Terrafor",
+      title: " Software Firewall deployment with Terraform",
       description:
         "Leverage validated Terraform Reference Architectures and Modules for VM-Series and CloudNGFW firewalls for rapid and reliable security in the cloud.",
       cta: {
