@@ -1,4 +1,5 @@
 import React from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 // components
 import Feeds from "../components/ProductLandingPage/Feeds/Feeds";
 import Hero from "../components/ProductLandingPage/Hero/Hero";
@@ -42,7 +43,9 @@ export default function TerraformLandingPage() {
         subheader={TERRAFORM_USE_CASES_CONTENT.subheader}
         useCaseCards={TERRAFORM_USE_CASES_CONTENT.useCaseCards}
       />
-      <Feeds />
+      <BrowserOnly fallback={<div>Loading...</div>}>
+        {() => <Feeds />}
+      </BrowserOnly>
     </Layout>
   );
 }
