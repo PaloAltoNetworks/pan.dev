@@ -123,7 +123,7 @@ Use the default Search app if using just the Palo Alto Networks Add-on.
 
 If Splunk is getting the syslogs from the firewall and parsing them correctly, then you'll see the config event syslogs show up here from the changes you made on the firewall configuration.
 
-If you don't see the syslog, verify the steps above or try the [Troubleshooting Guide](../troubleshoot).
+If you don't see the syslog, verify the steps above or try the [Troubleshooting Guide](../troubleshooting).
 
 ### Firewall/Panorama API Configuration {#firewallpanorama-credential-changes}
 
