@@ -119,6 +119,18 @@ export const SWFW_LINKS = [
         text: "Palo Alto Networks and Terraform",
         url: "/terraform/",
       },
+      {
+        text: "Terraform for PanOS Docs",
+        url: "/terraform/docs/panos/",
+      },
+      {
+        text: "Terraform for NGFW Docs",
+        url: "/terraform/docs/cloudngfw/",
+      },
+      {
+        text: "Terraform Registry",
+        url: "https://registry.terraform.io/",
+      },
       // {
       //   text: "Palo Alto Networks and Consul",
       //   url: "#",
