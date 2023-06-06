@@ -120,16 +120,20 @@ export const SWFW_LINKS = [
         url: "/terraform/",
       },
       {
-        text: "Terraform for PanOS Docs",
+        text: "Terraform for PAN-OS",
         url: "/terraform/docs/panos/",
       },
       {
-        text: "Terraform for NGFW Docs",
-        url: "/terraform/docs/cloudngfw/",
+        text: "Ansible and Palo Alto Networks",
+        url: "/ansible/",
       },
       {
-        text: "Terraform Registry",
-        url: "https://registry.terraform.io/",
+        text: "Ansible for PAN-OS",
+        url: "/ansible/docs/panos/",
+      },
+      {
+        text: "APIs and SDKs for PAN-OS",
+        url: "/panos/docs/",
       },
       // {
       //   text: "Palo Alto Networks and Consul",
