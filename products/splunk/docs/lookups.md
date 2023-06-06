@@ -75,7 +75,7 @@ Create the following saved searches in the TA, by creating the file: `$SPLUNK_HO
     search = | pancontentpack <IP-or-hostname> threats | outputlookup createinapp=true threat_lookup
     disabled = 0
 
-Set `<IP-or-hostname>` to the IP or hostname of your Firewall or Panorama. Ensure you set the credentials for this device in the Add-on configuration. See [Configure Adaptive Response](/adaptive-response.md#configure-adaptive-response) for more information.
+Set `<IP-or-hostname>` to the IP or hostname of your Firewall or Panorama. Ensure you set the credentials for this device in the Add-on configuration. See [Configure Adaptive Response](../adaptive-response#configure-adaptive-response) for more information.
 
 This example updates the lookup tables every Saturday at 12:05 AM for apps and 12:10 AM for threats. Change the cron_schedule to your desired update schedule.
 
@@ -85,5 +85,5 @@ The Palo Alto Networks App version 5.0 or higher must be installed for the looku
 
 :::
 >
-> If using a custom admin role on the firewall, it must have **Configuration** permissions for the **XML API**. See [Configure Adaptive Response](/adaptive-response.md#configure-adaptive-response) for more information.
+> If using a custom admin role on the firewall, it must have **Configuration** permissions for the **XML API**. See [Configure Adaptive Response](../adaptive-response#configure-adaptive-response) for more information.
 

@@ -15,7 +15,7 @@ If authentication logs are being indexed by Splunk, then Splunk can synchronize 
 In this situation, it is often preferred to use Splunk syslog forwarding to a User-ID agent or firewall because it is more efficient. But there are some cases where the user and IP are not in the same log. For example, if an authentication log contains the user and MAC address, and the DHCP log contains the MAC address and IP. A correlation must be done on the MAC address to know which IP the user logged in from. In this situation, the panuserupdate command is the preferred solution.
 
 See also:  
--   Searchbar Command: [panuserupdate](commands.md#panuserupdate)
+-   Searchbar Command: [panuserupdate](../commands#panuserupdate)
 
 Method 1: Splunk Forwarding
 ---------------------------
@@ -37,7 +37,7 @@ Use the `panuserupdate` command that is included with the app.
 
 For this method, the logs are not required to contain both the user and ip in the same log. For example, where there is an authentication log with user and MAC address, and a DHCP log with MAC address and IP address. Splunk can do a search correlating the user to the IP using the MAC as the common value, then pass the search results to the `panuserupdate` command which will update the mapping on the firewall.
 
-See [panuserupdate](commands.md#panuserupdate) in the Searchbar Command documentation.
+See [panuserupdate](../commands#panuserupdate) in the Searchbar Command documentation.
 
 More Information: Distribute User-ID
 ------------------

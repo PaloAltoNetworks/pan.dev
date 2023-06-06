@@ -13,7 +13,7 @@ title: Firewalls and Panorama
 
 **Panorama** sends its own logs to Splunk and can forward logs from firewalls to Splunk.
 
-**Syslog-ng and Universal Forwarder** An alternative to sending the logs directly to Splunk, it is common to send logs to a syslog-ng or other intermediate syslog server, then forward the logs from there with a Splunk Universal Forwarder. For instruction on how to do this, please skip this article and go to the [Syslog-ng and Universal Forwarder Guide](universal-forwarder.md).
+**Syslog-ng and Universal Forwarder** An alternative to sending the logs directly to Splunk, it is common to send logs to a syslog-ng or other intermediate syslog server, then forward the logs from there with a Splunk Universal Forwarder. For instruction on how to do this, please skip this article and go to the [Syslog-ng and Universal Forwarder Guide](../universal-forwarder).
 
 **Syslog to Splunk using the following protocols:**
 
@@ -123,11 +123,11 @@ Use the default Search app if using just the Palo Alto Networks Add-on.
 
 If Splunk is getting the syslogs from the firewall and parsing them correctly, then you'll see the config event syslogs show up here from the changes you made on the firewall configuration.
 
-If you don't see the syslog, verify the steps above or try the [Troubleshooting Guide](troubleshoot.md).
+If you don't see the syslog, verify the steps above or try the [Troubleshooting Guide](../troubleshoot).
 
 ### Firewall/Panorama API Configuration {#firewallpanorama-credential-changes}
 
-Adaptive Response and Searchbar Commands leverage API calls to the FIrewall/Panorama. 
+Adaptive Response and Searchbar Commands leverage API calls to the Firewall/Panorama.
 
 Create an administrative user and role with API access on the Firewall/Panorama.
 

@@ -49,8 +49,8 @@ This technique does not pull from the index, so there are a couple things you ne
 
 Requirements:
 
-* [Install the Palo Alto Networks App for Splunk](/installation.md). It contains a full datamodel for all Palo Alto Networks logs which is where we'll pull the logs from.
-* [Turn on Datamodel Acceleration](/installation.md#enable-datamodel-acceleration) for all the Palo Alto Networks datamodels.
+* [Install the Palo Alto Networks App for Splunk](../installation). It contains a full datamodel for all Palo Alto Networks logs which is where we'll pull the logs from.
+* [Turn on Datamodel Acceleration](../installation#enable-datamodel-acceleration) for all the Palo Alto Networks datamodels.
 
 ```
 | tstats summariesonly=t count, values(log.bytes_in) AS log.bytes_in, values(log.bytes_out) AS log.bytes_out, values(log.dest_name) AS log.dest_name FROM datamodel="pan_firewall" WHERE nodename="log.traffic.end" OR nodename="log.url" GROUPBY log.session_id

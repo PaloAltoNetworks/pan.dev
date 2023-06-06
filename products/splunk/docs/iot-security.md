@@ -48,4 +48,4 @@ After waiting the interval time, check that logs are coming into Splunk by click
 
     eventtype="pan_iot_device"
 
-You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in IoT Security to generate logs, and try the [Troubleshooting Guide](troubleshoot.md).
+You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in IoT Security to generate logs, and try the [Troubleshooting Guide](../troubleshoot).

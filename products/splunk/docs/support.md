@@ -11,13 +11,13 @@ Get Support
 
 ### Setup and configuration
 
-> See [Installation](/installation.md) and
-> [Getting Data Into Splunk](/getting-data-in.md) for guidance to get things up
+> See [Installation](../installation) and
+> [Getting Data Into Splunk](../getting-data-in) for guidance to get things up
 > and running.
 
 ### Troubleshooting an issue?
 
-> See the [Troubleshooting Guide](/troubleshoot.md) for common problems and solutions.
+> See the [Troubleshooting Guide](../troubleshoot) for common problems and solutions.
 
 ### Need more help? Have questions?
 

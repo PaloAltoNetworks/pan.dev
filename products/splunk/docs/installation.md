@@ -19,7 +19,7 @@ The Palo Alto Networks Splunk App and Add-on are designed to work together, and 
 | Heavy Forwarder | Add-on only |
 | Universal Forwarder | None |
 
-Some organizations prefer not to install Add-ons on Search Heads. This is fine for log ingest, but will prevent some advanced features from functioning, such as [Adaptive Response](https://www.splunk.com/en_us/solutions/solution-areas/security-and-fraud/adaptive-response-initiative.html) and [Threat Intelligence](/threat-intelligence.md).
+Some organizations prefer not to install Add-ons on Search Heads. This is fine for log ingest, but will prevent some advanced features from functioning, such as [Adaptive Response](https://www.splunk.com/en_us/solutions/solution-areas/security-and-fraud/adaptive-response-initiative.html) and [Threat Intelligence](../threat-intelligence).
 
 :::info Important Changes
 

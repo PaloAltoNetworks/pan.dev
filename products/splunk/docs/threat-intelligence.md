@@ -6,7 +6,7 @@ MineMeld can be used to deliver threat intelligence and indicators of compromise
 
 MineMeld and AutoFocus are often used together to share AutoFocus threat intelligence with Splunk.
 
-For more information on getting MineMeld indicators into Splunk, see [Getting Data Into Splunk: AutoFocus and MineMeld](/autofocus-and-minemeld.md).
+For more information on getting MineMeld indicators into Splunk, see [Getting Data Into Splunk: AutoFocus and MineMeld](../autofocus-and-minemeld).
 
 ## AutoFocus Export List
 

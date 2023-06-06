@@ -56,28 +56,28 @@ Traps datamodel has been renamed from `pan_endpoint` to `pan_traps` and some fie
 
 6.0.0
 
-Is your organization safe from those who intend the most harm? Know your adversary with the new Adversary Scoreboard and measure how effective your security is at defeating their attacks. Automatically prioritize attacks with the new [All Incident Feed](/dashboards.md#incidents), and investigate with the new [Incident Context View](/dashboards.md#incident-context).
+Is your organization safe from those who intend the most harm? Know your adversary with the new Adversary Scoreboard and measure how effective your security is at defeating their attacks. Automatically prioritize attacks with the new [All Incident Feed](../dashboards#incidents), and investigate with the new [Incident Context View](../dashboards#incident-context).
 
-* All [new dashboards](/dashboards.md):
-  * [Adversary Scoreboard](/dashboards.md#adversary)
-  * [All Incident Feed](/dashboards.md#incidents)
-  * [Real-time Event Feed](/dashboards.md#realtime)
-  * [Datamodel Audit](/dashboards.md#datamodel)
-  * [User Behavior](/dashboards.md#user)
+* All [new dashboards](../dashboards):
+  * [Adversary Scoreboard](../dashboards#adversary)
+  * [All Incident Feed](../dashboards#incidents)
+  * [Real-time Event Feed](../dashboards#realtime)
+  * [Datamodel Audit](../dashboards#datamodel)
+  * [User Behavior](../dashboards#user)
   * And many more new dashboards...
 * Tool tips and Tour to help guide you through the new dashboards
 * Events from Firewall, Panorama, Traps, Aperture, AutoFocus, and Minemeld correlate and combine to offer unparalleled security insights
-* Support for [content pack sync](/lookups.md#contentpack) with PAN-OS 8.0
+* Support for [content pack sync](../lookups#contentpack) with PAN-OS 8.0
 
 ### Add-on 6.0
 
 6.0.0
 
-* [MineMeld Support](/autofocus-and-minemeld.md)
-* [AutoFocus Tags Support](/autofocus-and-minemeld.md)
-* [Aperture Support](/aperture.md)
+* [MineMeld Support](../autofocus-and-minemeld)
+* [AutoFocus Tags Support](../autofocus-and-minemeld)
+* [Aperture Support](../aperture)
 * [PAN-OS 8.0](https://www.paloaltonetworks.com/poducts/new/new-panos8-0) new fields
-* Threat Intelligence from MineMeld can be [shared with Splunk Enterprise Security](/enterprise-security.md#share-minemeld-indicators)
+* Threat Intelligence from MineMeld can be [shared with Splunk Enterprise Security](../enterprise-security#share-minemeld-indicators)
 * Improved CIM adoption
 * Datamodel optimizations for size on disk and performance
 
@@ -165,7 +165,7 @@ You might need to update custom searches or panels you created that leverage the
 
 :::note
 
-If you are using Splunk 6.1 or earlier, you must upgrade to Splunk 6.2 or later before upgrading to App v5.2.0. If you currently use **panblock** or **panupdate** commands, please update your usage of the App to leverage [pantag](commands.md#pantag) and [panuserupdate](commands.md#panuserupdate) instead.
+If you are using Splunk 6.1 or earlier, you must upgrade to Splunk 6.2 or later before upgrading to App v5.2.0. If you currently use **panblock** or **panupdate** commands, please update your usage of the App to leverage [pantag](../commands#pantag) and [panuserupdate](../commands#panuserupdate) instead.
 
 :::
 
@@ -208,13 +208,13 @@ This major release re-architects the Palo Alto Networks App by splitting it into
 
 In addition to the new Palo Alto Networks Add-on, this version also has the following new features:
 
-* New SaaS dashboard with [Un/Sanctioned SaaS Detection](/lookups.md#saas)
+* New SaaS dashboard with [Un/Sanctioned SaaS Detection](../lookups#saas)
 * CIM 4.x compliance
 * Optimized Datamodel for better performance and storage efficiency
 * Logs are no longer required to be stored in the pan\_logs index
-* [Auto update script](/lookups.md#contentpack) for app and threat lookup tables
-* New [panuserupdate](commands.md#panuserupdate) command for User-ID update
-* Enhanced [pantag](commands.md#pantag) command to leverage log data for tags
+* [Auto update script](../lookups#contentpack) for app and threat lookup tables
+* New [panuserupdate](../commands#panuserupdate) command for User-ID update
+* Enhanced [pantag](../commands#pantag) command to leverage log data for tags
 * Both commands now support Panorama and VSYS targets, and are more efficient and scalable
 * Better command documentation
 * Changed from CC license to ISC license
@@ -231,7 +231,7 @@ In addition to the new Palo Alto Networks Add-on, this version also has the foll
 * Add support for PAN-OS 7.0 new fields
 * Add hip-match log type from Firewall and Panorama
 * Add sourcetype category
-* Add Sanctioned SaaS lookup table \(see [Un/Sanctioned SaaS Detection](/lookups.md#saas)\)
+* Add Sanctioned SaaS lookup table \(see [Un/Sanctioned SaaS Detection](../lookups#saas)\)
 * Update app\_list.csv and threat\_list.csv lookup tables with new format and data
 * Fix incorrect value in report\_id field for Wildfire logs in PAN-OS 6.1 or higher
 * Fix src\_category field should be dest\_category
