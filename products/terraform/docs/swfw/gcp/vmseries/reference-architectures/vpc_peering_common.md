@@ -24,7 +24,7 @@ The Terraform code presented here will deploy Palo Alto Networks VM-Series firew
 
 ## Reference Architecture Design
 
-![simple](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/assets/6574404/942d7e0a-eafb-42fb-ba53-6fefedb4b69d)
+![simple](942d7e0a-eafb-42fb-ba53-6fefedb4b69d.png)
 
 This code implements:
 - a _centralized design_, a hub-and-spoke topology with a shared VPC containing VM-Series to inspect all inbound, outbound, east-west, and enterprise traffic
@@ -41,7 +41,7 @@ This design model integrates multiple methods to interconnect and control your a
 
 The common firewall option leverages a single set of VM-Series firewalls. The sole set of firewalls operates as a shared resource and may present scale limitations with all traffic flowing through a single set of firewalls due to the performance degradation that occurs when traffic crosses virtual routers. This option is suitable for proof-of-concepts and smaller scale deployments because the number of firewalls is low. However, the technical integration complexity is high.
 
-![VM-Series-Common-Firewall-Option](https://user-images.githubusercontent.com/43091730/232486760-a8f6f1f2-6c46-44ed-9842-3afa2fb2309f.png)
+![VM-Series-Common-Firewall-Option](232486760-a8f6f1f2-6c46-44ed-9842-3afa2fb2309f.png.png)
 
 The scope of this code is to deploy an example of the [VM-Series Common Firewall Option](https://www.paloaltonetworks.com/apps/pan/public/downloadResource?pagePath=/content/pan/en_US/resources/guides/gcp-architecture-guide#Design%20Model) architecture within a GCP project.
 
