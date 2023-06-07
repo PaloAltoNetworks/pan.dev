@@ -18,26 +18,27 @@ title: Auto-Scaling for Palo Alto Networks VM-Series
 
 # Auto-Scaling for Palo Alto Networks VM-Series
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15.3, < 2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 3.48 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.48 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.54 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -50,7 +51,7 @@ No modules.
 | [random_id.autoscaler](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google_compute_default_service_account.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -77,7 +78,7 @@ No modules.
 | <a name="input_update_policy_type"></a> [update\_policy\_type](#input\_update\_policy\_type) | What to do when the underlying template changes (e.g. PAN-OS upgrade).<br />OPPORTUNISTIC is the only recommended value. Also PROACTIVE is allowed: it immediately<br />starts to re-create/delete instances and since this is not coordinated with<br />the instance group manager in other zone, it can easily lead to total outage.<br />It is thus feasible only in dev environments. Real environments should<br />perform a "Rolling Update" in GCP web interface. | `string` | `"OPPORTUNISTIC"` | no |
 | <a name="input_zones"></a> [zones](#input\_zones) | Map of zone names for the zonal IGMs | `map(string)` | `{}` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

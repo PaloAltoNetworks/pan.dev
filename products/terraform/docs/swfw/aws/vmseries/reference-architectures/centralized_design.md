@@ -61,8 +61,9 @@ In example VM-Series are licensed using [Panorama-Based Software Firewall Licens
 6. Deploy infrastructure: `terraform apply -auto-approve`
 7. Destroy infrastructure if needed: `terraform destroy -auto-approve`
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
@@ -70,13 +71,13 @@ In example VM-Series are licensed using [Panorama-Based Software Firewall Licens
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.4.0 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 
-## Modules
+### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
@@ -93,7 +94,7 @@ In example VM-Series are licensed using [Panorama-Based Software Firewall Licens
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../modules/vpc | n/a |
 | <a name="module_vpc_routes"></a> [vpc\_routes](#module\_vpc\_routes) | ../../modules/vpc_route | n/a |
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -106,7 +107,7 @@ In example VM-Series are licensed using [Panorama-Based Software Firewall Licens
 | [aws_lb_target_group_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment) | resource |
 | [aws_ami.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -124,7 +125,7 @@ In example VM-Series are licensed using [Panorama-Based Software Firewall Licens
 | <a name="input_vmseries"></a> [vmseries](#input\_vmseries) | A map defining VM-Series instances<br /><br />Following properties are available:<br />- `instances`: map of VM-Series instances<br />- `bootstrap_options`: VM-Seriess bootstrap options used to connect to Panorama<br />- `panos_version`: PAN-OS version used for VM-Series<br />- `ebs_kms_id`: alias for AWS KMS used for EBS encryption in VM-Series<br />- `vpc`: key of VPC<br />- `gwlb`: key of GWLB<br />- `subinterfaces`: configuration of network subinterfaces used to map with GWLB endpoints<br />- `system_services`: map of system services<br />- `application_lb`: ALB placed in front of the Firewalls' public interfaces<br />- `network_lb`: NLB placed in front of the Firewalls' public interfaces<br /><br />Example:<pre>vmseries = {<br />  vmseries = {<br />    instances = {<br />      "01" = { az = "eu-central-1a" }<br />      "02" = { az = "eu-central-1b" }<br />    }<br /><br />    # Value of `panorama-server`, `auth-key`, `dgname`, `tplname` can be taken from plugin `sw\_fw\_license`<br />    bootstrap\_options = {<br />      mgmt-interface-swap         = "enable"<br />      plugin-op-commands          = "panorama-licensing-mode-on,aws-gwlb-inspect:enable,aws-gwlb-overlay-routing:enable"<br />      dhcp-send-hostname          = "yes"<br />      dhcp-send-client-id         = "yes"<br />      dhcp-accept-server-hostname = "yes"<br />      dhcp-accept-server-domain   = "yes"<br />    }<br /><br />    panos\_version = "10.2.3"        # TODO: update here<br />    ebs\_kms\_id    = "alias/aws/ebs" # TODO: update here<br /><br />    # Value of `vpc` must match key of objects stored in `vpcs`<br />    vpc = "security\_vpc"<br /><br />    # Value of `gwlb` must match key of objects stored in `gwlbs`<br />    gwlb = "security\_gwlb"<br /><br />    interfaces = {<br />      private = {<br />        device\_index      = 0<br />        security\_group    = "vmseries\_private"<br />        vpc\_subnet        = "security\_vpc-private"<br />        create\_public\_ip  = false<br />        source\_dest\_check = false<br />      }<br />      mgmt = {<br />        device\_index      = 1<br />        security\_group    = "vmseries\_mgmt"<br />        vpc\_subnet        = "security\_vpc-mgmt"<br />        create\_public\_ip  = true<br />        source\_dest\_check = true<br />      }<br />      public = {<br />        device\_index      = 2<br />        security\_group    = "vmseries\_public"<br />        vpc\_subnet        = "security\_vpc-public"<br />        create\_public\_ip  = true<br />        source\_dest\_check = false<br />      }<br />    }<br /><br />    # Value of `gwlb\_endpoint` must match key of objects stored in `gwlb\_endpoints`<br />    subinterfaces = {<br />      inbound = {<br />        app1 = {<br />          gwlb\_endpoint = "app1\_inbound"<br />          subinterface  = "ethernet1/1.11"<br />        }<br />        app2 = {<br />          gwlb\_endpoint = "app2\_inbound"<br />          subinterface  = "ethernet1/1.12"<br />        }<br />      }<br />      outbound = {<br />        only\_1\_outbound = {<br />          gwlb\_endpoint = "security\_gwlb\_outbound"<br />          subinterface  = "ethernet1/1.20"<br />        }<br />      }<br />      eastwest = {<br />        only\_1\_eastwest = {<br />          gwlb\_endpoint = "security\_gwlb\_eastwest"<br />          subinterface  = "ethernet1/1.30"<br />        }<br />      }<br />    }<br /><br />    system\_services = {<br />      dns\_primary = "4.2.2.2"      # TODO: update here<br />      dns\_secondy = null           # TODO: update here<br />      ntp\_primary = "pool.ntp.org" # TODO: update here<br />      ntp\_secondy = null           # TODO: update here<br />    }<br /><br />    application\_lb = null<br />    network\_lb     = null<br />  }<br />}</pre> | <pre>map(object({<br />    instances = map(object({<br />      az = string<br />    }))<br /><br />    bootstrap\_options = object({<br />      mgmt-interface-swap         = string<br />      plugin-op-commands          = string<br />      panorama-server             = string<br />      auth-key                    = string<br />      dgname                      = string<br />      tplname                     = string<br />      dhcp-send-hostname          = string<br />      dhcp-send-client-id         = string<br />      dhcp-accept-server-hostname = string<br />      dhcp-accept-server-domain   = string<br />    })<br /><br />    panos\_version = string<br />    ebs\_kms\_id    = string<br /><br />    vpc  = string<br />    gwlb = string<br /><br />    interfaces = map(object({<br />      device\_index      = number<br />      security\_group    = string<br />      vpc\_subnet        = string<br />      create\_public\_ip  = bool<br />      source\_dest\_check = bool<br />    }))<br /><br />    subinterfaces = map(map(object({<br />      gwlb\_endpoint = string<br />      subinterface  = string<br />    })))<br /><br />    system\_services = object({<br />      dns\_primary = string<br />      dns\_secondy = string<br />      ntp\_primary = string<br />      ntp\_secondy = string<br />    })<br /><br />    application\_lb = object({<br />      name  = string<br />      rules = any<br />    })<br /><br />    network\_lb = object({<br />      name  = string<br />      rules = any<br />    })<br />  }))</pre> | `{}` | no |
 | <a name="input_vpcs"></a> [vpcs](#input\_vpcs) | A map defining VPCs with security groups and subnets.<br /><br />Following properties are available:<br />- `name`: VPC name<br />- `cidr`: CIDR for VPC<br />- `security_groups`: map of security groups<br />- `subnets`: map of subnets with properties:<br />   - `az`: availability zone<br />   - `set`: internal identifier referenced by main.tf<br />- `routes`: map of routes with properties:<br />   - `vpc_subnet` - built from key of VPCs concatenate with `-` and key of subnet in format: `VPCKEY-SUBNETKEY`<br />   - `next_hop_key` - must match keys use to create TGW attachment, IGW, GWLB endpoint or other resources<br />   - `next_hop_type` - internet\_gateway, nat\_gateway, transit\_gateway\_attachment or gwlbe\_endpoint<br /><br />Example:<pre>vpcs = {<br />  example\_vpc = {<br />    name = "example-spoke-vpc"<br />    cidr = "10.104.0.0/16"<br />    nacls = {<br />      trusted\_path\_monitoring = {<br />        name               = "trusted-path-monitoring"<br />        rules = {<br />          allow\_inbound = {<br />            rule\_number = 300<br />            egress      = false<br />            protocol    = "-1"<br />            rule\_action = "allow"<br />            cidr\_block  = "0.0.0.0/0"<br />            from\_port   = null<br />            to\_port     = null<br />          }<br />        }<br />      }<br />    }<br />    security\_groups = {<br />      example\_vm = {<br />        name = "example\_vm"<br />        rules = {<br />          all\_outbound = {<br />            description = "Permit All traffic outbound"<br />            type        = "egress", from\_port = "0", to\_port = "0", protocol = "-1"<br />            cidr\_blocks = ["0.0.0.0/0"]<br />          }<br />        }<br />      }<br />    }<br />    subnets = {<br />      "10.104.0.0/24"   = { az = "eu-central-1a", set = "vm", nacl = null }<br />      "10.104.128.0/24" = { az = "eu-central-1b", set = "vm", nacl = null }<br />    }<br />    routes = {<br />      vm\_default = {<br />        vpc\_subnet    = "app1\_vpc-app1\_vm"<br />        to\_cidr       = "0.0.0.0/0"<br />        next\_hop\_key  = "app1"<br />        next\_hop\_type = "transit\_gateway\_attachment"<br />      }<br />    }<br />  }<br />}</pre> | <pre>map(object({<br />    name = string<br />    cidr = string<br />    nacls = map(object({<br />      name = string<br />      rules = map(object({<br />        rule\_number = number<br />        egress      = bool<br />        protocol    = string<br />        rule\_action = string<br />        cidr\_block  = string<br />        from\_port   = string<br />        to\_port     = string<br />      }))<br />    }))<br />    security\_groups = map(object({<br />      name = string<br />      rules = map(object({<br />        description = string<br />        type        = string,<br />        from\_port   = string<br />        to\_port     = string,<br />        protocol    = string<br />        cidr\_blocks = list(string)<br />      }))<br />    }))<br />    subnets = map(object({<br />      az   = string<br />      set  = string<br />      nacl = string<br />    }))<br />    routes = map(object({<br />      vpc\_subnet    = string<br />      to\_cidr       = string<br />      next\_hop\_key  = string<br />      next\_hop\_type = string<br />    }))<br />  }))</pre> | `{}` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

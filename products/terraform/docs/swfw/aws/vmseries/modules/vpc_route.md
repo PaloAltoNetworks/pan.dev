@@ -77,31 +77,32 @@ module "vpc_route" {
 }
 ```
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
 | [aws_route.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -111,7 +112,7 @@ No modules.
 | <a name="input_route_table_ids"></a> [route\_table\_ids](#input\_route\_table\_ids) | A map of Route Tables where to install the route. Each key is an arbitrary string,<br />each value is a Route Table identifier. The keys need to match keys used in the<br />`next_hop_set` input. The keys are usually Availability Zone names. Each of the Route Tables<br />obtains exactly one next hop from the `next_hop_set`. Example:<pre>route\_table\_ids = {<br />  "us-east-1a" = "rt-123123"<br />  "us-east-1b" = "rt-123456"<br />}</pre> | `map(string)` | n/a | yes |
 | <a name="input_to_cidr"></a> [to\_cidr](#input\_to\_cidr) | The CIDR to match the packet's destination field. If they match, the route can be used for the packet. For example "0.0.0.0/0". | `string` | n/a | yes |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|
