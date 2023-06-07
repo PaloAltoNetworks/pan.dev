@@ -200,6 +200,7 @@ components:
         - Service Connections
         - Mobile Users Container
         - Mobile Users Explicit Proxy
+        pattern: ^[0-9a-zA-Z._-\s]{1,}$
         type: string
     limit-optional:
       description: 'The maximum number of result objects to return per page.
@@ -454,6 +455,32 @@ components:
       - name
       - action
       type: object
+    rule-based-move:
+      properties:
+        destination:
+          description: A destination of the rule. Valid destination values are top,
+            bottom, before and after.
+          enum:
+          - top
+          - bottom
+          - before
+          - after
+          type: string
+        destination_rule:
+          description: A destination_rule attribute is required only if the destination
+            value is before or after. Valid destination_rule values are existing rule
+            UUIDs within the same container.
+          type: string
+        rulebase:
+          description: A base of a rule. Valid rulebase values are pre and post.
+          enum:
+          - pre
+          - post
+          type: string
+      required:
+      - destination
+      - rulebase
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
@@ -577,6 +604,7 @@ paths:
       description: Get a QoS policy rule by ID.
       operationId: get-sse-config-v1-qos-policy-rules-id
       parameters:
+      - $ref: '#/components/parameters/folder'
       - $ref: '#/components/parameters/uuid-required'
       responses:
         '200':
@@ -634,6 +662,39 @@ paths:
       security:
       - Bearer: []
       summary: Edit a qos policy rule.
+      tags:
+      - QoSPolicyRules
+  /sse/config/v1/qos-policy-rules/{id}:move:
+    post:
+      description: 'Move a qos policy rule.
+
+        '
+      operationId: post-sse-config-v1-qos-policy-rules-id:move
+      parameters:
+      - $ref: '#/components/parameters/uuid-required'
+      - $ref: '#/components/parameters/folder'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rule-based-move'
+        description: The qos policy rule you want to move
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Move a qos policy rule
       tags:
       - QoSPolicyRules
 servers:
