@@ -18,26 +18,27 @@ title: Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Ser
 
 # Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Series
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0, < 2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 3.30 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.30 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.54 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -51,7 +52,7 @@ No modules.
 | [random_string.randomstring](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [google_compute_default_service_account.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -61,7 +62,7 @@ No modules.
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix of the name of Google Cloud Storage bucket, followed by 10 random characters | `string` | `"paloaltonetworks-firewall-bootstrap-"` | no |
 | <a name="input_service_account"></a> [service\_account](#input\_service\_account) | Optional IAM Service Account (just an email) that will be granted read-only access to this bucket | `string` | `null` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

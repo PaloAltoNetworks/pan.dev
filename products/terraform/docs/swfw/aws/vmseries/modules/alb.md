@@ -89,25 +89,26 @@ module "public_alb" {
 }
 ```
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -123,7 +124,7 @@ No modules.
 | [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_s3_bucket.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -143,7 +144,7 @@ No modules.
 | <a name="input_targets"></a> [targets](#input\_targets) | A list of backends accepting traffic. For Application Load Balancer all targets are of type `IP`. This is because this is the only option that allows a direct routing between a Load Balancer and a specific VMSeries' network interface. The Application Load Balancer is meant to be always public, therefore the VMSeries IPs should be from the public facing subnet. An example on how to feed this variable with data:<pre>fw\_instance\_ips = { for k, v in var.vmseries : k => module.vmseries[k].interfaces["untrust"].private\_ip }</pre>For format of `var.vmseries` check the [`vmseries` module](../vmseries/README.md). The key is the VM name. By using those keys, we can loop through all vmseries modules and take the private IP from the interface that is assigned to the subnet we require. The subnet can be identified by the subnet set name (like above). In other words, the `for` loop returns the following map:<pre>{<br />  vm01 = "1.1.1.1"<br />  vm02 = "2.2.2.2"<br />  ...<br />}</pre> | `map(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the security VPC for the Load Balancer. | `string` | n/a | yes |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

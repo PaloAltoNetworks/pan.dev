@@ -62,26 +62,27 @@ resource "local_file" "this" {
 }
 ```
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.7 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.25 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.1 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.7 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -91,7 +92,7 @@ No modules.
 | [azurerm_storage_share_file.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share_file) | resource |
 | [azurerm_storage_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -107,7 +108,7 @@ No modules.
 | <a name="input_storage_share_access_tier"></a> [storage\_share\_access\_tier](#input\_storage\_share\_access\_tier) | Access tier for the File Share. | `string` | `"Cool"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to be associated with the resources created. | `map(string)` | `{}` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

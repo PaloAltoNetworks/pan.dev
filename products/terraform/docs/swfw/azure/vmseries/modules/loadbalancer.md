@@ -26,25 +26,26 @@ The module creates a single load balancer and a single backend for it, but it al
 
 For usage see any of the reference architecture examples.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.7 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.7 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -57,7 +58,7 @@ No modules.
 | [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -76,7 +77,7 @@ No modules.
 | <a name="input_tags"></a> [tags](#input\_tags) | Azure tags to apply to the created resources. | `map(string)` | `{}` | no |
 | <a name="input_avzones"></a> [avzones](#input\_avzones) | Controls zones for load balancer's Fronted IP configurations. For:<br /><br />* public IPs - these are regions in which the IP resource is available<br />* private IPs - this represents Zones to which Azure will deploy paths leading to this Frontend IP.<br /><br />For public IPs, after provider version 3.x (Azure API upgrade) you need to specify all zones available in a region (typically 3), ie: for zone-redundant with 3 availability zone in current region value will be:<pre>["1","2","3"]</pre> | `list(string)` | `[]` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

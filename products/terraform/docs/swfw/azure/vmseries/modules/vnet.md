@@ -24,25 +24,26 @@ A terraform module for deploying a Virtual Network and its components required f
 
 For usage refer to any example module.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.7 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.7 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -57,7 +58,7 @@ No modules.
 | [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 | [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -73,7 +74,7 @@ No modules.
 | <a name="input_route_tables"></a> [route\_tables](#input\_route\_tables) | Map of objects describing a Route Table.<br />List of available attributes of each Route Table entry:<br />- `name`: Name of a Route Table.<br />- `location` : (Optional) Specifies the Azure location where to deploy the resource.<br />- `routes` : (Optional) Map of routes within the Route Table.<br />  List of available attributes of each route entry:<br />  - `address_prefix` : The destination CIDR to which the route applies, such as `10.1.0.0/16`.<br />  - `next_hop_type` : The type of Azure hop the packet should be sent to.<br />    Possible values are: `VirtualNetworkGateway`, `VnetLocal`, `Internet`, `VirtualAppliance` and `None`.<br />  - `next_hop_in_ip_address` : Contains the IP address packets should be forwarded to. <br />    Next hop values are only allowed in routes where the next hop type is `VirtualAppliance`.<br /><br />Example:<pre>{<br />  "rt\_1" = {<br />    name = "route\_table\_1"<br />    routes = {<br />      "route\_1" = {<br />        address\_prefix = "10.1.0.0/16"<br />        next\_hop\_type  = "vnetlocal"<br />      },<br />      "route\_2" = {<br />        address\_prefix = "10.2.0.0/16"<br />        next\_hop\_type  = "vnetlocal"<br />      },<br />    }<br />  },<br />  "rt\_2" = {<br />    name = "route\_table\_2"<br />    routes = {<br />      "route\_3" = {<br />        address\_prefix         = "0.0.0.0/0"<br />        next\_hop\_type          = "VirtualAppliance"<br />        next\_hop\_in\_ip\_address = "10.112.0.100"<br />      }<br />    },<br />  },<br />}</pre> | `map` | `{}` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Map of subnet objects to create within a virtual network. If `create_subnets` is set to `false` this is just a mapping between the existing subnets and UDRs and NSGs that should be assigned to them.<br /><br />List of available attributes of each subnet entry:<br />- `name` - Name of a subnet.<br />- `address_prefixes` : The address prefix to use for the subnet. Only required when a subnet will be created.<br />- `network_security_group` : The Network Security Group identifier to associate with the subnet.<br />- `route_table_id` : The Route Table identifier to associate with the subnet.<br />- `enable_storage_service_endpoint` : Flag that enables `Microsoft.Storage` service endpoint on a subnet. This is a suggested setting for the management interface when full bootstrapping using an Azure Storage Account is used. Defaults to `false`.<br />Example:<pre>{<br />  "management" = {<br />    name                            = "management-snet"<br />    address\_prefixes                = ["10.100.0.0/24"]<br />    network\_security\_group          = "network\_security\_group\_1"<br />    route\_table                     = "route\_table\_1"<br />    enable\_storage\_service\_endpoint = true<br />  },<br />  "private" = {<br />    name                   = "private-snet"<br />    address\_prefixes       = ["10.100.1.0/24"]<br />    network\_security\_group = "network\_security\_group\_2"<br />    route\_table            = "route\_table\_2"<br />  },<br />  "public" = {<br />    name                   = "public-snet"<br />    address\_prefixes       = ["10.100.2.0/24"]<br />    network\_security\_group = "network\_security\_group\_3"<br />    route\_table            = "route\_table\_3"<br />  },<br />}</pre> | `any` | n/a | yes |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

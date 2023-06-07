@@ -211,21 +211,22 @@ please see https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the
 
 The GCP Global HTTP LB acts as a proxy and sends traffic to the VM-Series `Untrust` interfaces. In order to properly route traffic - configure a DNAT + SNAT Policy on the dedicated inbound firewall pair to send traffic towards a VM inside your network (SNAT is also required to properly route return traffic back to the proper firewall).
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0, < 2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | n/a |
 | <a name="provider_local"></a> [local](#provider\_local) | n/a |
 
-## Modules
+### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
@@ -237,7 +238,7 @@ The GCP Global HTTP LB acts as a proxy and sends traffic to the VM-Series `Untru
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../modules/vpc | n/a |
 | <a name="module_vpc_peering"></a> [vpc\_peering](#module\_vpc\_peering) | ../../modules/vpc-peering | n/a |
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -247,7 +248,7 @@ The GCP Global HTTP LB acts as a proxy and sends traffic to the VM-Series `Untru
 | [local_file.init_cfg](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [google_compute_image.my_image](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -265,7 +266,7 @@ The GCP Global HTTP LB acts as a proxy and sends traffic to the VM-Series `Untru
 | <a name="input_vmseries_common"></a> [vmseries\_common](#input\_vmseries\_common) | A map containing common vmseries setting.<br /><br />Example of variable deployment :<pre>vmseries\_common = {<br />  ssh\_keys            = "admin:AAABBB..."<br />  vmseries\_image      = "vmseries-flex-byol-1022h2"<br />  machine\_type        = "n2-standard-4"<br />  min\_cpu\_platform    = "Intel Cascade Lake"<br />  service\_account\_key = "sa-vmseries-01"<br />  bootstrap\_options = {<br />    type                = "dhcp-client"<br />    mgmt-interface-swap = "enable"<br />  }<br />}</pre>Bootstrap options can be moved between vmseries individual instance variable (`vmseries`) and this common vmserie variable (`vmseries_common`). | `any` | n/a | yes |
 | <a name="input_vpc_peerings"></a> [vpc\_peerings](#input\_vpc\_peerings) | A map containing each VPC peering setting.<br /><br />Example of variable deployment :<pre>vpc\_peerings = {<br />  "trust-to-spoke1" = {<br />    local\_network = "fw-trust-vpc"<br />    peer\_network  = "spoke1-vpc"<br /><br />    local\_export\_custom\_routes                = true<br />    local\_import\_custom\_routes                = true<br />    local\_export\_subnet\_routes\_with\_public\_ip = true<br />    local\_import\_subnet\_routes\_with\_public\_ip = true<br /><br />    peer\_export\_custom\_routes                = true<br />    peer\_import\_custom\_routes                = true<br />    peer\_export\_subnet\_routes\_with\_public\_ip = true<br />    peer\_import\_subnet\_routes\_with\_public\_ip = true<br />  }<br />}</pre>For a full list of available configuration items - please refer to [module documentation](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/modules/vpc-peering#inputs)<br /><br />Multiple keys can be added and will be deployed by the code. | `map(any)` | `{}` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

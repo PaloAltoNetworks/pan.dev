@@ -41,25 +41,26 @@ module "natgw" {
 
 This will create a NAT Gateway in with a single Public IP in a zone chosen by Azure.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -73,7 +74,7 @@ No modules.
 | [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
 | [azurerm_public_ip_prefix.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip_prefix) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -93,7 +94,7 @@ No modules.
 | <a name="input_existing_pip_prefix_name"></a> [existing\_pip\_prefix\_name](#input\_existing\_pip\_prefix\_name) | Name of an existing Public IP Prefix resource to associate with the NAT Gateway. Only for newly created resources. | `string` | `null` | no |
 | <a name="input_existing_pip_prefix_resource_group_name"></a> [existing\_pip\_prefix\_resource\_group\_name](#input\_existing\_pip\_prefix\_resource\_group\_name) | Name of a resource group hosting the Public IP Prefix resource specified in `existing_pip_name`. When omitted Resource Group specified in `resource_group_name` will be used. | `string` | `null` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

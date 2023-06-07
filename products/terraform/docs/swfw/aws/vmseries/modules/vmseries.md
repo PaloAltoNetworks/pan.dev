@@ -28,25 +28,26 @@ For example usage, please refer to the [Examples](https://github.com/PaloAltoNet
 
 The changes in user data bootstrap entries will not affect the existing VM-Series EC2 instances. The recommended method to replace existing VM is to use terraform taint.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -59,7 +60,7 @@ No modules.
 | [aws_ebs_default_kms_key.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ebs_default_kms_key) | data source |
 | [aws_kms_alias.current_arn](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_alias) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -77,7 +78,7 @@ No modules.
 | <a name="input_vmseries_product_code"></a> [vmseries\_product\_code](#input\_vmseries\_product\_code) | Product code corresponding to a chosen VM-Series license type model - by default - BYOL. <br />To check the available license type models and their codes, please refer to the<br />[VM-Series documentation](https://docs.paloaltonetworks.com/vm-series/10-0/vm-series-deployment/set-up-the-vm-series-firewall-on-aws/deploy-the-vm-series-firewall-on-aws/obtain-the-ami/get-amazon-machine-image-ids.html) | `string` | `"6njl1pau431dv1qxipg63mvah"` | no |
 | <a name="input_vmseries_version"></a> [vmseries\_version](#input\_vmseries\_version) | VM-Series Firewall version to deploy.<br />To list all available VM-Series versions, run the command provided below. <br />Please have in mind that the `product-code` may need to be updated - check the `vmseries_product_code` variable for more information.<pre>aws ec2 describe-images --region us-west-1 --filters "Name=product-code,Values=6njl1pau431dv1qxipg63mvah" "Name=name,Values=PA-VM-AWS*" --output json --query "Images[].Description" \| grep -o 'PA-VM-AWS-.*' \| sort</pre> | `string` | `"10.2.0"` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

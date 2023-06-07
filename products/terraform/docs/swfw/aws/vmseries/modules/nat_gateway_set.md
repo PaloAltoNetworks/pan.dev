@@ -52,25 +52,26 @@ module "nat_gateway_set" {
 
 ```
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -79,7 +80,7 @@ No modules.
 | [aws_eip.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eip) | data source |
 | [aws_nat_gateway.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/nat_gateway) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -92,7 +93,7 @@ No modules.
 | <a name="input_nat_gateway_tags"></a> [nat\_gateway\_tags](#input\_nat\_gateway\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Map of Subnets where to create the NAT Gateways. Each map's key is the availability zone name and each map's object has an attribute `id` identifying AWS Subnet. Importantly, the traffic returning from the NAT Gateway uses the Subnet's route table.<br />The keys of this input map are used for the output map `endpoints`.<br />Example for users of module `subnet_set`:<pre>subnets = module.subnet\_set.subnets</pre>Example:<pre>subnets = {<br />  "us-east-1a" = { id = "snet-123007" }<br />  "us-east-1b" = { id = "snet-123008" }<br />}</pre> | <pre>map(object({<br />    id   = string<br />    tags = map(string)<br />  }))</pre> | n/a | yes |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

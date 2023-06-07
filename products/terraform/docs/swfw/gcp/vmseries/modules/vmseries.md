@@ -24,27 +24,28 @@ When troubleshooting you can use this module also with a good ol' Linux image. I
 
 - One cannot connect to `nic1` of Linux, because GCP DHCP doesn't ever furnish it with a default route. Connect to the primary interface (the `nic0`) for both data traffic and management traffic.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15.3, < 2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 3.30 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.1 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.30 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.54 |
 | <a name="provider_null"></a> [null](#provider\_null) | ~> 3.1 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -56,7 +57,7 @@ No modules.
 | [google_compute_image.vmseries](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
 | [google_compute_subnetwork.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_subnetwork) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -83,7 +84,7 @@ No modules.
 | <a name="input_vmseries_image"></a> [vmseries\_image](#input\_vmseries\_image) | The image name from which to boot an instance, including the license type and the version.<br />  To get a list of available official images, please run the following command:<br />  `gcloud compute images list --filter="name ~ vmseries" --project paloaltonetworksgcp-public --no-standard-images` | `string` | `"vmseries-flex-bundle1-1008h8"` | no |
 | <a name="input_zone"></a> [zone](#input\_zone) | Zone to deploy instance in. | `string` | n/a | yes |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|
