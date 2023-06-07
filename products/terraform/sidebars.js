@@ -76,6 +76,7 @@ module.exports = {
             "terraform/docs/cloudngfw/aws/tutorials/create-rulestack",
             "terraform/docs/cloudngfw/aws/tutorials/commit-rulestack",
             "terraform/docs/cloudngfw/aws/tutorials/create-cloudngfws",
+            "terraform/docs/cloudngfw/aws/tutorials/create-aws-routing",
             "terraform/docs/cloudngfw/aws/tutorials/review",
           ],
         },

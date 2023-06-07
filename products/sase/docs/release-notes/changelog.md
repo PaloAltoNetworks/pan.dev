@@ -13,6 +13,9 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| May 16, 2023    | Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.                                   |
+| April 26, 2023  | Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellanous other changes.                                                                       |
+| March 28, 2023  | New endpoints for the [Prisma Access Configuration APIs](/sase/docs/release-notes/release-notes/#march-2023).                                                                         |
 | Dec 5, 2022     | Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.                                            |
 | Nov 22, 2022    | Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints.                                                                         |
 | Nov 1, 2022     | Published [Prisma Access Insights examples](/access/docs/insights/examples/).                                                                                                         |
@@ -24,7 +27,7 @@ keywords:
 | July 27, 2022   | Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details.    |
 | July 5, 2022    | Clarified the difference between [Device Insights 2.0 and 1.0 APIs](/access/docs/insights). <br/> Added the `support_contact` field to the [Tenancy Service](/sase/api/tenancy) APIs. |
 | June 7, 2022    | Published additional information about [IAM user accounts](/sase/docs/user-accounts).                                                                                                 |
-| May 25, 2022    | Published [User Account APIs](/category/sase/api/iam/user-accounts) for the IAM service.                                                                                              |
+| May 25, 2022    | Published [User Account APIs](/sase/api/iam/user-accounts) for the IAM service.                                                                                                       |
 | May 16, 2022    | Prisma Access Configuration API monthly release, which includes [breaking changes](/sase/docs/release-notes/release-notes#april-2022) to the APIs.                                    |
 | April 26, 2022  | Added Prisma Access Insights v1.0 and v2.0 APIs                                                                                                                                       |
 | April 12, 2022  | Corrected base URLs in the API reference. Fixed bugs and typos in the breadcrumbs. Added release notes to the developer documentation. Miscellaneous editorial corrections.           |
