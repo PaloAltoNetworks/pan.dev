@@ -203,13 +203,18 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Ansible",
-                      to: "ansible/docs/panos",
+                      label: "Terraform for VM-Series",
+                      to: "swfw",
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
+                      label: "Terraform for PAN-OS",
                       to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
                       icon: "doc",
                     },
                   ],
@@ -238,7 +243,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/docs/cloudngfw",
+                      to: "swfw",
                       icon: "doc",
                     },
                   ],
@@ -505,34 +510,33 @@ const config = {
               description: "Discover technology partner integrations.",
               products: [
                 {
-                  label: "Ansible",
+                  label: "Automation",
                   to: "#",
                   docs: [
                     {
+                      label: "Terraform for Software NGFW",
+                      to: "swfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform and Palo Alto Networks",
+                      to: "terraform",
+                      icon: "doc",
+                    },
+                    {
                       label: "Ansible",
-                      to: "ansible/docs/panos",
+                      to: "ansible",
                       icon: "doc",
                     },
                   ],
                 },
                 {
-                  label: "Splunk",
+                  label: "SIEM",
                   to: "#",
                   docs: [
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
-                      icon: "doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Terraform",
-                  to: "#",
-                  docs: [
-                    {
-                      label: "Terraform",
-                      to: "terraform/docs/panos",
                       icon: "doc",
                     },
                   ],
