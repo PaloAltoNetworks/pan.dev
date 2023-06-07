@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: Lb External
+sidebar_label: LB External
 title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
 ---
 
@@ -26,26 +26,27 @@ title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
   - Can only use the nic0 (the base interface) of an instance.
   - Cannot serve as a next hop in a GCP custom routing table entry.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15.3, < 2.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 3.30 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 3.30 |
+| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.54 |
 | <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | n/a |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -57,7 +58,7 @@ No modules.
 | [google_compute_target_pool.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_pool) | resource |
 | [google_client_config.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -81,7 +82,7 @@ No modules.
 | <a name="input_rules"></a> [rules](#input\_rules) | Map of objects, the keys are names of the external forwarding rules, each of the objects has the following attributes:<br /><br />- `port_range`: (Required) The port your service is listening on. Can be a number (80) or a range (8080-8089, or even 1-65535).<br />- `ip_address`: (Optional) A public IP address on which to listen, must be in the same region as the LB and must be IPv4. If empty, automatically generates a new non-ephemeral IP on a PREMIUM tier.<br />- `ip_protocol`: (Optional) The IP protocol for the frontend forwarding rule: TCP, UDP, ESP, ICMP, or L3\_DEFAULT. Default is TCP.<br />- `all_ports`: (Optional) Allows all ports to be forwarded to the Backend Service | `any` | n/a | yes |
 | <a name="input_session_affinity"></a> [session\_affinity](#input\_session\_affinity) | How to distribute load. Options are `NONE`, `CLIENT_IP` and `CLIENT_IP_PROTO`. | `string` | `"NONE"` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

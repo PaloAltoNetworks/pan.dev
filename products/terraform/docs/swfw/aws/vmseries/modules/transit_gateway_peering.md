@@ -51,26 +51,27 @@ provider "aws" {
 
 The static routes are currently not handled by this module.
 
+## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
 | <a name="provider_aws.remote"></a> [aws.remote](#provider\_aws.remote) | ~> 4.25 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -81,7 +82,7 @@ No modules.
 | [aws_caller_identity.remote](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_region.remote_region](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -90,7 +91,7 @@ No modules.
 | <a name="input_remote_tgw_route_table"></a> [remote\_tgw\_route\_table](#input\_remote\_tgw\_route\_table) | Analog to the `local_tgw_route_table` but on the remote end of the peering. | <pre>object({<br />    id                 = string<br />    transit\_gateway\_id = string<br />  })</pre> | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | AWS tags to assign to all the created objects. Example: `{ Team = "my-team" }` | `map(string)` | `{}` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|
