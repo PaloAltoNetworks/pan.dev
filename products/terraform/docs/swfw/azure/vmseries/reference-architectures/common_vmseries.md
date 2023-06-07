@@ -24,7 +24,7 @@ The Terraform code presented here will deploy Palo Alto Networks VM-Series firew
 
 ## Reference Architecture Design
 
-![simple](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/assets/6574404/a7c2452d-f926-49da-bf21-9d840282a0a2)
+![simple](a7c2452d-f926-49da-bf21-9d840282a0a2.png)
 
 This code implements:
 - a _centralized design_, a hub-and-spoke topology with a Transit VNet containing VM-Series to inspect all inbound, outbound, east-west, and enterprise traffic
@@ -40,7 +40,7 @@ This design uses a Transit VNet. Application functions and resources are deploye
 
 The common firewall option leverages a single set of VM-Series firewalls. The sole set of firewalls operates as a shared resource and may present scale limitations with all traffic flowing through a single set of firewalls due to the performance degradation that occurs when traffic crosses virtual routers. This option is suitable for proof-of-concepts and smaller scale deployments because the number of firewalls low. However, the technical integration complexity is high.
 
-![Detailed Topology Diagram](https://user-images.githubusercontent.com/2110772/234920647-c7dc77c1-d86c-42ac-ba5a-59a95439ef23.png)
+![Detailed Topology Diagram](234920647-c7dc77c1-d86c-42ac-ba5a-59a95439ef23.png.png)
 
 This reference architecture consists of:
 
