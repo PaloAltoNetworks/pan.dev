@@ -203,13 +203,18 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Ansible",
-                      to: "ansible/docs/panos",
+                      label: "Terraform for VM-Series",
+                      to: "swfw",
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
+                      label: "Terraform for PAN-OS",
                       to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
                       icon: "doc",
                     },
                   ],
@@ -238,7 +243,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/docs/cloudngfw",
+                      to: "swfw",
                       icon: "doc",
                     },
                   ],
@@ -493,6 +498,46 @@ const config = {
                       to: "sdwan/api/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Partner Integrations",
+              to: "#",
+              colorclass: "partner-integrations",
+              description: "Discover technology partner integrations.",
+              products: [
+                {
+                  label: "Automation",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Terraform for Software NGFW",
+                      to: "swfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform and Palo Alto Networks",
+                      to: "terraform",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "SIEM",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Splunk App/Add-on",
+                      to: "splunk/docs",
+                      icon: "doc",
                     },
                   ],
                 },
