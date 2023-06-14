@@ -100,19 +100,20 @@ __Returns__
 
 ```python
 @staticmethod
-def key_checker(left_dict: dict, right_dict: dict, key: str) -> None
+def key_checker(left_dict: dict, right_dict: dict, key: Union[str, set,
+                                                              list]) -> None
 ```
 
-The static method to check if a key is available in both dictionaries.
+The static method to check if a key or a list/set of keys is available in both dictionaries.
 
-This method looks for a given key in two dictionaries. Its main purpose is to assure that when comparing a key-value pair from two dictionaries, it actually exists in both.
+This method looks for a given key or list/set of keys in two dictionaries. Its main purpose is to assure that when comparing a key-value pair from two dictionaries, it actually exists in both.
 
 __Parameters__
 
 
 - __left_dict__ (`dict`): 1st dictionary to verify.
 - __right_dict__ (`dict`): 2nd dictionary to verify.
-- __key__ (`str`): Key name to check.
+- __key__ (`str, set, list`): Key name or set/list of keys to check.
 
 __Raises__
 
