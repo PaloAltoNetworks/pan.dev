@@ -9,10 +9,6 @@ title: Adaptive Response
 
 Use the [pantag](/splunk/docs/commands#pantag) command to share context from Splunk to the firewall for automated remediation.
 
-This webinar explains the concept of automated remediation and demonstrates a case study of a real customer using this technique with Splunk and Palo Alto Networks today:
-
-Webinar: [Defeat APT with Automated Remediation in Splunk](https://www.paloaltonetworks.com/resources/webcasts/defeat-apts-improve-security-posture-real-time.html)
-
 ## Share context with Dynamic Address/User Groups
 
 Tagging an IP address/User means setting metadata or context on the firewall for that IP/User, which causes it to be added to corresponding Dynamic Address/User Groups in the firewall security policy. For example, you could create a rule in the security policy that blocks any IP address with the tag 'bad-actor'. Initially, no IP addresses would be blocked, but you can create a search in Splunk for criteria that represents a problem device, and trigger a tagging of that IP address with the 'bad-actor' tag. The firewall would add the IP address to the Dynamic Address Group in the policy automatically and begin blocking the IP.
@@ -22,10 +18,6 @@ Blocking a bad actor is just the beginning, and you aren't limited to allow or d
 **See also:**
 
 > Command reference: [pantag](commands#pantag)
-
-Webinar that explains the concept of automated remediation and demonstrates a case study of a real customer using this technique with Splunk and Palo Alto Networks today:
-
-> Webinar: [Defeat APT with Automated Remediation in Splunk](https://www.paloaltonetworks.com/resources/webcasts/defeat-apts-improve-security-posture-real-time.html)
 
 Video from a session at Ignite 2015 explains Dynamic Address Groups in more detail with several use cases including asset management:
 
