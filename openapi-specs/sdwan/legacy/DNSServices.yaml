@@ -2,15 +2,23 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: 'The details of the aggregate data.
+
+            '
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
-          description: 'The field value.
+          description: Field
+          type: string
+        name:
+          description: 'The name of the query response.
 
             '
           type: string
         operator:
-          description: 'The operator values.
-
-            '
+          description: Operator
           enum:
           - max
           - count
@@ -18,6 +26,34 @@ components:
           - avg
           - sum
           type: string
+        statistic:
+          description: 'QoS application aggregate statistics.
+
+            '
+          type: string
+        unit:
+          description: 'The unit.
+
+            '
+          type: string
+      required:
+      - statistic
+      - unit
+      - name
+      - data
+    AggregateData:
+      properties:
+        value:
+          description: 'Value of the aggregate data.
+
+            '
+          type: number
+        view:
+          description: "View the aggregate date. \n"
+          type: object
+      required:
+      - value
+      - view
     Alias:
       properties:
         mask:
@@ -290,6 +326,29 @@ components:
           type: boolean
       required:
       - dns_servers
+    DnsForwardConfigV2:
+      properties:
+        dns_servers:
+          description: 'Dns Servers: ListString(allowDuplicate = true, allowEmpty
+            = false, allowNull = false, length = 0, listMaxSize = 0, INVALID_STRING,
+            noTrim = false, regex = , required = false) '
+          items:
+            $ref: '#/components/schemas/DnsServersV2'
+          type: array
+        max_source_port:
+          description: 'Max Source Port: Range(max = 65535L, error = DNSSERVICE_CONFIG_INVALID_MAXSOURCEPORT_VALUE:
+            Invalid max source port, min = 1L) '
+          type: integer
+        min_source_port:
+          description: 'Min Source Port: Range(max = 65535L, error = DNSSERVICE_CONFIG_INVALID_MINSOURCEPORT_VALUE:
+            Invalid min source port, min = 1L) '
+          format: int32
+          type: integer
+        send_to_all_dns_servers:
+          description: Send To All Dns Servers
+          type: boolean
+      required:
+      - dns_servers
     DnsQueriesMetadata:
       properties:
         add_client_mac:
@@ -445,6 +504,44 @@ components:
           description: 'The DNS server source port.
 
             '
+          type: integer
+      required:
+      - dnsserver_ip
+    DnsServersV2:
+      properties:
+        address_family:
+          description: Address Family
+          enum:
+          - ipv4
+          - ipv6
+          - ipv4v6
+          type: string
+        dnsserver_ip:
+          description: 'Dnsserver Ip: NotEmpty(error = DNSSERVER_IP_CONFIG_MISSING:
+            Dns Server ip is missing) '
+          type: string
+        dnsserver_port:
+          description: 'Dnsserver Port: Range(max = 65535L, error = INVALID_DNSSERVER_PORT_RANGE_CONFIG:
+            Dns Server port is not in the valid range ''1 - 65535'', min = 1L) '
+          type: integer
+        domain_names:
+          description: 'Domain Names: UniqueHostNames(allowNull = true, max = 2147483647,
+            message = DNSSERVER_DOMAIN_NAMES_CONFIG_INVALID_HOST, min = 0) '
+          items:
+            description: Domain Names
+            type: string
+          type: array
+        forward_dnsservicerole_id:
+          description: 'Forward Dnsservicerole Id: Size(max = 20, error = VALUE_EXCEEDS_LIMIT:
+            value length exceeds maximum limit, min = 0) '
+          type: string
+        ip_prefix:
+          description: Ip Prefix
+          type: string
+        source_port:
+          description: 'Source Port: Range(max = 65535L, error = INVALID_DNSSERVER_SOURCE_PORT_RANGE_CONFIG:
+            Dns Server source port is not in the valid range ''1 - 65535'', min =
+            1L) '
           type: integer
       required:
       - dnsserver_ip
@@ -756,6 +853,104 @@ components:
             '
           format: int64
           type: integer
+    DnsServiceProfileV2N1:
+      properties:
+        authoritative_config:
+          $ref: '#/components/schemas/AuthoritativeConfig'
+          description: "The configuration details of the authoritative DNS server\
+            \ where all the queries will try to resolve without forwarding it to external\
+            \ servers.               \n"
+        cache_config:
+          $ref: '#/components/schemas/CacheConfig'
+          description: 'Lists details of the cache configuration.
+
+            '
+        description:
+          description: 'The description of the DNS profiles.
+
+            '
+        dns_forward_config:
+          $ref: '#/components/schemas/DnsForwardConfigV2'
+          description: "Lists details of the DNS forward requests configuration. \
+            \             \n"
+        dns_queries_metadata:
+          $ref: '#/components/schemas/DnsQueriesMetadata'
+          description: 'Lists the DNS queries parameters that append the client metadata
+            to the DNS query as it is sent to the upstream DNS server.
+
+            '
+        dns_rebind_config:
+          $ref: '#/components/schemas/DnsRebindConfig'
+          description: 'The details of the DNS rebind configuration.
+
+            '
+        dns_response_overrides:
+          $ref: '#/components/schemas/DnsResponseOverrides'
+          description: 'The details of the DNS response overrides.
+
+            '
+        dnssec_config:
+          $ref: '#/components/schemas/DnsSecConfig'
+          description: "The DNS secondary server configuration details.          \
+            \   \n"
+        domains_to_addresses:
+          description: 'The unique domain to address mapping and the IP address.
+
+            '
+          items:
+            $ref: '#/components/schemas/DomainsToAddress'
+          type: array
+        edns_packet_max:
+          description: 'The EDNS packets size. The default size is 4096.
+
+            '
+          format: int32
+          type: integer
+        enable_dns_loop_detection:
+          description: 'If DNS loop detection is enabled.
+
+            '
+          type: boolean
+        enable_dnssec_proxy:
+          description: "If DNS second proxy is enabled.             \n"
+          type: boolean
+        enable_strict_domain_name:
+          description: 'If DNS strict domain name is enabled.
+
+            '
+          type: boolean
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        listen_dnsservicerole_id:
+          description: "The ID mapped to the interfaces which are used for listening.\
+            \           \n"
+          type: string
+        listen_port:
+          description: 'The port where the DNS is listening to the DNS queries.
+
+            '
+          format: int32
+          type: integer
+        name:
+          description: 'The DNS profile name.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the DNS
+            profile.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - dns_forward_config
+      - name
     DnsServiceQuery:
       properties:
         aggregate:
@@ -1117,6 +1312,9 @@ components:
             '
           type: object
         tenant_id:
+          description: 'The tenant ID.
+
+            '
           type: string
         total_count:
           description: 'Total number of queries.
@@ -1139,6 +1337,9 @@ components:
             '
           type: string
         tenant_id:
+          description: 'The ID of the tenant.
+
+            '
           type: string
       type: object
     MxHostRecord:
@@ -2322,6 +2523,396 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update DNS Service Config (v2.0)
+      tags:
+      - DNS Services
+  /v2.1/api/tenants/{tenant_id}/dnsserviceprofiles:
+    get:
+      description: List all the DNS service profiles.
+      operationId: get-v2.1-api-tenants-tenant_id-dnsserviceprofiles
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/DnsServiceProfileV2N1'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get DNS Service Profiles (v2.1)
+      tags:
+      - DNS Services
+    post:
+      description: Create a new DNS service profile.
+      operationId: post-v2.1-api-tenants-tenant_id-dnsserviceprofiles
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsServiceProfileV2N1'
+        description: Details of the DNS service profile to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DnsServiceProfileV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: DNSSERVICE_PROFILE_CREATE_FAILED
+                  - code: INVALID_REQUEST_DUPLICATE_KEY
+                  - code: INVALID_PROFILE_CONFIG
+                  - code: INVALID_LISTENROLE_ID
+                  - code: DNSSERVER_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: DNSSERVER_INVALID_FWDROLE_ID
+                  - code: DNSREBIND_DOMAIN_CONFIG_INVALID_HOST
+                  - code: DUPLICATE_DOMAINTOADDRESS_MAPPING_UNSUPPORTED
+                  - code: DOMAINTOADDRESS_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: TRUST_ANCHORS_MISSING
+                  - code: DISABLE_DNSSEC_TIMECHECK_NOT_ALLOWED
+                  - code: DNS_CHECK_UNSIGNED_NOT_ALLOWED
+                  - code: DNSSEC_CONFIG_NOT_ALLOWED
+                  - code: HOSTRECORD_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_NAPTRRECORD_CONFIG
+                  - code: INVALID_SYNTH_DOMAIN_CONFIG
+                  - code: INVALID_ALIAS_CONFIG
+                  - code: INVALID_ADD_CUSTOMER_PREMISES_EQUIPMENT_CONFIG
+                  - code: NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_EXCEEDS_LIMIT
+                  - code: INVALID_TAG
+                  - code: INVALID_DNSSERVER_LISTEN_PORT_RANGE_CONFIG
+                  - code: DNSSERVICE_CONFIG_INVALID_MINSOURCEPORT_VALUE
+                  - code: DNSSERVICE_CONFIG_INVALID_MAXSOURCEPORT_VALUE
+                  - code: INVALID_DNSSERVER_IP_PREFIX_CONFIG
+                  - code: INVALID_DNSSERVER_DOMAIN_NAMES_LIST_CONFIG
+                  - code: DNSSERVER_IP_CONFIG_MISSING
+                  - code: INVALID_DNSSERVER_IP_CONFIG_IP
+                  - code: INVALID_DNSSERVER_PORT_RANGE_CONFIG
+                  - code: INVALID_DNSSERVER_SOURCE_PORT_RANGE_CONFIG
+                  - code: INVALID_CUSTOMER_PREMISES_EQUIPMENT_TYPE
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IP_ADDRESS
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IP_PREFIX_LENGTH_RANGE
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IPV6_ADDRESS
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IPV6_PREFIX_LENGTH_RANGE
+                  - code: INVALID_BOGUS_NX_DOMAINS
+                  - code: INVALID_IGNORE_IP_ADDRESS
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_IP
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_START_IP
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_END_IP
+                  - code: ALIAS_CONFIG_REPLACE_IP_ADDRESS_MISSING
+                  - code: INVALID_DNSREBIND_REBIND_DOMAINS_LIST_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_TAG_RANGE_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_DIGEST_ALGO_RANGE_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_DIGEST_TYPE_RANGE_CONFIG
+                  - code: INVALID_DOMAINTOADDRESS_DOMAIN_NAMES_LIST_CONFIG
+                  - code: DOMAINTOADDRESS_IP_CONFIG_MISSING
+                  - code: INVALID_SECONDARY_SERVER
+                  - code: INVALID_PEER_ADDRESS
+                  - code: AUTHCONFIG_SERVER_DOMAIN_NAME_CONFIG_MISSING
+                  - code: AUTHCONFIG_SERVER_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: AUTHCONFIG_ZONE_DOMAIN_NAME_CONFIG_MISSING
+                  - code: AUTHCONFIG_ZONE_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: AUTHCONFIG_ZONE_INVALID_INCLUDE_PREFIX
+                  - code: AUTHCONFIG_ZONE_INVALID_EXCLUDE_PREFIX
+                  - code: AUTHCONFIG_SOA_SERIAL_NUMBER_CONFIG_MISSING
+                  - code: INVALID_HOSTRECORD_DOMAIN_NAMES_LIST_CONFIG
+                  - code: INVALID_HOSTRECORD_IPV4_CONFIG
+                  - code: INVALID_HOSTRECORD_IPV6_CONFIG
+                  - code: SYNTHDOMAIN_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_SYNTHDOMAIN_START_IP_ADDRESS_CONFIG
+                  - code: INVALID_SYNTHDOMAIN_END_IP_ADDRESS_CONFIG
+                  - code: INVALID_SYNTHDOMAIN_IP_ADDRESS_PREFIX_CONFIG
+                  - code: SRVHOST_SERVICE_MISSING
+                  - code: SRVHOST_PROTOCOL_MISSING
+                  - code: SRVHOST_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: INVALID_SRVHOST_PORT_RANGE_CONFIG
+                  - code: INVALID_SRVHOST_PRIORITY_RANGE_CONFIG
+                  - code: NAPTRRECORD_NAME_MISSING
+                  - code: INVALID_NAPTRRECORD_ORDER_RANGE_CONFIG
+                  - code: NAPTRRECORD_ORDER_MISSING
+                  - code: INVALID_NAPTRRECORD_PREFERENCE_RANGE_CONFIG
+                  - code: NAPTRRECORD_PREFERENCE_MISSING
+                  - code: NAPTRRECORD_FLAGS_MISSING
+                  - code: CAARECORD_NAME_MISSING
+                  - code: CAARECORD_FLAG_MISSING
+                  - code: CAARECORD_TAG_MISSING
+                  - code: CAARECORD_VALUE_MISSING
+                  - code: DNSRESOURCERECORD_NAME_MISSING
+                  - code: DNSRESOURCERECORD_RRNUMBER_MISSING
+                  - code: CNAMERECORD_NAME_MISSING
+                  - code: CNAMERECORD_TARGET_MISSING
+                  - code: PTRRECORD_NAME_MISSING
+                  - code: TXTRECORD_DOMAIN_NAME_MISSING
+                  - code: TXTRECORD_TEXT_INVALID_LENGTH
+                  - code: MX_NAME_MISSING
+                  - code: MX_HOST_NAME_MISSING
+                  - code: MX_NAME_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_DNSSERVER_IP_CONFIG_IPV6
+                  - code: INVALID_DNSSERVER_IPV6_PREFIX_CONFIG
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create DNS Service Profile (v2.1)
+      tags:
+      - DNS Services
+  /v2.1/api/tenants/{tenant_id}/dnsserviceprofiles/query:
+    post:
+      description: Query DNS service profiles based on parameters.
+      operationId: post-v2.1-api-tenants-tenant_id-dnsserviceprofiles-query
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsServiceProfileQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/DnsServiceProfileQuery'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Query DNS Service Profile (v2.1)
+      tags:
+      - DNS Services
+  /v2.1/api/tenants/{tenant_id}/dnsserviceprofiles/{dnsservice_role_id}:
+    delete:
+      description: Delete an existing DNS service profile.
+      operationId: delete-v2.1-api-tenants-tenant_id-dnsserviceprofiles-dnsservice_role_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the DNS service profile.
+        in: path
+        name: dnsservice_role_id
+        required: true
+        schema:
+          description: Dnsservice Role Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DnsServiceProfileV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: DNSPROFILE_CONFIG_DELETE_NOTALLOWED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete DNS Service Profile (v2.1)
+      tags:
+      - DNS Services
+    get:
+      description: List a DNS service profile.
+      operationId: get-v2.1-api-tenants-tenant_id-dnsserviceprofiles-dnsservice_role_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the DNS service profile.
+        in: path
+        name: dnsservice_role_id
+        required: true
+        schema:
+          description: Dnsservice Role Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DnsServiceProfileV2N1'
+          description: Successful Operation
+      summary: Get DNS Service Profile (v2.1)
+      tags:
+      - DNS Services
+    put:
+      description: Update a DNS service profile.
+      operationId: put-v2.1-api-tenants-tenant_id-dnsserviceprofiles-dnsservice_role_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the DNS service profile.
+        in: path
+        name: dnsservice_role_id
+        required: true
+        schema:
+          description: Dnsservice Role Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsServiceProfileV2N1'
+        description: Details of the DNS service profile to be updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DnsServiceProfileV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_REQUEST_DUPLICATE_KEY
+                  - code: INVALID_PROFILE_CONFIG
+                  - code: INVALID_LISTENROLE_ID
+                  - code: DNSSERVER_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: DNSSERVER_INVALID_FWDROLE_ID
+                  - code: DNSREBIND_DOMAIN_CONFIG_INVALID_HOST
+                  - code: DUPLICATE_DOMAINTOADDRESS_MAPPING_UNSUPPORTED
+                  - code: DOMAINTOADDRESS_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: TRUST_ANCHORS_MISSING
+                  - code: DISABLE_DNSSEC_TIMECHECK_NOT_ALLOWED
+                  - code: DNS_CHECK_UNSIGNED_NOT_ALLOWED
+                  - code: DNSSEC_CONFIG_NOT_ALLOWED
+                  - code: HOSTRECORD_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_NAPTRRECORD_CONFIG
+                  - code: INVALID_SYNTH_DOMAIN_CONFIG
+                  - code: INVALID_ALIAS_CONFIG
+                  - code: INVALID_ADD_CUSTOMER_PREMISES_EQUIPMENT_CONFIG
+                  - code: NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_EXCEEDS_LIMIT
+                  - code: INVALID_TAG
+                  - code: INVALID_DNSSERVER_LISTEN_PORT_RANGE_CONFIG
+                  - code: DNSSERVICE_CONFIG_INVALID_MINSOURCEPORT_VALUE
+                  - code: DNSSERVICE_CONFIG_INVALID_MAXSOURCEPORT_VALUE
+                  - code: INVALID_DNSSERVER_IP_PREFIX_CONFIG
+                  - code: INVALID_DNSSERVER_DOMAIN_NAMES_LIST_CONFIG
+                  - code: DNSSERVER_IP_CONFIG_MISSING
+                  - code: INVALID_DNSSERVER_IP_CONFIG_IP
+                  - code: INVALID_DNSSERVER_PORT_RANGE_CONFIG
+                  - code: INVALID_DNSSERVER_SOURCE_PORT_RANGE_CONFIG
+                  - code: INVALID_CUSTOMER_PREMISES_EQUIPMENT_TYPE
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IP_ADDRESS
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IP_PREFIX_LENGTH_RANGE
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IPV6_ADDRESS
+                  - code: DNSQUERYMETADATA_CONFIG_INVALID_IPV6_PREFIX_LENGTH_RANGE
+                  - code: INVALID_BOGUS_NX_DOMAINS
+                  - code: INVALID_IGNORE_IP_ADDRESS
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_IP
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_START_IP
+                  - code: ALIAS_CONFIG_INVALID_ORIGINAL_END_IP
+                  - code: ALIAS_CONFIG_REPLACE_IP_ADDRESS_MISSING
+                  - code: INVALID_DNSREBIND_REBIND_DOMAINS_LIST_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_TAG_RANGE_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_DIGEST_ALGO_RANGE_CONFIG
+                  - code: INVALID_TRUSTANCHOR_KEY_DIGEST_TYPE_RANGE_CONFIG
+                  - code: INVALID_DOMAINTOADDRESS_DOMAIN_NAMES_LIST_CONFIG
+                  - code: DOMAINTOADDRESS_IP_CONFIG_MISSING
+                  - code: INVALID_SECONDARY_SERVER
+                  - code: INVALID_PEER_ADDRESS
+                  - code: AUTHCONFIG_SERVER_DOMAIN_NAME_CONFIG_MISSING
+                  - code: AUTHCONFIG_SERVER_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: AUTHCONFIG_ZONE_DOMAIN_NAME_CONFIG_MISSING
+                  - code: AUTHCONFIG_ZONE_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: AUTHCONFIG_ZONE_INVALID_INCLUDE_PREFIX
+                  - code: AUTHCONFIG_ZONE_INVALID_EXCLUDE_PREFIX
+                  - code: AUTHCONFIG_SOA_SERIAL_NUMBER_CONFIG_MISSING
+                  - code: INVALID_HOSTRECORD_DOMAIN_NAMES_LIST_CONFIG
+                  - code: INVALID_HOSTRECORD_IPV4_CONFIG
+                  - code: INVALID_HOSTRECORD_IPV6_CONFIG
+                  - code: SYNTHDOMAIN_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_SYNTHDOMAIN_START_IP_ADDRESS_CONFIG
+                  - code: INVALID_SYNTHDOMAIN_END_IP_ADDRESS_CONFIG
+                  - code: INVALID_SYNTHDOMAIN_IP_ADDRESS_PREFIX_CONFIG
+                  - code: SRVHOST_SERVICE_MISSING
+                  - code: SRVHOST_PROTOCOL_MISSING
+                  - code: SRVHOST_DOMAIN_NAME_CONFIG_INVALID_HOST
+                  - code: INVALID_SRVHOST_PORT_RANGE_CONFIG
+                  - code: INVALID_SRVHOST_PRIORITY_RANGE_CONFIG
+                  - code: NAPTRRECORD_NAME_MISSING
+                  - code: INVALID_NAPTRRECORD_ORDER_RANGE_CONFIG
+                  - code: NAPTRRECORD_ORDER_MISSING
+                  - code: INVALID_NAPTRRECORD_PREFERENCE_RANGE_CONFIG
+                  - code: NAPTRRECORD_PREFERENCE_MISSING
+                  - code: NAPTRRECORD_FLAGS_MISSING
+                  - code: CAARECORD_NAME_MISSING
+                  - code: CAARECORD_FLAG_MISSING
+                  - code: CAARECORD_TAG_MISSING
+                  - code: CAARECORD_VALUE_MISSING
+                  - code: DNSRESOURCERECORD_NAME_MISSING
+                  - code: DNSRESOURCERECORD_RRNUMBER_MISSING
+                  - code: CNAMERECORD_NAME_MISSING
+                  - code: CNAMERECORD_TARGET_MISSING
+                  - code: PTRRECORD_NAME_MISSING
+                  - code: TXTRECORD_DOMAIN_NAME_MISSING
+                  - code: TXTRECORD_TEXT_INVALID_LENGTH
+                  - code: MX_NAME_MISSING
+                  - code: MX_HOST_NAME_MISSING
+                  - code: MX_NAME_DOMAIN_NAMES_CONFIG_INVALID_HOST
+                  - code: INVALID_DNSSERVER_IP_CONFIG_IPV6
+                  - code: INVALID_DNSSERVER_IPV6_PREFIX_CONFIG
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update DNS Service Profile (v2.1)
       tags:
       - DNS Services
 servers:
