@@ -25,6 +25,17 @@ function Home() {
   const partnerTools = [
     {
       colorClass: "terraform",
+      title: " Software Firewall deployment with Terraform",
+      description:
+        "Leverage validated Terraform Reference Architectures and Modules for VM-Series and CloudNGFW firewalls for rapid and reliable security in the cloud.",
+      cta: {
+        text: "Learn More",
+        src: "/swfw",
+      },
+      logo: "/img/terraform-logo.png",
+    },
+    {
+      colorClass: "terraform",
       title: "Palo Alto Networks as Code with Terraform",
       description:
         "Hashicorp's Terraform is widely used to build and deploy infrastructure, safely and efficiently, with high levels of automation and integration.",
