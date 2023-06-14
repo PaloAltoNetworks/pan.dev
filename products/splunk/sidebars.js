@@ -6,11 +6,7 @@ module.exports = {
       type: "category",
       label: "OVERVIEW",
       collapsed: false,
-      items: [
-        "splunk/docs/webinars-videos",
-        "splunk/docs/faq",
-        "splunk/docs/release-notes",
-      ],
+      items: ["splunk/docs/faq", "splunk/docs/release-notes"],
     },
     {
       type: "category",
