@@ -1,25 +1,102 @@
 components:
   schemas:
+    Aggregate:
+      properties:
+        data:
+          description: 'The details of the aggregate data.
+
+            '
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
+        field:
+          description: Field
+          type: string
+        name:
+          description: 'The name of the query response.
+
+            '
+          type: string
+        operator:
+          description: Operator
+          enum:
+          - max
+          - count
+          - min
+          - avg
+          - sum
+          type: string
+        statistic:
+          description: 'QoS application aggregate statistics.
+
+            '
+          type: string
+        unit:
+          description: 'The unit.
+
+            '
+          type: string
+      required:
+      - statistic
+      - unit
+      - name
+      - data
+    AggregateData:
+      properties:
+        value:
+          description: 'Value of the aggregate data.
+
+            '
+          type: number
+        view:
+          description: "View the aggregate date. \n"
+          type: object
+      required:
+      - value
+      - view
+    AggregateMetric:
+      properties:
+        name:
+          description: 'The name of the aggregate metric.
+
+            '
+          type: string
+        statistic:
+          description: 'QoS application aggregate statistics.
+
+            '
+          type: string
+        unit:
+          description: 'The unit.
+
+            '
+          type: string
+      required:
+      - statistic
+      - unit
+      - name
     AggregateStatsFilter:
       properties:
         app:
-          description: 'App: Required(error = AGGREGATE_STATS_APP_ID_REQUIRED: App
-            id is required as part of filter) Size(max = 1, error = AGGREGATE_STATS_APP_LENGTH_EXCEEDED:
-            Please provide one app id, min = 0) '
+          description: 'Filter by aggregate stats app ID.
+
+            '
           items:
             description: App
             type: string
           type: array
         path:
-          description: Path
+          description: 'Filter by path.
+
+            '
           items:
             description: Path
             type: string
           type: array
         site:
-          description: 'Site: Required(error = AGGREGATE_STATS_QUERY_FILTER_SITE_ID_REQUIRED:
-            Site id is required as part of filter) Size(max = 10, error = AGGREGATE_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED:
-            Please provide max ten site id, min = 0) '
+          description: 'Filter by aggregate stats filter site ID.
+
+            '
           items:
             description: Site
             type: string
@@ -29,23 +106,30 @@ components:
     AggregateStatsQuery:
       properties:
         aggregates:
-          description: 'Aggregates: Required(error = AGGREGATE_STATS_QUERY_AGGREGATES_REQUIRED:
-            Aggregates is required) '
+          description: 'The aggregate number of supported app/site stats. Max number
+            = 10.
+
+            '
           items:
             description: Aggregates
             type: map[string,aggregatestatstypeenum]
           type: array
         end_time:
+          description: 'The end time to get the app/site stats.
+
+            '
           format: date
           type: string
         filter:
           $ref: '#/components/schemas/AggregateStatsFilter'
-          description: 'Filter: Required(AGGREGATE_STATS_QUERY_FILTER_REQUIRED) Valid '
+          description: "Filters according to the specifications. \n"
         name:
-          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
-            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          description: 'The description of the app/site. Maz size = 128.
+
+            '
           type: string
         start_time:
+          description: "The start time to get the app/site statistics. \n"
           format: date
           type: string
       required:
@@ -57,40 +141,68 @@ components:
     AggregateStatsResponse:
       properties:
         aggregates:
-          description: Aggregates
+          description: 'The aggregate number of supported app/site stats. Max number
+            = 10.
+
+            '
           items:
             type: object
           type: array
         end_time:
+          description: 'The end time to get the app/site stats.
+
+            '
           format: date
           type: string
         start_time:
+          description: 'The start time to get the app/site statistics.
+
+            '
           format: date
           type: string
       required:
       - aggregates
       - end_time
       - start_time
+    AggregatesQueryResponse:
+      properties:
+        aggregates:
+          description: 'The application QoS aggregates.
+
+            '
+          items:
+            $ref: '#/components/schemas/Aggregate'
+          type: array
+      required:
+      - aggregates
     AppObjectStatsResponse:
       properties:
         data:
-          description: Data
+          description: "The details of the app object stats. \n"
           items:
             type: object
           type: array
         end_time:
+          description: 'The end time to get the app object stats.
+
+            '
           format: date
           type: string
         filter:
           $ref: '#/components/schemas/AppStatsFilter'
-          description: Filter
+          description: 'Filters according to the specifications.
+
+            '
         object_type:
-          description: Object Type
+          description: 'The object type.
+
+            '
           enum:
           - PeerStatistics
           - IntfStatistics
           - CellularModuleStatistics
           - CellularAPNStatistics
+          - CellularAPNV6Statistics
           - MulticastStatistics
           - SecurityPolicyRule
           - IntfPoEStatistics
@@ -102,6 +214,9 @@ components:
           - AppSummaryStats
           type: string
         start_time:
+          description: 'The start time to get the app object stats.
+
+            '
           format: date
           type: string
       required:
@@ -268,7 +383,9 @@ components:
     AppStatsFilter:
       properties:
         health_score:
-          description: Health Score
+          description: 'Filter by health score.
+
+            '
           type: map[appstatsoperatortype,string]
       required:
       - health_score
@@ -504,6 +621,227 @@ components:
       required:
       - type
       - limit
+    ApplicationQosAggregatesQuery:
+      properties:
+        aggregates:
+          description: 'The aggregate number of supported app stats. Max number =
+            10.
+
+            '
+          items:
+            $ref: '#/components/schemas/AggregateMetric'
+          type: array
+        end_time:
+          description: 'The end time to get the app stats.
+
+            '
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/ApplicationQosMetricsFilter'
+          description: "Filters according to the specifications. \n"
+        name:
+          description: 'The description of the app. Maz size = 128.
+
+            '
+          type: string
+        start_time:
+          description: 'The start time to get the app statistics.
+
+            '
+          format: date
+          type: string
+        view:
+          $ref: '#/components/schemas/View'
+          description: "View the QoS metric details. \n"
+      required:
+      - filter
+      - view
+      - aggregates
+      - start_time
+      - name
+      - end_time
+    ApplicationQosMetricsFilter:
+      properties:
+        application_name:
+          description: 'Filter by the name of the application.
+
+            '
+          type: string
+        direction:
+          description: 'Filter by the traffic direction.
+
+            '
+          enum:
+          - Ingress
+          - Egress
+          type: string
+        email:
+          description: 'Filter by the email address.
+
+            '
+          items:
+            description: Email
+            type: string
+          type: array
+        site:
+          description: 'Filter by the site.
+
+            '
+          items:
+            description: Site
+            type: string
+          type: array
+        user:
+          description: 'Filter by user.
+
+            '
+          items:
+            description: User
+            type: string
+          type: array
+      required:
+      - direction
+      - email
+      - site
+      - user
+      - application_name
+    ApplicationQosMetricsQuery:
+      properties:
+        end_time:
+          description: 'The end time to get the application QoS metrics.
+
+            '
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/ApplicationQosMetricsFilter'
+          description: 'Filters according to the specifications.
+
+            '
+        interval:
+          description: 'The interval time of the application QoS metrics.
+
+            '
+          enum:
+          - TEN_SEC
+          - ONE_MIN
+          - FIVE_MIN
+          - ONE_HOUR
+          - ONE_DAY
+          type: string
+        max_datapoints:
+          description: 'The max datapoints of the application QoS metrics.
+
+            '
+          format: int32
+          type: integer
+        metrics:
+          description: 'Details of the application QoS metrics.
+
+            '
+          items:
+            $ref: '#/components/schemas/Metrics'
+          type: array
+        name:
+          description: 'The name of the Application QoS metric.
+
+            '
+          type: string
+        start_time:
+          description: 'The start time to get the application QoS metrics.
+
+            '
+          format: date
+          type: string
+        view:
+          $ref: '#/components/schemas/View'
+          description: 'View the application QoS metrics.
+
+            '
+      required:
+      - filter
+      - view
+      - max_datapoints
+      - interval
+      - metrics
+      - start_time
+      - name
+      - end_time
+    ApplicationQosMetricsResponse:
+      properties:
+        metrics:
+          description: Metrics
+          items:
+            $ref: '#/components/schemas/Metrics'
+          type: array
+      required:
+      - metrics
+    ApplicationUserData:
+      properties:
+        client_ip:
+          description: 'The client IP address.
+
+            '
+          type: string
+        email:
+          description: 'The email ID of the application user.
+
+            '
+          type: string
+        site:
+          description: 'The site.
+
+            '
+          type: string
+        user_name:
+          description: 'The user name of the application user.
+
+            '
+          type: string
+      required:
+      - client_ip
+      - site
+      - user_name
+      - email
+    ApplicationUsersQuery:
+      properties:
+        application_name:
+          description: 'Filter by application name.
+
+            '
+          type: string
+        end_time:
+          description: 'Filter by end time.
+
+            '
+          format: date
+          type: string
+        name:
+          description: 'Filter by app name.
+
+            '
+          type: string
+        start_time:
+          description: 'Filter by end time.
+
+            '
+          format: date
+          type: string
+      required:
+      - application_name
+      - start_time
+      - name
+      - end_time
+    ApplicationUsersResponse:
+      properties:
+        data:
+          description: Data
+          items:
+            $ref: '#/components/schemas/ApplicationUserData'
+          type: array
+      required:
+      - data
     BaseTopNQuery:
       properties:
         end_time:
@@ -619,19 +957,25 @@ components:
     CapacityPredictionFilter:
       properties:
         direction:
-          description: Direction
+          description: 'Filter by direction of traffic.
+
+            '
           enum:
           - Ingress
           - Egress
           type: string
         site:
-          description: Site
+          description: 'Filter by site.
+
+            '
           items:
             description: Site
             type: string
           type: array
         wn_path:
-          description: Wn Path
+          description: 'Filter by WAN path.
+
+            '
           items:
             description: Wn Path
             type: string
@@ -643,18 +987,29 @@ components:
     CapacityPredictionQuery:
       properties:
         end_time:
+          description: 'The end time of the capacity prediction query. End times need
+            to be specified in ISO8601 UTC format.
+
+            '
           format: date
           type: string
         filter:
           $ref: '#/components/schemas/CapacityPredictionFilter'
-          description: Filter
+          description: 'Filters according to the specifications.
+
+            '
         forecast:
-          description: Forecast
+          description: 'The deatils of the forecast.
+
+            '
           items:
             $ref: '#/components/schemas/Forecast'
           type: array
         forecast_basis:
-          description: Forecast Basis Types
+          description: 'The forecast basis types. Forecast basis need be to specified
+            according to 2.0 specifications.
+
+            '
           items:
             description: Forecast Basis Types
             enum:
@@ -664,17 +1019,28 @@ components:
             type: string
           type: array
         forecast_date:
+          description: 'The forecast data.
+
+            '
           format: date
           type: string
         name:
-          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
-            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          description: 'The name of the capacity prediction query. Maz size = 128.
+
+            '
           type: string
         start_time:
+          description: 'The start time to get the capacity prediction query. Start
+            times need to be specified in ISO8601 UTC format.,
+
+            '
           format: date
           type: string
         type:
-          description: Type
+          description: 'The type of capacity prediction query. Type need to be specified
+            according to the specifications.
+
+            '
           enum:
           - SITE
           - CIRCUIT
@@ -691,9 +1057,14 @@ components:
     CapacityPredictionResponse:
       properties:
         forecast:
-          description: Forecast
+          description: 'Capacity forecast.
+
+            '
           type: object
         forecast_date:
+          description: 'Capacity forecast data.
+
+            '
           format: date
           type: string
       required:
@@ -979,7 +1350,7 @@ components:
     Filter:
       properties:
         elements:
-          description: 'Elements of the filter.
+          description: 'Filter by element.
 
             '
           items:
@@ -987,7 +1358,7 @@ components:
             type: string
           type: array
         path:
-          description: 'Path of the filter.
+          description: 'Filter by path.
 
             '
           items:
@@ -995,12 +1366,12 @@ components:
             type: string
           type: array
         site:
-          description: 'Site of the filter.
+          description: 'Filter by site.
 
             '
           type: object
         type:
-          description: 'Type of the filter.
+          description: 'Filter by type.
 
             '
           type: string
@@ -1221,6 +1592,9 @@ components:
           type: boolean
         is_sec_policy_present:
           description: Is Sec Policy Present
+          type: boolean
+        is_v6:
+          description: Is V6
           type: boolean
         lan_dscp_lan_to_wan:
           description: 'Lan Dscp Lan To Wan: JsonDeserialize(as = classOf[Void], builder
@@ -1507,6 +1881,9 @@ components:
         unknown_reason:
           description: Unknown Reason
           type: string
+        user_name:
+          description: User Name
+          type: string
         vlan_id:
           description: Vlan Id
           type: integer
@@ -1534,6 +1911,8 @@ components:
           format: int64
           type: integer
       required:
+      - user_name
+      - is_v6
       - win_scaler_s2c
       - win_scaler_c2s
       - win_size_s2c
@@ -1701,35 +2080,47 @@ components:
     FlowsFilter:
       properties:
         app:
-          description: App
+          description: 'Filter flows by apps.
+
+            '
           items:
             description: App
             type: string
           type: array
         element:
-          description: Element
+          description: 'Filter flows by element.
+
+            '
           items:
             description: Element
             type: string
           type: array
         flow:
           $ref: '#/components/schemas/FlowTupple'
-          description: Flow
+          description: 'Filter details of the flows.
+
+            '
         flow_type:
-          description: Flow Type
+          description: 'Filter flows by flow type.
+
+            '
           enum:
           - local
           - wan
           - all
           type: string
         path:
-          description: Path
+          description: 'Filter flows by path.
+
+            '
           items:
             description: Path
             type: string
           type: array
         path_type:
-          description: Path Type
+          description: 'Filter flows by path type.
+
+            '
           items:
             description: Path Type
             enum:
@@ -1742,38 +2133,50 @@ components:
             type: string
           type: array
         security_policy_destination_zone:
-          description: Security Policy Destination Zone
+          description: 'Filter by security policy destination zone.
+
+            '
           items:
             description: Security Policy Destination Zone
             type: string
           type: array
         security_policy_rule:
-          description: Security Policy Rule
+          description: 'Filter by security policy rule.
+
+            '
           items:
             description: Security Policy Rule
             type: string
           type: array
         security_policy_rule_action:
-          description: Security Policy Rule Action
+          description: 'Filter by security policy rule action.
+
+            '
           enum:
           - allow
           - deny
           - reject
           type: string
         security_policy_source_zone:
-          description: Security Policy Source Zone
+          description: 'Filter by security policy source zone.
+
+            '
           items:
             description: Security Policy Source Zone
             type: string
           type: array
         site:
-          description: Site
+          description: 'Filter flows by site.
+
+            '
           items:
             description: Site
             type: string
           type: array
         waninterface:
-          description: Waninterface
+          description: 'Filter flows by WAN interface.
+
+            '
           items:
             description: Waninterface
             type: string
@@ -1841,25 +2244,36 @@ components:
     Forecast:
       properties:
         actual_forecast_date:
+          description: 'The forecast date and time.
+
+            '
           format: date-time
           type: string
         forecast_status:
-          description: Forecast Status
+          description: 'The forecast status. True or False.
+
+            '
           type: boolean
         items:
-          description: Items
+          description: 'The deatils of the forecast results.
+
+            '
           items:
             $ref: '#/components/schemas/ForecastResult'
           type: array
         name:
-          description: Name
+          description: 'The name of the forecast.
+
+            '
           enum:
           - CAPACITY_EXCEED_THRESHOLD
           - ANOMALY
           - CIRCUIT_CAPACITY_FORECAST
           type: string
         type:
-          description: Type
+          description: 'The type of forecast.
+
+            '
           enum:
           - FORECAST_28_DAYS
           - FORECAST_7_DAYS
@@ -1873,13 +2287,19 @@ components:
     ForecastResult:
       properties:
         direction:
-          description: Direction
+          description: 'The direction of traffic.
+
+            '
           type: map[string,capacityprediction]
         site:
-          description: Site
+          description: 'The site.
+
+            '
           type: string
         wn_path:
-          description: Wn Path
+          description: 'The WAN path.
+
+            '
           type: string
       required:
       - direction
@@ -1957,13 +2377,20 @@ components:
     HealthScoreQuery:
       properties:
         end_time:
+          description: 'The end time to get the healthscore metrics.
+
+            '
           format: date
           type: string
         filter:
           $ref: '#/components/schemas/HealthFilter'
-          description: Filter
+          description: 'Filters according to the specifications.
+
+            '
         interval:
-          description: Interval
+          description: 'The interval time of the healthscore responses.
+
+            '
           enum:
           - TEN_SEC
           - ONE_MIN
@@ -1972,14 +2399,20 @@ components:
           - ONE_DAY
           type: string
         name:
-          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
-            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          description: 'The name of the healthscore filter.
+
+            '
           type: string
         start_time:
+          description: 'The start time to get the healthscore metrics.
+
+            '
           format: date
           type: string
         view:
-          description: View
+          description: 'View the healthscore metrics.
+
+            '
           enum:
           - SUMMARY
           - TIMESERIES
@@ -1994,15 +2427,20 @@ components:
     HealthScoreResponse:
       properties:
         data:
-          description: Data
+          description: "The details of the health data. \n"
           items:
             $ref: '#/components/schemas/HealthData'
           type: array
         end_time:
+          description: 'The end time to get the health data.
+
+            '
           format: date
           type: string
         interval:
-          description: Interval
+          description: 'The interval time of the health data response.
+
+            '
           enum:
           - TEN_SEC
           - ONE_MIN
@@ -2011,10 +2449,15 @@ components:
           - ONE_DAY
           type: string
         start_time:
+          description: 'The start time to get the health data.
+
+            '
           format: date
           type: string
         view:
-          description: View
+          description: 'View the health score data.
+
+            '
           type: object
       required:
       - view
@@ -3134,6 +3577,7 @@ components:
           - IntfStatistics
           - CellularModuleStatistics
           - CellularAPNStatistics
+          - CellularAPNV6Statistics
           - MulticastStatistics
           - SecurityPolicyRule
           - IntfPoEStatistics
@@ -3933,7 +4377,9 @@ components:
     SysMetricsQuery:
       properties:
         end_time:
-          description: 'The end time to get the system metrics.
+          description: 'The end time to get the system metrics. End time, if not specified,
+            default to now. Start and end times need to be specified in ISO8601 UTC
+            format.
 
             '
           format: date
@@ -3961,7 +4407,9 @@ components:
           format: int32
           type: integer
         metrics:
-          description: 'The details of the metrics.
+          description: 'The details of the metrics. Metrics need to specified according
+            to 2.3 specifications. Invalid metrics will be ignored and the result
+            will not include them.
 
             '
           items:
@@ -3973,7 +4421,11 @@ components:
             '
           type: string
         start_time:
-          description: "The start time to get the system metrics. \n"
+          description: 'The start time to get the system metrics. Start time, if not
+            specified, default to epoch. Start and end times need to be specified
+            in ISO8601 UTC format.
+
+            '
           format: date
           type: string
         view:
@@ -4002,10 +4454,16 @@ components:
     TopNComparator:
       properties:
         end_time:
+          description: 'The end date to get the top n sites/apps. Start and end time
+            need to be specified in ISO8601 UTC format.
+
+            '
           format: date
           type: string
         measurement:
-          description: 'Measurement: Valid '
+          description: 'The measurement values of the Top N reports.
+
+            '
           enum:
           - value
           - value_growth
@@ -4014,6 +4472,10 @@ components:
           - percentage_reduction
           type: string
         start_time:
+          description: 'The start date to get the top n sites/apps. Start and end
+            time need to be specified in ISO8601 UTC format.
+
+            '
           format: date
           type: string
       required:
@@ -4024,22 +4486,23 @@ components:
       properties:
         compare:
           $ref: '#/components/schemas/TopNComparator'
-          description: Compare
+          description: "The topn n comparator metrics. \n"
         filter:
           $ref: '#/components/schemas/TopNGrowthFilter'
-          description: 'Filter: Valid '
+          description: 'Filters according to the specifications.
+
+            '
         limit:
-          description: 'Limit: Min(error = INVALID_LIMIT: Limit should be between
-            1 and 10, value = 1L) Max(error = INVALID_LIMIT: Limit should be between
-            1 and 10, value = 10L) '
+          description: "The query limit. \n"
           type: integer
         metrics:
           $ref: '#/components/schemas/Metrics'
-          description: 'Metrics: Required(error = REQUIRED_PROPERTY: Schema check
-            failed - {} is a required property) '
+          description: 'The topn n metrics. Metrics need to specified according to
+            2.0 specifications.
+
+            '
         type:
-          description: 'Type: Required(error = REQUIRED_PROPERTY: Schema check failed
-            - {} is a required property) '
+          description: "The type of top n metrics.              \n"
           enum:
           - app
           - site
@@ -4053,14 +4516,17 @@ components:
     TopNGrowthFilter:
       properties:
         app:
-          description: 'App: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
-            failed - {} is too long, min = 0) '
+          description: 'Filter by apps.
+
+            '
           items:
             description: App
             type: string
           type: array
         direction:
-          description: Direction
+          description: 'Filter by the direction of the traffic.
+
+            '
           items:
             description: Direction
             enum:
@@ -4069,22 +4535,26 @@ components:
             type: string
           type: array
         element:
-          description: 'Element: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
-            failed - {} is too long, min = 0) '
+          description: 'Filter by element.
+
+            '
           items:
             description: Element
             type: string
           type: array
         path:
-          description: 'Path: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
-            failed - {} is too long, min = 0) '
+          description: 'Filter by path.
+
+            '
           items:
             description: Path
             type: string
           type: array
         path_type:
-          description: 'Path Type: Size(max = 10, error = PATH_TYPE_LIST_LENGTH_EXCEEDED:
-            Maximum number of allowed path_types is 10, min = 0) '
+          description: 'Filter by path type. Maximum number of allowed path types
+            is 10.
+
+            '
           items:
             description: Path Type
             enum:
@@ -4097,15 +4567,17 @@ components:
             type: string
           type: array
         site:
-          description: 'Site: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
-            failed - {} is too long, min = 0) '
+          description: 'Filter by site. Max size = 10.
+
+            '
           items:
             description: Site
             type: string
           type: array
         waninterface:
-          description: 'Waninterface: Size(max = 10, error = LENGTH_EXCEEDED: Schema
-            check failed - {} is too long, min = 0) '
+          description: 'Filter by wan interfaces. Max size = 10.
+
+            '
           items:
             description: Waninterface
             type: string
@@ -4115,19 +4587,28 @@ components:
     TopNGrowthQuery:
       properties:
         end_time:
+          description: 'The end time to get the top n sites/apps. If not specified,
+            it is default to now. End times need to be specified in ISO8601 UTC format.
+
+            '
           format: date
           type: string
         name:
-          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
-            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          description: "The name of the of the top n sites/apps. \n"
           type: string
         start_time:
+          description: 'The start time to get the top n sites/apps. If not specified,
+            it is default to epoch. Start times need to be specified in ISO8601 UTC
+            format.
+
+            '
           format: date
           type: string
         top_n:
           $ref: '#/components/schemas/TopNGrowth'
-          description: 'Top N: Required(error = REQUIRED_PROPERTY: Schema check failed
-            - {} is a required property) Valid '
+          description: 'The details of the limit and type of the Top N reports.
+
+            '
       required:
       - top_n
       - start_time
@@ -4153,6 +4634,9 @@ components:
           - TRAFFIC_TYPE
           - COMMON
           - CLIENT_MAC_ADDRESS
+          - USER
+          - USER_EMAIL
+          - RESOLUTION_QUALITY
           - None
           type: string
         summary:
@@ -4174,8 +4658,8 @@ openapi: 3.0.0
 paths:
   /v2.0/api/tenants/{esp_tenant_id}/monitor/aggregates/healthscore:
     post:
-      description: HealthScore Aggregate categorized as poor, fair and good for MSP
-        and its clients
+      description: The health score aggregate categorized as poor, fair and good for
+        MSP and its clients.
       operationId: post-v2.0-api-tenants-esp_tenant_id-monitor-aggregates-healthscore
       parameters:
       - description: MSP Tenant Id
@@ -4210,7 +4694,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Aggregate HealthScore
+      summary: Query Aggregate Healthscore (v2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aaa_client_metrics:
@@ -4392,6 +4876,56 @@ paths:
       summary: Query Radius Metrics Top N (v2.0)
       tags:
       - Metrics
+  /v2.0/api/tenants/{tenant_id}/monitor/aggregates/application/qos:
+    post:
+      description: The aggregated data for an application's QOS stats.
+      operationId: post-v2.0-api-tenants-tenant_id-monitor-aggregates-application-qos
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationQosAggregatesQuery'
+        description: Filters for application qos aggregates
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregatesQueryResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: INVALID_FILTER
+                  - code: APPLICATION_NOT_SUPPORTED
+                  - code: MULTIPLE_QOS_TYPE_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_UNIT_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_STATISTICS_NOT_SUPPORTED
+                  - code: REQUESTED_VIEW_NOT_SUPPORTED
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: OTHER_METRICS_NOT_SUPPORTED
+                  - code: REQUESTED_VIEW_NOT_SUPPORTED_FOR_METRIC
+                  - code: SERVICE_UNAVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Application QOS Aggregates (2.0)
+      tags:
+      - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aggregates/multicast/mroute:
     post:
       description: Query all the multicast statistics.
@@ -4494,10 +5028,10 @@ paths:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aiops/aggregates:
     get:
-      description: Get site or path level aggregated stats API v2.0
+      description: Get the site or path level aggregated statistics.
       operationId: get-v2.0-api-tenants-tenant_id-monitor-aiops-aggregates
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4517,14 +5051,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get site or path level aggregated statistics
+      summary: Get Site or Path Level Aggregated Statistics (2.0)
       tags:
       - Metrics
     post:
-      description: Query and get site or path level aggregated stats API v2.0
+      description: Query the site or path level aggregated statistics.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-aiops-aggregates
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4565,17 +5099,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query and get site or path level aggregated statistics
+      summary: Query Site or Path Level Aggregated Statistics (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aiops/forecast:
     get:
-      description: 'Returns capacity prediction schema for Version 2.0
-
-        '
+      description: List all the capacity prediction schema.
       operationId: get-v2.0-api-tenants-tenant_id-monitor-aiops-forecast
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4595,24 +5127,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Returns capacity prediction schema for Version 2.0
+      summary: Get Capacity Prediction Schema (2.0)
       tags:
       - Metrics
     post:
-      description: 'Get capacity prediction for site v2.0
-
-        Note
-
-        * Start and end time need to be specified in ISO8601 UTC format.
-
-        * Forecast basis need be to specified according to 2.0 specifications.
-
-        * Type need to be specified according to the specifications.
-
-        '
+      description: Query request for getting capacity prediction based on type and
+        forecast basis.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-aiops-forecast
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4646,17 +5169,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Capacity Prediction
+      summary: Get Capacity Prediction (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aiops/health:
     get:
-      description: 'Get Healthscore parameters
-
-        '
+      description: List all the healthscore parameters.
       operationId: get-v2.0-api-tenants-tenant_id-monitor-aiops-health
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4676,28 +5197,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get Healthscore parameters
+      summary: Get Healthscore Parameters (2.0)
       tags:
       - Metrics
     post:
-      description: 'Get health metrics for sites, links and applications.
-
-        * interval is required
-
-        * start_time is required
-
-        Note
-
-        * Start time need to be specified in ISO8601 UTC format.
-
-        * Metrics need to specified according to 2.0 specifications.
-
-        * Filters need to be specified according to the specifications.
-
-        '
+      description: Get health metrics for sites, links, and applications.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-aiops-health
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4730,15 +5237,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Healthscore metrics
+      summary: Query Healthscore Metrics (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aiops/object_stats:
     get:
-      description: Get app object stats API v2.0
+      description: Get app object statistics.
       operationId: get-v2.0-api-tenants-tenant_id-monitor-aiops-object_stats
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4758,14 +5265,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get App object statistics
+      summary: Get App Object Statistics (2.0)
       tags:
       - Metrics
     post:
-      description: Query and get app object stats API v2.0
+      description: Query and list app object statistics.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-aiops-object_stats
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -4808,7 +5315,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query and get App object statistics
+      summary: Query App object Statistics (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/aiops/topn:
@@ -4860,6 +5367,139 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Get TopN data with metrics output
+      tags:
+      - Metrics
+  /v2.0/api/tenants/{tenant_id}/monitor/application/qos_metrics:
+    post:
+      description: Query the time series application QOS metrics.
+      operationId: post-v2.0-api-tenants-tenant_id-monitor-application-qos_metrics
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationQosMetricsQuery'
+        description: Filters for application qos metrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationQosMetricsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: INVALID_FILTER
+                  - code: APPLICATION_NOT_SUPPORTED
+                  - code: MULTIPLE_QOS_TYPE_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_UNIT_NOT_SUPPORTED
+                  - code: REQUESTED_METRIC_STATISTICS_NOT_SUPPORTED
+                  - code: MAX_DATAPOINTS_NOT_SUPPORTED
+                  - code: REQUESTED_VIEW_NOT_SUPPORTED
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: OTHER_METRICS_NOT_SUPPORTED
+                  - code: REQUESTED_VIEW_NOT_SUPPORTED_FOR_METRIC
+                  - code: MOS_METRICS_NOT_SUPPORTED
+                  - code: SERVICE_UNAVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Time Series Application QOS Metrics (2.0)
+      tags:
+      - Metrics
+  /v2.0/api/tenants/{tenant_id}/monitor/application/qos_metrics/{application_name}:
+    get:
+      description: Get details of application QoS metrics.
+      operationId: get-v2.0-api-tenants-tenant_id-monitor-application-qos_metrics-application_name
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The application name.
+        in: path
+        name: application_name
+        required: true
+        schema:
+          description: Application Name
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricSchemaResponse'
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: APPLICATION_NOT_SUPPORTED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+      summary: Get Application QOS Metrics (2.0)
+      tags:
+      - Metrics
+  /v2.0/api/tenants/{tenant_id}/monitor/application/users:
+    post:
+      description: Query the application users.
+      operationId: post-v2.0-api-tenants-tenant_id-monitor-application-users
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUsersQuery'
+        description: Filters for application qos point metrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationUsersResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: APPLICATION_NOT_SUPPORTED
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: SERVICE_UNAVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Application Users (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/cellular_metrics:
@@ -4957,10 +5597,10 @@ paths:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/cellular_metrics/topn:
     post:
-      description: Get cellular Top N data
+      description: Query the topn n cellular metrics.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-cellular_metrics-topn
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5002,7 +5642,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Cellular metrics Top N
+      summary: Query Topn N Cellular Metrics (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/lqm_point_metrics:
@@ -5144,21 +5784,11 @@ paths:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/network_point_metrics_hs:
     post:
-      description: 'Get network point metrics like HealthScore for sites across tenants
-        . External API used for stats queries. Below are the tenet for queries
-
-        * interval is required
-
-        Note
-
-        * Start time, is required
-
-        * interval, is required
-
-        '
+      description: Query network point metrics like health score for sites across
+        tenants.
       operationId: post-v2.0-api-tenants-tenant_id-monitor-network_point_metrics_hs
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5196,79 +5826,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Network Point Metrics HealthScore
-      tags:
-      - Metrics
-  /v2.0/api/tenants/{tenant_id}/monitor/object_stats:
-    get:
-      description: Get object stats API v2.0
-      operationId: get-v2.0-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: Tenant ID
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsTypeResponse'
-          description: Successful Operation
-      summary: Get name and description of all object stats
-      tags:
-      - Metrics
-    post:
-      description: Query all the object statistics.
-      operationId: post-v2.0-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ObjectStatsQuery'
-        description: Details of object stats query
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
-                  - code: INVALID_STATS_REQUEST_BODY
-                  - code: FUTURE_TIME_ERROR
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query Object Stats (v2.0)
+      summary: Query Network Point Metrics HealthScore (2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/qos_metrics:
@@ -5336,87 +5894,6 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Query QoS Metrics (v2.0)
-      tags:
-      - Metrics
-  /v2.0/api/tenants/{tenant_id}/monitor/sys_metrics:
-    get:
-      description: List the details of the system metrics schema.
-      operationId: get-v2.0-api-tenants-tenant_id-monitor-sys_metrics
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MetricSchemaResponse'
-          description: Successful Operation
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Get System Metrics Schema (v2.0)
-      tags:
-      - Metrics
-    post:
-      description: Query the details of the system metrics schema.
-      operationId: post-v2.0-api-tenants-tenant_id-monitor-sys_metrics
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SysMetricsQuery'
-        description: Query request for getting sysmetrics
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SysMetricsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: SCHEMA_MISMATCH
-                  - code: METRIC_NOT_SUPPORTED
-                  - code: METRIC_UNIT_NOT_SUPPORTED
-                  - code: UNSUPPORTED_FILTER_IN_VERSION
-                  - code: UNSUPPORTED_FILTER_FOR_METRIC
-                  - code: MISSING_INTERFACE_FILTER_PROPERTY
-                  - code: MISSING_ELEMENT_FILTER_PROPERTY
-                  - code: UNSUPPORTED_DIRECTION_FILTER
-                  - code: DIRECTION_FILTER_EMPTY
-                  - code: MAX_DATAPOINTS_END_TIME
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Query System Metrics Schema (v2.0)
       tags:
       - Metrics
   /v2.0/api/tenants/{tenant_id}/monitor/sys_metrics/topn:
@@ -5510,14 +5987,88 @@ paths:
       summary: Query System Point Metrics (v2.0)
       tags:
       - Metrics
+  /v2.1/api/tenants/{tenant_id}/monitor/aiops/aggregates:
+    get:
+      description: Get the site or path level aggregated statistics.
+      operationId: get-v2.1-api-tenants-tenant_id-monitor-aiops-aggregates
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get Site or Path Level Aggregated Statistics (2.1)
+      tags:
+      - Metrics
+    post:
+      description: Query the site or path level aggregated statistics.
+      operationId: post-v2.1-api-tenants-tenant_id-monitor-aiops-aggregates
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregateStatsQuery'
+        description: Details of app object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_REQUIRED
+                  - code: AGGREGATE_STATS_APP_ID_REQUIRED
+                  - code: AGGREGATE_STATS_APP_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_APP_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: AGGREGATE_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_PATH_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_UNSUPPORTED
+                  - code: AGGREGATE_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: AGGREGATE_STATS_QUERY_FILTER_UNSUPPORTED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Site or Path Level Aggregated Statistics (2.1)
+      tags:
+      - Metrics
   /v2.1/api/tenants/{tenant_id}/monitor/aiops/forecast:
     get:
-      description: 'Get capacity forecast for Version 2.1
-
-        '
+      description: List all the capacity prediction schema.
       operationId: get-v2.1-api-tenants-tenant_id-monitor-aiops-forecast
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5537,24 +6088,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get capacity forecast for Version 2.1
+      summary: Get Capacity Prediction Schema (2.1)
       tags:
       - Metrics
     post:
-      description: 'Get capacity prediction for site v2.1
-
-        Note
-
-        * Start and end time need to be specified in ISO8601 UTC format.
-
-        * Forecast basis need be to specified according to 2.0 specifications.
-
-        * Type need to be specified according to the specifications.
-
-        '
+      description: Query request for getting capacity prediction based on type and
+        forecast basis.
       operationId: post-v2.1-api-tenants-tenant_id-monitor-aiops-forecast
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5588,15 +6130,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Capacity Prediction
+      summary: Get Capacity Prediction (2.1)
       tags:
       - Metrics
   /v2.1/api/tenants/{tenant_id}/monitor/aiops/object_stats:
     get:
-      description: Get app object stats API v2.1
+      description: Get app object statistics.
       operationId: get-v2.1-api-tenants-tenant_id-monitor-aiops-object_stats
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5616,14 +6158,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get App object statistics
+      summary: Get App Object Statistics (2.1)
       tags:
       - Metrics
     post:
-      description: Query and get app object stats API v2.1
+      description: Query and list app object statistics.
       operationId: post-v2.1-api-tenants-tenant_id-monitor-aiops-object_stats
       parameters:
-      - description: Tenant ID
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5666,268 +6208,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query and get App object statistics
-      tags:
-      - Metrics
-  /v2.1/api/tenants/{tenant_id}/monitor/metrics:
-    post:
-      description: Query the monitor metrics
-      operationId: post-v2.1-api-tenants-tenant_id-monitor-metrics
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MonitorMetricsQuery'
-        description: Details of monitor metrics query
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorMetricsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: EMPTY_REQ_BODY
-                  - code: SCHEMA_MISMATCH
-                  - code: METRIC_NOT_SUPPORTED
-                  - code: METRIC_UNIT_NOT_SUPPORTED
-                  - code: UNSUPPORTED_FILTER_FOR_VERSION
-                  - code: UNSUPPORTED_INDIVIDUAL_DIMENSION
-                  - code: VIEW_DIRECTION_AND_FILTER_DIRECTION_NOT_SUPPORTED
-                  - code: UNSUPPORTED_DIRECTION_FILTER
-                  - code: METRIC_AND_VIEW_NOT_SUPPORTED
-                  - code: MISSING_DIRECTION
-                  - code: MAX_DATAPOINTS_END_TIME
-                  - code: START_TIME_GREATER_THAN_END_TIME
-                  - code: METRIC_STATISTICS_NOT_SUPPORTED
-                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
-                  - code: SITE_WITH_PATH_MISSING
-                  - code: SITE_WITH_WANINTERFACE_MISSING
-                  - code: WANINTERFACE_WITH_ANYNETLINK_MISSING
-                  - code: SITE_WITH_ELEMENT_MISSING
-                  - code: METRIC_MISSING_SITE
-                  - code: METRIC_MISSING_APP
-                  - code: METRIC_SUPPORTS_SINGLE_SITE
-                  - code: METRIC_SUPPORTS_SINGLE_REMOTE_SITE
-                  - code: METRIC_SUPPORTS_SINGLE_APP
-                  - code: METRIC_NOT_SUPPORTED_WITH_PATH_FILTER
-                  - code: METRIC_NOT_SUPPORTED_WITH_WAN_INTERFACE
-                  - code: METRIC_MISSING_PATH_ID
-                  - code: METRIC_SUPPORTS_SINGLE_PATH_ID
-                  - code: METRIC_SUPPORTS_SINGLE_FILTER_WITH_LIST
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query Monitor Metrics (v2.1)
-      tags:
-      - Metrics
-  /v2.1/api/tenants/{tenant_id}/monitor/metrics/{mtype}:
-    get:
-      description: List details of the monitor metrics.
-      operationId: get-v2.1-api-tenants-tenant_id-monitor-metrics-mtype
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The metric type.
-        in: path
-        name: mtype
-        required: true
-        schema:
-          description: Mtype
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MetricSchemaResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: METRIC_NOT_SUPPORTED
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Monitor Metrics (v2.1)
-      tags:
-      - Metrics
-  /v2.1/api/tenants/{tenant_id}/monitor/object_stats:
-    get:
-      description: Get object stats API v2.1
-      operationId: get-v2.1-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: Tenant ID
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsTypeResponse'
-          description: Successful Operation
-      summary: Get name and description of all object stats
-      tags:
-      - Metrics
-    post:
-      description: Query all the object statistics.
-      operationId: post-v2.1-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ObjectStatsQuery'
-        description: Details of object stats query
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
-                  - code: INVALID_STATS_REQUEST_BODY
-                  - code: FUTURE_TIME_ERROR
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query Object Stats (v2.1)
-      tags:
-      - Metrics
-  /v2.1/api/tenants/{tenant_id}/monitor/sys_metrics:
-    get:
-      description: 'Returns sysmetrics schema for Version 2.1
-
-        '
-      operationId: get-v2.1-api-tenants-tenant_id-monitor-sys_metrics
-      parameters:
-      - description: Tenant Id
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MetricSchemaResponse'
-          description: Successful Operation
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Returns sysmetrics schema for Version 2.1
-      tags:
-      - Metrics
-    post:
-      description: List the details of the system metrics schema.
-      operationId: post-v2.1-api-tenants-tenant_id-monitor-sys_metrics
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SysMetricsQuery'
-        description: Query request for getting sysmetrics
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SysMetricsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: SCHEMA_MISMATCH
-                  - code: METRIC_NOT_SUPPORTED
-                  - code: METRIC_UNIT_NOT_SUPPORTED
-                  - code: UNSUPPORTED_FILTER_IN_VERSION
-                  - code: UNSUPPORTED_FILTER_FOR_METRIC
-                  - code: MISSING_INTERFACE_FILTER_PROPERTY
-                  - code: MISSING_ELEMENT_FILTER_PROPERTY
-                  - code: UNSUPPORTED_DIRECTION_FILTER
-                  - code: DIRECTION_FILTER_EMPTY
-                  - code: DIRECTION_VIEW_NOT_SUPPORTED
-                  - code: MAX_DATAPOINTS_END_TIME
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Get System Metrics Schema (v2.1)
+      summary: Query App object Statistics (2.1)
       tags:
       - Metrics
   /v2.1/api/tenants/{tenant_id}/monitor/sys_metrics/topn:
@@ -6084,86 +6365,12 @@ paths:
       summary: Get Monitor Metrics (v2.2)
       tags:
       - Metrics
-  /v2.2/api/tenants/{tenant_id}/monitor/object_stats:
-    get:
-      description: Get object stats API v2.2
-      operationId: get-v2.2-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: Tenant ID
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsTypeResponse'
-          description: Successful Operation
-      summary: Get name and description of all object statistics
-      tags:
-      - Metrics
-    post:
-      description: List the object statistics.
-      operationId: post-v2.2-api-tenants-tenant_id-monitor-object_stats
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ObjectStatsQuery'
-        description: Details of object stats query
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
-                  - code: INVALID_STATS_REQUEST_BODY
-                  - code: FUTURE_TIME_ERROR
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Object Stats (v2.2)
-      tags:
-      - Metrics
   /v2.2/api/tenants/{tenant_id}/monitor/sys_metrics:
     get:
-      description: 'Returns sysmetrics schema for Version 2.2
-
-        '
+      description: List all the system metrics schema.
       operationId: get-v2.2-api-tenants-tenant_id-monitor-sys_metrics
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -6183,14 +6390,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Returns sysmetrics schema for Version 2.2
+      summary: Get System Metrics Schema (v2.2)
       tags:
       - Metrics
     post:
-      description: List all the system metrics schema.
+      description: "Get system metrics like CPU, Memory and Disk usage. External API\
+        \ used for stats queries. In addition to __CPUUsage__, Memory Usage and DiskUsage\n\
+        __InterfaceBandwidthUsage, InterfaceDroppedPackets, InterfaceErrors, InterfaceFifoErrors,\
+        \ InterfaceIngressCRCErrors, InterfaceIngressFrameErrors, InterfaceEgressCarrierErrors__\n\
+        additional metrics like __InterfacePoePowerConsumption__\nBelow are the tenet\
+        \ for queries\n* interval is required\n* start_time, end_time and max_datapoints\
+        \ are optional with the following restrictions, at least one of them needs\
+        \ to be specified.\n  all the three can not be specified, as the result is\
+        \ ambiguous.\nNote\n* Start time, if not specified, default to epoch.\n* End\
+        \ time, if not specified, default to now.\n* Limit, if not specified, defaults\
+        \ to None..\n* Start and end times need to be specified in ISO8601 UTC format.\n\
+        * Metrics need to specified according to 2.1 specifications. Invalid metrics\
+        \ will be ignored and the result will not include them.\n* Filters need to\
+        \ be specified according to the specifications.\n"
       operationId: post-v2.2-api-tenants-tenant_id-monitor-sys_metrics
       parameters:
-      - description: ID of the tenant.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -6237,7 +6457,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
-      summary: Get System Metrics Schema (v2.2)
+      summary: System metrics for Version 2.2
       tags:
       - Metrics
   /v2.3/api/tenants/{tenant_id}/monitor/metrics:
@@ -6308,17 +6528,17 @@ paths:
       - Metrics
   /v2.3/api/tenants/{tenant_id}/monitor/metrics/{mtype}:
     get:
-      description: Get details of monitor metrics API v2.3
+      description: List details of the monitor metrics.
       operationId: get-v2.3-api-tenants-tenant_id-monitor-metrics-mtype
       parameters:
-      - description: Tenant ID
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: Metric Type
+      - description: The metric type.
         in: path
         name: mtype
         required: true
@@ -6342,13 +6562,97 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get details of monitor metrics
+      summary: Get Monitor Metrics (v2.3)
       tags:
       - Metrics
-  /v2.3/api/tenants/{tenant_id}/monitor/object_stats:
+  /v2.3/api/tenants/{tenant_id}/monitor/sys_metrics:
+    get:
+      description: 'Returns sysmetrics schema for Version 2.3
+
+        '
+      operationId: get-v2.3-api-tenants-tenant_id-monitor-sys_metrics
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricSchemaResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Returns sysmetrics schema for Version 2.3
+      tags:
+      - Metrics
+    post:
+      description: List all the system metrics schema.
+      operationId: post-v2.3-api-tenants-tenant_id-monitor-sys_metrics
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SysMetricsQuery'
+        description: Query request for getting sysmetrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SysMetricsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: METRIC_NOT_SUPPORTED
+                  - code: METRIC_UNIT_NOT_SUPPORTED
+                  - code: UNSUPPORTED_FILTER_IN_VERSION
+                  - code: UNSUPPORTED_FILTER_FOR_METRIC
+                  - code: MISSING_INTERFACE_FILTER_PROPERTY
+                  - code: MISSING_ELEMENT_FILTER_PROPERTY
+                  - code: UNSUPPORTED_DIRECTION_FILTER
+                  - code: DIRECTION_FILTER_EMPTY
+                  - code: DIRECTION_VIEW_NOT_SUPPORTED
+                  - code: MAX_DATAPOINTS_END_TIME
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get System Metrics Schema (v2.3)
+      tags:
+      - Metrics
+  /v2.4/api/tenants/{tenant_id}/monitor/object_stats:
     get:
       description: List the object statistics.
-      operationId: get-v2.3-api-tenants-tenant_id-monitor-object_stats
+      operationId: get-v2.4-api-tenants-tenant_id-monitor-object_stats
       parameters:
       - description: ID of the tenant.
         in: path
@@ -6364,12 +6668,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ObjectStatsTypeResponse'
           description: Successful Operation
-      summary: Get Object Stats (v2.3)
+      summary: Get Object Stats (v2.4)
       tags:
       - Metrics
     post:
-      description: Query and get object stats API v2.3
-      operationId: post-v2.3-api-tenants-tenant_id-monitor-object_stats
+      description: Query and get object stats API v2.4
+      operationId: post-v2.4-api-tenants-tenant_id-monitor-object_stats
       parameters:
       - description: Tenant ID
         in: path
@@ -6417,10 +6721,10 @@ paths:
       summary: Query and get object statistics
       tags:
       - Metrics
-  /v2.4/api/tenants/{tenant_id}/monitor/object_stats:
+  /v2.5/api/tenants/{tenant_id}/monitor/object_stats:
     get:
-      description: Get object stats API v2.4
-      operationId: get-v2.4-api-tenants-tenant_id-monitor-object_stats
+      description: Get object stats API v2.5
+      operationId: get-v2.5-api-tenants-tenant_id-monitor-object_stats
       parameters:
       - description: Tenant ID
         in: path
@@ -6441,7 +6745,7 @@ paths:
       - Metrics
     post:
       description: List the object statistics.
-      operationId: post-v2.4-api-tenants-tenant_id-monitor-object_stats
+      operationId: post-v2.5-api-tenants-tenant_id-monitor-object_stats
       parameters:
       - description: ID of the tenant.
         in: path
@@ -6486,15 +6790,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Object Stats (v2.4)
+      summary: Get Object Stats (v2.5)
       tags:
       - Metrics
   /v3.0/api/tenants/{tenant_id}/monitor/aggregates:
     get:
-      description: List all the supported app stats aggregates.
+      description: Summary of supported aggregates
       operationId: get-v3.0-api-tenants-tenant_id-monitor-aggregates
       parameters:
-      - description: ID of the tenant.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -6508,14 +6812,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppStatsSupportedAggregatesResponse'
           description: Successful Operation
-      summary: Get App Stats Aggregates (v3.0)
+      summary: Supported App stats Aggregates
       tags:
       - Metrics
     post:
-      description: Aggregate app_stats and app_prefix stats based on different metrics
+      description: List all the supported app stats aggregates.
       operationId: post-v3.0-api-tenants-tenant_id-monitor-aggregates
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -6555,7 +6859,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Aggregate App stats
+      summary: Get App Stats Aggregates (v3.0)
       tags:
       - Metrics
   /v3.0/api/tenants/{tenant_id}/monitor/topn:
@@ -6657,116 +6961,6 @@ paths:
       summary: Get Top N Data (v3.1)
       tags:
       - Metrics
-  /v3.4/api/tenants/{tenant_id}/monitor/flows:
-    post:
-      description: List all the flow information.
-      operationId: post-v3.4-api-tenants-tenant_id-monitor-flows
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FlowsQuery'
-        description: Filter for flows
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FlowsQueryResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: EMPTY_REQ_BODY
-                  - code: SCHEMA_MISMATCH
-                  - code: START_TIME_GREATER_THAN_END_TIME
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: EMPTY_FILTER
-                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
-                  - code: SITE_WITH_PATH_MISSING
-                  - code: SITE_WITH_WANINTERFACE_MISSING
-                  - code: SITE_WITH_ELEMENT_MISSING
-                  - code: SITE_WITH_FLOW_TUPLE_MISSING
-                  - code: INVALID_IP
-                  - code: INVALID_FLOW_TYPE
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Get Flow Information (v3.4)
-      tags:
-      - Metrics
-  /v3.5/api/tenants/{tenant_id}/monitor/flows:
-    post:
-      description: List all the flow information.
-      operationId: post-v3.5-api-tenants-tenant_id-monitor-flows
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FlowsQuery'
-        description: Filter for flows
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FlowsQueryResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: EMPTY_REQ_BODY
-                  - code: SCHEMA_MISMATCH
-                  - code: START_TIME_GREATER_THAN_END_TIME
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: EMPTY_FILTER
-                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
-                  - code: SITE_WITH_PATH_MISSING
-                  - code: SITE_WITH_WANINTERFACE_MISSING
-                  - code: SITE_WITH_ELEMENT_MISSING
-                  - code: SITE_WITH_FLOW_TUPLE_MISSING
-                  - code: INVALID_IP
-                  - code: INVALID_FLOW_TYPE
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Get Flow Information (v3.5)
-      tags:
-      - Metrics
   /v3.6/api/tenants/{tenant_id}/monitor/flows:
     post:
       description: List all the flow information.
@@ -6820,6 +7014,61 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
       summary: Get Flow Information (v3.6)
+      tags:
+      - Metrics
+  /v3.7/api/tenants/{tenant_id}/monitor/flows:
+    post:
+      description: List all the flows information.
+      operationId: post-v3.7-api-tenants-tenant_id-monitor-flows
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowsQuery'
+        description: Filter for flows
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowsQueryResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: EMPTY_REQ_BODY
+                  - code: SCHEMA_MISMATCH
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: EMPTY_FILTER
+                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
+                  - code: SITE_WITH_PATH_MISSING
+                  - code: SITE_WITH_WANINTERFACE_MISSING
+                  - code: SITE_WITH_ELEMENT_MISSING
+                  - code: SITE_WITH_FLOW_TUPLE_MISSING
+                  - code: INVALID_IP
+                  - code: INVALID_FLOW_TYPE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get Flows Information (v3.7)
       tags:
       - Metrics
 servers:
