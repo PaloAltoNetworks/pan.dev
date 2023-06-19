@@ -39,7 +39,7 @@ module.exports = {
       ],
     },
   ],
-  cwpp_minor: [
+  cwpp_30: [
     {
       type: "category",
       label: "Prisma Cloud Enterprise Edition - 30.00",
@@ -50,6 +50,19 @@ module.exports = {
       ],
     },
   ],
+
+  cwpp_3001: [
+    {
+      type: "category",
+      label: "Prisma Cloud Enterprise Edition - 30.01",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/cwpp/30-01/stable-endpoints",
+        require("./api/cwpp/30-01/sidebar"),
+      ],
+    },
+  ],
+
   clouddocs: [
     "prisma-cloud/docs/home",
     {
