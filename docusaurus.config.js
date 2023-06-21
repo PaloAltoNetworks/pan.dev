@@ -646,7 +646,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           aiops: {
-            specPath: "openapi-specs/aiops/bpaopenapi.yaml",
+            specPath: "openapi-specs/aiops/BPAReportAPI.yaml",
             outputDir: "products/aiops/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },

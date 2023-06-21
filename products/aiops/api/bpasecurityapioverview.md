@@ -11,16 +11,17 @@ keywords:
   - API
 ---
 
-The DNS Security API provides Palo Alto Networks customers with an active [DNS Security](https://www.paloaltonetworks.com/network-security/dns-security) subscription with the ability to access information about domains processed by DNS Security through a programmatic RESTful API.
+The Palo Alto Networks Best Practice Assessment (BPA) measures your usage of our Next-Generation Firewall and Panorama™ security management capabilities across your deployment, enabling you to make adjustments that maximize your return on investment and strengthen security.
 
-Before using the DNS Security API, please refer to [Cloud-Delivered Security Services API Developer's docs](/cdss/docs/) for more information about using the API, including authentication details, access limits, and examples.
+This API enables you to programmatically generate BPA data without the need to provide an entire TSF (Technical Support File).
 
-:::note
-The DNS Security API is currently in `BETA`. To inquire about joining the beta or to receive support or provide suggestions, please contact dns-api@paloaltonetworks.com.
-:::
+For more BPA-related privacy information, please refer to our BPA Privacy Datasheet.
 
-Things to consider:
+We are always looking for ways to improve the user experience of our product, contact us at bpa@paloaltonetworks.com if you have any questions, concerns, or feature requests
 
-- To make DNS Security API requests, you must [retrieve your DNS Security API key](/cdss/docs/authentication), which is used to authenticate API calls. An organization (and corresponding superuser) can have a single API key at any given time, regardless of the number of users tied to the account.
-- You must have an activated and unexpired DNS Security subscription to access a DNS Security API key.
-- The number of API requests that can be submitted is throttled on a per API key basis. To control the number of requests you can make, you need to observe [DNS Security API Access Limits](/dns-security/docs/access-limits).
+These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
+
+Once you have a TSG, you can create a [service account](/sase/docs/service-accounts) for it.
+When you create a service account, you get a Client ID and Client Secret, which you need in order to
+[get an access token](/sase/api/auth/post-auth-v-1-oauth-2-access-token).
+You must also use your TSG's ID when you create an access token.

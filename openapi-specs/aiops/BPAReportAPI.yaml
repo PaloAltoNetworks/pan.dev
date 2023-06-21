@@ -1,0 +1,184 @@
+components:
+  schemas:
+    downloadResponseBody:
+      properties:
+        result:
+          description: The version of the BPA assessment tool.
+          items:
+            properties:
+              adoption:
+                description: Details of adoption recommendations.
+                example: '[adoption data]'
+                type: string
+              bpa:
+                description: Best practice assessment Data.
+                example: '[bpa data]'
+                type: string
+              timestamp:
+                description: Time of the completed report.
+                example: '2023-04-00T02:01:04.000000Z'
+                type: string
+              version:
+                description: The version of the BPA Assessment tools.
+                example: 3.10.2
+                type: string
+            type: object
+          type: array
+        status:
+          description: The completion status of the BPA assessment.
+          example: complete
+          type: string
+      type: object
+    taskStatusResponseBody:
+      properties:
+        taskStatus:
+          description: The completion status of the BPA assessment.
+          example: COMPLETED_WITH_SUCCESS
+          type: string
+      type: object
+    uploadResponseBody:
+      properties:
+        taskId:
+          description: The task ID of the BPA assessment.
+          example: 972afb87-46a9-430d-b9c2-083337f820ae
+          type: string
+        taskStatusId:
+          description: The complete Task status ID file location.
+          example: /tsf/taskStatus/972afb87-46a9-430d-b9c2-083337f820ae
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'This API allows you to programmatically generate Best Practice Assessment
+    data for NFGW and Panroama.
+
+    '
+  title: Best Practice Assessment Report APIs
+  version: '1.0'
+openapi: 3.0.1
+paths:
+  /bpa-report/download/{task_id}:
+    get:
+      description: Download the BPA assessment in the specified format.
+      operationId: get-bpa-report-download-task_id
+      parameters:
+      - description: Specifies the ID of the task ran for a past BPA assessment from
+          a submitted post request of the BPA assessment API.
+        in: path
+        name: task_id
+        required: true
+        schema:
+          type: string
+      - description: Specifies the format of the response (JSON default).
+        in: query
+        name: format
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/downloadResponseBody'
+          description: OK
+        '400':
+          description: API Call Error - task with id {task_id} could not be found,
+            unsupported format request
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Get BPA Assessment Results
+      tags:
+      - BPA Report API
+  /bpa-report/taskStatus/{task_id}:
+    get:
+      description: The completion status of the BPA assessment.
+      operationId: get-bpa-report-taskstatus-task_id
+      parameters:
+      - description: The ID of the running task, from a submitted post request of
+          the BPA assessment API.
+        in: path
+        name: task_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/taskStatusResponseBody'
+          description: OK
+        '400':
+          description: API Call Error - task with id {task_id} could not be found
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Get Task Status
+      tags:
+      - BPA Report API
+  /bpa-report/uploadConfig:
+    post:
+      description: Instead of generating a TSF (Tech Support File), You can use the
+        XML API to generate pieces of the file for the Best Practice Assessment. To
+        get started with the XML API visit [Getting Started with the XML API](https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-panorama-api/get-started-with-the-pan-os-xml-api).
+      operationId: post-bpa-report-uploadconfig
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                config:
+                  description: Config in XML format you can get using - ```https://PAN-OS-IP/api/?type=config&action=show&key=apikey```
+                  format: xml file
+                  type: string
+                deviceInfo:
+                  description: Device information you can get using - ```https://PAN-OS-IP/api/?type=op&cmd=<show><system><info></info></system></show>&key=apikey```
+                  format: txt file
+                  type: string
+                licenseInfo:
+                  description: Serial number you can get using - ```https://PAN-OS-IP/api/?type=op&cmd=<request><license><info/></license></request>&key=apikey```
+                  format: txt file
+                  type: string
+                timeInfo:
+                  description: Time information you can get using - ```https://PAN-OS-IP/api/?type=op&cmd=<show><system><clock></clock></show>&key=apikey```
+                  format: txt file
+                  type: string
+                userName:
+                  description: Username you can get using - ```https://PAN-OS-IP/api/?type=config&action=show&key=apikey```
+                  example: abc@xyz.com
+                  type: string
+              type: object
+        description: Uploads the following files in order to generate a BPA Report
+          for the tenant --- config, license info, device info, time info. These are
+          generated from the XML API. The config is in XML format and all others are
+          in TXT format.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uploadResponseBody'
+          description: OK
+        '400':
+          description: API Call Error - incorrect number of files uploaded, incorrect
+            file format, or empty/null username
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Upload BPA Config Files
+      tags:
+      - BPA Report API
+servers:
+- url: https://bpa.paloaltonetworks.com
+tags:
+- name: BPA Report API
