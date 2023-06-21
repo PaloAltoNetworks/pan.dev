@@ -1,6 +1,7 @@
 ---
 id: stable-endpoints
 title: Supported Endpoints
+slug: /prisma-cloud/api/cwpp
 ---
 
 With every release the Compute APIs are versioned to indicate the release number to which they correspond.
