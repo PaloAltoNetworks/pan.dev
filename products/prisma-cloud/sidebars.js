@@ -39,6 +39,30 @@ module.exports = {
       ],
     },
   ],
+  cwpp_30: [
+    {
+      type: "category",
+      label: "Prisma Cloud Enterprise Edition - 30.00",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/cwpp/30-00/stable-endpoints",
+        require("./api/cwpp/30-00/sidebar"),
+      ],
+    },
+  ],
+
+  cwpp_3001: [
+    {
+      type: "category",
+      label: "Prisma Cloud Enterprise Edition - 30.01",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/cwpp/30-01/stable-endpoints",
+        require("./api/cwpp/30-01/sidebar"),
+      ],
+    },
+  ],
+
   clouddocs: [
     "prisma-cloud/docs/home",
     {
@@ -104,6 +128,22 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Compute 30.00",
+          items: [
+            {
+              type: "link",
+              label: "Administrator's Guide",
+              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30/prisma-cloud-compute-edition-admin.html",
+            },
+            {
+              type: "link",
+              label: "Release Notes",
+              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30/prisma-cloud-compute-edition-release-notes/release-information",
+            },
+          ],
+        },
+        {
+          type: "category",
           label: "Compute 22.12",
           items: [
             {
@@ -131,22 +171,6 @@ module.exports = {
               type: "link",
               label: "Release Notes",
               href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/22-06/prisma-cloud-compute-edition-release-notes/release-information",
-            },
-          ],
-        },
-        {
-          type: "category",
-          label: "Compute 22.01",
-          items: [
-            {
-              type: "link",
-              label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/22-01/prisma-cloud-compute-edition-admin.html",
-            },
-            {
-              type: "link",
-              label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/22-01/prisma-cloud-compute-edition-release-notes/release-information",
             },
           ],
         },

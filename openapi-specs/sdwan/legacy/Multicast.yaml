@@ -2,8 +2,20 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: 'The details of the aggregate data.
+
+            '
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
           description: Field
+          type: string
+        name:
+          description: 'The name of the query response.
+
+            '
           type: string
         operator:
           description: Operator
@@ -13,6 +25,52 @@ components:
           - min
           - avg
           - sum
+          type: string
+        statistic:
+          description: 'QoS application aggregate statistics.
+
+            '
+          type: string
+        unit:
+          description: 'The unit.
+
+            '
+          type: string
+      required:
+      - statistic
+      - unit
+      - name
+      - data
+    AggregateData:
+      properties:
+        value:
+          description: 'Value of the aggregate data.
+
+            '
+          type: number
+        view:
+          description: "View the aggregate date. \n"
+          type: object
+      required:
+      - value
+      - view
+    DynamicRp:
+      properties:
+        groups:
+          description: 'The list of multicast group addresses that the RP serves.
+
+            '
+          items:
+            $ref: '#/components/schemas/Group'
+          type: array
+        ipv4_address:
+          description: 'The multicast group IPv4 addresses to which the RP caters.
+
+            '
+          type: string
+        type:
+          description: "The type of dynamic RP. BSR\u2014Indicates that the RP is\
+            \ learnt dynamically via BSM.\n"
           type: string
     Error:
       properties:
@@ -41,26 +99,26 @@ components:
     ListQueryResponse:
       properties:
         count:
-          description: 'The actual count
+          description: 'The count of the query list.
 
             '
           format: int32
           type: integer
         deleted_count:
-          description: 'The deleted number
+          description: 'The deleted number of queries.
 
             '
           format: int64
           type: integer
         deleted_ids:
-          description: 'The deleted IDs
+          description: 'The deleted query IDs.
 
             '
           items:
             type: string
           type: array
         description:
-          description: 'Description of the query. Max size is 256.
+          description: 'Description of the query. Max size = 256.
 
             '
         id:
@@ -69,14 +127,17 @@ components:
             '
           type: string
         next_query:
-          description: 'Details of the next query
+          description: 'Details of the next query.
 
             '
           type: object
         tenant_id:
+          description: 'The tenant ID.
+
+            '
           type: string
         total_count:
-          description: 'Total number.
+          description: 'Total number of queries.
 
             '
           format: int64
@@ -85,26 +146,114 @@ components:
     ListResponse:
       properties:
         count:
-          description: 'The actual count
+          description: 'The number of responses.
 
             '
           format: int32
           type: integer
-        description:
-          description: 'Description
-
-            '
         id:
-          description: 'The ID
+          description: 'The ID of the response.
 
             '
           type: string
         tenant_id:
-          description: 'The ID of the tenant
+          description: 'The ID of the tenant.
 
             '
           type: string
       type: object
+    MulticastDynamicRp:
+      properties:
+        dynamic_rps:
+          description: 'Details of the multicast dynamic RPs. Max size = 16.
+
+            '
+          items:
+            $ref: '#/components/schemas/DynamicRp'
+          type: array
+        id:
+          description: "The multicast dynamic RP ID.  \n"
+          type: string
+    MulticastDynamicRpQuery:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/Aggregate'
+          description: 'The aggregate number of multicast dynamic RPs that match the
+            query parameters.
+
+            '
+        dest_page:
+          description: 'The destination page.
+
+            '
+          format: int32
+          type: integer
+        getDeleted:
+          description: 'The number multicast dynamic RPs deleted for a time frame.
+
+            '
+          type: boolean
+        group_by:
+          description: Group By
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: "List the multicast dynamic RPs by ID.    \n"
+          type: string
+        last_query_ts:
+          description: 'Return the ID of a specified query in the current session.
+
+            '
+          format: int64
+          type: integer
+        limit:
+          description: 'The query limit.
+
+            '
+          format: int32
+          type: integer
+        next_query:
+          description: 'The  limit.
+
+            '
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: 'Retrieve information from a field.
+
+            '
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: 'List the fields to query.
+
+            '
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: 'The total number of query parameters.
+
+            '
+          format: int64
+          type: integer
+    MulticastDynamicRpQueryFilter:
+      properties:
+        dynamic_rps:
+          description: 'Details of the multicast dynamic RPs. Max size = 16.
+
+            '
+          items:
+            $ref: '#/components/schemas/DynamicRp'
+          type: array
+        id:
+          description: "The multicast dynamic RP ID.  \n"
+          type: string
     MulticastGlobalConfig:
       properties:
         id:
@@ -260,6 +409,159 @@ components:
 
             '
           type: string
+    MulticastPeerGroup:
+      properties:
+        description:
+          description: 'The multicast peer group descriptions.
+
+            '
+        id:
+          description: 'The multicast peer group ID.
+
+            '
+          type: string
+        name:
+          description: 'The name of the multicast peer group. Max limit = 128.
+
+            '
+          type: string
+        peer_sites:
+          description: 'The multicast peer site ID.
+
+            '
+          items:
+            $ref: '#/components/schemas/MulticastPeerSite'
+          type: array
+        tags:
+          description: 'A information field that can be added to identify the multicast
+            peer group. Maximum 10 unique tags of length 128 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - peer_sites
+      - name
+    MulticastPeerGroupScreen:
+      properties:
+        description:
+          description: 'The multicast peer group descriptions.
+
+            '
+        id:
+          description: 'The multicast peer group ID.
+
+            '
+          type: string
+        name:
+          description: 'The name of the multicast peer group. Max limit = 128.
+
+            '
+          type: string
+        peer_sites:
+          description: 'The multicast peer site ID.
+
+            '
+          items:
+            $ref: '#/components/schemas/MulticastPeerSite'
+          type: array
+        tags:
+          description: 'A information field that can be added to identify the multicast
+            peer group. Maximum 10 unique tags of length 128 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - peer_sites
+      - name
+    MulticastPeerGroupScreenV2N1:
+      properties:
+        description:
+          description: 'The description of the multicast peer group. Max size = 256.
+
+            '
+        id:
+          description: "The ID.             \n"
+          type: string
+        is_source_site_receiver:
+          description: 'True or False - Receive traffic from branch side sources to
+            receive multicast traffic from another branch site.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the multicast peer group.
+
+            '
+          type: string
+        peer_sites:
+          description: 'The peer sites ID.
+
+            '
+          items:
+            $ref: '#/components/schemas/MulticastPeerSite'
+          type: array
+        tags:
+          description: 'An information field that can be added to identify the multicast
+            peer group.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - peer_sites
+      - name
+    MulticastPeerGroupV2N1:
+      properties:
+        description:
+          description: 'The description of the multicast peer group. Max size = 256.
+
+            '
+        id:
+          description: "The ID.             \n"
+          type: string
+        is_source_site_receiver:
+          description: 'True or False - Receive traffic from branch side sources to
+            receive multicast traffic from another branch site.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the multicast peer group.
+
+            '
+          type: string
+        peer_sites:
+          description: 'The peer sites ID.
+
+            '
+          items:
+            $ref: '#/components/schemas/MulticastPeerSite'
+          type: array
+        tags:
+          description: 'An information field that can be added to identify the multicast
+            peer group.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - peer_sites
+      - name
+    MulticastPeerSite:
+      properties:
+        peer_site_id:
+          description: Peer Site Id
+          type: string
     MulticastPimProtocolConfig:
       properties:
         hello_hold_time:
@@ -285,7 +587,8 @@ components:
     MulticastProtocolParameter:
       properties:
         dr_priority:
-          description: 'Dr Priority: PositiveOrZero(message = INVALID_MULTICAST_PROTOCOL_PARAMETER_VALUE) '
+          description: "The priority associated with the interface on the device for\
+            \ DR election.           \n"
           format: int64
           type: integer
         id:
@@ -454,9 +757,6 @@ components:
             '
           type: object
         query_params:
-          description: 'Query using query parameters.
-
-            '
           type: object
         retrieved_fields:
           description: 'Retrieve information from a field.
@@ -472,10 +772,6 @@ components:
             '
           type: boolean
         sort_params:
-          description: 'Specify the order in which you want the search criteria to
-            display.
-
-            '
           type: object
         total_count:
           description: 'The total number of query parameters.
@@ -592,7 +888,7 @@ components:
             type: string
           type: array
         rp_address:
-          description: 'The address of the Rendezvous Point (RP) in the network.
+          description: 'he address of the Rendezvous Point (RP) in the network.
 
             '
           type: string
@@ -646,9 +942,6 @@ components:
             '
           type: object
         query_params:
-          description: 'Query using query parameters.
-
-            '
           type: object
         retrieved_fields:
           description: 'Retrieve information from a field.
@@ -664,10 +957,6 @@ components:
             '
           type: boolean
         sort_params:
-          description: 'Specify the order in which you want the search criteria to
-            display.
-
-            '
           type: object
         total_count:
           description: "The total number of query parameters.      \n"
@@ -720,6 +1009,144 @@ components:
           type: array
       required:
       - mroutes
+    MulticastSourceSideRp:
+      properties:
+        id:
+          description: 'The multicast source side RP ID.
+
+            '
+          type: string
+        source_side_rps:
+          description: 'The source side RP of multicast traffic in the network.
+
+            '
+          items:
+            $ref: '#/components/schemas/SourceSideRp'
+          type: array
+        source_site_id:
+          description: 'The source site ID.
+
+            '
+          type: string
+    MulticastSourceSideRpQuery:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/Aggregate'
+          description: 'The aggregate number of multicast source side RPs that match
+            the query parameters.
+
+            '
+        dest_page:
+          description: 'The destination page.
+
+            '
+          format: int32
+          type: integer
+        getDeleted:
+          description: 'The number multicast source side RPs deleted for a time frame.
+
+            '
+          type: boolean
+        group_by:
+          description: Group By
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: "List the multicast source side RPs by ID.    \n"
+          type: string
+        last_query_ts:
+          description: 'Return the ID of a specified query in the current session.
+
+            '
+          format: int64
+          type: integer
+        limit:
+          description: 'The query limit.
+
+            '
+          format: int32
+          type: integer
+        next_query:
+          description: 'The  limit.
+
+            '
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: 'Retrieve information from a field.
+
+            '
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: 'List the fields to query.
+
+            '
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: 'The total number of query parameters.
+
+            '
+          format: int64
+          type: integer
+    MulticastSourceSideRpQueryFilter:
+      properties:
+        id:
+          description: 'The multicast source side RP ID.
+
+            '
+          type: string
+        source_side_rps:
+          description: 'The source side RP of multicast traffic in the network.
+
+            '
+          items:
+            $ref: '#/components/schemas/SourceSideRp'
+          type: array
+        source_site_id:
+          description: 'The source site ID.
+
+            '
+          type: string
+    MulticastSourceSiteConfig:
+      properties:
+        id:
+          description: 'The multicast source side RP ID.
+
+            '
+          type: string
+        site_configs:
+          description: 'The multicast source site config list. Max size = 64.
+
+            '
+          items:
+            $ref: '#/components/schemas/SiteConfig'
+          type: array
+      required:
+      - site_configs
+    MulticastSourceSiteConfigScreen:
+      properties:
+        id:
+          description: 'The multicast source side RP ID.
+
+            '
+          type: string
+        site_configs:
+          description: 'The multicast source site config list. Max size = 64.
+
+            '
+          items:
+            $ref: '#/components/schemas/SiteConfig'
+          type: array
+      required:
+      - site_configs
     MulticastStatusQuery:
       properties:
         aggregate:
@@ -765,9 +1192,6 @@ components:
             '
           type: object
         query_params:
-          description: 'Query using query parameters.
-
-            '
           type: object
         retrieved_fields:
           description: 'Retrieve information from a field.
@@ -783,10 +1207,6 @@ components:
             '
           type: boolean
         sort_params:
-          description: 'Specify the order in which you want the search criteria to
-            display.
-
-            '
           type: object
         total_count:
           description: 'The total number of query parameters.
@@ -864,7 +1284,7 @@ components:
             '
           type: string
         pim_neighbors:
-          description: "The PIM neighbor's IP address.          \n"
+          description: "The PIM neighbor\u2019s IP address.          \n"
           items:
             $ref: '#/components/schemas/MulticastNeighbor'
           type: array
@@ -874,9 +1294,7 @@ components:
             '
           type: string
         state:
-          description: 'The state of the selected interface up or down.
-
-            '
+          description: "The state of the selected interface\u2014up or down.\n"
           type: string
       required:
       - pim_neighbors
@@ -884,6 +1302,107 @@ components:
       - address
       - state
       - name
+    MulticastWanNeighbor:
+      properties:
+        remote_site_id:
+          description: "The remote site ID.  \n"
+          type: string
+        state:
+          description: State
+          type: string
+        uptime:
+          description: 'Indicates the time for which the neighbor has been up.
+
+            '
+          type: string
+    MulticastWanStatus:
+      properties:
+        id:
+          description: "The multicast WAN status by ID.  \n"
+          type: string
+        pim_neighbors:
+          description: "The PIM neighbor\u2019s IP address.\n"
+          items:
+            $ref: '#/components/schemas/MulticastWanNeighbor'
+          type: array
+    MulticastWanStatusQuery:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/Aggregate'
+          description: 'The aggregate number of multicast WAN status that match the
+            query parameters.
+
+            '
+        dest_page:
+          description: 'The destination page.
+
+            '
+          format: int32
+          type: integer
+        getDeleted:
+          description: 'The number multicast WAN status deleted for a time frame.
+
+            '
+          type: boolean
+        group_by:
+          description: Group By
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: "List the multicast WAN status by ID.    \n"
+          type: string
+        last_query_ts:
+          description: 'Return the ID of a specified query in the current session.
+
+            '
+          format: int64
+          type: integer
+        limit:
+          description: 'The query limit.
+
+            '
+          format: int32
+          type: integer
+        next_query:
+          description: 'The  limit.
+
+            '
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: 'Retrieve information from a field.
+
+            '
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: 'List the fields to query.
+
+            '
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: 'The total number of query parameters.
+
+            '
+          format: int64
+          type: integer
+    MulticastWanStatusQueryFilter:
+      properties:
+        id:
+          description: "The multicast WAN status by ID.  \n"
+          type: string
+        pim_neighbors:
+          description: "The PIM neighbor\u2019s IP address.\n"
+          items:
+            $ref: '#/components/schemas/MulticastWanNeighbor'
+          type: array
     PathGroup:
       properties:
         description:
@@ -950,9 +1469,6 @@ components:
             '
           type: object
         query_params:
-          description: 'Query using query parameters.
-
-            '
           type: object
         retrieved_fields:
           description: 'Retrieve information from a field.
@@ -968,10 +1484,6 @@ components:
             '
           type: boolean
         sort_params:
-          description: 'Specify the order in which you want the search criteria to
-            display.
-
-            '
           type: object
         total_count:
           description: 'The total number of query parameters.
@@ -1025,6 +1537,44 @@ components:
           type: array
       required:
       - paths
+    SiteConfig:
+      properties:
+        group_ipv4_prefix:
+          description: 'The group IPv4 prefix.
+
+            '
+          type: string
+        source_ipv4_address:
+          description: 'The source side IPv4 address.
+
+            '
+          type: string
+    SourceSideGroup:
+      properties:
+        ipv4_prefix:
+          description: 'The IPv4 prefix of the for the multicast.
+
+            '
+          type: string
+        source_ipv4_address:
+          description: 'The source side IPv4 address.
+
+            '
+          type: string
+    SourceSideRp:
+      properties:
+        groups:
+          description: 'The list of multicast group addresses that the RP serves.
+
+            '
+          items:
+            $ref: '#/components/schemas/SourceSideGroup'
+          type: array
+        ipv4_address:
+          description: 'The multicast group IPv4 addresses to which the RP caters.
+
+            '
+          type: string
     WANPath:
       properties:
         label:
@@ -1048,12 +1598,243 @@ info:
   version: Latest
 openapi: 3.0.0
 paths:
+  /v2.0/api/tenants/{tenant_id}/multicastdynamicrps/query:
+    post:
+      description: Query all the multicast dynamic RPs.
+      operationId: post-v2.0-api-tenants-tenant_id-multicastdynamicrps-query
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastDynamicRpQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastDynamicRpQueryFilter'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_INPUT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Multicast Dynamic RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/multicastpeergroups:
+    get:
+      description: List all the multicast peer groups.
+      operationId: get-v2.0-api-tenants-tenant_id-multicastpeergroups
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastPeerGroup'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Peer Groups (v2.0)
+      tags:
+      - Multicast
+    post:
+      description: Create a multicast peer group.
+      operationId: post-v2.0-api-tenants-tenant_id-multicastpeergroups
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastPeerGroupScreen'
+        description: Details of the multicast peer groups
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroup'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_INVALID_PEER_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Multicast Peer Group (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/multicastpeergroups/{peer_group_id}:
+    delete:
+      description: Delete a multicast peer group.
+      operationId: delete-v2.0-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroup'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_PEER_GROUP_IN_USE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete Multicast Peer Group (v2.0)
+      tags:
+      - Multicast
+    get:
+      description: Get a multicast peer group.
+      operationId: get-v2.0-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroup'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_INPUT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Multicast Peer Group (v2.0)
+      tags:
+      - Multicast
+    put:
+      description: Update a multicast peer group.
+      operationId: put-v2.0-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastPeerGroupScreen'
+        description: Details of the multicast peer group to be Updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroup'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_INVALID_PEER_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Multicast Peer Group (v2.0)
+      tags:
+      - Multicast
   /v2.0/api/tenants/{tenant_id}/multicastroutes/query:
     post:
       description: Query the multicast route table.
       operationId: post-v2.0-api-tenants-tenant_id-multicastroutes-query
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -1094,10 +1875,10 @@ paths:
       - Multicast
   /v2.0/api/tenants/{tenant_id}/multicastrps/query:
     post:
-      description: Query the multicast Rendezvous Point (RP) configuration.
+      description: Query the multicast (Rendezvous Point) RP configuration.
       operationId: post-v2.0-api-tenants-tenant_id-multicastrps-query
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1141,7 +1922,7 @@ paths:
       description: Query the multicast status information.
       operationId: post-v2.0-api-tenants-tenant_id-multicaststatus-query
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1180,12 +1961,56 @@ paths:
       summary: Query Multicast Status Information (v2.0)
       tags:
       - Multicast
+  /v2.0/api/tenants/{tenant_id}/multicastwanstatus/query:
+    post:
+      description: Query all the multicast WAN status.
+      operationId: post-v2.0-api-tenants-tenant_id-multicastwanstatus-query
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastWanStatusQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastWanStatusQueryFilter'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_INPUT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Multicast WAN Status (v2.0)
+      tags:
+      - Multicast
   /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/interfaces/{interface_id}/multicaststatus:
     get:
       description: List all the multicast status information.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-interfaces-interface_id-multicaststatus
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1230,26 +2055,112 @@ paths:
       summary: Get Multicast Status (v2.0)
       tags:
       - Multicast
-  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastglobalconfigs:
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastdynamicrps:
     get:
-      description: API to get existing multicast global configs
-      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs
+      description: List all the multicast dynamic RPs.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastdynamicrps
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: Site Id
+      - description: The site ID.
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: Element Id
+      - description: The element ID.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastDynamicRp'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Dynamic RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastdynamicrps/{id}:
+    get:
+      description: List a specific the multicast dynamic RP.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastdynamicrps-id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The element ID.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      - description: The multicast dynamic RP ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastDynamicRp'
+          description: Successful Operation
+      summary: Get Specific Multicast Dynamic RP (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastglobalconfigs:
+    get:
+      description: List all the multicast configs.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The element ID.
         in: path
         name: element_id
         required: true
@@ -1270,7 +2181,7 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Get all Multicast configs (v2.0)
+      summary: Get Multicast Configs (v2.0)
       tags:
       - Multicast
   /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastglobalconfigs/{config_id}:
@@ -1278,7 +2189,7 @@ paths:
       description: List the existing multicast global configuration.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1320,7 +2231,7 @@ paths:
       description: Update the existing multicast global configuration.
       operationId: put-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1379,7 +2290,7 @@ paths:
       description: List all the multicast protocol parameters.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastprotocolparameters
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1415,7 +2326,7 @@ paths:
       description: List all the multicast routes.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastroutes
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1455,10 +2366,10 @@ paths:
       - Multicast
   /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastrps:
     get:
-      description: List all the multicast Rendezvous Point (RP) configs.
+      description: List all the multicast RP configs.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastrps
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1551,10 +2462,10 @@ paths:
       - Multicast
   /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastrps/{config_id}:
     delete:
-      description: Delete the existing multicast Rendezvous Point (RP) config.
+      description: Delete the existing multicast RP config.
       operationId: delete-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastrps-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1600,10 +2511,10 @@ paths:
       tags:
       - Multicast
     get:
-      description: List the multicast Rendezvous Point (RP) config.
+      description: List the multicast RP config.
       operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastrps-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1642,10 +2553,10 @@ paths:
       tags:
       - Multicast
     put:
-      description: Updates the existing multicast Rendezvous Point (RP) config.
+      description: Updates the existing multicast RP config.
       operationId: put-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastrps-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1701,12 +2612,611 @@ paths:
       summary: Update Multicast RP Config (v2.0)
       tags:
       - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastwanstatus:
+    get:
+      description: List all the multicast WAN status.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastwanstatus
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The element ID.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastWanStatus'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast WAN Status (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/elements/{element_id}/multicastwanstatus/{wan_status_id}:
+    get:
+      description: List a specific the multicast WAN status.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastwanstatus-wan_status_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The element ID.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      - description: The multicast WAN status ID.
+        in: path
+        name: wan_status_id
+        required: true
+        schema:
+          description: Wan Status Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastWanStatus'
+          description: Successful Operation
+      summary: Get Specific Multicast WAN Status (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps:
+    get:
+      description: List the multicast source side RPs.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID for which you wish to query the source side RPs.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSideRp'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Source Side RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps/query:
+    post:
+      description: Query the multicast source side RPs.
+      operationId: post-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps-query
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID for which you wish to query the source side RPs.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSideRpQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSideRpQueryFilter'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_INPUT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Multicast Source Side RPs (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiderps/{rp_id}:
+    get:
+      description: List a specific the multicast source side RP.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiderps-rp_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The RP ID.
+        in: path
+        name: rp_id
+        required: true
+        schema:
+          description: Rp Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSideRp'
+          description: Successful Operation
+      summary: Get Multicast Source Side RP (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiteconfigs:
+    get:
+      description: Use the API to get multicast source site configs.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID from where you wish to get multicast source site
+          configs.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastSourceSiteConfig'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Source Site Configs (v2.0)
+      tags:
+      - Multicast
+    post:
+      description: Create a multicast source site config.
+      operationId: post-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID where you wish to create multicast source site configs.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSiteConfigScreen'
+        description: Details of the multicast source site config to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: DUPLICATE_MULTICAST_SOURCE_SITE_GRP_IPV4_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Multicast Source Site Config (v2.0)
+      tags:
+      - Multicast
+  /v2.0/api/tenants/{tenant_id}/sites/{site_id}/multicastsourcesiteconfigs/{config_id}:
+    delete:
+      description: Delete the multicast source site config.
+      operationId: delete-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The source site config ID.
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '404':
+          description: Not Found
+      summary: Delete Multicast Source Site Config (v2.0)
+      tags:
+      - Multicast
+    get:
+      description: Get the multicast source site config.
+      operationId: get-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The source site config ID.
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '404':
+          description: Not Found
+      summary: Get Multicast Source Site Config (v2.0)
+      tags:
+      - Multicast
+    put:
+      description: Update the multicast source site config.
+      operationId: put-v2.0-api-tenants-tenant_id-sites-site_id-multicastsourcesiteconfigs-config_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The site ID.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The source site config ID.
+        in: path
+        name: config_id
+        required: true
+        schema:
+          description: Config Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastSourceSiteConfigScreen'
+        description: Details of the multicast source site config to be updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastSourceSiteConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: DUPLICATE_MULTICAST_SOURCE_SITE_GRP_IPV4_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          description: Not Found
+      summary: Update Multicast Source Site Config (v2.0)
+      tags:
+      - Multicast
+  /v2.1/api/tenants/{tenant_id}/multicastpeergroups:
+    get:
+      description: List all the multicast peer groups.
+      operationId: get-v2.1-api-tenants-tenant_id-multicastpeergroups
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/MulticastPeerGroupV2N1'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Multicast Peer Groups (v2.1)
+      tags:
+      - Multicast
+    post:
+      description: Create a multicast peer group.
+      operationId: post-v2.1-api-tenants-tenant_id-multicastpeergroups
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastPeerGroupScreenV2N1'
+        description: Details of the multicast peer groups to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroupV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_INVALID_PEER_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Multicast Peer Group (v2.1)
+      tags:
+      - Multicast
+  /v2.1/api/tenants/{tenant_id}/multicastpeergroups/{peer_group_id}:
+    delete:
+      description: Delete a multicast peer group.
+      operationId: delete-v2.1-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroupV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_PEER_GROUP_IN_USE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          description: Not Found
+      summary: Delete Multicast Peer Group (v2.1)
+      tags:
+      - Multicast
+    get:
+      description: Get a multicast peer group.
+      operationId: get-v2.1-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroupV2N1'
+          description: Successful Operation
+        '404':
+          description: Not Found
+      summary: Get Multicast Peer Group (v2.1)
+      tags:
+      - Multicast
+    put:
+      description: Update a multicast peer group.
+      operationId: put-v2.1-api-tenants-tenant_id-multicastpeergroups-peer_group_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The multicast peer group ID.
+        in: path
+        name: peer_group_id
+        required: true
+        schema:
+          description: Peer Group Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MulticastPeerGroupScreenV2N1'
+        description: Details of the multicast peer group to be updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MulticastPeerGroupV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: MULTICAST_INVALID_PEER_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Multicast Peer Group (v2.1)
+      tags:
+      - Multicast
   /v2.1/api/tenants/{tenant_id}/pathgroups:
     get:
       description: List all the path groups for a tenant.
       operationId: get-v2.1-api-tenants-tenant_id-pathgroups
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1734,7 +3244,7 @@ paths:
       description: Create a path group for a tenant.
       operationId: post-v2.1-api-tenants-tenant_id-pathgroups
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1773,10 +3283,10 @@ paths:
   /v2.1/api/tenants/{tenant_id}/pathgroups/query:
     post:
       description: Queries the DB for limit number of network contexts that match
-        query params.
+        query parameters.
       operationId: post-v2.1-api-tenants-tenant_id-pathgroups-query
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1821,7 +3331,7 @@ paths:
       description: Delete the path group of a tenant.
       operationId: delete-v2.1-api-tenants-tenant_id-pathgroups-path_group_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1860,7 +3370,7 @@ paths:
       description: List the path group of a tenant.
       operationId: get-v2.1-api-tenants-tenant_id-pathgroups-path_group_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1898,7 +3408,7 @@ paths:
       description: Update the path group of a tenant.
       operationId: put-v2.1-api-tenants-tenant_id-pathgroups-path_group_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1946,7 +3456,7 @@ paths:
       description: List all the existing multicast global configs.
       operationId: get-v2.1-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -1989,7 +3499,7 @@ paths:
       description: List the existing multicast global config.
       operationId: get-v2.1-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true
@@ -2031,7 +3541,7 @@ paths:
       description: Update the existing multicast global config.
       operationId: put-v2.1-api-tenants-tenant_id-sites-site_id-elements-element_id-multicastglobalconfigs-config_id
       parameters:
-      - description: Tenant Id
+      - description: ID of the tenant.
         in: path
         name: tenant_id
         required: true

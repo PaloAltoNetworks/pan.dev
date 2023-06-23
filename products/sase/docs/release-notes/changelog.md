@@ -13,6 +13,8 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| May 16, 2023    | Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.                                   |
+| April 26, 2023  | Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellanous other changes.                                                                       |
 | March 28, 2023  | New endpoints for the [Prisma Access Configuration APIs](/sase/docs/release-notes/release-notes/#march-2023).                                                                         |
 | Dec 5, 2022     | Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.                                            |
 | Nov 22, 2022    | Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints.                                                                         |

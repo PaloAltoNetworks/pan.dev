@@ -84,6 +84,10 @@ module.exports = {
             },
             {
               type: "doc",
+              id: "threat-vault/docs/examples/get-predefined-edl-content",
+            },
+            {
+              type: "doc",
               id: "threat-vault/docs/examples/get-atp-report-pcap",
             },
             {

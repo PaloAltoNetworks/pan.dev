@@ -63,9 +63,9 @@ As main characteristics, we can state that filters are
 
 These are a type of single filter.
 Syntax
-**<i>[object_types]</i>** is (not) **predefined_filter**
+**<i>[object_types]</i>** is (not) **predefined_filter.success**
 
-Example: **<i>[address]</i>** is **<i>not used</i>** . Will return all unused addresses
+Example: **<i>[address]</i>** is **<i>not used.success</i>** . Will return all unused addresses
 
 **Valid predefined filters**
 
@@ -156,23 +156,40 @@ This filter would return all addresses and groups where the name contains the wo
 |                              | vlan_interface          |                        |                   |
 |                              | loopback_interface      |                        |                   |
 |                              | sdwan_interface         |                        |                   |
-|                              | tunnel_interface        |                        |                   |
+|                              | tunnel_interface        |                        |                   |  
+
+**The valid properties are:**
+
+The table below presents the valid properties for each object type, based on the configuration objects in the Palo Alto Networks:
+All object types can filter by properties: name, description
+
+
+| Object Type        | Properties                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| address            | type ip_type ipaddress netmask Id                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| address_group      | type filter expression id                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| service            | id type protocol src_port dst_port timeout tcp_half_closed_timeout tcp_time_wait_timeout' timeout_override                                                                                                                                                                                                                                                                                                                                                   |
+| service_group      | id type                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| application        | id application_container parent_app technology category subcategory risk evasive_behavior consume_big_bandwidth prone_to_misuse able_to_transfer_file tunnel_other_application used_by_malware has_known_vulnerability pervasive_use tunnel_applications file_type_ident virus_ident data_ident default_type value timeout tcp_timeout tcp_half_closed_timeout tcp_time_wait_timeout udp_timeout spyware_ident vtype alg_disable_capability no_appid_caching |
+| application_filter | evasive_behavior consume_big_bandwidth prone_to_misuse able_to_transfer_file tunnel_other_application used_by_malware has_known_vulnerability pervasive_use saas_certifications saas_risk type category subcategory technology risk characteristic                                                                                                                                                                                                           |  
+
 
 ### Combination Filter
 
 The combined filters are the ones that require subfilters. For example a security rule that contains some specific addresses in its source.
 For example, if we want all security rules that have the “office” addresses from the previous example in its source the filter would be:
-**<i>[security_rule]</i>** **source_address** contains filter **<i>office_address</i>**
+**<i>[security_rule]</i>** **source_address** contains filter **<i>office_address.success</i>**
 
 **Syntax**
 
-**<i>[object_types]</i>** **property** (not) **operator filter** <i>filter_name</i>
+**<i>[object_types]</i>** **property** (not) **operator filter** <i>filter_reference.success</i>
 
 - **`[object_types]`** : indicates which object types apply the filter between brackets and separated by commas.
 - **`property`**: Property of the object type to search
 - **`operator`**: The operators can also be negated with a not before the operator
 - **`filter`**: It is necessary to indicate that after it will come the name of a filter
-- **`filter_name`**: Name of the filter to act as subfilter
+- **`filter_reference`**: Name of the filter to act as subfilter. In this example, the filter_reference is **<i>office_address.success</i>**  
+
 
 ### Operation filters
 
@@ -184,13 +201,15 @@ There are two different operators allowed: **or** (unions) and **and**(intersect
 **Syntax**  
 Defining a syntax here is not that simple since multiple combinations can be done using the operators and parentheses. An example can be:
 
-**<i>filter</i>** filter_name1 **and** (**<i>filter</i>** filter_name2 **or** **<i>filter</i>** filter_name4)
+**<i>filter</i>** filter_name1 **and** (**<i>filter</i>** filter_name2.success **or** **<i>filter</i>** filter_name4.success)
 
 - **`filter`**: it is necessary to indicate that after it will come the name of a filter
-- **`filter_name`**X : Name of the filter
+- **`filter_nameX`** : Name of the filter
 - **`and`**: Operator that indicates intersection between filter results
-- **`or`**: Operator that indicaties union of filter results
-- **`()`**: The parentheses can be used to make preference to some operations over others
+- **`or`**: Operator that indicates union of filter results
+- **`()`**: The parentheses can be used to make preference to some operations over others  
+For operations content the **`not`** operator is not available.  
+
 
 ## Filter related API Calls
 
@@ -213,7 +232,7 @@ values={[
 ```python
 def CreateFilter():
     print("Create a filter for address & address group objects contain "office"")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter"
     data = {
      "name": "officeobject",
      "description":"filter example",
@@ -286,7 +305,7 @@ values={[
 ```python
 def UpdateFilter():
     print("Update the filter for address & address group objects does not contain "office"")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filterID
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filterID
     data = {
      "name": "officeobject",
      "description":"filter example",
@@ -355,7 +374,7 @@ values={[
 ```python
 def DeleteFilter():
     print("Delete the filter for address & address group objects does not contain "office"")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filterID
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filterID
     r = requests.delete(url, verify=False, headers=hed)
     response = r.json()
     print(response)
@@ -403,7 +422,7 @@ The successful Json response will be similar to the following:
 
 | Method | API Route                                                                               | Path Parameters                          | Example Path                                                         |
 | ------ | --------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/success`</small> |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -415,7 +434,7 @@ values={[
 ```python
 def ListFilter():
     print("List the filter for all used addresses")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filterID
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filterID
     r = requests.get(url, verify=False, headers=hed)
     response = r.json()
     print(response)
@@ -476,7 +495,7 @@ values={[
 ```python
 def ListFilter():
     print("List all filters")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter"
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter"
     r = requests.get(url, verify=False, headers=hed)
     response = r.json()
     print(response)
@@ -524,7 +543,7 @@ The successful Json response will be similar to the following:
 
 ### Execute Filter
 
-**Description: ** Executes a fiter and stores the result  
+**Description: ** Executes a filter and stores the result  
 **API syntax for execute a specific filter:**
 
 | Method | API Route                                                                                       | Path Parameters                          | Example Path                                                                 |
@@ -541,7 +560,7 @@ values={[
 ```python
 def ExecuteFilter():
     print("Execute the filter")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filterID
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filterID
     r = requests.post(url, verify=False, headers=hed)
     response = r.json()
     print(response)
@@ -574,7 +593,7 @@ The successful Json response will return a job id:
 
 | Method | API Route                                                                                      | Path Parameters                          | Example Path                                                               |
 | ------ | ---------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/result`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/8/result`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/8/success`</small> |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -588,7 +607,7 @@ values={[
 ```python
 def ExecuteFilter():
     print("List the filter results")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filterID + "/result"
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filterID + "/success"
     r = requests.get(url, verify=False, headers=hed)
     response = r.json()
     print(response)
@@ -650,7 +669,7 @@ values={[
 ```python
 def ListFilter():
     print("Get a history of the filter")
-    url = "https://" + ip + "/api/v1/project/" + projectId + "/tools/filter" + filter_ID +"/history"
+    url = "https://localhost/api/v1/project/" + projectId + "/tools/filter" + filter_ID +"/history"
     r = requests.get(url, verify=False, headers=hed)
     response = r.json()
     print(response)
