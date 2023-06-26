@@ -1,6 +1,7 @@
 ---
 id: stable-endpoints
 title: Supported Endpoints
+slug: /prisma-cloud/api/cwpp
 ---
 
 With every release the Compute APIs are versioned to indicate the release number to which they correspond.
@@ -15,6 +16,7 @@ The deployment scripts and Twistcli that you download from Console, uses the API
 All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
 If you're looking for previous minor or maintenance release versions, visit the following link:
 
+* [Prisma Cloud Enterprise Edition - 30.01](/prisma-cloud/api/cwpp/30-01/)
 * [Prisma Cloud Enterprise Edition - 30.00](/prisma-cloud/api/cwpp/30-00/)
 ## Versioning
 
