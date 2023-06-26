@@ -18,6 +18,14 @@ Use the API to:
 - Set up, configure, reconfigure, and deploy Prisma Cloud Compute components to secure your hosts, containers, and serverless functions against vulnerabilities, malware, and compliance violations.
 - Extract the security data that Prisma Cloud Compute has collected about your environment and send it to your monitoring, alerting, and reporting systems.
 
+### Previous API Versions of Prisma Cloud Compute Edition
+
+All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
+If you're looking for previous minor or maintenance release versions, visit the following link:
+
+* [Prisma Cloud Compute Edition - 30.01](/compute/api/30-01/)
+* [Prisma Cloud Compute Edition - 30.00](/compute/api/30-00/)
+
 ### How to find your version
 
 To find the the version of Prisma Cloud Workload Protection that you're running:

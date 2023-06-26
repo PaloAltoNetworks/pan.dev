@@ -203,13 +203,18 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Ansible",
-                      to: "ansible/docs/panos",
+                      label: "Terraform for VM-Series",
+                      to: "swfw",
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
+                      label: "Terraform for PAN-OS",
                       to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
                       icon: "doc",
                     },
                   ],
@@ -238,7 +243,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/docs/cloudngfw",
+                      to: "swfw",
                       icon: "doc",
                     },
                   ],
@@ -398,6 +403,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/ztna/ztna-connector-apis",
+                      label: "ZTNA Connector",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc",
@@ -498,6 +508,46 @@ const config = {
                 },
               ],
             },
+            {
+              label: "Partner Integrations",
+              to: "#",
+              colorclass: "partner-integrations",
+              description: "Discover technology partner integrations.",
+              products: [
+                {
+                  label: "Automation",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Terraform for Software NGFW",
+                      to: "swfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform and Palo Alto Networks",
+                      to: "terraform",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "SIEM",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Splunk App/Add-on",
+                      to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
@@ -533,10 +583,6 @@ const config = {
         docs: false,
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
-        },
-        gtag: {
-          trackingID: "GTM-PLXD79N",
-          anonymizeIP: true,
         },
       },
     ],
@@ -604,6 +650,11 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ztna: {
+            specPath: "openapi-specs/access/ztna",
+            outputDir: "products/access/api/ztna",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sub: {
             specPath: "openapi-specs/sase/subscription",
             outputDir: "products/sase/api/subscription",
@@ -664,7 +715,23 @@ const config = {
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
+            showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+          },
+          cwpp_30: {
+            specPath: "openapi-specs/cwpp/30-00",
+            outputDir: "products/prisma-cloud/api/cwpp/30-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/30-00/",
+          },
+          cwpp_3001: {
+            specPath: "openapi-specs/cwpp/30-01",
+            outputDir: "products/prisma-cloud/api/cwpp/30-01",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/30-01/",
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -682,15 +749,16 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "22.12",
-            label: "v22.12",
+            version: "30.02",
+            label: "v30.02",
+            showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
-              22.01: {
-                specPath: "openapi-specs/compute/22-01",
-                outputDir: "products/compute/api/22-01",
-                label: "v22.01",
-                baseUrl: "/compute/api/22-01/",
+              22.12: {
+                specPath: "openapi-specs/compute/22-12",
+                outputDir: "products/compute/api/22-12",
+                label: "v22.12",
+                baseUrl: "/compute/api/22-12/",
               },
               22.06: {
                 specPath: "openapi-specs/compute/22-06",
@@ -699,6 +767,20 @@ const config = {
                 baseUrl: "/compute/api/22-06/",
               },
             },
+          },
+          compute_30: {
+            specPath: "openapi-specs/compute/30-00",
+            outputDir: "products/compute/api/30-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-00/",
+          },
+          compute_3001: {
+            specPath: "openapi-specs/compute/30-01",
+            outputDir: "products/compute/api/30-01",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-01/",
           },
         },
       },
@@ -713,6 +795,12 @@ const config = {
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      require.resolve("./docusaurus-plugin-gtm/index.js"),
+      {
+        gtm: "GTM-PLXD79N",
       },
     ],
   ],
