@@ -292,7 +292,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "/aiops/api",
+                      to: "/aiops-ngfw/api",
                       label: "AIOps for NGFW API",
                       icon: "api-doc",
                     },
@@ -645,9 +645,9 @@ const config = {
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          aiops: {
-            specPath: "openapi-specs/aiops/BPAReportAPI.yaml",
-            outputDir: "products/aiops/api",
+          "aiops-ngfw": {
+            specPath: "openapi-specs/aiops-ngfw/BPAReportAPI.yaml",
+            outputDir: "products/aiops-ngfw/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "dns-security": {
