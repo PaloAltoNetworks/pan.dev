@@ -16,7 +16,7 @@ This guide shows how to initiate a registry scan and then view its progress.
 
 ## View On-demand Registry Scan Progress
 
-2. Start the on-demand registry scan [by adding the required request parameters](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
+2. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 ```bash
 curl -sSL --header "authorization: Bearer access_token" \
@@ -26,7 +26,7 @@ curl -sSL --header "authorization: Bearer access_token" \
  "https://<CONSOLE>/api/v<VERSION>/registry/scan"
 ```
 
-3. View the on-demand registry scan progress by using the same request parameters in [view registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
+3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **cURL Request**:
 
