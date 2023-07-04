@@ -17,11 +17,11 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 :::
 
 **Follow these steps:**
-1. Set Up and Add Registry Settings
-2. Initiate Registry Scan
-3. View Registry Scan Progress
-4. Check Regular or Periodic Scan Status 
-5. Retrieve Scan Reports
+1. [Set Up and Add Registry Settings](#set-up-and-add-registry-settings)
+2. [Initiate Registry Scan](#initiate-registry-scan)
+3. [View Registry Scan Progress](#view-registry-scan-progress)
+4. [Check Regular or Periodic Scan Status](#check-regular-or-periodic-scan-status)
+5. [Retrieve Scan Reports](#retrieve-the-registry-scan-reports)
 
 ## Set Up and Add Registry Settings
 
@@ -63,6 +63,8 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
   "https://<CONSOLE>/api/v<VERSION>/registry/scan"
   ```
 > **Note:** You can initiate a regular or periodic scan with the same API by not using the `onDemandScan` parameter or setting it up to `false` in the request body. 
+
+
 ## View Registry Scan Progress
 
 3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
@@ -104,6 +106,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
   ]
   ```
 > **Note:** You can view the progress of a regular or periodic registry scan without using the query parameters.
+
 ## Check Regular or Periodic Scan Status  
 
 4. Check the status of a regular registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
@@ -126,6 +129,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
   ```
 
 > **Note:** You can also stop an ongoing registry scan with [POST, stop registry scan](/prisma-cloud/api/cwpp/post-registry-stop/) ![alt text](/icons/api-icon-pan-dev.svg) if needed.
+
 
 ## Retrieve the Registry Scan Reports
 
