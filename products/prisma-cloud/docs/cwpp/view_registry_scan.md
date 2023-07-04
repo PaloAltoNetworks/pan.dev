@@ -1,10 +1,10 @@
 ---
 id: vuln-registry-scan
-title: Get Vulnerability Report for Registry Scans
+title: Get Vulnerability Report for an On-demand Registry Scan
 sidebar_position: 7
 ---
 
-This guide shows how to add registry settings, initiate a scan, view its progress, and fetch over a million scan results.
+This guide shows how to get vulnerability report for registries.
 
 ***Prerequisite***:
 
@@ -15,6 +15,13 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 - The token is only valid for 30 minutes.
 
 :::
+
+**Follow these steps:**
+1. Set Up and Add Registry Settings
+2. Initiate Registry Scan
+3. View Registry Scan Progress
+4. Check Regular or Periodic Scan Status 
+5. Retrieve Scan Reports
 
 ## Set Up and Add Registry Settings
 
@@ -43,7 +50,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 
 > **Note:** You can view the settings by using [GET, registry settings](/prisma-cloud/api/cwpp/get-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg) and update by using [PUT, registry settings](prisma-cloud/api/cwpp/put-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg) if needed.
 
-## Initiate On-demand Registry Scan Progress
+## Initiate Registry Scan
 
 2. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
 
@@ -55,8 +62,8 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
   -d '{“onDemandScan”:true,“tag”:{“repo”:“library/alpine”,“tag” :“3.16”}}' \
   "https://<CONSOLE>/api/v<VERSION>/registry/scan"
   ```
-
-## View On-demand Registry Scan Progress
+> **Note:** You can initiate a regular or periodic scan with the same API by not using the `onDemandScan` parameter or setting it up to `false` in the request body. 
+## View Registry Scan Progress
 
 3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
 
@@ -96,10 +103,10 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
       }
   ]
   ```
+> **Note:** You can view the progress of a regular or periodic registry scan without using the query parameters.
+## Check Regular or Periodic Scan Status  
 
-## Check the Registry Scan Status
-
-4. Check the status of registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
+4. Check the status of a regular registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**
   ```bash
@@ -120,9 +127,9 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 
 > **Note:** You can also stop an ongoing registry scan with [POST, stop registry scan](/prisma-cloud/api/cwpp/post-registry-stop/) ![alt text](/icons/api-icon-pan-dev.svg) if needed.
 
-## Download Registry Scan Report
+## Retrieve the Registry Scan Reports
 
-5. Fetch the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
+5. Retrieve the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **Response**
   ```bash
