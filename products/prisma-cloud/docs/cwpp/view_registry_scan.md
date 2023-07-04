@@ -20,8 +20,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 
 1. Add the registry entries to set up the scan by using the [POST, registry settings](/prisma-cloud/api/cwpp/post-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
-<details>
-  <summary>cURL Request</summary>
+**cURL Request**
   ```bash
   curl -k \
     -u <USER> \
@@ -41,7 +40,6 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
     } ' \
     'https://<CONSOLE>/api/v<VERSION>/settings/registry'
   ```
-</details>
 
 > **Note:** You can view the settings by using [GET, registry settings](/prisma-cloud/api/cwpp/get-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg) and update by using [PUT, registry settings](prisma-cloud/api/cwpp/put-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg) if needed.
 
@@ -49,8 +47,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 
 2. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
 
-<details>
-  <summary>cURL Request</summary>
+**cURL Request**
   ```bash
   curl -sSL --header "authorization: Bearer access_token" \
     -H 'Content-Type: application/json' \
@@ -58,25 +55,20 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
   -d '{“onDemandScan”:true,“tag”:{“repo”:“library/alpine”,“tag” :“3.16”}}' \
   "https://<CONSOLE>/api/v<VERSION>/registry/scan"
   ```
-</details>
-
 
 ## View On-demand Registry Scan Progress
 
 3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
 
-<details>
-  <summary>cURL Request</summary>
+**cURL Request**
   ```bash
   curl -sSL --header "authorization: Bearer access_token" \
     -H 'Content-Type: application/json' \
     -X GET \
     "https://<CONSOLE>/api/v<VERSION>/registry/progress?onDemand=true&repo=library/alpine&tag=3.16"
   ```
-</details>
 
-<details>
-  <summary>Response</summary>
+**Response**
   ```bash
   [
     {
@@ -104,15 +96,12 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
       }
   ]
   ```
-</details>
-
 
 ## Check the Registry Scan Status
 
 4. Check the status of registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
-<details>
-  <summary>cURL Request</summary>
+**cURL Request**
   ```bash
   curl -k \
     -u <USER> \
@@ -120,18 +109,14 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
     -X GET \
     https://<CONSOLE>/api/v<VERSION>/statuses/registry
   ```
-</details>
 
-<details>
-  <summary>Response</summary>
+**Response**
   ```bash
   {
   "scanTime": "2019-07-31T19:42:49.036311567Z",
   "completed": true
   }
   ```
-</details>
-
 
 > **Note:** You can also stop an ongoing registry scan with [POST, stop registry scan](/prisma-cloud/api/cwpp/post-registry-stop/) ![alt text](/icons/api-icon-pan-dev.svg) if needed.
 
@@ -139,8 +124,7 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
 
 5. Fetch the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
 
-<details>
-  <summary>Response</summary>
+**Response**
   ```bash
   curl -k \
     -u <USER> \
@@ -149,6 +133,5 @@ Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/
     "https://<CONSOLE>/api/v<VERSION>/registry/download" \
     > registry_report.csv
   ```
-</details>
 
 > **Note:** You can also view the registry scan report in JSON format with [GET, registry scan results](/prisma-cloud/api/cwpp/get-registry/) ![alt text](/icons/api-icon-pan-dev.svg).
