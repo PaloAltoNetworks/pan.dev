@@ -6,9 +6,9 @@ sidebar_position: 7
 
 This guide shows how to add registry settings, initiate a scan, view its progress, and fetch over a million scan results.
 
-## Authenticate to Begin
+***Prerequisite***:
 
-1. Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg)
+Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg)
 
 :::info
 
@@ -18,7 +18,7 @@ This guide shows how to add registry settings, initiate a scan, view its progres
 
 ## Set Up and Add Registry Settings
 
-2. Add the registry entries to set up the scan by using the [POST, registry settings](/prisma-cloud/api/cwpp/post-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
+1. Add the registry entries to set up the scan by using the [POST, registry settings](/prisma-cloud/api/cwpp/post-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**:
 
@@ -45,7 +45,7 @@ curl -k \
 
 ## Initiate On-demand Registry Scan Progress
 
-3. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
+2. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**:
 
@@ -59,7 +59,7 @@ curl -sSL --header "authorization: Bearer access_token" \
 
 ## View On-demand Registry Scan Progress
 
-4. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
+3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **cURL Request**:
 
@@ -102,7 +102,7 @@ curl -sSL --header "authorization: Bearer access_token" \
 
 ## Check the Registry Scan Status
 
-5. Check the status of registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
+4. Check the status of registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**
 
@@ -127,7 +127,7 @@ curl -k \
 
 ## Download Registry Scan Report
 
-6. Fetch the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
+5. Fetch the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **cURL Request**:
 
