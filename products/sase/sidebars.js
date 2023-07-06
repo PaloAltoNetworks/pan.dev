@@ -94,6 +94,16 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Autonomous DEM",
+      collapsed: true,
+      items: [
+        "access/docs/adem/adem",
+        "access/docs/adem/filter-parameter",
+        "access/docs/adem/include-parameter",
+      ],
+    },
+    {
+      type: "category",
       label: "Prisma Access Insights",
       collapsed: true,
       items: [
