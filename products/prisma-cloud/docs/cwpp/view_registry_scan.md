@@ -4,17 +4,40 @@ title: Get Vulnerability Report for an On-demand Registry Scan
 sidebar_position: 7
 ---
 
-This guide shows how to get vulnerability report for registries.
+Prisma Cloud scans container images in public and private repositories stored on public and private registries.
+
+A registry is a system that stores and distributes container images.
+
+You can configure the following registries:
+
+* Amazon EC2 Container Registry: `aws`
+* Azure Container Registry: `azure`
+* CoreOS Quay: `coreos`
+* Docker Registry v2: `2`
+* Docker Trusted Registry: `dtr`
+* Google Container Registry: `gcr`
+* GitLab Container Registry: `gitlab`
+* IBM Cloud Container Registry: `bluemix`
+* JFrog Artifactory: `jfrog`
+* Red Hat OpenShift: `redhat`
+* Sonatype Nexus: `sonatype`
+
+After you configure, Prisma Cloud automatically scans images for vulnerabilities.
+
+This guide shows how to get vulnerability report for container images stored in different registries.
+
 
 ***Prerequisite***:
 
-Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg)
+* Make sure that you have deployed a Defender. For more details, see the [Deploying Defender](/prisma-cloud/docs/cwpp/deploy-defenders/) worlflow.
 
-:::info
+* Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg)
 
-- The token is only valid for 30 minutes.
+  :::info
 
-:::
+  - The token is only valid for 30 minutes.
+
+  :::
 
 **Follow these steps:**
 1. [Set Up and Add Registry Settings](#set-up-and-add-registry-settings)
