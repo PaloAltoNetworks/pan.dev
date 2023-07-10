@@ -1,6 +1,6 @@
 ---
 id: vuln-registry-scan
-title: Get Vulnerability Report for an On-demand Registry Scan
+title: Get Vulnerability Report for a Registry Scan
 sidebar_position: 7
 ---
 
@@ -22,9 +22,16 @@ You can configure the following registries:
 * Red Hat OpenShift: `redhat`
 * Sonatype Nexus: `sonatype`
 
-After you configure, Prisma Cloud automatically scans images for vulnerabilities.
+> **Note:** For the latest list of supported registries, see [Add Registry Settings](/prisma-cloud/api/cwpp/post-settings-registry/).
 
-This guide shows how to get vulnerability report for container images stored in different registries.
+After you configure, Prisma Cloud automatically scans images for vulnerabilities in the following steps:
+
+1. Scans the configured registry settings one by one in a sequential order.
+2. Discovers the repositories based on the registry configuration.
+3. Discovers the images using tags within each configured repository.
+4. Scans the discovered images.
+
+This guide shows how to get vulnerability report for container images stored in different registries. For more information about registry scan, see [Configure Registry Scan](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/vulnerability_management/registry_scanning/configure_registry_scanning).
 
 
 ***Prerequisite***:
@@ -43,12 +50,12 @@ This guide shows how to get vulnerability report for container images stored in 
 1. [Set Up and Add Registry Settings](#set-up-and-add-registry-settings)
 2. [Initiate Registry Scan](#initiate-registry-scan)
 3. [View Registry Scan Progress](#view-registry-scan-progress)
-4. [Check Regular or Periodic Scan Status](#check-regular-or-periodic-scan-status)
+4. [Check Scan Status (Available only for Regular or Periodic Scans)](#check-regular-or-periodic-scan-status)
 5. [Retrieve Scan Reports](#retrieve-the-registry-scan-reports)
 
 ## Set Up and Add Registry Settings
 
-1. Add the registry entries to set up the scan by using the [POST, registry settings](/prisma-cloud/api/cwpp/post-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
+Add the registry entries to set up the scan by using the [POST, registry settings](/prisma-cloud/api/cwpp/post-settings-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**
   ```bash
@@ -75,7 +82,7 @@ This guide shows how to get vulnerability report for container images stored in 
 
 ## Initiate Registry Scan
 
-2. Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
+Start the on-demand registry scan by adding the required request parameters in [POST, registry scan](/prisma-cloud/api/cwpp/post-registry-scan/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**
   ```bash
@@ -90,7 +97,7 @@ This guide shows how to get vulnerability report for container images stored in 
 
 ## View Registry Scan Progress
 
-3. View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
+View the on-demand registry scan progress by using the same request parameters in [GET, registry scan progress](/prisma-cloud/api/cwpp/get-registry-progress/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **cURL Request**
   ```bash
@@ -130,9 +137,9 @@ This guide shows how to get vulnerability report for container images stored in 
   ```
 > **Note:** You can view the progress of a regular or periodic registry scan without using the query parameters.
 
-## Check Regular or Periodic Scan Status  
+## Check Scan Status  
 
-4. Check the status of a regular registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
+Check the status of a regular registry scan with [GET, registry status](/prisma-cloud/api/cwpp/get-statuses-registry/) ![alt text](/icons/api-icon-pan-dev.svg):
 
 **cURL Request**
   ```bash
@@ -156,7 +163,7 @@ This guide shows how to get vulnerability report for container images stored in 
 
 ## Retrieve the Registry Scan Reports
 
-5. Retrieve the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
+Retrieve the registry scan reports with [GET, download registry scan results](/prisma-cloud/api/cwpp/get-registry-download/) ![alt text](/icons/api-icon-pan-dev.svg).
 
 **Response**
   ```bash
