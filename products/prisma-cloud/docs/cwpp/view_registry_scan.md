@@ -36,7 +36,7 @@ This guide shows how to get vulnerability report for container images stored in 
 
 ***Prerequisite***:
 
-* Make sure that you have deployed a Defender. For more details, see the [Deploying Defender](/prisma-cloud/docs/cwpp/deploy-defenders/) worlflow.
+* Make sure that you have deployed a Defender. For more details, see the [Deploying Defender](/prisma-cloud/docs/cwpp/deploy-defenders/) workflow.
 
 * Obtain an authorization token by [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg)
 
