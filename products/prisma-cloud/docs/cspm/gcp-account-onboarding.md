@@ -4,11 +4,11 @@ title: Automate GCP Cloud Account Onboarding
 sidebar_position: 5
 ---
 
-Onboarding a GCP account, such as GCP project or GCP Organization on Prisma Cloud connects all the respective GCP resources to Prisma Cloud. 
+Onboarding a GCP account, such as GCP project or GCP Organization, on Prisma Cloud connects all the respective GCP resources to Prisma Cloud. 
 
-You can add a single GCP project or multiple GCP projects to Prisma Cloud. If you want to add multiple projects, you must either add each project separately or you can allow Prisma Cloud to automatically monitor all GCP projects that use the Service Account attached to the project. Prisma Cloud refers to this service account as a **Master Service Account**.
+You can onboard resources by adding a single GCP project or multiple GCP projects to Prisma Cloud. If you want to add multiple projects, you must either add each project separately or you can allow Prisma Cloud to automatically monitor all GCP projects that use the Service Account attached to the project. Prisma Cloud refers to this service account as a **Master Service Account**.
 
-All the section in this topic contains sample request and response for onboarding resources under a GCP Project, a GCP organization and the Master Service Account.
+All the sections in this topic contain sample requests and responses for onboarding resources under a GCP Project, a GCP organization, and a Master Service Account.
 
 > **Prerequisite**: 
 > - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs. 
@@ -16,7 +16,7 @@ All the section in this topic contains sample request and response for onboardin
 :::info
 
 - The token is valid for only 10 minutes. If your session extends beyond that limit, [refresh the session](/prisma-cloud/api/cspm/extend-session/) ![alt text](/icons/api-icon-pan-dev.svg).
-- Replace the generic `api.prismacloud.io` base url used in the example APIs with your url.
+- Replace the generic `api.prismacloud.io` base URL used in the example APIs with your URL.
 
 :::
 
