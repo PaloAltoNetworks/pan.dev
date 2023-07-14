@@ -1,10 +1,14 @@
 ---
 id: gcp-account-onboarding
 title: Automate GCP Cloud Account Onboarding
+sidebar_position: 5
 ---
 
-Onboarding a GCP account, such as GCP project, GCP Organization, or GCP MasterServiceAccount on Prisma Cloud connects all your GCP resources to Prisma Cloud. Prisma Cloud uses Service Account to authenticate the ingestion of GCP cloud metadata, configurations, and logs.
+Onboarding a GCP account, such as GCP project or GCP Organization on Prisma Cloud connects all the respective GCP resources to Prisma Cloud. 
 
+You can add a single GCP project or multiple GCP projects to Prisma Cloud. If you want to add multiple projects, you must either add each project separately or you can allow Prisma Cloud to automatically monitor all GCP projects that use the Service Account attached to the project. Prisma Cloud refers to this service account as a **Master Service Account**.
+
+All the section in this topic contains sample request and response for onboarding resources under a GCP Project, a GCP organization and the Master Service Account.
 
 > **Prerequisite**: 
 > - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs. 
@@ -16,15 +20,15 @@ Onboarding a GCP account, such as GCP project, GCP Organization, or GCP MasterSe
 
 :::
 
-To onboard GCP Accounts, such as GCP project, GCP Organization, or GCP MasterServiceAccount:
+To onboard GCP Accounts, such as GCP Project, GCP Organization, or Master Service Account:
 
-  [1. Fetch the supported features based on the cloud type, account type, and deployment type.](#1-fetch-the-supported-features)
+  [1. Fetch the supported features based on the cloud type and account type.](#1-fetch-the-supported-features)
 
   [2. Generate the Terraform template.](#2-generate-the-terraform-template)
   
   [3. Execute the Terraform template in Google cloud shell to create service accounts and  its roles.](#3-create-service-account-and-corresponding-permissions-in-google-cloud-shell)
 
-  [4. Onboard your GCP Account on Prisma Cloud.](#4-onboard-the-gcp-project-on-prisma-cloud)
+  [4. Add your GCP Account to Prisma Cloud.](#4-add-the-gcp-account-to-prisma-cloud)
 
 ![](/img/gcp_onboarding_workflow.png)
 
@@ -108,7 +112,7 @@ Get the list of supported features based on the cloud type, account type, and de
   ```
 </details>
 
-  **Sample Request and Response for GCP MasterServiceAccount**  
+  **Sample Request and Response for Master Service Account**  
 
 <details>
   <summary>Sample Request</summary>
@@ -2045,7 +2049,7 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
 
 </details>
 
-**Sample Request and Response for GCP MasterServiceAccount**  
+**Sample Request and Response for Master Service Account**  
 <details>
   <summary>Sample Request</summary>
 
@@ -2987,9 +2991,11 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
     * b. terraform apply
   3. Follow the output instruction in the Google Cloud Shell and download the JSON file.Use the contents of the downloaded file in the next step.
 
-## 4. Onboard the GCP Project on Prisma Cloud
+## 4. Add the GCP Account to Prisma Cloud
 
 Add GCP Account by using [Add GCP Account API](/prisma-cloud/api/cspm/add-gcp-cloud-account/) ![alt text](/icons/api-icon-pan-dev.svg). Use the credentials, features, and states obtained in the previous steps in the request payload.
+
+For GCP Organization, you can specify the folders or the projects that you want to exclude or include in the `hierarchySelection` parameter.
 
 > **Note:** By default, the supported features list will contain **Cloud Visibility Compliance and Governance**. Do not include it as a feature in the supported feature request body parameter. An empty features list indicates that the default capabilities under **Cloud Visibility Compliance and Governance** are enabled.
 
@@ -3078,7 +3084,7 @@ Add GCP Account by using [Add GCP Account API](/prisma-cloud/api/cspm/add-gcp-cl
 </details>
 
 <details>
-<summary>Sample Request for GCP MasterServiceAccount</summary> 
+<summary>Sample Request for Master Service Account</summary> 
 
 ```bash
         curl -v --request POST 'https://api.prismacloud.io/cas/v1/gcp_account' \
@@ -3127,3 +3133,5 @@ Add GCP Account by using [Add GCP Account API](/prisma-cloud/api/cspm/add-gcp-cl
   200 (Success)
 ```
 </details>
+
+Verify that the GCP cloud account is onboarded successfully either by using the [List Cloud Account API](/prisma-cloud/api/cspm/get-cloud-accounts/) or by navigating to **Cloud Accounts** in the Prisma Cloud UI.

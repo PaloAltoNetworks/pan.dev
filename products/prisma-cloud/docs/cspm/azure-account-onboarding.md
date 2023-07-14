@@ -1,6 +1,7 @@
 ---
 id: azure-account-onboarding
 title: Automate Azure Cloud Account Onboarding
+sidebar_position: 4
 ---
 
 Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Azure Active Directory on Prisma Cloud connects all your Azure resources to Prisma Cloud. Prisma Cloud uses Application (Client) ID, Application Client Secret and Enterprise Application Object ID for authentication to ingest Azure Active Directory metadata, configurations, and logs.
