@@ -6,7 +6,19 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Autonomous DEM APIs require a `timerange` query parameter which is a human readable format last_<N>_<minute|hour|day|week|month>. For example, last_30_days, last_30_minutes, last_2_weeks. The responses are aggregated over a sample period which is a function of the time interval requested, such that the granularity decreases with increasing interval. This keeps the number of sample returned to a reasonable number whilst still allowing higher resolution at small intervals.
+Autonomous DEM APIs require a `timerange` query parameter. The timerange that you supply is in human readable format:
+
+    last_<N>_<minute|hour|day|week|month>. 
+
+For example: 
+
+    last_30_days
+    last_30_minutes
+    last_2_weeks 
+
+The responses are aggregated over a sample period which is a function of the time interval
+requested, such that the granularity decreases with increasing interval. This keeps the number of
+sample returned to a reasonable number whilst still allowing higher resolution at small intervals.
 
 | Interval (days)    | Sample Period (minutes) |
 | ---------------    | ----------------------- |
@@ -17,4 +29,7 @@ Autonomous DEM APIs require a `timerange` query parameter which is a human reada
 | <= 21              | 120                     |
 | >21                | 180                     |
 
-Alternately, you can specify the time range in either the start, end format (timestamps in Unix timestamp format (seconds) e.g. start=1686814360&end=1686900760)
+Alternately, you can specify the time range using the start and end parameters. These accept Unix
+timestamps. For example: 
+
+    start=1686814360&end=1686900760)
