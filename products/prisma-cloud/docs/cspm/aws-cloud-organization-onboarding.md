@@ -1,6 +1,7 @@
 ---
 id: aws-cloud-organization-onboarding
 title: Automate AWS Cloud Organization Onboarding
+sidebar_position: 3
 ---
 
 To successfully onboard an AWS Organization in Prisma Cloud, create IAM Roles in your AWS Organization account and member accounts that has a trusted relationship with Prisma Cloud AWS Account. Prisma Cloud uses IAM Role ARN to *AssumeRole* in to your AWS Organization and member accounts and ingest various configurations and logs.
