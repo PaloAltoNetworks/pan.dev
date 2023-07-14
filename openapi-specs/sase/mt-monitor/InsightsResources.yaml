@@ -57,12 +57,11 @@ info:
   version: '1.0'
 openapi: 3.0.2
 paths:
-  /mt/monitor/v1/agg/custom/upgrades/list:
+  /mt/monitor/v1/agg/upgrades/list:
     post:
-      description: 'Retrieve an aggregated list of all upgrade statuses across tenants.
-
-        '
-      operationId: post-mt-monitor-v1-agg-custom-upgrades-list
+      description: "Retrieve an aggregated upgrade list across tenants.          \
+        \          \n"
+      operationId: post-mt-monitor-v1-agg-upgrades-list
       parameters:
       - description: "Must be `tenant`. Using the query parameter returns all the\
           \ aggregated responses for the current parent tenant and its child tenants.\
@@ -71,10 +70,11 @@ paths:
         in: query
         name: agg_by
         schema: {type: string}
-      - description: 'Must be one of the following: `de`, `americas`, `europe`, `uk`,
-          `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake
-          (CDL) region specified. If no region is specified, the default response
-          is `americas` CDL region.    '
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region.                                            \
+          \           \n"
         example: americas
         in: header
         name: X-PANW-Region
@@ -85,15 +85,30 @@ paths:
             examples:
               Upgrade List:
                 value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: equals
+                      property: start_date
+                      values:
+                      - ['2023-05-01T01:00:00.000Z']
+                    - operator: equals
+                      property: end_date
+                      values:
+                      - ['2023-05-01T01:00:00.000Z']
                   properties:
+                  - {property: tenant_id}
                   - {property: sub_tenant_id}
-                  - {property: amiversion}
-                  - {property: current_software_version}
-                  - {property: last_upgrade_date}
-                  - {property: next_upgrade_scheduled_str}
+                  - {property: current_version}
+                  - {property: candidate_release_list}
+                  - {property: customer_onboarded_locations}
+                  - {property: upgrade_ts}
+                  - {property: time_window}
+                  - {property: compute_timezone}
+                  - {property: upgrade_ts}
+                  - {property: upgrade_type}
+                  - {property: upgrade_version}
                   - {property: status}
-                  - {property: error}
-                  - {property: next_upgrade_scheduled}
             schema: {$ref: '#/components/schemas/RequestBody_UpgradesList'}
       responses:
         '200':
@@ -102,10 +117,18 @@ paths:
               examples:
                 Upgrade List:
                   value:
-                  - {amiversion: <amiversion>, current_software_version: <current_software_version>,
-                    error: <error>, last_upgrade_date: <last_upgrade_date>, next_upgrade_scheduled: <next_upgrade_scheduled>,
-                    next_upgrade_scheduled_str: <next_upgrade_scheduled_str>, status: <status>,
-                    sub_tenant_id: <sub_tenant_id>}
+                  - {tenant_id: <tenant_id>}
+                  - {sub_tenant_id: <sub_tenant_id>}
+                  - {current_version: <amiversion>}
+                  - {candidate_release_list: <candidate_release_list>}
+                  - {customer_onboarded_locations: <customer_onboarded_locations>}
+                  - {upgrade_ts: <upgrade_ts>}
+                  - {time_window: <time_window>}
+                  - {compute_timezone: <compute_timezone>}
+                  - {upgrade_ts: <upgrade_ts>}
+                  - {upgrade_type: <upgrade_type>}
+                  - {upgrade_version: <upgrade_version>}
+                  - {status: <status>}
           description: Success
         '400': {description: Bad Request}
         '500': {description: Server Error}

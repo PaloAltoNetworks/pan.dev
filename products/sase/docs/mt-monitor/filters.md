@@ -169,6 +169,29 @@ For example:
         ]
       }...
 
+### IncidentRule
+
+Object with the following properties:
+
+| Property | Type             | Description                                                       |
+| -------- | ---------------- | ----------------------------------------------------------------- |
+| property | string           | Property field name. Must be `status`.                         |
+| operator | string           | Operator to run on the `property` field. Must be `in`.            |
+| values   | array of strings | Property value. Can be `Raised` or `Cleared` when property is `status`. |
+
+For example:
+
+    ...
+    "rules": [
+      {
+        "operator": "in",
+        "property": "status",
+        "values": [
+          Raised,
+          Cleared
+        ]
+      }...
+
 ### OutlierRule
 
 Object with the following properties:
@@ -489,6 +512,29 @@ For example:
         }
       ]
 
+### IncidentProperty
+
+Object with the following properties:
+
+| Property | Type   | Description                                                                                                                                                                 |
+| -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`total_count`</li><li>`warning_count`</li><li>`critical_count`</li><li>`created_time`</li><li>`updated_time`</li><li>`category`</li><li>`status`</li><li>`raised_time`</li><li>`cleared_time`</li></ul> |
+
+For example:
+
+    "properties": [
+        {
+        "property": "critical_count"
+        },
+        {
+        "property": "total_count"
+        },
+        {
+        "property": "warning_count"
+        }
+      ]
+
 ### OutliersProperty
 
 Object with the following properties:
@@ -674,35 +720,42 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`amiversion` - AWS AMI version</li><li>`current_software_version` - Prisma Access software version</li><li>`last_upgrade_date` - last upgrade date</li><li>`next_upgrade_scheduled_str` - date time of next scheduled upgrade</li><li>`status` - last upgrade status</li><li>`error` - upgrade error</li><li>`next_upgrade_scheduled` - date of next scheduled upgrade</li></ul> |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`tenant_id` - Tenant service group ID</li><li>`sub_tenant_id` - Child or sub tenant service group ID</li><li>`current_version` - Prisma Access versions, such as: PANOS-10.0.8-c1188.saas</li><li>`candidate_release_list` - The release list, such as: Preferred-10.0.8, latest </li><li>`customer_onboarded_locations` - The locations of the upgrade, such as: US East, Singapore, Ireland</li><li>`upgrade_ts` - The epoc time series such as epocTs from 1647241200000 to 1647414000000</li><li>`time_window` - The upgrade time window, such as: 10:00 AM to 11:00 PM</li><li>`compute_timezone` - The compute timezone, such as: NULL,HKT,GMT,CET,PDT,EDT,CDT,SGT,CST,EST</li><li>`upgrade_type` - The upgrade type, such as: full-upgrade, canary-upgrade</li><li>`upgrade_version` - The version of the next Prisma Access upgrade, such as: PANOS-10.2.4-ch39.saas</li><li>`status` - The last upgrade status, such as: scheduled, completed, failed</li></ul> |
 
 For example:
 
     {
       "properties": [
         {
-          "property": "sub_tenant_id"
+          "property":"tenant_id"
         },
         {
-          "property": "amiversion"
+          "property":"sub_tenant_id"
         },
         {
-          "property": "current_software_version"
+          "property":"amiversion"
         },
         {
-          "property": "last_upgrade_date"
+          "property":"candidate_release_list"
         },
         {
-          "property": "next_upgrade_scheduled_str"
+          "property":"customer_onboarded_locations"
         },
         {
-          "property": "status"
+          "property":"upgrade_ts"
         },
         {
-          "property": "error"
+          "property":"time_window"
         },
         {
-          "property": "next_upgrade_scheduled"
+          "property":"compute_timezone"
+        },
+        {
+          "property":"upgrade_type"
+        },
+        {
+          "property":"status"
         }
       ]
     }
+
