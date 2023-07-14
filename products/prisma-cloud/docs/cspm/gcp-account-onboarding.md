@@ -6,7 +6,7 @@ sidebar_position: 5
 
 Onboarding a GCP account, such as GCP project or GCP Organization, on Prisma Cloud connects all the respective GCP resources to Prisma Cloud. 
 
-You can onboard resources by adding a single GCP project or multiple GCP projects to Prisma Cloud. If you want to add multiple projects, you must either add each project separately or you can allow Prisma Cloud to automatically monitor all GCP projects that use the Service Account attached to the project. Prisma Cloud refers to this service account as a **Master Service Account**.
+You can onboard a single GCP project or multiple GCP projects to Prisma Cloud. If you want to onboard multiple projects, you must either onboard each project separately or allow Prisma Cloud to automatically onboard all GCP projects attached to the service account linked to the onboarded project. Prisma Cloud refers to this service account as a **Master Service Account**.
 
 All the sections in this topic contain sample requests and responses for onboarding resources under a GCP Project, a GCP organization, and a Master Service Account.
 
