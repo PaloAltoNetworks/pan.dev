@@ -723,6 +723,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/prisma-cloud/api/30-01/",
           },
+          cwpp_3002: {
+            specPath: "openapi-specs/cwpp/30-02",
+            outputDir: "products/prisma-cloud/api/cwpp/30-02",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/30-02/",
+          },
           cspm: {
             specPath: "openapi-specs/cspm",
             outputDir: "products/prisma-cloud/api/cspm",
