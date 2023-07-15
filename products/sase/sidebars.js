@@ -94,6 +94,29 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Autonomous DEM",
+      collapsed: true,
+      items: [
+        "access/docs/adem/adem",
+        "access/docs/adem/getstarted",
+        {
+          type: "category",
+          label: "Parameter Details",
+          collapsed: true,
+          items: [
+            "access/docs/adem/endpoint-type-parameter",
+            "access/docs/adem/filter-parameter",
+            "access/docs/adem/include-parameter",
+            "access/docs/adem/pagination-parameter",
+            "access/docs/adem/response-type-parameter",
+            "access/docs/adem/result-filter-parameter",
+            "access/docs/adem/timerange-parameter",
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Prisma Access Insights",
       collapsed: true,
       items: [
