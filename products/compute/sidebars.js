@@ -5,7 +5,7 @@ const {
 } = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
 
 module.exports = {
-  compute_3003: [
+  compute: [
     {
       type: "html",
       defaultStyle: true,
