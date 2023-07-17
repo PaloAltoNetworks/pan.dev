@@ -6,7 +6,7 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Autonomous DEM APIs require a `timerange` query parameter. The timerange that you supply is in human readable format:
+Autonomous DEM APIs provide a `timerange` query parameter. The timerange that you supply is in human readable format:
 
     last_<N>_<minute|hour|day|week|month>. 
 
@@ -29,7 +29,7 @@ sample returned to a reasonable number whilst still allowing higher resolution a
 | <= 21              | 120                     |
 | >21                | 180                     |
 
-Alternately, you can specify the time range using the start and end parameters. These accept Unix
+Alternately, you can specify an exact time range using the `start` and `end` query parameters. These accept Unix
 timestamps. For example: 
 
     start=1686814360&end=1686900760
