@@ -6,10 +6,10 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Autonomous DEM APIs require a `result-filter` query parameter to limit results by filtering the
-output of the query. It maps to a HAVING statement ( as compared with the input, which maps to a
-SELECT ). The output is filtered by requiring specified scores to be in a range defined by the score
-classification:
+Autonomous DEM APIs provide a `result-filter` query parameter that allows you to limit results by
+filtering the output of the query. It maps to a HAVING statement ( as compared with the input, which
+maps to a SELECT ). The output is filtered by requiring specified scores to be in a range defined by
+the score classification:
 
 | Category           | Range                |
 | ---------------    | -------------------- |
