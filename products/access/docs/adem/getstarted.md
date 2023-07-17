@@ -29,32 +29,8 @@ this process, see
 ## Base URL and Region
 
 You use Prisma SASE to obtain an access token for use with your Prisma Access 2.0 APIs, and you
-use the same FQDN as do the other Prisma SASE APIs:
-
-    https://api.sase.paloaltonetworks.com
-
-However, you must use the `x-panw-region` HTTP header to identify your tenant's Cortex Data Lake (CDL) region. Available
-regions are:
-
-| Region    | Country                      |
-| --------- | ---------------------------- |
-| americas  | United States                |
-| au        | Australia                    |
-| ca        | Canada                       |
-| ch        | China                        |
-| de        | Germany                      |
-| es        | Spain                        |
-| eu        | European Union               |
-| fr        | France                       |
-| in        | India                        |
-| jp        | Japan                        |
-| pl        | Poland                       |
-| sg        | Southeast Asia               |
-| uk        | United Kingdom               |
-
-
-You chose your region when you initially configured your Prisma Access
-instance.
+use the [same FQDN](/sase/docs/api-call/). Also, this API requires the x-panw-region header. See 
+[About x-panw-region](/sase/docs/api-call/#about-x-panw-region) for usage information.
 
 ## Full API URL
 
@@ -77,10 +53,10 @@ API call using the `Prisma-Tenant` custom HTTP header.
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token as returned by the Auth service
     # <TSG_ID> - Tenant Service Group ID used for the scope when you obtained your access token.
     #
-    curl -o --location "https://api.sase.paloaltonetworks.com/adem/telemetry/agent/v2/measure/agent/score?start=1688973957&end=1689060357&endpoint-type=muAgent&response-type=summary" \
-        -H "x-panw-region: de" \
+
+    curl --location "https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?start=1688973957&end=1689060357&endpoint-type=muAgent&response-type=summary" \
+        -H "x-panw-region: <region>" \
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Prisma-Tenant <TSG_ID>" \
         -H "Prisma-SubTenant <subtenant_id>" \
-		-H "Content-Type: application/json"
-
+        -H "Content-Type: application/json"
