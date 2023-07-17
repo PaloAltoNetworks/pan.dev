@@ -16,7 +16,7 @@ import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import Medium from "../components/Medium";
 import styles from "./styles.module.css";
-
+// TODO: Remove later - testing purposes
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
