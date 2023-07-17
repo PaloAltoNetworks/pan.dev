@@ -5,7 +5,7 @@ const {
 } = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
 
 module.exports = {
-  compute_3002: [
+  compute_3003: [
     {
       type: "html",
       defaultStyle: true,
@@ -15,7 +15,7 @@ module.exports = {
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`30-02`),
+      value: versionCrumb(`30-03`),
     },
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
@@ -59,7 +59,18 @@ module.exports = {
     "compute/api/22-06/stable-endpoints",
     require("./api/22-06/sidebar"),
   ],
-  compute_30: [
+  compute_3002: [
+    {
+      type: "category",
+      label: "Prisma Cloud Compute Edition - 30.02",
+      collapsed: true,
+      items: [
+        "compute/api/30-02/stable-endpoints",
+        require("./api/30-02/sidebar"),
+      ],
+    },
+  ],
+  compute_3001: [
     {
       type: "category",
       label: "Prisma Cloud Compute Edition - 30.01",
@@ -70,8 +81,7 @@ module.exports = {
       ],
     },
   ],
-
-  compute_3001: [
+  compute_30: [
     {
       type: "category",
       label: "Prisma Cloud Compute Edition - 30.00",
