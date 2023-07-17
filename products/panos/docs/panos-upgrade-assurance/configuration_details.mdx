@@ -125,25 +125,36 @@ The list of checks to run looks as follows:
 
 ```python
 [
-  'panorama',
-  'ntp_sync',
+  "active_support",
   'candidate_config',
   'expired_licenses',
+  'ntp_sync',
+  'panorama',
   # tests below have optional configuration
+  {
+    "certificates_requirements": {
+      "ecdsa": {"hash_method": "sha512"},
+      "rsa": {
+        "key_size": 1024,
+        "hash_method": "sha1"
+      }
+    }
+  },
   {'content_version': {'version': '8634-7678'}},
+  {"expired_licenses": {"skip_licenses": ["Threat Prevention"]}},
   {'free_disk_space': {'image_version': '10.1.6-h6'}},
   {'ha': {'skip_config_sync': True}},
   {'planes_clock_sync': {'diff_threshold': 30}}
   # tests below require additional configuration
+  {'arp_entry_exist': {'ip': '10.0.1.1'} },
+  {'ip_sec_tunnel_status': {
+    'tunnel_name': 'ipsec_tun'
+  }},
   {'session_exist': {
     'source': '134.238.135.137',
     'destination': '10.1.0.4',
     'dest_port': '80'
   }},
-  {'arp_entry_exist': {'ip': '10.0.1.1'} },
-  {'ip_sec_tunnel_status': {
-    'tunnel_name': 'ipsec_tun'
-  }}
 ]
 ```
 
@@ -161,9 +172,10 @@ parameter | description
 --- | ---
 `ip` | IP address we look for
 `interface` | (optional) network interface name we would like to limit the search to
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 # with lookup limited to a single interface
 {
   'ip': '10.0.1.1'
@@ -184,6 +196,40 @@ Does not require configuration.
 
 **Method:** [`CheckFirewall.check_pending_changes()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_pending_changes)
 
+### `certificates_requirements`
+
+Verifies each certificates' properties against minimum requirements (keys size and hashing method). When run w/o any additional parameters the minimum requirements follow limitations introduced in [PanOS 10.2](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-release-notes/changes-to-default-behavior/changes-to-default-behavior-in-pan-os-10-2#:~:text=Link%20Management%20Profiles-,Certificates,-On%20upgrade%20to).
+
+**Method**: [`CheckFirewall.check_ssl_cert_requirements()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_ssl_cert_requirements)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`rsa` | (optional) dictionary describing minimum requirements for `RSA` certificates
+`ecdsa` | (optional) dictionary describing minimum requirements for `ECDSA` certificates
+
+Both dictionaries accept the following keys:
+
+key | description
+--- | ---
+`hash_method` | a minimum ([from security perspective](https://en.wikipedia.org/wiki/Hash_function_security_summary)) required hashing method
+`key_size` | a minimum size of a key.
+
+**Sample configuration**
+
+```python showLineNumbers
+{
+  "ecdsa": {
+      "hash_method": "sha512"
+  },
+  "rsa": {
+      "key_size": 1024,
+      "hash_method": "sha1"
+  }
+}
+```
+
 ### `content_version`
 
 Compares currently installed Content DB version against either:
@@ -198,9 +244,10 @@ Compares currently installed Content DB version against either:
 paramter | description
 --- | ---
 `version` | (optional) a minimum Content DB version that would satisfy the check
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'version': '6453-5673'
 }
@@ -217,9 +264,10 @@ Checks if there is enough free space on the `/opt/panrepo` volume to download a 
 paramter | description
 --- | ---
 `image_version` | (optional) target PanOS version to calculate required free space, when skipped arbitrary 3GB is used
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'image_version': '10.1.6-h3'
 }
@@ -236,9 +284,10 @@ Checks and reports expired licenses.
 paramter | description
 --- | ---
 `skip_licenses` | (optional) a list of license names that should be excluded from verification
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'skip_licenses': ['WildFire License', 'Threat Prevention']
 }
@@ -255,9 +304,10 @@ Verifies if an HA pair is in a correct state. Only Active-Passive configuration 
 paramter | description
 --- | ---
 `skip_config_sync` | Flag to skip (`True`) configuration sync state between HA pair nodes.
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'skip_config_sync': True
 }
@@ -274,9 +324,10 @@ Verifies if a given IPSec tunnel is in active state.
 paramter | description
 --- | ---
 `tunnel_name` | A name of an IPSec tunnel which status we would like to verify
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'tunnel_name': 'ipsec_tunnel'
 }
@@ -309,9 +360,10 @@ Checks difference between clocks for Management and Data planes.
 paramter | description
 --- | ---
 `diff_threshold` | (optional) Maximum difference in seconds between clocks for management and data planes.
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'diff_threshold': 25
 }
@@ -330,9 +382,10 @@ paramter | description
 `source` | IP address from which the session was established
 `destination` | IP address to which the session was established
 `dest_port` | Target destination port
+
 **Sample configuration**
 
-``` python
+```python showLineNumbers
 {
   'source': '134.238.135.137',
   'destination': '10.1.0.4',
@@ -462,7 +515,7 @@ The reporting part is actually the result of comparison of two snapshots. It is 
 
 Each report can be run with default or custom configuration. The following example shows reports with additional configuration (where applicable):
 
-``` python
+```python showLineNumbers
 [
   {'ip_sec_tunnels: {
     'properties': ['state']
@@ -507,6 +560,7 @@ parameter | description
 --- | ---
 `properties` | (optional) a set of properties to skip when comparing two ARP table entries, all properties are checked when this parameter is skipped
 `count_change_threshold` | (optional) maximum difference percentage of changed entries in ARP table in both snapshots, skipped when this property is not specified
+
 **Sample configuration**
 
 The following configuration:
@@ -516,7 +570,7 @@ The following configuration:
 
 This report produces the standardized dictionary.
 
-``` python
+```python showLineNumbers
 {
   'properties': ['!ttl'],
   'count_change_threshold': 10
@@ -541,6 +595,7 @@ parameter | description
 --- | ---
 `properties` | (optional) a set of properties to skip when comparing two IPSec tunnels, all properties are checked when this parameter is skipped
 `count_change_threshold` | (optional) maximum difference percentage of changed entries in IPSec tunnels in both snapshots, skipped when this property is not specified
+
 **Sample configuration**
 
 The following configuration compares the state of IPSec tunnels as
@@ -548,7 +603,7 @@ captured in snapshots.
 
 This report produces the standardized dictionary.
 
-``` python
+```python showLineNumbers
 {
   'properties': ['state']
 }
@@ -574,7 +629,7 @@ snapshots. It will ignore the `serial` property.
 
 This report produces the standardized dictionary.
 
-``` python
+```python showLineNumbers
 {
   'properties': ['!serial']
 }
@@ -600,7 +655,7 @@ The following configuration provides both: change in NICs\' state (implicitly) a
 
 This report produces the standardized dictionary.
 
-``` python
+```python showLineNumbers
 {
   'count_change_threshold': 10
 }
@@ -631,7 +686,7 @@ The following configuration:
 
 This report produces the standardized dictionary.
 
-``` python
+```python showLineNumbers
 {
   'properties': ['!flags'],
   'count_change_threshold': 10
@@ -658,7 +713,7 @@ The following configuration compares only stats for `num-max` and `num-tcp`. For
 
 This report produces a `dict` as documented in the [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage) method documentation.
 
-``` python
+```python showLineNumbers
 {
   'thresholds': [
     {'num-max': 10},
