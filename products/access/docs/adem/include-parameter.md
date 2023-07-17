@@ -6,7 +6,7 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-Autonomous DEM APIs require an `include` query parameter which you can use to include additional
+Autonomous DEM APIs provide an `include` query parameter that you can use to include additional
 properties in the API's response. You can include multiple parameters by providing them as a 
 comma-separated list. You supply each element in the list in the format:
 

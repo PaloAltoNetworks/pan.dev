@@ -26,38 +26,34 @@ have a TSG and a service account that has role access to your Prisma Access inst
 this process, see
 [Prisma SASE API Get Started](/sase/docs/getstarted).
 
-## Base URLs
+## Base URL and Region
 
-While you use Prisma SASE to obtain an access token for use with your Prisma Access 2.0 APIs, you do
-not use the same FQDN as do the other Prisma SASE APIs.
+You use Prisma SASE to obtain an access token for use with your Prisma Access 2.0 APIs, and you
+use the same FQDN as do the other Prisma SASE APIs:
 
-All ADEM API requests go to the same base URL:
+    https://api.sase.paloaltonetworks.com
 
-`https://api.sase.paloaltonetworks.com/adem/telemetry`
-
-Use the `x-panw-region` HTTP header to identify your tenant's Cortex Data Lake (CDL) region. Available
+However, you must use the `x-panw-region` HTTP header to identify your tenant's Cortex Data Lake (CDL) region. Available
 regions are:
 
-
-
-| Region    | URL                          |
+| Region    | Country                      |
 | --------- | ---------------------------- |
-| americas  | United States |
-| sg        | Southeast Asia |
-| au        | Australia |
-| jp        | Japan |
-| ca        | Canada |
-| eu        | European Union |
-| uk        | United Kingdom |
-| in        | India |
-| de        | Germany |
-| ch        | China |
-| fr        | France |
-| es        | Spain |
-| pl        | Poland |
+| americas  | United States                |
+| au        | Australia                    |
+| ca        | Canada                       |
+| ch        | China                        |
+| de        | Germany                      |
+| es        | Spain                        |
+| eu        | European Union               |
+| fr        | France                       |
+| in        | India                        |
+| jp        | Japan                        |
+| pl        | Poland                       |
+| sg        | Southeast Asia               |
+| uk        | United Kingdom               |
 
 
-You chose your region when you initially configured your Prisma Access Insights
+You chose your region when you initially configured your Prisma Access
 instance.
 
 ## Full API URL
@@ -65,7 +61,7 @@ instance.
 The full URL for an API request includes the base URL, plus the API URI described in the API
 reference documentation. 
 
-`api.sase.paloaltonetworks.com/adem/telemetry/agent/v2/measure/agent/score?start=1688973957&end=1689060357&endpoint-type=muAgent&response-type=summary`
+`https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?start=1688973957&end=1689060357&endpoint-type=muAgent&response-type=summary`
 
 ## Sample: API Request
 
@@ -78,13 +74,13 @@ API call using the `Prisma-Tenant` custom HTTP header.
        echo "  "
     #
     # Replace
-    # <TENANT_REGION_API_SERVER> - Tenant's Prisma Access Region FQDN
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token as returned by the Auth service
     # <TSG_ID> - Tenant Service Group ID used for the scope when you obtained your access token.
     #
     curl -o --location "https://api.sase.paloaltonetworks.com/adem/telemetry/agent/v2/measure/agent/score?start=1688973957&end=1689060357&endpoint-type=muAgent&response-type=summary" \
+        -H "x-panw-region: de" \
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Prisma-Tenant <TSG_ID>" \
-        -H "Prisma-SubTenant <subtenant_id>"
+        -H "Prisma-SubTenant <subtenant_id>" \
 		-H "Content-Type: application/json"
 

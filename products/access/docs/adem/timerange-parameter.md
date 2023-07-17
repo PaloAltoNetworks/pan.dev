@@ -32,4 +32,4 @@ sample returned to a reasonable number whilst still allowing higher resolution a
 Alternately, you can specify the time range using the start and end parameters. These accept Unix
 timestamps. For example: 
 
-    start=1686814360&end=1686900760)
+    start=1686814360&end=1686900760
