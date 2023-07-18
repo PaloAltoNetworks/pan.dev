@@ -413,6 +413,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "access/api/adem/autonomous-dem-api",
+                      label: "Autonomous DEM",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/insights",
                       label: "Prisma Access Insights",
                       icon: "api-doc",
@@ -619,6 +624,11 @@ const config = {
             outputDir: "products/sase/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          adem: {
+            specPath: "openapi-specs/access/adem",
+            outputDir: "products/access/api/adem",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
             outputDir: "products/access/api/insights",
@@ -746,8 +756,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "30.03",
-            label: "v30.03",
+            version: "30.02",
+            label: "v30.02",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
@@ -778,13 +788,6 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/30-01/",
-          },
-          compute_3002: {
-            specPath: "openapi-specs/compute/30-02",
-            outputDir: "products/compute/api/30-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/30-02/",
           },
         },
       },

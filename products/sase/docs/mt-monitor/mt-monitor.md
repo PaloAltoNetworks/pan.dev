@@ -54,5 +54,5 @@ For example, using curl:
 Depending on the query and the [query parameter](/sase/docs/parameters), there are also [query
 filters and properties](/sase/docs/filters) that you need to use in the request body.
 
-For information about the `X-PANW-Region` header, see [About x-panw-region](/sase/docs/api-call/#about-x-panw-region).
+This API requires the x-panw-region header. See [About x-panw-region](/sase/docs/api-call/#about-x-panw-region) for usage information.
 
