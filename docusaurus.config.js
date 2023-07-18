@@ -413,6 +413,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "access/api/adem/autonomous-dem-api",
+                      label: "Autonomous DEM",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/insights",
                       label: "Prisma Access Insights",
                       icon: "api-doc",
@@ -618,6 +623,11 @@ const config = {
             specPath: "openapi-specs/sase/iam",
             outputDir: "products/sase/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          adem: {
+            specPath: "openapi-specs/access/adem",
+            outputDir: "products/access/api/adem",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
