@@ -199,6 +199,46 @@ components:
             \ the API response. See [GatewayStatusProperty](/sase/docs/filters#gatewaystatusproperty).\
             \ \n", example: 'sub_tenant_id, status, gateway_count', type: string}
       type: object
+    IncidentFilter:
+      properties:
+        operator: {description: Always set to AND, type: string}
+        rules:
+          anyOf:
+          - {$ref: '#/components/schemas/IncidentRule'}
+          - {$ref: '#/components/schemas/TimeFilter'}
+          items: {type: object}
+          type: array
+      required: [operator]
+      type: object
+    IncidentProperty:
+      description: 'Test
+
+        '
+      properties:
+        alias: {type: string}
+        property: {description: 'Incident property. See [IncidentProperty](/sase/docs/filters#incidentproperty).
+
+            ', example: 'sub_tenant_id, total_count, warning_count, critical_count,
+            created_time, updated_time, category, status, raised_time, cleared_time',
+          type: string}
+      type: object
+    IncidentRule:
+      description: 'Incident filter. Consists of a required operator and an array
+        of rules objects.
+
+        '
+      properties:
+        operator: {description: Filter operator that is one of the example values
+            and is run on the property field, example: in, type: string}
+        property: {description: "See [IncidentRule](/sase/docs/filters#incidentrule)\
+            \ and [TimeFilter](/sase/docs/filters#timefilter). \n", example: status,
+          type: string}
+        values:
+          description: Filter property value
+          example: Raised, Cleared
+          items: {type: string}
+          type: array
+      type: object
     OutlierRule:
       description: "Outlier rule.  \n"
       properties:
@@ -305,6 +345,18 @@ components:
           items: {$ref: '#/components/schemas/GatewayStatusProperty'}
           type: array
       required: [properties]
+      type: object
+    RequestBody_Incidents:
+      properties:
+        filter:
+          allOf:
+          - {$ref: '#/components/schemas/IncidentFilter'}
+          - {description: filter json object}
+        properties:
+          description: List of property json objects
+          items: {$ref: '#/components/schemas/IncidentProperty'}
+          type: array
+      required: [properties, filter]
       type: object
     RequestBody_Outliers:
       properties:
@@ -1217,6 +1269,540 @@ paths:
       security:
       - Bearer: []
       summary: List app summary
+      tags: [DataResources]
+  /mt/monitor/v1/agg/incidents/count:
+    post:
+      description: 'Retrieve an aggregated list of incident count by severity.
+
+        '
+      operationId: post-mt-monitor-v1-agg-incidents-count
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region. \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Incidents Count By Severity:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: raised_time
+                      values: ['1']
+                    - operator: equals
+                      property: status
+                      values: [Raised]
+                    - operator: in
+                      property: severity
+                      values: [Critical, Warning]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  properties:
+                  - {property: total_count}
+                  - {property: critical_count}
+                  - {property: warning_count}
+            schema: {$ref: '#/components/schemas/RequestBody_Incidents'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Incidents Count By Severity:
+                  value:
+                  - {critical_count: 10, total_count: 20, warning_count: 10}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List incident count by severity
+      tags: [DataResources]
+  /mt/monitor/v1/agg/incidents/impactedList:
+    post:
+      description: 'Retrieve an aggregated list of impacted objects.
+
+        '
+      operationId: post-mt-monitor-v1-agg-incidents-impactedlist
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region. \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              List Of Impacted Objects:
+                value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values: ['60']
+                    - operator: in
+                      property: incident_id
+                      values: [f2e7e5b7-c635-41e9-abfa-06697a382ebf]
+            schema: {$ref: '#/components/schemas/RequestBody_Incidents'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                List Of Impacted Objects:
+                  value:
+                  - bgp_peers: [BGP1]
+                    impacted_list: result
+                    locations: [LocationA]
+                    sites: [SiteA]
+                    tunnels: [TunnelA]
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List impacted objects
+      tags: [DataResources]
+  /mt/monitor/v1/agg/incidents/list:
+    post:
+      description: 'Retrieve an aggregated list of incidents.
+
+        '
+      operationId: post-mt-monitor-v1-agg-incidents-list
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region. \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              List Of Incidents:
+                value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: last_n_days
+                      property: updated_time
+                      values: [1]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  properties:
+                  - {property: incident_id}
+                  - {property: title}
+                  - {property: sub_tenant_id}
+                  - {property: severity}
+                  - {property: category}
+                  - {property: sub_category}
+                  - {property: status}
+                  - {property: created_time}
+                  - {property: updated_time}
+                  - {property: code}
+                  - {property: clear_reason}
+            schema: {$ref: '#/components/schemas/RequestBody_Incidents'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                List Of Incidents:
+                  value:
+                  - {category: Prisma-Access, clear_reason: Auto, code: AL_ABC, created_time: 123456789,
+                    incident_id: '34898', severity: Warning, status: Raised, sub-category: sub-category,
+                    sub_tenant_id: 12345, title: Tunnel1 is down, updated_time: 9876543}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List incidents
+      tags: [DataResources]
+  /mt/monitor/v1/agg/incidents/tenants:
+    post:
+      description: 'Retrieve an aggregated list of top tenants by incident count (open
+        critical + warning).
+
+        '
+      operationId: post-mt-monitor-v1-agg-incidents-tenants
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: 'Must be one of the following: `de`, `americas`, `europe`, `uk`,
+          `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake
+          (CDL) region specified. If no region is specified, the default response
+          is `americas` CDL region.
+
+          '
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Top Tenants By Incidents:
+                value:
+                  count: 5
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: raised_time
+                      values: ['1']
+                    - operator: equals
+                      property: status
+                      values: [Raised]
+                    - operator: in
+                      property: severity
+                      values: [Critical, Warning]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  properties:
+                  - {property: sub_tenant_id}
+                  - {property: total_count}
+                  - {property: critical_count}
+                  - {property: warning_count}
+            schema: {$ref: '#/components/schemas/RequestBody_Incidents'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Top Tenants By Incidents:
+                  value:
+                  - {critical_count: 10, sub_tenant_id: 123456, total_count: 20, warning_count: 10}
+                  - {critical_count: 20, sub_tenant_id: 5678768, total_count: 30,
+                    warning_count: 10}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List top tenants by incidents count
+      tags: [DataResources]
+  /mt/monitor/v1/agg/incidents/trends:
+    post:
+      description: 'Get incident trends (open, critical, open warning, closed incidents)
+
+        '
+      operationId: post-mt-monitor-v1-agg-incidents-trends
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: 'Must be one of the following: `de`, `americas`, `europe`, `uk`,
+          `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake
+          (CDL) region specified. If no region is specified, the default response
+          is `americas` CDL region.
+
+          '
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Cleared Incidents Histogram:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: cleared_time
+                      values: ['1']
+                    - operator: equals
+                      property: status
+                      values: [Cleared]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  histogram: {enableEmptyInterval: true, property: cleared_time, range: minute,
+                    value: '5'}
+              Open Critical Incidents Histogram:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: raised_time
+                      values: ['1']
+                    - operator: equals
+                      property: status
+                      values: [Raised]
+                    - operator: equals
+                      property: severity
+                      values: [Critical]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  histogram: {enableEmptyInterval: true, property: raised_time, range: minute,
+                    value: '5'}
+              Open Warning Incidents Histogram:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: raised_time
+                      values: ['1']
+                    - operator: equals
+                      property: status
+                      values: [Raised]
+                    - operator: equals
+                      property: severity
+                      values: [Warning]
+                    - operator: in
+                      property: domain
+                      values: [External, external]
+                  histogram: {enableEmptyInterval: true, property: raised_time, range: minute,
+                    value: '5'}
+            schema: {$ref: '#/components/schemas/RequestBody_Incidents'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Cleared Incidents Histogram:
+                  value:
+                  - {cleared_time: 234567890, count: 10, histogram_time: 234567890}
+                  - {cleared_time: 73987654, count: 10, histogram_time: 73987654}
+                Open Critical Incidents Histogram:
+                  value:
+                  - {count: 10, histogram_time: 234567890, raised_time: 234567890}
+                  - {count: 10, histogram_time: 73987654, raised_time: 73987654}
+                Open Warning Incidents Histogram:
+                  value:
+                  - {count: 10, histogram_time: 234567890, raised_time: 234567890}
+                  - {count: 10, histogram_time: 73987654, raised_time: 73987654}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: Get incident count histogram
+      tags: [DataResources]
+  /mt/monitor/v1/agg/location/list:
+    get:
+      description: 'Get a list of compute locations, latitude, and longitude.
+
+        '
+      operationId: get-mt-monitor-v1-agg-location-list
+      parameters:
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region.   \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Location List:
+                  value:
+                  - {cloudRegionName: hong-kong, latitude: '22.3193', locationName: Hong
+                      Kong, longitude: '114.1694'}
+                  - {cloudRegionName: ap-northeast-1, latitude: '36.2048', locationName: Japan
+                      Central, longitude: '138.2529'}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List locations
+      tags: [DataResources]
+  /mt/monitor/v1/agg/locationsTenants:
+    post:
+      description: 'Retrieve an aggregated list of the number of tenants with assets
+        at a specific compute location.
+
+        '
+      operationId: post-mt-monitor-v1-agg-locationstenants
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region.  \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Tenant Count at Location:
+                value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values: [1]
+                    - operator: in
+                      property: edge_location_display_name
+                      values: [US Central]
+                  properties:
+                  - {alias: unique_tenant_count, operator: distinct_count, property: sub_tenant_id}
+            schema: {$ref: '#/components/schemas/RequestBody_Resource'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Tenant Count at Location:
+                  value:
+                  - {unique_tenant_count: 100}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List tenants at locations
+      tags: [DataResources]
+  /mt/monitor/v1/agg/locationsUsers:
+    post:
+      description: 'Retrieve an aggregated list of the number of users at or across
+        compute locations.
+
+        '
+      operationId: post-mt-monitor-v1-agg-locationsusers
+      parameters:
+      - description: "Must be `tenant`. Using the query parameter returns all the\
+          \ aggregated responses for the current parent tenant and its child tenants.\
+          \ If not used, the results for just the current tenant are returned. \n"
+        example: tenant
+        in: query
+        name: agg_by
+        schema: {type: string}
+      - description: "Must be one of the following: `de`, `americas`, `europe`, `uk`,\
+          \ `sg`, `ca`, `jp`, `au`, `in`. Returns details from the Cortex Data Lake\
+          \ (CDL) region specified. If no region is specified, the default response\
+          \ is `americas` CDL region.  \n"
+        example: americas
+        in: header
+        name: X-PANW-Region
+        schema: {type: string}
+      requestBody:
+        content:
+          application/json:
+            examples:
+              User Count across Locations:
+                value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values: [90]
+                    - operator: in
+                      property: connection_state
+                      values:
+                      - [CONNECTED, CONNECT_CONTINUE]
+                    - operator: equals
+                      property: node_type
+                      values: [49]
+                  properties:
+                  - {property: compute_location}
+                  - {alias: unique_user_count, operator: distinct_count, property: gpuser_name}
+              User Count at Location:
+                value:
+                  filter:
+                    operator: AND
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values: [90]
+                    - operator: in
+                      property: connection_state
+                      values:
+                      - [CONNECTED, CONNECT_CONTINUE]
+                    - operator: equals
+                      property: node_type
+                      values: [49]
+                    - operator: in
+                      property: edge_location_display_name
+                      values: [US Central]
+                  properties:
+                  - {alias: unique_user_count, operator: distinct_count, property: gpuser_name}
+            schema: {$ref: '#/components/schemas/RequestBody_Resource'}
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                User Count across Locations:
+                  value:
+                  - {compute_location: US Central, unique_user_count: 10}
+                  - {compute_location: US West, unique_user_count: 100}
+                  - {compute_location: US East, unique_user_count: 1000}
+                User Count at Location:
+                  value:
+                  - {unique_user_count: 100}
+          description: Success
+        '400': {description: Bad Request}
+        '500': {description: Server Error}
+      security:
+      - Bearer: []
+      summary: List users at locations
       tags: [DataResources]
   /mt/monitor/v1/agg/resource:
     post:
