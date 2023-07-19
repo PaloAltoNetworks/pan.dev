@@ -41,7 +41,7 @@ This design supports interconnecting a large number of VPCs, with a scalable sol
 
 The following steps should be followed before deploying the Terraform code presented here.
 
-1. Deploy Panorama e.g. by using [Panorama example](../../examples/panorama_standalone)
+1. Deploy Panorama e.g. by using [Panorama example](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/panorama_standalone)
 2. Prepare device group, template, template stack in Panorama
 3. Download and install plugin `sw_fw_license` for managing licenses
 4. Configure bootstrap definition and license manager

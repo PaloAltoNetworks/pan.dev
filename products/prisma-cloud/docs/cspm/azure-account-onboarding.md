@@ -1,13 +1,14 @@
 ---
 id: azure-account-onboarding
 title: Automate Azure Cloud Account Onboarding
+sidebar_position: 4
 ---
 
 Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Azure Active Directory on Prisma Cloud connects all your Azure resources to Prisma Cloud including Accounts with Management Groups, Subscriptions, and Active Directory. Prisma Cloud uses Application (Client) ID, Application Client Secret and Enterprise Application Object ID for authentication to ingest Azure Active Directory metadata, configurations, and logs.
 
 
 > **Prerequisite**: 
-> - Obtain a [Prisma Cloud API authorization token](https://registry.terraform.io/providers/PaloAltoNetworks/prismacloud/latest/docs/resources/cloud_account_v2) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs. 
+> - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs. 
 
 :::info
 
@@ -24,7 +25,7 @@ To onboard Azure Accounts, such as Subscription, Tenant, and Active Directory:
   
   [3. Execute the Terraform template in Azure Portal to Register an application and create its roles and permissions.](#3-register-an-application-and-create-corresponding-roles-in-the-azure-portal)
 
-  [4. Onboard your Azure Tenant on Prisma Cloud ](#4-onboard-the-azure-tenant-on-prisma-cloud)
+  [4. Onboard your Azure Account on Prisma Cloud ](#4-onboard-the-azure-tenant-on-prisma-cloud)
 
 ![](/img/azure_onboarding_workflow.png)
 
@@ -54,9 +55,9 @@ Get the list of supported features based on the cloud type, account type, and de
   <details>
   <summary> Sample Response </summary>
 
-    ```json
+  ```json
     {
-      "cloudType": "azure",
+    "cloudType": "azure",
       "deploymentType": "global",
       "accountType": "account",
       "licenseType": "ENTERPRISE",
@@ -68,7 +69,7 @@ Get the list of supported features based on the cloud type, account type, and de
         "Serverless Function Scanning"
         ]
     }
-    ```
+  ```
   </details>
 
 **Sample Request and Response for Azure Tenant**  
@@ -92,7 +93,7 @@ Get the list of supported features based on the cloud type, account type, and de
   <details>
   <summary> Sample Response </summary>
 
-    ```json
+  ```json
     {
       "cloudType": "azure",
       "deploymentType": "global",
@@ -106,7 +107,7 @@ Get the list of supported features based on the cloud type, account type, and de
         "Serverless Function Scanning"
       ]
     }
-    ```
+  ```
   </details>
 
   **Sample Request and Response for Azure Active Directory Account**  
@@ -129,7 +130,7 @@ Get the list of supported features based on the cloud type, account type, and de
   <details>
   <summary> Sample Response </summary>
 
-    ```json
+  ```json
       {
         "cloudType": "azure",
         "deploymentType": "global",
@@ -140,7 +141,7 @@ Get the list of supported features based on the cloud type, account type, and de
         ]
       }
 
-    ```
+  ```
   </details>
 
     
@@ -373,7 +374,7 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
           --header 'x-redlock-auth: <YOUR_TOKEN>' \
           --data-raw '{
             "accountType": "tenant",
-            "tenantId": "f597bfbe-067c-4622-aaf7-b88bc8f6fa41",
+            "tenantId": "<tenant-id>",
             "features": [
               "Agentless Scanning",
               "Auto Protect",
@@ -927,9 +928,9 @@ curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
 ```
 </details>
 
-
 <details>
-<summary> Sample Response </summary>
+  <summary> Sample Response </summary>
+
 ```
   200 (Success)
 ```
