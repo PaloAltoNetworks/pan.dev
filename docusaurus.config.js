@@ -123,6 +123,13 @@ const config = {
                       icon: "doc",
                     },
                   ],
+                  howto: [
+                    {
+                      to: "/prisma-cloud/howto",
+                      label: "How To?",
+                      icon: "doc",
+                    },
+                  ],
                 },
                 {
                   label: "Prisma Cloud Compute Edition",
