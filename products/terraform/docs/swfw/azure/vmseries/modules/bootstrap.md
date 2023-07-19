@@ -29,7 +29,7 @@ Simple example usage is shown below. For more *real life* code please check [exa
 
 ```hcl
 module "bootstrap" {
-  source = "../modules/bootstrap"
+  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/bootstrap"
 
   storage_account_name = "accountname"
   resource_group_name  = "rg-name"
@@ -107,6 +107,11 @@ No modules.
 | <a name="input_storage_share_quota"></a> [storage\_share\_quota](#input\_storage\_share\_quota) | Maximum size of a File Share. | `number` | `50` | no |
 | <a name="input_storage_share_access_tier"></a> [storage\_share\_access\_tier](#input\_storage\_share\_access\_tier) | Access tier for the File Share. | `string` | `"Cool"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to be associated with the resources created. | `map(string)` | `{}` | no |
+| <a name="input_retention_policy_days"></a> [retention\_policy\_days](#input\_retention\_policy\_days) | Log retention policy in days | `number` | `7` | no |
+| <a name="input_blob_delete_retention_policy_days"></a> [blob\_delete\_retention\_policy\_days](#input\_blob\_delete\_retention\_policy\_days) | Specifies the number of days that the blob should be retained | `number` | `7` | no |
+| <a name="input_storage_allow_inbound_public_ips"></a> [storage\_allow\_inbound\_public\_ips](#input\_storage\_allow\_inbound\_public\_ips) | List of IP CIDR ranges (like `["23.23.23.23"]`) that are allowed to access the Storage Account.<br />Only public IPs are allowed - RFC1918 address space is not permitted. | `list(string)` | `[]` | no |
+| <a name="input_storage_allow_vnet_subnet_ids"></a> [storage\_allow\_vnet\_subnet\_ids](#input\_storage\_allow\_vnet\_subnet\_ids) | List of the allowed VNet subnet ids.<br />Note that this option requires network service endpoint enabled for Microsoft Storage for the specified subnets.<br />If you are using [vnet module](../vnet) - set `storage_private_access` to true for the specific subnet.<br />Example:<pre>[<br />  module.vnet.subnet\_ids["subnet-mgmt"],<br />  module.vnet.subnet\_ids["subnet-pub"],<br />  module.vnet.subnet\_ids["subnet-priv"]<br />]</pre> | `list(string)` | `[]` | no |
+| <a name="input_storage_acl"></a> [storage\_acl](#input\_storage\_acl) | If `true`, storage account network rules will be activated with `Deny` as the default action. In such case, at least one of `storage_allow_inbound_public_ips` or `storage_allow_vnet_subnet_ids` must be a non-empty list. | `bool` | `true` | no |
 
 ### Outputs
 
