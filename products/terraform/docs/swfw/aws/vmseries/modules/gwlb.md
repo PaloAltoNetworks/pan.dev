@@ -21,6 +21,8 @@ title: AWS Gateway Load Balancer Module
 This module creates a single Gateway Load Balancer (GWLB). Routes from other VPCs can direct traffic towards the GWLB
 through the use of a separate module `gwlb_endpoint_set`.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/gwlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/gwlb)
+
 ## Attaching new targets to the pre-existing GWLB
 
 This module is not intended to be used to attach extra tagets to a pre-exising Gateway Load Balancer and its Target Group.

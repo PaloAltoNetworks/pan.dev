@@ -20,6 +20,8 @@ title: Palo Alto Networks Autoscaling Group Module for AWS
 
 A Terraform module for deploying VM-Series in Autoscaling group in AWS cloud. 
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/asg) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/asg)
+
 ## Usage
 
 For example usage, please refer to the [Examples](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/develop/examples) directory.

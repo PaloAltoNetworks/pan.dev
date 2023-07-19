@@ -18,6 +18,8 @@ title: AWS Transit Gateway Peering
 
 # AWS Transit Gateway Peering
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/transit_gateway_peering) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/transit_gateway_peering)
+
 ## Usage
 
 This module creates both sides of a TGW Peering thus it needs two different AWS providers specified in the `providers` meta-argument.

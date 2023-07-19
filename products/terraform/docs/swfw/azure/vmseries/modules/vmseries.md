@@ -21,6 +21,8 @@ title: Palo Alto Networks VM-Series Module for Azure
 A Terraform module for deploying a VM-Series firewall in Azure cloud.
 The module is not intended for use with Scale Sets.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/vmseries) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/vmseries)
+
 ## Usage
 
 For usage please refer to any reference architecture example.

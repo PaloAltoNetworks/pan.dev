@@ -18,6 +18,8 @@ title: Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Ser
 
 # Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Series
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/examples/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/examples/bootstrap)
+
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements

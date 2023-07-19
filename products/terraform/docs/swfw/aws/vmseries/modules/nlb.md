@@ -20,6 +20,8 @@ title: Palo Alto Networks Network Load Balancer Module for AWS
 
 A Terraform module for deploying a Network Load Balancer in AWS cloud. This can be used both as a public facing Load Balancer (to balance incoming traffic to Firewalls) or as an internal Load Balancer (to balance traffic from Firewalls to the actual application.)
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/nlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/nlb)
+
 ## Usage
 
 For example usage please refer to the [tgw_inbound_with_alb_nlb](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/tgw_inbound_with_alb_nlb) example.
