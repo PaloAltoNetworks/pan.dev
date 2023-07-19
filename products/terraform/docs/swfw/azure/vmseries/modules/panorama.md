@@ -25,7 +25,6 @@ A terraform module for deploying a working Panorama instance in Azure.
 ```hcl
 module "panorama" {
   source  = "PaloAltoNetworks/vmseries-modules/azurerm//modules/panorama"
-  version = "0.1.0"
 
   panorama_name       = var.panorama_name
   resource_group_name = azurerm_resource_group.this.name
