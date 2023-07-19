@@ -53,6 +53,26 @@ for file in *.json; do
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
+    # delete 500 level codes
+    jq 'del(.paths[][].responses."5xx")' | \
+    jq 'del(.paths[][].responses."500")' | \
+    jq 'del(.paths[][].responses."501")' | \
+    jq 'del(.paths[][].responses."502")' | \
+    jq 'del(.paths[][].responses."503")' | \
+    jq 'del(.paths[][].responses."504")' | \
+    jq 'del(.paths[][].responses."505")' | \
+    jq 'del(.paths[][].responses."506")' | \
+    jq 'del(.paths[][].responses."507")' | \
+    jq 'del(.paths[][].responses."508")' | \
+    jq 'del(.paths[][].responses."509")' | \
+    jq 'del(.paths[][].responses."510")' | \
+    jq 'del(.paths[][].responses."511")' | \
+
+    jq 'del(.paths[][].responses."529")' | \
+    jq 'del(.paths[][].responses."530")' | \
+    jq 'del(.paths[][].responses."598")' | \
+    jq 'del(.paths[][].responses."599")' | \
+
     # add server urls
     jq '.servers |= [
         {"url":"https://api.prismacloud.io"},
