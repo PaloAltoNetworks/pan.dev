@@ -25,6 +25,8 @@ module is that it does not create multiple resources based on Terraform `count` 
 [easier removal](https://github.com/PaloAltoNetworks/terraform-best-practices#22-looping) of any single subnet,
 without the need to briefly destroy and re-create any other subnet.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/vpc) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/vpc)
+
 ## Usage
 
 ```hcl

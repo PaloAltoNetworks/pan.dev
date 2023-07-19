@@ -20,6 +20,8 @@ title: Palo Alto Networks Application Load Balancer Module for AWS
 
 A Terraform module for deploying an Application Load Balancer in AWS cloud. This is always a public Load Balancer with Target Groups of `IP` type. It is intended to be placed just in front of Next Generation Firewalls.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/alb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/alb)
+
 ## Usage
 
 Example usage:

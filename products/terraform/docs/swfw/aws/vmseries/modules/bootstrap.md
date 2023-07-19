@@ -29,6 +29,8 @@ The bootstrap package may optionally include a PAN-OS software image,
 application and threat signature updates, VM-Series plug-ins, and/or license
 files.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/bootstrap)
+
 ## Directory and file structure
 The root directory of the Terraform plan calling this module should include a
 `files` directory containing a subdirectory structure similar to the one below.

@@ -23,6 +23,8 @@ to [bootstrap a VM-Series firewalls in Azure](https://docs.paloaltonetworks.com/
 
 The module does *not* configure the bootstrap images, licenses, or configurations.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/bootstrap)
+
 ## Usage
 
 Simple example usage is shown below. For more *real life* code please check [examples folder](../../examples/).
