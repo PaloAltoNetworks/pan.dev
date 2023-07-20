@@ -22,7 +22,7 @@ title: NAT Gateway module
 
 Terraform module used to deploy Azure NAT Gateway. For limitations and zone-resiliency considerations please refer to [Microsoft documentation](https://learn.microsoft.com/en-us/azure/virtual-network/nat-gateway/nat-overview).
 
-This module can be used to either create a new NAT Gateway or to connect an existing one with subnets deployed using (for example) the [VNET module](../vnet/README.md).
+This module can be used to either create a new NAT Gateway or to connect an existing one with subnets deployed using (for example) the [VNET module](../vnet).
 
 ## Usage
 
@@ -30,7 +30,7 @@ To deploy this resource in it's minimum configuration following code snippet can
 
 ```terraform
 module "natgw" {
-  source = "../modules/natgw"
+  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/natgw"
 
   name                = "NATGW_name"
   resource_group_name = "resource_group_name"
