@@ -1,11 +1,15 @@
 ---
-id: defender-health
+id: howto-defender-health
 title: How To Determine Defender's Health Status?
 sidebar_position: 1
 ---
 
-This guide shows how to check the health status of Prisma Cloud Defender. 
+Prisma Cloud Defender is important and quintessential for the well being of Prisma Cloud. 
+It is imperative that Defender's health status is tracked and monitored regularly.
 This ensures that the Prisma Cloud Compute is configured and running properly and is able to detect vulnerabilities.
+
+This guide shows how to check the health status of Prisma Cloud Defender. 
+
 
 # Prerequisite
 
@@ -17,9 +21,33 @@ First of all, obtain an authorization token by [Authenticating a user](/prisma-c
 
 :::
 
-## Health Parameters
+(Optional) Check the Prisma Cloud Compute Console.
 
-The health parameters in the API endpoint [GET, Deployed Defenders](/compute/api/get-defenders/) ![alt text](/icons/api-icon-pan-dev.svg) response are a good indicator for a Defender's overall health.
+Use the [GET, _Ping](prisma-cloud/api/cwpp/get-ping/) ![alt text](/icons/api-icon-pan-dev.svg) to get the status if it's alive:
+
+```bash
+curl -sSL --header "authorization: Bearer access_token" \
+  -H 'Content-Type: application/json' \
+  -so /dev/null -w "%{http_code}\n" \
+  -X GET \
+  "https://<CONSOLE>/api/v<VERSION>/_ping"
+```
+
+**Response**
+
+If you get the `200: OK` response as below, it means the Prisma Cloud Compute is alive and running:
+
+```json
+    [
+        { 
+            "200": "OK"
+        }
+    ]
+```
+
+## Defender Health Parameters
+
+ The health parameters in the API endpoint [GET, Deployed Defenders](/compute/api/get-defenders/) ![alt text](/icons/api-icon-pan-dev.svg) response are a good indicator for a Defender's overall health.
 
 You can scope your cURL request based on the query parameters available in the API endpoint.
 
@@ -254,34 +282,9 @@ I       ndicates if the feature is enabled (true) or not (false).
         progress integer
         Upgrade progress.
 
-
-First step is to check the Prisma Cloud Compute Console.
-
-Use the [GET, _Ping](prisma-cloud/api/cwpp/get-ping/) ![alt text](/icons/api-icon-pan-dev.svg) to get the status:
-
-```bash
-curl -sSL --header "authorization: Bearer access_token" \
-  -H 'Content-Type: application/json' \
-  -so /dev/null -w "%{http_code}\n" \
-  -X GET \
-  "https://<CONSOLE>/api/v<VERSION>/_ping"
-```
-
-**Response**
-
-If you get the `200: OK` response as below, it means the Prisma Cloud Compute is alive and running:
-
-```json
-    [
-        { 
-            "200": "OK"
-        }
-    ]
-```
-
 ## Check Defender Status
 
-The next step is to check the status of the deployed Defenders.
+It's fairly easy to check the status of the deployed Defenders if you know which parameters you need to look for.
 
 Use the [GET, Deployed Defenders](/prisma-cloud/api/cwpp/get-defenders/) ![alt text](/icons/api-icon-pan-dev.svg) to get the status:
 
