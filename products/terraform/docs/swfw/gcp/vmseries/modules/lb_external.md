@@ -26,6 +26,8 @@ title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
   - Can only use the nic0 (the base interface) of an instance.
   - Cannot serve as a next hop in a GCP custom routing table entry.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/examples/lb_external) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/examples/lb_external)
+
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
