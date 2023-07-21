@@ -22,6 +22,8 @@ The module allows to create VPC peering between two networks in both directions.
 
 By default, no routes are exported/imported for each direction, every option has to be explicitely enabled by setting appropriate value to `true`.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/examples/vpc-peering) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/examples/vpc-peering)
+
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
