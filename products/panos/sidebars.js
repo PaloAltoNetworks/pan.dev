@@ -27,7 +27,6 @@ module.exports = {
           items: [
             "panos/docs/panos-upgrade-assurance/overview",
             "panos/docs/panos-upgrade-assurance/dialect",
-            "panos/docs/panos-upgrade-assurance/installation",
             "panos/docs/panos-upgrade-assurance/configuration-details",
             "panos/docs/panos-upgrade-assurance/usage-examples",
             {
