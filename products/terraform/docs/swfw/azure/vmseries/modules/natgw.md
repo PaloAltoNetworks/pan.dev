@@ -18,6 +18,8 @@ title: NAT Gateway module
 
 # NAT Gateway module
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/natgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/natgw)
+
 ## Purpose
 
 Terraform module used to deploy Azure NAT Gateway. For limitations and zone-resiliency considerations please refer to [Microsoft documentation](https://learn.microsoft.com/en-us/azure/virtual-network/nat-gateway/nat-overview).

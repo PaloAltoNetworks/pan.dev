@@ -22,6 +22,8 @@ A Terraform module for deploying AWS Transit Gateways Attachments.
 
 >AWS provides a network transit hub called a Transit Gateway. One or more VPCs can connect to a Transit Gateway through a Transit Gateway (TGW) Attachment.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/transit_gateway_attachment) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/transit_gateway_attachment)
+
 ## Usage
 
 For example usage, please refer to the [Examples](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/develop/examples) directory.
