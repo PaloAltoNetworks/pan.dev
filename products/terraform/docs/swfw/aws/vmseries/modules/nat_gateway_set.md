@@ -20,6 +20,8 @@ title: Palo Alto Networks NAT Gateway Set Module for AWS
 
 A Terraform module for deploying a NAT Gateway set in AWS cloud. The "set" means that the module will create an identical/similar NAT Gateway in each specified Availability Zone.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/nat_gateway_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/nat_gateway_set)
+
 ## Usage
 
 ```hcl

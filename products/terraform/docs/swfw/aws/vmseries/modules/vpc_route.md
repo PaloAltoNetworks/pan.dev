@@ -20,6 +20,8 @@ title: Palo Alto Networks VPC Route Module for AWS
 
 A Terraform module for deploying a VPC route in AWS cloud.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/vpc_route) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/vpc_route)
+
 ## Usage
 
 ```hcl
