@@ -48,8 +48,7 @@ __Attributes__
 ### `CheckFirewall.__init__`
 
 ```python
-def __init__(node: FirewallProxy,
-             skip_force_locale: Optional[bool] = False) -> None
+def __init__(node: FirewallProxy) -> None
 ```
 
 CheckFirewall constructor.
@@ -59,8 +58,6 @@ __Parameters__
 
 - __node__ (`FirewallProxy`): Object representing a device against which checks and/or snapshots are run. See
     [`FirewallProxy`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#class-firewallproxy) class' documentation.
-- __skip_force_locale__ (`bool, optional`): (defaults to `False`) Use with caution, when set to `True` will skip setting locale to
-    en_US.UTF-8 for the module which will parse the datetime strings in checks with current locale setting.
 
 ### `CheckFirewall.check_pending_changes`
 
