@@ -93,14 +93,6 @@ https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
 
 **Note:** This is a more secure method than including the `-p` option since your terminal history won't contain the password.
 
-### Postman collection
-
-You can use the Prisma Cloud Compute Postman collection to run the APIs.
-
-:::note
-Full documentation and details at: https://github.com/PaloAltoNetworks/pcs-postman
-:::
-
 ### API Limits
 
 Paginated API requests are capped to a max of 250 returned objects because very large responses could DoS Console. The default value is 50 objects per page.
