@@ -21,6 +21,8 @@ title: Google Cloud HTTP/HTTPS External Global Load Balancer
 A simplified GLB, which assumes that all participating instances are equally capable and that all
 participating groups are equally capable as well.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/examples/lb_http_ext_global) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/examples/lb_http_ext_global)
+
 ## Example
 
 ```terraform

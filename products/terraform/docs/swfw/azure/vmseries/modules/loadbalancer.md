@@ -22,6 +22,8 @@ A Terraform module for deploying a Load Balancer for VM-Series firewalls. Suppor
 
 The module creates a single load balancer and a single backend for it, but it allows multiple frontends.
 
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/loadbalancer) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/loadbalancer)
+
 ## Usage
 
 For usage see any of the reference architecture examples.
