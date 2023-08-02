@@ -61,7 +61,6 @@ module.exports = {
         },
       ],
     },
-    "prisma-cloud/docs/cspm-postman-collection",
     {
       type: "category",
       label: "Other Documentation",
