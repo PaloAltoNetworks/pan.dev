@@ -11,7 +11,7 @@ sidebar_position: 4
 
 ### Problem after upgrading the App/Add-on
 
-Check the [Release Notes](/release-notes) for actions needed during App/Add-on upgrade and ensure you completed all required actions for upgrade.
+Check the [Release Notes](../release-notes) for actions needed during App/Add-on upgrade and ensure you completed all required actions for upgrade.
 
 > If you experience error messages related to older versions of jQuery or Python 2, uninstall and reinstall both the app and add-on. Python 2 support was removed in version 8.0.0.
 
@@ -31,7 +31,7 @@ The 'Overview' dashboard has data, but other dashboards do not, usually datamode
 
 The 'Overview' dashboards has no data, but other dashboards work correctly, the clock on your firewall is a few minutes off, or the timezone is set wrong. The 'Overview' dashboard is a real-time 5 minute search, while the other dashboards pull a larger timeframe from the data model. So the 'Overview' is more suseptible to minor variations in system clock. Please verify the clock and timezone on Splunk and the Firewall/Panorama are set exactly the same.
 
-### Troubleshooting Cortex XDR 
+### Troubleshooting Cortex XDR
 
 **Enable Debug Logging**
 
@@ -95,7 +95,7 @@ WildFire reports have been deprecated as of App/Add-on 7.0.0
 
 :::
 
-The [WildFire dashboard](/dashboards#wildfire) is empty or no WildFire data is appearing in the index. For Splunk to take advantage of WildFire, you log WildFire events from the Firewall/Panorama first. Splunk will leverage the WildFire cloud API to pull reports and IOC's from the WildFire analysis only after it receives notification of the WildFire event from the Firewall/Panorama.
+The [WildFire dashboard](../dashboards#wildfire) is empty or no WildFire data is appearing in the index. For Splunk to take advantage of WildFire, you log WildFire events from the Firewall/Panorama first. Splunk will leverage the WildFire cloud API to pull reports and IOC's from the WildFire analysis only after it receives notification of the WildFire event from the Firewall/Panorama.
 
 Some things to check to get WildFire data into Splunk:
 
@@ -121,7 +121,7 @@ Follow these troubleshooting steps if there are problems getting the dashboards 
 
 **Step 1. Check that all initial configuration is complete**
 
-* Verify inputs.conf is set up per the [instructions](/firewalls-panorama). inputs.conf must have the line `no_appending_timestamp = true` for UDP syslogs
+* Verify inputs.conf is set up per the [instructions](../firewalls-panorama). inputs.conf must have the line `no_appending_timestamp = true` for UDP syslogs
 * Check for other inputs.conf outside the App or Add-on that might be using the same port
 * Check the firewall is not using a Custom Log Format \(must use the default log format\)
 * Check the Endpoint Security Manager is using CEF format
@@ -131,7 +131,7 @@ Follow these troubleshooting steps if there are problems getting the dashboards 
 
 **Step 2. Verify logs are indexed**
 
-Use the method described in the [Test the configuration](/firewalls-panorama#test-the-configuration) section to produce some syslogs. Verify the logs are reaching the Splunk server by navigating to the Splunk for Palo Alto Networks app, click 'Search' in the navigation bar, then enter:
+Use the method described in the [Test the configuration](../firewalls-panorama#test-the-configuration) section to produce some syslogs. Verify the logs are reaching the Splunk server by navigating to the Splunk for Palo Alto Networks app, click 'Search' in the navigation bar, then enter:
 
 ```
 eventtype=pan
@@ -149,7 +149,7 @@ If no logs show up, then the logs are not getting indexed correctly. Use these s
 
 **Step 3. Verify logs are parsed correctly**
 
-Use the method described above in the [Test the configuration](/firewalls-panorama#test-the-configuration) section to produce some syslogs. Verify the logs are reaching the Splunk server by navigating to the Palo Alto Networks App, click 'Search' in the navigation bar, and enter the following search:
+Use the method described above in the [Test the configuration](../firewalls-panorama#test-the-configuration) section to produce some syslogs. Verify the logs are reaching the Splunk server by navigating to the Palo Alto Networks App, click 'Search' in the navigation bar, and enter the following search:
 
 ```
 eventtype=pan_config
@@ -182,6 +182,3 @@ Check that the dashboards are populating with data. The Overview \(pre-6.0\) and
 **Step 5. Get support**
 
 If you get to the end of these troubleshooting steps and you still can't figure out what's wrong, please search [Splunk Answers](https://answers.splunk.com/app/questions/491.html) or ask a question using the information on the [Get Support](support#get-support) page.
-
-
-## Health Checks
