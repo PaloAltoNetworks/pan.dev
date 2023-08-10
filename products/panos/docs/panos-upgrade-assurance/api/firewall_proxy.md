@@ -956,3 +956,71 @@ __Returns__
 }
 ```
 
+### `FirewallProxy.get_jobs`
+
+```python
+def get_jobs() -> dict
+```
+
+Get details on all jobs.
+
+This method retrieves all jobs and their details, this means running, pending, finished, etc.
+
+The actual API command is `show jobs all`.
+
+__Returns__
+
+
+`dict`: All jobs found on the device, indexed by the ID of a job.
+
+```python showLineNumbers title="Sample output"
+{'1': {'description': None,
+    'details': {'line': ['ID population failed',
+                            'Client logrcvr registered in the middle of a '
+                            'commit/validate. Aborting current '
+                            'commit/validate.',
+                            'Commit failed',
+                            'Failed to commit policy to device']},
+    'positionInQ': '0',
+    'progress': '100',
+    'queued': 'NO',
+    'result': 'FAIL',
+    'status': 'FIN',
+    'stoppable': 'no',
+    'tdeq': '00:28:32',
+    'tenq': '2023/08/01 00:28:32',
+    'tfin': '2023/08/01 00:28:36',
+    'type': 'AutoCom',
+    'user': None,
+    'warnings': None},
+'2': {'description': None,
+    'details': {'line': ['Configuration committed successfully',
+                            'Successfully committed last configuration']},
+    'positionInQ': '0',
+    'progress': '100',
+    'queued': 'NO',
+    'result': 'OK',
+    'status': 'FIN',
+    'stoppable': 'no',
+    'tdeq': '00:28:40',
+    'tenq': '2023/08/01 00:28:40',
+    'tfin': '2023/08/01 00:29:20',
+    'type': 'AutoCom',
+    'user': None,
+    'warnings': None},
+'3': {'description': None,
+    'details': None,
+    'positionInQ': '0',
+    'progress': '30',
+    'queued': 'NO',
+    'result': 'PEND',
+    'status': 'ACT',
+    'stoppable': 'yes',
+    'tdeq': '00:58:59',
+    'tenq': '2023/08/01 00:58:59',
+    'tfin': None,
+    'type': 'Downld',
+    'user': None,
+    'warnings': None}}
+```
+
