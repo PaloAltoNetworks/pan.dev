@@ -52,6 +52,7 @@ module.exports = {
             "ansible/docs/panos/guides/import-load-config",
             "ansible/docs/panos/guides/csv-address-objects",
             "ansible/docs/panos/guides/search-and-remove",
+            "ansible/docs/panos/guides/eda-decryption-remediation",
           ],
         },
         {
