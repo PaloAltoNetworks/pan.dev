@@ -459,6 +459,26 @@ __Returns__
 * [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the certificate's
     properties (installed or required) are not supported.
 
+### `CheckFirewall.check_non_finished_jobs`
+
+```python
+def check_non_finished_jobs() -> CheckResult
+```
+
+Check for any job with status different than FIN.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when all jobs are in FIN state.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise, `CheckResult.reason`
+    field contains information about the 1<sup>st</sup> job found with status different than FIN (job ID and the actual
+    status).
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
+    device.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python
