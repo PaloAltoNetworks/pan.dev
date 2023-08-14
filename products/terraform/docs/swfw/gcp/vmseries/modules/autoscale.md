@@ -33,7 +33,9 @@ title: Auto-Scaling for Palo Alto Networks VM-Series
 
 | Name | Version |
 |------|---------|
+| <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
 | <a name="provider_google"></a> [google](#provider\_google) | ~> 4.54 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ### Modules
 
@@ -43,16 +45,30 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [google_cloudfunctions2_function.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function) | resource |
 | [google_compute_autoscaler.zonal](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_autoscaler) | resource |
 | [google_compute_instance_group_manager.zonal](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_group_manager) | resource |
 | [google_compute_instance_template.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template) | resource |
 | [google_compute_region_autoscaler.regional](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_autoscaler) | resource |
 | [google_compute_region_instance_group_manager.regional](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager) | resource |
+| [google_logging_project_sink.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_project_sink) | resource |
+| [google_project_iam_member.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.delicensing_cfn_invoker](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_pubsub_subscription.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_subscription) | resource |
 | [google_pubsub_subscription_iam_member.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_subscription_iam_member) | resource |
+| [google_pubsub_topic.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic) | resource |
 | [google_pubsub_topic.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic) | resource |
+| [google_pubsub_topic_iam_member.pubsub_sink_member](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic_iam_member) | resource |
+| [google_secret_manager_secret.delicensing_cfn_pano_creds](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret) | resource |
+| [google_service_account.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
+| [google_storage_bucket.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) | resource |
+| [google_storage_bucket_object.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object) | resource |
+| [google_vpc_access_connector.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/vpc_access_connector) | resource |
+| [random_id.postfix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [archive_file.delicensing_cfn](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [google_compute_default_service_account.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_default_service_account) | data source |
 | [google_compute_zones.main](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_zones) | data source |
+| [google_project.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 
 ### Inputs
 
@@ -61,6 +77,7 @@ No modules.
 | <a name="input_autoscaler_metrics"></a> [autoscaler\_metrics](#input\_autoscaler\_metrics) | A map with the keys being metrics identifiers (e.g. custom.googleapis.com/VMSeries/panSessionUtilization). Each of the contained objects has attribute `target` which is a numerical threshold for a scale-out or a scale-in. Each zonal group grows until it satisfies all the targets. Additional optional attribute `type` defines the metric as either `GAUGE`, `DELTA_PER_SECOND`, or `DELTA_PER_MINUTE`. For full specification, see the `metric` inside the [provider doc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_autoscaler). | `map` | <pre>{<br />  "custom.googleapis.com/VMSeries/panSessionThroughputKbps": {<br />    "target": 700000<br />  },<br />  "custom.googleapis.com/VMSeries/panSessionUtilization": {<br />    "target": 70<br />  }<br />}</pre> | no |
 | <a name="input_cooldown_period"></a> [cooldown\_period](#input\_cooldown\_period) | The number of seconds that the autoscaler should wait before it starts collecting information from a new VM-Series. This prevents the autoscaler from collecting information when the VM-Series is initializing, during which the collected usage would not be reliable. Virtual machine initialization times might vary because of numerous factors. | `number` | `480` | no |
 | <a name="input_create_pubsub_topic"></a> [create\_pubsub\_topic](#input\_create\_pubsub\_topic) | Set to `true` to create a Pub/Sub topic and subscription. The Panorama Google Cloud Plugin can use this Pub/Sub to trigger actions when the VM-Series Instance Group descales. Actions include, removal of VM-Series from Panorama and automatic delicensing (if VM-Series BYOL licensing is used). For more information, please see [Autoscaling the VM-Series on GCP](https://docs.paloaltonetworks.com/vm-series/9-1/vm-series-deployment/set-up-the-vm-series-firewall-on-google-cloud-platform/autoscaling-on-google-cloud-platform). | `bool` | `true` | no |
+| <a name="input_delicensing_cloud_function_config"></a> [delicensing\_cloud\_function\_config](#input\_delicensing\_cloud\_function\_config) | Defining `delicensing_cloud_function_config` enables creation of delicesing cloud function and related resources.<br />The variable contains the following configuration parameters that are related to Cloud Function:<br />- `name_prefix`           - Resource name prefix<br />- `function_name`         - Cloud Function base name<br />- `region`                - Cloud Function region<br />- `bucket_location`       - Cloud Function source code bucket location <br />- `panorama_address`      - Panorama IP address/FQDN<br />- `panorama2_address`     - Panorama 2 IP address/FQDN. Set if Panorama is in HA mode<br />- `vpc_connector_network` - Panorama VPC network Name<br />- `vpc_connector_cidr`    - VPC connector /28 CIDR.<br />                            VPC connector will be user for delicensing CFN to access Panorama VPC network.<br /> <br /><br />Example:<pre>{<br />  name\_prefix           = "abc-"<br />  function\_name         = "delicensing-cfn"<br />  region                = "europe-central1"<br />  bucket\_location       = "EU"<br />  panorama\_address      = "1.1.1.1"<br />  panorama2\_address     = ""<br />  vpc\_connector\_network = "panorama-vpc"<br />  vpc\_connector\_cidr    = "10.10.190.0/28"<br />}</pre> | <pre>object({<br />    name\_prefix           = string<br />    function\_name         = string<br />    region                = string<br />    bucket\_location       = string<br />    panorama\_address      = string<br />    panorama2\_address     = string<br />    vpc\_connector\_network = string<br />    vpc\_connector\_cidr    = string<br />  })</pre> | `null` | no |
 | <a name="input_disk_type"></a> [disk\_type](#input\_disk\_type) | The disk type that is attached to the instances of the VM-Series firewalls. | `string` | `"pd-ssd"` | no |
 | <a name="input_image"></a> [image](#input\_image) | Link to VM-Series PAN-OS image. Can be either a full self\_link, or one of the shortened forms per the [provider doc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance#image). | `string` | `"https://www.googleapis.com/compute/v1/projects/paloaltonetworksgcp-public/global/images/vmseries-byol-1014"` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The instance type for the VM-Series firewalls. | `string` | `"n2-standard-4"` | no |
