@@ -71,7 +71,7 @@ eyJ0eXAiOiJK...
 $ curl -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d $LICENSE_KEY \
-  https://localhost:8083/api/v1/settings/license
+  https://localhost:8083/api/v<VERSION>/settings/license
 ```
 
 The result should be 200 OK with an empty body "{}".
