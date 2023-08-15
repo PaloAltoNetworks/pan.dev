@@ -2,7 +2,6 @@
 id: stable-endpoints
 title: Supported Endpoints
 sidebar_label: Supported Endpoints
-slug: /compute/api/30-03
 ---
 
 With every release the Prisma Cloud Compute Edition APIs are versioned to indicate the release number to which they correspond.
@@ -11,12 +10,6 @@ The version-specific APIs are supported for the subsequent two major releases.
 With API versioning, as your Console is upgraded to newer versions, you can continue to use older versioned APIs with stability and migrate to newer version APIs at your convenience within the N-2 support lifecycle.
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
-
-### Latest API Versions of Prisma Cloud Compute Edition
-
-If you're looking for latest version of Prisma Cloud Compute Edition, visit the following link:
-
-* [Prisma Cloud Compute Edition - Latest](/compute/api/)
 
 ### Previous API Versions of Prisma Cloud Compute Edition
 
@@ -41,7 +34,6 @@ Where:
   - api/v1/cloud/discovery/entities, get
   - api/v1/registry/webhook/webhook, delete
   - api/v1/registry/webhook/webhook, post
-  - api/v1/settings/license, post
   - api/v1/signup, post
   - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
   - api/v1/util/tas-tile, get
