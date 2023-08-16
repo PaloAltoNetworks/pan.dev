@@ -525,6 +525,9 @@
             "readOnly": true,
             "type": "string"
           },
+          "customMemberRoleNameEnabled": {
+            "type": "boolean"
+          },
           "defaultAccountGroupId": {
             "description": "Default Account Group",
             "type": "string"
@@ -630,6 +633,9 @@
             "description": "Role ARN",
             "type": "string"
           },
+          "skipOverrideMemberRoleName": {
+            "type": "boolean"
+          },
           "storageScanConfig": {
             "allOf": [
               {
@@ -647,6 +653,9 @@
           "storageUUID": {
             "description": "Storage UUID",
             "type": "string"
+          },
+          "unifiedCftDisabled": {
+            "type": "boolean"
           }
         },
         "type": "object"
@@ -2433,11 +2442,27 @@
         ]
       }
     },
-    "/cloud/{id}/status/{enabled}": {
-      "patch": {
-        "description": "Enable or disable cloud account.",
-        "operationId": "update-cloud-account-status",
+    "/cloud/{cloud_type}/{id}": {
+      "get": {
+        "description": "Returns top level information about the cloud account.",
+        "operationId": "get-cloud-account",
         "parameters": [
+          {
+            "description": "Cloud Type",
+            "in": "path",
+            "name": "cloud_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "aws",
+                "azure",
+                "gcp",
+                "alibaba_cloud",
+                "oci"
+              ],
+              "type": "string"
+            }
+          },
           {
             "description": "Account ID",
             "in": "path",
@@ -2449,18 +2474,9 @@
             }
           },
           {
-            "description": "Status To Set",
-            "in": "path",
-            "name": "enabled",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "description": "Allows for updating status of children cloud accounts if any. Default is false.",
+            "description": "true = Include account group info. Default is false.",
             "in": "query",
-            "name": "updateChildren",
+            "name": "includeGroupInfo",
             "required": false,
             "schema": {
               "type": "boolean"
@@ -2469,13 +2485,14 @@
         ],
         "responses": {
           "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudAccountModel"
+                }
+              }
+            },
             "description": "successful operation"
-          },
-          "400": {
-            "description": "invalid_account_id_format / invalid_account_patch"
-          },
-          "404": {
-            "description": "invalid_account_id_format"
           }
         },
         "security": [
@@ -2483,13 +2500,11 @@
             "x-redlock-auth": []
           }
         ],
-        "summary": "Update Cloud Account Status",
+        "summary": "Get Cloud Account Details",
         "tags": [
           "Cloud Accounts (All)"
         ]
-      }
-    },
-    "/cloud/{cloud_type}/{id}": {
+      },
       "patch": {
         "description": "Enable / disable cloud account (and children) OR Update the Account Groups it belongs to",
         "operationId": "patch-cloud-account",
@@ -2613,6 +2628,62 @@
           }
         ],
         "summary": "Delete Cloud Account",
+        "tags": [
+          "Cloud Accounts (All)"
+        ]
+      }
+    },
+    "/cloud/{id}/status/{enabled}": {
+      "patch": {
+        "description": "Enable or disable cloud account.",
+        "operationId": "update-cloud-account-status",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": ".+",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Status To Set",
+            "in": "path",
+            "name": "enabled",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Allows for updating status of children cloud accounts if any. Default is false.",
+            "in": "query",
+            "name": "updateChildren",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / invalid_account_patch"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Cloud Account Status",
         "tags": [
           "Cloud Accounts (All)"
         ]
