@@ -1,7 +1,7 @@
 ---
 id: home
 title: API Workflows
-description: Prisma Cloud API workflows for Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWPP), and Cloud Code Security (CCS)
+description: Prisma Cloud API workflows for Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWPP), and Cloud Application Security (CCS)
 slug: /prisma-cloud/docs
 keywords:
   - Prisma Cloud
@@ -16,7 +16,7 @@ Prisma™ Cloud is a cloud-native security platform that provides comprehensive 
 
 - [Cloud Workload Protection](/prisma-cloud/api/cwpp) allows for automation and integration with other systems in your environment. Every functionality in the Console UI is exposed through the RESTful API. You can use the API for setup, configuration, monitoring, alerting, and data extraction.
 
-- [Cloud Code Security](/prisma-cloud/api/code/) enables you to programmatically check your Infrastructure-as-Code resources against Prisma Cloud out-of-the-box and custom security policies, ensuring security throughout the build lifecycle.
+- [Cloud Application Security](/prisma-cloud/api/code/) enables you to programmatically check your Infrastructure-as-Code resources against Prisma Cloud out-of-the-box and custom security policies, ensuring security throughout the build lifecycle.
 
 For information about Prisma Cloud beyond its APIs, such as administration and policy management,
 see the [Prisma Cloud administration documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud.html).
