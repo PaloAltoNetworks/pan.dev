@@ -29,7 +29,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Cloud Code Security",
+      label: "Cloud Application Security",
       collapsed: true,
       items: [
         "prisma-cloud/api/code/code",
