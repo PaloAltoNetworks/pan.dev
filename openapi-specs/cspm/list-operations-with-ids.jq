@@ -35,9 +35,11 @@
       path: $path, # Using the variable defined on line 4
       summary: .value.summary?,
       operationId: .value.operationId,
-      tags: .value.tags?[0]
+      tags: .value.tags?[0],
       #deprecated: .value.deprecated?
-    }
+      microservice: (if (input_filename | contains ("MicroService")) then input_filename else "Monolith" end)
+    } 
+     
   )[] # Flattens array to avoid having an array 
       # of array of {path, method, summary, deprecated}
 ) # Now we have an array of {path, method, summary, deprecated}
