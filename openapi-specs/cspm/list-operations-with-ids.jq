@@ -37,7 +37,7 @@
       operationId: .value.operationId,
       tags: .value.tags?[0],
       #deprecated: .value.deprecated?
-      microservice: (if (input_filename | contains ("MicroService")) then "From_MicroService: yes" else "From_MicroService:no" end)
+      microservice: (if (input_filename | contains ("MicroService")) then input_filename else "Monolith" end)
     } 
      
   )[] # Flattens array to avoid having an array 
