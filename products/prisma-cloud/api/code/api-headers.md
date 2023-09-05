@@ -1,6 +1,6 @@
 ---
 id: api-headers
-title: Code Security API Headers
+title: Application Security API Headers
 sidebar_label: Headers
 keywords:
   - Developer
@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-The following table lists the HTTP headers required for a Prisma Cloud Code Security API request.
+The following table lists the HTTP headers required for a Prisma Cloud Application Security API request.
 
 | HTTP Header     | Value                                                                                                                                                            |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -29,7 +29,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Cloud Code Security",
+      label: "Cloud Application Security",
       collapsed: true,
       items: [
         "prisma-cloud/api/code/code",
@@ -39,42 +39,6 @@ module.exports = {
       ],
     },
   ],
-  cwpp_30: [
-    {
-      type: "category",
-      label: "Prisma Cloud Enterprise Edition - 30.00",
-      collapsed: true,
-      items: [
-        "prisma-cloud/api/cwpp/30-00/stable-endpoints",
-        require("./api/cwpp/30-00/sidebar"),
-      ],
-    },
-  ],
-
-  cwpp_3001: [
-    {
-      type: "category",
-      label: "Prisma Cloud Enterprise Edition - 30.01",
-      collapsed: true,
-      items: [
-        "prisma-cloud/api/cwpp/30-01/stable-endpoints",
-        require("./api/cwpp/30-01/sidebar"),
-      ],
-    },
-  ],
-
-  cwpp_3002: [
-    {
-      type: "category",
-      label: "Prisma Cloud Enterprise Edition - 30.02",
-      collapsed: true,
-      items: [
-        "prisma-cloud/api/cwpp/30-02/stable-endpoints",
-        require("./api/cwpp/30-02/sidebar"),
-      ],
-    },
-  ],
-
   clouddocs: [
     "prisma-cloud/docs/home",
     {

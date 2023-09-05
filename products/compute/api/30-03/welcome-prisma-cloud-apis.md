@@ -1,7 +1,7 @@
 ---
 id: compute-api-reference-home
 title: Welcome to the Compute APIs
-slug: /compute/api/22-06
+slug: /compute/api/30-03
 keywords:
   - Developer
   - Prisma
@@ -17,6 +17,15 @@ Use the API to:
 
 - Set up, configure, reconfigure, and deploy Prisma Cloud Compute components to secure your hosts, containers, and serverless functions against vulnerabilities, malware, and compliance violations.
 - Extract the security data that Prisma Cloud Compute has collected about your environment and send it to your monitoring, alerting, and reporting systems.
+
+### Previous API Versions of Prisma Cloud Compute Edition
+
+All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
+If you're looking for previous minor or maintenance release versions, visit the following link:
+
+* [Prisma Cloud Compute Edition - 30.02](/compute/api/30-02/)
+* [Prisma Cloud Compute Edition - 30.01](/compute/api/30-01/)
+* [Prisma Cloud Compute Edition - 30.00](/compute/api/30-00/)
 
 ### How to find your version
 
@@ -57,9 +66,9 @@ This port is specified at install time in `twistlock.cfg`.
 The cURL example for each endpoint is called with a username (`-u <USER>`) only.
 The cURL command can be modified to use any of the following:
 
-- **Authentication Token:** Use the `-H` option to pass the authentication token from the [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint into the request header.
+- **Authentication Token:** Use the `-H` option to pass the authentication token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint into the request header.
 
-For example, replace `<ACCESS_TOKEN>` with the token from the [Authenticating a user](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+For example, replace `<ACCESS_TOKEN>` with the token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 ```bash
 $ curl -k \
