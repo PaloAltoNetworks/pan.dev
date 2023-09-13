@@ -459,6 +459,96 @@ __Returns__
 * [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the certificate's
     properties (installed or required) are not supported.
 
+### `CheckFirewall._calculate_schedule_time_diff`
+
+```python
+def _calculate_schedule_time_diff(now_dt: datetime, schedule_type: str,
+                                  schedule: dict) -> (int, str)
+```
+
+A method that calculates the time distance between two `datetime` objects.
+
+:::note
+This method is used only by [`CheckFirewall.check_scheduled_updates()`](#checkfirewallcheck_scheduled_updates) method and it expects some information
+to be already available.
+:::
+
+__Parameters__
+
+
+- __now_dt__ (`datetime`): A `datetime` object representing the current moment in time. Ideally this should be the device's local
+    time, taken from the management plane clock.
+- __schedule_type__ (`str`): A schedule type returned by PanOS, can be one of: `every-*`, `hourly`, `daily`, `weekly`,
+    `real-time`.
+- __schedule__ (`dict`): Value of the `recurring` key in the API response, see
+    [`FirewallProxy.get_update_schedules()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_update_schedules)
+    documentation for details. Both formats (locally configured and pushed from a Panorama template) are supported.
+
+__Raises__
+
+
+- `MalformedResponseException`: Thrown then the `schedule_type` is not recognizable.
+
+__Returns__
+
+
+`tuple(int, str)`: A tuple containing the calculated time difference (in minutes) and human-readable description.
+
+### `CheckFirewall.check_scheduled_updates`
+
+```python
+def check_scheduled_updates(test_window: int = 60) -> CheckResult
+```
+
+Check if any Dynamic Update job is scheduled to run within the specified time window.
+
+When device is configured via Panorama, this includes schedules set up in Templates. It does not however include schedules
+configured in `Panorama/Device Deployment/Dynamic Updates/Schedules`.
+
+__Parameters__
+
+
+- __test_window__ (`int, optional`): (defaults to 60 minutes). A time window in minutes to look for an update job occurrence.
+    Has to be a value between `60` and `10080` (1 week equivalent). The time window is calculated based on the device's
+    local time (taken from the management plane).
+
+__Raises__
+
+
+- `MalformedResponseException`: Thrown in case API response does not meet expectations.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there is no update job
+    planned within the test window.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise, `CheckResult.reason`
+    field contains information about the planned jobs with next occurrence time provided if possible.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the `test_window` parameter
+    does not meet criteria.
+
+### `CheckFirewall.check_non_finished_jobs`
+
+```python
+def check_non_finished_jobs() -> CheckResult
+```
+
+Check for any job with status different than FIN.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when all jobs are in FIN state.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise, `CheckResult.reason`
+    field contains information about the 1<sup>st</sup> job found with status different than FIN (job ID and the actual
+    status).
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
+    device.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python

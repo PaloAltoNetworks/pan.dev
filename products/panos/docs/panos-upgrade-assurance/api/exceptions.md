@@ -32,6 +32,10 @@ Parent class for all exceptions coming from [Utils](/panos/docs/panos-upgrade-as
 
 Used when a command run on a device does not return the `success` status.
 
+## class `GetXpathConfigFailedException`
+
+Used when XAPI does not return a `success` state when running a `get` operation.
+
 ## class `MalformedResponseException`
 
 A generic exception class used when a response does not meet the expected standards.
