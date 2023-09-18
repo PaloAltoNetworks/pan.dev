@@ -297,6 +297,11 @@ const config = {
                   ],
                   apiDocs: [
                     {
+                      to: "/aiops-ngfw/api",
+                      label: "AIOps for NGFW API",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/threat-vault/api",
                       label: "Threat Vault APIs",
                       icon: "api-doc",
@@ -700,6 +705,11 @@ const config = {
             outputDir: "products/threat-vault/api",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          "aiops-ngfw": {
+            specPath: "openapi-specs/aiops-ngfw/BPAReportAPI.yaml",
+            outputDir: "products/aiops-ngfw/api",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           "dns-security": {
             specPath: "openapi-specs/dns-security/dns-security.yaml",
