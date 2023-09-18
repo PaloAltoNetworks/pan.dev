@@ -1,0 +1,258 @@
+components:
+  parameters:
+    format:
+      description: Format of the BPA report.
+      in: query
+      name: format
+      schema:
+        default: json
+        enum:
+        - json
+    id:
+      description: The unique identifier for the request.
+      in: path
+      name: id
+      required: true
+      schema:
+        example: 123e4567-e89b-12d3-a456-426655440000
+        format: uuid
+        type: string
+  schemas:
+    job-id:
+      properties:
+        id:
+          description: The report generation job ID.
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          readOnly: true
+          type: string
+      required:
+      - id
+      title: id
+      type: object
+    report-request:
+      properties:
+        family:
+          description: The platform family of the device.
+          enum:
+          - 7000f
+          - 5400f
+          - 5200f
+          - 5000f
+          - 3400f
+          - 3200f
+          - 3000f
+          - 1400f
+          - 800f
+          - 400f
+          - 220f
+          - vm
+          - m
+        model:
+          description: The model of the device.
+          enum:
+          - PA-7080
+          - PA-7050
+          - PA-5450
+          - PA-5440
+          - PA-5430
+          - PA-5420
+          - PA-5410
+          - PA-5280
+          - PA-5260
+          - PA-5240
+          - PA-5220
+          - PA-5060
+          - PA-5050
+          - PA-5020
+          - PA-3440
+          - PA-3430
+          - PA-3420
+          - PA-3410
+          - PA-3260
+          - PA-3250
+          - PA-3220
+          - PA-3050
+          - PA-3020
+          - PA-1420
+          - PA-1410
+          - PA-850
+          - PA-820
+          - PA-460
+          - PA-450
+          - PA-445
+          - PA-440
+          - PA-415
+          - PA-410
+          - PA-220
+          - PA-220R
+          - Panorama
+        requester-email:
+          description: The email address of the person requesting the BPA report.
+          example: joe@alvisofincorp.com
+          format: email
+          type: string
+        requester-name:
+          description: The name of the person requesting the BPA report.
+          example: Joe User
+          type: string
+        serial:
+          description: The serial number of the device.
+          example: '023101010101'
+          type: string
+        version:
+          description: The PAN-OS version of the device.
+          example: 10.2.4
+          type: string
+      required:
+      - requester-name
+      - requester-email
+      - serial
+      - model
+      - family
+      - version
+      title: report-request
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Programmatically request Best Practice Assessment Data for both free
+    and premium instances of AIOps.
+
+    '
+  license:
+    name: MIT
+  termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+  title: Best Practice Assessment Report APIs
+  version: '1.0'
+openapi: 3.0.0
+paths:
+  /bpa/v1/jobs/{id}:
+    get:
+      description: Downloads the BPA assessment job status.
+      operationId: get-bpa-v1-jobs-id
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/job-id'
+                - properties:
+                    status:
+                      description: The status of the report generation job
+                      enum:
+                      - UPLOAD_INITIATED
+                      - CONFIG_PARSED
+                      - COMPLETED_WITH_SUCCESS
+                      - COMPLETED_WITH_ERROR
+                      readOnly: true
+                  required:
+                  - status
+                  type: object
+          description: OK
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      servers:
+      - url: https://api.stratacloud.paloaltonetworks.com/aiops
+      summary: Get Job Status
+      tags:
+      - BPA Report API
+  /bpa/v1/reports/{id}:
+    get:
+      description: Given an `id`, retrieves the BPA report in JSON format.
+      operationId: get-bpa-v1-reports-id
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/job-id'
+                - properties:
+                    download-url:
+                      description: The signed URL that will be used to download the
+                        Best Practices Assessment (BPA) report
+                      example: https://storage.googleapis.com/taskId/config.xml?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=key%40project.iam.gserviceaccount.com%2F20230803%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230803T172537Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=046d2e0e5f7c8f5100f50e8f057bcc222fcab2658bdc5cf4b4078dc93ef9dac5b815ed368afb09f2580cbc91818e49f0b9fe32857c13734f7b1bc131b6cd4ff370f5e5ffa839b6d9a4557ce3221324baa9e6cf6469088672b6688ba12c0765945f0a609e26c5878a3f16bd6f51108db2f2e71d3b532583d7713d6497cf1e942b0b295fcc4bf7d2c6ce5e479ac1ca5ed0f79bc5c1f36b234b678183ecfe0b27ee0c911fe529bfbe6cf9b3896230b9ab0a4a651dcd9babdbc1921fb0a513cf640f4e024c2523c9c3f3582ec19b3dac5b83cf44492305f69bb0545d1a0681e0c9cf7f5477bbdbf73f3f4352b8613d74a8f2d974e9a2b49187b6bd8e5df6a96e0f69
+                      format: uri
+                      readOnly: true
+                      type: string
+                  required:
+                  - download-url
+                  type: object
+          description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      servers:
+      - url: https://api.stratacloud.paloaltonetworks.com/aiops
+      summary: Get BPA Reports
+      tags:
+      - BPA Report API
+  /bpa/v1/requests:
+    post:
+      description: "Initiated the BPA report generation process.  You can configure\
+        \ options to generate report data.  \n\nThe `upload-url` field contains a\
+        \ [signed URL](https://cloud.google.com/storage/docs/access-control/signed-urls)\
+        \ that must be used for the configuration file upload. The`id` field contains\
+        \ the report generation job ID that you can use to track the report generation\
+        \ process.\n\nFile upload example: \n```\ncurl -X PUT --upload-file ${path/to/file}\
+        \ '${signed-upload-url}'\n```"
+      operationId: post-bpa-v1-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/report-request'
+          application/xml:
+            schema:
+              type: object
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/job-id'
+                - $ref: '#/components/schemas/report-request'
+                - properties:
+                    upload-url:
+                      description: The signed URL that will be used to upload the
+                        Tech Support File (TSF)
+                      example: https://storage.googleapis.com/taskId/config.xml?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=key%40project.iam.gserviceaccount.com%2F20230803%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230803T172537Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=046d2e0e5f7c8f5100f50e8f057bcc222fcab2658bdc5cf4b4078dc93ef9dac5b815ed368afb09f2580cbc91818e49f0b9fe32857c13734f7b1bc131b6cd4ff370f5e5ffa839b6d9a4557ce3221324baa9e6cf6469088672b6688ba12c0765945f0a609e26c5878a3f16bd6f51108db2f2e71d3b532583d7713d6497cf1e942b0b295fcc4bf7d2c6ce5e479ac1ca5ed0f79bc5c1f36b234b678183ecfe0b27ee0c911fe529bfbe6cf9b3896230b9ab0a4a651dcd9babdbc1921fb0a513cf640f4e024c2523c9c3f3582ec19b3dac5b83cf44492305f69bb0545d1a0681e0c9cf7f5477bbdbf73f3f4352b8613d74a8f2d974e9a2b49187b6bd8e5df6a96e0f69
+                      format: uri
+                      readOnly: true
+                      type: string
+                  type: object
+          description: Created
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      servers:
+      - url: https://api.stratacloud.paloaltonetworks.com/aiops
+      summary: Generate BPA Report
+      tags:
+      - BPA Report API
+servers:
+- url: https://bpa.paloaltonetworks.com
+tags:
+- name: BPA Report API
