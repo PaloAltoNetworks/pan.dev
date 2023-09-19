@@ -35,8 +35,7 @@ Execute a command on node, parse, and return response.
 
 This is just a wrapper around the
 [`Firewall.op()`](https://pan-os-python.readthedocs.io/en/latest/module-firewall.html#panos.firewall.Firewall.op) method.
-It additionally does basic error handling and tries to extract the actual device
-response.
+It additionally does basic error handling and tries to extract the actual device response.
 
 __Parameters__
 
@@ -52,6 +51,36 @@ __Raises__
 - `CommandRunFailedException`: An exception is raised if the command run status returned by a device is not successful.
 - `MalformedResponseException`: An exception is raised when a response is not parsable, no `result` element is found in the
     XML response.
+
+__Returns__
+
+`dict, xml.etree.ElementTree.Element`: The actual command output. A type is defined by the `return_xml` parameter.
+
+### `FirewallProxy.get_parser`
+
+```python
+def get_parser(xml_path: str,
+               return_xml: Optional[bool] = False) -> Union[dict, ET.Element]
+```
+
+Execute a configuration get command on a node, parse and return response.
+
+This is a wrapper around the
+[`pan.xapi.get()` method](https://github.com/kevinsteves/pan-python/blob/master/doc/pan.xapi.rst#getxpathnone)
+from the [`pan-python` package](https://pypi.org/project/pan-python/).
+It does a basic error handling and tries to extract the actual response.
+
+__Parameters__
+
+
+- __xml_path__ (`str`): An XPATH pointing to the config to be retrieved.
+- __return_xml__ (`bool`): (defaults to `False`) When set to `True`, the return data is an             [`XML object`](https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element)
+    instead of a Python dictionary.
+
+__Raises__
+
+
+- `GetXpathConfigFailedException`: This exception is raised when XPATH is not provided or does not exist.
 
 __Returns__
 
@@ -854,7 +883,7 @@ __Returns__
 ### `FirewallProxy.get_mp_clock`
 
 ```python
-def get_mp_clock() -> dict
+def get_mp_clock() -> datetime
 ```
 
 Get the clock information from management plane.
@@ -864,18 +893,7 @@ The actual API command is `show clock`.
 __Returns__
 
 
-`dict`: The clock information represented as a dictionary.
-
-```python showLineNumbers title="Sample output"
-{
-    'time': '00:41:36',
-    'tz': 'PDT',
-    'day': '19',
-    'month': 'Apr',
-    'year': '2023',
-    'day_of_week': 'Wed'
-}
-```
+`datetime`: The clock information represented as a `datetime` object.
 
 ### `FirewallProxy.get_dp_clock`
 
@@ -890,18 +908,7 @@ The actual API command is `show clock more`.
 __Returns__
 
 
-`dict`: The clock information represented as a dictionary.
-
-```python showLineNumbers title="Sample output"
-{
-    'time': '00:41:36',
-    'tz': 'PDT',
-    'day': '19',
-    'month': 'Apr',
-    'year': '2023',
-    'day_of_week': 'Wed'
-}
-```
+`datetime`: The clock information represented as a `datetime` object.
 
 ### `FirewallProxy.get_certificates`
 
@@ -954,5 +961,125 @@ __Returns__
     },
     ...
 }
+```
+
+### `FirewallProxy.get_update_schedules`
+
+```python
+def get_update_schedules() -> dict
+```
+
+Get schedules for all dynamic updates.
+
+This method gets scheduled dynamic updates on a device. This includes the ones pushed from Panorama,
+but it does not include the ones configured via `Panorama/Device Deployment/Dynamic Updates/Schedules`.
+
+The actual XMLAPI command run here is `config/get` with XPATH set to
+`/config/devices/entry[@name='localhost.localdomain']/deviceconfig/system/update-schedule`.
+
+__Returns__
+
+
+`dict`: All dynamic updates schedules, key is the entity type to update, like: threats, wildfire, etc.
+
+```python showLineNumbers title="Sample output, showing values coming from Panorama"
+{'@ptpl': 'lab',
+'@src': 'tpl',
+'anti-virus': {'@ptpl': 'lab',
+                '@src': 'tpl',
+                'recurring': {'@ptpl': 'lab',
+                            '@src': 'tpl',
+                            'hourly': {'@ptpl': 'lab',
+                                        '@src': 'tpl',
+                                        'action': {'`text`': 'download-and-install',
+                                                    '@ptpl': 'lab',
+                                                    '@src': 'tpl'},
+                                        'at': {'`text`': '0',
+                                                '@ptpl': 'lab',
+                                                '@src': 'tpl'}}}},
+'global-protect-clientless-vpn': {'@ptpl': 'lab',
+                                '@src': 'tpl',
+                                'recurring': {'@ptpl': 'lab',
+                                                '@src': 'tpl',
+                                                'weekly': {'@ptpl': 'lab',
+                                                            '@src': 'tpl',
+                                                            'action': {'`text`': 'download-only',
+                                                                    '@ptpl': 'lab',
+                                                                    '@src': 'tpl'},
+                                                            'at': {'`text`': '20:00',
+                                                                '@ptpl': 'lab',
+                                                                '@src': 'tpl'},
+                                                            'day-of-week': {'`text`': 'wednesday',
+                                                                            '@ptpl': 'lab',
+                                                                            '@src': 'tpl'}}}}
+}
+```
+
+### `FirewallProxy.get_jobs`
+
+```python
+def get_jobs() -> dict
+```
+
+Get details on all jobs.
+
+This method retrieves all jobs and their details, this means running, pending, finished, etc.
+
+The actual API command is `show jobs all`.
+
+__Returns__
+
+
+`dict`: All jobs found on the device, indexed by the ID of a job.
+
+```python showLineNumbers title="Sample output"
+{'1': {'description': None,
+    'details': {'line': ['ID population failed',
+                            'Client logrcvr registered in the middle of a '
+                            'commit/validate. Aborting current '
+                            'commit/validate.',
+                            'Commit failed',
+                            'Failed to commit policy to device']},
+    'positionInQ': '0',
+    'progress': '100',
+    'queued': 'NO',
+    'result': 'FAIL',
+    'status': 'FIN',
+    'stoppable': 'no',
+    'tdeq': '00:28:32',
+    'tenq': '2023/08/01 00:28:32',
+    'tfin': '2023/08/01 00:28:36',
+    'type': 'AutoCom',
+    'user': None,
+    'warnings': None},
+'2': {'description': None,
+    'details': {'line': ['Configuration committed successfully',
+                            'Successfully committed last configuration']},
+    'positionInQ': '0',
+    'progress': '100',
+    'queued': 'NO',
+    'result': 'OK',
+    'status': 'FIN',
+    'stoppable': 'no',
+    'tdeq': '00:28:40',
+    'tenq': '2023/08/01 00:28:40',
+    'tfin': '2023/08/01 00:29:20',
+    'type': 'AutoCom',
+    'user': None,
+    'warnings': None},
+'3': {'description': None,
+    'details': None,
+    'positionInQ': '0',
+    'progress': '30',
+    'queued': 'NO',
+    'result': 'PEND',
+    'status': 'ACT',
+    'stoppable': 'yes',
+    'tdeq': '00:58:59',
+    'tenq': '2023/08/01 00:58:59',
+    'tfin': None,
+    'type': 'Downld',
+    'user': None,
+    'warnings': None}}
 ```
 
