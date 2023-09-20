@@ -7,21 +7,73 @@ custom_edit_url: null
 ---
 ## class `FirewallProxy`
 
-Class representing a Firewall.
+A proxy to the [Firewall][fw] class.
 
-Proxy in this class means that it is between the *high level*
-[`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class and a device itself.
-Inherits the [Firewall][fw] class but adds methods to interpret XML API commands. The class constructor is also inherited
-from the [Firewall][fw] class.
+Proxy in this case means that this class is between the *high level*
+[`CheckFirewall`](/panos/docs/panos-upgrade-assurance/api/check_firewall#class-checkfirewall) class and the
+[`Firewall`][fw] class representing the device itself.
+There is no inheritance between the [`Firewall`][fw] and [`FirewallProxy`][fwp] classes, but an object of the latter one
+has access to all attributes of the former.
 
 All interaction with a device are read-only. Therefore, a less privileged user can be used.
 
-All methods starting with `is_` check the state, they do not present any data besides simple `boolean`values.
+All methods starting with `is_` check the state, they do not present any data besides simple `boolean` values.
 
 All methods starting with `get_` fetch data from a device by running a command and parsing the output.
 The return data type can be different depending on what kind of information is returned from a device.
 
 [fw]: https://pan-os-python.readthedocs.io/en/latest/module-firewall.html#module-panos.firewall
+[fwp]: /panos/docs/panos-upgrade-assurance/api/firewall_proxy
+
+__Attributes__
+
+
+- `_fw (Firewall)`: an object of the [`Firewall`][fw] class.
+
+### `FirewallProxy.__init__`
+
+```python
+def __init__(firewall: Optional[Firewall] = None, **kwargs)
+```
+
+Constructor of the [`FirewallProxy`][fwp] class.
+
+Main purpose of this constructor is to store an object of the [`Firewall`][fw] class. This can be done in two ways:
+
+1. by passing an existing object
+1. by passing credentials and address of a device (all parameters used byt the [`Firewall`][fw] class constructor
+    are supported).
+
+:::tip
+Please note that positional arguments are not supported.
+:::
+
+__Parameters__
+
+
+- __firewall__ (`Firewall`): An existing object of the [`Firewall`][fw] class.
+- __**kwargs__: Used to pass keyword arguments that will be used directly in the [`Firewall`][fw] class constructor.
+
+__Raises__
+
+
+- `WrongNumberOfArgumentsException`: Raised when a mixture of arguments is passed (for example a [`Firewall`][fw]
+    object and firewall credentials).
+
+### `FirewallProxy.__getattr__`
+
+```python
+def __getattr__(attr)
+```
+
+An overload of the default `__getattr__()` method.
+
+Its main purpose is to provide backwards compatibility to the old [`FirewallProxy`][fwp] class structure. It's called
+when a requested attribute does not exist in the [`FirewallProxy`][fwp] class object, and it tries to fetch it
+from the [`Firewall`][fw] object stored within the [`FirewallProxy`][fwp] object.
+
+From the [`FirewallProxy`][fwp] object's interface perspective, this provides the same behaviour as if the
+[`FirewallProxy`][fwp] would still inherit from the [`Firewall`][fw] class.
 
 ### `FirewallProxy.op_parser`
 
