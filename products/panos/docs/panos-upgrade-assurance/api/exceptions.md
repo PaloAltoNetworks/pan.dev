@@ -28,6 +28,11 @@ module.
 
 Parent class for all exceptions coming from [Utils](/panos/docs/panos-upgrade-assurance/api/utils) module.
 
+## class `WrongNumberOfArgumentsException`
+
+Thrown when [FirewallProxy](/panos/docs/panos-upgrade-assurance/api/firewall_proxy) constructor is given wrong number or
+set of arguments.
+
 ## class `CommandRunFailedException`
 
 Used when a command run on a device does not return the `success` status.
