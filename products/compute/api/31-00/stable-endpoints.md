@@ -15,6 +15,12 @@ The Compute API is versioned as follows:
 
 `/api/vX/route`
 
+### Latest API Versions of Prisma Cloud Compute Edition
+
+To view the documentation for the latest versions of the supported Prisma Cloud Compute Edition releases, visit:
+
+* [Prisma Cloud Compute Edition - Latest](/compute/api/)
+
 Where:
 
 - `v1` - Always points to the latest API. This represents a larger set of APIs. Only the following v1 endpoints are supported and documented:
