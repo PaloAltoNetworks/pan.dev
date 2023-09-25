@@ -17,9 +17,9 @@ This API enables you to programmatically generate BPA data for both the free and
 
 With the API, you can:
 
-1. [Generate a BPA Report.](/aiops-ngfw/api/post-bpa-v-1-requests/)
-2. [Get the Status of a Generated BPA Report.](/aiops-ngfw/api/get-bpa-v-1-jobs-id/)
-3. [Get the BPA Report in JSON Format.](/get-bpa-v-1-reports-id/)
+1. [Generate a BPA Report.](/aiops-ngfw-bpa/api/post-bpa-v-1-requests/)
+2. [Get the Status of a Generated BPA Report.](/aiops-ngfw-bpa/api/get-bpa-v-1-jobs-id/)
+3. [Get the BPA Report in JSON Format.](/aiops-ngfw-bpa/get-bpa-v-1-reports-id/)
 
 For more BPA-related privacy information, please refer to our [AIOps for NGFW](https://www.paloaltonetworks.com/resources/datasheets/privacy-aiops-for-ngfw).
 
