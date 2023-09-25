@@ -11,14 +11,11 @@ With API versioning, as your Console is upgraded to newer versions, you can cont
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
 
-### Previous API Versions of Prisma Cloud Compute Edition
+### Latest API Versions of Prisma Cloud Compute Edition
 
-All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
-If you're looking for previous minor or maintenance release versions, visit the following link:
+To view the documentation for the latest versions of other supported releases of Prisma Cloud Compute Edition, visit:
 
-* [Prisma Cloud Compute Edition - 30.02](/compute/api/30-02/)
-* [Prisma Cloud Compute Edition - 30.01](/compute/api/30-01/)
-* [Prisma Cloud Compute Edition - 30.00](/compute/api/30-00/)
+* [Prisma Cloud Compute Edition - Latest](/compute/api/)
 
 ## Versioning
 
