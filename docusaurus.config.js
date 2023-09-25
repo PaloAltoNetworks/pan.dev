@@ -297,8 +297,8 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "/aiops-ngfw/api",
-                      label: "AIOps for NGFW API",
+                      to: "/aiops-ngfw-bpa/api",
+                      label: "AIOps for NGFW Best Practice Assessment API",
                       icon: "api-doc",
                     },
                     {
@@ -691,9 +691,9 @@ const config = {
               },
             },
           },
-          "aiops-ngfw": {
-            specPath: "openapi-specs/aiops-ngfw/BPAReportAPI.yaml",
-            outputDir: "products/aiops-ngfw/api",
+          "aiops-ngfw-bpa": {
+            specPath: "openapi-specs/aiops-ngfw-bpa/BPAReportAPI.yaml",
+            outputDir: "products/aiops-ngfw-bpa/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {

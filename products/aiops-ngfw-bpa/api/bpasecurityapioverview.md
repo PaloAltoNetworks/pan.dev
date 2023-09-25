@@ -1,9 +1,9 @@
 ---
 id: bpasecurityapioverview
-title: AIOps Best Practice Assessment APIs for NGFW
-sidebar_label: AIOps BPA APIs
+title: AIOps for NGFW Best Practice Assessment APIs
+sidebar_label: AIOps NGFW BPA APIs
 sidebar_position: 1
-slug: /aiops-ngfw/api
+slug: /aiops-ngfw-bpa/api
 keywords:
   - PAN-OS
   - Reference

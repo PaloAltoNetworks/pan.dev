@@ -1,6 +1,6 @@
 module.exports = {
   aiops_api: [
-    "aiops-ngfw/api/bpasecurityapioverview",
+    "aiops-ngfw-bpa/api/bpasecurityapioverview",
     require("./api/sidebar"),
   ],
 };
