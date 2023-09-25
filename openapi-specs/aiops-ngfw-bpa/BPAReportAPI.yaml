@@ -21,13 +21,10 @@ components:
     job-id:
       properties:
         id:
-          description: The report generation job ID.
+          description: The generated report ID.
           example: 123e4567-e89b-12d3-a456-426655440000
           format: uuid
-          readOnly: true
           type: string
-      required:
-      - id
       title: id
       type: object
     report-request:
@@ -146,15 +143,12 @@ paths:
                 - $ref: '#/components/schemas/job-id'
                 - properties:
                     status:
-                      description: The status of the report generation job
+                      description: The status of the report generation job.
                       enum:
                       - UPLOAD_INITIATED
                       - CONFIG_PARSED
                       - COMPLETED_WITH_SUCCESS
                       - COMPLETED_WITH_ERROR
-                      readOnly: true
-                  required:
-                  - status
                   type: object
           description: OK
         '404':
@@ -170,7 +164,10 @@ paths:
       - BPA Report API
   /bpa/v1/reports/{id}:
     get:
-      description: Given an `id`, retrieves the BPA report in JSON format.
+      description: "Retrieves the url for the completed BPA report. The `download-url`\
+        \ field contains a [signed \nURL](https://cloud.google.com/storage/docs/access-control/signed-urls)\
+        \ where you can download the report.\n\n> Note that this API endpoint should\
+        \ only be called when the report generation status is `COMPLETED_WITH_SUCCESS`.\n"
       operationId: get-bpa-v1-reports-id
       parameters:
       - $ref: '#/components/parameters/id'
@@ -187,10 +184,7 @@ paths:
                         Best Practices Assessment (BPA) report
                       example: https://storage.googleapis.com/taskId/config.xml?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=key%40project.iam.gserviceaccount.com%2F20230803%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230803T172537Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=046d2e0e5f7c8f5100f50e8f057bcc222fcab2658bdc5cf4b4078dc93ef9dac5b815ed368afb09f2580cbc91818e49f0b9fe32857c13734f7b1bc131b6cd4ff370f5e5ffa839b6d9a4557ce3221324baa9e6cf6469088672b6688ba12c0765945f0a609e26c5878a3f16bd6f51108db2f2e71d3b532583d7713d6497cf1e942b0b295fcc4bf7d2c6ce5e479ac1ca5ed0f79bc5c1f36b234b678183ecfe0b27ee0c911fe529bfbe6cf9b3896230b9ab0a4a651dcd9babdbc1921fb0a513cf640f4e024c2523c9c3f3582ec19b3dac5b83cf44492305f69bb0545d1a0681e0c9cf7f5477bbdbf73f3f4352b8613d74a8f2d974e9a2b49187b6bd8e5df6a96e0f69
                       format: uri
-                      readOnly: true
                       type: string
-                  required:
-                  - download-url
                   type: object
           description: OK
         '400':
@@ -208,12 +202,14 @@ paths:
       - BPA Report API
   /bpa/v1/requests:
     post:
-      description: "Initiates the BPA report generation process.  You can configure\
-        \ options to generate report data.  \n\nThe `upload-url` field contains a\
-        \ [signed URL](https://cloud.google.com/storage/docs/access-control/signed-urls)\
-        \ that must be used for the configuration file upload. The`id` field contains\
-        \ the report generation job ID that you can use to track the report generation\
-        \ process.\n\nFile upload example: \n```\ncurl -X PUT --upload-file ${path/to/file}\
+      description: "Initiates the BPA report generation proces using the configurable\
+        \ options\n\nWhen a successful PUT request is sent, the `upload-url` field\
+        \ contains a [signed URL](https://cloud.google.com/storage/docs/access-control/signed-urls)\
+        \ you can use the for [configuration file upload](https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-admin/firewall-administration/manage-configuration-backups/save-and-export-firewall-configurations).\
+        \ \n\nThe `id` field contains the report generation job ID that you can use\
+        \ to track the report generation process.\n\nBelow is an example curl request\
+        \ you can use to upload your XML configuration file to the generated signed-URL\
+        \ you receive in the response: \n```\ncurl -X PUT --upload-file ${path/to/file}\
         \ '${signed-upload-url}'\n```"
       operationId: post-bpa-v1-requests
       requestBody:
@@ -235,13 +231,12 @@ paths:
                 - properties:
                     upload-url:
                       description: The signed URL that will be used to upload the
-                        Tech Support File (TSF)
+                        Tech Support File (TSF).
                       example: https://storage.googleapis.com/taskId/config.xml?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=key%40project.iam.gserviceaccount.com%2F20230803%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230803T172537Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=046d2e0e5f7c8f5100f50e8f057bcc222fcab2658bdc5cf4b4078dc93ef9dac5b815ed368afb09f2580cbc91818e49f0b9fe32857c13734f7b1bc131b6cd4ff370f5e5ffa839b6d9a4557ce3221324baa9e6cf6469088672b6688ba12c0765945f0a609e26c5878a3f16bd6f51108db2f2e71d3b532583d7713d6497cf1e942b0b295fcc4bf7d2c6ce5e479ac1ca5ed0f79bc5c1f36b234b678183ecfe0b27ee0c911fe529bfbe6cf9b3896230b9ab0a4a651dcd9babdbc1921fb0a513cf640f4e024c2523c9c3f3582ec19b3dac5b83cf44492305f69bb0545d1a0681e0c9cf7f5477bbdbf73f3f4352b8613d74a8f2d974e9a2b49187b6bd8e5df6a96e0f69
                       format: uri
-                      readOnly: true
                       type: string
                   type: object
-          description: Created
+          description: Generated the BPA Report
         '400':
           description: Bad Request
         '500':
