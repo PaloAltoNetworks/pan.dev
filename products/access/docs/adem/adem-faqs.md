@@ -22,7 +22,7 @@ is required, which verifies tenant access described by the following header form
 | Prisma-Tenant         | Prisma-SubTenant   |
 | ---------------       | ------------------ |
 | tenant_service_group  | Mobile User Agent  |
-| \<tenant\>:\<subtenant\>  | Mobile User Probe  |
+| <tenant\>:<subtenant\>  | Mobile User Probe  |
 
 
 ## What are the response types that the ADEM endpoint supports?
@@ -52,7 +52,7 @@ results by user and endpoint. `en` is an alias for Entity so `en.user, en.endpoi
 ## What are Filters used for?
 
 
-A parameter of the form `field<operator>value`  is used to filter the ADEM query. The following operators are supported:  
+A parameter of the form `<field><operator><value>`  is used to filter the ADEM query. The following operators are supported:  
 
 `>=`<br/>`<=`<br/>`==`<br/>`!=`<br/>`>`<br/>`<` 
 
@@ -69,7 +69,7 @@ For more information, see [ADEM Filter Parameter](/access/docs/adem/filter-param
 ## What is an include parameter?
 
 The include parameter is used to include additional results in the  response - multiple includes can
-be specified by comma separating. The format for this parameter is `\<Include\>.\<property\>[,..]`
+be specified by comma separating. The format for this parameter is `<Include>.<property>[,..]`
 
 | include            | Alias  | Description                       | Example                                  |            
 | ---------------    | -----  | -----------                       | --------                                 |                                                                                                                                      
@@ -107,7 +107,7 @@ requiring specified scores to be in a range defined by the score classification:
 
 | Name          | Format                         | Type     | Description                     | Examples                                                                       |
 | -----         | ------                         | ----     | -----------                     | --------                                                                       |
-| result-filter | Score.\<field1\>==\<category\>,..; | string   | Limit score results by category | Score.endpointScore==fair,good    Score.application==good;Score.lan==fair,good |
+| result-filter | Score.<field1\>==<category\>,..; | string   | Limit score results by category | Score.endpointScore==fair,good    Score.application==good;Score.lan==fair,good |
 
 For more information, see [ADEM Result Filter Parameter](/access/docs/adem/result-filter-parameter/).
 
