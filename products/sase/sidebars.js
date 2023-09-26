@@ -99,6 +99,7 @@ module.exports = {
       items: [
         "access/docs/adem/adem",
         "access/docs/adem/getstarted",
+        "access/docs/adem/adem-faqs",
         {
           type: "category",
           label: "Parameter Details",
