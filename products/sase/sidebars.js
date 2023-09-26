@@ -113,6 +113,68 @@ module.exports = {
             "access/docs/adem/timerange-parameter",
           ],
         },
+        {
+          type: "category",
+          label: "Examples",
+          collapsed: true,
+          items: [
+            {
+              type: "category",
+              label: "Application Performance",
+              collapsed: true,
+              items: [
+                "access/docs/adem/examples/application-performance/mu-experience-score-for-an-app",
+                "access/docs/adem/examples/application-performance/network-performance-metrics-for-an-application",
+                "access/docs/adem/examples/application-performance/timeseries-data-of-application-performance-for-all-applications",
+              ],
+            },
+            {
+              type: "category",
+              label: "Application Test",
+              collapsed: true,
+              items: [
+                "access/docs/adem/examples/application-test/application-testuuid",
+                "access/docs/adem/examples/application-test/distribution-for-an-app-test-per-segment",
+                "access/docs/adem/examples/application-test/distribution-for-an-application-test",
+                "access/docs/adem/examples/application-test/global-distribution-of-app-score-for-an-app-test",
+                "access/docs/adem/examples/application-test/network-performance-metrics",
+                "access/docs/adem/examples/application-test/timeseries-data-for-an-app-test",
+                "access/docs/adem/examples/application-test/timeseries-of-app-performance-metrics-for-an-app-test",
+                "access/docs/adem/examples/application-test/top-20-applications-lowest-to-highest-experience-score",
+              ],
+            },
+            {
+              type: "category",
+              label: "Mobile Users",
+              collapsed: true,
+              items: [
+                "access/docs/adem/examples/mobile-users/distribution-of-mu-agent-scores-by-endpoint-across-all-tests",
+                "access/docs/adem/examples/mobile-users/distribution-of-mu-application-score",
+                "access/docs/adem/examples/mobile-users/experience-score-for-top-monitored-mu-devices",
+                "access/docs/adem/examples/mobile-users/fetch-all-mu-adem-agents-logged-in-for-last-30-days",
+                "access/docs/adem/examples/mobile-users/global-distribution-of-application-experience-scores-for-mu-devices",
+                "access/docs/adem/examples/mobile-users/mu-agent-score-aggregated-across-all-endpoints",
+                "access/docs/adem/examples/mobile-users/timeseries-of-mu-agent-scores",
+              ],
+            },
+            {
+              type: "category",
+              label: "Remote Networks",
+              collapsed: true,
+              items: [
+                "access/docs/adem/examples/remote-networks/adem-apis-for-rns",
+              ],
+            },
+            {
+              type: "category",
+              label: "Zoom Data",
+              collapsed: true,
+              items: [
+                "access/docs/adem/examples/zoom-data/fetch-zoom-meeting-data-for-a-user",
+              ],
+            },
+          ],
+        },
       ],
     },
     {
