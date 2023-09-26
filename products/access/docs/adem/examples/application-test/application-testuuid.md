@@ -9,7 +9,7 @@ This API retrieves an application’s test UUID.
 
 ## Request
 
-    https://api.sase.paloaltonetworks.com//adem/telemetry/v2/measure/application/score?timerange=last_3_day&group=en.testName,en.test&endpoint-type=muAgent&response-type=grouped-summary
+    GET https://api.sase.paloaltonetworks.com//adem/telemetry/v2/measure/application/score?timerange=last_3_day&group=en.testName,en.test&endpoint-type=muAgent&response-type=grouped-summary
      
     header = { "prisma-tenant": "<tenant-id>" }
 

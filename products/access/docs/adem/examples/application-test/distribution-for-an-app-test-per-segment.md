@@ -14,7 +14,7 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-    https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_day&filter=testUuid==3100bb11-dde4-4ab9-8503-d0c6ad5f9698&endpoint-type=muAgent&response-type=distribution
+    GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_day&filter=testUuid==3100bb11-dde4-4ab9-8503-d0c6ad5f9698&endpoint-type=muAgent&response-type=distribution
      
     header = { "prisma-tenant": "<tenant-id>" }
 
