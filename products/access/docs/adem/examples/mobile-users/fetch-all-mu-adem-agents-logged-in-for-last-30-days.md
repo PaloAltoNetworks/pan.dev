@@ -14,7 +14,7 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-    https://api.sase.paloaltonetworks.com/agent/v2/measure/agent/score?timerange=last_30_days&group=en.endpoint,en.user&endpoint-type=muAgent&response-type=grouped-summary
+    GET https://api.sase.paloaltonetworks.com/agent/v2/measure/agent/score?timerange=last_30_days&group=en.endpoint,en.user&endpoint-type=muAgent&response-type=grouped-summary
      
     header = { "prisma-tenant": "<tenant-id>" }
 

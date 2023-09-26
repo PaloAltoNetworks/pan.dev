@@ -14,7 +14,7 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-    https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/internet/metric? timerange=last_30_day&filter=email=auntyjack@panwsase.com
+    GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/internet/metric? timerange=last_30_day&filter=email=auntyjack@panwsase.com
      
     header = { "prisma-tenant": "<tenant-id>" }
 
