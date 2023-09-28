@@ -5,7 +5,8 @@ description: Network Performance Metrics for a given application
 sidebar_label: Get Network Performance Metrics for an Application
 ---
 
-This API retrieves the Network Performance Metrics for a given application. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+This API retrieves the Network Performance Metrics for a given application.  
+
 The attached screen is located in Monitor -> Applications -> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
