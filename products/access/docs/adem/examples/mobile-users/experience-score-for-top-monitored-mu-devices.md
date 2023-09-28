@@ -5,7 +5,7 @@ description: Experience Score for Top Monitored Mobile User Devices
 sidebar_label: Get Experience Score for Top Monitored Mobile User Devices
 ---
 
-This API retrieves the experience score for top monitored Mobile User devices.
+This API retrieves the experience score for top monitored Mobile User devices. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. "endpoint" represents the device that the user is using.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -38,7 +38,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "rowCount": 6102,
                 "id": {
-                    "endpoint": "<id-of-endpoint>"
+                    "endpoint": "<id-of-endpoint>"   <<<<<<
                 },
                 "average": {
                     "endpointScore": 91.1,
@@ -46,17 +46,17 @@ The following shows the portions of the UI widget where the data is displayed fo
                     "lan": 68.7,
                     "vpnUnderlay": null,
                     "vpnOverlay": null,
-                    "application": 84.7,
+                    "application": 84.7,   <<<<<<
                     "internet": 88.5
                 },
                 "agentProperties": {
-                    "username": "MeenaSehar@panwsase.com"
+                    "username": "xxxxxx@xxxxxx.com"   <<<<<<
                 }
             },
             {
                 "rowCount": 4753,
                 "id": {
-                    "endpoint": "<id-of-endpoint>"
+                    "endpoint": "<id-of-endpoint>"   <<<<<<
                 },
                 "average": {
                     "endpointScore": 99.4,
@@ -64,11 +64,11 @@ The following shows the portions of the UI widget where the data is displayed fo
                     "lan": 73.8,
                     "vpnUnderlay": 51.5,
                     "vpnOverlay": 53.2,
-                    "application": 67.9,
+                    "application": 67.9,   <<<<<<
                     "internet": 75.2
                 },
                 "agentProperties": {
-                    "username": "BlueyHeeler@panwsase.com"
+                    "username": "xxxxxx@xxxxxx.com"
                 }
             },
             },……

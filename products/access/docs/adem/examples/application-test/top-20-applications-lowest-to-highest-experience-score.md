@@ -5,7 +5,8 @@ description: Top 20 applications with lowest to highest experience score
 sidebar_label: Get Top 20 Applications with Lowest to Highest Experience Score
 ---
 
-This API retrieves the top 20 applications with lowest to highest experience score.
+This API retrieves the top 20 applications with lowest to highest experience score. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. For example, the Dropbox application has a score of 31, which is above 30 but less than 70. So its icon is represented in orange which indicates a fair experience score.
+The attached screen is located in Monitor -> Users -> User details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -49,20 +50,20 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "rowCount": 23132,
                 "id": {
                     "test": "<test-id>",
-                    "testName": "Dropbox"
+                    "testName": "Dropbox"   <<<<<<
                 },
                 "average": {
-                    "application": 31
+                    "application": 31   <<<<<<
                 }
             },
             {
                 "rowCount": 7781,
                 "id": {
                     "test": "<test-id>",
-                    "testName": "AWS"
+                    "testName": "AWS"   <<<<<<
                 },
                 "average": {
-                    "application": 34.7
+                    "application": 34.7   <<<<<<
                 }
             },
             {

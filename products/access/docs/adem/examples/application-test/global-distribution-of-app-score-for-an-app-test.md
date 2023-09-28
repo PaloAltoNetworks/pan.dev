@@ -5,7 +5,7 @@ description: Global distribution of App score for a given application test
 sidebar_label: Get Global Distribution of App Score for an Application Test
 ---
 
-This API retrieves the global distribution of application scores for a given application test.
+This API retrieves the global distribution of application scores for a given application test. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -38,15 +38,15 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "rowCount": 9389,
                 "id": {
-                    "location": "Australia Southeast"
+                    "location": "Australia Southeast"   <<<<<<
                 },
                 "average": {
-                    "application": 82.8
+                    "application": 82.8   <<<<<<
                 },
                 "entityCounts": {
-                    "endpoint": 4,
+                    "endpoint": 4,   <<<<<<
                     "location": "Australia Southeast",
-                    "test": 1
+                    "test": 1   <<<<<<
                 }
             },
          
@@ -56,12 +56,12 @@ The following shows the portions of the UI widget where the data is displayed fo
                     "location": "US West"
                 },
                 "average": {
-                    "application": 93.1
+                    "application": 93.1   <<<<<<
                 },
                 "entityCounts": {
-                    "endpoint": 9,
-                    "location": "US West",
-                    "test": 1
+                    "endpoint": 9, <<<<<<
+                     "location": "US West",  <<<<<<
+                     "test": 1   <<<<<<
                 }
             }, ……..
             {
@@ -70,12 +70,12 @@ The following shows the portions of the UI widget where the data is displayed fo
                     "location": "UK"
                 },
                 "average": {
-                    "application": 96.6
+                    "application": 96.6   <<<<<<
                 },
                 "entityCounts": {
-                    "endpoint": 2,
-                    "location": "UK",
-                    "test": 1
+                    "endpoint": 2,   <<<<<<
+                    "location": "UK",   <<<<<<
+                    "test": 1   <<<<<<
                 }
             }
         ]

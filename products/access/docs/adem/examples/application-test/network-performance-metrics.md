@@ -5,7 +5,7 @@ description: Network Performance Metrics
 sidebar_label: Get Network Performance Metrics
 ---
 
-This API retrieves the Network Performance Metrics.
+This API retrieves the Network Performance Metrics. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The values shown in the response are the starting values shown in the graph for the first sample.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -33,11 +33,11 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "_rowCount": 3681,
                 "availability": 99.5,
-                "delay": 81472.1,
+                "delay": 81472.1,   <<<<<<
                 "maxDelay": 1151403,
-                "jitter": 26321.4,
+                "jitter": 26321.4,   <<<<<<
                 "maxJitter": 6596877,
-                "loss": 0.6,
+                "loss": 0.6,   <<<<<<
                 "maxLoss": 100,
                 "sample": 1691334000
             },

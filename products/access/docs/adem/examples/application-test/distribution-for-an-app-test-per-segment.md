@@ -5,7 +5,8 @@ description: Fetch the distribution for a particular application test per segmen
 sidebar_label: Get Distribution for an Application Test Per Segment
 ---
 
-This API retrieves the distribution for a particular application test within a segment.
+This API retrieves the distribution for a particular application test within a segment. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+The attached screen is located in Monitor -> Applications -> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -45,20 +46,20 @@ The following shows the portions of the UI widget where the data is displayed fo
                 }
             },
           {
-                "id": "lan",
+                "id": "lan",   <<<<<
                 "distribution": {
                     "clients": 17,
-                    "score": 82,   <<<<<< lan segment green
+                    "score": 82,   <<<<<< lan segment green indicating a good score
                     "poor": 0,
                     "fair": 6,
                     "good": 11
                 }
             }, ……..
             {
-                "id": "application",
+                "id": "application",   <<<<<<
                 "distribution": {
                     "clients": 22,
-                    "score": 90,  <<<google base app segment green
+                    "score": 90,  <<<<<< google base app segment green indicating a good score
                     "poor": 0,
                     "fair": 3,
                     "good": 19
@@ -68,7 +69,7 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "id": "internet",
                 "distribution": {
                     "clients": 22,
-                    "score": 92, <<<<<internet segment green
+                    "score": 92, <<<<<< internet segment green indicating a good score
                     "poor": 0,
                     "fair": 2,
                     "good": 20

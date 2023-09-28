@@ -5,7 +5,7 @@ description: Fetch all the Mobile Users ADEM agents logged in for the last 30 da
 sidebar_label: Get all the Mobile Users ADEM agents logged in for the last 30 days
 ---
 
-This API retrieves all the Mobile Users ADEM agents logged in for the last 30 days.
+This API retrieves all the Mobile Users ADEM agents logged in for the last 30 days. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -38,7 +38,7 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "rowCount": 87,
                 "id": {
                     "endpoint": "<id-of-endpoint>",
-                    "user": "adem.testks2@gmail.com"
+                    "user": "xxxxxx@xxxxxx.com"   <<<<<<
                 },
                 "average": {
                     "endpointScore": 99.6,
@@ -46,7 +46,7 @@ The following shows the portions of the UI widget where the data is displayed fo
                     "lan": 62.9,
                     "vpnUnderlay": 88.2,
                     "vpnOverlay": 93.3,
-                    "application": 65.2,
+                    "application": 65.2,   <<<<<< Experience score for the Mobile User agent on the users device
                     "internet": 64
                 },
                 "agentProperties": {}

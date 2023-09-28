@@ -5,7 +5,7 @@ description: Get an Application’s testUUID
 sidebar_label: Get an Application’s testUUID
 ---
 
-This API retrieves an application’s test UUID.
+This API retrieves an application’s test UUID. This API does not have an impact on the UI as it only fetches the test ID and name.
 
 ## Request
 
@@ -34,8 +34,8 @@ This API retrieves an application’s test UUID.
             {
                 "rowCount": 13166,
                 "id": {
-                    "test": "<test-id>",
-                    "testName": "Google"
+                    "test": "<test-id>",   <<<<<<
+                    "testName": "Google"   <<<<<<
                 },
                 "average": {
                     "application": 91.6

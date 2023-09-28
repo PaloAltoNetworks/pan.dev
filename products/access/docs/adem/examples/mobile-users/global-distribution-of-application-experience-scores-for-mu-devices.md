@@ -5,7 +5,8 @@ description: Global Distribution of Application Experience Scores for Mobile Use
 sidebar_label: Get Global Distribution of Application Experience Scores for Mobile User Devices
 ---
 
-The API retrieves the Global Distribution of application experience scores for all monitored Mobile User devices.
+The API retrieves the Global Distribution of application experience scores for all monitored Mobile User devices. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The US Southeast location displays a green circle indicating that it has a good score (85.4), whereas the US Central displays an orange circle indicating a fair score (61.2).
+The attached screen is located in Monitor -> Applications -> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -37,10 +38,10 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "rowCount": 46738,
                 "id": {
-                    "location": "US Southeast"
+                    "location": "US Southeast"   <<<<<<
                 },
                 "average": {
-                    "application": 85.4
+                    "application": 85.4   <<<<<<
                 },
                 "entityCounts": {
                     "location": "US Southeast",
@@ -50,10 +51,10 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "rowCount": 112123,
                 "id": {
-                    "location": "UK"
+                    "location": "UK"   <<<<<<
                 },
                 "average": {
-                    "application": 94.4
+                    "application": 94.4   <<<<<<
                 },
                 "entityCounts": {
                     "location": "UK",
@@ -128,7 +129,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             {
                 "rowCount": 2055,
                 "id": {
-                    "location": "US Central"
+                    "location": "US Central"   <<<<<<
                 },
                 "average": {
                     "application": 61.2.    <<<<< marked in orange in the UI
