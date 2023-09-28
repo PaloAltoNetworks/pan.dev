@@ -5,7 +5,9 @@ description: Timeseries of Application Performance Metrics for a particular appl
 sidebar_label: Get Timeseries of Application Performance Metrics for an Application Test
 ---
 
-This API retrieves the Timeseries of the Application Performance Metrics for a particular application test. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The availability is 100% when it is 1. The graph shows the availability as 0.9 which is close to 1 indicating that the availability is close to 100%.
+This API retrieves the Timeseries of the Application Performance Metrics for a particular application test.  
+
+In the Response section, the availability is 100% when it is 1. The graph shows the availability as 0.9 which is close to 1 indicating that the availability is close to 100%.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 

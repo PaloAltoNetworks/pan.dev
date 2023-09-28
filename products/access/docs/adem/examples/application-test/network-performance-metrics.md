@@ -5,7 +5,9 @@ description: Network Performance Metrics
 sidebar_label: Get Network Performance Metrics
 ---
 
-This API retrieves the Network Performance Metrics. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The values shown in the response are the starting values shown in the graph for the first sample.
+This API retrieves the Network Performance Metrics.  
+
+In the Response section, the values shown are the starting values shown in the graph for the first sample.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 

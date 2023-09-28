@@ -5,7 +5,7 @@ description: Autonomous DEM Remote Networks Metrics API Example
 sidebar_label: ADEM Retrieve RN Metrics
 ---
 
-You can retrieve all the same metrics for Remote Networks as you retrieved for your Mobile Users. All the APIs for Mobile Users can be used for endpoint Remote Networks by using endpoint-type=rnAgent. In each of the Mobile User APIs replace endpoint-type=muAgent with endpoint-type=rnAgent. Remote Agent Score is aggregated across all Remote Networks
+You can retrieve all the same metrics for Remote Networks that you can retrieve for your Mobile Users. All the APIs for Mobile Users can be used for endpoint Remote Networks by using endpoint-type=rnAgent. In each of the Mobile User APIs, replace endpoint-type=muAgent with endpoint-type=rnAgent. Remote Agent Score is aggregated across all Remote Networks
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
