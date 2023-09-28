@@ -5,7 +5,7 @@ description: Timeseries Data of Application Performance for all Applications
 sidebar_label: Get Timeseries Data of Application Performance for all Applications
 ---
 
-This API retrieves the timeseries data of application performance for all applications.
+This API retrieves the timeseries data of application performance for all applications. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The values shown for each field, for example dnsLookupTime, are the average values for that field in the timeseries. The availability is always 100% which is indicated by 1.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -32,7 +32,7 @@ The following shows the portions of the UI widget where the data is displayed fo
         "series": [
             {
                 "_rowCount": 3580,
-                "dnsLookupTime": 42.8,
+                "dnsLookupTime": 42.8,   <<<<<<
                 "maxDnsLookupTime": 530,
                 "throughput": 3316902.9,
                 "maxThroughput": 75128344,
@@ -44,11 +44,11 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "maxWaitTime": 13142609,
                 "dataTransferTime": 264332,
                 "maxDataTransferTime": 15013933,
-                "timeToFirstByte": 525857.4,
+                "timeToFirstByte": 525857.4,   <<<<<<
                 "maxTimeToFirstByte": 13879987,
                 "totalTime": 828298.6,
                 "wireSize": 65611.4,
-                "availability": 1,
+                "availability": 1,   <<<<<< 
                 "sample": 1691334000
             },
     …..

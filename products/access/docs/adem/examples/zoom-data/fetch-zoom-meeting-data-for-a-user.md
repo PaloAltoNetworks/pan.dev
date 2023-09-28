@@ -5,7 +5,8 @@ description: Fetch zoom meeting data for a particular user
 sidebar_label: Get Zoom Meeting Data for a User
 ---
 
-This API retrieves zoom meeting data for a particular user.
+This API retrieves zoom meeting data for a particular user. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+The attached screen is located in Monitor -> Users -> User details page (Zoom Performance Analysis tab) in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -24,7 +25,7 @@ The following shows the portions of the UI widget where the data is displayed fo
     [
        {
             "meetingUuid": "fa05d660556b49e7b979bb1bd2171328",
-            "email": "auntyjack@panwsase.com",
+            "email": "xxxx@xxxxx.com",
             "recordId": "1f5ef19d-e890-4520-9517-cccc6bc55a2a",
             "accountId": "Oc9Dz_jJTPiiczkAOkA_RQ",
             "duration": 0,
@@ -33,7 +34,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             "topic": null,
             "meetingId": "89183316435",
             "userId": "16778240",
-            "userName": "auntyjack@panwsase.com",
+            "userName": "xxxxx@xxxxx.com",
             "joinTime": "2023-08-31T02:00:09Z",
             "leaveTime": "2023-08-31T02:10:01Z",
             "actualDuration": 592,
@@ -41,7 +42,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             "eventTimeEpoch": 1693447804010,
             "eventTime": "2023-08-31T02:10:04Z",
             "pcName": "DESKTOP-VELG4SR",
-            "macAddress": "B0:3C:DC:89:F1:84",
+            "macAddress": "xx:xx:xx:xx:xx:xx",
             "domain": "NA",
             "harddiskId": "NA",
             "destinationIpPort": "443",
@@ -50,17 +51,17 @@ The following shows the portions of the UI widget where the data is displayed fo
             "networkType": "others",
             "location": "Brisbane(AU)",
             "microphone": "Microphone (Realtek(R) Audio)",
-            "signalingInternalIpAddress": "172.20.17.51",
+            "signalingInternalIpAddress": "xxx.xx.xx.xx",
             "version": "5.15.7.20303",
             "device": "Windows",
             "signalingInternalIpPort": "51758",
-            "asInternalIpAddress": "172.20.17.51",
+            "asInternalIpAddress": "xxx.xx.xx.xx",
             "asInternalIpPort": "62528",
             "speaker": "Speakers (Realtek(R) Audio)",
-            "videoInternalIpAddress": "172.20.17.51",
+            "videoInternalIpAddress": "xxx.xx.xx.xx",
             "videoInternalIpPort": "62523",
             "audioInternalIpPort": "62525",
-            "audioInternalIpAddress": "172.20.17.51",
+            "audioInternalIpAddress": "xxx.xx.xx.xx",
             "camera": null,
             "tenantId": "1359465673",
             "subTenantId": "1359465673",
@@ -70,7 +71,7 @@ The following shows the portions of the UI widget where the data is displayed fo
     },
     {
             "meetingUuid": "bda1594d8f4a40ea88cf6e6c28142378",
-            "email": "auntyjack@panwsase.com",
+            "email": "xxxxx@xxxxxx.com",
             "recordId": "35991287-0dcd-40d3-a8de-abb34ca656e3",
             "accountId": "Oc9Dz_jJTPiiczkAOkA_RQ",
             "duration": 0,
@@ -79,7 +80,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             "topic": null,
             "meetingId": "81505431105",
             "userId": "16778240",
-            "userName": "auntyjack@panwsase.com",
+            "userName": "xxxxxx@xxxxxx.com",
             "joinTime": "2023-09-04T05:59:11Z",
             "leaveTime": "2023-09-04T06:37:30Z",
             "actualDuration": 2299,
@@ -87,7 +88,7 @@ The following shows the portions of the UI widget where the data is displayed fo
             "eventTimeEpoch": 1693809515656,
             "eventTime": "2023-09-04T06:38:35Z",
             "pcName": "DESKTOP-VELG4SR",
-            "macAddress": "B0:3C:DC:89:F1:84",
+            "macAddress": "xx:xx:xx:xx:xx:xx",
             "domain": "NA",
             "harddiskId": "NA",
             "destinationIpPort": "443",
@@ -96,17 +97,17 @@ The following shows the portions of the UI widget where the data is displayed fo
             "networkType": "others",
             "location": null,
             "microphone": "Microphone (Realtek(R) Audio)",
-            "signalingInternalIpAddress": "172.20.17.51",
+            "signalingInternalIpAddress": "xxx.xx.xx.xx",
             "version": "5.15.7.20303",
             "device": "Windows",
             "signalingInternalIpPort": "56024",
-            "asInternalIpAddress": "172.20.17.51",
+            "asInternalIpAddress": "xxx.xx.xx.xx",
             "asInternalIpPort": "56141",
             "speaker": "Speakers (Realtek(R) Audio)",
-            "videoInternalIpAddress": "172.20.17.51",
+            "videoInternalIpAddress": "xxx.xx.xx.xx",
             "videoInternalIpPort": "56136",
             "audioInternalIpPort": "56139",
-            "audioInternalIpAddress": "172.20.17.51",
+            "audioInternalIpAddress": "xxx.xx.xx.xx",
             "camera": null,
             "tenantId": "1359465673",
             "subTenantId": "1359465673",

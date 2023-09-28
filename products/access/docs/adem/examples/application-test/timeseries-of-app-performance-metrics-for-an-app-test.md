@@ -5,7 +5,7 @@ description: Timeseries of Application Performance Metrics for a particular appl
 sidebar_label: Get Timeseries of Application Performance Metrics for an Application Test
 ---
 
-This API retrieves the Timeseries of the Application Performance Metrics for a particular application test.
+This API retrieves the Timeseries of the Application Performance Metrics for a particular application test. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The availability is 100% when it is 1. The graph shows the availability as 0.9 which is close to 1 indicating that the availability is close to 100%.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -32,7 +32,7 @@ The following shows the portions of the UI widget where the data is displayed fo
         "series": [
             {
                 "_rowCount": 351,
-                "dnsLookupTime": 46.5,
+                "dnsLookupTime": 46.5,   <<<<<<
                 "maxDnsLookupTime": 408,
                 "throughput": 767161.6,
                 "maxThroughput": 2836784,
@@ -44,11 +44,11 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "maxWaitTime": 1608543,
                 "dataTransferTime": 67118.8,
                 "maxDataTransferTime": 2269218,
-                "timeToFirstByte": 428691.5,
+                "timeToFirstByte": 428691.5,   <<<<<<
                 "maxTimeToFirstByte": 9268485,
                 "totalTime": 511078.7,
                 "wireSize": 18130.7,
-                "availability": 0.9,
+                "availability": 0.9,   <<<<<<
                 "sample": 1691010000
             },…..
     ]

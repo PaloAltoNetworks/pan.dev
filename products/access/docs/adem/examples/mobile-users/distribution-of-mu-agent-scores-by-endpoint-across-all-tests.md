@@ -5,7 +5,12 @@ description: Get a distribution of MU agent scores by endpoint (across all tests
 sidebar_label: Get Distribution of Mobile User Agent Scores by Endpoint Across All Tests
 ---
 
-This API retrieves the distribution of monitored mobile user scores by endpoint across all application tests.
+This API retrieves the distribution of monitored mobile user scores by endpoint across all application tests. The icons are represented in one of three colors, red, orange, or green, that indicate the health of the segment based on the experience score.
+Red (poor) - experience score <30
+Orange (fair) - experience score >=30 but <=70
+Green (good) - experince score is >70
+
+The attached screen is located in Monitor -> Applications-> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -52,13 +57,13 @@ The following shows the portions of the UI widget where the data is displayed fo
                 }
             },
             {
-                "id": "lan",
+                "id": "lan",   <<<<<<
                 "distribution": {
                     "clients": 17,
-                    "score": 81,
-                    "poor": 0,
-                    "fair": 5,
-                    "good": 12
+                    "score": 81,   <<<<<<
+                    "poor": 0,   <<<<<<
+                    "fair": 5,   <<<<<<
+                    "good": 12   <<<<<<
                 }
             },
             {
@@ -92,13 +97,13 @@ The following shows the portions of the UI widget where the data is displayed fo
                 }
             },
             {
-                "id": "internet",
+                "id": "internet",   <<<<<<
                 "distribution": {
                     "clients": 22,
-                    "score": 89,
-                    "poor": 0,
-                    "fair": 1,
-                    "good": 21
+                    "score": 89,   <<<<<<
+                    "poor": 0,   <<<<<<
+                    "fair": 1,   <<<<<<
+                    "good": 21   <<<<<<
                 }
             }
         ]
