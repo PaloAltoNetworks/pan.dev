@@ -5,7 +5,9 @@ description: Timeseries Data of Application Performance for all Applications
 sidebar_label: Get Timeseries Data of Application Performance for all Applications
 ---
 
-This API retrieves the timeseries data of application performance for all applications. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The values shown for each field, for example dnsLookupTime, are the average values for that field in the timeseries. The availability is always 100% which is indicated by 1.
+This API retrieves the timeseries data of application performance for all applications.  
+
+In the Response section, the values shown for each field that is followed by a comment (<<<<<<), for example dnsLookupTime, are the average values for that field in the timeseries. The availability is always 100% which is indicated by 1.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 

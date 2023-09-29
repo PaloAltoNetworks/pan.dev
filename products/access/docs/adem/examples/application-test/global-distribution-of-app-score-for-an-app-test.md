@@ -5,7 +5,9 @@ description: Global distribution of App score for a given application test
 sidebar_label: Get Global Distribution of App Score for an Application Test
 ---
 
-This API retrieves the global distribution of application scores for a given application test. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+This API retrieves the global distribution of application scores for a given application test.  
+
+In the Response code, the lines that are marked with (<<<<<<) correspond to the area in the UI (see attached screenshot) that are marked with red arrows.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
