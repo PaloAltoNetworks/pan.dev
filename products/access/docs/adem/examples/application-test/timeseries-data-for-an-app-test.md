@@ -5,7 +5,8 @@ description: Timeseries Data for an Application Test
 sidebar_label: Get Timeseries Data for an Application Test
 ---
 
-This API retrieves the Timeseries data for a given application test. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+This API retrieves the Timeseries data for a given application test.  
+
 The attached screen is located in Monitor -> Applications -> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
