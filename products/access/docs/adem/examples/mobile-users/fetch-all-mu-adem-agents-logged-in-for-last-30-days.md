@@ -5,7 +5,9 @@ description: Fetch all the Mobile Users ADEM agents logged in for the last 30 da
 sidebar_label: Get all the Mobile Users ADEM agents logged in for the last 30 days
 ---
 
-This API retrieves all the Mobile Users ADEM agents logged in for the last 30 days. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+This API retrieves all the Mobile Users ADEM agents logged in for the last 30 days.  
+
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 

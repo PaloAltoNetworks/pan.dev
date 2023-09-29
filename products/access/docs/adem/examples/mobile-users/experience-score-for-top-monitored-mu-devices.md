@@ -5,7 +5,9 @@ description: Experience Score for Top Monitored Mobile User Devices
 sidebar_label: Get Experience Score for Top Monitored Mobile User Devices
 ---
 
-This API retrieves the experience score for top monitored Mobile User devices. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. "endpoint" represents the device that the user is using.
+This API retrieves the experience score for top monitored Mobile User devices.  
+
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. "endpoint" represents the device that the user is using.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 

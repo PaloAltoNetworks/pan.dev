@@ -5,7 +5,8 @@ description: Fetch zoom meeting data for a particular user
 sidebar_label: Get Zoom Meeting Data for a User
 ---
 
-This API retrieves zoom meeting data for a particular user. In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+This API retrieves zoom meeting data for a particular user.  
+
 The attached screen is located in Monitor -> Users -> User details page (Zoom Performance Analysis tab) in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
