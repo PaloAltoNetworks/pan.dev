@@ -5,10 +5,10 @@ description: Get a distribution of MU agent scores by endpoint (across all tests
 sidebar_label: Get Distribution of Mobile User Agent Scores by Endpoint Across All Tests
 ---
 
-This API retrieves the distribution of monitored mobile user scores by endpoint across all application tests. The icons are represented in one of three colors, red, orange, or green, that indicate the health of the segment based on the experience score.
-Red (poor) - experience score <30
-Orange (fair) - experience score >=30 but <=70
-Green (good) - experince score is >70
+This API retrieves the distribution of monitored mobile user scores by endpoint across all application tests. The icons are represented in one of three colors, red, orange, or green, that indicate the health of the segment based on the experience score.  
+Red (poor) - experience score <30  
+Orange (fair) - experience score >=30 but <=70  
+Green (good) - experince score is >70  
 
 The attached screen is located in Monitor -> Applications-> Application details page in the Strata Cloud Manager UI.
 
