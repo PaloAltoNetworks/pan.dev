@@ -16,6 +16,9 @@ keywords:
   - upgrade assurance
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Configuration details
 
 This documentation represents the current state of the available checks and snapshot state areas, along with the instructions on how to configure them properly.
@@ -52,25 +55,71 @@ Elements of this list can be either of the `str` or `dict` type:
 - `str` - the element simply specifies the name of a check to run.
 - `dict` - the element contains the check name and a configuration (if a particular check requires one); the dictionary format is as follows:
 
-  ```yaml
+  ```mdx-code-block
+  <Tabs>
+  <TabItem value="python" label="Python" default>
+  ```
+
+  ```python
   {
     'check_name': {
-      'config_name': 'config_value'
+      'config_name': 'config_value',
       'config2_name': 'config2_value'
     }
   }
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  <TabItem value="ansible" label="YAML">
+  ```
+
+  ```yaml
+  check_name:
+    config_name: 'config_value'
+    config2_name: 'config2_value'
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  </Tabs>
   ```
 
 Following [`ConfigParser's`][cfgprs] [`dialect`][dialect], when no configuration is provided, **all** checks are triggered. *Notice* that in this situation checks that require configuration to run will return [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus).
 
 Example of the `checks_configuration` parameter:
 
-``` yaml
-[
-  'all',
-  '!ha',
-  {'content_version': {'version': '8634-7678'}}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python
+checks_configuration = [
+    'all',
+    '!ha',
+    {'content_version': {
+        'version': '8634-7678'
+    }}
 ]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml
+checks_configuration:
+  - 'all'
+  - '!ha'
+  - 'content_version':
+      version: '8634-7678'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 This is interpreted as:
@@ -88,17 +137,43 @@ The [`CheckFirewall.run_readiness_checks()`](/panos/docs/panos-upgrade-assurance
 
     Assuming that we run the checks with the following configuration:
 
-    ``` yaml
-    [
+    ```mdx-code-block
+    <Tabs>
+    <TabItem value="python" label="Python" default>
+    ```
+
+    ```python
+    checks_configuration = [
         'ha',
         'panorama',
     ]
     ```
 
+    ```mdx-code-block
+    </TabItem>
+    <TabItem value="ansible" label="YAML">
+    ```
+
+    ```yaml
+    checks_configuration:
+      - 'ha'
+      - 'panorama'
+    ```
+
+    ```mdx-code-block
+    </TabItem>
+    </Tabs>
+    ```
+
     The return `dict` should look as follows:
 
-    ``` yaml
-    {
+    ```mdx-code-block
+    <Tabs>
+    <TabItem value="python" label="Python" default>
+    ```
+
+    ```python
+    result = {
         'ha': {
             'state': False
             'reason': '[FAIL] Device configuration is not synchronized between the nodes.'
@@ -110,9 +185,57 @@ The [`CheckFirewall.run_readiness_checks()`](/panos/docs/panos-upgrade-assurance
     }
     ```
 
+    ```mdx-code-block
+    </TabItem>
+    <TabItem value="ansible" label="YAML">
+    ```
+
+    ```yaml
+    result:
+      ha: 
+        state: false
+        reason: '[FAIL] Device configuration is not synchronized between the nodes.'
+      candidate_config:
+        state: true
+        reason: '[SUCCESS]'
+    ```
+
+    ```mdx-code-block
+    </TabItem>
+    </Tabs>
+    ```
+
 - `True`: results are also formatted as `dict` with the keys corresponding to checks names, but values are a string representations of the [`CheckResult`][chckres] class.
 
   For the above example of checks, the result would be similar to:
+
+  ```mdx-code-block
+  <Tabs>
+  <TabItem value="python" label="Python" default>
+  ```
+
+  ```python
+  result = {
+      'ha': '[FAIL] Device configuration is not synchronized between the nodes.'
+      'candidate_config': '[SUCCESS].'
+  }
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  <TabItem value="ansible" label="YAML">
+  ```
+
+  ```yaml
+  result:
+    ha: '[FAIL] Device configuration is not synchronized between the nodes.'
+    candidate_config: '[SUCCESS].'
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  </Tabs>
+  ```
 
   ``` yaml
   {
@@ -123,39 +246,95 @@ The [`CheckFirewall.run_readiness_checks()`](/panos/docs/panos-upgrade-assurance
 
 The list of checks to run looks as follows:
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python
-[
-  "active_support",
-  'candidate_config',
-  'expired_licenses',
-  'ntp_sync',
-  'panorama',
-  # tests below have optional configuration
-  {
-    "certificates_requirements": {
-      "ecdsa": {"hash_method": "sha512"},
-      "rsa": {
-        "key_size": 1024,
-        "hash_method": "sha1"
-      }
-    }
-  },
-  {'content_version': {'version': '8634-7678'}},
-  {"expired_licenses": {"skip_licenses": ["Threat Prevention"]}},
-  {'free_disk_space': {'image_version': '10.1.6-h6'}},
-  {'ha': {'skip_config_sync': True}},
-  {'planes_clock_sync': {'diff_threshold': 30}}
-  # tests below require additional configuration
-  {'arp_entry_exist': {'ip': '10.0.1.1'} },
-  {'ip_sec_tunnel_status': {
-    'tunnel_name': 'ipsec_tun'
-  }},
-  {'session_exist': {
-    'source': '134.238.135.137',
-    'destination': '10.1.0.4',
-    'dest_port': '80'
-  }},
+checks_configuration = [
+    "active_support",
+    'candidate_config',
+    'expired_licenses',
+    'jobs',
+    'ntp_sync',
+    'panorama',
+    # tests below have optional configuration
+    {
+        "certificates_requirements": {
+            "ecdsa": {"hash_method": "sha512"},
+            "rsa": {
+                "key_size": 1024,
+                "hash_method": "sha1"
+            }
+        }
+    },
+    {'content_version': {'version': '8634-7678'}},
+    {'dynamic_updates': {'test_window': 120}},
+    {"expired_licenses": {"skip_licenses": ["Threat Prevention"]}},
+    {'free_disk_space': {'image_version': '10.1.6-h6'}},
+    {'ha': {'skip_config_sync': True}},
+    {'planes_clock_sync': {'diff_threshold': 30}}
+    # tests below require additional configuration
+    {'arp_entry_exist': {'ip': '10.0.1.1'} },
+    {'ip_sec_tunnel_status': {
+        'tunnel_name': 'ipsec_tun'
+    }},
+    {'session_exist': {
+        'source': '134.238.135.137',
+        'destination': '10.1.0.4',
+        'dest_port': '80'
+    }},
 ]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml
+checks_configuration:
+  - "active_support"
+  - "candidate_config"
+  - "expired_licenses"
+  - "jobs"
+  - "ntp_sync"
+  - "panorama"
+  # tests below have optional configuration
+  - certificates_requirements:
+      ecdsa:
+        hash_method: "sha512"
+      rsa:
+        key_size: 1024
+        hash_method: "sha1"
+  - content_version:
+      version: "8634-7678"
+  - dynamic_updates:
+      test_window: 120
+  - expired_licenses:
+      skip_licenses:
+        - "Threat Prevention"
+  - free_disk_space:
+      image_version: "10.1.6-h6"
+  - ha:
+      skip_config_sync: true
+  - planes_clock_sync:
+      diff_threshold: 30
+  # tests below require additional configuration
+  - arp_entry_exist:
+      ip: "10.0.1.1"
+  - ip_sec_tunnel_status:
+      tunnel_name: "ipsec_tun"
+  - session_exist:
+      source: "134.238.135.137"
+      destination: "10.1.0.4"
+      dest_port: "80"
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 Please see the sections below for details of each check:
@@ -175,18 +354,55 @@ parameter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-# with lookup limited to a single interface
-{
-  'ip': '10.0.1.1'
-  'interface': 'ethernet1/1'
-}
-
-# with a lookup in all ARP entries
-{
-  'ip': '10.0.0.6'
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers title="Lookup limited to a single interface"
+checks_configuration = [
+    {
+        'arp_entry_exist': {
+            'ip': '10.0.1.1'
+            'interface': 'ethernet1/1'
+        }
+    }
+]
+```
+
+```python showLineNumbers title="Lookup in all ARP entries"
+checks_configuration = [
+    {
+        'arp_entry_exist': {
+            'ip': '10.0.0.6'
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers title="Lookup limited to a single interface"
+checks_configuration:
+  - arp_entry_exist:
+      ip: '10.0.1.1'
+      interface: 'ethernet1/1'
+```
+
+```yaml showLineNumbers title="Lookup in all ARP entries"
+checks_configuration:
+  - arp_entry_exist:
+      ip: '10.0.0.6'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `candidate_config`
 
@@ -218,17 +434,47 @@ key | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  "ecdsa": {
-      "hash_method": "sha512"
-  },
-  "rsa": {
-      "key_size": 1024,
-      "hash_method": "sha1"
-  }
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        "certificates_requirements": {
+            "ecdsa": {
+                "hash_method": "sha512"
+            },
+            "rsa": {
+                "key_size": 1024,
+                "hash_method": "sha1"
+            }
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - certificates_requirements:
+      ecdsa:
+        hash_method: "sha512"
+      rsa:
+        key_size: 1024,
+        hash_method: "sha1"
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `content_version`
 
@@ -247,11 +493,88 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'version': '6453-5673'
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'content_version': {
+          'version': '6453-5673'
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - content_version:
+      version: '6453-5673'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+
+### `dynamic_updates`
+
+Check if any Dynamic Update job is scheduled to run within the specified time window.
+
+:::note
+This includes schedules pushed from Panorama via a template, but does not include the ones configured
+in `Panorama/Device Deployment/Dynamic Updates/Schedules`.
+:::
+
+**Method:** [`CheckFirewall.check_scheduled_updates()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_scheduled_updates)
+
+**Configuration parameters**
+
+paramter | description
+--- | ---
+`test_window` | (optional) time window in minutes to look for an update job occurrence
+
+**Sample configuration**
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'dynamic_updates': {
+          'test_window': 120
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - dynamic_updates:
+      test_window: 120
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `free_disk_space`
 
@@ -267,11 +590,37 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'image_version': '10.1.6-h3'
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'free_disk_space': {
+            'image_version': '10.1.6-h3'
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - free_disk_space:
+      image_version: '10.1.6-h3'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `expired_licenses`
 
@@ -287,11 +636,38 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'skip_licenses': ['WildFire License', 'Threat Prevention']
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    { 'expired_licenses': {
+        'skip_licenses': ['WildFire License', 'Threat Prevention']
+        } 
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - expired_licenses:
+      skip_licenses:
+        - 'WildFire License'
+        - 'Threat Prevention'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `ha`
 
@@ -307,11 +683,37 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'skip_config_sync': True
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'ha' : {
+            'skip_config_sync': True
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - ha:
+      skip_config_sync: true
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `ip_sec_tunnel_status`
 
@@ -327,11 +729,45 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'tunnel_name': 'ipsec_tunnel'
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'ip_sec_tunnel_status': {
+            'tunnel_name': 'ipsec_tunnel'
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - ip_sec_tunnel_status:
+      tunnel_name: 'ipsec_tunnel'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### `jobs`
+
+Verify if there are any running/pending jobs in the job queue. Any job with a status different than `FIN` will cause
+the check to fail.
+
+Does not require configuration.
+
+**Method**: [`CheckFirewall.check_non_finished_jobs()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_non_finished_jobs)
 
 ### `ntp_sync`
 
@@ -363,10 +799,35 @@ paramter | description
 
 **Sample configuration**
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-{
-  'diff_threshold': 25
-}
+checks_configuration = [
+    { 
+        'planes_clock_sync': {
+            'diff_threshold': 25
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - planes_clock_sync:
+      diff_threshold: 25
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 ### `session_exist`
@@ -385,13 +846,41 @@ paramter | description
 
 **Sample configuration**
 
-```python showLineNumbers
-{
-  'source': '134.238.135.137',
-  'destination': '10.1.0.4',
-  'dest_port': '80'
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'session_exist': {
+            'source': '134.238.135.137',
+            'destination': '10.1.0.4',
+            'dest_port': '80'
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml
+checks_configuration:
+  - session_exist:
+      source: '134.238.135.137'
+      destination: '10.1.0.4'
+      dest_port: '80'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ## State snapshots
 
@@ -408,7 +897,12 @@ The output of the [`CheckFirewall.run_snapshots()`](/panos/docs/panos-upgrade-as
 
 The sample output containing a snapshot for *route tables*, *licenses*, and *IPSec tunnels* is shown below (one element per each area):
 
-```json
+```mdx-code-block
+<Tabs>
+<TabItem value="json" label="JSON" default>
+```
+
+```json showLineNumbers
 {
   "ip_sec_tunnels": {
     "ipsec_tun": {
@@ -451,10 +945,20 @@ The sample output containing a snapshot for *route tables*, *licenses*, and *IPS
 }
 ```
 
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 Following state areas are available:
 
-```yaml
-[
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+snapshots_config = [
   'nics',
   'routes',
   'license',
@@ -463,6 +967,27 @@ Following state areas are available:
   'session_stats',
   'ip_sec_tunnels',
 ]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+snapshots_config:
+  - nics
+  - routes
+  - license
+  - arp_table
+  - content_version
+  - session_stats
+  - ip_sec_tunnels
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 Please see the sections below for details of each state snapshot:
@@ -515,34 +1040,75 @@ The reporting part is actually the result of comparison of two snapshots. It is 
 
 Each report can be run with default or custom configuration. The following example shows reports with additional configuration (where applicable):
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-[
-  {'ip_sec_tunnels: {
-    'properties': ['state']
-  }},
-  {'arp_table': {
-    'properties': ['!ttl'],
-    'count_change_threshold': 10
-  }},
-  {'nics': {
-    'count_change_threshold': 10
-  }},
-  {'license': {
-    'properties': ['!serial']
-  }},
-  {'routes: {
-    'properties': ['!flags'],
-    'count_change_threshold': 10
-  }},
-  'content_version',
-  {'session_stats': {
-    'thresholds': [
-      {'num-max': 10},
-      {'num-tcp': 10},
-    ]
-  }}
+reports = [
+    {'ip_sec_tunnels': {
+        'properties': ['state']
+    }},
+    {'arp_table': {
+        'properties': ['!ttl'],
+        'count_change_threshold': 10
+    }},
+    {'nics': {
+        'count_change_threshold': 10
+    }},
+    {'license': {
+        'properties': ['!serial']
+    }},
+    {'routes': {
+        'properties': ['!flags'],
+        'count_change_threshold': 10
+    }},
+    'content_version',
+    {'session_stats': {
+        'thresholds': [
+            {'num-max': 10},
+            {'num-tcp': 10},
+        ]
+    }}
 ]
 ```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - ip_sec_tunnels:
+      properties:
+        - "state"
+  - arp_table:
+      properties:
+        - "!ttl"
+      count_change_threshold: 10
+  - nics:
+      count_change_threshold: 10
+  - license:
+      properties:
+        - "!serial"
+  - routes:
+      properties:
+        - "!flags"
+      count_change_threshold: 10
+  - content_version
+  - session_stats:
+      thresholds:
+        - num-max: 10
+        - num-tcp: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 For most reports, a generic comparison method is used ([`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)). It produces the standardized dictionary. For details, see documentation for this method. Common method assigns a report result to a report area providing a dictionary where keys are report areas and values are report results.
 
@@ -570,12 +1136,40 @@ The following configuration:
 
 This report produces the standardized dictionary.
 
-```python showLineNumbers
-{
-  'properties': ['!ttl'],
-  'count_change_threshold': 10
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+reports = [
+    {
+        'arp_table': {
+            'properties': ['!ttl'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - arp_table:
+      properties:
+        - '!ttl'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `content_version`
 
@@ -603,11 +1197,38 @@ captured in snapshots.
 
 This report produces the standardized dictionary.
 
-```python showLineNumbers
-{
-  'properties': ['state']
-}
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
 ```
+
+```python showLineNumbers
+reports = [
+    {
+        'ip_sec_tunnels': {
+            'properties': ['state']
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - ip_sec_tunnels:
+      properties:
+        - 'state'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 
 ### `license`
 
@@ -629,10 +1250,36 @@ snapshots. It will ignore the `serial` property.
 
 This report produces the standardized dictionary.
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-{
-  'properties': ['!serial']
-}
+reports = [
+    {
+        'license': {
+            'properties': ['!serial']
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - license:
+      properties:
+        - '!serial'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 ### `nics`
@@ -655,10 +1302,36 @@ The following configuration provides both: change in NICs\' state (implicitly) a
 
 This report produces the standardized dictionary.
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-{
-  'count_change_threshold': 10
-}
+reports = [
+    {
+        'nics': {
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - nics:
+      count_change_threshold: 10
+
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 ### `routes`
@@ -686,11 +1359,38 @@ The following configuration:
 
 This report produces the standardized dictionary.
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-{
-  'properties': ['!flags'],
-  'count_change_threshold': 10
-}
+reports = [
+    {
+        'routes': {
+            'properties': ['!flags'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - routes:
+      properties:
+        - '!flags'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 ### `session_stats`
@@ -713,13 +1413,40 @@ The following configuration compares only stats for `num-max` and `num-tcp`. For
 
 This report produces a `dict` as documented in the [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage) method documentation.
 
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
 ```python showLineNumbers
-{
-  'thresholds': [
-    {'num-max': 10},
-    {'num-tcp': 10},
-  ]
-}
+reports = [
+    {
+        'session_stats': {
+            'thresholds': [
+                {'num-max': 10},
+                {'num-tcp': 10}
+            ]
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - session_stats:
+      thresholds:
+        - num-max: 10
+        - num-tcp: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
 ```
 
 [cfgprs]: /panos/docs/panos-upgrade-assurance/api/utils#class-configparser
