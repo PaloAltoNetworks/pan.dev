@@ -20,6 +20,18 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## September 2023
+
+Added [Autonomous DEM](/access/api/adem/autonomous-dem-api/) APIs. Use the ADEM APIs to access the Autonomous Digital
+Experience Management summary, distribution and timeseries data, such as application score and agent
+scores.
+
+Added [examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/) 
+that correlate fields in response structures to the area in the UI which displays that data. 
+
+For more information on AI-Powered Autonomous DEM, see 
+[AI-Powered Autonomous DEM](https://docs.paloaltonetworks.com/autonomous-dem/administration).
+
 ## April 2023
 
 Added [ZTNA Connector](/access/api/ztna/ztna-connector-apis/) APIs.
