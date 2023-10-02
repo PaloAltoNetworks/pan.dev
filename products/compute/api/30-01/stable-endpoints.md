@@ -14,7 +14,7 @@ The deployment scripts and Twistcli that you download from Console, uses the API
 
 ### Latest API Versions of Prisma Cloud Compute Edition
 
-If you're looking for latest version of Prisma Cloud Compute Edition, visit the following link:
+To view the documentation for the latest versions of the supported Prisma Cloud Compute Edition releases, visit:
 
 * [Prisma Cloud Compute Edition - Latest](/compute/api/)
 
