@@ -221,7 +221,7 @@ const config = {
                   apiDocs: [
                     {
                       label: "Ansible Module Reference",
-                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      to: "https://galaxy.ansible.com/ui/repo/published/paloaltonetworks/panos/docs",
                       icon: "api-doc",
                     },
                     {
