@@ -549,6 +549,33 @@ __Returns__
 * [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
     device.
 
+### `CheckFirewall.check_unsupported_transceivers`
+
+```python
+def check_unsupported_transceivers(
+        supported_sfp_regex: Optional[List[str]] = None) -> CheckResult
+```
+
+Check for any Optical Transceivers (SFPs or otherwise) that aren't supported by Palo Alto Networks.
+
+__Parameters__
+
+
+- __supported_sfp_regex__ (`list, optional`): List of supported transceivers, as regex strings, to mark SFP's as
+    supported even if they aren't OEM.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) When all optics are OEM and
+    PAN supported
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise, `CheckResult.reason`
+    field contains information about which Slots and Physical ports currently have unsupported transceivers installed
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no transceiver
+    slots at all.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python

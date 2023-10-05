@@ -1135,3 +1135,31 @@ __Returns__
     'warnings': None}}
 ```
 
+### `FirewallProxy.get_system_state`
+
+```python
+def get_system_state() -> Dict[str, str]
+```
+
+Gets the entire output of the show system state command.
+
+Show system state returns low level information about PAN-OS and the attributes of the system. Note that this function
+does not parse the data structures beyond the first level.
+
+The actual API command is `show system state`.
+
+__Returns__
+
+
+`dict`: Each item from the state, where the key is the item key and the value is the value as a string.
+
+```python showLineNumbers title="Sample output"
+{
+    local.name: "mp"
+    local.octeon: "{ }"
+    local.ppid: "0"
+    local.role: "mp"
+    local.slot: "1"
+}
+```
+
