@@ -297,6 +297,11 @@ const config = {
                   ],
                   apiDocs: [
                     {
+                      to: "/aiops-ngfw-bpa/api",
+                      label: "AIOps for NGFW Best Practice Assessment API",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/threat-vault/api",
                       label: "Threat Vault APIs",
                       icon: "api-doc",
@@ -685,6 +690,11 @@ const config = {
                 baseUrl: "/sdwan/api/legacy/",
               },
             },
+          },
+          "aiops-ngfw-bpa": {
+            specPath: "openapi-specs/aiops-ngfw-bpa/BPAReportAPI.yaml",
+            outputDir: "products/aiops-ngfw-bpa/api",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
