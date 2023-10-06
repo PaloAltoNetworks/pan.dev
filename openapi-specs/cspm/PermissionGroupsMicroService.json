@@ -1,10 +1,16 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Prisma Cloud Permission Groups API",
-    "description": "Permission groups enable you to restrict access to one or more features available on the Prisma Cloud administrative console. Permission group APIs allow you to retrieve, update or delete one or more existing permissions groups. You can also use these APIs to create a custom permission group and then you must attach it to a role and assign the role to a user.",
-    "contact": {},
-    "version": "Latest"
+    "title": "Authentication and RBAC API's",
+    "contact": {
+      "name": "Platform",
+      "url": "https://panw-rnd.slack.com/archives/C01DQJBJ7LJ"
+    },
+    "version": "1.0"
+  },
+  "externalDocs": {
+    "description": "Platform Wiki Documentation",
+    "url": "https://redlock.atlassian.net/wiki/spaces/RED/pages/2744877602/Platform+AuthN+Integration+Template"
   },
   "servers": [
     {
@@ -57,61 +63,13 @@
     {
       "description": "Permission groups enable you to restrict access to one or more features available on the Prisma Cloud administrative console. Permission group APIs allow you to retrieve, update or delete one or more existing permissions groups. You can also use these APIs to create a custom permission group and then you must attach it to a role and assign the role to a user.",
       "name": "Permission Groups"
+    },
+    {
+      "name": "SSO",
+      "description": "OpenID Connect OpenID Connect (OIDC) is an open security protocol for authentication based on the OAuth 2.0 framework. Prisma Cloud offers the option to set up SSO, leveraging Service Provider initiated OIDC. Prisma Cloud System Administrators can use the following APIs to configure tenant SSO authentication using OIDC."
     }
   ],
   "paths": {
-    "/authz/v1/feature": {
-      "get": {
-        "tags": [
-          "Permission Groups"
-        ],
-        "summary": "Get all active features",
-        "description": "Returns a list of Prisma Cloud features that can be added to Custom Permission Groups",
-        "operationId": "getFeatures",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "4XX": {
-            "description": "Client error",
-            "headers": {
-              "x-redlock-status": {
-                "description": "error description",
-                "style": "simple",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ]
-      }
-    },
     "/authz/v1/permission_group/{id}": {
       "get": {
         "tags": [
@@ -175,7 +133,8 @@
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
       },
       "put": {
         "tags": [
@@ -226,7 +185,8 @@
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
       },
       "delete": {
         "tags": [
@@ -267,7 +227,292 @@
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
+      }
+    },
+    "/authn/api/v1/oauth2/config": {
+      "get": {
+        "tags": [
+          "SSO"
+        ],
+        "summary": "Get OIDC Configuration",
+        "description": "Get the OAuth2 configuration details of a tenant that is used by OpenID Connect(OIDC).",
+        "operationId": "get-oauth2-config",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2ConfigDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpringErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2ConfigDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2ConfigDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2ConfigDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice": "true",
+        "x-ga": "23.10.1",
+        "x-public": "true"
+      },
+      "put": {
+        "tags": [
+          "SSO"
+        ],
+        "summary": "Update OIDC Configuration",
+        "description": "Updates the parameters of an existing OAuth2 configuration that is used by OpenID Connect(OIDC).",
+        "operationId": "update-oauth2-config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuth2ConfigDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpringErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error"
+          },
+          "403": {
+            "description": "Authorization error"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice": "true",
+        "x-ga": "23.10.1",
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "SSO"
+        ],
+        "summary": "Create an OIDC Configuration",
+        "description": "Create an OAuth2 configuration for a given tenant to be used by OpenID Connect(OIDC).",
+        "operationId": "create-oauth2-config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuth2ConfigDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpringErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice": "true",
+        "x-ga": "23.10.1",
+        "x-public": "true"
+      },
+      "patch": {
+        "tags": [
+          "SSO"
+        ],
+        "summary": "Update OIDC Configuration",
+        "description": "Updates the parameters of an existing OAuth2 configuration that is used by OpenID Connect(OIDC).",
+        "operationId": "patch-oauth2-config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuth2ConfigDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpringErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error"
+          },
+          "403": {
+            "description": "Authorization error"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice": "true",
+        "x-ga": "23.10.1",
+        "x-public": "true"
       }
     },
     "/authz/v1/permission_group": {
@@ -276,7 +521,7 @@
           "Permission Groups"
         ],
         "summary": "Get all existing Permission Groups",
-        "description": "Returns a list of all existing Permission Groups.",
+        "description": "Returns the list of all existing Permission Groups.",
         "operationId": "getAll",
         "parameters": [
           {
@@ -339,7 +584,8 @@
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
       },
       "post": {
         "tags": [
@@ -379,12 +625,195 @@
           {
             "x-redlock-auth": []
           }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/authz/v1/feature": {
+      "get": {
+        "tags": [
+          "Permission Groups"
+        ],
+        "summary": "Get all active features",
+        "description": "Returns the list of Prisma Cloud features that can be added to Custom Permission Groups",
+        "operationId": "getFeatures",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/authn/api/v1/oauth2/login": {
+      "get": {
+        "tags": [
+          "SSO"
+        ],
+        "summary": "Get OIDC Login URL",
+        "description": "Get the OIDC login URL for the tenant.",
+        "operationId": "get-oauth2-login-url",
+        "parameters": [
+          {
+            "name": "user_name",
+            "in": "query",
+            "description": "User name of the tenant requesting the login URL.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "prisma_id",
+            "in": "query",
+            "description": "PrismaId of the tenant requesting the login URL.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error",
+            "headers": {
+              "x-redlock-status": {
+                "description": "error description",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpringErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-microservice": "true",
+        "x-ga": "23.10.1",
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
         ]
       }
     }
   },
   "components": {
     "schemas": {
+      "Feature": {
+        "required": [
+          "featureName",
+          "operations"
+        ],
+        "type": "object",
+        "properties": {
+          "featureName": {
+            "type": "string",
+            "description": "Prisma Cloud Feature Name. Prisma Cloud feature names can be retreived from GET: /authz/v1/feature API Endpoint"
+          },
+          "operations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "A mapping of operations and a boolean value representing whether the privilege to perform the operation needs to be granted."
+            },
+            "description": "A mapping of operations and a boolean value representing whether the privilege to perform the operation needs to be granted."
+          }
+        },
+        "description": "Collection of permitted features associated with the role. \n Refer to PermissionGroup API docs to get the entire list of PC features."
+      },
+      "PermissionGroupRequest": {
+        "title": "Model used for permission group",
+        "required": [
+          "features",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Permission Group Name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Permission Group Description"
+          },
+          "features": {
+            "type": "array",
+            "description": "List of Prisma Cloud Features",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          }
+        }
+      },
       "ErrorDetails": {
         "required": [
           "message",
@@ -433,6 +862,933 @@
             "type": "string"
           }
         }
+      },
+      "SsoConfig": {
+        "type": "object",
+        "properties": {
+          "identityProvider": {
+            "title": "IdP Issuer URI",
+            "type": "string"
+          },
+          "certificate": {
+            "title": "IdP Certificate",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "SSO Enabled",
+            "type": "boolean"
+          },
+          "logoutRedirectUrl": {
+            "title": "IdP Sign-Off URL",
+            "type": "string"
+          },
+          "relayStateParamName": {
+            "title": "IdP Relay State Param",
+            "type": "string"
+          },
+          "lastLoginErrors": {
+            "title": "Last Login Errors",
+            "type": "array",
+            "items": {
+              "title": "Last Login Errors",
+              "type": "string"
+            }
+          },
+          "audienceUri": {
+            "title": "AudienceUri or Prisma Cloud SP-Entity-Id",
+            "type": "string"
+          },
+          "autoProvisionEnabled": {
+            "title": "AutoProvision Enabled",
+            "type": "boolean"
+          },
+          "requireAccessSamlUrlPublic": {
+            "title": "Skip Public address check for Access SAML URL",
+            "type": "boolean"
+          },
+          "autoProvisionSamlEmail": {
+            "title": "AutoProvision SAML Attribute - Email (Mandatory)",
+            "type": "string"
+          },
+          "autoProvisionSamlFirstName": {
+            "title": "AutoProvision SAML Attribute - First name (Mandatory)",
+            "type": "string"
+          },
+          "autoProvisionSamlLastName": {
+            "title": "AutoProvision SAML Attribute - Last name (Mandatory)",
+            "type": "string"
+          },
+          "autoProvisionSamlRole": {
+            "title": "AutoProvision SAML Attribute - Role (Mandatory)",
+            "type": "string"
+          },
+          "autoProvisionSamlTimezone": {
+            "title": "AutoProvision SAML Attribute - TZ",
+            "type": "string"
+          },
+          "redLockAccessSamlUrl": {
+            "title": "IdP Configured Prisma Cloud Access URL",
+            "type": "string"
+          }
+        }
+      },
+      "AllowListParams": {
+        "title": "IpAllowListParams",
+        "required": [
+          "cidr",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cidr": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trimmedName": {
+            "type": "string"
+          },
+          "trimmedDescription": {
+            "type": "string"
+          },
+          "trimmedCidrs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Model for login IP allow list parameters"
+      },
+      "IpAllowListData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Login IP allow list ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description"
+          },
+          "cidr": {
+            "type": "array",
+            "description": "List of CIDR blocks (IP addresses) from which access is allowed when Login IP Allow List flag is enabled.",
+            "items": {
+              "type": "string",
+              "description": "List of CIDR blocks (IP addresses) from which access is allowed when Login IP Allow List flag is enabled."
+            }
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "description": "Timestamp for last modification of CIDR block list",
+            "format": "int64",
+            "readOnly": true
+          }
+        },
+        "description": "Model for login IP allow list data"
+      },
+      "OAuth2ConfigDetail": {
+        "required": [
+          "clientId",
+          "grantType",
+          "idpAuthUri",
+          "issuer",
+          "tokenUri"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "clientSecret": {
+            "type": "string",
+            "description": "Client ID secret from the Identity Provider(IdP).",
+            "writeOnly": true
+          },
+          "prismaId": {
+            "type": "integer",
+            "description": "Prisma ID of the tenant.",
+            "format": "int64",
+            "readOnly": true
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Client ID obtained after Identity Provider(IdP) configuration."
+          },
+          "issuer": {
+            "type": "string",
+            "description": "The identifier of the OpenID Connect(OIDC) provider."
+          },
+          "grantType": {
+            "type": "string",
+            "description": "Grant types are a way to specify how a client wants to interact with an Identity Provider(IdP).",
+            "enum": [
+              "authorization_code"
+            ]
+          },
+          "withPkce": {
+            "type": "boolean",
+            "description": "Using proof key for code exchange(PKCE) as additional verification.  PKCE ensures that only the client that requests the access token can redeem it.",
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "idpAuthUri": {
+            "type": "string",
+            "description": "The URL of the authentication endpoint on the Identity Provider(IdP)."
+          },
+          "tokenUri": {
+            "type": "string",
+            "description": "The Identity Provider token endpoint URL for obtaining access and ID tokens."
+          },
+          "jwkSetUri": {
+            "type": "string",
+            "description": "The URL of the Identity Provider(IdP) JSON Web Key Set document. This document contains signing keys that are used to validate the signatures from the provider."
+          },
+          "endSessionUri": {
+            "type": "string",
+            "description": "The URL used to sign out the user from the Identity Provider(IdP)."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "True to enable SSO using OIDC; False otherwise.",
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "pcAuthUri": {
+            "type": "string",
+            "description": "Prisma Cloud endpoint URL to begin the authentication flow.",
+            "readOnly": true
+          },
+          "pcRelayUri": {
+            "type": "string",
+            "description": "Prisma Cloud callback endpoint URL from the IdP during authentication.",
+            "readOnly": true
+          },
+          "clientSecretIsBlank": {
+            "type": "boolean",
+            "description": "True if client secret configured; False otherwise. ",
+            "readOnly": true,
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "lastLoginErrors": {
+            "type": "array",
+            "description": "Recent OIDC login errors.",
+            "readOnly": true,
+            "items": {
+              "type": "string",
+              "description": "Recent OIDC login errors.",
+              "readOnly": true
+            }
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "User who created the resource.",
+            "readOnly": true
+          },
+          "createdTs": {
+            "type": "integer",
+            "description": "Created on timestamp.",
+            "format": "int64",
+            "readOnly": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "description": "User who made the last update.",
+            "readOnly": true
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "description": "Last update timestamp.",
+            "format": "int64",
+            "readOnly": true
+          }
+        }
+      },
+      "MultiRoleUserProfile": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Time zone (e.g. America/Los_Angeles)"
+          },
+          "enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "readOnly": true
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "lastLoginTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "displayName": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ssoBypassAllowed": {
+            "type": "boolean"
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          },
+          "defaultRoleId": {
+            "type": "string"
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileRoleDetail"
+            }
+          },
+          "activeRole": {
+            "$ref": "#/components/schemas/UserProfileRoleDetail"
+          },
+          "userRoleName": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "UserProfileRoleDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "onlyAllowCIAccess": {
+            "type": "boolean"
+          },
+          "onlyAllowComputeAccess": {
+            "type": "boolean"
+          },
+          "onlyAllowReadAccess": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserProfile": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "roleId",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Time zone (e.g. America/Los_Angeles)"
+          },
+          "enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "roleId": {
+            "type": "string"
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "readOnly": true
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "lastLoginTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "role": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "readOnly": true
+            },
+            "readOnly": true
+          },
+          "roleType": {
+            "type": "string",
+            "readOnly": true
+          },
+          "displayName": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ssoBypassAllowed": {
+            "type": "boolean"
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          },
+          "userRoleName": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "Attributes": {
+        "type": "object",
+        "properties": {
+          "onlyAllowCIAccess": {
+            "type": "boolean"
+          },
+          "onlyAllowComputeAccess": {
+            "type": "boolean"
+          },
+          "hasDefenderPermissions": {
+            "type": "boolean"
+          },
+          "onlyAllowReadAccess": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accountGroupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resourceListIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "codeRepositoryIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "associatedUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "restrictDismissalAccess": {
+            "type": "boolean"
+          },
+          "additionalAttributes": {
+            "$ref": "#/components/schemas/Attributes"
+          },
+          "roleType": {
+            "type": "string"
+          }
+        }
+      },
+      "SupportUserProfileRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "supportAccessLevel": {
+            "type": "string"
+          }
+        }
+      },
+      "UserSearchCriteria": {
+        "title": "User Search Request Filter",
+        "type": "object",
+        "properties": {
+          "permissionGroupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userRoleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserSearch"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        },
+        "description": "Response with along with nextPageToken"
+      },
+      "UserSearch": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "properties": {
+              "List of role IDs": {
+                "type": "string"
+              }
+            },
+            "items": {
+              "$ref": "#/components/schemas/roleDetail"
+            }
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "ssoBypassAllowed": {
+            "type": "boolean"
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          }
+        },
+        "description": "User Search Result Data"
+      },
+      "roleDetail": {
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "string"
+          }
+        },
+        "description": "user role"
+      },
+      "EntitlementToRoleSearchRequest": {
+        "type": "object",
+        "properties": {
+          "resourceListIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountGroupIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "codeRepositoryIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CustomerNameResponse": {
+        "type": "object",
+        "properties": {
+          "customerName": {
+            "type": "string"
+          },
+          "prismaId": {
+            "type": "string"
+          },
+          "tosAccepted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SamlLoginResponse": {
+        "type": "object",
+        "properties": {
+          "errorReasonExpectedValue": {
+            "type": "string"
+          },
+          "errorReasonActualValue": {
+            "type": "string"
+          },
+          "errorReasonKey": {
+            "type": "string",
+            "enum": [
+              "SAML_ASSERTION",
+              "SAML_ASSERTION_AUDIENCE_URI",
+              "SAML_ASSERTION_AUTHN_STATEMENT",
+              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
+              "SAML_ASSERTION_CONDITIONS",
+              "SAML_ASSERTION_ISSUE_INSTANT",
+              "SAML_ASSERTION_ISSUER_URI",
+              "SAML_ASSERTION_SIGNATURE",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
+              "SAML_CERTIFICATE",
+              "SAML_CONFIGURATION",
+              "SAML_CUSTOMER",
+              "SAML_DESTINATION_URI",
+              "SAML_PARSING_STATUS_CODE",
+              "SAML_RESPONSE",
+              "SAML_USER"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "customerNames": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerNameResponse"
+            }
+          },
+          "forwardLocation": {
+            "type": "string"
+          },
+          "prismaSamlAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "pingSamlAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prismaId": {
+            "type": "string"
+          },
+          "errorInfoUnavailable": {
+            "type": "string",
+            "writeOnly": true,
+            "enum": [
+              "SAML_ASSERTION",
+              "SAML_ASSERTION_AUDIENCE_URI",
+              "SAML_ASSERTION_AUTHN_STATEMENT",
+              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
+              "SAML_ASSERTION_CONDITIONS",
+              "SAML_ASSERTION_ISSUE_INSTANT",
+              "SAML_ASSERTION_ISSUER_URI",
+              "SAML_ASSERTION_SIGNATURE",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
+              "SAML_CERTIFICATE",
+              "SAML_CONFIGURATION",
+              "SAML_CUSTOMER",
+              "SAML_DESTINATION_URI",
+              "SAML_PARSING_STATUS_CODE",
+              "SAML_RESPONSE",
+              "SAML_USER"
+            ]
+          },
+          "errorInfoMultiple": {
+            "type": "string",
+            "writeOnly": true,
+            "enum": [
+              "SAML_ASSERTION",
+              "SAML_ASSERTION_AUDIENCE_URI",
+              "SAML_ASSERTION_AUTHN_STATEMENT",
+              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
+              "SAML_ASSERTION_CONDITIONS",
+              "SAML_ASSERTION_ISSUE_INSTANT",
+              "SAML_ASSERTION_ISSUER_URI",
+              "SAML_ASSERTION_SIGNATURE",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
+              "SAML_CERTIFICATE",
+              "SAML_CONFIGURATION",
+              "SAML_CUSTOMER",
+              "SAML_DESTINATION_URI",
+              "SAML_PARSING_STATUS_CODE",
+              "SAML_RESPONSE",
+              "SAML_USER"
+            ]
+          },
+          "errorInfoInvalid": {
+            "type": "string",
+            "writeOnly": true,
+            "enum": [
+              "SAML_ASSERTION",
+              "SAML_ASSERTION_AUDIENCE_URI",
+              "SAML_ASSERTION_AUTHN_STATEMENT",
+              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
+              "SAML_ASSERTION_CONDITIONS",
+              "SAML_ASSERTION_ISSUE_INSTANT",
+              "SAML_ASSERTION_ISSUER_URI",
+              "SAML_ASSERTION_SIGNATURE",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
+              "SAML_CERTIFICATE",
+              "SAML_CONFIGURATION",
+              "SAML_CUSTOMER",
+              "SAML_DESTINATION_URI",
+              "SAML_PARSING_STATUS_CODE",
+              "SAML_RESPONSE",
+              "SAML_USER"
+            ]
+          },
+          "errorInfoDisabled": {
+            "type": "string",
+            "writeOnly": true,
+            "enum": [
+              "SAML_ASSERTION",
+              "SAML_ASSERTION_AUDIENCE_URI",
+              "SAML_ASSERTION_AUTHN_STATEMENT",
+              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
+              "SAML_ASSERTION_CONDITIONS",
+              "SAML_ASSERTION_ISSUE_INSTANT",
+              "SAML_ASSERTION_ISSUER_URI",
+              "SAML_ASSERTION_SIGNATURE",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
+              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
+              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
+              "SAML_CERTIFICATE",
+              "SAML_CONFIGURATION",
+              "SAML_CUSTOMER",
+              "SAML_DESTINATION_URI",
+              "SAML_PARSING_STATUS_CODE",
+              "SAML_RESPONSE",
+              "SAML_USER"
+            ]
+          },
+          "fullErrorMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "SamlLoginRequest": {
+        "title": "Model used for saml authentication",
+        "required": [
+          "rawSaml",
+          "requestIpAddress"
+        ],
+        "type": "object",
+        "properties": {
+          "rawSaml": {
+            "type": "string"
+          },
+          "requestIpAddress": {
+            "type": "string"
+          },
+          "relayState": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "title": "Model used for authentication",
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "prismaId": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "tosAccepted": {
+            "type": "boolean"
+          },
+          "ssoSession": {
+            "type": "boolean"
+          }
+        },
+        "description": "Model used for authentication"
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "customerNames": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerNameResponse"
+            }
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ServiceTokenResponse": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "ForgotPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "resetToken": {
+            "type": "string"
+          },
+          "recaptchaResponse": {
+            "type": "string"
+          }
+        }
+      },
+      "UsernamePasswordRequest": {
+        "title": "Model used to validate user/password",
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "ExternalJwtIntegration": {
+        "title": "Model used for JWT integrations with external vendors",
+        "type": "object",
+        "properties": {
+          "integration": {
+            "type": "string"
+          }
+        },
+        "description": "Model used for JWT integrations with external vendors"
       },
       "UserAccount": {
         "required": [
@@ -538,29 +1894,6 @@
           }
         }
       },
-      "UserProfileRoleDetail": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "onlyAllowCIAccess": {
-            "type": "boolean"
-          },
-          "onlyAllowComputeAccess": {
-            "type": "boolean"
-          },
-          "onlyAllowReadAccess": {
-            "type": "boolean"
-          }
-        }
-      },
       "CreateUserAccessKeyResponse": {
         "type": "object",
         "properties": {
@@ -571,359 +1904,6 @@
             "type": "string"
           }
         }
-      },
-      "ChangePasswordRequest": {
-        "type": "object",
-        "properties": {
-          "userName": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "newPassword": {
-            "type": "string"
-          }
-        }
-      },
-      "SupportUserProfile": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "supportAccessLevel": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "LIGHT_AGENT",
-              "AGENT",
-              "ADMIN"
-            ]
-          },
-          "failedLoginCount": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "UserProfile": {
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "roleId",
-          "timeZone"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone (e.g. America/Los_Angeles)"
-          },
-          "enabled": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "roleId": {
-            "type": "string"
-          },
-          "lastModifiedBy": {
-            "type": "string",
-            "readOnly": true
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "lastLoginTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "role": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string",
-              "readOnly": true
-            },
-            "readOnly": true
-          },
-          "roleType": {
-            "type": "string",
-            "readOnly": true
-          },
-          "displayName": {
-            "type": "string",
-            "readOnly": true
-          },
-          "ssoBypassAllowed": {
-            "type": "boolean"
-          },
-          "accessKeysAllowed": {
-            "type": "boolean"
-          },
-          "userRoleName": {
-            "type": "string",
-            "writeOnly": true
-          }
-        }
-      },
-      "OpenIdConfigurationResponse": {
-        "type": "object",
-        "properties": {
-          "issuer": {
-            "type": "string"
-          },
-          "authorization_endpoint": {
-            "type": "string"
-          },
-          "jwks_uri": {
-            "type": "string"
-          },
-          "token_endpoint": {
-            "type": "string"
-          },
-          "token_endpoint_auth_methods_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "introspection_endpoint": {
-            "type": "string"
-          },
-          "introspection_endpoint_auth_methods_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "revocation_endpoint": {
-            "type": "string"
-          },
-          "response_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "subject_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id_token_signing_alg_values_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "grant_types_supported": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "Feature": {
-        "required": [
-          "featureName",
-          "operations"
-        ],
-        "type": "object",
-        "properties": {
-          "featureName": {
-            "type": "string",
-            "description": "Prisma Cloud Feature Name. Prisma Cloud feature names can be retreived from GET: /authz/v1/feature API Endpoint"
-          },
-          "operations": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "description": "A mapping of operations and a boolean value representing whether the privilege to perform the operation needs to be granted."
-            },
-            "description": "A mapping of operations and a boolean value representing whether the privilege to perform the operation needs to be granted."
-          }
-        },
-        "description": "Collection of permitted features associated with the role. \n Refer to PermissionGroup API docs to get the entire list of PC features."
-      },
-      "RoleInternalPermissionGroup": {
-        "required": [
-          "custom",
-          "features",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "PermissionGroup Name"
-          },
-          "custom": {
-            "type": "boolean",
-            "description": "Indicates whether the permissionGroup associated with the role is 'Default' or 'Custom' type."
-          },
-          "features": {
-            "type": "array",
-            "description": "Collection of permitted features associated with the role. \n Refer to PermissionGroup API docs to get the entire list of PC features.",
-            "items": {
-              "$ref": "#/components/schemas/Feature"
-            }
-          }
-        },
-        "description": "Permission Group is only populated for the active role, i.e. active=true"
-      },
-      "UserInternalRole": {
-        "required": [
-          "active",
-          "default",
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique id of the Role"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the Role"
-          },
-          "active": {
-            "type": "boolean",
-            "description": "Indicates whether the role is active role or not"
-          },
-          "permissionGroup": {
-            "$ref": "#/components/schemas/RoleInternalPermissionGroup"
-          },
-          "default": {
-            "type": "boolean",
-            "description": "Indicates whether the role is default or not"
-          }
-        }
-      },
-      "UserProfileV2": {
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "timeZone"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone (e.g. America/Los_Angeles)"
-          },
-          "lastLoginTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "accessKeysAllowed": {
-            "type": "boolean"
-          },
-          "roles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserInternalRole"
-            }
-          }
-        }
-      },
-      "AllowListParams": {
-        "title": "IpAllowListParams",
-        "required": [
-          "cidr",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "cidr": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "trimmedName": {
-            "type": "string"
-          },
-          "trimmedDescription": {
-            "type": "string"
-          },
-          "trimmedCidrs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "description": "Model for login IP allow list parameters"
-      },
-      "IpAllowListData": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Login IP allow list ID",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Name"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description"
-          },
-          "cidr": {
-            "type": "array",
-            "description": "List of CIDR blocks (IP addresses) from which access is allowed when Login IP Allow List flag is enabled.",
-            "items": {
-              "type": "string",
-              "description": "List of CIDR blocks (IP addresses) from which access is allowed when Login IP Allow List flag is enabled."
-            }
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "description": "Timestamp for last modification of CIDR block list",
-            "format": "int64",
-            "readOnly": true
-          }
-        },
-        "description": "Model for login IP allow list data"
       },
       "CustomerSupportFilter": {
         "type": "object",
@@ -937,883 +1917,6 @@
           },
           "entitlementSerialNumber": {
             "type": "string"
-          }
-        }
-      },
-      "UserAccessKeyDetailResponse": {
-        "type": "object",
-        "properties": {
-          "Access key id": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "createdTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastUsedTime": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "status": {
-            "type": "string"
-          },
-          "expiresOn": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "role": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string",
-              "description": "Role of User"
-            },
-            "description": "Role of User"
-          },
-          "roleType": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        }
-      },
-      "Attributes": {
-        "type": "object",
-        "properties": {
-          "onlyAllowCIAccess": {
-            "type": "boolean"
-          },
-          "onlyAllowComputeAccess": {
-            "type": "boolean"
-          },
-          "hasDefenderPermissions": {
-            "type": "boolean"
-          },
-          "onlyAllowReadAccess": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UserRole": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "accountGroupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "resourceListIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "codeRepositoryIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "associatedUsers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "restrictDismissalAccess": {
-            "type": "boolean"
-          },
-          "additionalAttributes": {
-            "$ref": "#/components/schemas/Attributes"
-          },
-          "roleType": {
-            "type": "string"
-          }
-        }
-      },
-      "CustomerNameResponse": {
-        "type": "object",
-        "properties": {
-          "customerName": {
-            "type": "string"
-          },
-          "prismaId": {
-            "type": "string"
-          },
-          "tosAccepted": {
-            "type": "boolean"
-          }
-        }
-      },
-      "LoginResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "customerNames": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CustomerNameResponse"
-            }
-          },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "GetServicesResponse": {
-        "required": [
-          "services"
-        ],
-        "type": "object",
-        "properties": {
-          "services": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ServiceResponse"
-            }
-          },
-          "errors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "JwkResponse": {
-        "required": [
-          "alg",
-          "key_ops",
-          "kid",
-          "kty",
-          "used_for_grant"
-        ],
-        "type": "object",
-        "properties": {
-          "kid": {
-            "type": "string"
-          },
-          "kty": {
-            "type": "string"
-          },
-          "alg": {
-            "type": "string",
-            "enum": [
-              "HS256",
-              "HS384",
-              "HS512",
-              "RS256",
-              "RS384",
-              "RS512"
-            ]
-          },
-          "key_ops": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "used_for_grant": {
-            "type": "boolean"
-          },
-          "expires_at": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "token_duration_seconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "k": {
-            "type": "string"
-          },
-          "e": {
-            "type": "string"
-          },
-          "n": {
-            "type": "string"
-          },
-          "d": {
-            "type": "string"
-          },
-          "p": {
-            "type": "string"
-          },
-          "q": {
-            "type": "string"
-          },
-          "dp": {
-            "type": "string"
-          },
-          "dq": {
-            "type": "string"
-          },
-          "qi": {
-            "type": "string"
-          }
-        }
-      },
-      "JwksResponse": {
-        "required": [
-          "keys"
-        ],
-        "type": "object",
-        "properties": {
-          "keys": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/JwkResponse"
-            }
-          }
-        }
-      },
-      "ServiceResponse": {
-        "required": [
-          "id",
-          "is_enabled",
-          "jwks",
-          "password",
-          "roles",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "username": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "jwks": {
-            "$ref": "#/components/schemas/JwksResponse"
-          },
-          "customer_name": {
-            "type": "string",
-            "deprecated": true
-          },
-          "prisma_id": {
-            "type": "string"
-          },
-          "is_enabled": {
-            "type": "boolean"
-          }
-        }
-      },
-      "LoginRequest": {
-        "title": "Model used for authentication",
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "prismaId": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "tosAccepted": {
-            "type": "boolean"
-          },
-          "ssoSession": {
-            "type": "boolean"
-          }
-        },
-        "description": "Model used for authentication"
-      },
-      "EntitlementToRoleSearchRequest": {
-        "type": "object",
-        "properties": {
-          "resourceListIds": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "accountGroupIds": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "codeRepositoryIds": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "UserProfileInternal": {
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "timeZone"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone (e.g. America/Los_Angeles)"
-          },
-          "enabled": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "lastModifiedBy": {
-            "type": "string",
-            "readOnly": true
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "lastLoginTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "displayName": {
-            "type": "string",
-            "readOnly": true
-          },
-          "ssoBypassAllowed": {
-            "type": "boolean"
-          },
-          "accessKeysAllowed": {
-            "type": "boolean"
-          },
-          "defaultRoleId": {
-            "type": "string"
-          },
-          "roleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "roles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileRoleDetail"
-            }
-          },
-          "activeRole": {
-            "$ref": "#/components/schemas/UserProfileRoleDetail"
-          },
-          "username": {
-            "type": "string",
-            "description": "User or service account name"
-          },
-          "type": {
-            "type": "string",
-            "description": "User type. Default is USER_ACCOUNT.",
-            "enum": [
-              "USER_ACCOUNT",
-              "SERVICE_ACCOUNT"
-            ]
-          },
-          "accessKeyName": {
-            "type": "string"
-          },
-          "accessKeyExpiration": {
-            "type": "integer",
-            "description": "Access key expiration timestamp in milliseconds",
-            "format": "int64"
-          },
-          "enableKeyExpiration": {
-            "type": "boolean",
-            "description": "true = Enable access key expiration. Default is false."
-          },
-          "accessKeysCount": {
-            "type": "integer",
-            "description": "Access key count",
-            "format": "int32",
-            "readOnly": true
-          },
-          "sfSyncStatus": {
-            "type": "boolean"
-          },
-          "userRoleName": {
-            "type": "string",
-            "writeOnly": true
-          }
-        }
-      },
-      "PermissionGroupRequest": {
-        "title": "Model used for permission group",
-        "required": [
-          "features",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Permission Group Name"
-          },
-          "description": {
-            "type": "string",
-            "description": "Permission Group Description"
-          },
-          "features": {
-            "type": "array",
-            "description": "List of Prisma Cloud Features",
-            "items": {
-              "$ref": "#/components/schemas/Feature"
-            }
-          }
-        }
-      },
-      "ForgotPasswordRequest": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "resetToken": {
-            "type": "string"
-          },
-          "recaptchaResponse": {
-            "type": "string"
-          }
-        }
-      },
-      "PermissionGroupDetail": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Permission Group Name"
-          },
-          "description": {
-            "type": "string",
-            "description": "Permission Group Description"
-          },
-          "type": {
-            "type": "string",
-            "description": "Permission Group Type",
-            "enum": [
-              "Default",
-              "Custom",
-              "Internal",
-              "Default",
-              "Custom"
-            ]
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "associatedRoles": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "description": "Map of associated role Ids and Names"
-            },
-            "description": "Map of associated role Ids and Names"
-          },
-          "features": {
-            "$ref": "#/components/schemas/Feature"
-          },
-          "acceptAccountGroups": {
-            "type": "boolean",
-            "description": "acceptAccountGroups"
-          },
-          "acceptResourceLists": {
-            "type": "boolean",
-            "description": "acceptResourceLists"
-          },
-          "acceptCodeRepositories": {
-            "type": "boolean",
-            "description": "acceptCodeRepositories"
-          },
-          "custom": {
-            "type": "boolean",
-            "description": "Boolean value signifying whether this is a custom (i.e. user-defined) permission group. Is set to true if the attribute value of permissionGroupType is set to CUSTOM"
-          },
-          "id": {
-            "type": "string",
-            "description": "Permission Group ID"
-          }
-        }
-      },
-      "PermissionGroup": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Permission Group Name"
-          },
-          "custom": {
-            "type": "boolean",
-            "description": "Boolean value signifying whether this is a custom (i.e. user-defined) permission group. Is set to true if the attribute value of permissionGroupType is set to CUSTOM"
-          },
-          "id": {
-            "type": "string",
-            "description": "Permission Group ID"
-          }
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "timezone": {
-            "type": "string"
-          },
-          "resetToken": {
-            "type": "string"
-          },
-          "resetTokenTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "deleted": {
-            "type": "boolean"
-          },
-          "defaultUserRoleId": {
-            "type": "string"
-          },
-          "userRoleDetails": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/UserInternalRoleDetail"
-            }
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "lastLoginTime": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tosBypassAllowed": {
-            "type": "boolean"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tosAccepted": {
-            "type": "boolean"
-          },
-          "ssoBypassAllowed": {
-            "type": "boolean"
-          },
-          "sessionTimeout": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "provisional": {
-            "type": "boolean"
-          },
-          "canAssumeRole": {
-            "type": "boolean"
-          },
-          "supportAccessLevel": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "LIGHT_AGENT",
-              "AGENT",
-              "ADMIN"
-            ]
-          },
-          "accessKeysAllowed": {
-            "type": "boolean"
-          },
-          "sfSyncStatus": {
-            "type": "boolean"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "USER_ACCOUNT",
-              "SERVICE_ACCOUNT"
-            ]
-          },
-          "fullName": {
-            "type": "string"
-          },
-          "active": {
-            "type": "boolean"
-          }
-        },
-        "description": "User object"
-      },
-      "UserInternalRoleDetail": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "permissionGroup": {
-            "$ref": "#/components/schemas/PermissionGroup"
-          },
-          "restrictedDismissalAccess": {
-            "type": "boolean"
-          },
-          "hasDefenderPermissions": {
-            "type": "boolean"
-          },
-          "onlyAllowReadAccess": {
-            "type": "boolean"
-          },
-          "onlyAllowComputeAccess": {
-            "type": "boolean"
-          },
-          "onlyAllowCIAccess": {
-            "type": "boolean"
-          }
-        }
-      },
-      "MultiRoleUserProfile": {
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "timeZone"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "timeZone": {
-            "type": "string",
-            "description": "Time zone (e.g. America/Los_Angeles)"
-          },
-          "enabled": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "lastModifiedBy": {
-            "type": "string",
-            "readOnly": true
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "lastLoginTs": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "displayName": {
-            "type": "string",
-            "readOnly": true
-          },
-          "ssoBypassAllowed": {
-            "type": "boolean"
-          },
-          "accessKeysAllowed": {
-            "type": "boolean"
-          },
-          "defaultRoleId": {
-            "type": "string"
-          },
-          "roleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "roles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserProfileRoleDetail"
-            }
-          },
-          "activeRole": {
-            "$ref": "#/components/schemas/UserProfileRoleDetail"
-          },
-          "userRoleName": {
-            "type": "string",
-            "writeOnly": true
-          }
-        }
-      },
-      "SsoConfig": {
-        "type": "object",
-        "properties": {
-          "identityProvider": {
-            "title": "IdP Issuer URI",
-            "type": "string"
-          },
-          "certificate": {
-            "title": "IdP Certificate",
-            "type": "string"
-          },
-          "enabled": {
-            "title": "SSO Enabled",
-            "type": "boolean"
-          },
-          "logoutRedirectUrl": {
-            "title": "IdP Sign-Off URL",
-            "type": "string"
-          },
-          "relayStateParamName": {
-            "title": "IdP Relay State Param",
-            "type": "string"
-          },
-          "lastLoginErrors": {
-            "title": "Last Login Errors",
-            "type": "array",
-            "items": {
-              "title": "Last Login Errors",
-              "type": "string"
-            }
-          },
-          "audienceUri": {
-            "title": "AudienceUri or Prisma Cloud SP-Entity-Id",
-            "type": "string"
-          },
-          "autoProvisionEnabled": {
-            "title": "AutoProvision Enabled",
-            "type": "boolean"
-          },
-          "requireAccessSamlUrlPublic": {
-            "title": "Skip Public address check for Access SAML URL",
-            "type": "boolean"
-          },
-          "autoProvisionSamlEmail": {
-            "title": "AutoProvision SAML Attribute - Email (Mandatory)",
-            "type": "string"
-          },
-          "autoProvisionSamlFirstName": {
-            "title": "AutoProvision SAML Attribute - First name (Mandatory)",
-            "type": "string"
-          },
-          "autoProvisionSamlLastName": {
-            "title": "AutoProvision SAML Attribute - Last name (Mandatory)",
-            "type": "string"
-          },
-          "autoProvisionSamlRole": {
-            "title": "AutoProvision SAML Attribute - Role (Mandatory)",
-            "type": "string"
-          },
-          "autoProvisionSamlTimezone": {
-            "title": "AutoProvision SAML Attribute - TZ",
-            "type": "string"
-          },
-          "redLockAccessSamlUrl": {
-            "title": "IdP Configured Prisma Cloud Access URL",
-            "type": "string"
-          }
-        }
-      },
-      "UserAccessKeyResponse": {
-        "type": "object",
-        "properties": {
-          "Access key id": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "expiresOn": {
-            "type": "integer",
-            "description": "Timestamp in milliseconds when access key expires",
-            "format": "int64"
           }
         }
       },
@@ -1922,6 +2025,7 @@
             "enum": [
               "NONE",
               "LIGHT_AGENT",
+              "SRE",
               "AGENT",
               "ADMIN"
             ]
@@ -1931,6 +2035,10 @@
       "CloudAccountMetaVO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "accountId": {
             "type": "string"
           },
@@ -2078,32 +2186,459 @@
             "enum": [
               "NONE",
               "LIGHT_AGENT",
+              "SRE",
               "AGENT",
               "ADMIN"
             ]
           }
         }
       },
-      "UsernameVsDisplayName": {
+      "TokenInfoResponse": {
+        "required": [
+          "active"
+        ],
         "type": "object",
         "properties": {
-          "id": {
+          "active": {
+            "type": "boolean"
+          },
+          "username": {
             "type": "string"
           },
-          "name": {
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorized": {
+            "type": "boolean",
+            "description": "Null if roles query param is not sent otherwise {true only if the roles are authorized for the token}"
+          },
+          "exp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "prismaId": {
+            "type": "string"
+          },
+          "claims": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "authorizedSupportLevels": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ipAddressClaimIsTrusted": {
+            "type": "string",
+            "description": "ipAddress claim trusted ip outcome",
+            "enum": [
+              "NOT_PERFORMED",
+              "PERFORMED_AND_VALID",
+              "PERFORMED_AND_INVALID"
+            ]
+          },
+          "customer_name": {
+            "type": "string"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "SERVICE"
+            ]
+          }
+        }
+      },
+      "CreateServiceRequest": {
+        "required": [
+          "jwk",
+          "roles",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "deprecated": true
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "jwk": {
+            "$ref": "#/components/schemas/Jwk"
+          },
+          "customer_name": {
+            "type": "string",
+            "description": "Should only be specified for compute console",
+            "deprecated": true
+          },
+          "prisma_id": {
+            "type": "string",
+            "description": "Should only be specified for compute console"
+          }
+        }
+      },
+      "Jwk": {
+        "required": [
+          "alg",
+          "token_duration_seconds"
+        ],
+        "type": "object",
+        "properties": {
+          "alg": {
+            "type": "string",
+            "enum": [
+              "HS256",
+              "HS384",
+              "HS512",
+              "RS256",
+              "RS384",
+              "RS512"
+            ]
+          },
+          "kid": {
+            "type": "string"
+          },
+          "token_duration_seconds": {
+            "maximum": 3600,
+            "minimum": 60,
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "JwkResponse": {
+        "required": [
+          "alg",
+          "key_ops",
+          "kid",
+          "kty",
+          "used_for_grant"
+        ],
+        "type": "object",
+        "properties": {
+          "kid": {
+            "type": "string"
+          },
+          "kty": {
+            "type": "string"
+          },
+          "alg": {
+            "type": "string",
+            "enum": [
+              "HS256",
+              "HS384",
+              "HS512",
+              "RS256",
+              "RS384",
+              "RS512"
+            ]
+          },
+          "key_ops": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "used_for_grant": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "token_duration_seconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "k": {
+            "type": "string"
+          },
+          "e": {
+            "type": "string"
+          },
+          "n": {
+            "type": "string"
+          },
+          "d": {
+            "type": "string"
+          },
+          "p": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "dp": {
+            "type": "string"
+          },
+          "dq": {
+            "type": "string"
+          },
+          "qi": {
             "type": "string"
           }
         }
       },
-      "TokenResponse": {
+      "JwksResponse": {
+        "required": [
+          "keys"
+        ],
         "type": "object",
         "properties": {
-          "empty": {
+          "keys": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JwkResponse"
+            }
+          }
+        }
+      },
+      "ServiceResponse": {
+        "required": [
+          "id",
+          "is_enabled",
+          "jwks",
+          "password",
+          "roles",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "jwks": {
+            "$ref": "#/components/schemas/JwksResponse"
+          },
+          "customer_name": {
+            "type": "string",
+            "deprecated": true
+          },
+          "prisma_id": {
+            "type": "string"
+          },
+          "is_enabled": {
             "type": "boolean"
           }
-        },
-        "additionalProperties": {
-          "type": "string"
+        }
+      },
+      "TokenResponse": {
+        "required": [
+          "access_token",
+          "token_type"
+        ],
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UserAccessKeyRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Access Key Name"
+          },
+          "expiresOn": {
+            "type": "integer",
+            "description": "Timestamp in milliseconds when access key expires",
+            "format": "int64"
+          },
+          "serviceAccountName": {
+            "type": "string"
+          }
+        }
+      },
+      "UserAccessKeyDetailResponse": {
+        "type": "object",
+        "properties": {
+          "Access key id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastUsedTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expiresOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "role": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Role of User"
+            },
+            "description": "Role of User"
+          },
+          "roleType": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "UserProfileInternal": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Time zone (e.g. America/Los_Angeles)"
+          },
+          "enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "readOnly": true
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "lastLoginTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "displayName": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ssoBypassAllowed": {
+            "type": "boolean"
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          },
+          "defaultRoleId": {
+            "type": "string"
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserProfileRoleDetail"
+            }
+          },
+          "activeRole": {
+            "$ref": "#/components/schemas/UserProfileRoleDetail"
+          },
+          "username": {
+            "type": "string",
+            "description": "User or service account name"
+          },
+          "type": {
+            "type": "string",
+            "description": "User type. Default is USER_ACCOUNT.",
+            "enum": [
+              "USER_ACCOUNT",
+              "SERVICE_ACCOUNT"
+            ]
+          },
+          "accessKeyName": {
+            "type": "string"
+          },
+          "accessKeyExpiration": {
+            "type": "integer",
+            "description": "Access key expiration timestamp in milliseconds",
+            "format": "int64"
+          },
+          "enableKeyExpiration": {
+            "type": "boolean",
+            "description": "true = Enable access key expiration. Default is false."
+          },
+          "accessKeysCount": {
+            "type": "integer",
+            "description": "Access key count",
+            "format": "int32",
+            "readOnly": true
+          },
+          "sfSyncStatus": {
+            "type": "boolean"
+          },
+          "userRoleName": {
+            "type": "string",
+            "writeOnly": true
+          }
         }
       },
       "UserEntitlementsMeta": {
@@ -2129,6 +2664,368 @@
           }
         },
         "description": "User entitlements"
+      },
+      "UpdateServiceRequest": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "jwk": {
+            "$ref": "#/components/schemas/Jwk"
+          },
+          "customer_name": {
+            "type": "string",
+            "deprecated": true
+          },
+          "prisma_id": {
+            "type": "string"
+          },
+          "add_roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remove_roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "is_enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RoleInternalPermissionGroup": {
+        "required": [
+          "custom",
+          "features",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "PermissionGroup Name"
+          },
+          "custom": {
+            "type": "boolean",
+            "description": "Indicates whether the permissionGroup associated with the role is 'Default' or 'Custom' type."
+          },
+          "features": {
+            "type": "array",
+            "description": "Collection of permitted features associated with the role. \n Refer to PermissionGroup API docs to get the entire list of PC features.",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          }
+        },
+        "description": "Permission Group is only populated for the active role, i.e. active=true"
+      },
+      "UserInternalRole": {
+        "required": [
+          "active",
+          "default",
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id of the Role"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the Role"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Indicates whether the role is active role or not"
+          },
+          "permissionGroup": {
+            "$ref": "#/components/schemas/RoleInternalPermissionGroup"
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Indicates whether the role is default or not"
+          }
+        }
+      },
+      "UserProfileV2": {
+        "required": [
+          "email",
+          "firstName",
+          "lastName",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string",
+            "description": "Time zone (e.g. America/Los_Angeles)"
+          },
+          "lastLoginTs": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserInternalRole"
+            }
+          }
+        }
+      },
+      "PermissionGroupDetail": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Permission Group Name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Permission Group Description"
+          },
+          "type": {
+            "type": "string",
+            "description": "Permission Group Type",
+            "enum": [
+              "Default",
+              "Custom"
+            ]
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "associatedRoles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Map of associated role Ids and Names"
+            },
+            "description": "Map of associated role Ids and Names"
+          },
+          "features": {
+            "$ref": "#/components/schemas/Feature"
+          },
+          "acceptAccountGroups": {
+            "type": "boolean",
+            "description": "acceptAccountGroups"
+          },
+          "acceptResourceLists": {
+            "type": "boolean",
+            "description": "acceptResourceLists"
+          },
+          "acceptCodeRepositories": {
+            "type": "boolean",
+            "description": "acceptCodeRepositories"
+          },
+          "custom": {
+            "type": "boolean",
+            "description": "Boolean value signifying whether this is a custom (i.e. user-defined) permission group. Is set to true if the attribute value of permissionGroupType is set to CUSTOM"
+          },
+          "id": {
+            "type": "string",
+            "description": "Permission Group ID"
+          }
+        }
+      },
+      "UsernameValidationResponse": {
+        "type": "object",
+        "properties": {
+          "regex": {
+            "type": "string"
+          }
+        }
+      },
+      "PermissionGroup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Permission Group Name"
+          },
+          "custom": {
+            "type": "boolean",
+            "description": "Boolean value signifying whether this is a custom (i.e. user-defined) permission group. Is set to true if the attribute value of permissionGroupType is set to CUSTOM"
+          },
+          "id": {
+            "type": "string",
+            "description": "Permission Group ID"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "resetToken": {
+            "type": "string"
+          },
+          "resetTokenTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prismaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "defaultUserRoleId": {
+            "type": "string"
+          },
+          "userRoleDetails": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/UserInternalRoleDetail"
+            }
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "lastLoginTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tosBypassAllowed": {
+            "type": "boolean"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tosAccepted": {
+            "type": "boolean"
+          },
+          "ssoBypassAllowed": {
+            "type": "boolean"
+          },
+          "sessionTimeout": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "canAssumeRole": {
+            "type": "boolean"
+          },
+          "supportAccessLevel": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "LIGHT_AGENT",
+              "SRE",
+              "AGENT",
+              "ADMIN"
+            ]
+          },
+          "accessKeysAllowed": {
+            "type": "boolean"
+          },
+          "sfSyncStatus": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "USER_ACCOUNT",
+              "SERVICE_ACCOUNT"
+            ]
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "description": "User object"
+      },
+      "UserInternalRoleDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "permissionGroup": {
+            "$ref": "#/components/schemas/PermissionGroup"
+          },
+          "restrictedDismissalAccess": {
+            "type": "boolean"
+          },
+          "hasDefenderPermissions": {
+            "type": "boolean"
+          },
+          "onlyAllowReadAccess": {
+            "type": "boolean"
+          },
+          "onlyAllowComputeAccess": {
+            "type": "boolean"
+          },
+          "onlyAllowCIAccess": {
+            "type": "boolean"
+          }
+        }
       },
       "UserRoleView": {
         "type": "object",
@@ -2218,452 +3115,13 @@
           }
         }
       },
-      "UsernameValidationResponse": {
+      "UsernameVsDisplayName": {
         "type": "object",
         "properties": {
-          "regex": {
-            "type": "string"
-          }
-        }
-      },
-      "CreateServiceRequest": {
-        "required": [
-          "jwk",
-          "roles",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "username": {
+          "id": {
             "type": "string"
           },
-          "password": {
-            "type": "string",
-            "deprecated": true
-          },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "jwk": {
-            "$ref": "#/components/schemas/Jwk"
-          },
-          "customer_name": {
-            "type": "string",
-            "deprecated": true
-          },
-          "prisma_id": {
-            "type": "string"
-          }
-        }
-      },
-      "Jwk": {
-        "required": [
-          "alg",
-          "token_duration_seconds"
-        ],
-        "type": "object",
-        "properties": {
-          "alg": {
-            "type": "string",
-            "enum": [
-              "HS256",
-              "HS384",
-              "HS512",
-              "RS256",
-              "RS384",
-              "RS512"
-            ]
-          },
-          "kid": {
-            "type": "string"
-          },
-          "token_duration_seconds": {
-            "maximum": 3600,
-            "minimum": 60,
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "SamlLoginResponse": {
-        "type": "object",
-        "properties": {
-          "errorReasonExpectedValue": {
-            "type": "string"
-          },
-          "errorReasonActualValue": {
-            "type": "string"
-          },
-          "errorReasonKey": {
-            "type": "string",
-            "enum": [
-              "SAML_ASSERTION",
-              "SAML_ASSERTION_AUDIENCE_URI",
-              "SAML_ASSERTION_AUTHN_STATEMENT",
-              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
-              "SAML_ASSERTION_CONDITIONS",
-              "SAML_ASSERTION_ISSUE_INSTANT",
-              "SAML_ASSERTION_ISSUER_URI",
-              "SAML_ASSERTION_SIGNATURE",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
-              "SAML_CERTIFICATE",
-              "SAML_CONFIGURATION",
-              "SAML_CUSTOMER",
-              "SAML_DESTINATION_URI",
-              "SAML_PARSING_STATUS_CODE",
-              "SAML_RESPONSE",
-              "SAML_USER"
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "customerNames": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CustomerNameResponse"
-            }
-          },
-          "forwardLocation": {
-            "type": "string"
-          },
-          "prismaSamlAttributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          },
-          "pingSamlAttributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          },
-          "errorInfoMultiple": {
-            "type": "string",
-            "writeOnly": true,
-            "enum": [
-              "SAML_ASSERTION",
-              "SAML_ASSERTION_AUDIENCE_URI",
-              "SAML_ASSERTION_AUTHN_STATEMENT",
-              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
-              "SAML_ASSERTION_CONDITIONS",
-              "SAML_ASSERTION_ISSUE_INSTANT",
-              "SAML_ASSERTION_ISSUER_URI",
-              "SAML_ASSERTION_SIGNATURE",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
-              "SAML_CERTIFICATE",
-              "SAML_CONFIGURATION",
-              "SAML_CUSTOMER",
-              "SAML_DESTINATION_URI",
-              "SAML_PARSING_STATUS_CODE",
-              "SAML_RESPONSE",
-              "SAML_USER"
-            ]
-          },
-          "errorInfoInvalid": {
-            "type": "string",
-            "writeOnly": true,
-            "enum": [
-              "SAML_ASSERTION",
-              "SAML_ASSERTION_AUDIENCE_URI",
-              "SAML_ASSERTION_AUTHN_STATEMENT",
-              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
-              "SAML_ASSERTION_CONDITIONS",
-              "SAML_ASSERTION_ISSUE_INSTANT",
-              "SAML_ASSERTION_ISSUER_URI",
-              "SAML_ASSERTION_SIGNATURE",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
-              "SAML_CERTIFICATE",
-              "SAML_CONFIGURATION",
-              "SAML_CUSTOMER",
-              "SAML_DESTINATION_URI",
-              "SAML_PARSING_STATUS_CODE",
-              "SAML_RESPONSE",
-              "SAML_USER"
-            ]
-          },
-          "errorInfoDisabled": {
-            "type": "string",
-            "writeOnly": true,
-            "enum": [
-              "SAML_ASSERTION",
-              "SAML_ASSERTION_AUDIENCE_URI",
-              "SAML_ASSERTION_AUTHN_STATEMENT",
-              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
-              "SAML_ASSERTION_CONDITIONS",
-              "SAML_ASSERTION_ISSUE_INSTANT",
-              "SAML_ASSERTION_ISSUER_URI",
-              "SAML_ASSERTION_SIGNATURE",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
-              "SAML_CERTIFICATE",
-              "SAML_CONFIGURATION",
-              "SAML_CUSTOMER",
-              "SAML_DESTINATION_URI",
-              "SAML_PARSING_STATUS_CODE",
-              "SAML_RESPONSE",
-              "SAML_USER"
-            ]
-          },
-          "errorInfoUnavailable": {
-            "type": "string",
-            "writeOnly": true,
-            "enum": [
-              "SAML_ASSERTION",
-              "SAML_ASSERTION_AUDIENCE_URI",
-              "SAML_ASSERTION_AUTHN_STATEMENT",
-              "SAML_ASSERTION_AUTHN_STATEMENT_SESSION_TIME",
-              "SAML_ASSERTION_CONDITIONS",
-              "SAML_ASSERTION_ISSUE_INSTANT",
-              "SAML_ASSERTION_ISSUER_URI",
-              "SAML_ASSERTION_SIGNATURE",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER",
-              "SAML_ASSERTION_SUBJECT_CONFIRMATION_DATA_RECIPIENT",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_BEFORE",
-              "SAML_ASSERTION_TIME_LIMIT_NOT_ON_OR_AFTER",
-              "SAML_CERTIFICATE",
-              "SAML_CONFIGURATION",
-              "SAML_CUSTOMER",
-              "SAML_DESTINATION_URI",
-              "SAML_PARSING_STATUS_CODE",
-              "SAML_RESPONSE",
-              "SAML_USER"
-            ]
-          },
-          "fullErrorMessage": {
-            "type": "string"
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "prismaId": {
-            "type": "string"
-          }
-        }
-      },
-      "ExternalJwtIntegration": {
-        "title": "Model used for JWT integrations with external vendors",
-        "type": "object",
-        "properties": {
-          "integration": {
-            "type": "string"
-          }
-        },
-        "description": "Model used for JWT integrations with external vendors"
-      },
-      "UserSearchCriteria": {
-        "title": "User Search Request Filter",
-        "type": "object",
-        "properties": {
-          "permissionGroupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "userRoleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "PageListUserSearchVO": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserSearchVO"
-            }
-          },
-          "nextPageToken": {
-            "type": "string"
-          }
-        }
-      },
-      "RoleDetail": {
-        "type": "object",
-        "properties": {
-          "roleId": {
-            "type": "string"
-          }
-        },
-        "description": "List of role IDs"
-      },
-      "UserSearchVO": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "User name / User email"
-          },
-          "roles": {
-            "type": "array",
-            "description": "List of role IDs",
-            "items": {
-              "$ref": "#/components/schemas/RoleDetail"
-            }
-          },
-          "timezone": {
-            "type": "string",
-            "description": "timeZone"
-          },
-          "ssoBypassAllowed": {
-            "type": "boolean",
-            "description": "ssoBypassAllowed"
-          },
-          "accessKeysAllowed": {
-            "type": "boolean",
-            "description": "accessKeysAllowed"
-          }
-        }
-      },
-      "UserAccessKeyRequest": {
-        "type": "object",
-        "properties": {
           "name": {
-            "type": "string",
-            "description": "Access Key Name"
-          },
-          "expiresOn": {
-            "type": "integer",
-            "description": "Timestamp in milliseconds when access key expires",
-            "format": "int64"
-          },
-          "serviceAccountName": {
-            "type": "string"
-          }
-        }
-      },
-      "UpdateServiceRequest": {
-        "type": "object",
-        "properties": {
-          "password": {
-            "type": "string"
-          },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "jwk": {
-            "$ref": "#/components/schemas/Jwk"
-          },
-          "customer_name": {
-            "type": "string",
-            "deprecated": true
-          },
-          "prisma_id": {
-            "type": "string"
-          },
-          "add_roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "remove_roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "is_enabled": {
-            "type": "boolean"
-          }
-        }
-      },
-      "TokenInfoResponse": {
-        "required": [
-          "active"
-        ],
-        "type": "object",
-        "properties": {
-          "active": {
-            "type": "boolean"
-          },
-          "username": {
-            "type": "string"
-          },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "authorized": {
-            "type": "boolean",
-            "description": "Null if roles query param is not sent otherwise {true only if the roles are authorized for the token}"
-          },
-          "exp": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "prismaId": {
-            "type": "string"
-          },
-          "claims": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          },
-          "ipAddressClaimIsTrusted": {
-            "type": "string",
-            "description": "ipAddress claim trusted ip outcome",
-            "enum": [
-              "NOT_PERFORMED",
-              "PERFORMED_AND_VALID",
-              "PERFORMED_AND_INVALID"
-            ]
-          },
-          "customer_name": {
-            "type": "string"
-          },
-          "user_type": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "SERVICE"
-            ]
-          }
-        }
-      },
-      "UsernamePasswordRequest": {
-        "title": "Model used to validate user/password",
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string"
-          },
-          "password": {
             "type": "string"
           }
         }
@@ -2676,33 +3134,123 @@
           }
         }
       },
-      "SupportUserProfileRequest": {
+      "GetServicesResponse": {
+        "required": [
+          "services"
+        ],
+        "type": "object",
+        "properties": {
+          "services": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceResponse"
+            }
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UserAccessKeyResponse": {
+        "type": "object",
+        "properties": {
+          "Access key id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "expiresOn": {
+            "type": "integer",
+            "description": "Timestamp in milliseconds when access key expires",
+            "format": "int64"
+          }
+        }
+      },
+      "SupportUserProfile": {
         "type": "object",
         "properties": {
           "email": {
             "type": "string"
           },
           "supportAccessLevel": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "NONE",
+              "LIGHT_AGENT",
+              "SRE",
+              "AGENT",
+              "ADMIN"
+            ]
+          },
+          "failedLoginCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "SamlLoginRequest": {
-        "title": "Model used for saml authentication",
-        "required": [
-          "rawSaml",
-          "requestIpAddress"
-        ],
+      "OpenIdConfigurationResponse": {
         "type": "object",
         "properties": {
-          "rawSaml": {
+          "issuer": {
             "type": "string"
           },
-          "requestIpAddress": {
+          "authorization_endpoint": {
             "type": "string"
           },
-          "relayState": {
+          "jwks_uri": {
             "type": "string"
+          },
+          "token_endpoint": {
+            "type": "string"
+          },
+          "token_endpoint_auth_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "introspection_endpoint": {
+            "type": "string"
+          },
+          "introspection_endpoint_auth_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "revocation_endpoint": {
+            "type": "string"
+          },
+          "response_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subject_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "id_token_signing_alg_values_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grant_types_supported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
