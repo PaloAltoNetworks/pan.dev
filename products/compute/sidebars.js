@@ -15,7 +15,7 @@ module.exports = {
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`31-01`),
+      value: versionCrumb(`31-02`),
     },
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
