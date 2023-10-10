@@ -49,6 +49,9 @@ for file in *.json; do
     # rewrite the GLOBAL tag description
     tmp=$(mktemp)
      jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
+
+    # Add note for darwin-only APIs
+    #jq 'if ((.paths[][]."x-ga" !=null) and (.paths[][]."x-ga" | contains("darwin"))) then .paths[][].description += "\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
     
     # remove S2S headers or parameters if any
     jq '.paths |= del(.[][].parameters[]? | select(.description!=null ) | select (.description | contains("S2S")))' | \
