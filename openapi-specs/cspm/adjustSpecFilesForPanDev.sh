@@ -46,7 +46,7 @@ for file in *.json; do
     # add hyphen (i.e. v2 -> v-2)
     sed -i  "s/\/get-asset-inventory-v2-dashboard-filter-options/\/get-asset-inventory-v-2-dashboard-filter-options/g" $file
 
-    # rewrite the GLOBAL tag description
+    # rewrite the GLOBAL tag description when it is coming from the monolith file
     tmp=$(mktemp)
      jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
 
