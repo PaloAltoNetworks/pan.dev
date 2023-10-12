@@ -22,7 +22,7 @@ A Terraform module for deploying AWS Transit Gateways Attachments.
 
 >AWS provides a network transit hub called a Transit Gateway. One or more VPCs can connect to a Transit Gateway through a Transit Gateway (TGW) Attachment.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/transit_gateway_attachment) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/transit_gateway_attachment)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/transit_gateway_attachment) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/transit_gateway_attachment)
 
 ## Usage
 
@@ -35,13 +35,13 @@ For example usage, please refer to the [Examples](https://github.com/PaloAltoNet
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 
 ### Modules
 

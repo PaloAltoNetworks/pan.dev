@@ -20,7 +20,7 @@ title: Palo Alto Networks VM-Series Module for AWS
 
 A Terraform module for deploying a VM-Series firewall in AWS cloud.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/vmseries) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/vmseries)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/vmseries) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/vmseries)
 
 ## Usage
 
@@ -37,13 +37,13 @@ The changes in user data bootstrap entries will not affect the existing VM-Serie
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 
 ### Modules
 
@@ -69,6 +69,7 @@ No modules.
 | <a name="input_bootstrap_options"></a> [bootstrap\_options](#input\_bootstrap\_options) | VM-Series bootstrap options to provide using instance user data. Contents determine type of bootstap method to use.<br />If empty (the default), bootstrap process is not triggered at all.<br />For more information on available methods, please refer to VM-Series documentation for specific version.<br />For 10.0 docs are available [here](https://docs.paloaltonetworks.com/vm-series/10-0/vm-series-deployment/bootstrap-the-vm-series-firewall.html). | `string` | `""` | no |
 | <a name="input_ebs_encrypted"></a> [ebs\_encrypted](#input\_ebs\_encrypted) | Whether to enable EBS encryption on volumes. | `bool` | `true` | no |
 | <a name="input_ebs_kms_key_alias"></a> [ebs\_kms\_key\_alias](#input\_ebs\_kms\_key\_alias) | The alias for the customer managed KMS key to use for volume encryption. Should be prepended with the word "alias" followed by a forward slash (alias/example-key-alias).<br />If `null` (the default), the default master key that protects EBS volumes will be used. | `string` | `null` | no |
+| <a name="input_eip_domain"></a> [eip\_domain](#input\_eip\_domain) | Indicates if this EIP is for use in VPC | `string` | `"vpc"` | no |
 | <a name="input_enable_imdsv2"></a> [enable\_imdsv2](#input\_enable\_imdsv2) | Whether to enable IMDSv2 on the EC2 instance.<br />Support for this feature has been added in VM-Series Plugin [3.0.0](https://docs.paloaltonetworks.com/plugins/vm-series-and-panorama-plugins-release-notes/vm-series-plugin/vm-series-plugin-30/vm-series-plugin-300#id126d0957-95d7-4b29-9147-fff20027986e), which in turn requires VM-Series version 10.2.0 at minimum. | `string` | `false` | no |
 | <a name="input_enable_instance_termination_protection"></a> [enable\_instance\_termination\_protection](#input\_enable\_instance\_termination\_protection) | Whether to enable termination protection on the EC2 instance. | `bool` | `false` | no |
 | <a name="input_iam_instance_profile"></a> [iam\_instance\_profile](#input\_iam\_instance\_profile) | IAM instance profile. | `string` | `null` | no |
