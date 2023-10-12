@@ -51,8 +51,10 @@ for file in *.json; do
      jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
 
     # Add note for darwin-only APIs
-    jq '.paths[][] |= if(."x-ga" and (."x-ga"|contains("darwin"))) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
+    #jq '.paths[][] |= if(."x-ga" and (."x-ga"|contains("darwin")) and (.description | contains("Darwin release only") | not)) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
     
+    jq '.paths[][] |= if(."x-ga" and (."x-ga" |contains("darwin")) and (.description | test("Darwin release only") | not)) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
+
     # remove S2S headers or parameters if any
     jq '.paths |= del(.[][].parameters[]? | select(.description!=null ) | select (.description | contains("S2S")))' | \
 
