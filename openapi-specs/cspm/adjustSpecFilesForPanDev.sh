@@ -46,15 +46,16 @@ for file in *.json; do
     # add hyphen (i.e. v2 -> v-2)
     sed -i  "s/\/get-asset-inventory-v2-dashboard-filter-options/\/get-asset-inventory-v-2-dashboard-filter-options/g" $file
 
-    # rewrite the GLOBAL tag description
+    # rewrite the GLOBAL tag description when it is coming from the monolith file
     tmp=$(mktemp)
-     jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
+    jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
 
     # Add note for darwin-only APIs
     jq '.paths[][] |= if(."x-ga" and (."x-ga"|contains("darwin"))) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
     
     # remove S2S headers or parameters if any
     jq '.paths |= del(.[][].parameters[]? | select(.description!=null ) | select (.description | contains("S2S")))' | \
+
 
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
