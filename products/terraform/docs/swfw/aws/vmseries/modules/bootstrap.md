@@ -29,7 +29,7 @@ The bootstrap package may optionally include a PAN-OS software image,
 application and threat signature updates, VM-Series plug-ins, and/or license
 files.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/bootstrap)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/bootstrap)
 
 ## Directory and file structure
 The root directory of the Terraform plan calling this module should include a
@@ -93,14 +93,14 @@ variables and associated values.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.3.2 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.3.2 |
 
 ### Modules
@@ -125,6 +125,7 @@ No modules.
 | [aws_s3_object.init_cfg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [random_id.sufix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
+| [aws_partition.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_s3_bucket.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
 
 ### Inputs

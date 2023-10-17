@@ -21,7 +21,7 @@ title: AWS GWLB Endpoint Set
 This module creates a set of [VPC GWLB Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpce-gateway-load-balancer.html)
 over a range of one or more Availability Zones. All the Endpoints transfer the traffic to the same Gateway Load Balancer (GWLB).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/gwlb_endpoint_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/gwlb_endpoint_set)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/gwlb_endpoint_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/gwlb_endpoint_set)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -30,13 +30,13 @@ over a range of one or more Availability Zones. All the Endpoints transfer the t
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 
 ### Modules
 
