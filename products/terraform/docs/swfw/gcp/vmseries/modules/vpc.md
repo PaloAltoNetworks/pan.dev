@@ -29,7 +29,7 @@ Any existing networks/subnetworks can work equally well, independent on how they
 For Terraform 0.13+, a viable alternative is to use [Goggle-authored Terraform modules](https://registry.terraform.io/modules/terraform-google-modules/network)
 and employ `for_each` or `count` parameters when needed.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/examples/vpc) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/examples/vpc)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/modules/vpc) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/submodules/vpc)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
