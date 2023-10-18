@@ -20,7 +20,7 @@ title: Palo Alto Networks NAT Gateway Set Module for AWS
 
 A Terraform module for deploying a NAT Gateway set in AWS cloud. The "set" means that the module will create an identical/similar NAT Gateway in each specified Availability Zone.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/nat_gateway_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/nat_gateway_set)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/nat_gateway_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/nat_gateway_set)
 
 ## Usage
 
@@ -61,13 +61,13 @@ module "nat_gateway_set" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 
 ### Modules
 
@@ -88,6 +88,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_create_eip"></a> [create\_eip](#input\_create\_eip) | If false, does not create a new Elastic IP, but instead reads a pre-existing one. This input is ignored if `create_nat_gateway` is false. | `bool` | `true` | no |
 | <a name="input_create_nat_gateway"></a> [create\_nat\_gateway](#input\_create\_nat\_gateway) | If false, does not create a new NAT Gateway, but instead reads a pre-existing one. | `bool` | `true` | no |
+| <a name="input_eip_domain"></a> [eip\_domain](#input\_eip\_domain) | Indicates if this EIP is for use in VPC | `string` | `"vpc"` | no |
 | <a name="input_eip_tags"></a> [eip\_tags](#input\_eip\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_eips"></a> [eips](#input\_eips) | Optional map of Elastic IP attributes. Each key is an Availability Zone name, for example "us-east-1b". Each entry has optional attributes `name`, `public_ip`, `id`.<br />These are mainly useful to select a pre-existing Elastic IP when create\_eip is false. Example:<pre>eips = {<br />    "us-east-1a" = { id = aws\_eip.a.id }<br />    "us-east-1b" = { id = aws\_eip.b.id }<br />}</pre>The `name` attribute can be used both for selecting the pre-existing Elastic IP, or for customizing a newly created Elastic IP:<pre>eips = {<br />    "us-east-1a" = { name = "Alice" }<br />    "us-east-1b" = { name = "Bob" }<br />}</pre> | `map` | `{}` | no |
 | <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | n/a | `map(string)` | `{}` | no |
