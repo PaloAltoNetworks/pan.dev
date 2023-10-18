@@ -8,7 +8,7 @@ The Prisma Cloud integration API endpoints enable you to receive Prisma Cloud al
 
 The request body for some of the endpoints includes an `integrationConfig` parameter that is a map of key/value pairs. The type of integration defines the content of these key/value pairs. The information below provides the details for this `integrationConfig` parameter for each listed technology.
 
-Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. See [Prisma Cloud Integrations](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations.html) for details.
+Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. For more details, see [Prisma Cloud Integrations](https://docs-preview.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations). If you are upgraded to the Darwin release, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations).
 
 ### Amazon S3
 
@@ -71,7 +71,7 @@ To test an Amazon S3 integration, make your request as described in
 
 ### Amazon SQS
 
-Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service. Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs.html), you can use an API request to add the Amazon SQS integration to Prisma Cloud.
+Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service. Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs-preview.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs), you can use an API request to add the Amazon SQS integration to Prisma Cloud. If you are upgraded to Darwin, see [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs).
 
 #### Add, Update, or Test an Amazon SQS Integration
 
@@ -135,7 +135,7 @@ To test an Amazon SQS integration, make the request with the corresponding reque
 
 ### Azure Service Bus Queue
 
-Prisma Cloud can send alerts to an Azure Service Bus messaging service. To authorize access, you can either (1) use a shared access signature to limit access permissions to the Service Bus namespace or queue or (2) use the service principal credentials associated with the Azure Cloud account you've on-boarded to Prisma Cloud. If you plan to use the service principal that uses Azure Active Directory to authorize requests, you must include the additional role _Azure Service Bus Data Sender_ and enable _send_ access to the Service Bus namespace and queues. See [Integrate Prisma Cloud with Azure Service Bus](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue.html) for details about these prerequisites.
+Prisma Cloud can send alerts to an Azure Service Bus messaging service. To authorize access, you can either (1) use a shared access signature to limit access permissions to the Service Bus namespace or queue or (2) use the service principal credentials associated with the Azure Cloud account you've on-boarded to Prisma Cloud. If you plan to use the service principal that uses Azure Active Directory to authorize requests, you must include the additional role _Azure Service Bus Data Sender_ and enable _send_ access to the Service Bus namespace and queues. For details about these prerequisites, see [Integrate Prisma Cloud with Azure Service Bus](https://docs-preview.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue). If you are upgraded to the Darwin release, see [Integrate Prisma Cloud with Azure Service Bus](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue).
 
 #### Add, Update, or Test an Azure Service Bus Queue Integration
 
