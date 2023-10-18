@@ -22,7 +22,7 @@ A terraform module for deploying an Application Gateway v2. The module is dedica
 
 In the center of module's configuration is the `rules` property. See the the [rules property explained](#rules-property-explained) and [`rules` property examples](#rules-property-examples) topics for more details.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/appgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/appgw)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/appgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/appgw)
 
 ## Rules property explained
 

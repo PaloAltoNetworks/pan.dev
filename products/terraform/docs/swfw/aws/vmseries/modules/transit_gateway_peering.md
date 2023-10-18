@@ -18,7 +18,7 @@ title: AWS Transit Gateway Peering
 
 # AWS Transit Gateway Peering
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/transit_gateway_peering) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/transit_gateway_peering)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/transit_gateway_peering) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/transit_gateway_peering)
 
 ## Usage
 
@@ -60,14 +60,14 @@ The static routes are currently not handled by this module.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
-| <a name="provider_aws.remote"></a> [aws.remote](#provider\_aws.remote) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
+| <a name="provider_aws.remote"></a> [aws.remote](#provider\_aws.remote) | ~> 5.17 |
 
 ### Modules
 

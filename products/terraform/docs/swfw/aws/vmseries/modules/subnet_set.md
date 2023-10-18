@@ -20,7 +20,7 @@ title: Palo Alto Networks Subnet-Set Module for AWS
 
 A Terraform module for deploying a subnet-set in AWS cloud. The "set" means that the module will create an identical/similar subnet in each specified Availability Zone.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/subnet_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/subnet_set)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/subnet_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/subnet_set)
 
 ## Usage
 
@@ -55,13 +55,13 @@ module "subnet_sets" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.25 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.17 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.25 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.17 |
 
 ### Modules
 
@@ -88,7 +88,7 @@ No modules.
 | <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | Optional map of arbitrary tags to apply to all the created resources. | `map(string)` | `{}` | no |
 | <a name="input_has_secondary_cidrs"></a> [has\_secondary\_cidrs](#input\_has\_secondary\_cidrs) | The input that depends on the secondary CIDR ranges of the VPC `vpc_id`. The actual value (true or false) is ignored, the input is used only to delay subnet creation until the secondary CIDR ranges are processed by Terraform. | `bool` | `true` | no |
 | <a name="input_map_public_ip_on_launch"></a> [map\_public\_ip\_on\_launch](#input\_map\_public\_ip\_on\_launch) | See the [provider's documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet#map_public_ip_on_launch). | `bool` | `null` | no |
-| <a name="input_nacl_associations"></a> [nacl\_associations](#input\_nacl\_associations) | NACLs associations with subnets | `map(string)` | `null` | no |
+| <a name="input_nacl_associations"></a> [nacl\_associations](#input\_nacl\_associations) | NACLs associations with subnets | `map(string)` | `{}` | no |
 | <a name="input_name"></a> [name](#input\_name) | Subnet set name, used to construct default subnet names. | `string` | `null` | no |
 | <a name="input_propagating_vgws"></a> [propagating\_vgws](#input\_propagating\_vgws) | See the [provider's documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table). | `list(string)` | `[]` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Id of the VPC to create resource in. | `string` | n/a | yes |
