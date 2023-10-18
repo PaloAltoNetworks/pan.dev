@@ -35,7 +35,7 @@ cURL is a command line tool for transferring data with URLS and has been in deve
 
 ## Use cURL to Generate JWT Tokens in Prisma Cloud
 
-The first step is to generate access keys which are a secure way for enabling programmatic access to the Prisma Cloud REST API. Access keys have two components; Access Key ID and Secret Key which should be copied and saved in a secure location for later reuse as they’re not stored in Prisma Cloud. Refer to the Prisma Cloud documentation for instructions on [how to create an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html#idb225a52a-85ea-4b0c-9d69-d2dfca250e16). You can then use cURL to generate your x-redlock-auth JWT token with the following command:
+The first step is to generate access keys which are a secure way for enabling programmatic access to the Prisma Cloud REST API. Access keys have two components; Access Key ID and Secret Key which should be copied and saved in a secure location for later reuse as they’re not stored in Prisma Cloud. Refer to the Prisma Cloud documentation for instructions on [how to create an access key](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/create-access-keys). If you are upgraded to Darwin, see [how to create an access key](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys). You can then use cURL to generate your x-redlock-auth JWT token with the following command:
 
     curl -X POST \
 
