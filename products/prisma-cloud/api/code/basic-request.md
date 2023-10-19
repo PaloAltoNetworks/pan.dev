@@ -12,7 +12,8 @@ keywords:
 
 Use the following guidelines to ensure that your Application Security API requests to Prisma Cloud are successful.
 
-See [Prisma Cloud Application Security](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security.html) for more information and for directions to enable Application Security on Prisma Cloud.
+ For more information and for directions to enable Application Security on Prisma Cloud, see [Prisma Cloud Administrator’s Guide—Application Security](https://docs.prismacloud.io/en/classic/appsec-admin-guide). If you are upgraded to Darwin, see [Prisma Cloud Application Security](https://docs.prismacloud.io/en/enterprise-edition/content-collections/application-security/application-security).
+ 
 
 ## Prerequisites for a Application Security Request
 
@@ -20,16 +21,13 @@ To make a Application Security API request, you must have the right privileges a
 
 ### Application Security Access
 
-To have the right privileges to make a Application Security API request, you must set up:
-
-- [Administrator access](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security/get-started/setup-administrator-access.html)
-- [Developer access](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security/get-started/setup-developer-access.html)
+To have the right privileges to make a Application Security API request, you must set up Administrator and Developer access. For more information, see - [Manage Roles and Permissions](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/prisma-cloud-administrator-roles). If you are upgraded to Darwin, see [Administrator access](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/manage-roles-permissions).
 
 ### Application Security API Authorization
 
 To have the right authorization for a Application Security API request, follow the high-level steps below:
 
-1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
+1. [Create and Manage Access Keys](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/create-access-keys). If you are upgraded to Darwin, see [Create and Manage Access Keys](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys).
 2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
 
 All the Application Security API requests use this JWT in the API request [header](/prisma-cloud/api/code/api-headers) for authorization. Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/prisma-cloud/api/cspm/extend-session/).
