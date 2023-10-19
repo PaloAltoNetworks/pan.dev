@@ -31,7 +31,7 @@ After you configure, Prisma Cloud automatically scans images for vulnerabilities
 3. Discovers the images using tags within each configured repository.
 4. Scans the discovered images.
 
-This guide shows how to get vulnerability report for container images stored in different registries. For more information about registry scan, see [Configure Registry Scan](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/vulnerability_management/registry_scanning/configure_registry_scanning).
+This guide shows how to get vulnerability report for container images stored in different registries. For more information about registry scan, see [Configure Registry Scan](https://docs.prismacloud.io/en/classic/compute-admin-guide/vulnerability-management/registry-scanning/configure-registry-scanning). If you are upgraded to Darwin, see [Configure Registry Scan](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/vulnerability-management/registry-scanning/configure-registry-scanning).
 
 
 ***Prerequisite***:
