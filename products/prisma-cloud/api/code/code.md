@@ -17,6 +17,6 @@ enables you to:
 
 Use the [CSPM Policy API](/prisma-cloud/api/cspm/policy) to create and manage Application Security build policies.
 
-See [Prisma Cloud Application Security](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-code-security.html) for more information.
+For more information, see [Prisma Cloud Administrator’s Guide—Application Security](https://docs.prismacloud.io/en/classic/appsec-admin-guide). If you are upgraded to Darwin, see [Prisma Cloud Application Security](https://docs.prismacloud.io/en/enterprise-edition/content-collections/application-security/application-security).
 
 Check the status notifications at <https://status.paloaltonetworks.com/> for the Prisma Cloud release schedule to know when new functionality is available.

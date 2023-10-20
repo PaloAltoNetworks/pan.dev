@@ -183,7 +183,7 @@ Each package has the following name-value pairs:
 
 ## Running scans from inside the container
 
-By default, `twistcli` is run from outside the container image. In some cases, you might need to copy `twistcli` to the container’s file system, and then run the scanner from inside the container. One reason you might want to run the scanner this way is when your build platform doesn’t give you access to the Docker socket. OpenShift Container Platform and CodeFresh are examples of such platforms. For step-by-step guidance on configuring the OpenShift build process, <a href="https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/howto/openshift_build_twistcli_scanning.html" target="_blank">see here.</a>
+By default, `twistcli` is run from outside the container image. In some cases, you might need to copy `twistcli` to the container’s file system, and then run the scanner from inside the container. One reason you might want to run the scanner this way is when your build platform doesn’t give you access to the Docker socket. OpenShift Container Platform and CodeFresh are examples of such platforms. For step-by-step guidance on configuring the OpenShift build process, see [Scan Images Built with Jenkins in an OpenShift Environment](https://docs.prismacloud.io/en/compute-edition/31/admin-guide/tools/twistcli-scan-images). If you are upgraded to Darwin, see [Scan Images Built with Jenkins in an OpenShift Environment](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/tools/twistcli-scan-images).
 
 There are some shortcomings with this scanning from inside a container, so you should only use this approach when no other approach is viable. The shortcomings are:
 
@@ -440,7 +440,7 @@ $ twistcli hosts scan \
 
 Where the `--skip-docker` option skips all Docker compliance checks such as the Docker daemon configuration and the `--include-3rd-party` option scans application-specific files such as Java JARs.
 
-> A detailed procedure for setting up twistcli scanning during the OpenShift build process can be found <a href="https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/howto/openshift_build_twistcli_scanning.html" target="_blank">here</a>.
+> For the detailed procedure for setting up twistcli scanning during the OpenShift build process, see [Scan Images Built with Jenkins in an OpenShift Environment](https://docs.prismacloud.io/en/compute-edition/31/admin-guide/tools/twistcli-scan-images). If you are upgraded to Darwin, see [Scan Images Built with Jenkins in an OpenShift Environment](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/tools/twistcli-scan-images).
 
 ## Scan images when the Docker socket isn’t in the default location
 
