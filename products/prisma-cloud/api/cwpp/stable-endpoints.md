@@ -32,7 +32,7 @@ Where:
 As a best practice, update your scripts to use the version-specific API endpoints to ensure that your implementation is fully supported.
 For the version-specific APIs, you will have access to the API Reference and Release Notes documentation for changes or updates that may impact you.
 
-When using the version-specific endpoints, you will need to update your automation scripts approximately once-a- year to stay in sync with the product [support lifecycle](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/upgrade/support_lifecycle.html).
+When using the version-specific endpoints, you will need to update your automation scripts approximately once a year to stay in sync with the product [Support lifecycle for connected components](https://docs.prismacloud.io/en/classic/compute-admin-guide/upgrade/support-lifecycle). If you are upgraded to Darwin, see [Support Lifecycle for Connected Components](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/upgrade/support-lifecycle).
 
 **Note**: If you have a mixed environment of different version Defenders, then use the version of the API that matches the earliest version.
 

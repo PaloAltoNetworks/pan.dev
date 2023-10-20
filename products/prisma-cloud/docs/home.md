@@ -10,7 +10,7 @@ keywords:
   - Cloud Workload Protection
 ---
 
-Prisma™ Cloud is a cloud-native security platform that provides comprehensive visibility, threat detection/prevention, compliance assurance, and data protection across an organization’s hybrid, multi-cloud infrastructure. It is available as either an [Enterprise or Compute Edition](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/welcome/pcee_vs_pcce.html), offering a convenient REST API for all three capabilities.
+Prisma™ Cloud is a cloud-native security platform that provides comprehensive visibility, threat detection/prevention, compliance assurance, and data protection across an organization’s hybrid, multi-cloud infrastructure. It is available as either an Enterprise or Compute Edition, offering a convenient REST API for all three capabilities. For more information, see [Prisma Cloud Enterprise Edition vs Compute Edition](https://docs.prismacloud.io/en/classic/compute-admin-guide/welcome/pcee-vs-pcce). If you are upgraded to Darwin, see [Prisma Cloud Enterprise Edition vs Compute Edition](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/pcee-vs-pcce). 
 
 - [Cloud Security Posture Management](/prisma-cloud/api/cspm) enables you to configure custom integrations for your cloud security needs. For example, you can use it to automate sending alert notifications to your in-house tool or to extend the DevOps security capabilities for a tool that does not have an extension or plugin for Prisma Cloud. Most actions supported on the Prisma Cloud web interface are available with the REST API.
 
@@ -19,7 +19,7 @@ Prisma™ Cloud is a cloud-native security platform that provides comprehensive 
 - [Cloud Application Security](/prisma-cloud/api/code/) enables you to programmatically check your Infrastructure-as-Code resources against Prisma Cloud out-of-the-box and custom security policies, ensuring security throughout the build lifecycle.
 
 For information about Prisma Cloud beyond its APIs, such as administration and policy management,
-see the [Prisma Cloud administration documentation](https://docs.paloaltonetworks.com/prisma/prisma-cloud.html).
+see the [Prisma Cloud documentation](https://docs.prismacloud.io/en).
 
 :::info
 

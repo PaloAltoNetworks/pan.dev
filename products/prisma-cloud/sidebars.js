@@ -67,18 +67,24 @@ module.exports = {
       items: [
         {
           type: "link",
-          label: "Administrator's Guide",
-          href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin.html",
+          label: "Administrator's Guide (Enterprise Edition - Classic)",
+          href: "https://docs.prismacloud.io/en/classic/cspm-admin-guide",
         },
         {
           type: "link",
+          label: "Content Collections (Enterprise Edition)",
+          href: "https://docs.prismacloud.io/en/enterprise-edition/content-collections",
+        },
+
+        {
+          type: "link",
           label: "Release Information",
-          href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/prisma-cloud-release-notes/prisma-cloud-release-information.html",
+          href: "https://docs.prismacloud.io/en/enterprise-edition/rn",
         },
         {
           type: "link",
           label: "Resource Query Language (RQL)",
-          href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-rql-reference/rql-reference.html",
+          href: "https://docs.prismacloud.io/en/classic/rql-reference",
         },
         "prisma-cloud/docs/twistcli_gs",
         {
@@ -108,12 +114,12 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/31/prisma-cloud-compute-edition-admin.html",
+              href: "https://docs.prismacloud.io/en/compute-edition/31/admin-guide",
             },
             {
               type: "link",
               label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/31/prisma-cloud-compute-edition-release-notes/release-information",
+              href: "https://docs.prismacloud.io/en/compute-edition/31/rn/release-information/release-notes-31-02-update2",
             },
           ],
         },
@@ -124,12 +130,12 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/30/prisma-cloud-compute-edition-admin.html",
+              href: "https://docs.prismacloud.io/en/compute-edition/30/admin-guide",
             },
             {
               type: "link",
               label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/30/prisma-cloud-compute-edition-release-notes/release-information",
+              href: "https://docs.prismacloud.io/en/compute-edition/30/rn/release-information/release-notes-30-03-update3",
             },
           ],
         },
@@ -140,28 +146,12 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/22-12/prisma-cloud-compute-edition-admin.html",
+              href: "https://docs.prismacloud.io/en/compute-edition/22-12/admin-guide",
             },
             {
               type: "link",
               label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/22-12/prisma-cloud-compute-edition-release-notes/release-information",
-            },
-          ],
-        },
-        {
-          type: "category",
-          label: "Compute 22.06",
-          items: [
-            {
-              type: "link",
-              label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/content/techdocs/en_US/prisma/prisma-cloud/22-06/prisma-cloud-compute-edition-admin.html",
-            },
-            {
-              type: "link",
-              label: "Release Notes",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/22-06/prisma-cloud-compute-edition-release-notes/release-information",
+              href: "https://docs.prismacloud.io/en/compute-edition/22-12/rn/release-information/release-notes-22-12-update4",
             },
           ],
         },
@@ -172,7 +162,7 @@ module.exports = {
             {
               type: "link",
               label: "Administrator's Guide",
-              href: "https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute.html",
+              href: "https://docs.prismacloud.io/en/enterprise-edition/content-collections",
             },
           ],
         },
