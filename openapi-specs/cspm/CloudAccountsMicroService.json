@@ -53,21 +53,25 @@
     }
   ],
   "paths": {
-    "/cas/api/v1/org/{id}/features": {
-      "put": {
+    "/cas/v1/cloud/{cloudType}/deployment-type": {
+      "get": {
         "tags": [
-          "Cloud Accounts (All)"
+          "Cloud Accounts (OCI and Alibaba)"
         ],
-        "summary": "Enable a Feature for Members",
-        "description": "Enable or disable the feature for a set of member accounts linked to an organization.",
-        "operationId": "save-Bulk-Cloud-Account-Feature",
+        "summary": "Get Cloud Account Deployment Types (Alibaba)",
+        "description": "List cloud account deployment types. Currently, this is applicable only for Alibaba cloud.",
+        "operationId": "getCloudDeploymentTypes",
         "parameters": [
           {
-            "name": "id",
+            "name": "cloudType",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Cloud Account Type",
+              "enum": [
+                "alibaba-cloud"
+              ]
             }
           },
           {
@@ -83,63 +87,13 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CloudAccountBulkFeatureRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
-          "429": {
-            "description": "Rate Limit Exceeded",
+          "425": {
+            "description": "Too Early to access the resource",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Successfully saved/updated cloud account feature for the given member accounts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid Account Id/Member Ids cannot be empty or null/Member account list should be less than 500 in a single request/Feature {0} is not allowed/Invalid feature state {0} for feature {1}/Organisation Id {0} is not onboarded/AccountType of {0} is invalid, should be either of Organisation / Master Service Account / Tenant/Members account {0} do not belong to {1}/Compute features are not supported for {0}/Feature {0} is not present for given account,/For feature = {0}, parent feature state is {1}/Organisation / Master Service Account / Tenant Id {0} should not be part of memberIds list/AccountType of member account {0} is invalid. Member accountType should be of type {1}/",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tenant not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                  "$ref": "#/components/schemas/APIErrorObject"
                 }
               }
             }
@@ -149,7 +103,67 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                  "$ref": "#/components/schemas/APIErrorObject"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorObject"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tenant not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorObject"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorObject"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully retrieved list of cloud deployment types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentTypeListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIErrorObject"
                 }
               }
             }
@@ -159,17 +173,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
-                }
-              }
-            }
-          },
-          "425": {
-            "description": "Too Early to access the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                  "$ref": "#/components/schemas/APIErrorObject"
                 }
               }
             }
@@ -183,14 +187,14 @@
         ]
       }
     },
-    "/cas/v1/azure_template": {
+    "/cas/v1/aws_template/presigned_url": {
       "post": {
         "tags": [
-          "Cloud Accounts (Azure)"
+          "Cloud Accounts (AWS)"
         ],
-        "summary": "Generate and Download the Terraform template (Azure)",
-        "description": "Generates the Azure Terraform template. The generated Terraform template includes the permissions based on selected features. The terraform template can be used to create an app registration and required roles on the Azure Portal.\n\n**Note**: This feature is available only for Prisma Commercial and Government stacks.",
-        "operationId": "generate-template-link",
+        "summary": "Generate the CFT Template Link (AWS)",
+        "description": "Generates the AWS Cloudformation Stack Quick create link with S3 presigned CFT URL. The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.\n\n The response contains *createStackLinkWithS3PresignedUrl* key whose value can be used to create IAM role via AWS CloudFormation stack.\n\n There are 2 ways to create IAM role:\n\n 1. [Manual] If you are logged into your AWS Management console, directly open the value of the *createStackLinkWithS3PresignedUrl* key on a new tab in the browser.\n 2. [Automation] Else, you can extract the actual S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* key by splitting at templateURL= and url decoding the last index of the split(i.e right part of the split). This extracted decoded link can be used to create or update the IAM role CloudFormation stack. \n\n  **NOTE**: The *createStackLinkWithS3PresignedUrl* link is valid for 1hr",
+        "operationId": "generate-cft-template-link-aws",
         "parameters": [
           {
             "name": "x-redlock-auth",
@@ -209,15 +213,65 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AzureTemplateGenRequest"
+                "$ref": "#/components/schemas/AWSTemplateGenRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tenant License Expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Template Generated Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AWSCFTGenResponse"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Too Early to access the resource",
             "content": {
               "application/json": {
                 "schema": {
@@ -236,29 +290,6 @@
               }
             }
           },
-          "200": {
-            "description": "Template Generated Successfully"
-          },
-          "403": {
-            "description": "Tenant License Expired",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Wrong Http Method",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -269,18 +300,8 @@
               }
             }
           },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
+          "405": {
+            "description": "Wrong Http Method",
             "content": {
               "application/json": {
                 "schema": {
@@ -331,18 +352,8 @@
           "required": true
         },
         "responses": {
-          "401": {
-            "description": "Unauthorized Access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed with an exception.",
+          "403": {
+            "description": "Tenant License Expired",
             "content": {
               "application/json": {
                 "schema": {
@@ -354,8 +365,8 @@
           "200": {
             "description": "Template Generated Successfully"
           },
-          "403": {
-            "description": "Tenant License Expired",
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
@@ -364,18 +375,8 @@
               }
             }
           },
-          "405": {
-            "description": "Wrong Http Method",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
+          "401": {
+            "description": "Unauthorized Access",
             "content": {
               "application/json": {
                 "schema": {
@@ -394,8 +395,28 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "500": {
+            "description": "Failed with an exception.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong Http Method",
             "content": {
               "application/json": {
                 "schema": {
@@ -462,26 +483,6 @@
           "required": true
         },
         "responses": {
-          "401": {
-            "description": "Unauthorized Access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "425": {
-            "description": "Too Early to access the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "403": {
             "description": "Tenant License Expired",
             "content": {
@@ -492,8 +493,48 @@
               }
             }
           },
-          "405": {
-            "description": "Wrong Http Method",
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Too Early to access the resource",
             "content": {
               "application/json": {
                 "schema": {
@@ -522,8 +563,8 @@
               }
             }
           },
-          "429": {
-            "description": "Rate Limit Exceeded",
+          "405": {
+            "description": "Wrong Http Method",
             "content": {
               "application/json": {
                 "schema": {
@@ -531,6 +572,61 @@
                 }
               }
             }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/cas/v1/azure_template": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "Generate and Download the Terraform template (Azure)",
+        "description": "Generates the Azure Terraform template. The generated Terraform template includes the permissions based on selected features. The terraform template can be used to create an app registration and required roles on the Azure Portal.\n\n**Note**: This feature is available only for Prisma Commercial and Government stacks.",
+        "operationId": "generate-template-link",
+        "parameters": [
+          {
+            "name": "x-redlock-auth",
+            "in": "header",
+            "description": "x-redlock-auth token should be used for U2S API call",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureTemplateGenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "403": {
+            "description": "Tenant License Expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Template Generated Successfully"
           },
           "400": {
             "description": "Bad Request",
@@ -542,12 +638,183 @@
               }
             }
           },
-          "500": {
-            "description": "Failed with an Exception, Internal Error Occurred",
+          "401": {
+            "description": "Unauthorized Access",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an exception.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong Http Method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/cas/api/v1/org/{id}/features": {
+      "put": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "Update Feature State for Members of an Organization",
+        "description": "Enable or disable the feature for list of member accounts linked to an organization.",
+        "operationId": "save-Bulk-Cloud-Account-Feature",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "For AWS, specify organization id.\n\nFor GCP, specify organization id or masterServiceAccount id.\n\nFor Azure, specify tenant id.\n\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-redlock-auth",
+            "in": "header",
+            "description": "x-redlock-auth token should be used for U2S API call",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudAccountBulkFeatureRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tenant License Expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Too Early to access the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong Http Method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Successfully saved/updated cloud account feature for the given member accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Account Id/Member Ids cannot be empty or null/Member account list should be less than 500 in a single request/Feature {0} is not allowed/Invalid feature state {0} for feature {1}/Organisation Id {0} is not onboarded/AccountType of {0} is invalid, should be either of Organisation / Master Service Account / Tenant/Members account {0} do not belong to {1}/Compute features are not supported for {0}/Feature {0} is not present for given account,/For feature = {0}, parent feature state is {1}/Organisation / Master Service Account / Tenant Id {0} should not be part of memberIds list/AccountType of member account {0} is invalid. Member accountType should be of type {1}/",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tenant not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestAPIErrorResponse"
                 }
               }
             }
@@ -597,28 +864,8 @@
           "400": {
             "description": "Bad Request/Bad Request with accountType account, only valid cftType is account/Bad Request with accountType organization, cftType account is not valid/AccountType can be one of the following [account , organization]/AccountId is not valid Feature list is invalid /Invalid usage of customMemberRoleNameEnabled"
           },
-          "401": {
-            "description": "Unauthorized Access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "425": {
-            "description": "Too Early to access the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed with an exception.",
+          "403": {
+            "description": "Tenant License Expired",
             "content": {
               "application/json": {
                 "schema": {
@@ -630,28 +877,8 @@
           "200": {
             "description": "Template Generated Successfully"
           },
-          "403": {
-            "description": "Tenant License Expired",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Wrong Http Method",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
+          "401": {
+            "description": "Unauthorized Access",
             "content": {
               "application/json": {
                 "schema": {
@@ -662,68 +889,6 @@
           },
           "429": {
             "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          }
-        },
-        "x-public": "true",
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ]
-      }
-    },
-    "/cas/v1/aws_template/presigned_url": {
-      "post": {
-        "tags": [
-          "Cloud Accounts (AWS)"
-        ],
-        "summary": "Generate the CFT Template Link (AWS)",
-        "description": "Generates the AWS Cloudformation Stack Quick create link with S3 presigned CFT URL. The Generated CFT template will include Prisma Cloud generated externalId and the permissions based on selected features.\n\n The response contains *createStackLinkWithS3PresignedUrl* key whose value can be used to create IAM role via AWS CloudFormation stack.\n\n There are 2 ways to create IAM role:\n\n 1. [Manual] If you are logged into your AWS Management console, directly open the value of the *createStackLinkWithS3PresignedUrl* key on a new tab in the browser.\n 2. [Automation] Else, you can extract the actual S3 Presigned CFT URL from the *createStackLinkWithS3PresignedUrl* key by splitting at templateURL= and url decoding the last index of the split(i.e right part of the split). This extracted decoded link can be used to create or update the IAM role CloudFormation stack. \n\n  **NOTE**: The *createStackLinkWithS3PresignedUrl* link is valid for 1hr",
-        "operationId": "generate-cft-template-link-aws",
-        "parameters": [
-          {
-            "name": "x-redlock-auth",
-            "in": "header",
-            "description": "x-redlock-auth token should be used for U2S API call",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AWSTemplateGenRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access",
             "content": {
               "application/json": {
                 "schema": {
@@ -752,26 +917,6 @@
               }
             }
           },
-          "403": {
-            "description": "Tenant License Expired",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Wrong Http Method",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -782,156 +927,12 @@
               }
             }
           },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Template Generated Successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AWSCFTGenResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-public": "true",
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ]
-      }
-    },
-    "/cas/v1/cloud/{cloudType}/deployment-type": {
-      "get": {
-        "tags": [
-          "Cloud Accounts (OCI and Alibaba)"
-        ],
-        "summary": "Get Cloud Account Deployment Types (Alibaba)",
-        "description": "List cloud account deployment types. Currently, this is applicable only for Alibaba cloud.",
-        "operationId": "getCloudDeploymentTypes",
-        "parameters": [
-          {
-            "name": "cloudType",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "Cloud Account Type",
-              "enum": [
-                "alibaba-cloud"
-              ]
-            }
-          },
-          {
-            "name": "x-redlock-auth",
-            "in": "header",
-            "description": "x-redlock-auth token should be used for U2S API call",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "403": {
-            "description": "Tenant License Expired",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tenant not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed with an Exception, Internal Error Occurred",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "425": {
-            "description": "Too Early to access the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Successfully retrieved list of cloud deployment types",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeploymentTypeListResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized Access",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
-                }
-              }
-            }
-          },
           "405": {
             "description": "Wrong Http Method",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIErrorObject"
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1036,6 +1037,919 @@
           }
         }
       },
+      "CloudAccountSecret": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecretDetails"
+            }
+          },
+          "notFound": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SecretDetails": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountGroupInfo": {
+        "type": "object",
+        "properties": {
+          "groupName": {
+            "type": "string"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string"
+          },
+          "autoCreated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AwsCloudAccount": {
+        "type": "object",
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "roleArn": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "type": "string"
+          },
+          "defaultAccountGroupName": {
+            "type": "string"
+          },
+          "memberRoleName": {
+            "type": "string"
+          },
+          "memberExternalId": {
+            "type": "string"
+          },
+          "hasMemberRole": {
+            "type": "boolean"
+          },
+          "templateUrl": {
+            "type": "string"
+          },
+          "memberTemplateUrl": {
+            "type": "string"
+          },
+          "eventbridgeRuleNamePrefix": {
+            "type": "string"
+          },
+          "assumeRoleAccount": {
+            "type": "string",
+            "enum": [
+              "REDLOCK",
+              "EVIDENT",
+              "US_GOV",
+              "CHINA",
+              "GLOBAL"
+            ]
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hierarchySelection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "groupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "storageScanConfig": {
+            "$ref": "#/components/schemas/StorageScanConfig"
+          },
+          "storageUUID": {
+            "type": "string"
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          },
+          "customMemberRoleNameEnabled": {
+            "type": "boolean"
+          },
+          "unifiedCftDisabled": {
+            "type": "boolean"
+          },
+          "skipOverrideMemberRoleName": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CloudAccount": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "storageScanEnabled": {
+            "type": "boolean"
+          },
+          "addedOnTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parentName": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string",
+            "enum": [
+              "account",
+              "masterServiceAccount",
+              "compartment",
+              "management_group",
+              "organization",
+              "tenant",
+              "workspace_domain"
+            ]
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "protectionMode": {
+            "type": "string"
+          },
+          "deploymentType": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerPrismaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastModifiedEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "deploymentTypeDescription": {
+            "type": "string"
+          },
+          "autoConsent": {
+            "type": "string"
+          },
+          "features": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDetails"
+            }
+          }
+        }
+      },
+      "FeatureDetails": {
+        "type": "object",
+        "properties": {
+          "featureName": {
+            "type": "string"
+          },
+          "featureMode": {
+            "type": "string"
+          },
+          "createdTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "featureState": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "defaultMemberState": {
+            "type": "string"
+          }
+        }
+      },
+      "HierarchySelection": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "nodeType": {
+            "type": "string",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ]
+          },
+          "selectionType": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ]
+          }
+        }
+      },
+      "StorageScanConfig": {
+        "type": "object",
+        "properties": {
+          "scanOption": {
+            "type": "string",
+            "enum": [
+              "Realtime",
+              "Custom",
+              "Full",
+              "Historical"
+            ]
+          },
+          "buckets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "snsTopicArn": {
+            "type": "string"
+          }
+        }
+      },
+      "OrgMember": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ACCOUNT",
+              "FOLDER",
+              "ORG"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "onboarded": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrgMembersHierarchyResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgMember"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CloudRegions": {
+        "type": "object",
+        "properties": {
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "APIErrorObject": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "innererror": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "innerError": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "writeOnly": true
+          }
+        }
+      },
+      "DeploymentTypeListResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeploymentTypeResponse"
+            }
+          }
+        }
+      },
+      "DeploymentTypeResponse": {
+        "type": "object",
+        "properties": {
+          "deploymentType": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "autoCreated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CloudAccountWithFeatureDetails": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "storageScanEnabled": {
+            "type": "boolean"
+          },
+          "addedOnTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parentName": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string",
+            "enum": [
+              "account",
+              "masterServiceAccount",
+              "compartment",
+              "management_group",
+              "organization",
+              "tenant",
+              "workspace_domain"
+            ]
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "protectionMode": {
+            "type": "string"
+          },
+          "deploymentType": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerPrismaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastModifiedEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "deploymentTypeDescription": {
+            "type": "string"
+          },
+          "autoConsent": {
+            "type": "string"
+          },
+          "features": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDetails"
+            }
+          },
+          "feature": {
+            "$ref": "#/components/schemas/FeatureDetails"
+          }
+        }
+      },
+      "AWSTemplateGenRequest": {
+        "required": [
+          "accountId",
+          "accountType"
+        ],
+        "type": "object",
+        "properties": {
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "account",
+              "organization"
+            ]
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account Id"
+          },
+          "awsPartition": {
+            "type": "string",
+            "description": "*Applicable only for Prisma Government Stack(**app.gov.prismacloud.io**) and given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
+            "enum": [
+              "us-east-1",
+              "us-gov-west-1"
+            ]
+          },
+          "features": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
+            "example": [
+              "Remediation"
+            ],
+            "items": {
+              "type": "string",
+              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
+              "example": "[\"Remediation\"]"
+            }
+          },
+          "customMemberRoleNameEnabled": {
+            "type": "boolean",
+            "description": "Applicable only when accountType is organization the default is `false`. However, if given as true, the  user has to provide a memberRole name"
+          },
+          "cftType": {
+            "type": "string",
+            "description": "Specify which type of cft you want to download",
+            "enum": [
+              "org_member",
+              "org_management",
+              "org_management_member",
+              "account"
+            ]
+          }
+        }
+      },
+      "AWSCFTGenResponse": {
+        "type": "object",
+        "properties": {
+          "createStackLinkWithS3PresignedUrl": {
+            "type": "string",
+            "description": "AWS Cloudformation Stack Quick Create link."
+          },
+          "externalId": {
+            "type": "string"
+          }
+        }
+      },
+      "AlibabaAccessTokenResponse": {
+        "type": "object",
+        "properties": {
+          "rawToken": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        }
+      },
+      "Credentials": {
+        "type": "object",
+        "properties": {
+          "accessKeyId": {
+            "type": "string"
+          },
+          "secretAccessKey": {
+            "type": "string"
+          },
+          "sessionToken": {
+            "type": "string"
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AzureCloudAccount": {
+        "type": "object",
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "servicePrincipalId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "type": "string"
+          },
+          "defaultAccountGroupName": {
+            "type": "string"
+          },
+          "memberSyncEnabled": {
+            "type": "boolean"
+          },
+          "templateUrl": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hierarchySelection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "groupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "monitorFlowLogs": {
+            "type": "boolean"
+          },
+          "environmentType": {
+            "type": "string"
+          },
+          "accountGroupMode": {
+            "type": "string"
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          }
+        }
+      },
+      "CloudAccountModel": {
+        "type": "object",
+        "properties": {
+          "customerName": {
+            "type": "string"
+          },
+          "customerPrismaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "deploymentType": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "parentName": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "protectionMode": {
+            "type": "string"
+          },
+          "createdEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastModifiedEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastModifiedBy": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "deploymentTypeDescription": {
+            "type": "string"
+          },
+          "hasConfigError": {
+            "type": "boolean"
+          },
+          "storageScanEnabled": {
+            "type": "boolean"
+          },
+          "addedOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "permissionStatusList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudAccountPermissionStatusApiRequest"
+            }
+          },
+          "features": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDetails"
+            }
+          }
+        }
+      },
+      "CloudAccountPermissionStatusApiRequest": {
+        "type": "object",
+        "properties": {
+          "subComponent": {
+            "type": "string"
+          },
+          "component": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "remediation": {
+            "type": "string"
+          },
+          "statusTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accountId": {
+            "type": "string"
+          }
+        }
+      },
+      "CloudAccountPermissionStatus": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "remediation": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "lastRunEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastSuccessEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastErrorEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudAccountPermissionStatus"
+            }
+          }
+        }
+      },
       "IBMTemplateGenRequest": {
         "type": "object",
         "properties": {
@@ -1083,19 +1997,161 @@
           }
         }
       },
-      "AccountGroupInfo": {
+      "GcpCloudAccountResponse": {
         "type": "object",
         "properties": {
-          "groupName": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "hierarchySelection": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "parentId": {
             "type": "string"
           },
-          "lastModifiedBy": {
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectId": {
             "type": "string"
           },
-          "groupId": {
+          "serviceAccountEmail": {
             "type": "string"
           },
-          "autoCreated": {
+          "authenticationType": {
+            "type": "string"
+          },
+          "flowLogStorageBucket": {
+            "type": "string"
+          },
+          "compressionEnabled": {
+            "type": "boolean"
+          },
+          "accountGroupCreationMode": {
+            "type": "string"
+          },
+          "dataflowEnabledProject": {
+            "type": "string"
+          },
+          "credentials": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "defaultAccountGroupId": {
+            "type": "string"
+          },
+          "groupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          }
+        }
+      },
+      "CloudAccountFeaturePatchRequest": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "AzureTokenRequest": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        }
+      },
+      "AzureTokenResponse": {
+        "type": "object",
+        "properties": {
+          "rawToken": {
+            "$ref": "#/components/schemas/IAuthenticationResultResponse"
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "IAuthenticationResultResponse": {
+        "type": "object",
+        "properties": {
+          "accessTokenType": {
+            "type": "string"
+          },
+          "expiresOn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idToken": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresAfter": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiresOnDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "multipleResourceRefreshToken": {
             "type": "boolean"
           }
         }
@@ -1262,997 +2318,6 @@
           }
         }
       },
-      "IbmPermissionCheckRequest": {
-        "type": "object",
-        "properties": {
-          "svcIdIamId": {
-            "type": "string"
-          },
-          "apiKey": {
-            "type": "string"
-          }
-        }
-      },
-      "APIErrorObject": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "enum": [
-              "100 CONTINUE",
-              "101 SWITCHING_PROTOCOLS",
-              "102 PROCESSING",
-              "103 CHECKPOINT",
-              "200 OK",
-              "201 CREATED",
-              "202 ACCEPTED",
-              "203 NON_AUTHORITATIVE_INFORMATION",
-              "204 NO_CONTENT",
-              "205 RESET_CONTENT",
-              "206 PARTIAL_CONTENT",
-              "207 MULTI_STATUS",
-              "208 ALREADY_REPORTED",
-              "226 IM_USED",
-              "300 MULTIPLE_CHOICES",
-              "301 MOVED_PERMANENTLY",
-              "302 FOUND",
-              "302 MOVED_TEMPORARILY",
-              "303 SEE_OTHER",
-              "304 NOT_MODIFIED",
-              "305 USE_PROXY",
-              "307 TEMPORARY_REDIRECT",
-              "308 PERMANENT_REDIRECT",
-              "400 BAD_REQUEST",
-              "401 UNAUTHORIZED",
-              "402 PAYMENT_REQUIRED",
-              "403 FORBIDDEN",
-              "404 NOT_FOUND",
-              "405 METHOD_NOT_ALLOWED",
-              "406 NOT_ACCEPTABLE",
-              "407 PROXY_AUTHENTICATION_REQUIRED",
-              "408 REQUEST_TIMEOUT",
-              "409 CONFLICT",
-              "410 GONE",
-              "411 LENGTH_REQUIRED",
-              "412 PRECONDITION_FAILED",
-              "413 PAYLOAD_TOO_LARGE",
-              "413 REQUEST_ENTITY_TOO_LARGE",
-              "414 URI_TOO_LONG",
-              "414 REQUEST_URI_TOO_LONG",
-              "415 UNSUPPORTED_MEDIA_TYPE",
-              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
-              "417 EXPECTATION_FAILED",
-              "418 I_AM_A_TEAPOT",
-              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
-              "420 METHOD_FAILURE",
-              "421 DESTINATION_LOCKED",
-              "422 UNPROCESSABLE_ENTITY",
-              "423 LOCKED",
-              "424 FAILED_DEPENDENCY",
-              "425 TOO_EARLY",
-              "426 UPGRADE_REQUIRED",
-              "428 PRECONDITION_REQUIRED",
-              "429 TOO_MANY_REQUESTS",
-              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
-              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
-              "500 INTERNAL_SERVER_ERROR",
-              "501 NOT_IMPLEMENTED",
-              "502 BAD_GATEWAY",
-              "503 SERVICE_UNAVAILABLE",
-              "504 GATEWAY_TIMEOUT",
-              "505 HTTP_VERSION_NOT_SUPPORTED",
-              "506 VARIANT_ALSO_NEGOTIATES",
-              "507 INSUFFICIENT_STORAGE",
-              "508 LOOP_DETECTED",
-              "509 BANDWIDTH_LIMIT_EXCEEDED",
-              "510 NOT_EXTENDED",
-              "511 NETWORK_AUTHENTICATION_REQUIRED"
-            ]
-          },
-          "message": {
-            "type": "string"
-          },
-          "target": {
-            "type": "string"
-          },
-          "innererror": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          },
-          "innerError": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            },
-            "writeOnly": true
-          }
-        }
-      },
-      "RestAPIErrorResponse": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/APIErrorObject"
-          }
-        }
-      },
-      "AccountStatusMessage": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "staticMessage": {
-            "type": "boolean"
-          }
-        }
-      },
-      "CloudAccountStatus": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "statusMessage": {
-            "$ref": "#/components/schemas/AccountStatusMessage"
-          }
-        }
-      },
-      "PermissionCheckResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CloudAccountStatus"
-            }
-          }
-        }
-      },
-      "CloudAccountModel": {
-        "type": "object",
-        "properties": {
-          "customerName": {
-            "type": "string"
-          },
-          "customerPrismaId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "accountId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "cloudType": {
-            "type": "string"
-          },
-          "accountType": {
-            "type": "string"
-          },
-          "deploymentType": {
-            "type": "string"
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "parentName": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "deleted": {
-            "type": "boolean"
-          },
-          "protectionMode": {
-            "type": "string"
-          },
-          "createdEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "lastModifiedEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "owner": {
-            "type": "string"
-          },
-          "deploymentTypeDescription": {
-            "type": "string"
-          },
-          "hasConfigError": {
-            "type": "boolean"
-          },
-          "storageScanEnabled": {
-            "type": "boolean"
-          },
-          "addedOn": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "permissionStatusList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CloudAccountPermissionStatusApiRequest"
-            }
-          },
-          "features": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureDetails"
-            }
-          }
-        }
-      },
-      "CloudAccountPermissionStatusApiRequest": {
-        "type": "object",
-        "properties": {
-          "subComponent": {
-            "type": "string"
-          },
-          "component": {
-            "type": "string"
-          },
-          "statusCode": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "remediation": {
-            "type": "string"
-          },
-          "statusTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "accountId": {
-            "type": "string"
-          }
-        }
-      },
-      "FeatureDetails": {
-        "type": "object",
-        "properties": {
-          "featureName": {
-            "type": "string"
-          },
-          "featureMode": {
-            "type": "string"
-          },
-          "createdTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "featureState": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          },
-          "defaultMemberState": {
-            "type": "string"
-          }
-        }
-      },
-      "AlibabaAccessTokenResponse": {
-        "type": "object",
-        "properties": {
-          "rawToken": {
-            "$ref": "#/components/schemas/Credentials"
-          }
-        }
-      },
-      "Credentials": {
-        "type": "object",
-        "properties": {
-          "accessKeyId": {
-            "type": "string"
-          },
-          "secretAccessKey": {
-            "type": "string"
-          },
-          "sessionToken": {
-            "type": "string"
-          },
-          "expiration": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "OciCredentialsData": {
-        "type": "object",
-        "properties": {
-          "userName": {
-            "type": "string"
-          },
-          "userOcid": {
-            "type": "string"
-          },
-          "groupName": {
-            "type": "string"
-          },
-          "policyName": {
-            "type": "string"
-          },
-          "homeRegion": {
-            "type": "string"
-          },
-          "privateKey": {
-            "type": "string"
-          },
-          "fingerPrint": {
-            "type": "string"
-          },
-          "tenancyId": {
-            "type": "string"
-          }
-        }
-      },
-      "AzureCloudAccount": {
-        "type": "object",
-        "properties": {
-          "cloudAccount": {
-            "$ref": "#/components/schemas/CloudAccount"
-          },
-          "tenantId": {
-            "type": "string"
-          },
-          "servicePrincipalId": {
-            "type": "string"
-          },
-          "clientId": {
-            "type": "string"
-          },
-          "defaultAccountGroupId": {
-            "type": "string"
-          },
-          "defaultAccountGroupName": {
-            "type": "string"
-          },
-          "memberSyncEnabled": {
-            "type": "boolean"
-          },
-          "templateUrl": {
-            "type": "string"
-          },
-          "key": {
-            "type": "string"
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hierarchySelection": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
-            }
-          },
-          "groupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "monitorFlowLogs": {
-            "type": "boolean"
-          },
-          "environmentType": {
-            "type": "string"
-          },
-          "accountGroupMode": {
-            "type": "string"
-          },
-          "accountGroupInfos": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountGroupInfo"
-            }
-          }
-        }
-      },
-      "CloudAccount": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "accountTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cloudType": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "storageScanEnabled": {
-            "type": "boolean"
-          },
-          "addedOnTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "parentName": {
-            "type": "string"
-          },
-          "accountType": {
-            "type": "string",
-            "enum": [
-              "account",
-              "masterServiceAccount",
-              "compartment",
-              "management_group",
-              "organization",
-              "tenant",
-              "workspace_domain"
-            ]
-          },
-          "deleted": {
-            "type": "boolean"
-          },
-          "protectionMode": {
-            "type": "string"
-          },
-          "deploymentType": {
-            "type": "string"
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "customerPrismaId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "lastModifiedEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "owner": {
-            "type": "string"
-          },
-          "deploymentTypeDescription": {
-            "type": "string"
-          },
-          "autoConsent": {
-            "type": "string"
-          },
-          "features": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureDetails"
-            }
-          }
-        }
-      },
-      "HierarchySelection": {
-        "type": "object",
-        "properties": {
-          "resourceId": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          },
-          "nodeType": {
-            "type": "string",
-            "enum": [
-              "ORG",
-              "FOLDER",
-              "PROJECT",
-              "SUBSCRIPTION",
-              "MANAGEMENT_GROUP",
-              "TENANT",
-              "ACCOUNT",
-              "OU"
-            ]
-          },
-          "selectionType": {
-            "type": "string",
-            "enum": [
-              "ALL",
-              "INCLUDE",
-              "EXCLUDE"
-            ]
-          }
-        }
-      },
-      "CloudAccountWithFeatureDetails": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "accountTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cloudType": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "storageScanEnabled": {
-            "type": "boolean"
-          },
-          "addedOnTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "parentName": {
-            "type": "string"
-          },
-          "accountType": {
-            "type": "string",
-            "enum": [
-              "account",
-              "masterServiceAccount",
-              "compartment",
-              "management_group",
-              "organization",
-              "tenant",
-              "workspace_domain"
-            ]
-          },
-          "deleted": {
-            "type": "boolean"
-          },
-          "protectionMode": {
-            "type": "string"
-          },
-          "deploymentType": {
-            "type": "string"
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "customerPrismaId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "lastModifiedEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "owner": {
-            "type": "string"
-          },
-          "deploymentTypeDescription": {
-            "type": "string"
-          },
-          "autoConsent": {
-            "type": "string"
-          },
-          "features": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureDetails"
-            }
-          },
-          "feature": {
-            "$ref": "#/components/schemas/FeatureDetails"
-          }
-        }
-      },
-      "IamToken": {
-        "type": "object",
-        "properties": {
-          "exception": {
-            "type": "object",
-            "properties": {
-              "stackTrace": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "classLoaderName": {
-                      "type": "string"
-                    },
-                    "moduleName": {
-                      "type": "string"
-                    },
-                    "moduleVersion": {
-                      "type": "string"
-                    },
-                    "methodName": {
-                      "type": "string"
-                    },
-                    "fileName": {
-                      "type": "string"
-                    },
-                    "lineNumber": {
-                      "type": "integer",
-                      "format": "int32"
-                    },
-                    "className": {
-                      "type": "string"
-                    },
-                    "nativeMethod": {
-                      "type": "boolean"
-                    }
-                  }
-                }
-              },
-              "message": {
-                "type": "string"
-              },
-              "suppressed": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "stackTrace": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "classLoaderName": {
-                            "type": "string"
-                          },
-                          "moduleName": {
-                            "type": "string"
-                          },
-                          "moduleVersion": {
-                            "type": "string"
-                          },
-                          "methodName": {
-                            "type": "string"
-                          },
-                          "fileName": {
-                            "type": "string"
-                          },
-                          "lineNumber": {
-                            "type": "integer",
-                            "format": "int32"
-                          },
-                          "className": {
-                            "type": "string"
-                          },
-                          "nativeMethod": {
-                            "type": "boolean"
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "localizedMessage": {
-                      "type": "string"
-                    }
-                  }
-                }
-              },
-              "localizedMessage": {
-                "type": "string"
-              }
-            }
-          },
-          "accessToken": {
-            "type": "string"
-          },
-          "refreshToken": {
-            "type": "string"
-          },
-          "tokenType": {
-            "type": "string"
-          },
-          "expiresIn": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expiration": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tokenValid": {
-            "type": "boolean"
-          }
-        }
-      },
-      "IbmAccessTokenResponse": {
-        "type": "object",
-        "properties": {
-          "rawToken": {
-            "$ref": "#/components/schemas/IamToken"
-          },
-          "meta": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          }
-        }
-      },
-      "CloudRegions": {
-        "type": "object",
-        "properties": {
-          "regions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "AwsCloudAccount": {
-        "type": "object",
-        "properties": {
-          "cloudAccount": {
-            "$ref": "#/components/schemas/CloudAccount"
-          },
-          "roleArn": {
-            "type": "string"
-          },
-          "externalId": {
-            "type": "string"
-          },
-          "defaultAccountGroupId": {
-            "type": "string"
-          },
-          "defaultAccountGroupName": {
-            "type": "string"
-          },
-          "memberRoleName": {
-            "type": "string"
-          },
-          "memberExternalId": {
-            "type": "string"
-          },
-          "hasMemberRole": {
-            "type": "boolean"
-          },
-          "templateUrl": {
-            "type": "string"
-          },
-          "memberTemplateUrl": {
-            "type": "string"
-          },
-          "eventbridgeRuleNamePrefix": {
-            "type": "string"
-          },
-          "assumeRoleAccount": {
-            "type": "string",
-            "enum": [
-              "REDLOCK",
-              "EVIDENT",
-              "US_GOV",
-              "CHINA",
-              "GLOBAL"
-            ]
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hierarchySelection": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
-            }
-          },
-          "groupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "storageScanConfig": {
-            "$ref": "#/components/schemas/StorageScanConfig"
-          },
-          "storageUUID": {
-            "type": "string"
-          },
-          "accountGroupInfos": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountGroupInfo"
-            }
-          },
-          "customMemberRoleNameEnabled": {
-            "type": "boolean"
-          },
-          "unifiedCftDisabled": {
-            "type": "boolean"
-          },
-          "skipOverrideMemberRoleName": {
-            "type": "boolean"
-          }
-        }
-      },
-      "StorageScanConfig": {
-        "type": "object",
-        "properties": {
-          "scanOption": {
-            "type": "string",
-            "enum": [
-              "Realtime",
-              "Custom",
-              "Full",
-              "Historical"
-            ]
-          },
-          "buckets": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "snsTopicArn": {
-            "type": "string"
-          }
-        }
-      },
-      "GCPTokenRequestV2": {
-        "type": "object",
-        "properties": {
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "GCPTokenResponseV2": {
-        "type": "object",
-        "properties": {
-          "rawAuthToken": {
-            "type": "string"
-          },
-          "expirationTime": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "meta": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          }
-        }
-      },
-      "CloudAccountBulkFeatureRequest": {
-        "required": [
-          "features",
-          "memberIds"
-        ],
-        "type": "object",
-        "properties": {
-          "memberIds": {
-            "type": "array",
-            "description": "List of member ids for which the feature must be enabled or disabled.\n\nFor AWS, specify account ids\n\nFor Azure, specify subscription ids\n\nFor GCP, specify project ids",
-            "items": {
-              "type": "string",
-              "description": "List of member ids for which the feature must be enabled or disabled.\n\nFor AWS, specify account ids\n\nFor Azure, specify subscription ids\n\nFor GCP, specify project ids"
-            }
-          },
-          "features": {
-            "type": "array",
-            "description": "Features to be enabled or disabled. To get a list of all the supported features, see **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**.",
-            "items": {
-              "$ref": "#/components/schemas/CloudAccountFeatureModel"
-            }
-          }
-        }
-      },
-      "SuccessResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      },
-      "OrgMember": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "ACCOUNT",
-              "FOLDER",
-              "ORG"
-            ]
-          },
-          "id": {
-            "type": "string"
-          },
-          "onboarded": {
-            "type": "boolean"
-          }
-        }
-      },
-      "OrgMembersHierarchyResponse": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrgMember"
-            }
-          },
-          "nextPageToken": {
-            "type": "string"
-          }
-        }
-      },
       "AwsLoggingAccount": {
         "type": "object",
         "properties": {
@@ -2412,57 +2477,10 @@
           }
         }
       },
-      "LoggingAccountMapRequest": {
+      "GCPTokenRequestV2": {
         "type": "object",
         "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "bucketId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "action": {
-            "type": "string"
-          },
-          "featureName": {
-            "type": "string"
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          },
-          "details": {
-            "type": "string"
-          }
-        }
-      },
-      "IbmCloudAccountResponse": {
-        "type": "object",
-        "properties": {
-          "cloudAccount": {
-            "$ref": "#/components/schemas/CloudAccount"
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "svcIdIamId": {
-            "type": "string"
-          },
-          "groupIds": {
-            "uniqueItems": true,
+          "scopes": {
             "type": "array",
             "items": {
               "type": "string"
@@ -2470,53 +2488,21 @@
           }
         }
       },
-      "AzureTemplateGenRequest": {
-        "required": [
-          "accountType",
-          "tenantId"
-        ],
+      "GCPTokenResponseV2": {
         "type": "object",
         "properties": {
-          "accountType": {
-            "type": "string",
-            "description": "Cloud account type. \n\n **account** = Azure Subscription \n\n**tenant** = Azure Tenant",
-            "enum": [
-              "account",
-              "tenant"
-            ]
+          "rawAuthToken": {
+            "type": "string"
           },
-          "subscriptionId": {
-            "type": "string",
-            "description": "*Required field for accountType: **account***.\n\n Azure Subscription ID"
+          "expirationTime": {
+            "type": "integer",
+            "format": "int64"
           },
-          "tenantId": {
-            "type": "string",
-            "description": "Azure Directory (Tenant) ID"
-          },
-          "rootSyncEnabled": {
-            "type": "boolean",
-            "description": "*Applicable only for accountType: **tenant***\n\n In order to onboard the account type **tenant** and its associated **management groups** and **subscriptions**, ```rootSyncEnabled``` must be set to ```true```"
-          },
-          "features": {
-            "uniqueItems": true,
-            "type": "array",
-            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
-            "example": [
-              "Remediation"
-            ],
-            "items": {
-              "type": "string",
-              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
-              "example": "[\"Remediation\"]"
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
             }
-          },
-          "deploymentType": {
-            "type": "string",
-            "description": "*Applicable only for Prisma Commercial and Government stacks* \n\n**azure** = Commercial deployment type\n\n**azure_gov** = Government deployment type",
-            "enum": [
-              "azure",
-              "azure_gov"
-            ]
           }
         }
       },
@@ -2553,71 +2539,76 @@
           }
         }
       },
-      "PermissionsRequest": {
+      "AWSTokenRequest": {
         "type": "object",
         "properties": {
-          "accountType": {
-            "type": "string"
+          "durationInSeconds": {
+            "type": "integer",
+            "format": "int32"
           },
-          "deploymentType": {
-            "type": "string"
+          "shouldRefreshMaxSessionDuration": {
+            "type": "boolean"
           },
-          "awsPartition": {
-            "type": "string"
+          "featureType": {
+            "type": "string",
+            "enum": [
+              "AWS_S3_FLOWLOG_ACCOUNT_TOKEN",
+              "AWS_CLOUD_TRAIL",
+              "NONE"
+            ]
           },
-          "authenticationType": {
+          "accountOnboardingType": {
+            "type": "string",
+            "enum": [
+              "MONITORED",
+              "LOGGING"
+            ]
+          },
+          "tenantName": {
             "type": "string"
           }
         }
       },
-      "AppCapabilityPermissionMapping": {
+      "AssumeRoleResult": {
         "type": "object",
         "properties": {
-          "label": {
-            "type": "string"
+          "sdkResponseMetadata": {
+            "$ref": "#/components/schemas/ResponseMetadata"
           },
-          "feature": {
-            "type": "string"
+          "sdkHttpMetadata": {
+            "$ref": "#/components/schemas/SdkHttpMetadata"
           },
-          "mode": {
-            "type": "string"
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
           },
-          "permissions": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "assumedRoleUser": {
+            "$ref": "#/components/schemas/AssumedRoleUser"
           },
-          "roles": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "packedPolicySize": {
+            "type": "integer",
+            "format": "int32"
           },
-          "services": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "AzureTokenRequest": {
-        "type": "object",
-        "properties": {
-          "resource": {
+          "sourceIdentity": {
             "type": "string"
           }
         }
       },
-      "AzureTokenResponse": {
+      "AssumedRoleUser": {
+        "type": "object",
+        "properties": {
+          "assumedRoleId": {
+            "type": "string"
+          },
+          "arn": {
+            "type": "string"
+          }
+        }
+      },
+      "AwsTokenResponse": {
         "type": "object",
         "properties": {
           "rawToken": {
-            "$ref": "#/components/schemas/IAuthenticationResultResponse"
+            "$ref": "#/components/schemas/AssumeRoleResult"
           },
           "meta": {
             "type": "object",
@@ -2627,44 +2618,35 @@
           }
         }
       },
-      "IAuthenticationResultResponse": {
+      "ResponseMetadata": {
         "type": "object",
         "properties": {
-          "accessTokenType": {
+          "requestId": {
             "type": "string"
-          },
-          "expiresOn": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "idToken": {
-            "type": "string"
-          },
-          "accessToken": {
-            "type": "string"
-          },
-          "expiresAfter": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expiresOnDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "multipleResourceRefreshToken": {
-            "type": "boolean"
           }
         }
       },
-      "ComputeLimitStatusResponse": {
+      "SdkHttpMetadata": {
         "type": "object",
         "properties": {
-          "limit": {
+          "httpHeaders": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "httpStatusCode": {
             "type": "integer",
             "format": "int32"
           },
-          "isAccountImported": {
-            "type": "boolean"
+          "allHttpHeaders": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -2788,471 +2770,6 @@
           }
         }
       },
-      "IngestionCloudAccount": {
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "cloudType": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "accountType": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "credentials": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "homeRegionId": {
-            "type": "string"
-          },
-          "regionIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "policyName": {
-            "type": "string"
-          },
-          "autoConsent": {
-            "type": "string"
-          }
-        }
-      },
-      "AccountGroup": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "lastModifiedBy": {
-            "type": "string"
-          },
-          "lastModifiedTs": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "autoCreated": {
-            "type": "boolean"
-          }
-        }
-      },
-      "AWSTokenRequest": {
-        "type": "object",
-        "properties": {
-          "durationInSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "shouldRefreshMaxSessionDuration": {
-            "type": "boolean"
-          },
-          "featureType": {
-            "type": "string",
-            "enum": [
-              "AWS_S3_FLOWLOG_ACCOUNT_TOKEN",
-              "AWS_CLOUD_TRAIL",
-              "NONE"
-            ]
-          },
-          "accountOnboardingType": {
-            "type": "string",
-            "enum": [
-              "MONITORED",
-              "LOGGING"
-            ]
-          },
-          "tenantName": {
-            "type": "string"
-          }
-        }
-      },
-      "AssumeRoleResult": {
-        "type": "object",
-        "properties": {
-          "sdkResponseMetadata": {
-            "$ref": "#/components/schemas/ResponseMetadata"
-          },
-          "sdkHttpMetadata": {
-            "$ref": "#/components/schemas/SdkHttpMetadata"
-          },
-          "credentials": {
-            "$ref": "#/components/schemas/Credentials"
-          },
-          "assumedRoleUser": {
-            "$ref": "#/components/schemas/AssumedRoleUser"
-          },
-          "packedPolicySize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sourceIdentity": {
-            "type": "string"
-          }
-        }
-      },
-      "AssumedRoleUser": {
-        "type": "object",
-        "properties": {
-          "assumedRoleId": {
-            "type": "string"
-          },
-          "arn": {
-            "type": "string"
-          }
-        }
-      },
-      "AwsTokenResponse": {
-        "type": "object",
-        "properties": {
-          "rawToken": {
-            "$ref": "#/components/schemas/AssumeRoleResult"
-          },
-          "meta": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          }
-        }
-      },
-      "ResponseMetadata": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "type": "string"
-          }
-        }
-      },
-      "SdkHttpMetadata": {
-        "type": "object",
-        "properties": {
-          "httpHeaders": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "httpStatusCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "allHttpHeaders": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "AwsLoggingAccountResponse": {
-        "type": "object",
-        "properties": {
-          "loggingAccountId": {
-            "type": "string"
-          },
-          "loggingAccountName": {
-            "type": "string"
-          },
-          "roleArn": {
-            "type": "string"
-          },
-          "loggingAccountBucketMap": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AwsLoggingAccountBucket"
-            }
-          }
-        }
-      },
-      "AWSTemplateGenRequest": {
-        "required": [
-          "accountId",
-          "accountType"
-        ],
-        "type": "object",
-        "properties": {
-          "accountType": {
-            "type": "string",
-            "description": "Cloud Account Type",
-            "enum": [
-              "account",
-              "organization"
-            ]
-          },
-          "accountId": {
-            "type": "string",
-            "description": "Account Id"
-          },
-          "awsPartition": {
-            "type": "string",
-            "description": "*Applicable only for Prisma Government Stack(**app.gov.prismacloud.io**) and given if the Cloud account Global Deployment option is enabled*\n\n * **us-east-1** -  AWS Commercial/Global account\n\n * **us-gov-west-1** - AWS GovCloud account.",
-            "enum": [
-              "us-east-1",
-              "us-gov-west-1"
-            ]
-          },
-          "features": {
-            "uniqueItems": true,
-            "type": "array",
-            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
-            "example": [
-              "Remediation"
-            ],
-            "items": {
-              "type": "string",
-              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
-              "example": "[\"Remediation\"]"
-            }
-          },
-          "customMemberRoleNameEnabled": {
-            "type": "boolean",
-            "description": "Applicable only when accountType is organization the default is `false`. However, if given as true, the  user has to provide a memberRole name"
-          },
-          "cftType": {
-            "type": "string",
-            "description": "Specify which type of cft you want to download",
-            "enum": [
-              "org_member",
-              "org_management",
-              "org_management_member",
-              "account"
-            ]
-          }
-        }
-      },
-      "AddComputeLimitRequest": {
-        "required": [
-          "importedAccounts",
-          "limit"
-        ],
-        "type": "object",
-        "properties": {
-          "limit": {
-            "minimum": 1,
-            "type": "integer",
-            "format": "int32"
-          },
-          "importedAccounts": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "CloudAccountPermissionStatus": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "feature": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
-          "remediation": {
-            "type": "string"
-          },
-          "errorCode": {
-            "type": "string"
-          },
-          "lastRunEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastSuccessEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "lastErrorEpochMillis": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "components": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CloudAccountPermissionStatus"
-            }
-          }
-        }
-      },
-      "CloudAccountFeaturePatchRequest": {
-        "type": "object",
-        "properties": {
-          "mode": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        }
-      },
-      "AWSCFTGenResponse": {
-        "type": "object",
-        "properties": {
-          "createStackLinkWithS3PresignedUrl": {
-            "type": "string",
-            "description": "AWS Cloudformation Stack Quick Create link."
-          },
-          "externalId": {
-            "type": "string"
-          }
-        }
-      },
-      "GcpCloudAccountResponse": {
-        "type": "object",
-        "properties": {
-          "cloudAccount": {
-            "$ref": "#/components/schemas/CloudAccount"
-          },
-          "hierarchySelection": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
-            }
-          },
-          "parentId": {
-            "type": "string"
-          },
-          "customerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "projectId": {
-            "type": "string"
-          },
-          "serviceAccountEmail": {
-            "type": "string"
-          },
-          "authenticationType": {
-            "type": "string"
-          },
-          "flowLogStorageBucket": {
-            "type": "string"
-          },
-          "compressionEnabled": {
-            "type": "boolean"
-          },
-          "accountGroupCreationMode": {
-            "type": "string"
-          },
-          "dataflowEnabledProject": {
-            "type": "string"
-          },
-          "credentials": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            }
-          },
-          "defaultAccountGroupId": {
-            "type": "string"
-          },
-          "groupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "organizationName": {
-            "type": "string"
-          },
-          "accountGroupInfos": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccountGroupInfo"
-            }
-          }
-        }
-      },
-      "CloudAccountSecret": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SecretDetails"
-            }
-          },
-          "notFound": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "SecretDetails": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string"
-          }
-        }
-      },
-      "DeploymentTypeListResponse": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DeploymentTypeResponse"
-            }
-          }
-        }
-      },
-      "DeploymentTypeResponse": {
-        "type": "object",
-        "properties": {
-          "deploymentType": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          }
-        }
-      },
       "CloudAccountIdentity": {
         "type": "object",
         "properties": {
@@ -3302,20 +2819,125 @@
           }
         }
       },
-      "CloudAccountFeatureSaveRequest": {
+      "AzureTemplateGenRequest": {
         "required": [
-          "featureName"
+          "accountType",
+          "tenantId"
         ],
         "type": "object",
         "properties": {
-          "featureName": {
+          "accountType": {
+            "type": "string",
+            "description": "Cloud account type. \n\n **account** = Azure Subscription \n\n**tenant** = Azure Tenant",
+            "enum": [
+              "account",
+              "tenant"
+            ]
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "*Required field for accountType: **account***.\n\n Azure Subscription ID"
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "Azure Directory (Tenant) ID"
+          },
+          "rootSyncEnabled": {
+            "type": "boolean",
+            "description": "*Applicable only for accountType: **tenant***\n\n In order to onboard the account type **tenant** and its associated **management groups** and **subscriptions**, ```rootSyncEnabled``` must be set to ```true```"
+          },
+          "features": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
+            "example": [
+              "Remediation"
+            ],
+            "items": {
+              "type": "string",
+              "description": "Features for which the permissions should be generated and included in the template. \n\n To get a list of all the supported features, call **[Get Supported Features](/prisma-cloud/api/cspm/fetch-supported-features)** endpoint",
+              "example": "[\"Remediation\"]"
+            }
+          },
+          "deploymentType": {
+            "type": "string",
+            "description": "*Applicable only for Prisma Commercial and Government stacks* \n\n**azure** = Commercial deployment type\n\n**azure_gov** = Government deployment type",
+            "enum": [
+              "azure",
+              "azure_gov"
+            ]
+          }
+        }
+      },
+      "PermissionsRequest": {
+        "type": "object",
+        "properties": {
+          "accountType": {
+            "type": "string"
+          },
+          "deploymentType": {
+            "type": "string"
+          },
+          "awsPartition": {
+            "type": "string"
+          },
+          "authenticationType": {
+            "type": "string"
+          }
+        }
+      },
+      "AppCapabilityPermissionMapping": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "feature": {
             "type": "string"
           },
           "mode": {
             "type": "string"
           },
-          "state": {
+          "permissions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "services": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AwsLoggingAccountResponse": {
+        "type": "object",
+        "properties": {
+          "loggingAccountId": {
             "type": "string"
+          },
+          "loggingAccountName": {
+            "type": "string"
+          },
+          "roleArn": {
+            "type": "string"
+          },
+          "loggingAccountBucketMap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AwsLoggingAccountBucket"
+            }
           }
         }
       },
@@ -3344,6 +2966,412 @@
             "items": {
               "$ref": "#/components/schemas/ComponentStatusModel"
             }
+          }
+        }
+      },
+      "CloudAccountBulkFeatureModel": {
+        "required": [
+          "name",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Feature name obtained from **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "example": "Remediation",
+            "enum": [
+              "Agentless Scanning",
+              "Serverless Function Scanning"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "description": "Feature state whether to be enabled or disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ]
+          }
+        },
+        "description": "Features to be enabled or disabled. You can enable or disable only **Agentless Scanning** and **Serverless Function Scanning** feature."
+      },
+      "CloudAccountBulkFeatureRequest": {
+        "required": [
+          "features",
+          "memberIds"
+        ],
+        "type": "object",
+        "properties": {
+          "memberIds": {
+            "type": "array",
+            "description": "List of member ids for which the feature must be enabled or disabled.\n\nFor AWS, specify account ids.\n\nFor Azure, specify subscription ids.\n\nFor GCP, specify project ids.",
+            "items": {
+              "type": "string",
+              "description": "List of member ids for which the feature must be enabled or disabled.\n\nFor AWS, specify account ids.\n\nFor Azure, specify subscription ids.\n\nFor GCP, specify project ids."
+            }
+          },
+          "features": {
+            "type": "array",
+            "description": "Features to be enabled or disabled. You can enable or disable only **Agentless Scanning** and **Serverless Function Scanning** feature.",
+            "items": {
+              "$ref": "#/components/schemas/CloudAccountBulkFeatureModel"
+            }
+          }
+        }
+      },
+      "RestAPIErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/APIErrorObject"
+          }
+        }
+      },
+      "LoggingAccountMapRequest": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "bucketId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "action": {
+            "type": "string"
+          },
+          "featureName": {
+            "type": "string"
+          }
+        }
+      },
+      "IamToken": {
+        "type": "object",
+        "properties": {
+          "exception": {
+            "type": "object",
+            "properties": {
+              "stackTrace": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "classLoaderName": {
+                      "type": "string"
+                    },
+                    "moduleName": {
+                      "type": "string"
+                    },
+                    "moduleVersion": {
+                      "type": "string"
+                    },
+                    "methodName": {
+                      "type": "string"
+                    },
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "lineNumber": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "className": {
+                      "type": "string"
+                    },
+                    "nativeMethod": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "message": {
+                "type": "string"
+              },
+              "suppressed": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "stackTrace": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "classLoaderName": {
+                            "type": "string"
+                          },
+                          "moduleName": {
+                            "type": "string"
+                          },
+                          "moduleVersion": {
+                            "type": "string"
+                          },
+                          "methodName": {
+                            "type": "string"
+                          },
+                          "fileName": {
+                            "type": "string"
+                          },
+                          "lineNumber": {
+                            "type": "integer",
+                            "format": "int32"
+                          },
+                          "className": {
+                            "type": "string"
+                          },
+                          "nativeMethod": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "localizedMessage": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "localizedMessage": {
+                "type": "string"
+              }
+            }
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tokenValid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "IbmAccessTokenResponse": {
+        "type": "object",
+        "properties": {
+          "rawToken": {
+            "$ref": "#/components/schemas/IamToken"
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "AddComputeLimitRequest": {
+        "required": [
+          "importedAccounts",
+          "limit"
+        ],
+        "type": "object",
+        "properties": {
+          "limit": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "importedAccounts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IbmPermissionCheckRequest": {
+        "type": "object",
+        "properties": {
+          "svcIdIamId": {
+            "type": "string"
+          },
+          "apiKey": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountStatusMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "staticMessage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CloudAccountStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusMessage": {
+            "$ref": "#/components/schemas/AccountStatusMessage"
+          }
+        }
+      },
+      "PermissionCheckResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudAccountStatus"
+            }
+          }
+        }
+      },
+      "ComputeLimitStatusResponse": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isAccountImported": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CloudAccountFeatureSaveRequest": {
+        "required": [
+          "featureName"
+        ],
+        "type": "object",
+        "properties": {
+          "featureName": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "IngestionCloudAccount": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "accountType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "credentials": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "homeRegionId": {
+            "type": "string"
+          },
+          "regionIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "policyName": {
+            "type": "string"
+          },
+          "autoConsent": {
+            "type": "string"
+          }
+        }
+      },
+      "IbmCloudAccountResponse": {
+        "type": "object",
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "svcIdIamId": {
+            "type": "string"
+          },
+          "groupIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OciCredentialsData": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "userOcid": {
+            "type": "string"
+          },
+          "groupName": {
+            "type": "string"
+          },
+          "policyName": {
+            "type": "string"
+          },
+          "homeRegion": {
+            "type": "string"
+          },
+          "privateKey": {
+            "type": "string"
+          },
+          "fingerPrint": {
+            "type": "string"
+          },
+          "tenancyId": {
+            "type": "string"
           }
         }
       }
