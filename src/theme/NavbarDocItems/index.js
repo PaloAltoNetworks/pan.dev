@@ -11,8 +11,8 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
     <div className="navbar-doc-items">
       <span className="navbar-doc-items__title">API Reference</span>
       <div className="navbar-doc-items__links">
-        {Object.values(apiDocs).map((apiDoc) => (
-          <li>
+        {Object.values(apiDocs).map((apiDoc, i) => (
+          <li key={i}>
             <NavbarNavLink
               className="dropdown__link"
               to={apiDoc.to}
@@ -28,8 +28,8 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
     <div className="navbar-doc-items">
       <span className="navbar-doc-items__title">Developer Guides</span>
       <div className="navbar-doc-items__links">
-        {Object.values(docs).map((doc) => (
-          <li>
+        {Object.values(docs).map((doc, i) => (
+          <li key={i}>
             <NavbarNavLink
               className="dropdown__link"
               to={doc.to}
