@@ -243,7 +243,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "swfw",
+                      to: "terraform/docs/cloudngfw/",
                       icon: "doc",
                     },
                   ],
