@@ -14,7 +14,7 @@ These release notes highlight API changes made for the various CDSS (Cloud-Deliv
 
 In addition, you can refer to the TechDocs [product documentation](https://docs.paloaltonetworks.com/cdss) for release information about non-API feature enhancements:
 
-See also the [change log](/cdss/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
+See also the [change log](../../cdss/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
 ## August 2022
