@@ -14,13 +14,14 @@ CSPM API requests require right privileges
 
 ### CSPM User Roles
 
-To have the right privileges for a CSPM API request, you must have a [Prisma Cloud user role](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/prisma-cloud-administrator-roles.html) with sufficient permissions. See [Prisma Cloud Administrator Permissions](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/prisma-cloud-admin-permissions.html) for the permissions associated with each role.
+To have the right privileges for a CSPM API request, you must have a [Prisma Cloud user role](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/prisma-cloud-administrator-roles) with sufficient permissions. If you are upgraded to the Darwin release, see [Prisma Cloud user role](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/prisma-cloud-administrator-roles).
+For the permissions associated with each role, see [Prisma Cloud Administrator Permissions](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/prisma-cloud-admin-permissions). If you are upgraded to the Darwin release, see [Prisma Cloud Administrator Permissions](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/prisma-cloud-admin-permissions).
 
 ### CSPM API Authorization
 
 To have the right authorization for a CSPM API request, follow the high-level steps below:
 
-1. [Obtain an access key](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/manage-prisma-cloud-administrators/create-access-keys.html) from your Prisma Cloud system administrator.
+1. [Obtain an access key](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/create-access-keys) from your Prisma Cloud system administrator. If you are upgraded to the Darwin release, see [Obtain an access key](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys).
 2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
 
 Almost all CSPM API requests use this JWT for authorization.

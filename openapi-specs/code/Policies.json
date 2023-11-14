@@ -3,7 +3,12 @@
     "examples": {},
     "headers": {},
     "parameters": {},
-    "requestBodies": {},
+    "requestBodies": {
+      "Params": {
+        "content": { "application/json": { "schema": { "type": "object" } } },
+        "required": true
+      }
+    },
     "responses": {},
     "securitySchemes": {
       "CustomAuthorizer": {
@@ -12,7 +17,7 @@
         "type": "apiKey",
         "x-amazon-apigateway-authorizer": {
           "authorizerResultTtlInSeconds": 0,
-          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-authorizer-{UniqueTag}{Alias}/invocations",
+          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-v2-authorizer-{UniqueTag}{Alias}/invocations",
           "identitySource": "method.request.header.authorization",
           "type": "request"
         },
@@ -648,13 +653,21 @@
       "Amount": {
         "additionalProperties": false,
         "properties": {
+          "AWAITING_REMEDIATION": { "format": "double", "type": "number" },
           "CLOSED": { "format": "double", "type": "number" },
           "DELETED": { "format": "double", "type": "number" },
           "OPEN": { "format": "double", "type": "number" },
           "REMEDIATED": { "format": "double", "type": "number" },
           "SUPPRESSED": { "format": "double", "type": "number" }
         },
-        "required": ["CLOSED", "DELETED", "OPEN", "REMEDIATED", "SUPPRESSED"],
+        "required": [
+          "CLOSED",
+          "DELETED",
+          "OPEN",
+          "REMEDIATED",
+          "SUPPRESSED",
+          "AWAITING_REMEDIATION"
+        ],
         "type": "object"
       },
       "AndQuery": {
@@ -673,32 +686,53 @@
         "type": "object"
       },
       "AttributeOperator": {
-        "enum": [
-          "within",
-          "equals",
-          "not_equals",
-          "regex_match",
-          "not_regex_match",
-          "greater_than",
-          "greater_than_or_equal",
-          "less_than",
-          "less_than_or_equal",
-          "exists",
-          "not_exists",
-          "contains",
-          "not_contains",
-          "starting_with",
-          "not_starting_with",
-          "ending_with",
-          "not_ending_with",
-          "jsonpath_equals",
-          "jsonpath_not_equals",
-          "jsonpath_exists",
-          "jsonpath_not_exists",
-          "subset",
-          "not_subset"
-        ],
-        "type": "string"
+        "anyOf": [
+          { "$ref": "#/components/schemas/BaseAttributeOperator" },
+          {
+            "enum": [
+              "jsonpath_within",
+              "jsonpath_equals",
+              "jsonpath_not_equals",
+              "jsonpath_regex_match",
+              "jsonpath_not_regex_match",
+              "jsonpath_greater_than",
+              "jsonpath_greater_than_or_equal",
+              "jsonpath_less_than",
+              "jsonpath_less_than_or_equal",
+              "jsonpath_exists",
+              "jsonpath_not_exists",
+              "jsonpath_contains",
+              "jsonpath_not_contains",
+              "jsonpath_starting_with",
+              "jsonpath_not_starting_with",
+              "jsonpath_ending_with",
+              "jsonpath_not_ending_with",
+              "jsonpath_is_empty",
+              "jsonpath_is_not_empty",
+              "jsonpath_length_equals",
+              "jsonpath_length_not_equals",
+              "jsonpath_length_greater_than",
+              "jsonpath_length_greater_than_or_equal",
+              "jsonpath_length_less_than",
+              "jsonpath_length_less_than_or_equal",
+              "jsonpath_is_true",
+              "jsonpath_is_false",
+              "jsonpath_subset",
+              "jsonpath_not_subset",
+              "jsonpath_intersects",
+              "jsonpath_not_intersects",
+              "jsonpath_equals_ignore_case",
+              "jsonpath_not_equals_ignore_case",
+              "jsonpath_number_of_words_equals",
+              "jsonpath_number_of_words_not_equals",
+              "jsonpath_number_of_words_less_than",
+              "jsonpath_number_of_words_less_than_or_equal",
+              "jsonpath_number_of_words_greater_than",
+              "jsonpath_number_of_words_greater_than_or_equal"
+            ],
+            "type": "string"
+          }
+        ]
       },
       "AttributeQuery": {
         "additionalProperties": false,
@@ -1808,6 +1842,50 @@
         ],
         "type": "string"
       },
+      "BaseAttributeOperator": {
+        "enum": [
+          "within",
+          "equals",
+          "not_equals",
+          "regex_match",
+          "not_regex_match",
+          "greater_than",
+          "greater_than_or_equal",
+          "less_than",
+          "less_than_or_equal",
+          "exists",
+          "not_exists",
+          "contains",
+          "not_contains",
+          "starting_with",
+          "not_starting_with",
+          "ending_with",
+          "not_ending_with",
+          "is_empty",
+          "is_not_empty",
+          "length_equals",
+          "length_not_equals",
+          "length_greater_than",
+          "length_greater_than_or_equal",
+          "length_less_than",
+          "length_less_than_or_equal",
+          "is_true",
+          "is_false",
+          "subset",
+          "not_subset",
+          "intersects",
+          "not_intersects",
+          "equals_ignore_case",
+          "not_equals_ignore_case",
+          "number_of_words_equals",
+          "number_of_words_not_equals",
+          "number_of_words_less_than",
+          "number_of_words_less_than_or_equal",
+          "number_of_words_greater_than",
+          "number_of_words_greater_than_or_equal"
+        ],
+        "type": "string"
+      },
       "BenchmarksIds": {
         "additionalProperties": {
           "items": { "type": "string" },
@@ -1834,7 +1912,8 @@
           "vcs",
           "buildIntegrity",
           "licenses",
-          "alibabacloud"
+          "alibabacloud",
+          "drift"
         ],
         "type": "string"
       },
@@ -1856,7 +1935,9 @@
           "VCS",
           "BuildIntegrity",
           "Licenses",
-          "AlibabaCloud"
+          "AlibabaCloud",
+          "Drift",
+          "Policy3D"
         ],
         "type": "string"
       },
@@ -1876,13 +1957,14 @@
               { "$ref": "#/components/schemas/AttributeQuery" },
               { "$ref": "#/components/schemas/ConnectionQuery" },
               { "$ref": "#/components/schemas/FilterQuery" },
-              { "$ref": "#/components/schemas/ComplexQuery" }
+              { "$ref": "#/components/schemas/ComplexQuery" },
+              { "$ref": "#/components/schemas/SecretsQuery" }
             ]
           },
           "constructiveTitle": { "type": "string" },
           "descriptiveTitle": { "type": "string" },
           "frameworks": {
-            "items": { "$ref": "#/components/schemas/FrameworkType" },
+            "items": { "$ref": "#/components/schemas/FrameworkTypes" },
             "type": "array"
           },
           "guidelines": { "type": "string" },
@@ -2753,11 +2835,12 @@
               { "$ref": "#/components/schemas/AttributeQuery" },
               { "$ref": "#/components/schemas/ConnectionQuery" },
               { "$ref": "#/components/schemas/FilterQuery" },
-              { "$ref": "#/components/schemas/ComplexQuery" }
+              { "$ref": "#/components/schemas/ComplexQuery" },
+              { "$ref": "#/components/schemas/SecretsQuery" }
             ]
           },
           "frameworks": {
-            "items": { "$ref": "#/components/schemas/FrameworkType" },
+            "items": { "$ref": "#/components/schemas/FrameworkTypes" },
             "type": "array"
           },
           "guidelines": { "type": "string" },
@@ -2772,13 +2855,21 @@
           { "$ref": "#/components/schemas/AttributeQuery" },
           { "$ref": "#/components/schemas/ConnectionQuery" },
           { "$ref": "#/components/schemas/FilterQuery" },
-          { "$ref": "#/components/schemas/ComplexQuery" }
+          { "$ref": "#/components/schemas/ComplexQuery" },
+          { "$ref": "#/components/schemas/SecretsQuery" }
         ]
       },
       "ErrorMessage": {
         "additionalProperties": false,
         "properties": { "message": { "type": "string" } },
         "required": ["message"],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "code": { "description": "The error code", "type": "integer" },
+          "message": { "type": "string" }
+        },
         "type": "object"
       },
       "ErrorsReturn": {
@@ -2812,7 +2903,7 @@
         "required": ["cond_type", "attribute", "operator", "value"],
         "type": "object"
       },
-      "FrameworkType": {
+      "FrameworkTypes": {
         "enum": [
           "Terraform",
           "CloudFormation",
@@ -3222,17 +3313,18 @@
           "metadata": { "$ref": "#/components/schemas/MetadataPolicy" },
           "scope": { "$ref": "#/components/schemas/ScopePolicy" }
         },
-        "required": ["metadata", "scope", "definition"],
+        "required": ["metadata", "definition"],
         "type": "object"
       },
       "PolicyPreviewBody": {
         "additionalProperties": false,
         "properties": {
+          "checkovCheckId": { "type": "string" },
           "policy": { "$ref": "#/components/schemas/PolicyPreviewDetails" },
+          "policyId": { "type": "string" },
           "resultsNumber": { "format": "double", "type": "number" },
           "token": { "type": "string" }
         },
-        "required": ["policy"],
         "type": "object"
       },
       "PolicyPreviewDetails": {
@@ -3298,12 +3390,15 @@
           "OpenStack",
           "Packages",
           "Git",
-          "Prisma Cloud Code Security",
+          "Prisma Cloud Application Security",
           "Linode",
           "DigitalOcean",
           "PANOS",
           "Licenses",
-          "AlibabaCloud"
+          "AlibabaCloud",
+          "CircleCI",
+          "Github",
+          "Gitlab"
         ],
         "type": "string"
       },
@@ -3321,7 +3416,11 @@
           "digitalocean",
           "panos",
           "licenses",
-          "alibabacloud"
+          "alibabacloud",
+          "circleci",
+          "github",
+          "gitlab",
+          "docker"
         ],
         "type": "string"
       },
@@ -3335,7 +3434,8 @@
               { "$ref": "#/components/schemas/FilterQuery" },
               { "$ref": "#/components/schemas/ComplexQuery" },
               { "$ref": "#/components/schemas/AndQuery" },
-              { "$ref": "#/components/schemas/OrQuery" }
+              { "$ref": "#/components/schemas/OrQuery" },
+              { "$ref": "#/components/schemas/SecretsQuery" }
             ]
           },
           "resource_types": {
@@ -3344,23 +3444,29 @@
               { "items": { "type": "string" }, "type": "array" }
             ]
           },
-          "scope": { "$ref": "#/components/schemas/Scope" }
+          "scope": {
+            "properties": {
+              "provider": { "$ref": "#/components/schemas/ProviderType" }
+            },
+            "required": ["provider"],
+            "type": "object"
+          }
         },
         "required": ["query"],
         "type": "object"
       },
-      "ResourceTypes": {
-        "anyOf": [
-          { "items": { "type": "string" }, "type": "array" },
-          { "enum": ["all"], "type": "string" }
-        ]
-      },
-      "Scope": {
+      "ResourceType": {
         "additionalProperties": false,
         "properties": {
-          "provider": { "$ref": "#/components/schemas/ProviderType" }
+          "arguments": { "items": { "type": "string" }, "type": "array" },
+          "provider": { "type": "string" }
         },
-        "required": ["provider"],
+        "required": ["provider", "arguments"],
+        "type": "object"
+      },
+      "ResourceTypes": {
+        "additionalProperties": { "$ref": "#/components/schemas/ResourceType" },
+        "properties": {},
         "type": "object"
       },
       "ScopePolicy": {
@@ -3369,6 +3475,24 @@
           "provider": { "$ref": "#/components/schemas/ProviderType" }
         },
         "required": ["provider"],
+        "type": "object"
+      },
+      "SecretsQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "cond_type": {
+            "enum": ["secrets"],
+            "nullable": false,
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              { "type": "string" },
+              { "items": { "type": "string" }, "type": "array" }
+            ]
+          }
+        },
+        "required": ["cond_type"],
         "type": "object"
       },
       "SeverityType": {
@@ -3446,7 +3570,7 @@
   "paths": {
     "/code/api/v1/policies/definition/{queryId}": {
       "post": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API is used to validate a user defined Prisma Cloud Code Security YAML-based custom policy schema. It returns an array of errors for not supported keys, values, and more. This call is used to verify that a custom policy which is about to be saved is properly configured.\n\nPolicy definitions include the following types:\noption 1 - \"attribute\" block (defined by cond_type=attribute) - checks the specific attributes of a given resource type\noption 2 - \"connection\" block (defined by cond_type=connection) - checks the existence of connection between given two resource group types\noption 3 - \"filter\" block (defined by cond_type=filter) - return given resource group types\noption 4 - \"and\"/\"or\"  - structure that supports nested \"and\"/\"or\" logic and blocks for options 1, 2 and 3\n\nUse the example below as a reference for configuring the API request body.",
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API is used to validate a user defined Prisma Cloud Application Security YAML-based custom policy schema. It returns an array of errors for not supported keys, values, and more. This call is used to verify that a custom policy which is about to be saved is properly configured.\n\n Policy definitions include the following types:\noption 1 - \"attribute\" block (defined by cond_type=attribute) - checks the specific attributes of a given resource type\noption 2 - \"connection\" block (defined by cond_type=connection) - checks the existence of connection between given two resource group types\noption 3 - \"filter\" block (defined by cond_type=filter) - return given resource group types\noption 4 - \"and\"/\"or\"  - structure that supports nested \"and\"/\"or\" logic and blocks for options 1, 2 and 3\nUse the given examples as a reference for configuring the API request body.",
         "operationId": "validateCustomPolicy",
         "parameters": [
           {
@@ -3510,63 +3634,23 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/definition/{queryId}\"\n\npayload = {\n    \"definition\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": [\"string\"],\n        \"value\": \"string\"\n    },\n    \"metadata\": {\n        \"category\": \"elasticsearch\",\n        \"guidelines\": \"string\",\n        \"name\": \"string\",\n        \"severity\": \"critical\"\n    },\n    \"scope\": {\"provider\": \"aws\"}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/definition/{queryId}\"\n\npayload = {\n    \"definition\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": {\n            \"property1\": {\n                \"arguments\": [\"string\"],\n                \"provider\": \"string\"\n            },\n            \"property2\": {\n                \"arguments\": [\"string\"],\n                \"provider\": \"string\"\n            }\n        },\n        \"value\": \"string\"\n    },\n    \"metadata\": {\n        \"category\": \"elasticsearch\",\n        \"guidelines\": \"string\",\n        \"name\": \"string\",\n        \"severity\": \"critical\"\n    },\n    \"scope\": {\"provider\": \"aws\"}\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/definition/{queryId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/definition/{queryId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":{\"property1\":{\"arguments\":[\"string\"],\"provider\":\"string\"},\"property2\":{\"arguments\":[\"string\"],\"provider\":\"string\"}},\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}}'"
           }
         ]
       }
     },
     "/code/api/v1/policies": {
       "post": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API creates a new Prisma Cloud Code Security custom policy.\nThe input will be a code-based policy definition file. The output will be a new policy id. In case of invalid code - output will include definition errors.\nUse the example below as a reference for configuring the API request body for saving new policies.",
+        "deprecated": true,
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API creates a new Prisma Cloud Application Security custom policy.\n\n The input will be a code-based policy definition file. The output will be a new policy id. In case of invalid code - output will include definition errors.\nUse the given examples as a reference for configuring the API request body for saving new policies.\n:::info\nUse the CSPM endpoint [Add Policy](/prisma-cloud/api/cspm/add-policy/) in place of this endpoint.\n:::",
         "operationId": "savePolicy",
         "parameters": [],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "examples": {
-                "Example 1": {
-                  "value": {
-                    "benchmarks": { "benchmark_id": ["1"] },
-                    "category": "general",
-                    "conditions": {
-                      "attribute": "attribute",
-                      "cond_type": "attribute",
-                      "operator": "exists",
-                      "resource_types": ["aws_s3_bucket"]
-                    },
-                    "guidelines": "New policy guideline",
-                    "provider": "aws",
-                    "severity": "critical",
-                    "title": "New policy title"
-                  }
-                },
-                "Example 2": {
-                  "value": {
-                    "code": {
-                      "definition": {
-                        "attribute": "tags.env",
-                        "cond_type": "attribute",
-                        "operator": "exists",
-                        "resource_types": "all"
-                      },
-                      "metadata": {
-                        "category": "general",
-                        "guidelines": "New policy guideline",
-                        "name": "New policy title (name)",
-                        "severity": "critical"
-                      },
-                      "scope": { "provider": "aws" }
-                    }
-                  }
-                }
-              },
-              "schema": { "$ref": "#/components/schemas/CustomPolicy" }
-            }
-          },
+          "content": { "application/json": { "schema": { "type": "object" } } },
           "required": true
         },
         "responses": {
@@ -3581,7 +3665,28 @@
                 }
               }
             },
-            "description": "Save a new policy data"
+            "description": "Save a new policy data",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
+          },
+          "202": {
+            "description": "Operation Accepted",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
           },
           "400": { "description": "Policy Validation Error" },
           "403": { "description": "Payment required" },
@@ -3591,21 +3696,34 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Save new policy",
         "tags": ["Policies"],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "passthroughBehavior": "when_no_match",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'",
+            "method.response.header.Access-Control-Expose-Headers": "'etag'"
+          },
+          "type": "aws_proxy",
+          "uri": "policies_api_arn"
+        },
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies\"\n\npayload = {\n    \"benchmarks\": {\n        \"property1\": [\"string\"],\n        \"property2\": [\"string\"]\n    },\n    \"category\": \"elasticsearch\",\n    \"code\": {\n        \"definition\": {\n            \"attribute\": \"string\",\n            \"cond_type\": \"attribute\",\n            \"operator\": \"within\",\n            \"resource_types\": [\"string\"],\n            \"value\": \"string\"\n        },\n        \"metadata\": {\n            \"category\": \"elasticsearch\",\n            \"guidelines\": \"string\",\n            \"name\": \"string\",\n            \"severity\": \"critical\"\n        },\n        \"scope\": {\"provider\": \"aws\"}\n    },\n    \"conditions\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": [\"string\"],\n        \"value\": \"string\"\n    },\n    \"frameworks\": [\"Terraform\"],\n    \"guidelines\": \"string\",\n    \"provider\": \"aws\",\n    \"severity\": \"critical\",\n    \"title\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies\"\n\npayload = {}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"benchmarks\":{\"property1\":[\"string\"],\"property2\":[\"string\"]},\"category\":\"elasticsearch\",\"code\":{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}},\"conditions\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"frameworks\":[\"Terraform\"],\"guidelines\":\"string\",\"provider\":\"aws\",\"severity\":\"critical\",\"title\":\"string\"}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{}'"
           }
         ]
       }
     },
     "/code/api/v1/policies/table/data": {
       "get": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API gets all Prisma Cloud Code Security custom policies with count of passed, failed, suppressed resources, scan status (compliant/non-compliant), and attached benchmarks of specific policies.\nUse the example below as a reference for the expected output of this API request.",
+        "deprecated": true,
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API gets all Prisma Cloud Application Security custom policies with count of passed, failed, suppressed resources, scan status (compliant/non-compliant), and attached benchmarks of specific policies.\n\n Use the given examples as a reference for the expected output of this API request.\n:::info \n Use the CSPM endpoint [List Policies V2](/prisma-cloud/api/cspm/get-policies-v-2/) in place of this endpoint.\n :::",
         "operationId": "getCustomPoliciesTable",
         "parameters": [],
         "responses": {
@@ -3648,6 +3766,7 @@
                           "accountsData": {
                             "owner/repo": {
                               "amounts": {
+                                "AWAITING_REMEDIATION": 0,
                                 "CLOSED": 0,
                                 "DELETED": 0,
                                 "OPEN": 1,
@@ -3658,6 +3777,7 @@
                             },
                             "owner2/repo2": {
                               "amounts": {
+                                "AWAITING_REMEDIATION": 0,
                                 "CLOSED": 0,
                                 "DELETED": 0,
                                 "OPEN": 1,
@@ -3732,7 +3852,7 @@
                           "Secrets"
                         ],
                         "createdBy": [
-                          "Prisma Cloud Code Security",
+                          "Prisma Cloud Application Security",
                           "user@email.com"
                         ],
                         "provider": [
@@ -3786,7 +3906,8 @@
     },
     "/code/api/v1/policies/{policyId}": {
       "put": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API request updates an existing Prisma Cloud Code Security custom policy. The API contains the fields to be edited. Any field not included in the request will remain unchanged.\nYou can use this API request to add fields that were previously not configured. The output will be the id of updated policy.\nUse the example below as a reference for configuring the API request body.",
+        "deprecated": true,
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API request updates an existing Prisma Cloud Application Security custom policy. The API contains the fields to be edited. Any field not included in the request will remain unchanged.\n\n You can use this API request to add fields that were previously not configured. The output will be the id of updated policy.\nUse the given examples as a reference for configuring the API request body.\n\n :::info\nUse the CSPM endpoint [Update Policy](/prisma-cloud/api/cspm/update-policy/) in place of this endpoint.\n:::",
         "operationId": "updatePolicy",
         "parameters": [
           {
@@ -3798,48 +3919,7 @@
           }
         ],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "examples": {
-                "Example 1": {
-                  "value": {
-                    "benchmarks": { "benchmark_id": ["1"] },
-                    "category": "general",
-                    "conditions": {
-                      "attribute": "value",
-                      "cond_type": "attribute",
-                      "operator": "exists",
-                      "resource_types": ["aws_s3_bucket"]
-                    },
-                    "guidelines": "Tags Governance - in case of the matched condition below -> add a tag of env with one of the values: prod/dev1/dev2/test/stage",
-                    "provider": "aws",
-                    "severity": "critical",
-                    "title": "Check that all resources are tagged with the key - env"
-                  }
-                },
-                "Example 2": {
-                  "value": {
-                    "code": {
-                      "definition": {
-                        "attribute": "tags.env",
-                        "cond_type": "attribute",
-                        "operator": "exists",
-                        "resource_types": "all"
-                      },
-                      "metadata": {
-                        "category": "general",
-                        "guidelines": "Tags Governance - in case of the matched condition below -> add a tag of env with one of the values: prod/dev1/dev2/test/stage",
-                        "name": "Check that all resources are tagged with the key - env",
-                        "severity": "critical"
-                      },
-                      "scope": { "provider": "aws" }
-                    }
-                  }
-                }
-              },
-              "schema": { "$ref": "#/components/schemas/CustomPolicy" }
-            }
-          },
+          "content": { "application/json": { "schema": { "type": "object" } } },
           "required": true
         },
         "responses": {
@@ -3854,7 +3934,28 @@
                 }
               }
             },
-            "description": "Update a policy data"
+            "description": "Update a policy data",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
+          },
+          "202": {
+            "description": "Operation Accepted",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
           },
           "400": { "description": "Policy Validation Error" },
           "422": { "description": "Request arguments validation error" },
@@ -3863,19 +3964,32 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Update policy",
         "tags": ["Policies"],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "passthroughBehavior": "when_no_match",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'",
+            "method.response.header.Access-Control-Expose-Headers": "'etag'"
+          },
+          "type": "aws_proxy",
+          "uri": "policies_api_arn"
+        },
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/{policyId}\"\n\npayload = {\n    \"benchmarks\": {\n        \"property1\": [\"string\"],\n        \"property2\": [\"string\"]\n    },\n    \"category\": \"elasticsearch\",\n    \"code\": {\n        \"definition\": {\n            \"attribute\": \"string\",\n            \"cond_type\": \"attribute\",\n            \"operator\": \"within\",\n            \"resource_types\": [\"string\"],\n            \"value\": \"string\"\n        },\n        \"metadata\": {\n            \"category\": \"elasticsearch\",\n            \"guidelines\": \"string\",\n            \"name\": \"string\",\n            \"severity\": \"critical\"\n        },\n        \"scope\": {\"provider\": \"aws\"}\n    },\n    \"conditions\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": [\"string\"],\n        \"value\": \"string\"\n    },\n    \"frameworks\": [\"Terraform\"],\n    \"guidelines\": \"string\",\n    \"provider\": \"aws\",\n    \"severity\": \"critical\",\n    \"title\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/{policyId}\"\n\npayload = {}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request PUT \\\n  --url https://api.prismacloud.io/code/api/v1/policies/{policyId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"benchmarks\":{\"property1\":[\"string\"],\"property2\":[\"string\"]},\"category\":\"elasticsearch\",\"code\":{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}},\"conditions\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"frameworks\":[\"Terraform\"],\"guidelines\":\"string\",\"provider\":\"aws\",\"severity\":\"critical\",\"title\":\"string\"}'"
+            "source": "curl --request PUT \\\n  --url https://api.prismacloud.io/code/api/v1/policies/{policyId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{}'"
           }
         ]
       },
       "delete": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API deletes an existing Prisma Cloud Code Security custom policy. The output will be the id of deleted policy.",
+        "deprecated": true,
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API deletes an existing Prisma Cloud Application Security custom policy. The output will be the id of deleted policy.\n\n :::info\nUse the CSPM endpoint [Delete Policy](/prisma-cloud/api/cspm/delete-policy/) in place of this endpoint.\n:::",
         "operationId": "removePolicy",
         "parameters": [
           {
@@ -3903,6 +4017,18 @@
             },
             "description": "Remove a policy data by policy id"
           },
+          "201": {
+            "description": "Policy removed",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
+          },
           "404": { "description": "Policy id is not exist" },
           "422": { "description": "Request arguments validation error" },
           "500": { "description": "Could not remove policy" }
@@ -3910,6 +4036,17 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Delete policy",
         "tags": ["Policies"],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "passthroughBehavior": "when_no_match",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "type": "aws_proxy",
+          "uri": "policies_api_arn"
+        },
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
@@ -3924,7 +4061,7 @@
     },
     "/code/api/v1/policies/preview": {
       "post": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API gets up to 30 results (by default) of non-compliant resources for a specific policy. The input is the policy to test and the output is an array of resources results.\nUse the first example to configure the API to test a policy, and use the second example as a reference of the expected output.",
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API gets up to 30 results (by default) of non-compliant resources for a specific policy. The input is the policy to test and the output is an array of resources results.\n\n Use the first example to configure the API to test a policy, and use the second example as a reference of the expected output.",
         "operationId": "policyPreview",
         "parameters": [],
         "requestBody": {
@@ -3946,9 +4083,13 @@
                 "resultsNumber": 20,
                 "token": "12345"
               },
-              "schema": { "$ref": "#/components/schemas/PolicyPreviewBody" }
+              "schema": {
+                "$ref": "#/components/schemas/PolicyPreviewBody",
+                "type": "string"
+              }
             }
           },
+          "description": "policy query",
           "required": true
         },
         "responses": {
@@ -3996,30 +4137,59 @@
                 }
               }
             },
-            "description": "Got policy preview"
+            "description": "Got policy preview",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": { "type": "string" }
+              },
+              "Access-Control-Allow-Origin": { "schema": { "type": "string" } }
+            }
           },
           "403": { "description": "Payment required" },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            },
+            "description": "policies are not found"
+          },
           "422": { "description": "Request arguments validation error" },
           "500": { "description": "Could not get policy preview data" }
         },
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Policy Preview",
         "tags": ["Policies"],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "passthroughBehavior": "when_no_match",
+          "responseParameters": {
+            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+            "method.response.header.Access-Control-Allow-Methods": "'*'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'"
+          },
+          "type": "aws_proxy",
+          "uri": "policies_api_arn"
+        },
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/preview\"\n\npayload = {\n    \"policy\": {\"policy_preview\": {\n            \"query\": {\n                \"attribute\": \"string\",\n                \"cond_type\": \"attribute\",\n                \"operator\": \"within\",\n                \"resource_types\": [\"string\"],\n                \"value\": \"string\"\n            },\n            \"resource_types\": \"string\",\n            \"scope\": {\"provider\": \"aws\"}\n        }},\n    \"resultsNumber\": 0,\n    \"token\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/preview\"\n\npayload = {\n    \"checkovCheckId\": \"string\",\n    \"policy\": {\"policy_preview\": {\n            \"query\": {\n                \"attribute\": \"string\",\n                \"cond_type\": \"attribute\",\n                \"operator\": \"within\",\n                \"resource_types\": {\n                    \"property1\": {\n                        \"arguments\": [\"string\"],\n                        \"provider\": \"string\"\n                    },\n                    \"property2\": {\n                        \"arguments\": [\"string\"],\n                        \"provider\": \"string\"\n                    }\n                },\n                \"value\": \"string\"\n            },\n            \"resource_types\": \"string\",\n            \"scope\": {\"provider\": \"aws\"}\n        }},\n    \"policyId\": \"string\",\n    \"resultsNumber\": 0,\n    \"token\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/preview \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"policy\":{\"policy_preview\":{\"query\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"resource_types\":\"string\",\"scope\":{\"provider\":\"aws\"}}},\"resultsNumber\":0,\"token\":\"string\"}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/preview \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"checkovCheckId\":\"string\",\"policy\":{\"policy_preview\":{\"query\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":{\"property1\":{\"arguments\":[\"string\"],\"provider\":\"string\"},\"property2\":{\"arguments\":[\"string\"],\"provider\":\"string\"}},\"value\":\"string\"},\"resource_types\":\"string\",\"scope\":{\"provider\":\"aws\"}}},\"policyId\":\"string\",\"resultsNumber\":0,\"token\":\"string\"}'"
           }
         ]
       }
     },
     "/code/api/v1/policies/clone/{policyId}": {
       "post": {
-        "description": "Prisma Cloud Code Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\nTo use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Code Security custom policy schema)\n\nThis API clones an existing Policy.\nGiven a valid Policy Id, this API will create a new Policy based on the different fields from the original Policy, and will override any field given to it as input.",
+        "deprecated": true,
+        "description": "Prisma Cloud Application Security supports policy-as-code capabilities using YAML-based policy definition files to enable attribute and connection checks (composite checks).\n\n For information on defining YAML-based policies, see the Prisma Cloud documentation about the [Code Editor](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/classic/appsec-admin-guide/get-started/code-repositories-policy-management/custom-build-policy-examples). If you are upgraded to Darwin, see  [Code Editor](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/code-editor) and [Custom Build Policy Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/governance/custom-build-policies/custom-build-policy-examples).\n\n To use the API request, add your token to the header. API supports both YAML and JSON configuration of Prisma Cloud Application Security custom policy schema.\n\n This API clones an existing Policy.\n\n Given a valid Policy Id, this API will create a new Policy based on the different fields from the original Policy, and will override any field given to it as input.\n\n :::info\nUse the CSPM endpoint [Update Policy](/prisma-cloud/api/cspm/update-policy/) in place of this endpoint.\n:::\n        ",
         "operationId": "clonePolicy",
         "parameters": [
           {
@@ -4070,7 +4240,7 @@
             },
             "description": "Clone a policy"
           },
-          "400": { "description": "Missing customer name" },
+          "400": { "description": "Exceed custom secrets policies limit" },
           "422": { "description": "Request arguments validation error" },
           "500": { "description": "Could not clone policy" }
         },
@@ -4080,11 +4250,11 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/clone/{policyId}\"\n\npayload = {\n    \"benchmarks\": {\n        \"property1\": [\"string\"],\n        \"property2\": [\"string\"]\n    },\n    \"category\": \"elasticsearch\",\n    \"code\": {\n        \"definition\": {\n            \"attribute\": \"string\",\n            \"cond_type\": \"attribute\",\n            \"operator\": \"within\",\n            \"resource_types\": [\"string\"],\n            \"value\": \"string\"\n        },\n        \"metadata\": {\n            \"category\": \"elasticsearch\",\n            \"guidelines\": \"string\",\n            \"name\": \"string\",\n            \"severity\": \"critical\"\n        },\n        \"scope\": {\"provider\": \"aws\"}\n    },\n    \"conditions\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": [\"string\"],\n        \"value\": \"string\"\n    },\n    \"constructiveTitle\": \"string\",\n    \"descriptiveTitle\": \"string\",\n    \"frameworks\": [\"Terraform\"],\n    \"guidelines\": \"string\",\n    \"provider\": \"aws\",\n    \"severity\": \"critical\",\n    \"title\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/policies/clone/{policyId}\"\n\npayload = {\n    \"benchmarks\": {\n        \"property1\": [\"string\"],\n        \"property2\": [\"string\"]\n    },\n    \"category\": \"elasticsearch\",\n    \"code\": {\n        \"definition\": {\n            \"attribute\": \"string\",\n            \"cond_type\": \"attribute\",\n            \"operator\": \"within\",\n            \"resource_types\": {\n                \"property1\": {\n                    \"arguments\": [\"string\"],\n                    \"provider\": \"string\"\n                },\n                \"property2\": {\n                    \"arguments\": [\"string\"],\n                    \"provider\": \"string\"\n                }\n            },\n            \"value\": \"string\"\n        },\n        \"metadata\": {\n            \"category\": \"elasticsearch\",\n            \"guidelines\": \"string\",\n            \"name\": \"string\",\n            \"severity\": \"critical\"\n        },\n        \"scope\": {\"provider\": \"aws\"}\n    },\n    \"conditions\": {\n        \"attribute\": \"string\",\n        \"cond_type\": \"attribute\",\n        \"operator\": \"within\",\n        \"resource_types\": {\n            \"property1\": {\n                \"arguments\": [\"string\"],\n                \"provider\": \"string\"\n            },\n            \"property2\": {\n                \"arguments\": [\"string\"],\n                \"provider\": \"string\"\n            }\n        },\n        \"value\": \"string\"\n    },\n    \"constructiveTitle\": \"string\",\n    \"descriptiveTitle\": \"string\",\n    \"frameworks\": [\"Terraform\"],\n    \"guidelines\": \"string\",\n    \"provider\": \"aws\",\n    \"severity\": \"critical\",\n    \"title\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/clone/{policyId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"benchmarks\":{\"property1\":[\"string\"],\"property2\":[\"string\"]},\"category\":\"elasticsearch\",\"code\":{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}},\"conditions\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":[\"string\"],\"value\":\"string\"},\"constructiveTitle\":\"string\",\"descriptiveTitle\":\"string\",\"frameworks\":[\"Terraform\"],\"guidelines\":\"string\",\"provider\":\"aws\",\"severity\":\"critical\",\"title\":\"string\"}'"
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/policies/clone/{policyId} \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"benchmarks\":{\"property1\":[\"string\"],\"property2\":[\"string\"]},\"category\":\"elasticsearch\",\"code\":{\"definition\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":{\"property1\":{\"arguments\":[\"string\"],\"provider\":\"string\"},\"property2\":{\"arguments\":[\"string\"],\"provider\":\"string\"}},\"value\":\"string\"},\"metadata\":{\"category\":\"elasticsearch\",\"guidelines\":\"string\",\"name\":\"string\",\"severity\":\"critical\"},\"scope\":{\"provider\":\"aws\"}},\"conditions\":{\"attribute\":\"string\",\"cond_type\":\"attribute\",\"operator\":\"within\",\"resource_types\":{\"property1\":{\"arguments\":[\"string\"],\"provider\":\"string\"},\"property2\":{\"arguments\":[\"string\"],\"provider\":\"string\"}},\"value\":\"string\"},\"constructiveTitle\":\"string\",\"descriptiveTitle\":\"string\",\"frameworks\":[\"Terraform\"],\"guidelines\":\"string\",\"provider\":\"aws\",\"severity\":\"critical\",\"title\":\"string\"}'"
           }
         ]
       }

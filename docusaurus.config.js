@@ -203,20 +203,25 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Ansible",
-                      to: "ansible/docs/panos",
+                      label: "Terraform for VM-Series",
+                      to: "swfw",
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
+                      label: "Terraform for PAN-OS",
                       to: "terraform/docs/panos",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible/docs/panos",
                       icon: "doc",
                     },
                   ],
                   apiDocs: [
                     {
                       label: "Ansible Module Reference",
-                      to: "https://paloaltonetworks.github.io/pan-os-ansible/modules.html",
+                      to: "https://galaxy.ansible.com/ui/repo/published/paloaltonetworks/panos/docs",
                       icon: "api-doc",
                     },
                     {
@@ -238,7 +243,7 @@ const config = {
                     },
                     {
                       label: "Terraform",
-                      to: "terraform/docs/cloudngfw",
+                      to: "terraform/docs/cloudngfw/",
                       icon: "doc",
                     },
                   ],
@@ -291,6 +296,11 @@ const config = {
                     },
                   ],
                   apiDocs: [
+                    {
+                      to: "/aiops-ngfw-bpa/api",
+                      label: "AIOps for NGFW Best Practice Assessment API",
+                      icon: "api-doc",
+                    },
                     {
                       to: "/threat-vault/api",
                       label: "Threat Vault APIs",
@@ -393,6 +403,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/ztna/ztna-connector-apis",
+                      label: "ZTNA Connector",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sdwan/api",
                       label: "Prisma SD-WAN",
                       icon: "api-doc",
@@ -400,6 +415,11 @@ const config = {
                     {
                       to: "sase/api/mt-monitor",
                       label: "Aggregate Monitoring",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/adem/autonomous-dem-api",
+                      label: "Autonomous DEM",
                       icon: "api-doc",
                     },
                     {
@@ -493,6 +513,46 @@ const config = {
                 },
               ],
             },
+            {
+              label: "Partner Integrations",
+              to: "#",
+              colorclass: "partner-integrations",
+              description: "Discover technology partner integrations.",
+              products: [
+                {
+                  label: "Automation",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Terraform for Software NGFW",
+                      to: "swfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform and Palo Alto Networks",
+                      to: "terraform",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Ansible",
+                      to: "ansible",
+                      icon: "doc",
+                    },
+                  ],
+                },
+                {
+                  label: "SIEM",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Splunk App/Add-on",
+                      to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
@@ -528,10 +588,6 @@ const config = {
         docs: false,
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
-        },
-        gtag: {
-          trackingID: "GTM-PLXD79N",
-          anonymizeIP: true,
         },
       },
     ],
@@ -573,6 +629,11 @@ const config = {
             outputDir: "products/sase/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          adem: {
+            specPath: "openapi-specs/access/adem",
+            outputDir: "products/access/api/adem",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
           insights: {
             specPath: "openapi-specs/access/insights/2.0",
             outputDir: "products/access/api/insights",
@@ -597,6 +658,11 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          ztna: {
+            specPath: "openapi-specs/access/ztna",
+            outputDir: "products/access/api/ztna",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sub: {
@@ -624,6 +690,11 @@ const config = {
                 baseUrl: "/sdwan/api/legacy/",
               },
             },
+          },
+          "aiops-ngfw-bpa": {
+            specPath: "openapi-specs/aiops-ngfw-bpa/BPAReportAPI.yaml",
+            outputDir: "products/aiops-ngfw-bpa/api",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
@@ -654,7 +725,9 @@ const config = {
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
+            showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -672,23 +745,52 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "30.00",
-            label: "v30.00",
+            version: "31.02",
+            label: "v31.02",
+            showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
+              30.03: {
+                specPath: "openapi-specs/compute/30-03",
+                outputDir: "products/compute/api/30-03",
+                label: "v30.03",
+                baseUrl: "/compute/api/30-03/",
+              },
               22.12: {
                 specPath: "openapi-specs/compute/22-12",
                 outputDir: "products/compute/api/22-12",
                 label: "v22.12",
                 baseUrl: "/compute/api/22-12/",
               },
-              22.06: {
-                specPath: "openapi-specs/compute/22-06",
-                outputDir: "products/compute/api/22-06",
-                label: "v22.06",
-                baseUrl: "/compute/api/22-06/",
-              },
             },
+          },
+          compute_31: {
+            specPath: "openapi-specs/compute/31-00",
+            outputDir: "products/compute/api/31-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/31-00/",
+          },
+          compute_30: {
+            specPath: "openapi-specs/compute/30-00",
+            outputDir: "products/compute/api/30-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-00/",
+          },
+          compute_3001: {
+            specPath: "openapi-specs/compute/30-01",
+            outputDir: "products/compute/api/30-01",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-01/",
+          },
+          compute_3002: {
+            specPath: "openapi-specs/compute/30-02",
+            outputDir: "products/compute/api/30-02",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/30-02/",
           },
         },
       },
@@ -703,6 +805,12 @@ const config = {
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      require.resolve("./docusaurus-plugin-gtm/index.js"),
+      {
+        gtm: "GTM-PLXD79N",
       },
     ],
   ],

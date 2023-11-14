@@ -1,0 +1,653 @@
+{
+  "components": {
+    "requestBodies": {
+      "AzureCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
+      "Resources": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Resources"
+            }
+          }
+        },
+        "description": "Cloud service provider resource IDs",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "AccountStatusMessage": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "staticMessage": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AzureAncestorsModel": {
+        "description": "Model for Azure GetAncestors API Response",
+        "properties": {
+          "ancestors": {
+            "description": "List of ancestors",
+            "items": {
+              "$ref": "#/components/schemas/AzureHierarchyNodeModel"
+            },
+            "type": "array"
+          },
+          "resourceId": {
+            "description": "Resource ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AzureCloudAccountRequestModel": {
+        "description": "Model containing the request for Azure Standalone and Tenant Cloud Account",
+        "properties": {
+          "accountGroupMode": {
+            "description": "*Applicable only for role: **System Admin** and account type: **tenant** when ```rootSyncEnabled``` is set to ```true```.*\n\n* **MANUAL** - Create account groups manually in Prisma Cloud.\n\n* **AUTOMAP** - Automatically creates the account groups in Prisma Cloud replicating the hierarchy in Azure Cloud.",
+            "enum": [
+              "MANUAL",
+              "AUTOMAP"
+            ],
+            "type": "string"
+          },
+          "clientId": {
+            "description": "Application (Client) ID",
+            "type": "string"
+          },
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "defaultAccountGroupId": {
+            "description": "*Required only for accountType: **tenant**.*\n\n This is the Default Account Group ID for the Azure Tenant and its Management Groups/Subscriptions.",
+            "type": "string"
+          },
+          "environmentType": {
+            "description": "* **azure** -  Commercial deployment type.\nApplicable for Prisma Commercial and Government stacks\n\n * **azure_gov** - Government deployment type.\nApplicable for Prisma Commercial and Government stacks..\n\n * **azure_china** - Applicable for Prisma China Stack.",
+            "enum": [
+              "azure",
+              "azure_gov",
+              "azure_china"
+            ],
+            "type": "string"
+          },
+          "features": {
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, call **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "hierarchySelection": {
+            "description": "*Required only for accountType: **tenant**.*\n\n Include or Exclude a list of Azure Management Groups and Azure Subscriptions to onboard under this Tenant.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            },
+            "type": "array"
+          },
+          "key": {
+            "description": "Application key/client secret",
+            "type": "string"
+          },
+          "monitorFlowLogs": {
+            "description": "If set to true, it ingests Network Security Group Flow Logs to Prisma Cloud",
+            "type": "boolean"
+          },
+          "rootSyncEnabled": {
+            "description": "*Applicable only for accountType: **tenant***\n\n In order to onboard the **tenant** and its associated **management groups** and **subscriptions**, ```rootSyncEnabled``` must be set to ```true```",
+            "type": "boolean"
+          },
+          "servicePrincipalId": {
+            "description": "Service Principal ID",
+            "type": "string"
+          },
+          "tenantId": {
+            "description": "Directory (Tenant) ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientId",
+          "cloudAccount",
+          "environmentType",
+          "key",
+          "tenantId"
+        ],
+        "type": "object"
+      },
+      "AzureHierarchyNodeModel": {
+        "description": "Model for AzureNode in the Tenant Hierarchy",
+        "properties": {
+          "displayName": {
+            "description": "Display name",
+            "type": "string"
+          },
+          "hasChild": {
+            "description": "true = Has child",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Node ID",
+            "type": "string"
+          },
+          "parent": {
+            "description": "Parent",
+            "type": "string"
+          },
+          "type": {
+            "description": "Node type",
+            "enum": [
+              "TENANT",
+              "MANAGEMENT_GROUP",
+              "ACCOUNT"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CloudAccount": {
+        "properties": {
+          "accountId": {
+            "description": "Organization resource ID if `accountType` is **organization**.\n\n Project ID if `accountType` is **account** or **masterServiceAccount**.",
+            "type": "string"
+          },
+          "accountType": {
+            "description": "Cloud Account Type.\n\n**account**: GCP Project \n\n**organization**: GCP Organization\n\n**masterServiceAccount**: Onboards all GCP projects that are accessible by the service account.",
+            "enum": [
+              "account",
+              "masterServiceAccount",
+              "organization"
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enable or disable this account on Prisma Cloud.\n\n Default value: **false**",
+            "type": "boolean"
+          },
+          "groupIds": {
+            "description": "List of Account Groups that must be mapped to this account. To get the account group ids,call **[List Account Groups](/prisma-cloud/api/cspm/get-account-groups/)** API",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "Account name for the GCP account that will be onboarded on Prisma Cloud. (must be unique)",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "ID of the project.\n\nGet the project ID from the credentials json file that is generated from the GCP Terraform template. ",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "accountType",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CloudAccountStatus": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusMessage": {
+            "$ref": "#/components/schemas/AccountStatusMessage"
+          }
+        },
+        "type": "object"
+      },
+      "Feature": {
+        "description": "Model for Feature",
+        "properties": {
+          "defaultMemberState": {
+            "description": "Enable or disable the feature for all the member accounts linked to this organization. You can enable or disable the defaultMemberState only if the feature state is enabled for the organization. Applicable only for ```Serverless Function Scanning``` and ```Agentless Workload Scanning``` features.",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "description": "Feature name obtained from **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "example": "Remediation",
+            "type": "string"
+          },
+          "state": {
+            "description": "Feature state. Whether to be enabled or disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HierarchySelection": {
+        "description": "Model for HierarchySelection",
+        "properties": {
+          "displayName": {
+            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "example": "Root",
+            "type": "string"
+          },
+          "nodeType": {
+            "description": "Member account node type. Supported values based on cloud type: \n\n**aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ],
+            "type": "string"
+          },
+          "resourceId": {
+            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) \n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "example": "root",
+            "type": "string"
+          },
+          "selectionType": {
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Resources": {
+        "description": "Resources Model for Identifying Ancestors",
+        "properties": {
+          "resourceIds": {
+            "description": "Array of resource IDs (Subscription and/or Management Group IDs)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "To monitor the resources on your Azure cloud infrastructure, you must first add your Azure accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between Azure and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (Azure) APIs enable you to add and manage Azure accounts on Prisma Cloud. For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n",
+    "title": "Azure Cloud Accounts API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/cas/v1/azure_account": {
+      "post": {
+        "description": "Onboard a new azure cloud account onto the Prisma Cloud platform. \n\n**Prerequisite**: Generate and download the Terraform template by calling Generate and Download the Azure Terraform Template. \n\n**Note**: For Azure China, Terraform template generation is not supported. You must create the app registration and the required roles manually.",
+        "operationId": "add-azure-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add Cloud Account (Azure)",
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ]
+      }
+    },
+    "/cas/v1/azure_account/{account_id}": {
+      "put": {
+        "description": "Update the cloud account that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-azure-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          },
+          "500": {
+            "description": "not_found / internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Cloud Account (Azure)",
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/azure": {
+      "post": {
+        "description": "Lists the status of a Azure Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-azure-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Cloud Account Status (Azure)",
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ]
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{parent_id}/children": {
+      "post": {
+        "description": "For Azure only. Lists all the children, both management groups and subscriptions, under the given parent. A parent can be either an Azure tenant or a management group.  \r\n\r\n### Request Body\nThe table below lists the required request body parameters.\n\nParameter  | Type | Description | Default Value or Required\n-----------| ---- | ----------- | -------------\ncloudAccount.accountId | string | Azure account ID | Required\ncloudAccount.accountType | string | Valid value: **tenant** | Required\nclientId | string | Application ID registered with Active Directory | Required\ntenantId | string | Active Directory ID associated with Azure | Required\nservicePrincipalId | string | Unique ID of the service principal object associated with the Prisma Cloud application | Required\nkey | string | Application ID key | Required\nmonitorFlowLogs | boolean | Automatically ingest flow logs. Must be **true**. | Required\nenvironmentType | string | Existing environment type. Valid values:<br/>**azure** (Commercial),<br/>**azure_gov** (Government),<br/>**azure_china** (China) | Required\nrootSyncEnabled | boolean | **true** = Azure tenant has children. Must be **true**. | Required\n\n#### Request Body Example\n```json\n{\n  \"clientId\":\"\",\n  \"cloudAccount\": {\n    \"accountId\":\"\",\n    \"accountType\":\"tenant\"\n  },\n  \"environmentType\":\"azure\",\n  \"key\":\"\",\n  \"monitorFlowLogs\":true,\n  \"rootSyncEnabled\":true,\n  \"servicePrincipalId\":\"\",\n  \"tenantId\":\"\"\n}\n```      \n",
+        "operationId": "list-children-under-parent",
+        "parameters": [
+          {
+            "description": "Parent Resource ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Azure cloud account parameters",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AzureHierarchyNodeModel"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Children of Parent (Azure)",
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ]
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{account_id}/ancestors": {
+      "post": {
+        "description": "For Azure only. Lists the ancestors of the given Azure management groups and subscriptions for the specified cloud account (Azure tenant) ID. Each resource ID in the request body is either a management group ID or a subscription ID. A successful response returns an array of ancestors for each given resource ID.",
+        "operationId": "get-ancestors-for-given-subscriptions-and-management-groups",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resources"
+              }
+            }
+          },
+          "description": "Cloud service provider resource IDs",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AzureAncestorsModel"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Ancestors (Azure)",
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Cloud Accounts (Azure)",
+      "description": "To monitor the resources on your Azure cloud infrastructure, you must first add your Azure accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between Azure and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (Azure) APIs enable you to add and manage Azure accounts on Prisma Cloud. For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    }
+  ]
+}
