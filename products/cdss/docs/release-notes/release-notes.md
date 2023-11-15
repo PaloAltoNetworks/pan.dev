@@ -25,4 +25,4 @@ The following known issues are present in the current API release:
 
 | Known Issue ID | Description                                                                                                                                      | Status     |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| `CSP-12173`    | Advanced Threat Prevention and Threat Prevention subscriptions included as part of a bundle package cannot currently access the ThreatVault API. | Unresolved |
+| `CSP-12173`    | Advanced Threat Prevention and Threat Prevention subscriptions included as part of a bundle package cannot currently access the ThreatVault API. |  Resolved  |
