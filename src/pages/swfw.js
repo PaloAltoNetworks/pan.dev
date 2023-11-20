@@ -14,6 +14,7 @@ import {
 import "./swfw.scss";
 import CloudCard from "../components/CloudCard";
 import LinkList from "../components/LinkList";
+import CertExpireBanner from "../components/CertExpireBanner";
 
 export default function SWFWLandingPage() {
   return (
@@ -22,6 +23,7 @@ export default function SWFWLandingPage() {
       title={SWFW_METADATA.title}
       wrapperClassName="swfw-landing-page"
     >
+      <CertExpireBanner />
       <div className="swfw-landing-page__container">
         <section className={`product-hero-container swfw swfw-hero-container`}>
           <div className={`product-hero__inner-content swfw`}>
