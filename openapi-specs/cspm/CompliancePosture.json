@@ -1,6 +1,15 @@
 {
   "components": {
     "requestBodies": {
+      "BaseFilterModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BaseFilterModel"
+            }
+          }
+        }
+      },
       "FilterModel3": {
         "content": {
           "application/json": {
@@ -58,6 +67,59 @@
             "type": "object"
           }
         ]
+      },
+      "BaseFilterModel": {
+        "description": "Model for Filter",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "detailed": {
+            "description": "Detailed",
+            "type": "boolean"
+          },
+          "fields": {
+            "description": "Array of specific fields to return",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "filters": {
+            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
+            "items": {
+              "$ref": "#/components/schemas/UIFilterModel"
+            },
+            "type": "array"
+          },
+          "groupBy": {
+            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 10,000. The default is 10,000.",
+            "type": "number"
+          },
+          "offset": {
+            "description": "The number of items to skip before selecting items to return. Default is zero",
+            "type": "number"
+          },
+          "pageToken": {
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
+            "type": "string"
+          },
+          "sortBy": {
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
       },
       "ComplianceDetail": {
         "description": "Model for Compliance Detail on Posture API",
@@ -243,64 +305,27 @@
         "type": "object"
       },
       "FilterModel": {
-        "description": "Model for Filter",
-        "properties": {
-          "detailed": {
-            "description": "Detailed",
-            "type": "boolean"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseFilterModel"
           },
-          "fields": {
-            "description": "Array of specific fields to return",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "filters": {
-            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
-            "items": {
-              "$ref": "#/components/schemas/UIFilterModel"
-            },
-            "type": "array"
-          },
-          "groupBy": {
-            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 10,000. The default is 10,000.",
-            "type": "number"
-          },
-          "offset": {
-            "description": "The number of items to skip before selecting items to return. Default is zero",
-            "type": "number"
-          },
-          "pageToken": {
-            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
-            "type": "string"
-          },
-          "sortBy": {
-            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "timeRange": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TimeRangeConfigModel"
-              },
-              {
-                "description": "Time range"
+          {
+            "description": "Model for Filter",
+            "properties": {
+              "timeRange": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TimeRangeConfigModel"
+                  },
+                  {
+                    "description": "Time range"
+                  }
+                ]
               }
-            ]
+            },
+            "type": "object"
           }
-        },
-        "type": "object"
+        ]
       },
       "FilterSuggestion": {
         "description": "Model for FilterSuggestion",
@@ -647,7 +672,7 @@
           "operator": {
             "description": "Operator",
             "enum": [
-              "="
+              "tag:yaml.org,2002:value ="
             ],
             "type": "string"
           },
@@ -967,7 +992,7 @@
       },
       "post": {
         "deprecated": true,
-        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections for the given compliance standard ID.",
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections for the given compliance standard ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options) \nfor an API request to list all the valid filters.\n",
         "operationId": "post-compliance-posture-for-standard",
         "parameters": [
           {
@@ -1709,7 +1734,7 @@
       },
       "post": {
         "deprecated": true,
-        "description": "Returns the compliance posture summary that describes the passed/failed statistics trend for the given compliance standard ID and compliance requirement ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options)\nfor the API request to list all valid filters.                                \n",
+        "description": "Returns the compliance posture summary that describes the passed/failed statistics trend for the given compliance standard ID and compliance requirement ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options)\nfor the API request to list all valid filters. \n",
         "operationId": "post-compliance-posture-trend-for-requirement",
         "parameters": [
           {
@@ -1839,6 +1864,872 @@
           }
         ],
         "summary": "List Compliance Overview Filter Autocomplete Suggestions",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture": {
+      "get": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections. Also returns a summary for all compliance standards.",
+        "operationId": "get-compliance-posture-v2",
+        "parameters": [
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance standard name",
+            "in": "query",
+            "name": "policy.complianceStandard",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics Breakdown V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections. Also returns a summary for all compliance standards.",
+        "operationId": "post-compliance-posture-v2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics Breakdown V2 - POST",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture/{complianceId}": {
+      "get": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections for the given compliance standard ID.",
+        "operationId": "get-compliance-posture-for-standard-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics for Standard ID V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance standards, requirements, and sections for the given compliance standard ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options) \nfor an API request to list all the valid filters.\n",
+        "operationId": "post-compliance-posture-for-standard-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics for Standard ID V2 - POST",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture/{complianceId}/{requirementId}": {
+      "get": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance sections for the specified compliance standard ID and compliance requirement ID.",
+        "operationId": "get-compliance-posture-for-requirement-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Compliance requirement ID",
+            "in": "path",
+            "name": "requirementId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics for Requirement ID V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns a breakdown of the passed/failed statistics and associated policies for compliance sections for the specified compliance standard ID and compliance requirement ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options) \nfor for an API request to list all the valid filters.\n",
+        "operationId": "post-compliance-posture-for-requirement-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Compliance requirement ID",
+            "in": "path",
+            "name": "requirementId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePosture"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Statistics for Requirement ID V2 - POST",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture/trend": {
+      "get": {
+        "description": "Returns a compliance posture summary that describes the passed/failed statistics trend.",
+        "operationId": "get-compliance-posture-trend-v2",
+        "parameters": [
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance standard name",
+            "in": "query",
+            "name": "policy.complianceStandard",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns a compliance posture summary that describes the passed/failed statistics trend.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options) \nfor the API request to list all valid filters.\n",
+        "operationId": "post-compliance-posture-trend-v2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend V2 - POST",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture/trend/{complianceId}": {
+      "get": {
+        "description": "Returns a compliance posture summary that describes the passed/failed statistics trend for the specified compliance standard ID.  \r\n\r\nThe **fields** request body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** request body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options) \nfor for an API request to list all the valid filters.\n",
+        "operationId": "get-compliance-posture-trend-for-standard-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend for Standard ID V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns a compliance posture summary that describes the passed/failed statistics trend for the specified compliance standard ID.",
+        "operationId": "post-compliance-posture-trend-for-standard-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend for Standard ID V2 - POST",
+        "tags": [
+          "Compliance Posture"
+        ]
+      }
+    },
+    "/v2/compliance/posture/trend/{complianceId}/{requirementId}": {
+      "get": {
+        "description": "Returns the compliance posture summary that describes the passed/failed statistics trend for the given compliance standard ID and compliance requirement ID.",
+        "operationId": "get-compliance-posture-trend-for-requirement-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Compliance requirement ID",
+            "in": "path",
+            "name": "requirementId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend for Requirement ID V2 - GET",
+        "tags": [
+          "Compliance Posture"
+        ]
+      },
+      "post": {
+        "description": "Returns the compliance posture summary that describes the passed/failed statistics trend for the given compliance standard ID and compliance requirement ID.  \r\n\r\nThe **fields** body parameter allows you to request specific fields. These fields are separate \nfrom the filters you specify. The following are valid **fields** items.\n\n* cloud.account\n* account.group\n* cloud.region\n* cloud.type\n* policy.complianceStandard\n* policy.complianceRequirement\n* policy.complianceSection\n\nThe **filters** body parameter enables you to narrow your request for alerts. \nSee [Get Compliance Overview Filters and Options](/prisma-cloud/api/cspm/get-compliance-posture-filters-and-options)\nfor the API request to list all valid filters.                               \n",
+        "operationId": "post-compliance-posture-trend-for-requirement-v2",
+        "parameters": [
+          {
+            "description": "Compliance standard ID",
+            "in": "path",
+            "name": "complianceId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Compliance requirement ID",
+            "in": "path",
+            "name": "requirementId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PostureSummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "500": {
+            "description": "internal_error"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Compliance Trend for Requirement ID V2 - POST",
         "tags": [
           "Compliance Posture"
         ]
