@@ -1,0 +1,302 @@
+components:
+  schemas:
+    GetIncidentsResponse:
+      properties:
+        limit:
+          description: Specifies batch limit for the result set, minimum is 1, maximum
+            is 1000 and default is 20
+          example: 10
+          format: int32
+          type: integer
+        nextLink:
+          description: This provides link to fetch next set of entries
+          example: /incident/api/v1/incidents?to=2022-12-03T12:15:30Z&from=2022-12-03T10:15:30Z&app_type=exchange-email&previous_incident_id=2&limit=10
+          type: string
+        resources:
+          items:
+            $ref: '#/components/schemas/IncidentResource'
+          type: array
+      type: object
+    IncidentResource:
+      properties:
+        action:
+          description: Action taken by Enterprise DLP based on the [Email DLP](https://docs.paloaltonetworks.com/content/techdocs/en_US/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp/add-an-enterprise-dlp-email-policy.html)
+            policy the outbound email matched against.
+          enum:
+          - monitor
+          - fwd_to_manager
+          - block
+          - fwd_to_admin
+          - encrypt
+          - quarantine
+          type: string
+        appType:
+          description: The email provider.
+          enum:
+          - exchange-email
+          - gmail-email
+          - default-app
+          type: string
+        assigneeId:
+          description: Incident assignee responsible to review and address the Email
+            DLP incident.
+          type: string
+        createdAt:
+          description: Date the Email DLP incident occurred.
+          format: date-time
+          type: string
+        dataProfileId:
+          description: 'You can use this field as a pointer to remove duplicate incident
+            entries with the same creation date across batched results. The response
+            automatially includes this field as part of nextLink, if the results span
+            over multiple batches.
+
+            '
+          type: string
+        incidentId:
+          description: An automatically generated ID for the incident.
+          type: string
+        messageId:
+          description: An automtically generated ID for the message.
+          type: string
+        policyId:
+          description: An automtically generated ID for the policy.
+          type: string
+        policyName:
+          description: The name of the [policy](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp/add-an-enterprise-dlp-email-policy)
+            that triggered the initial report.
+          type: string
+        receivers:
+          description: a list of the persons or entities that recieved the email.
+          items:
+            type: string
+          type: array
+        reportId:
+          description: The report ID.
+          type: string
+        sender:
+          description: The sender of the email.
+          type: string
+        sentDate:
+          description: The date an email was sent.
+          format: date-time
+          type: string
+        severity:
+          description: Severity of the DLP incident specified in the [Email DLP policy](https://docs.paloaltonetworks.com/content/techdocs/en_US/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp/add-an-enterprise-dlp-email-policy.html).
+          enum:
+          - very_low
+          - low
+          - medium
+          - high
+          - critical
+          type: string
+        status:
+          description: The status of the incident.
+          enum:
+          - closed
+          - resolved
+          - under_review
+          - open
+          type: string
+        subject:
+          description: The subject of the email.
+          type: string
+        updatedAt:
+          description: Date the Email DLP incident status or assignee was updated.
+          format: date-time
+          type: string
+      type: object
+    UpdateIncidentStatusRequest:
+      properties:
+        value:
+          description: Inidicates the current status of the Email DLP incident, this
+            can indicate whether the incident is open, under review, resovled or closed.
+          enum:
+          - closed
+          - resolved
+          - under_review
+          - open
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Programmatically request [Email incidents](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp/how-does-email-dlp-work)
+    as an additional vector of Enterprise DLP. To prevent sensitive data exfiltration,
+    Enterprise Data Loss Prevention (E-DLP) needs to perform inline inspection of
+    all outbound emails. To do this, an inbound and outbound connectors are used to
+    transport outbound emails to and from Enterprise DLP for inspection and verdict
+    rendering.
+
+    '
+  title: Email DLP APIs
+  version: 1.0.0
+openapi: 3.0.1
+paths:
+  /incident/api/v1/incidents:
+    get:
+      description: "Retrieves information about [Email DLP](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp)\
+        \ incidents. \n\nYou can combine the query parameters to further drill down\
+        \ on your E-DLP incidents and limit your response sizes. For example:\n\n\
+        ``` \ncurl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?limit=10&from=2023-10-17T02:29:04.402Z&to=2023-11-20T21:44:07.611Z&app_type=exchange-email,gmail-email\n\
+        ```\n\n```\ncurl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?to=2023-11-20T19:44:04.395Z&from=2023-10-17T02:29:04.402Z&status=resolved,open&severity=very_low&limit=1\n\
+        ```\n\nThe report ID field in the response can be used to further inspect\
+        \ the incdent with the [DLP API](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/reports/retrieve-reports).\n"
+      operationId: get-incident-api-v1-incidents
+      parameters:
+      - description: Pagination support for the API, this enables you to limit the
+          response size.
+        in: query
+        name: limit
+        required: false
+        schema:
+          type: string
+      - description: Indicates the beginning of a time-controlled filter.
+        in: query
+        name: from
+        required: false
+        schema:
+          example: 2023-10-17 02:29:04.402000+00:00
+          format: date-time
+          type: string
+      - description: Indicates the end of a time-controlled filter.
+        in: query
+        name: to
+        required: false
+        schema:
+          example: 2023-11-20 21:44:07.611000+00:00
+          format: date-time
+          type: string
+      - description: An automatically generated field based on batched results from
+          a previous request.
+        in: query
+        name: previous_incident_id
+        required: false
+        schema:
+          type: string
+      - description: A list of entities indicating where the emails came from.
+        in: query
+        name: senders
+        required: false
+        schema:
+          type: string
+      - description: The list of status for the Email DLP reports which can be either
+          closed, resolved, under review, or open.
+        in: query
+        name: statuses
+        required: false
+        schema:
+          items:
+            enum:
+            - closed
+            - resolved
+            - under_review
+            - open
+            type: string
+          type: array
+          uniqueItems: true
+      - description: The list of severity for the shown Email DLP Reports.
+        in: query
+        name: severity
+        required: false
+        schema:
+          items:
+            enum:
+            - very_low
+            - low
+            - medium
+            - high
+            - critical
+            type: string
+          type: array
+          uniqueItems: true
+      - description: he Email DLP policy names that triggered the report.
+        in: query
+        name: policy_name
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      - description: The automatically generated ID for the messages.
+        in: query
+        name: message_id
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      - description: The email provider.
+        in: query
+        name: app_type
+        required: false
+        schema:
+          items:
+            enum:
+            - exchange-email
+            - gmail-email
+            type: string
+          type: array
+          uniqueItems: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIncidentsResponse'
+          description: Ok
+        '400':
+          description: Invalid Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Get Email Incident Details
+      tags:
+      - Email DLP API
+  /incident/api/v1/incidents/{incidentId}/status:
+    patch:
+      description: When you specify an Incident ID, the a PATCH request to the API
+        updates the status of an Email DLP incident.
+      operationId: patch-incident-api-v1-incidents-incidentid-status
+      parameters:
+      - in: path
+        name: incidentId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIncidentStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Invalid Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not Found
+        '500':
+          description: Internal Server Error
+      security:
+      - Bearer: []
+      summary: Update Incident Status
+      tags:
+      - Email DLP API
+tags:
+- name: Email DLP API

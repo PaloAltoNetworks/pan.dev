@@ -322,6 +322,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "email-dlp/api",
+                      label: "Email Data Loss Prevention API",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-api",
                       label: "SaaS Security API",
                       icon: "api-doc",
@@ -694,6 +699,11 @@ const config = {
           "aiops-ngfw-bpa": {
             specPath: "openapi-specs/aiops-ngfw-bpa/BPAReportAPI.yaml",
             outputDir: "products/aiops-ngfw-bpa/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "email-dlp": {
+            specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
+            outputDir: "products/email-dlp/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
