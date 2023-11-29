@@ -54,4 +54,4 @@ After waiting the interval time, check that logs are coming into Splunk by click
 
     sourcetype="pan:xdr_incident"
 
-You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in Cortex XDR to generate logs, and try the [Troubleshooting Guide](./troubleshooting/#troubleshooting-cortex-xdr).
+You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in Cortex XDR to generate logs, and try the [Troubleshooting Guide](/splunk/docs/troubleshooting/#troubleshooting-cortex-xdr).
