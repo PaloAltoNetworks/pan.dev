@@ -3,13 +3,14 @@ components:
     GetIncidentsResponse:
       properties:
         limit:
-          description: Specifies batch limit for the result set, minimum is 1, maximum
-            is 1000 and default is 20
+          description: Specificies the batch limit for the requested result set. The
+            minimum is 1, The maximum, is 1000, and the default is 20 incidents.
           example: 10
           format: int32
           type: integer
         nextLink:
-          description: This provides link to fetch next set of entries
+          description: The link you can use to fetch the next set of entries when
+            using a filter in the GET request.
           example: /incident/api/v1/incidents?to=2022-12-03T12:15:30Z&from=2022-12-03T10:15:30Z&app_type=exchange-email&previous_incident_id=2&limit=10
           type: string
         resources:
@@ -140,14 +141,13 @@ paths:
   /incident/api/v1/incidents:
     get:
       description: "Retrieves information about [Email DLP](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/configure-enterprise-dlp/email-dlp)\
-        \ incidents. \n\nYou can combine the query parameters to further drill down\
-        \ on your E-DLP incidents and limit your response sizes. For example:\n\n\
-        ``` \ncurl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?limit=10&from=2023-10-17T02:29:04.402Z&to=2023-11-20T21:44:07.611Z&app_type=exchange-email,gmail-email\n\
-        ```\n\n```\ncurl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?to=2023-11-20T19:44:04.395Z&from=2023-10-17T02:29:04.402Z&status=resolved,open&severity=very_low&limit=1\n\
+        \ incidents. \n\nYou can combine the query parameters to drill down on your\
+        \ Email DLP incidents and limit your response sizes. For example:\n\n``` \n\
+        curl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?limit=10&from=2023-10-17T02:29:04.402Z&to=2023-11-20T21:44:07.611Z&app_type=exchange-email,gmail-email\n\
+        ```\n\n```\ncurl curl https://api.us-west1.email.dlp.paloaltonetworks.com/incident/api/v1/incidents?to=2023-11-20T19:44:04.395Z&from=2023-10-17T02:29:04.402Z&statuses=resolved,open&severities=very_low&limit=10\n\
         ```\nUsing the limit query, the response contains a `next-batch` field that\
-        \ you can use to obtain the next page of results. For example, the response\
-        \ will contain the next endpoint based for the delta based on your query:\n\
-        ```\n\"nextLink\": \"incident/api/incidents/delta?limit=100&from=2021-05-21T01:02:56Z&to=2021-05-22T01:02:56Z\"\
+        \ you can use to obtain the next page of results. The response will contain\
+        \ the next endpoint based on the delta:\n```\n\"nextLink\": \"incident/api/incidents/delta?limit=100&from=2021-05-21T01:02:56Z&to=2021-05-22T01:02:56Z\"\
         \n```\n\nThe report ID field in the response can be used to further inspect\
         \ the incdent with the [DLP API](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/reports/retrieve-reports).\n"
       operationId: get-incident-api-v1-incidents
@@ -182,14 +182,19 @@ paths:
         required: false
         schema:
           type: string
-      - description: A list of entities indicating where the emails came from.
+      - description: Etiher a single sender or list of senders indicating where the
+          emails came from.
         in: query
         name: senders
         required: false
         schema:
-          type: string
-      - description: The list of status for the Email DLP reports which can be either
-          closed, resolved, under review, or open.
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      - description: Either a single status or a list of statuses to filter on for
+          the Email DLP reports which can be either closed, resolved, under review,
+          or open.
         in: query
         name: statuses
         required: false
@@ -205,7 +210,7 @@ paths:
           uniqueItems: true
       - description: The list of severity for the shown Email DLP Reports.
         in: query
-        name: severity
+        name: severities
         required: false
         schema:
           items:
@@ -218,18 +223,18 @@ paths:
             type: string
           type: array
           uniqueItems: true
-      - description: he Email DLP policy names that triggered the report.
+      - description: The Email DLP policy names that triggered the report.
         in: query
-        name: policy_name
+        name: policy_names
         required: false
         schema:
           items:
             type: string
           type: array
           uniqueItems: true
-      - description: The automatically generated ID for the messages.
+      - description: An automatically generated ID for the messages.
         in: query
-        name: message_id
+        name: message_ids
         required: false
         schema:
           items:
