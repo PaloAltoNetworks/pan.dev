@@ -149,7 +149,6 @@ components:
           type: string
           description: "Generic response message."
           example: "Successful"
-
     Pagination:
       type: object
       properties:
@@ -413,6 +412,127 @@ components:
           type: string
           description: "The time when the package was released externally."
           example: "2022-03-13T03:02:24Z"
+    GetIpFeedSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "The response status."
+          example: true
+        link:
+          type: array
+          description: "The pagination information of the results."
+          items:
+            $ref: '#/components/schemas/Pagination'
+        count:
+          type: integer
+          description: "The total number of entries found."
+          example: 1
+        data:
+          type: array
+          description: "The data of the response."
+          items:
+            $ref: '#/components/schemas/IpFeedDataList'
+        message:
+          type: string
+          description: "Generic response message."
+          example: "Successful"
+    PostIpFeedBatchSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "The response status."
+          example: true
+        link:
+          type: array
+          description: "The pagination information of the results."
+          items:
+            $ref: '#/components/schemas/Pagination'
+        count:
+          type: integer
+          description: "The total number of entries found."
+          example: 1
+        data:
+          type: array
+          description: |
+            The data of the response.
+          items:
+            $ref: '#/components/schemas/PostIpFeedBatchList'
+        message:
+          type: string
+          description: "Generic response message."
+          example: "Successful"
+    PostIpFeedBatchList:
+      type: object
+      properties:
+        ipaddr:
+          type: string
+          description: "The IP address."
+          example: "2.59.154.102"
+        name:
+          type: string
+          description: "The name of the IP Feed entry."
+          example: "High Risk IP Feed"
+        status:
+          type: string
+          description: "The status of the IP Feed entry."
+          example: "released"
+        release:
+          type: object
+          description: "The release information."
+          properties:
+            first_release_version:
+              type: string
+              description: "The release version when the IP Feed was released."
+              example: "3566"
+            first_release_time:
+              type: string
+              description: "The release time when the IP Feed was released."
+              example: "2020-12-16T23:40:24Z"    
+    IpFeedDataList:
+      type: object
+      properties:
+        ipaddr:
+          type: string
+          description: "The IP address."
+          example: "2.59.154.102"
+        name:
+          type: string
+          description: "The name of the IP Feed entry."
+          example: "High Risk IP Feed"
+        status:
+          type: string
+          description: "The status of the IP Feed entry."
+          example: "released"
+        release:
+          type: object
+          description: "The release information."
+          properties:
+            first_release_version:
+              type: string
+              description: "The release version when the IP Feed was released."
+              example: "3566"
+            first_release_time:
+              type: string
+              description: "The release time when the IP Feed was released."
+              example: "2020-12-16T23:40:24Z"
+      geo:
+        type: string
+        description: "The geolocation information of the IP address."
+        example: "JP (Japan)"
+      asn:
+        type: string
+        description: "The Autonomous System information of the IP address."
+        example: "136526 (ALLCLOUD-AS-AP ALLCLOUD LIMITED, HK)"
+        geo:
+          type: string
+          description: "The geolocation information of the IP address."
+          example: "JP (Japan)"
+        asn:
+          type: string
+          description: "The Autonomous System information IP address."
+          example: "136526 (ALLCLOUD-AS-AP ALLCLOUD LIMITED, HK)"
 info:
   contact: {}
   description: "
@@ -1372,6 +1492,288 @@ paths:
         - X-API-KEY: []
       summary: Request Predefined EDL Content
       tags: [Threat Prevention]
+
+
+
+  /ip-feed:
+    get:
+      operationId: ip_feed
+      security:
+        - X-API-KEY: [ ]
+      summary: Request IP Feed Information
+      tags: [Threat Prevention]
+      description: |
+        A GET request to retrieve the IP feed information by name, IP address or IP address range.
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+            - malicious
+            - high-risk
+        description: |
+          Provides the IP feed entries by the feed name.
+          
+          *Note: Returns only entries with 'released' status that exist in the Threat Intelligence database.*
+          
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed?name=malicious'
+          ```
+
+      - name: ipaddr
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Provides the IP feed information by IP address.
+          
+          *Note:*
+          *Always returns a result.*
+          *Returns feed information if IP Address exists in the Threat Intelligence database, 
+          otherwise returns only the Geolocation and Autonomous System information.*
+          
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed?ipaddr=193.189.116.210'
+          ```
+
+      - name: fromipaddr
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Used together with `toipaddr` field. Provides the IP feed entries based on IP address range.
+      
+          *Note: Returns entries with 'released', 'disabled' or 'expired' status that exist in the Threat Intelligence database.*
+      
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed?fromipaddr=185.130.5.207&toipaddr=185.130.5.236'
+          ```
+
+      - name: toipaddr
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          The right boundary of date range query, must use with `toipaddr`.
+      
+          Example can be found in **toipaddr** section
+      
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Optional parameter. The maximum number of results to return in each page.
+          
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed?name=high-risk&limit=3'
+          ```
+
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: string
+        description: |
+          Optional parameter. The starting position of the query in relation to the complete set of the unpaginated results.
+          
+          ---
+          ```
+          curl -v -H 'X-API-KEY: API_KEY' \
+            'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed?name=high-risk&limit=10&offset=10'
+          ```
+      responses:
+        "200":
+          description: Request succeeded
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/GetIpFeedSuccessResponse"
+          headers:
+            X-Day-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per day.
+              example: 2000
+              schema: { type: integer }
+            X-Day-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one day).
+              schema: { type: integer }
+            X-Day-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one day) resets.
+              schema: { type: integer }
+            X-Minute-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per minute.
+              example: 200
+              schema: { type: integer }
+            X-Minute-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one minute).
+              schema: { type: integer }
+            X-Minute-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one minute) resets.
+              schema: { type: integer }
+
+        4XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response messa
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Client related error response
+        5XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response messa
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Server related error response     
+      
+    post:
+      operationId: ip_feed_batch
+      security:
+        - X-API-KEY: []
+      summary: Request IP Feed Information in Batch Mode
+      tags: [Threat Prevention]
+      description: |
+        A POST request to retrieve the IP feed information by IP address. Batch limit is 100 entries.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ipaddr:
+                  type: array
+                  description: |
+                    Provides the IP feed information by a list of IP addresses. Limit is 100.
+        
+                    ---
+                    ```
+                    curl -v -X POST -H 'X-API-KEY: API_KEY' \
+                      -H 'Content-Type: application/json' \
+                      -d '{"ipaddr": ["185.130.5.200", "185.130.5.201", "185.130.5.202", "185.130.5.203", "185.130.5.204", "185.130.5.205", "185.130.5.206", "185.130.5.207", "185.130.5.208", "185.130.5.209", "185.130.5.210"]}' \
+                      'https://api.threatvault.paloaltonetworks.com/service/v1/ip-feed'
+                    ```
+                  items:
+                    type: string
+
+      responses:
+        "200":
+          description: Request succeeded
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/GetIpFeedSuccessResponse"
+          headers:
+            X-Day-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per day.
+              example: 2000
+              schema: { type: integer }
+            X-Day-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one day).
+              schema: { type: integer }
+            X-Day-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one day) resets.
+              schema: { type: integer }
+            X-Minute-RateLimit-Limit:
+              description:
+                The maximum number of requests that the user is permitted
+                to make per minute.
+              example: 200
+              schema: { type: integer }
+            X-Minute-RateLimit-Remaining:
+              description:
+                The number of requests remaining in the current rate limit
+                window (one minute).
+              schema: { type: integer }
+            X-Minute-RateLimit-Reset:
+              description:
+                The epoch timestamp at which the current rate limit window
+                (one minute) resets.
+              schema: { type: integer }
+        4XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response messa
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Client related error response
+        5XX:
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    { description: Generic response messa
+                        message., type: string }
+                  success:
+                    {
+                      description: The response status.,
+                      example: false,
+                      type: boolean,
+                    }
+                type: object
+          description: Server related error response     
+  
+
 
 
 servers:
