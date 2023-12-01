@@ -7,7 +7,7 @@ title: Cortex XDR
 
 Cortex XDR is supported starting with App/Add-on 7.0.0.
 
-IoT Security is cloud-hosted so logs are retrieved by Splunk using the IoT Security logging API. Logs are pulled down in JSON format with sourcetype="pan:iot_alert", sourcetype="pan:iot_device" and eventtype="pan_iot_device", eventtype="pan_iot_alert".
+Cortex XDR is cloud-hosted so logs are retrieved by Splunk using the Cortex XDR API's. Logs are pulled down in JSON format with sourcetype="pan:xdr_incident".
 
 ## Create API Key in Cortex XDR 
 
@@ -54,4 +54,4 @@ After waiting the interval time, check that logs are coming into Splunk by click
 
     sourcetype="pan:xdr_incident"
 
-You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in Cortex XDR to generate logs, and try the [Troubleshooting Guide](/splunk/docs/troubleshoot#troubleshooting-cortex-xdr).
+You should see some JSON formatted logs show up. If nothing shows up, wait a little longer, ensure there is activity in Cortex XDR to generate logs, and try the [Troubleshooting Guide](/splunk/docs/troubleshooting/#troubleshooting-cortex-xdr).
