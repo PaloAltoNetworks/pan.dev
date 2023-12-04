@@ -94,6 +94,14 @@ module.exports = {
               type: "doc",
               id: "threat-vault/docs/examples/get-content-release-notes",
             },
+            {
+              type: "doc",
+              id: "threat-vault/docs/examples/get-ip-feed-information",
+            },
+            {
+              type: "doc",
+              id: "threat-vault/docs/examples/get-ip-feed-batch-mode",
+            },
           ],
         },
         {
