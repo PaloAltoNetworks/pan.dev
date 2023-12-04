@@ -1,0 +1,903 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Vulnerability Dashboard API",
+    "description": "API for displaying Vulnerability Dashboard",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Unified Vulnerability Explorer",
+      "description": "API for displaying Vulnerability Dashboard"
+    }
+  ],
+  "paths": {
+    "/uve/api/v1/dashboard/vulnerabilities/overview": {
+      "get": {
+        "summary": "Get Vulnerability Overview",
+        "description": "Returns a summary of the total vulnerabilities in your environment which is further divided into Vulnerabilities by Asset and Vulnerabilities that have already been remediated.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "vulnerability-dashboard-overview",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,build,deploy,run"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewWidget"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/prioritised": {
+      "get": {
+        "summary": "Get Prioritized Vulnerabilities",
+        "description": "Returns the top-priority vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, and vulnerable packages in use",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "prioritised-vulnerability",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,build,deploy,run"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilities"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/impact-stage": {
+      "get": {
+        "summary": "Get Vulnerability Impact by Stage",
+        "description": "Returns a summary of vulnerability across app stages of your application lifecycle.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "vulnerability-impact-by-stage",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,build,deploy,run"
+            }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SeverityParam"
+            },
+            "description": "Severity"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "value": {
+                    "code": {
+                      "package": 0
+                    },
+                    "build": {},
+                    "run": {
+                      "serverlessFunction": 0,
+                      "host": 0,
+                      "deployedImage": 0
+                    },
+                    "deploy": {
+                      "registryImage": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/prioritised-vuln": {
+      "get": {
+        "summary": "Get Top Impacting Vulnerabilities",
+        "description": "Returns the CVEs of top critical vulnerabilities in your environment based on the risk score. Each CVE includes risk factors, severity, CVSS, risk factors, and assets impacted.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "top-prioritised-vulnerability",
+        "parameters": [
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "code,build,deploy,run"
+            }
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": 5
+            },
+            "description": "Number of  results to be returned"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopPrioritizedVulnerabilities"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/cve-overview": {
+      "get": {
+        "summary": "Get CVE Overview",
+        "description": "Get the overview of the CVE with its CVSS score, the impacted stages, severity, risk factors, the package name, and the distros affected by this CVE.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "cve-overview",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "CVE-2021-44288"
+            },
+            "description": "CVE ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveOverview"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/vuln-assets": {
+      "post": {
+        "summary": "Get Vulnerable Assets by CVE",
+        "description": "Get the list of all the assets affected by the CVE.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "list-vulnerable-assets",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetsSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveOverview"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RiskFactorsParam": {
+        "type": "object",
+        "properties": {
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SeverityParam": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OverviewWidget": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Overview"
+            }
+          }
+        }
+      },
+      "Overview": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilityCount": {
+            "type": "integer"
+          },
+          "totalVulnerableAsset": {
+            "type": "integer"
+          },
+          "totalRemediationCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "PrioritizedVulnerabilities": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilities": {
+            "type": "integer"
+          },
+          "urgent": {
+            "type": "integer"
+          },
+          "patchable": {
+            "type": "integer"
+          },
+          "exploitable": {
+            "type": "integer"
+          },
+          "packageInUse": {
+            "type": "integer"
+          }
+        }
+      },
+      "TopPrioritizedVulnerabilities": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cve": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cve"
+            }
+          }
+        }
+      },
+      "Cve": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "trends": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trend"
+            }
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assetsImpacted": {
+            "$ref": "#/components/schemas/AssetsImpacted"
+          }
+        }
+      },
+      "AssetsImpacted": {
+        "type": "object",
+        "properties": {
+          "codeCount": {
+            "type": "integer"
+          },
+          "buildCount": {
+            "type": "integer"
+          },
+          "deployCount": {
+            "type": "integer"
+          },
+          "runtimeCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "Trend": {
+        "type": "object",
+        "properties": {
+          "reportedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assetsWithCveCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "CveOverview": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cvss": {
+            "type": "number",
+            "format": "double"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "fixVersion": {
+            "type": "string"
+          },
+          "impactedVersion": {
+            "type": "string"
+          },
+          "publishedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lifeCycle": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severity": {
+            "type": "string"
+          },
+          "cpuArch": {
+            "type": "string"
+          },
+          "impactedDistrosList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactedDistros"
+            }
+          }
+        }
+      },
+      "ImpactedDistros": {
+        "type": "object",
+        "properties": {
+          "distro": {
+            "type": "string"
+          },
+          "impactCount": {
+            "type": "integer"
+          },
+          "distroDetailsList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DistroDetails"
+            }
+          }
+        }
+      },
+      "DistroDetails": {
+        "type": "object",
+        "properties": {
+          "cvss": {
+            "type": "number",
+            "format": "double"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "integer"
+          },
+          "affectedVersion": {
+            "type": "string"
+          },
+          "fixedTime": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AssetsSearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "cve_id": {
+            "type": "string"
+          },
+          "risk_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sort_by": {
+            "type": "string"
+          },
+          "asset_type": {
+            "type": "string"
+          },
+          "page_offset": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          },
+          "filter_suppressed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "target": {
+            "type": "string",
+            "description": "Error target"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ]
+}
