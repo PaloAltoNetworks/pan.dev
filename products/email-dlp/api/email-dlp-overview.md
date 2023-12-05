@@ -12,7 +12,7 @@ keywords:
   - API
 ---
 
-To prevent sensitive data exfiltration, Enterprise Data Loss Prevention Email DLP needs to perform inline inspection of all outbound emails. The service inspects outbound emails for verdict rendering. 
+To prevent sensitive data exfiltration, Enterprise Data Loss Prevention Email DLP performs inline inspection of all outbound emails. The email DLP service renders verdicts which can then be examined using the API. 
 
 The API enables you to programtically review Email DLP incidents and further inspect the report in order to update verdicts.
 
@@ -39,4 +39,4 @@ When you create a service account, you get a Client ID and Client Secret, which 
 [get an access token](/sase/api/auth/post-auth-v-1-oauth-2-access-token).
 You must also use your TSG's ID when you create an access token.
 
-To use the Email DLP API, the service account must have a **role** assigned as Superuser, SOC_Admin, or DATA_SECURITY_ADMIN and the **Apps and Services** must have access to Next-Generation CASB.
+To use the Email DLP API, the service account must have a **role** assigned as either Superuser, SOC_Admin, or DATA_SECURITY_ADMIN and the **Apps and Services** must have access to Next-Generation CASB.
