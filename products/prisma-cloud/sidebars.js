@@ -109,22 +109,6 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Compute 32.00",
-          items: [
-            {
-              type: "link",
-              label: "Administrator's Guide",
-              href: "https://docs.prismacloud.io/en/compute-edition/32/admin-guide",
-            },
-            {
-              type: "link",
-              label: "Release Notes",
-              href: "https://docs.prismacloud.io/en/compute-edition/32/rn/release-information/release-notes-32-00",
-            },
-          ],
-        },
-        {
-          type: "category",
           label: "Compute 31.03",
           items: [
             {
