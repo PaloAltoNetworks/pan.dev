@@ -59,48 +59,4 @@ module.exports = {
     "compute/api/30-03/stable-endpoints",
     require("./api/30-03/sidebar"),
   ],
-  compute_31: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 31.00",
-      collapsed: true,
-      items: [
-        "compute/api/31-00/stable-endpoints",
-        require("./api/31-00/sidebar"),
-      ],
-    },
-  ],
-  compute_3002: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 30.02",
-      collapsed: true,
-      items: [
-        "compute/api/30-02/stable-endpoints",
-        require("./api/30-02/sidebar"),
-      ],
-    },
-  ],
-  compute_3001: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 30.01",
-      collapsed: true,
-      items: [
-        "compute/api/30-01/stable-endpoints",
-        require("./api/30-01/sidebar"),
-      ],
-    },
-  ],
-  compute_30: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 30.00",
-      collapsed: true,
-      items: [
-        "compute/api/30-00/stable-endpoints",
-        require("./api/30-00/sidebar"),
-      ],
-    },
-  ],
 };
