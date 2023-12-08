@@ -59,7 +59,6 @@ module.exports = {
     "compute/api/30-03/stable-endpoints",
     require("./api/30-03/sidebar"),
   ],
-  
   compute_31: [
     {
       type: "category",
