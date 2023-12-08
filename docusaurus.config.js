@@ -753,7 +753,7 @@ const config = {
               31.02: {
                 specPath: "openapi-specs/compute/31-02",
                 outputDir: "products/compute/api/31-02",
-                label: "v31-02",
+                label: "v31.02",
                 baseUrl: "/compute/api/31-02/",
               },
               30.03: {
