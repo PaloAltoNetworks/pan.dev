@@ -1,7 +1,7 @@
 ---
 id: compute-api-reference-home
 title: Welcome to the Compute APIs
-slug: /compute/api
+slug: /compute/api/31-02
 keywords:
   - Developer
   - Prisma
