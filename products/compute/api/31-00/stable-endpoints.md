@@ -17,7 +17,7 @@ The Compute API is versioned as follows:
 
 ### Latest API Versions of Prisma Cloud Compute Edition
 
-To view the documentation for the latest versions of the supported Prisma Cloud Compute Edition releases, visit:
+To view the documentation for the other supported releases of Prisma Cloud Compute Edition, visit:
 
 * [Prisma Cloud Compute Edition - Latest](/compute/api/)
 
