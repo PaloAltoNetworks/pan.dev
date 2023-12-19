@@ -1028,6 +1028,12 @@ Takes a snapshot of the Route Table (this includes routes populated from DHCP as
 
 **Method:** [`FirewallProxy.get_routes()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_routes)
 
+### `fib_routes`
+
+Takes a snapshot of the Forwarding table (routes that are actually taken into forwarding decisions based on routing table).
+
+**Method:** [`FirewallProxy.get_fib()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_fib)
+
 ### `session_stats`
 
 Gets information about the session statistics, such as current sessions count per a session type (TCP, UDP, etc).
@@ -1393,6 +1399,65 @@ reports:
 </Tabs>
 ```
 
+### `fib_routes`
+
+Provides a report on differences between FIB Table entries. It includes:
+
+- availability of a fib entry in one of the snapshots,
+- for fib entries available in two snapshots, difference in fib entry properties, such as destination, next hop, flags etc.
+
+**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`properties` | (optional) a set of properties to skip when comparing two fib entries, all properties are checked when this parameter is skipped
+`count_change_threshold` | (optional) maximum difference percentage of changed entries for fib routes in both snapshots, skipped when this property is not specified
+
+**Sample configuration**
+
+The following configuration:
+
+- compares FIB Table entries between both snapshots, but when comparing two entries the `flags` parameter is not taken into consideration,
+- calculates the count of changed FIB Table entries from both snapshots and marks comparison as failed if the difference is bigger than 10%.
+
+This report produces the standardized dictionary.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'fib_routes': {
+            'properties': ['!flags'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - fib_routes:
+      properties:
+        - '!flags'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 ### `session_stats`
 
 This report is slightly different than reports made with the [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold) method as the snapshot data is different (refer to the [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats) method documentation for details).
@@ -1448,6 +1513,89 @@ reports:
 </TabItem>
 </Tabs>
 ```
+
+### `session_stats`
+
+This report is slightly different than reports made with the [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold) method as the snapshot data is different (refer to the [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats) method documentation for details).
+
+It takes one parameter only: `thresholds`. It contains a list of sessions stats as available in the snapshot. For each stat a threshold value is provided. This report calculates a change in the session statistics and compares it to the threshold value. This parameter does not have a default value - when skipped the report gives no results.
+
+**Method:** [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`thresholds` | a list of sessions with change threshold value to analyze
+
+**Sample configuration**
+
+The following configuration compares only stats for `num-max` and `num-tcp`. For both, the accepted difference is 10%.
+
+This report produces a `dict` as documented in the [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage) method documentation.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'session_stats': {
+            'thresholds': [
+                {'num-max': 10},
+                {'num-tcp': 10}
+            ]
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - session_stats:
+      thresholds:
+        - num-max: 10
+        - num-tcp: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## Health Checks
+
+Health checks are another category of check that look for specific issues or configuration that might either
+require an upgrade or impact the result of an upgrade.
+
+Health checks represent checks that are `boolean` in nature. A result of such checks always presents a `True`/`False` value with some explanation in case of check fails. They can be triggered with a common method: [`CheckFirewall.run_health_checks()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_health_checks). When running this method, a list of health checks to run (with an optional configuration) is provided using the `checks_configuration` parameter. This list is defined using the [`ConfigParser`][cfgprs] class [`dialect`][dialect]. For details, refer to the documentation for this class.
+
+Please see the sections below for details of each health check:
+
+### `device_root_certificate_issue`
+
+Checks if a device is impacted, or is to be impacted, by the [expiration of the device root certificate.](https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA14u0000008Vp5CAE)
+
+This test by default checks only if the software version is an affected version and fails if it is.
+
+If the `fail_when_affected_version_only` parameter is set to False, however, it will check to see if the issue is corrected
+by the device running and updated content version.
+
+**Method:** [`CheckFirewall.check_arp_entry()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_arp_entry)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`fail_when_affected_version_only` | (Optional - Default 'True') Fails this test whenever the PAN-OS version is affected, regardless of the impact of the issue.
+
 
 [cfgprs]: /panos/docs/panos-upgrade-assurance/api/utils#class-configparser
 [chckres]: /panos/docs/panos-upgrade-assurance/api/utils#class-checkresult
