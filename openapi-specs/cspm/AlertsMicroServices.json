@@ -551,11 +551,9 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
-              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
-              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -1081,11 +1079,9 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
-              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
-              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -1185,14 +1181,6 @@
           "Resource Api Id.": {
             "type": "integer",
             "format": "int32"
-          },
-          "Unified Asset Id": {
-            "type": "string",
-            "example": "''"
-          },
-          "Related Asset Id": {
-            "type": "string",
-            "example": "''"
           },
           "Policy Id.": {
             "type": "string",
@@ -1539,6 +1527,9 @@
             "type": "boolean"
           },
           "timeRange": {
+            "discriminator": {
+              "propertyName": "type"
+            },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/AbsoluteTimeRangeConfig"
@@ -1693,27 +1684,33 @@
         }
       },
       "TimeRangeConfigModel": {
+        "required": [
+          "type"
+        ],
         "type": "object",
         "properties": {
-          "type": {
+          "Time type": {
             "type": "string",
-            "description": "type for time range",
             "enum": [
               "to_now,absolute,relative,from_now"
             ]
           },
-          "value": {
+          "Time value": {
             "type": "object",
-            "description": "Time value"
+            "enum": [
+              "epoch"
+            ]
           },
-          "forField": {
+          "Field for range": {
             "type": "string",
-            "description": "Field for range",
             "enum": [
               "lastOpenStateTs",
               "lastStatusChangeTs",
-              "lastUpdatedTs"
+              "lastOpenStateTs"
             ]
+          },
+          "type": {
+            "type": "string"
           }
         },
         "description": "Model for TimeRangeConfig"
@@ -2013,9 +2010,7 @@
               "workload_vulnerability",
               "workload_incident",
               "api",
-              "attack_path",
-              "malware",
-              "grayware"
+              "attack_path"
             ]
           },
           "systemDefault": {
@@ -2236,10 +2231,6 @@
           "policyType": {
             "type": "string",
             "description": "Policy Type"
-          },
-          "description": {
-            "type": "string",
-            "description": "Policy Description"
           },
           "severity": {
             "type": "string",
@@ -3045,9 +3036,7 @@
               "workload_vulnerability",
               "workload_incident",
               "api",
-              "attack_path",
-              "malware",
-              "grayware"
+              "attack_path"
             ]
           },
           "policySubTypes": {
@@ -3079,9 +3068,7 @@
                 "virtual_patches",
                 "misconfig",
                 "misconfig_and_event",
-                "event",
-                "host",
-                "container_image"
+                "event"
               ]
             }
           },
@@ -3927,11 +3914,9 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
-              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
-              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -3947,9 +3932,6 @@
         }
       },
       "AlertEvidenceGraph": {
-        "required": [
-          "nodes"
-        ],
         "type": "object",
         "properties": {
           "nodes": {
@@ -3964,15 +3946,27 @@
               {
                 "$ref": "#/components/schemas/VulnerabilityNode"
               }
-            ],
-            "description": "A dictionary of the node identifier and the associated node"
+            ]
           },
           "edges": {
             "type": "array",
-            "description": "The edges of the graph",
             "items": {
               "$ref": "#/components/schemas/GraphEdge"
             }
+          },
+          "add": {
+            "writeOnly": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AssetNode"
+              },
+              {
+                "$ref": "#/components/schemas/FindingNode"
+              },
+              {
+                "$ref": "#/components/schemas/VulnerabilityNode"
+              }
+            ]
           }
         },
         "description": "The resource specific graph"
@@ -4320,8 +4314,7 @@
           "metadata": {
             "$ref": "#/components/schemas/EdgeMetadata"
           }
-        },
-        "description": "The edges of the graph"
+        }
       },
       "IAMPermissionGraph": {
         "type": "object",
