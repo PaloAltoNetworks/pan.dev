@@ -551,9 +551,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -1079,9 +1081,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -1181,6 +1185,14 @@
           "Resource Api Id.": {
             "type": "integer",
             "format": "int32"
+          },
+          "Unified Asset Id": {
+            "type": "string",
+            "example": "''"
+          },
+          "Related Asset Id": {
+            "type": "string",
+            "example": "''"
           },
           "Policy Id.": {
             "type": "string",
@@ -1681,39 +1693,30 @@
         }
       },
       "TimeRangeConfigModel": {
-        "required": [
-          "type"
-        ],
         "type": "object",
         "properties": {
-          "Time type": {
+          "type": {
             "type": "string",
+            "description": "type for time range",
             "enum": [
               "to_now,absolute,relative,from_now"
             ]
           },
-          "Time value": {
+          "value": {
             "type": "object",
-            "enum": [
-              "epoch"
-            ]
+            "description": "Time value"
           },
-          "Field for range": {
+          "forField": {
             "type": "string",
+            "description": "Field for range",
             "enum": [
               "lastOpenStateTs",
               "lastStatusChangeTs",
-              "lastOpenStateTs"
+              "lastUpdatedTs"
             ]
-          },
-          "type": {
-            "type": "string"
           }
         },
-        "description": "Model for TimeRangeConfig",
-        "discriminator": {
-          "propertyName": "type"
-        }
+        "description": "Model for TimeRangeConfig"
       },
       "ToNowTimeRangeConfig": {
         "type": "object",
@@ -2010,7 +2013,9 @@
               "workload_vulnerability",
               "workload_incident",
               "api",
-              "attack_path"
+              "attack_path",
+              "malware",
+              "grayware"
             ]
           },
           "systemDefault": {
@@ -2231,6 +2236,10 @@
           "policyType": {
             "type": "string",
             "description": "Policy Type"
+          },
+          "description": {
+            "type": "string",
+            "description": "Policy Description"
           },
           "severity": {
             "type": "string",
@@ -3036,7 +3045,9 @@
               "workload_vulnerability",
               "workload_incident",
               "api",
-              "attack_path"
+              "attack_path",
+              "malware",
+              "grayware"
             ]
           },
           "policySubTypes": {
@@ -3068,7 +3079,9 @@
                 "virtual_patches",
                 "misconfig",
                 "misconfig_and_event",
-                "event"
+                "event",
+                "host",
+                "container_image"
               ]
             }
           },
@@ -3914,9 +3927,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -3932,32 +3947,13 @@
         }
       },
       "AlertEvidenceGraph": {
+        "required": [
+          "nodes"
+        ],
         "type": "object",
         "properties": {
           "nodes": {
             "type": "object",
-            "additionalProperties": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/AssetNode"
-                },
-                {
-                  "$ref": "#/components/schemas/FindingNode"
-                },
-                {
-                  "$ref": "#/components/schemas/VulnerabilityNode"
-                }
-              ]
-            }
-          },
-          "edges": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GraphEdge"
-            }
-          },
-          "add": {
-            "writeOnly": true,
             "oneOf": [
               {
                 "$ref": "#/components/schemas/AssetNode"
@@ -3968,7 +3964,15 @@
               {
                 "$ref": "#/components/schemas/VulnerabilityNode"
               }
-            ]
+            ],
+            "description": "A dictionary of the node identifier and the associated node"
+          },
+          "edges": {
+            "type": "array",
+            "description": "The edges of the graph",
+            "items": {
+              "$ref": "#/components/schemas/GraphEdge"
+            }
           }
         },
         "description": "The resource specific graph"
@@ -3994,19 +3998,11 @@
       },
       "AssetNode": {
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "metadata": {
-                "$ref": "#/components/schemas/AssetNodeMetadata"
-              }
-            }
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/AssetNodeMetadata"
           }
-        ]
+        }
       },
       "AssetNodeMetadata": {
         "type": "object",
@@ -4212,26 +4208,18 @@
           "type"
         ],
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The node type",
+            "enum": [
+              "Finding"
+            ]
           },
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The node type",
-                "enum": [
-                  "Finding"
-                ]
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/FindingNodeMetadata"
-              }
-            }
+          "metadata": {
+            "$ref": "#/components/schemas/FindingNodeMetadata"
           }
-        ]
+        }
       },
       "FindingNodeMetadata": {
         "required": [
@@ -4332,7 +4320,8 @@
           "metadata": {
             "$ref": "#/components/schemas/EdgeMetadata"
           }
-        }
+        },
+        "description": "The edges of the graph"
       },
       "IAMPermissionGraph": {
         "type": "object",
@@ -4487,26 +4476,18 @@
           "type"
         ],
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The node type",
+            "enum": [
+              "Vulnerability"
+            ]
           },
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The node type",
-                "enum": [
-                  "Vulnerability"
-                ]
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/VulnerabilityMetadata"
-              }
-            }
+          "metadata": {
+            "$ref": "#/components/schemas/VulnerabilityMetadata"
           }
-        ]
+        }
       }
     },
     "headers": {
