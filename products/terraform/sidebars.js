@@ -58,7 +58,7 @@ module.exports = {
       items: ["terraform/docs/panos/reference/provider"],
     },
   ],
-  terraformcloudngfw: [
+  terraformcloudngfwaws: [
     "terraform/docs/cloudngfw/intro",
     {
       type: "category",
@@ -97,6 +97,28 @@ module.exports = {
           collapsed: true,
           label: "Reference",
           items: ["terraform/docs/cloudngfw/aws/reference/provider"],
+        },
+      ],
+    },
+  ],
+  terraformcloudngfwazure: [
+    "terraform/docs/cloudngfw/intro",
+    {
+      type: "category",
+      collapsed: false,
+      label: "Azure",
+      items: [
+        {
+          type: "category",
+          collapsed: true,
+          label: "Getting Started Tutorial",
+          items: ["terraform/docs/cloudngfw/azure/tutorials/intro"],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Reference",
+          items: ["terraform/docs/cloudngfw/azure/reference/provider"],
         },
       ],
     },
