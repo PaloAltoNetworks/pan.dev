@@ -25,18 +25,33 @@
             "name": "asset_type",
             "in": "query",
             "required": true,
+            "description": "Type of Asset",
             "schema": {
               "type": "string",
-              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
             }
           },
           {
             "name": "life_cycle",
             "in": "query",
+            "description": "Life Cycle stage",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,build,deploy,run"
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
             }
           }
         ],
@@ -111,20 +126,35 @@
         "parameters": [
           {
             "name": "asset_type",
+            "description": "Type of Asset",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
             }
           },
           {
             "name": "life_cycle",
+            "description": "Life Cycle stage",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,build,deploy,run"
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
             }
           }
         ],
@@ -199,28 +229,49 @@
         "parameters": [
           {
             "name": "asset_type",
+            "description": "Type of Asset",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,package,deployedImage,serverlessFunction,host,registryImage,vmImage"
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
             }
           },
           {
             "name": "life_cycle",
+            "description": "Life Cycle stage",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,build,deploy,run"
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
             }
           },
           {
             "name": "severities",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
-              "$ref": "#/components/schemas/SeverityParam"
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
             },
             "description": "Severity"
           }
@@ -231,23 +282,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
-                },
-                "example": {
-                  "value": {
-                    "code": {
-                      "package": 0
-                    },
-                    "build": {},
-                    "run": {
-                      "serverlessFunction": 0,
-                      "host": 0,
-                      "deployedImage": 0
-                    },
-                    "deploy": {
-                      "registryImage": 0
-                    }
-                  }
+                  "$ref": "#/components/schemas/ImpactByStageResponse"
                 }
               }
             }
@@ -312,11 +347,17 @@
         "parameters": [
           {
             "name": "life_cycle",
+            "description": "Life Cycle stage",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
-              "default": "code,build,deploy,run"
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
             }
           },
           {
@@ -494,7 +535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CveOverview"
+                  "$ref": "#/components/schemas/AssetSideCarResponse"
                 }
               }
             }
@@ -840,6 +881,132 @@
           "target": {
             "type": "string",
             "description": "Error target"
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "actionResult": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AssetDetails": {
+        "type": "object",
+        "properties": {
+          "assetName": {
+            "type": "string"
+          },
+          "resourceName": {
+            "type": "string"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "packageVersion": {
+            "type": "string"
+          },
+          "fixVersion": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "discoveredTime": {
+            "type": "string"
+          },
+          "remediationAvailable": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
+          },
+          "age": {
+            "type": "integer"
+          }
+        }
+      },
+      "AssetSideCarResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "object",
+            "properties": {
+              "assets": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssetDetails"
+                }
+              }
+            }
+          },
+          "cve_id": {
+            "type": "string"
+          },
+          "page_offset": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "ImpactByStageResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "object",
+                "properties": {
+                  "package": {
+                    "type": "integer"
+                  },
+                  "iac": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "build": {
+                "type": "object"
+              },
+              "run": {
+                "type": "object",
+                "properties": {
+                  "serverlessFunction": {
+                    "type": "integer"
+                  },
+                  "host": {
+                    "type": "integer"
+                  },
+                  "deployedImage": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "deploy": {
+                "type": "object",
+                "properties": {
+                  "registryImage": {
+                    "type": "integer"
+                  },
+                  "vmImage": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
           }
         }
       }
