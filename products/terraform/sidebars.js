@@ -58,7 +58,7 @@ module.exports = {
       items: ["terraform/docs/panos/reference/provider"],
     },
   ],
-  terraformcloudngfwaws: [
+  terraformcloudngfw: [
     "terraform/docs/cloudngfw/intro",
     {
       type: "category",
@@ -100,9 +100,6 @@ module.exports = {
         },
       ],
     },
-  ],
-  terraformcloudngfwazure: [
-    "terraform/docs/cloudngfw/intro",
     {
       type: "category",
       collapsed: false,
@@ -111,7 +108,7 @@ module.exports = {
         {
           type: "category",
           collapsed: true,
-          label: "Getting Started Tutorial",
+          label: "Securing vWAN Tutorial",
           items: ["terraform/docs/cloudngfw/azure/tutorials/intro"],
         },
         {
