@@ -61,11 +61,14 @@ function Medium() {
       return firstParagraph;
     };
 
+    const cardImgSrc =
+      blog.thumbnail || blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
+
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
           <img
-            src={blog.thumbnail}
+            src={cardImgSrc || "/img/stock-feed.jpg"}
             alt={blog.title}
             className={styles.blogImage}
           />
