@@ -27,24 +27,28 @@ function Feeds() {
   const FeedItem = ({ feeds, imageFeeds }) => {
     const hasFeeds = feeds.length > 0;
     const hasImageFeeds = imageFeeds.length > 0;
-    const cardImageSrc =
-      feed.thumbnail || blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
 
     return (
       <div className="feeds-image-list-container">
         {hasImageFeeds && (
           <div className="feeds-image-container">
-            {imageFeeds.map((feed, i) => (
-              <Link key={i} to={feed.link}>
-                <div className="feeds-image-text-wrapper">
-                  <img
-                    src={cardImageSrc || "/img/stock-feed.jpg"}
-                    alt={feed.title}
-                  />
-                  <h3 className="feeds__title">{feed.title}</h3>
-                </div>
-              </Link>
-            ))}
+            {imageFeeds.map((feed, i) => {
+              const cardImageSrc =
+                feed.thumbnail ||
+                feed.description.match(/<img[^>]+src="([^">]+)"/);
+
+              return (
+                <Link key={i} to={feed.link}>
+                  <div className="feeds-image-text-wrapper">
+                    <img
+                      src={cardImageSrc || "/img/stock-feed.jpg"}
+                      alt={feed.title}
+                    />
+                    <h3 className="feeds__title">{feed.title}</h3>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
         {hasFeeds && (
