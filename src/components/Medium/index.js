@@ -62,7 +62,10 @@ function Medium() {
     };
 
     const cardImgSrc =
-      blog.thumbnail || blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
+      blog.thumbnail ||
+      (blog.content.match(/<img[^>]+src="([^">]+)"/)
+        ? blog.content.match(/<img[^>]+src="([^">]+)"/)[1]
+        : null);
 
     return (
       <div className={clsx("card", styles.showcaseBlog)}>

@@ -35,7 +35,9 @@ function Feeds() {
             {imageFeeds.map((feed, i) => {
               const cardImageSrc =
                 feed.thumbnail ||
-                feed.description.match(/<img[^>]+src="([^">]+)"/);
+                (feed.content.match(/<img[^>]+src="([^">]+)"/)
+                  ? feed.content.match(/<img[^>]+src="([^">]+)"/)[1]
+                  : null);
 
               return (
                 <Link key={i} to={feed.link}>
