@@ -27,6 +27,8 @@ function Feeds() {
   const FeedItem = ({ feeds, imageFeeds }) => {
     const hasFeeds = feeds.length > 0;
     const hasImageFeeds = imageFeeds.length > 0;
+    const cardImageSrc =
+      feed.thumbnail || blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
 
     return (
       <div className="feeds-image-list-container">
@@ -36,10 +38,7 @@ function Feeds() {
               <Link key={i} to={feed.link}>
                 <div className="feeds-image-text-wrapper">
                   <img
-                    src={
-                      feed.thumbnail ||
-                      "/img/product-landing/terraform/feeds/stock-feed.jpg"
-                    }
+                    src={cardImageSrc || "/img/stock-feed.jpg"}
                     alt={feed.title}
                   />
                   <h3 className="feeds__title">{feed.title}</h3>
