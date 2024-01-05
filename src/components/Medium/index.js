@@ -61,12 +61,17 @@ function Medium() {
       return firstParagraph;
     };
 
-    const cardImgSrc = blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
+    const cardImgSrc =
+      blog.thumbnail || blog.description.match(/<img[^>]+src="([^">]+)"/)[1];
 
     return (
       <div className={clsx("card", styles.showcaseBlog)}>
         <div className="card__image">
-          <img src={cardImgSrc} alt={blog.title} className={styles.blogImage} />
+          <img
+            src={cardImgSrc || "/img/stock-feed.jpg"}
+            alt={blog.title}
+            className={styles.blogImage}
+          />
         </div>
         <div className="card__body">
           <h3 className="avater__name">{blog.title}</h3>
