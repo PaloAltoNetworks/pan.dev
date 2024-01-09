@@ -322,6 +322,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "email-dlp/api",
+                      label: "Email Data Loss Prevention API",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-api",
                       label: "SaaS Security API",
                       icon: "api-doc",
@@ -696,6 +701,11 @@ const config = {
             outputDir: "products/aiops-ngfw-bpa/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "email-dlp": {
+            specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
+            outputDir: "products/email-dlp/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
@@ -745,22 +755,22 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "31.02",
-            label: "v31.02",
+            version: "32.00",
+            label: "v32.00",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
+              31.02: {
+                specPath: "openapi-specs/compute/31-02",
+                outputDir: "products/compute/api/31-02",
+                label: "v31.02",
+                baseUrl: "/compute/api/31-02/",
+              },
               30.03: {
                 specPath: "openapi-specs/compute/30-03",
                 outputDir: "products/compute/api/30-03",
                 label: "v30.03",
                 baseUrl: "/compute/api/30-03/",
-              },
-              22.12: {
-                specPath: "openapi-specs/compute/22-12",
-                outputDir: "products/compute/api/22-12",
-                label: "v22.12",
-                baseUrl: "/compute/api/22-12/",
               },
             },
           },
