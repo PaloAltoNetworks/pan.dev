@@ -61,6 +61,9 @@ for file in *.json; do
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
+    # delete all 5xx error from endpoints
+    jq '.paths |= del(.[][].responses | .[keys[] | select(contains("5xx","5XX","500", "501", "502","503", "504", "505", "506", "507", "508","509","510","511", "529", "530","598","599"))])' | \
+
     # add server urls
     jq '.servers |= [
         {"url":"https://api.prismacloud.io"},
