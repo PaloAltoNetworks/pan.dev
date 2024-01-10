@@ -656,3 +656,59 @@ __Returns__
 
 `dict`: The results of the executed snapshots.
 
+### `CheckFirewall.run_health_checks`
+
+```python
+def run_health_checks(
+        checks_configuration: Optional[List[Union[str, dict]]] = None,
+        report_style: bool = False) -> Union[Dict[str, dict], Dict[str, str]]
+```
+
+Run device health checks.
+
+This method provides a convenient way of running health check methods. For details on configuration see the
+[health checks](/panos/docs/panos-upgrade-assurance/configuration-details#health-checks) documentation.
+
+__Parameters__
+
+
+- __checks_configuration__ (`list(str,dict), optional`): (defaults to `None`) List of readiness checks to run.
+- __report_style__ (`bool`): (defaults to `False`) Changes the output to more descriptive. Can be used when generating a report
+    from the checks.
+
+__Raises__
+
+
+- `WrongDataTypeException`: An exception is raised when the configuration is in a data type different then `str` or `dict`.
+
+__Returns__
+
+
+`dict`: Results of all configured checks.
+
+### `CheckFirewall.check_device_root_certificate_issue`
+
+```python
+def check_device_root_certificate_issue(
+        fail_when_affected_version_only: bool = True) -> CheckResult
+```
+
+Checks whether the target device is affected by the Root Certificate Expiration issue;
+
+https://live.paloaltonetworks.com/t5/customer-advisories/emergency-update-required-pan-os-root-and-default-certificate/ta-p/564672
+
+This check will FAIL if so, allowing you to build upgrade logic based on when and how it's failed.
+
+This check will fail in the following scenarios;
+    1. The device is running software that is affected by the issue AND is running out of date content
+        AND is NOT running the user-id service or data redistribution
+    2. The device is running software that is affected by the issue AND IS running user-id service OR data
+        redistribution
+
+__Parameters__
+
+
+- __fail_when_affected_version_only__ (`bool, optional`): (defaults to `True`) When set to False, this test will only
+    fail if the software version is affected by the root certificate issue, AND the device is used for data
+    redistribution OR it's using an out-of-date content DB version.
+
