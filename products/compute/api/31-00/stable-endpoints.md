@@ -32,6 +32,7 @@ Where:
   - api/v1/signup, post
   - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
   - api/v1/util/tas-tile, get
+
 - `vVersion` - Points to a version-specific API, where `Version` specifies the major and minor parts of a release's version string.
 
 As a best practice, update your scripts to use the version-specific API endpoints to ensure that your implementation is fully supported.
