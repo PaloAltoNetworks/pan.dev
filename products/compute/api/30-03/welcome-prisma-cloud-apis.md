@@ -20,12 +20,10 @@ Use the API to:
 
 ### Previous API Versions of Prisma Cloud Compute Edition
 
-All minor or maintainance versions (xx) of 30.xx release have n-2 support for backward compatibility.
-If you're looking for previous minor or maintenance release versions, visit the following link:
+All minor or maintainance versions (xx) of 32.xx release have n-2 support for backward compatibility.
+If you're looking for previous minor or maintenance release versions of 30.xx, visit the following link:
 
 * [Prisma Cloud Compute Edition - 30.02](/compute/api/30-02/)
-* [Prisma Cloud Compute Edition - 30.01](/compute/api/30-01/)
-* [Prisma Cloud Compute Edition - 30.00](/compute/api/30-00/)
 
 ### How to find your version
 
@@ -102,7 +100,7 @@ https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
 
 **Note:** This is a more secure method than including the `-p` option since your terminal history won't contain the password.
 
-### API Limits
+### Paginated Responses
 
 Paginated API requests are capped to a max of 250 returned objects because very large responses could DoS Console. The default value is 50 objects per page.
 
@@ -113,6 +111,10 @@ For example:
 ```bash
 $ https://<CONSOLE>/api/v<VERSION>/images?limit=250&offset=X
 ```
+
+### API Rate Limits
+
+Rate limiting is applied to some endpoints. The documentation for each such endpoint has details of the rate limits enforced on it. For example, [Get Container Scan Results](https://pan.dev/prisma-cloud/api/cwpp/get-containers/).
 
 ### View parameter descriptions
 
