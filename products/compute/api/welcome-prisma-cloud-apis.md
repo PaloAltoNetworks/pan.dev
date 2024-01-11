@@ -27,7 +27,7 @@ To find the the version of Prisma Cloud Workload Protection that you're running:
 2. Click the bell icon in the top right of the page.
 
    The drop-down shows the currently running version:
-
+   
    ![Console screenshot](/img/compute-version.png)
 
 ### cURL Examples
@@ -93,7 +93,7 @@ https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
 
 **Note:** This is a more secure method than including the `-p` option since your terminal history won't contain the password.
 
-### API Limits
+### Paginated Responses
 
 Paginated API requests are capped to a max of 250 returned objects because very large responses could DoS Console. The default value is 50 objects per page.
 
@@ -104,6 +104,10 @@ For example:
 ```bash
 $ https://<CONSOLE>/api/v<VERSION>/images?limit=250&offset=X
 ```
+
+### API Rate Limits
+
+Rate limiting is applied to some endpoints. The documentation for each such endpoint has details of the rate limits enforced on it. For example, [Get Container Scan Results](https://pan.dev/prisma-cloud/api/cwpp/get-containers/).
 
 ### View parameter descriptions
 
