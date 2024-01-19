@@ -1219,3 +1219,39 @@ __Returns the software version as a packaging 'Version' object.__
 
 Version: Version(9.1.12)
 
+### `FirewallProxy.get_fib`
+
+```python
+def get_fib() -> dict
+```
+
+Get the information from the forwarding information table (FIB).
+
+The actual API command run is `show routing fib`.
+
+__Returns__
+
+
+`dict`: Status of the route entries in the FIB
+
+```python showLineNumbers title="Sample output"
+{
+    '0.0.0.0/0_ethernet1/1': {
+        'Destination': '0.0.0.0/0',
+        'Interface': 'ethernet1/1',
+        'Next Hop Type': '0',
+        'Flags': 'ug',
+        'Next Hop': '10.10.11.1',
+        'MTU': '1500'
+    },
+    '1.1.1.1/32_loopback.10': {
+        'Destination': '1.1.1.1/32',
+        'Interface': 'loopback.10',
+        'Next Hop Type': '3',
+        'Flags': 'uh',
+        'Next Hop': '0.0.0.0',
+        'MTU': '1500'
+    }
+}
+```
+
