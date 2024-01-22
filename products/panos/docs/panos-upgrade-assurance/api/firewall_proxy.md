@@ -1135,3 +1135,87 @@ __Returns__
     'warnings': None}}
 ```
 
+### `FirewallProxy.get_user_id_service_status`
+
+```python
+def get_user_id_service_status() -> dict
+```
+
+Get the status of the User ID agent service.
+
+The user-id service is used to redistribute user-id information to other firewalls.
+
+__Returns the clients and agents known to this device.__
+
+
+dict: The state of the user-id agent. Only returns up or down.
+
+```python showLineNumbers title="Sample output"
+{
+    "status": "up"
+}
+```
+
+### `FirewallProxy.get_redistribution_status`
+
+```python
+def get_redistribution_status() -> dict
+```
+
+Get the status of the Data Redistribution service.
+
+Redistribution is used to share data, such as user-id information, between PAN-OS firewalls or Agents.
+
+__Returns the clients and agents known to this device.__
+
+
+dict: The state of the redistribution service, and the associated clients, if available.
+
+```python showLineNumbers title="Sample output"
+{
+    'clients': [
+        {
+            'host': '1.1.1.1', 'port': '34518', 'vsys': 'vsys1', 'version': '6', 'status': 'idle',
+            'redistribution': 'I'
+        },
+        {
+            'host': '1.1.1.2', 'port': '34518', 'vsys': 'vsys1', 'version': '6', 'status': 'idle',
+            'redistribution': 'I'
+        }
+    ],
+    'agents': [
+        {
+            '@name': 'FW3367',
+            'host': '1.1.1.1',
+            'job-id': '0',
+            'last-heard-time': '1701651677',
+            'num_recv_msgs': '0',
+            'num_sent_msgs': '0',
+            'peer-address': '1.1.1.1',
+            'port': '5007',
+            'state': 'conn:idle',
+            'status-msg': '-',
+            'version': '0x6',
+            'vsys': 'vsys1',
+            'vsys_hub': 'no'
+        }
+    ]
+}
+```
+
+### `FirewallProxy.get_device_software_version`
+
+```python
+def get_device_software_version()
+```
+
+Gets the current running device software version, as a packaging.version.Version object.
+
+This allows you to do comparators between other Version objects easily. Note that this strips out information
+    like 'xfr' but maintains the hotfix (i.e 9.1.12-h3 becaomes 9.1.12.3 for the purpose of versioning).
+
+__Returns the software version as a packaging 'Version' object.__
+
+
+Version: Version(9.1.12)
+
