@@ -220,6 +220,110 @@
         ]
       }
     },
+    "/uve/api/v2/dashboard/vulnerabilities/prioritised": {
+      "get": {
+        "summary": "Get Prioritized Vulnerabilities V2",
+        "description": "Returns the top-priority unique vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, and vulnerable packages in use along with the number of assets they occur in\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "prioritised-vulnerability-v2",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "description": "Type of Asset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
+            }
+          },
+          {
+            "name": "life_cycle",
+            "description": "Life Cycle stage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "x-ga": "24.1.2-darwin",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
     "/uve/api/v1/dashboard/vulnerabilities/impact-stage": {
       "get": {
         "summary": "Get Vulnerability Impact by Stage",
@@ -631,6 +735,113 @@
           }
         }
       },
+      "OverviewWidgetV2": {
+        "type": "object",
+        "properties": {
+          "overviewSummary": {
+            "$ref": "#/components/schemas/OverviewSummary"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendCount"
+            }
+          }
+        }
+      },
+      "Values": {
+        "type": "array",
+        "properties": {
+          "values": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/TrendCount"
+            }
+          }
+        }
+      },
+      "TrendCount": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerableAsset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalRemediationCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "OverviewSummary": {
+        "type": "object",
+        "description": "Provides Summary of the vulnerability, remediated and asset counts in Runtime",
+        "properties": {
+          "totalVulnerableRuntimeAssets": {
+            "$ref": "#/components/schemas/VulnerableAssetByType"
+          },
+          "totalVulnerabilitiesinRuntime": {
+            "$ref": "#/components/schemas/VulnerabilityCountBySeverity"
+          },
+          "totalRemediatedinRuntime": {
+            "$ref": "#/components/schemas/VulnerabilityCountBySeverity"
+          }
+        }
+      },
+      "VulnerableAssetByType": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deployedImageCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverlessFunctionCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hostCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "VulnerabilityCountBySeverity": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "criticalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "highCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mediumCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lowCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "Overview": {
         "type": "object",
         "properties": {
@@ -670,6 +881,43 @@
           },
           "packageInUse": {
             "type": "integer"
+          }
+        }
+      },
+      "PrioritizedVulnerabilitiesV2": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilities": {
+            "type": "integer"
+          },
+          "urgent": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "patchable": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "exploitable": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "packageInUse": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          }
+        }
+      },
+      "VulnerabilityInfo": {
+        "type": "object",
+        "properties": {
+          "vulnerabilityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assetCount": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
