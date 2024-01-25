@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -22,11 +24,12 @@ title: 'Reference Architecture with Terraform: VM-Series in AWS, Combined Design
 Palo Alto Networks produces several [validated reference architecture design and deployment documentation guides](https://www.paloaltonetworks.com/resources/reference-architectures), which describe well-architected and tested deployments. When deploying VM-Series in a public cloud, the reference architectures guide users toward the best security outcomes, whilst reducing rollout time and avoiding common integration efforts.
 The Terraform code presented here will deploy Palo Alto Networks VM-Series firewalls in AWS based on the centralized design; for a discussion of other options, please see the design guide from [the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/combined_design) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/combined_design)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/combined_design) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/combined_design)
 
 ## Reference Architecture Design
 
-![Simplified High Level Topology Diagram](9c08a6e3-bb3e-49c8-87ec-2fccb914899e.png)
+![Simplified High Level Topology Diagram](425bb2f3-976f-4262-8595-32f98a9b391a.png)
+
 
 This code implements:
 - a _centralized design_, which secures outbound, inbound, and east-west traffic flows using an AWS transit gateway (TGW). Application resources are segmented across multiple VPCs that connect in a hub-and-spoke topology, with a dedicated VPC for security services where the VM-Series are deployed
@@ -41,13 +44,13 @@ This design supports interconnecting a large number of VPCs, with a scalable sol
 
 Inbound traffic originates outside your VPCs and is destined to applications or services hosted within your VPCs, such as web or application servers. The combined model implements inbound security by using the VM-Series and Gateway Load Balancer (GWLB) in a Security VPC, with distributed GWLB endpoints in the application VPCs. Unlike with outbound traffic, this design option does not use the transit gateway for traffic forwarding between the security VPC and the application VPCs.
 
-![Detailed Topology Diagram](240822321-37a7ffc1-134a-4037-b174-5a2abe44f475.png.png)
+![image](730327e8-cb90-4d80-9b1c-e5ee927e0cc7.png)
 
 ## Prerequisites
 
 The following steps should be followed before deploying the Terraform code presented here.
 
-1. Deploy Panorama e.g. by using [Panorama example](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/panorama_standalone)
+1. Deploy Panorama e.g. by using [Panorama example](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/panorama_standalone)
 2. Prepare device group, template, template stack in Panorama
 3. Download and install plugin `sw_fw_license` for managing licenses
 4. Configure bootstrap definition and license manager
