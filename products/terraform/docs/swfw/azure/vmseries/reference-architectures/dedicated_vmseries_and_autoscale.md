@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -24,11 +26,11 @@ The Terraform code presented here will deploy Palo Alto Networks VM-Series firew
 
 Virtual Machine Scale Sets (VMSS) are used for autoscaling to run the Next Generation Firewalls, with custom data plane oriented metrics published by PanOS it is possible to adjust the number of firewall appliances to the current workload (data plane utilization). Since firewalls are added or removed automatically, they cannot be managed in a classic way. Therefore they are not assigned with public IP addresses. To ease licensing, management and updates a Panorama appliance is suggested. Deployment of a Panorama instance is not covered in this example, but a [dedicated one exists](../standalone_panorama).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/dedicated_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/dedicated_vmseries_and_autoscale)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/dedicated_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/dedicated_vmseries_and_autoscale)
 
 ## Reference Architecture Design
 
-![simple](a7c2452d-f926-49da-bf21-9d840282a0a2.png)
+![simple](aa2ae33a-fb46-4a1c-9811-98ea3b132297.png)
 
 This code implements:
 - a _centralized design_, a hub-and-spoke topology with a Transit VNet containing VM-Series to inspect all inbound, outbound, east-west, and enterprise traffic
@@ -45,7 +47,8 @@ This design uses a Transit VNet. Application functions and resources are deploye
 
 The dedicated inbound option separates traffic flows across two separate sets of VM-Series firewalls. One set of VM-Series firewalls is dedicated to inbound traffic flows, allowing for greater flexibility and scaling of inbound traffic loads. The second set of VM-Series firewalls services all outbound, east-west, and enterprise network traffic flows. This deployment choice offers increased scale and operational resiliency and reduces the chances of high bandwidth use from the inbound traffic flows affecting other traffic flows within the deployment.
 
-![Dedicated-VMSeries-with-autoscaling](be84d4cb-c4c0-4e62-8bd7-8f5050215876.png)
+![Dedicated-VMSeries-with-autoscaling](757005dc-3e24-4b39-8a69-7b3fbf9819cb.png)
+
 
 This reference architecture consists of:
 
