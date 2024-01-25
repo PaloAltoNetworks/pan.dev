@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -24,11 +26,11 @@ The Terraform code presented here will deploy Palo Alto Networks VM-Series firew
 
 Virtual Machine Scale Sets (VMSS) are used for autoscaling to run the Next Generation Firewalls, with custom data plane oriented metrics published by PanOS it is possible to adjust the number of firewall appliances to the current workload (data plane utilization). Since firewalls are added or removed automatically, they cannot be managed in a classic way. To ease licensing, management and updates a Panorama appliance is suggested. Deployment of a Panorama instance is not covered in this example, but a [dedicated one exists](../standalone_panorama).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/common_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/common_vmseries_and_autoscale)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/common_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/common_vmseries_and_autoscale)
 
 ## Reference Architecture Design
 
-![simple](a7c2452d-f926-49da-bf21-9d840282a0a2.png)
+![simple](aa2ae33a-fb46-4a1c-9811-98ea3b132297.png)
 
 This code implements:
 - a _centralized design_, a hub-and-spoke topology with a Transit VNet containing VM-Series to inspect all inbound, outbound, east-west, and enterprise traffic
@@ -45,7 +47,8 @@ This design uses a Transit VNet. Application functions and resources are deploye
 
 The common firewall option leverages a single set of VM-Series firewalls. The sole set of firewalls operates as a shared resource and may present scale limitations with all traffic flowing through a single set of firewalls due to the performance degradation that occurs when traffic crosses virtual routers. This option is suitable for smaller scale deployments because inbound and outbound traffic flows occur on the same set of firewalls. However, the technical integration complexity is high.
 
-![Common-VMSeries-with-autoscaling](b10403f9-795a-4501-a189-3c21d44fc9e7.png)
+![Common-VMSeries-with-autoscaling](7d363d6a-b394-4851-99b9-03ce8abf379a.png)
+
 
 This reference architecture consists of:
 

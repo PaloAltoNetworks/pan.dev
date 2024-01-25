@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -22,7 +24,7 @@ A terraform module for deploying an Application Gateway v2. The module is dedica
 
 In the center of module's configuration is the `rules` property. See the the [rules property explained](#rules-property-explained) and [`rules` property examples](#rules-property-examples) topics for more details.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/appgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/appgw)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/appgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/appgw)
 
 ## Rules property explained
 
@@ -234,7 +236,7 @@ An example invocation (assuming usage of other Palo Alto's Azure modules) with a
 
 ```hcl
 module "Application Gateway" {
-  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/appgw"
+  source = "PaloAltoNetworks/swfw-modules/azurerm//modules/appgw"
 
   name                = "Application Gateway"
   resource_group_name = azurerm_resource_group.this.name

@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -35,13 +37,13 @@ provider "azurerm" {
 }
 ```
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/vmss) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/vmss)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/vmss) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/vmss)
 
 ## Usage
 
 ```hcl
 module "vmss" {
-  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/vmss"
+  source = "PaloAltoNetworks/swfw-modules/azurerm//modules/vmss"
 
   location                  = "Australia Central"
   name_prefix               = "pan"
@@ -90,7 +92,7 @@ No modules.
 | <a name="input_location"></a> [location](#input\_location) | Region to install VM-Series and dependencies. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the existing resource group where to place the resources created. | `string` | n/a | yes |
 | <a name="input_vm_size"></a> [vm\_size](#input\_vm\_size) | Azure VM size (type) to be created. Consult the *VM-Series Deployment Guide* as only a few selected sizes are supported. | `string` | `"Standard_D3_v2"` | no |
-| <a name="input_interfaces"></a> [interfaces](#input\_interfaces) | List of the network interface specifications.<br /><br />NOTICE. The ORDER in which you specify the interfaces DOES MATTER.<br />Interfaces will be attached to VM in the order you define here, therefore:<br />* The first should be the management interface, which does not participate in data filtering.<br />* The remaining ones are the dataplane interfaces.<br /><br />Options for an interface object:<br />- `name`                     - (required\|string) Interface name.<br />- `subnet_id`                - (required\|string) Identifier of an existing subnet to create interface in.<br />- `create_pip`               - (optional\|bool) If true, create a public IP for the interface<br />- `lb_backend_pool_ids`      - (optional\|list(string)) A list of identifiers of an existing Load Balancer backend pools to associate interface with.<br />- `appgw_backend_pool_ids`   - (optional\|list(String)) A list of identifier of the Application Gateway backend pools to associate interface with.<br />- `pip_domain_name_label`    - (optional\|string) The Prefix which should be used for the Domain Name Label for each Virtual Machine Instance.<br /><br />Example:<pre>[<br />  {<br />    name       = "management"<br />    subnet\_id  = azurerm\_subnet.my\_mgmt\_subnet.id<br />    create\_pip = true<br />  },<br />  {<br />    name      = "private"<br />    subnet\_id = azurerm\_subnet.my\_priv\_subnet.id<br />  },<br />  {<br />    name                = "public"<br />    subnet\_id           = azurerm\_subnet.my\_pub\_subnet.id<br />    lb\_backend\_pool\_ids = [azurerm\_lb\_backend\_address\_pool.lb\_backend.id]<br />  }<br />]</pre> | `list(any)` | n/a | yes |
+| <a name="input_interfaces"></a> [interfaces](#input\_interfaces) | List of the network interface specifications.<br /><br />NOTICE. The ORDER in which you specify the interfaces DOES MATTER.<br />Interfaces will be attached to VM in the order you define here, therefore:<br />* The first should be the management interface, which does not participate in data filtering.<br />* The remaining ones are the dataplane interfaces.<br /><br />Options for an interface object:<br />- `name`                     - (required\|string) Interface name.<br />- `subnet_id`                - (required\|string) Identifier of an existing subnet to create interface in.<br />- `create_pip`               - (optional\|bool) If true, create a public IP for the interface<br />- `lb_backend_pool_ids`      - (optional\|list(string)) A list of identifiers of an existing Load Balancer backend pools to associate interface with.<br />- `appgw_backend_pool_ids`   - (optional\|list(String)) A list of identifier of the Application Gateway backend pools to associate interface with.<br />- `pip_domain_name_label`    - (optional\|string) The Prefix which should be used for the Domain Name Label for each Virtual Machine Instance.<br /><br />Example:<pre>[<br />  {<br />    name       = "management"<br />    subnet\_id  = azurerm\_subnet.my\_mgmt\_subnet.id<br />    create\_pip = true<br />  },<br />  {<br />    name      = "private"<br />    subnet\_id = azurerm\_subnet.my\_priv\_subnet.id<br />  },<br />  {<br />    name                = "public"<br />    subnet\_id           = azurerm\_subnet.my\_pub\_subnet.id<br />    lb\_backend\_pool\_ids = [azurerm\_lb\_backend\_address\_pool.lb\_backend.id]<br />  }<br />]</pre> | `any` | n/a | yes |
 | <a name="input_username"></a> [username](#input\_username) | Initial administrative username to use for VM-Series. | `string` | `"panadmin"` | no |
 | <a name="input_password"></a> [password](#input\_password) | Initial administrative password to use for VM-Series. | `string` | n/a | yes |
 | <a name="input_ssh_keys"></a> [ssh\_keys](#input\_ssh\_keys) | A list of initial administrative SSH public keys that allow key-pair authentication. If not defined the `password` variable must be specified.<br /><br />This is a list of strings, so each item should be the actual public key value. If you would like to load them from files instead, following method is available:<pre>[<br />  file("/path/to/public/keys/key\_1.pub"),<br />  file("/path/to/public/keys/key\_2.pub")<br />]</pre> | `list(string)` | `[]` | no |

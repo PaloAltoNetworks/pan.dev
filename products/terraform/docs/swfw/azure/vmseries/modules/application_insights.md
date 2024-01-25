@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -40,7 +42,7 @@ In both situations the instrumentation key for the Application Insights has to b
         }
       }
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/application_insights) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/application_insights)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/application_insights) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/application_insights)
 
 ## Usage
 
@@ -48,7 +50,7 @@ The following snippet deploys Application Insights in Workspace mode, setting th
 
 ```hcl
 module "ai" {
-  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/application_insights"
+  source = "PaloAltoNetworks/swfw-modules/azurerm//modules/application_insights"
 
   name                      = "vmseries-ai
   metrics_retention_in_days = 365
