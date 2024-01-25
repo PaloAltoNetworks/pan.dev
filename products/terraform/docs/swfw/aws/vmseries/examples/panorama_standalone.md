@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -23,7 +25,7 @@ A Terraform example for deploying a one or more instances of Panorama in one or 
 **NOTE:**
 Panorama will take a serveral minutes to bootup during the initial setup.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/panorama_standalone) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/panorama_standalone)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/panorama_standalone) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/panorama_standalone)
 
 ## Topology
 
@@ -31,7 +33,7 @@ The topology consists of :
  - VPC with 2 subnets in 2 availability zones
  - 2 Panorama instances with a public IP addresses and static private IP addresses
 
-![](235086359-e846b901-e01b-45b2-92d0-81c94b4220e9.png.png)
+![image](e5da6263-16cc-4ac2-a081-40e6ac0d575c.png)
 
 ## PAN-OS software version
 
@@ -45,8 +47,8 @@ Example was prepared for PAN-OS in **10.2.3** version as described in [AWS Deplo
 ## Usage
 
 1. Access AWS CloudShell or any other environment which has access to your AWS account
-2. Clone the repository: `git clone https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules`
-3. Go to Panorama example: `cd terraform-aws-vmseries-modules/examples/panorama_standalone`
+2. Clone the repository: `git clone https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules`
+3. Go to Panorama example: `cd terraform-aws-swfw-modules/examples/panorama_standalone`
 4. Copy `example.tfvars` into `terraform.tfvars`
 5. Review `terraform.tfvars` file, especially with lines commented by ` # TODO: update here`
 6. Initialize Terraform: `terraform init`
