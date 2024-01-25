@@ -459,61 +459,45 @@ $ ./twistcli images scan \
 
 ## Options
 
-- **--addressURI --**
+- **--address URI**
 
   Required. Complete URI for Console, including the protocol and port. Only the HTTPS protocol is supported. By default, Console listens to HTTPS on port 8083, although your administrator can configure Console to listen on a different port.
 
   Example: --address https://console.example.com:8083
 
-- **-u, --userUSERNAME --**
+- **-u, --user USERNAME**
 
   Required. Username to access Console.
 
-- **-p, --passwordPASSWORD --**
+- **-p, --password PASSWORD**
 
   Password for the user specified with -u, --user. If not specified on the command-line, you are prompted for the user’s password before the scan runs.
 
-- **--output-fileFILENAME --**
+- **--output-file FILENAME**
 
   Send the results of the scan to a file.
   Example: --output-file examplescan
 
-- **--hashALGORITHM --**
-
-  Specifies the hashing algorithm. Supported values are md5, sha1, and sha256. The default value is md5.
-
-- **--compliance-thresholdSEVERITY --**
-
-  Sets the minimum severity compliance issue that returns a fail exit code. Supported values are low, medium, high, and critical To learn more about how Prisma Cloud rates compliance issues, see CIS benchmarks.
-
-- **--vulnerability-thresholdSEVERITY --**
-
-  Sets the minimum severity vulnerability that returns a fail exit code. Supported values are low, medium, high, and critical Minimum vulnerability threshold for failing the build on vulnerability checks
-
-- **--only-fixed --**
-
-  Reports just the vulnerabilities that have fixes available. If you set --vulnerability-threshold to high, and a high severity vulnerability is discovered during the scan, but that vulnerability still has no vendor fix, then the scanner returns a pass in the exit code.
-
-- **--details --**
+- **--details**
 
   Prints an itemized list of each vulnerability found by the scanner.
 
-- **--containerized --**
+- **--containerized**
 
   Run the scan from inside the container.
 
-- **--docker-tlscacertPATH --**
+- **--docker-tlscacert PATH**
 
   Path to Docker client CA certificate.
 
-- **--docker-tlscertPATH --**
+- **--docker-tlscert PATH**
 
   Path to Docker client Client certificate.
 
-- **--docker-tlskeyPATH --**
+- **--docker-tlskey PATH**
 
   Path to Docker client Client private key.
 
-- **--tlscacertPATH --**
+- **--tlscacert PATH**
 
   Path to Prisma Cloud CA certificate file. If no CA certificate is specified, the connection to Console is insecure.

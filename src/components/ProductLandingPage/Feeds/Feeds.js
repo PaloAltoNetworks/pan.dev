@@ -32,20 +32,25 @@ function Feeds() {
       <div className="feeds-image-list-container">
         {hasImageFeeds && (
           <div className="feeds-image-container">
-            {imageFeeds.map((feed, i) => (
-              <Link key={i} to={feed.link}>
-                <div className="feeds-image-text-wrapper">
-                  <img
-                    src={
-                      feed.thumbnail ||
-                      "/img/product-landing/terraform/feeds/stock-feed.jpg"
-                    }
-                    alt={feed.title}
-                  />
-                  <h3 className="feeds__title">{feed.title}</h3>
-                </div>
-              </Link>
-            ))}
+            {imageFeeds.map((feed, i) => {
+              const cardImageSrc =
+                feed.thumbnail ||
+                (feed.content.match(/<img[^>]+src="([^">]+)"/)
+                  ? feed.content.match(/<img[^>]+src="([^">]+)"/)[1]
+                  : null);
+
+              return (
+                <Link key={i} to={feed.link}>
+                  <div className="feeds-image-text-wrapper">
+                    <img
+                      src={cardImageSrc || "/img/stock-feed.jpg"}
+                      alt={feed.title}
+                    />
+                    <h3 className="feeds__title">{feed.title}</h3>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
         {hasFeeds && (

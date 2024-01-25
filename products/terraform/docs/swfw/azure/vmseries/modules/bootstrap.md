@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -23,7 +25,7 @@ to [bootstrap a VM-Series firewalls in Azure](https://docs.paloaltonetworks.com/
 
 The module does *not* configure the bootstrap images, licenses, or configurations.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/bootstrap)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/bootstrap)
 
 ## Usage
 
@@ -31,7 +33,7 @@ Simple example usage is shown below. For more *real life* code please check [exa
 
 ```hcl
 module "bootstrap" {
-  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/bootstrap"
+  source = "PaloAltoNetworks/swfw-modules/azurerm//modules/bootstrap"
 
   storage_account_name = "accountname"
   resource_group_name  = "rg-name"

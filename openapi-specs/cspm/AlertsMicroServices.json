@@ -101,16 +101,6 @@
                 }
               }
             }
-          },
-          "5XX": {
-            "description": "Server error",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/SpringErrorResponse"
-                }
-              }
-            }
           }
         },
         "security": [
@@ -162,16 +152,6 @@
           },
           "4XX": {
             "description": "Client error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SpringErrorResponse"
-                }
-              }
-            }
-          },
-          "5XX": {
-            "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -262,16 +242,6 @@
           },
           "429": {
             "description": "Too Many Requests - API is getting rate limited",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/SpringErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -1527,6 +1497,9 @@
             "type": "boolean"
           },
           "timeRange": {
+            "discriminator": {
+              "propertyName": "type"
+            },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/AbsoluteTimeRangeConfig"
@@ -1710,10 +1683,7 @@
             "type": "string"
           }
         },
-        "description": "Model for TimeRangeConfig",
-        "discriminator": {
-          "propertyName": "type"
-        }
+        "description": "Model for TimeRangeConfig"
       },
       "ToNowTimeRangeConfig": {
         "type": "object",
@@ -3936,19 +3906,17 @@
         "properties": {
           "nodes": {
             "type": "object",
-            "additionalProperties": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/AssetNode"
-                },
-                {
-                  "$ref": "#/components/schemas/FindingNode"
-                },
-                {
-                  "$ref": "#/components/schemas/VulnerabilityNode"
-                }
-              ]
-            }
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AssetNode"
+              },
+              {
+                "$ref": "#/components/schemas/FindingNode"
+              },
+              {
+                "$ref": "#/components/schemas/VulnerabilityNode"
+              }
+            ]
           },
           "edges": {
             "type": "array",
@@ -3994,19 +3962,11 @@
       },
       "AssetNode": {
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "metadata": {
-                "$ref": "#/components/schemas/AssetNodeMetadata"
-              }
-            }
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/AssetNodeMetadata"
           }
-        ]
+        }
       },
       "AssetNodeMetadata": {
         "type": "object",
@@ -4212,26 +4172,18 @@
           "type"
         ],
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The node type",
+            "enum": [
+              "Finding"
+            ]
           },
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The node type",
-                "enum": [
-                  "Finding"
-                ]
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/FindingNodeMetadata"
-              }
-            }
+          "metadata": {
+            "$ref": "#/components/schemas/FindingNodeMetadata"
           }
-        ]
+        }
       },
       "FindingNodeMetadata": {
         "required": [
@@ -4487,26 +4439,18 @@
           "type"
         ],
         "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Node"
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The node type",
+            "enum": [
+              "Vulnerability"
+            ]
           },
-          {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The node type",
-                "enum": [
-                  "Vulnerability"
-                ]
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/VulnerabilityMetadata"
-              }
-            }
+          "metadata": {
+            "$ref": "#/components/schemas/VulnerabilityMetadata"
           }
-        ]
+        }
       }
     },
     "headers": {
