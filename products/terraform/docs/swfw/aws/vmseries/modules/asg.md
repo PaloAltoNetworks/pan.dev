@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -18,13 +20,16 @@ title: Palo Alto Networks Autoscaling Group Module for AWS
 
 # Palo Alto Networks Autoscaling Group Module for AWS
 
-A Terraform module for deploying VM-Series in Autoscaling group in AWS cloud. 
+A Terraform module for deploying VM-Series in Autoscaling group in AWS cloud.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/asg) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/asg)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/modules/asg) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/submodules/asg)
 
 ## Usage
 
-For example usage, please refer to the [Examples](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/develop/examples) directory.
+For example usage, please refer to the [examples](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples) directory:
+- [Reference Architecture with Terraform: VM-Series in AWS, Centralized Design Model, Common NGFW option with Autoscaling](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/centralized_design_autoscale)
+- [Reference Architecture with Terraform: VM-Series in AWS, Combined Design Model, Common NGFW Option with Autoscaling](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/combined_design_autoscale)
+- [Reference Architecture with Terraform: VM-Series in AWS, Isolated Design Model, Common NGFW option with Autoscaling](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/isolated_design_autoscale)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -78,6 +83,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_asg_name"></a> [asg\_name](#input\_asg\_name) | Name of the autoscaling group to create | `string` | `"asg"` | no |
 | <a name="input_bootstrap_options"></a> [bootstrap\_options](#input\_bootstrap\_options) | Bootstrap options to put into userdata | `any` | `{}` | no |
+| <a name="input_delete_timeout"></a> [delete\_timeout](#input\_delete\_timeout) | Timeout needed to correctly drain autoscaling group while deleting ASG.<br /><br />  By default in AWS timeout is set to 10 minutes, which is too low and causes issue:<br />  Error: waiting for Auto Scaling Group (example-asg) drain: timeout while waiting for state to become '0' (last state: '1', timeout: 10m0s) | `string` | `"20m"` | no |
 | <a name="input_delicense_enabled"></a> [delicense\_enabled](#input\_delicense\_enabled) | If true, then Lambda is going to delicense FW before destroying VM-Series | `bool` | `false` | no |
 | <a name="input_delicense_ssm_param_name"></a> [delicense\_ssm\_param\_name](#input\_delicense\_ssm\_param\_name) | Secure string in Parameter Store with value in below format:<pre>{"username":"ACCOUNT","password":"PASSWORD","panorama1":"IP\_ADDRESS1","panorama2":"IP\_ADDRESS2","license\_manager":"LICENSE\_MANAGER\_NAME"}"</pre> | `any` | `null` | no |
 | <a name="input_desired_capacity"></a> [desired\_capacity](#input\_desired\_capacity) | Number of Amazon EC2 instances that should be running in the group. | `number` | `2` | no |
@@ -87,7 +93,9 @@ No modules.
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | EC2 instance type. | `string` | `"m5.xlarge"` | no |
 | <a name="input_interfaces"></a> [interfaces](#input\_interfaces) | Map of the network interface specifications.<br />If "mgmt-interface-swap" bootstrap option is enabled, ensure dataplane interface `device_index` is set to 0 and the firewall management interface `device_index` is set to 1.<br />Available options:<br />- `device_index`       = (Required\|int) Determines order in which interfaces are attached to the instance. Interface with `0` is attached at boot time.<br />- `subnet_id`          = (Required\|string) Subnet ID to create the ENI in.<br />- `name`               = (Optional\|string) Name tag for the ENI. Defaults to instance name suffixed by map's key.<br />- `description`        = (Optional\|string) A descriptive name for the ENI.<br />- `create_public_ip`   = (Optional\|bool) Whether to create a public IP for the ENI. Defaults to false.<br />- `eip_allocation_id`  = (Optional\|string) Associate an existing EIP to the ENI.<br />- `private_ips`        = (Optional\|list) List of private IPs to assign to the ENI. If not set, dynamic allocation is used.<br />- `public_ipv4_pool`   = (Optional\|string) EC2 IPv4 address pool identifier.<br />- `source_dest_check`  = (Optional\|bool) Whether to enable source destination checking for the ENI. Defaults to false.<br />- `security_group_ids` = (Optional\|list) A list of Security Group IDs to assign to this interface. Defaults to null.<br /><br />Example:<pre>interfaces = {<br />  mgmt = {<br />    device\_index       = 0<br />    subnet\_id          = aws\_subnet.mgmt.id<br />    name               = "mgmt"<br />    create\_public\_ip   = true<br />    source\_dest\_check  = true<br />    security\_group\_ids = ["sg-123456"]<br />  },<br />  public = {<br />    device\_index     = 1<br />    subnet\_id        = aws\_subnet.public.id<br />    name             = "public"<br />    create\_public\_ip = true<br />  },<br />  private = {<br />    device\_index = 2<br />    subnet\_id    = aws\_subnet.private.id<br />    name         = "private"<br />  },<br />]</pre> | `map(any)` | n/a | yes |
 | <a name="input_ip_target_groups"></a> [ip\_target\_groups](#input\_ip\_target\_groups) | Target groups (type IP) for load balancers, which are used by Lamda to register VM-Series IP of untrust interface | <pre>list(object({<br />    arn  = string<br />    port = string<br />  }))</pre> | `[]` | no |
+| <a name="input_lambda_execute_pip_install_once"></a> [lambda\_execute\_pip\_install\_once](#input\_lambda\_execute\_pip\_install\_once) | Flag used in local-exec command installing Python packages required by Lambda.<br /><br />  If set to true, local-exec is executed only once, when all resources are created.<br />  If you need to have idempotent behaviour for terraform apply every time and you have downloaded<br />  all required Python packages, set it to true.<br /><br />  If set to false, every time it's checked if files for package pan\_os\_python are downloaded.<br />  If not, it causes execution of local-exec command in two consecutive calls of terraform apply:<br />  - first time value of installed-pan-os-python is changed from true (or empty) to false<br />  - second time value of installed-pan-os-python is changed from false to true<br />  In summary while executing code from scratch, two consecutive calls of terraform apply are not idempotent.<br />  The third execution of terraform apply show no changes.<br />  While using modules in CI/CD pipelines, when agents are selected randomly, set this value to false<br />  in order to check every time, if pan\_os\_python package is downloaded. sdfdsf sdfvars | `bool` | `false` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Amount of time Lambda Function has to run in seconds. | `number` | `30` | no |
+| <a name="input_launch_template_update_default_version"></a> [launch\_template\_update\_default\_version](#input\_launch\_template\_update\_default\_version) | Whether to update launch template default version each update.<br /><br />  If set to true, every time when e.g. bootstrap options are changed, new version is created and default version is updated.<br />  If set to false, every time when e.g. bootstrap options are changed, new version is created, but default version is not changed. | `bool` | `true` | no |
 | <a name="input_lifecycle_hook_timeout"></a> [lifecycle\_hook\_timeout](#input\_lifecycle\_hook\_timeout) | How long should we wait for lambda to finish | `number` | `300` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | Maximum size of the Auto Scaling Group. | `number` | `2` | no |
 | <a name="input_min_size"></a> [min\_size](#input\_min\_size) | Minimum size of the Auto Scaling Group. | `number` | `1` | no |

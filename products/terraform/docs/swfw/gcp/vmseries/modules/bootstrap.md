@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - gcp
 pagination_next: null
 pagination_prev: null
@@ -18,7 +20,7 @@ title: Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Ser
 
 # Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Series
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/submodules/bootstrap)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/google/latest/submodules/bootstrap)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -26,7 +28,7 @@ title: Google Cloud Storage Bucket For Initial Boot Of Palo Alto Networks VM-Ser
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3, < 2.0 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 
 ### Providers
