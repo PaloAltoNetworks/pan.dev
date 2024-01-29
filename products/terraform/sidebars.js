@@ -100,6 +100,25 @@ module.exports = {
         },
       ],
     },
+    {
+      type: "category",
+      collapsed: false,
+      label: "Azure",
+      items: [
+        {
+          type: "category",
+          collapsed: true,
+          label: "Securing vWAN Tutorial",
+          items: ["terraform/docs/cloudngfw/azure/tutorials/intro"],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Reference",
+          items: ["terraform/docs/cloudngfw/azure/reference/provider"],
+        },
+      ],
+    },
   ],
   terraform_swfw_aws: [
     "terraform/docs/swfw/aws/vmseries/overview",

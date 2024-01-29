@@ -242,8 +242,13 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
-                      to: "terraform/docs/cloudngfw/",
+                      label: "Terraform - AWS",
+                      to: "terraform/docs/cloudngfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform - Azure",
+                      to: "terraform/docs/cloudngfw",
                       icon: "doc",
                     },
                   ],

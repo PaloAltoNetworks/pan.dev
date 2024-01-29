@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - gcp
 pagination_next: null
 pagination_prev: null
@@ -26,7 +28,7 @@ title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
   - Can only use the nic0 (the base interface) of an instance.
   - Cannot serve as a next hop in a GCP custom routing table entry.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules/tree/main/modules/lb_external) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest/submodules/lb_external)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/lb_external) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/google/latest/submodules/lb_external)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -34,7 +36,7 @@ title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3, < 2.0 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | ~> 4.54 |
 
 ### Providers
