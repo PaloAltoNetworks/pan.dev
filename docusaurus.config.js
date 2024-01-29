@@ -317,7 +317,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/dlp-api-resources",
+                      to: "dlp/api",
                       label: "Data Loss Prevention API",
                       icon: "api-doc",
                     },
@@ -704,6 +704,11 @@ const config = {
           "email-dlp": {
             specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
             outputDir: "products/email-dlp/api",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          dlp: {
+            specPath: "openapi-specs/dlp/DLPAPI.yaml",
+            outputDir: "products/dlp/api",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
