@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -29,7 +31,7 @@ The bootstrap package may optionally include a PAN-OS software image,
 application and threat signature updates, VM-Series plug-ins, and/or license
 files.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/bootstrap)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/modules/bootstrap) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/submodules/bootstrap)
 
 ## Directory and file structure
 The root directory of the Terraform plan calling this module should include a
@@ -115,7 +117,6 @@ No modules.
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.bootstrap](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_s3_bucket.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket_acl.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_acl) | resource |
 | [aws_s3_bucket_ownership_controls.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_ownership_controls) | resource |
 | [aws_s3_bucket_public_access_block.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_server_side_encryption_configuration.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
@@ -133,29 +134,16 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_bootstrap_directories"></a> [bootstrap\_directories](#input\_bootstrap\_directories) | List of subdirectories to be created inside the bucket (whether or not they exist locally inside the `source_root_directory`). A hardcoded pan-os requirement. | `list(string)` | <pre>[<br />  "config/",<br />  "content/",<br />  "software/",<br />  "license/",<br />  "plugins/"<br />]</pre> | no |
+| <a name="input_bootstrap_options"></a> [bootstrap\_options](#input\_bootstrap\_options) | Object define bootstrap options used in the init-cfg.txt file.<br /><br />There are available bootstrap parameters:<br />- `hostname`                    - (`string`, optional) The hostname of the VM-series instance.<br />- `panorama-server`             - (`string`, optional) The FQDN or IP address of the primary Panorama server.<br />- `panorama-server-2`           - (`string`, optional) The FQDN or IP address of the secondary Panorama server.<br />- `tplname`                     - (`string`, optional) The Panorama template stack name.<br />- `dgname`                      - (`string`, optional) The Panorama device group name.<br />- `cgname`                      - (`string`, optional) The Panorama collector group name.<br />- `dns-primary`                 - (`string`, optional) The IP address of the primary DNS server.<br />- `dns-secondary`               - (`string`, optional) The IP address of the secondary DNS server.<br />- `auth-key`                    - (`string`, optional) VM-Series authentication key generated via plugin sw\_fw\_license.<br />- `vm-auth-key`                 - (`string`, optional) VM-Series authentication key generated on Panorama.<br />- `op-command-modes`            - (`string`, optional) Set jumbo-frame and/or mgmt-interface-swap.<br />- `plugin-op-commands`          - (`string`, optional) Set plugin-op-commands.<br />- `dhcp-send-hostname`          - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its hostname to the DHCP server.<br />- `dhcp-send-client-id`         - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its client ID to the DHCP server.<br />- `dhcp-accept-server-hostname` - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its hostname from the DHCP server.<br />- `dhcp-accept-server-domain`   - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its DNS server from the DHCP server. | `any` | <pre>{<br />  "dhcp-accept-server-domain": "yes",<br />  "dhcp-accept-server-hostname": "yes",<br />  "dhcp-send-client-id": "yes",<br />  "dhcp-send-hostname": "yes"<br />}</pre> | no |
 | <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | Name of a bucket to reuse or create (depending on `create_bucket` value). In the latter case - if empty, the name will be auto-generated. | `string` | `""` | no |
 | <a name="input_create_bucket"></a> [create\_bucket](#input\_create\_bucket) | If true, a new bucket will be created. When false, name of existing bucket to use has to be provided in `bucket_name` variable. | `bool` | `true` | no |
 | <a name="input_create_iam_role_policy"></a> [create\_iam\_role\_policy](#input\_create\_iam\_role\_policy) | If true, a new IAM role with policy will be created. When false, name of existing IAM role to use has to be provided in `iam_role_name` variable. | `bool` | `true` | no |
-| <a name="input_dgname"></a> [dgname](#input\_dgname) | The Panorama device group name. | `string` | `""` | no |
-| <a name="input_dhcp_accept_server_domain"></a> [dhcp\_accept\_server\_domain](#input\_dhcp\_accept\_server\_domain) | The DHCP server determines a value of yes or no. If yes, the firewall accepts its DNS server from the DHCP server. | `string` | `"yes"` | no |
-| <a name="input_dhcp_accept_server_hostname"></a> [dhcp\_accept\_server\_hostname](#input\_dhcp\_accept\_server\_hostname) | The DHCP server determines a value of yes or no. If yes, the firewall accepts its hostname from the DHCP server. | `string` | `"yes"` | no |
-| <a name="input_dhcp_send_client_id"></a> [dhcp\_send\_client\_id](#input\_dhcp\_send\_client\_id) | The DHCP server determines a value of yes or no. If yes, the firewall sends its client ID to the DHCP server. | `string` | `"yes"` | no |
-| <a name="input_dhcp_send_hostname"></a> [dhcp\_send\_hostname](#input\_dhcp\_send\_hostname) | The DHCP server determines a value of yes or no. If yes, the firewall sends its hostname to the DHCP server. | `string` | `"yes"` | no |
-| <a name="input_dns-primary"></a> [dns-primary](#input\_dns-primary) | The IP address of the primary DNS server. | `string` | `""` | no |
-| <a name="input_dns-secondary"></a> [dns-secondary](#input\_dns-secondary) | The IP address of the secondary DNS server. | `string` | `""` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Set to false to prevent Terraform from destroying a bucket with unknown objects or locked objects. | `bool` | `true` | no |
 | <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | Map of arbitrary tags to apply to all resources. | `map(any)` | `{}` | no |
-| <a name="input_hostname"></a> [hostname](#input\_hostname) | The hostname of the VM-series instance. | `string` | `""` | no |
 | <a name="input_iam_instance_profile_name"></a> [iam\_instance\_profile\_name](#input\_iam\_instance\_profile\_name) | Name of the instance profile to create. If empty, name will be auto-generated. | `string` | `""` | no |
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Name of a IAM role to reuse or create (depending on `create_iam_role_policy` value). | `string` | `null` | no |
-| <a name="input_op-command-modes"></a> [op-command-modes](#input\_op-command-modes) | Set jumbo-frame and/or mgmt-interface-swap. | `string` | `""` | no |
-| <a name="input_panorama-server"></a> [panorama-server](#input\_panorama-server) | The FQDN or IP address of the primary Panorama server. | `string` | `""` | no |
-| <a name="input_panorama-server2"></a> [panorama-server2](#input\_panorama-server2) | The FQDN or IP address of the secondary Panorama server. | `string` | `""` | no |
-| <a name="input_plugin-op-commands"></a> [plugin-op-commands](#input\_plugin-op-commands) | Set plugin-op-commands. | `string` | `""` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | The prefix to use for bucket name, IAM role name, and IAM role policy name. It is allowed to use dash "-" as the last character. | `string` | `"bootstrap-"` | no |
 | <a name="input_source_root_directory"></a> [source\_root\_directory](#input\_source\_root\_directory) | The source directory to become the bucket's root directory. If empty uses `files` subdirectory of a Terraform configuration root directory. | `string` | `""` | no |
-| <a name="input_tplname"></a> [tplname](#input\_tplname) | The Panorama template stack name. | `string` | `""` | no |
-| <a name="input_vm-auth-key"></a> [vm-auth-key](#input\_vm-auth-key) | Virtual machine authentication key. | `string` | `""` | no |
 
 ### Outputs
 

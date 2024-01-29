@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -20,11 +22,11 @@ title: Palo Alto Networks Network Load Balancer Module for AWS
 
 A Terraform module for deploying a Network Load Balancer in AWS cloud. This can be used both as a public facing Load Balancer (to balance incoming traffic to Firewalls) or as an internal Load Balancer (to balance traffic from Firewalls to the actual application.)
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/nlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/nlb)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/modules/nlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/submodules/nlb)
 
 ## Usage
 
-For example usage please refer to the [*Centralized Design*](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/centralized_design), [*Combined Design*](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/combined_design/) or [*Isolated Design*](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/isolated_design/) examples.
+For example usage please refer to the [*Centralized Design*](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/centralized_design), [*Combined Design*](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/combined_design/) or [*Isolated Design*](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/isolated_design/) examples.
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -78,6 +80,7 @@ No modules.
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Enable load balancing between instances in different AZs. Defaults to `true`.<br />Change to `false` only if absolutely necessary. By default, there is only one FW in each AZ.<br />Turning this off means 1:1 correlation between a public IP assigned to an AZ and a FW deployed in that AZ. | `bool` | `true` | no |
 | <a name="input_internal_lb"></a> [internal\_lb](#input\_internal\_lb) | Determines if this Load Balancer will be a public (default) or an internal one. | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the Load Balancer to be created, must be less or equal to 32 char. | `string` | n/a | yes |
+| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security group IDs to use with a Load Balancer.<br /><br />If security groups are created with a [VPC module](../vpc) you can use output from that module like this:<pre>security\_groups              = [module.vpc.security\_group\_ids["load\_balancer\_security\_group"]]</pre>For more information on the `load_balancer_security_group` key refer to the [VPC module documentation](../vpc). | `list(string)` | `[]` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Map of subnets used with a Network Load Balancer. Each map's key is the availability zone name and the value is an object that has an attribute<br />`id` identifying AWS subnet.<br /><br />Examples:<br /><br />You can define the values directly:<pre>subnets = {<br />  "us-east-1a" = { id = "snet-123007" }<br />  "us-east-1b" = { id = "snet-123008" }<br />}</pre>You can also use output from the `subnet_sets` module:<pre>subnets        = { for k, v in module.subnet\_sets["untrust"].subnets : k => { id = v.id } }</pre> | <pre>map(object({<br />    id = string<br />  }))</pre> | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of AWS tags to apply to all the created resources. | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the security VPC the Load Balancer should be created in. | `string` | n/a | yes |
