@@ -1,3 +1,3 @@
 module.exports = {
-  aiops_api: ["dlp/api/dlpoverview", require("./api/sidebar")],
+  dlp_api: ["dlp/api/dlpoverview", require("./api/sidebar")],
 };
