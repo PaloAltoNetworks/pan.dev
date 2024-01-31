@@ -3,34 +3,34 @@ components:
     IncidentAssignee:
       properties:
         createdAt:
-          description: create at
+          description: The creation time of the DLP incident.
           example: yyyy-MMM-dd HH:mm:ss z
           type: string
         emailAddress:
-          description: email address of the assignee
+          description: Email address of the assignee
           type: string
         firstName:
-          description: assignee first name
+          description: First name of the assignee
           type: string
         id:
           description: ID of the assignee
           format: uuid
           type: string
         lastName:
-          description: assignee last name
+          description: Last name of the assignee
           type: string
         status:
-          description: active assignee or inactivate assignee
+          description: Signifies whether the assignee is active or inactive.
           enum:
           - ACTIVE
           - INACTIVE
           example: '"ACTIVE" or "INACTIVE"'
           type: string
         tenantId:
-          description: dlp tenant id
+          description: The TSG enabled tenant group ID.
           type: string
         updatedAt:
-          description: ''
+          description: The last updated time of the incident.
           example: yyyy-MMM-dd HH:mm:ss z
           type: string
       required:
@@ -115,7 +115,6 @@ components:
       title: PagedDataResponse<IncidentDTO>
       type: object
     IncidentResponseDTO:
-      description: ''
       example:
         action: alert
         assignee_id: 00d53ebf-c386-4b95-ad05-6819517c3450
@@ -148,13 +147,16 @@ components:
         tenant_id: '5886928188517009408'
       properties:
         action:
+          description: Action taken on the incident.
           enum:
           - alert
           - block
           type: string
         app_id:
+          description: Palo Alto Networks assigned Application ID.
           type: string
         app_name:
+          description: The name of the application.
           type: string
         assignee_id:
           type: string
@@ -211,6 +213,7 @@ components:
           type: string
         user:
           type: string
+      title: IncidentResponseDTO
       type: object
     MatchInfo:
       properties:
@@ -295,6 +298,42 @@ components:
           type: integer
       title: PageData
       type: object
+    ScanContentResponse:
+      properties:
+        data_pattern_rule_1_verdict:
+          enum:
+          - MATCHED
+          - NOT_EVALUATED
+          - NOT_MATCHED
+          - null
+          type: string
+        data_pattern_rule_2_verdict:
+          enum:
+          - MATCHED
+          - NOT_EVALUATED
+          - NOT_MATCHED
+          - null
+          type: string
+        data_profile_name:
+          description: Profile of the detection rules
+          type: string
+        file_name:
+          description: Name of the scanned file
+          type: string
+        report_id:
+          description: ID of the retrieved report
+          type: string
+        scanContentRawReport:
+          description: List of report data
+          type: string
+        tenant_id:
+          description: DLP tenant ID
+          type: string
+        txn_id:
+          description: ID of the retrieved report
+          type: string
+      title: ScanContentResponse
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
@@ -312,6 +351,8 @@ openapi: 3.0.2
 paths:
   /v1/api/incidents/assignee:
     get:
+      description: Retrieve information about all assignees that you can use to monitor
+        team members who can examine incidents.
       operationId: get-v1-api-incidents-assignee
       responses:
         '200':
@@ -332,6 +373,7 @@ paths:
       tags:
       - DLP API
     put:
+      description: Update information about all assignees  who can examine incidents.
       operationId: put-v1-api-incidents-assignee
       requestBody:
         content:
@@ -355,6 +397,8 @@ paths:
       - DLP API
   /v1/api/incidents/assignee/{assigneeId}:
     get:
+      description: Retrieve information about your assignees that you can use to monitor
+        team members who can examine incidents.
       operationId: get-v1-api-incidents-assignee-assigneeid
       parameters:
       - description: The ID of the asignee for the incident.
@@ -383,6 +427,14 @@ paths:
       - DLP API
   /v1/api/incidents/{incidentID}/assignee:
     put:
+      description: 'When reviewing your incidents you can assign your incidents using
+        the API. These asignees can then:
+
+        * [Update Notes](/dlp/api/put-v-1-api-incidents-incidentid-notes/)
+
+        * [Update Incident Resolution Statuses](/dlp/api/put-v-1-api-incidents-incidentid-resolution-status/)
+
+        '
       operationId: put-v1-api-incidents-incidentid-assignee
       parameters:
       - description: The region/country of the incident.
@@ -432,6 +484,8 @@ paths:
       - DLP API
   /v1/api/incidents/{incidentID}/notes:
     delete:
+      description: For additional auditing and clarity for your team members, you
+        can programatically delete notes to provide further details.
       operationId: delete-v1-api-incidents-incidentid-notes
       parameters:
       - description: The ID of the recorded incident.
@@ -490,6 +544,8 @@ paths:
       tags:
       - DLP API
     put:
+      description: For additional auditing and clarity for your team members, you
+        can programatically edit notes to provide further details.
       operationId: put-v1-api-incidents-incidentid-notes
       parameters:
       - description: The ID of the recorded incident.
@@ -559,6 +615,7 @@ paths:
       - DLP API
   /v1/api/incidents/{incidentID}/resolution-status:
     put:
+      description: Update the resolution status for a specific incident
       operationId: put-v1-api-incidents-incidentid-resolution-status
       parameters:
       - description: ID of the Incident to be updated
@@ -568,24 +625,6 @@ paths:
         schema:
           type: string
       - description: The region/country of the recorded incident.
-        in: query
-        name: region
-        required: false
-        schema:
-          enum:
-          - us
-          - eu
-          - uk
-          - jp
-          - in
-          - ca
-          type: string
-      - in: path
-        name: incidentID
-        required: true
-        schema:
-          type: string
-      - description: region(default to us)
         in: query
         name: region
         required: false
@@ -621,8 +660,145 @@ paths:
       summary: Update Incident Resolution
       tags:
       - DLP API
+  /v1/public/report/{reportId}:
+    get:
+      description: 'A GET request to this endpoint retrieves the DLP report stored
+        in Cortex Data Lake. You can use the report ID from Cortex Data Lake or from
+        an [incident](/dlp/api/get-v-2-api-incidents/). A report can contain many
+        incidents.
+
+        [Set Up Enterprise Data Loss Prevention](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/set-up-enterprise-data-loss-prevention)
+        provides more information.
+
+        '
+      operationId: get-v1-public-report-reportid
+      parameters:
+      - description: ID of the retrieved report.
+        in: path
+        name: reportId
+        required: true
+        schema:
+          type: string
+      - description: (Optional) Boolean field when set to true, retrieves snippets
+          from the DLP report.
+        in: query
+        name: fetchSnippets
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                sample report:
+                  value:
+                    data_pattern_rule_1_verdict: MATCHED
+                    data_profile_id: '11995014'
+                    data_profile_name: Sensitive Content
+                    detection_time: 10/15/2020 21:16:24 UTC
+                    extracted_file_size_in_bytes: 1005635
+                    fileSha: 90d068df2381ebd8342c99cf59907e7c9fc7ab3d7c4c6fdc2a3d814eb7ed374f
+                    file_name: google_finance_template_1mb.txt
+                    file_size_in_bytes: 1005626
+                    file_type: txt
+                    report_id: '483332512'
+                    scanContentRawReport:
+                      data_pattern_rule_1_results:
+                      - data_pattern_id: 5ee3c51c99025d000161ab9a
+                        detection_frequency: 0
+                        high_confidence_frequency: 0
+                        low_confidence_frequency: 0
+                        medium_confidence_frequency: 0
+                        name: Bank - American Bankers Association Routing Number -
+                          ABA
+                        proximity_detection_frequency: 0
+                        score: 0
+                        state: EVALUATED
+                        strict_detection_frequency: 0
+                        technique: regex
+                        type: predefined
+                        unique_checksum_detection_frequency: 0
+                        unique_detection_frequency: 0
+                        unique_high_confidence_frequency: 0
+                        unique_low_confidence_frequency: 0
+                        unique_medium_confidence_frequency: 0
+                        unique_proximity_detection_frequency: 0
+                        unique_strict_detection_frequency: 0
+                        version: 1
+                        weighted_frequency: 0
+                      - data_pattern_id: 5ee3c51c99025d000161aba6
+                        detection_frequency: 0
+                        high_confidence_frequency: 0
+                        low_confidence_frequency: 0
+                        medium_confidence_frequency: 0
+                        name: Voyager Credit Card
+                        proximity_detection_frequency: 0
+                        score: 0
+                        state: EVALUATED
+                        strict_detection_frequency: 0
+                        technique: regex
+                        type: predefined
+                        unique_checksum_detection_frequency: 0
+                        unique_detection_frequency: 0
+                        unique_high_confidence_frequency: 0
+                        unique_low_confidence_frequency: 0
+                        unique_medium_confidence_frequency: 0
+                        unique_proximity_detection_frequency: 0
+                        unique_strict_detection_frequency: 0
+                        version: 1
+                        weighted_frequency: 0
+                      - data_pattern_id: 5ee3c51d99025d000161ac52
+                        detection_frequency: 3
+                        high_confidence_frequency: 3
+                        low_confidence_frequency: 3
+                        matched_confidence_level: high
+                        medium_confidence_frequency: 0
+                        name: NationalId - US Social Security Number - SSN
+                        proximity_detection_frequency: 3
+                        score: 0
+                        state: EVALUATED
+                        strict_detection_frequency: 0
+                        technique: regex
+                        type: predefined
+                        unique_checksum_detection_frequency: 0
+                        unique_detection_frequency: 3
+                        unique_high_confidence_frequency: 3
+                        unique_low_confidence_frequency: 3
+                        unique_medium_confidence_frequency: 0
+                        unique_proximity_detection_frequency: 3
+                        unique_strict_detection_frequency: 0
+                        version: 1
+                        weighted_frequency: 0
+                    tenant_id: '7830962012064884736'
+                    txn_id: '483332512'
+                    type: basic
+              schema:
+                $ref: '#/components/schemas/ScanContentResponse'
+          description: Upon success, the HTTP response code is 200
+        '400':
+          description: Bad Request. Got an invalid JSON.
+        '401':
+          description: Unauthorized access. An issue occurred during authentication.
+            This can indicate an incorrect key, ID, or other invalid authentication
+            parameters.
+        '403':
+          description: Forbidden access. The provided API Key does not have the required
+            permissions to run this API.
+        '500':
+          description: Internal server error. A unified status for API communication
+            type errors.
+      security:
+      - Bearer: []
+      summary: Get Reports
+      tags:
+      - DLP API
   /v2/api/incidents:
     get:
+      description: 'Similarly to how you can view [DLP Incidents on Panorama](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/monitor-enterprise-dlp/view-dlp-log-details),
+        you can view your DLP incidents programatically. The API retrieves all DLP
+        incidents which you can filter using the query paramaters.
+
+        '
       operationId: get-v2-api-incidents
       parameters:
       - description: Sort incidents in ascending order
@@ -842,9 +1018,12 @@ paths:
       - DLP API
   /v2/api/incidents/{incidentID}:
     get:
+      description: "Similarly to how you can view [DLP Incidents on Panorama](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/monitor-enterprise-dlp/view-dlp-log-details),\
+        \ you can view your DLP incidents programatically. \nThe API can retrieve\
+        \ specific DLP incidents using the query parameters.\n"
       operationId: get-v2-api-incidents-incidentid
       parameters:
-      - description: ID of the incident
+      - description: The incident ID to filter.
         examples:
           IncidentID Example:
             value: 3fb38abe-a83b-44e5-99d5-4bec3765bba6
@@ -859,7 +1038,7 @@ paths:
         required: true
         schema:
           type: string
-      - description: region(default to us)
+      - description: Region of the incident (defaults to US)
         in: query
         name: region
         schema:
@@ -889,5 +1068,7 @@ paths:
       summary: Get Incident Details
       tags:
       - DLP API
+servers:
+- url: https://api.dlp.paloaltonetworks.com
 tags:
 - name: DLP API
