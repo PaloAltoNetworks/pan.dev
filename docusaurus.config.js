@@ -261,6 +261,25 @@ const config = {
                   ],
                 },
                 {
+                  label: "VM-Series",
+                  to: "#",
+                  logoClass: "panos",
+                  docs: [
+                    {
+                      label: "Introduction",
+                      to: "vm-series/docs",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "vm-series/api",
+                      label: "VM-Series API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
                   label: "Cortex Data Lake",
                   to: "#",
                   logoClass: "panos",
@@ -731,6 +750,11 @@ const config = {
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          vmseries: {
+            specPath: "openapi-specs/vm-series/",
+            outputDir: "products/vm-series/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           iot: {
