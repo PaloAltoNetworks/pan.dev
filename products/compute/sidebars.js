@@ -103,15 +103,4 @@ module.exports = {
       ],
     },
   ],
-  compute_3001: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 30.01",
-      collapsed: true,
-      items: [
-        "compute/api/30-01/stable-endpoints",
-        require("./api/30-01/sidebar"),
-      ],
-    },
-  ],
 };
