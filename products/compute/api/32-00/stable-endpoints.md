@@ -12,7 +12,7 @@ The deployment scripts and Twistcli that you download from Console, uses the API
 
 ### Previous API Versions of Prisma Cloud Compute Edition
 
-All minor or maintainance versions (xx) of 32.xx release have n-2 support for backward compatibility. The documentation for the latest and other supported releases is available at:
+All minor or maintainance versions (xx) of 32.xx release have n-2 support for backward compatibility. The documentation for the latest and other supported releases is accessible from:
 
 * [Prisma Cloud Compute Edition - Latest](/compute/api/)
 
