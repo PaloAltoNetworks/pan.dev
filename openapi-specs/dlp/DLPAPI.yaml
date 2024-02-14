@@ -364,7 +364,31 @@ paths:
       operationId: get-v1-api-incidents-assignee
       responses:
         '200':
-          description: Get all assignees
+          content:
+            application/json:
+              examples:
+                assignees:
+                  value:
+                  - createdAt: 2024-Jan-11 23:16:33 UTC
+                    emailAddress: test@test.com
+                    firstName: test u
+                    id: 00d53ebf-c386-4b95-ad05-6819517c3450
+                    lastName: test
+                    status: ACTIVE
+                    tenantId: '5886928188517009408'
+                    updatedAt: 2024-Feb-14 19:13:01 UTC
+                  - createdAt: 2023-Aug-03 21:23:39 UTC
+                    emailAddress: user1@test.com
+                    firstName: user
+                    id: 133b9b0d-6e64-40ca-abec-15ff3b906b80
+                    lastName: my last name
+                    status: ACTIVE
+                    tenantId: '5886928188517009408'
+              schema:
+                items:
+                  $ref: '#/components/schemas/IncidentAssignee'
+                type: array
+          description: OK
         '400':
           description: Bad Request
         '401':
@@ -419,7 +443,21 @@ paths:
           type: string
       responses:
         '200':
-          description: Get assignee
+          content:
+            application/json:
+              examples:
+                assignee:
+                  value:
+                    createdAt: 2024-Jan-11 23:16:33 UTC
+                    emailAddress: test@test.com
+                    firstName: test
+                    id: 00d53ebf-c386-4b95-ad05-6819517c3450
+                    lastName: test
+                    status: ACTIVE
+                    tenantId: '5886928188517009408'
+              schema:
+                $ref: '#/components/schemas/IncidentAssignee'
+          description: OK
         '400':
           description: Bad Request
         '401':
@@ -465,11 +503,6 @@ paths:
           type: string
       - description: The ID of the updated incident.
         in: path
-        name: incidentID
-        required: true
-        schema:
-          type: string
-      - in: path
         name: incidentID
         required: true
         schema:
@@ -521,32 +554,8 @@ paths:
           - au
           - par
           type: string
-      - description: Incident UUID
-        in: path
-        name: incidentID
-        required: true
-        schema:
-          type: string
-      - description: region(default to us)
-        in: query
-        name: region
-        required: false
-        schema:
-          enum:
-          - us
-          - eu
-          - uk
-          - jp
-          - in
-          - ap
-          - ca
-          - au
-          - par
-          type: string
       responses:
         '200':
-          content:
-            application/json: {}
           description: Deleted the note for the incident.
         '400':
           description: Bad Request
@@ -591,28 +600,6 @@ paths:
           - au
           - par
           type: string
-      - description: Incident UUID
-        in: path
-        name: incidentID
-        required: true
-        schema:
-          type: string
-      - description: region(default to us)
-        in: query
-        name: region
-        required: false
-        schema:
-          enum:
-          - us
-          - eu
-          - uk
-          - jp
-          - in
-          - ap
-          - ca
-          - au
-          - par
-          type: string
       requestBody:
         content:
           application/json:
@@ -638,7 +625,7 @@ paths:
           description: Internal server error
       security:
       - Bearer: []
-      summary: Update Inicident Note
+      summary: Update Incident Notes
       tags:
       - DLP API
   /v1/api/incidents/{incidentID}/resolution-status:
@@ -690,7 +677,10 @@ paths:
     get:
       description: 'A GET request to this endpoint retrieves the DLP reports. You
         can use the report ID from Cortex Data Lake or from an [incident](/dlp/api/get-v-2-api-incidents/).
-        A report can contain many incidents.
+        A report contains metadata and detection information about a file or payload,
+        such as pattern matches, but does not include unique incident information.
+        (Get Incident Details)[/dlp/api/get-v-2-api-incidents-incidentid/] for user,
+        app, URL and channel information. A report can contain many incidents.
 
         [Set Up Enterprise Data Loss Prevention](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/set-up-enterprise-data-loss-prevention)
         provides more information.
@@ -879,7 +869,7 @@ paths:
                     type: basic
               schema:
                 $ref: '#/components/schemas/ScanContentResponse'
-          description: Upon success, the HTTP response code is 200
+          description: OK
         '400':
           description: Bad Request. Got an invalid JSON.
         '401':
@@ -899,12 +889,14 @@ paths:
       - DLP API
   /v2/api/incidents:
     get:
-      description: 'Similarly to how you can view [DLP Incidents on Panorama or Strata
-        Cloud Manager](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/monitor-enterprise-dlp/view-dlp-log-details),
-        you can view your DLP incidents programatically. The API retrieves all DLP
-        incidents which you can filter using the query paramaters.
-
-        '
+      description: "Similarly to how you can view [DLP Incidents on Panorama or Strata\
+        \ Cloud Manager](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/monitor-enterprise-dlp/view-dlp-log-details),\
+        \ you can view your DLP incidents programatically. The API retrieves all DLP\
+        \ incidents which you can filter using the query paramaters.\n\nWhen using\
+        \ the API note:\n* If you are using multiple filtering parameters such as\
+        \ report ID, user ID, file SHA, and channel, all are combined via an \u201C\
+        AND\u201D operation\n* All filters are exact matches\n* Fields with null values\
+        \ are not included in the response\n"
       operationId: get-v2-api-incidents
       parameters:
       - description: Sort incidents in ascending order
@@ -1047,7 +1039,7 @@ paths:
                       tenant_id: '5886928188517009408'
               schema:
                 $ref: '#/components/schemas/IncidentResponse'
-          description: 200 ok
+          description: OK
         '400':
           description: Bad Request
         '401':
@@ -1067,19 +1059,15 @@ paths:
     get:
       description: "Similarly to how you can view [DLP Incidents on Panorama](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-admin/monitor-enterprise-dlp/view-dlp-log-details),\
         \ you can view your DLP incidents programatically. \nThe API can retrieve\
-        \ specific DLP incidents using the query parameters.\n"
+        \ specific DLP incidents using the query parameters. Use (/dlp/api/get-v-2-api-incidents-incidentid/)\
+        \ for more detailed information about the Incident.\n\nYou can only view one\
+        \ incident at a time.\n"
       operationId: get-v2-api-incidents-incidentid
       parameters:
       - description: The incident ID to filter.
         examples:
           IncidentID Example:
             value: 3fb38abe-a83b-44e5-99d5-4bec3765bba6
-        in: path
-        name: incidentID
-        required: true
-        schema:
-          type: string
-      - description: incidentID(UUID)
         in: path
         name: incidentID
         required: true
@@ -1259,7 +1247,7 @@ paths:
                     tenant_id: '5886928188517009408'
               schema:
                 $ref: '#/components/schemas/IncidentResponseDTO'
-          description: 200 ok
+          description: OK
         '400':
           description: Bad Request
         '401':
