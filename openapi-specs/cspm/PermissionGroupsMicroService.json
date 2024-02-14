@@ -59,14 +59,28 @@
       "url": "https://api.fr.prismacloud.io"
     }
   ],
-  "tags": [
+  "security": [
     {
-      "description": "Permission groups enable you to restrict access to one or more features available on the Prisma Cloud administrative console. Permission group APIs allow you to retrieve, update or delete one or more existing permissions groups. You can also use these APIs to create a custom permission group and then you must attach it to a role and assign the role to a user.",
-      "name": "Permission Groups"
+      "CertAuth": []
     },
     {
+      "ServiceJwt": []
+    },
+    {
+      "UserJwt": []
+    },
+    {
+      "x-redlock-auth": []
+    }
+  ],
+  "tags": [
+    {
       "name": "SSO",
-      "description": "On Prisma Cloud, you can enable single sign-on (SSO) using an Identity Provider (IdP) that supports Security Assertion Markup Language (SAML) or OpenID Connect (OIDC), such as Okta, Microsoft Active Directory Federation Services (ADFS), Azure Active Directory (AD), Google, or OneLogin. You can configure only one IdP for all the cloud accounts that Prisma Cloud monitors. Prisma Cloud System Administrators can use the following APIs to configure tenant SSO."
+      "description": "On Prisma Cloud, you can enable single sign-on (SSO) using an Identity Provider (IdP) that supports Security Assertion Markup Language (SAML) or OpenID Connect (OIDC), such as Okta, Microsoft Active Directory Federation Services (ADFS), Azure Active Directory (AD), Google, or OneLogin. Prisma Cloud System Administrators can use the following APIs to configure tenant SSO."
+    },
+    {
+      "name": "Permission Groups",
+      "description": "Permission groups enable you to restrict access to one or more features available on the Prisma Cloud administrative console. Permission group APIs allow you to retrieve, update or delete one or more existing permissions groups. You can also use these APIs to create a custom permission group and then you must attach it to a role and assign the role to a user."
     }
   ],
   "paths": {
@@ -82,7 +96,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "PermissionGroupID",
+            "description": "Permission Group ID",
             "required": true,
             "schema": {
               "type": "string"
@@ -296,6 +310,16 @@
         "summary": "Update SAML Configuration",
         "description": "Used by System Admins to update the SAML Configuration for the tenancy",
         "operationId": "update-saml-config",
+        "parameters": [
+          {
+            "name": "clientIp",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -354,6 +378,16 @@
         "summary": "Create SAML Configuration",
         "description": "Used by System Admins to create the SAML Configuration for the tenancy",
         "operationId": "create-saml-config",
+        "parameters": [
+          {
+            "name": "clientIp",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -865,7 +899,7 @@
           {
             "name": "user_name",
             "in": "query",
-            "description": "User name of the tenant requesting the login URL.",
+            "description": "User name requesting the login URL.",
             "required": false,
             "schema": {
               "type": "string"
@@ -874,7 +908,7 @@
           {
             "name": "prisma_id",
             "in": "query",
-            "description": "PrismaId of the tenant requesting the login URL.",
+            "description": "Prisma ID for the tenant of the user requesting the login.",
             "required": false,
             "schema": {
               "type": "string"
@@ -960,7 +994,7 @@
             "description": "A mapping of operations and a boolean value representing whether the privilege to perform the operation needs to be granted."
           }
         },
-        "description": "Collection of permitted features associated with the role. \n Refer to PermissionGroup API docs to get the entire list of PC features."
+        "description": "List of Prisma Cloud Features"
       },
       "PermissionGroupRequest": {
         "title": "Model used for permission group",
@@ -1184,6 +1218,7 @@
           "clientId",
           "idpAuthUri",
           "issuer",
+          "scopes",
           "tokenUri"
         ],
         "type": "object",
@@ -1193,11 +1228,6 @@
             "description": "Id",
             "format": "uuid",
             "readOnly": true
-          },
-          "clientSecret": {
-            "type": "string",
-            "description": "Client ID secret from the Identity Provider(IdP).",
-            "writeOnly": true
           },
           "prismaId": {
             "type": "integer",
@@ -1209,9 +1239,24 @@
             "type": "string",
             "description": "Client ID obtained after Identity Provider(IdP) configuration."
           },
+          "clientSecret": {
+            "type": "string",
+            "description": "Secret for the client id",
+            "writeOnly": true
+          },
           "issuer": {
             "type": "string",
             "description": "The identifier of the OpenID Connect(OIDC) provider."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Identifiers used to specify what access privileges are being requested.",
+            "example": "[openid, email, profile]",
+            "items": {
+              "type": "string",
+              "description": "Identifiers used to specify what access privileges are being requested.",
+              "example": "[openid, email, profile]"
+            }
           },
           "grantType": {
             "type": "string",
@@ -1238,7 +1283,7 @@
           },
           "jwkSetUri": {
             "type": "string",
-            "description": "The URL of the Identity Provider(IdP) JSON Web Key Set document. This document contains signing keys that are used to validate the signatures from the provider."
+            "description": "The URL of the Identity Provider(IdP) JSON Web Key Set document.This document contains signing keys that are used to validate the signatures from the provider."
           },
           "endSessionUri": {
             "type": "string",
@@ -1251,6 +1296,22 @@
               true,
               false
             ]
+          },
+          "isJitEnabled": {
+            "type": "boolean",
+            "description": "Is JIT enabled",
+            "enum": [
+              true,
+              false
+            ]
+          },
+          "jitRoleClaimName": {
+            "type": "string",
+            "description": "Id Token claim to use for the name of the user role."
+          },
+          "jitDefaultRoleId": {
+            "type": "string",
+            "description": "Default PC role to use for JIT when claim is missing or undefined."
           },
           "pcAuthUri": {
             "type": "string",
