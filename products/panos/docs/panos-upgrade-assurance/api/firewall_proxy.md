@@ -106,6 +106,7 @@ __Raises__
 
 __Returns__
 
+
 `dict, xml.etree.ElementTree.Element`: The actual command output. A type is defined by the `return_xml` parameter.
 
 ### `FirewallProxy.get_parser`
@@ -135,6 +136,7 @@ __Raises__
 - `GetXpathConfigFailedException`: This exception is raised when XPATH is not provided or does not exist.
 
 __Returns__
+
 
 `dict, xml.etree.ElementTree.Element`: The actual command output. A type is defined by the `return_xml` parameter.
 
@@ -504,19 +506,20 @@ Get route table entries, either retrieved from DHCP or configured manually.
 
 The actual API command is `show routing route`.
 
-In the returned `dict` the key is made of three route properties delimited with an underscore (`_`) in the following
+In the returned `dict` the key is made of four route properties delimited with an underscore (`_`) in the following
 order:
 
 * virtual router name,
 * destination CIDR,
-* network interface name if one is available, empty string otherwise.
+* network interface name if one is available, empty string otherwise,
+* next-hop address or name.
 
 The key does not provide any meaningful information, it's there only to introduce uniqueness for each entry. All
 properties that make a key are also available in the value of a dictionary element.
 
 ```python showLineNumbers title="Sample output"
 {
-    private_0.0.0.0/0_private/i3': {
+    private_0.0.0.0/0_private/i3_vr-public': {
         'age': None,
         'destination': '0.0.0.0/0',
         'flags': 'A S',
@@ -526,7 +529,7 @@ properties that make a key are also available in the value of a dictionary eleme
         'route-table': 'unicast',
         'virtual-router': 'private'
     },
-    'public_10.0.0.0/8_public/i3': {
+    'public_10.0.0.0/8_public/i3_vr-private': {
         'age': None,
         'destination': '10.0.0.0/8',
         'flags': 'A S',
@@ -1145,10 +1148,10 @@ Get the status of the User ID agent service.
 
 The user-id service is used to redistribute user-id information to other firewalls.
 
-__Returns the clients and agents known to this device.__
+__Returns__
 
 
-dict: The state of the user-id agent. Only returns up or down.
+`dict`: The state of the user-id agent. Only returns up or down.
 
 ```python showLineNumbers title="Sample output"
 {
@@ -1164,12 +1167,12 @@ def get_redistribution_status() -> dict
 
 Get the status of the Data Redistribution service.
 
-Redistribution is used to share data, such as user-id information, between PAN-OS firewalls or Agents.
+Redistribution service is used to share data, such as user-id information, between PAN-OS firewalls or Agents.
 
-__Returns the clients and agents known to this device.__
+__Returns__
 
 
-dict: The state of the redistribution service, and the associated clients, if available.
+`dict`: The state of the redistribution service, and the associated clients, if available.
 
 ```python showLineNumbers title="Sample output"
 {
@@ -1209,13 +1212,78 @@ dict: The state of the redistribution service, and the associated clients, if av
 def get_device_software_version()
 ```
 
-Gets the current running device software version, as a packaging.version.Version object.
+Gets the current running device software version, as a `packaging.version.Version` object.
 
 This allows you to do comparators between other Version objects easily. Note that this strips out information
-    like 'xfr' but maintains the hotfix (i.e 9.1.12-h3 becaomes 9.1.12.3 for the purpose of versioning).
+    like `xfr` but maintains the hotfix (i.e `9.1.12-h3` becomes `9.1.12.3` for the purpose of versioning).
 
-__Returns the software version as a packaging 'Version' object.__
+__Returns__
 
 
-Version: Version(9.1.12)
+`Version`: the software version as a packaging 'Version' object.
+
+### `FirewallProxy.get_fib`
+
+```python
+def get_fib() -> dict
+```
+
+Get the information from the forwarding information table (FIB).
+
+The actual API command run is `show routing fib`.
+
+In the returned `dict` the key is made of three route properties delimited with an underscore (`_`) in the following
+order:
+
+* destination CIDR,
+* network interface name,
+* next-hop address or name.
+
+The key does not provide any meaningful information, it's there only to introduce uniqueness for each entry. All
+properties that make a key are also available in the value of a dictionary element.
+
+__Returns__
+
+
+`dict`: Status of the route entries in the FIB
+
+```python showLineNumbers title="Sample output"
+{
+    '0.0.0.0/0_ethernet1/1_10.10.11.1': {
+        'Destination': '0.0.0.0/0',
+        'Interface': 'ethernet1/1',
+        'Next Hop Type': '0',
+        'Flags': 'ug',
+        'Next Hop': '10.10.11.1',
+        'MTU': '1500'
+    },
+    '1.1.1.1/32_loopback.10_0.0.0.0': {
+        'Destination': '1.1.1.1/32',
+        'Interface': 'loopback.10',
+        'Next Hop Type': '3',
+        'Flags': 'uh',
+        'Next Hop': '0.0.0.0',
+        'MTU': '1500'
+    }
+}
+```
+
+### `FirewallProxy.get_system_time_rebooted`
+
+```python
+def get_system_time_rebooted() -> datetime
+```
+
+Returns the date and time the system last rebooted using the system uptime.
+
+The actual API command is `show system info`.
+
+__Returns__
+
+
+`datetime`: Time system was last rebooted based on current time - system uptime string
+
+```python showLineNumbers title="Sample output"
+datetime(2024, 01, 01, 00, 00, 00)
+```
 
