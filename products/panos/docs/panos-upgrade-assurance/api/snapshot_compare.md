@@ -202,7 +202,7 @@ when comparing route tables snapshots are formatted like:
 ```python showLineNumbers
 {
     "routes": {
-        "default_0.0.0.0/0_ethernet1/3": {
+        "default_0.0.0.0/0_ethernet1/3_10.26.129.129": {
             "virtual-router": "default",
             "destination": "0.0.0.0/0",
             "nexthop": "10.26.129.129",
@@ -376,7 +376,7 @@ To illustrate that, the `passed` flag added by this method is highlighted:
     },
     'missing': {
         'missing_keys': [
-            'default_0.0.0.0/0_ethernet1/3'
+            'default_0.0.0.0/0_ethernet1/3_10.26.129.129'
         ],
         'passed': False
     },
@@ -427,21 +427,21 @@ An example for the route tables, crafted in a way that almost each level fails:
 {
     "added": {
         "added_keys": [
-            "default_10.26.129.0/25_ethernet1/2",
-            "default_168.63.129.16/32_ethernet1/3"
+            "default_10.26.129.0/25_ethernet1/2_10.26.129.1",
+            "default_168.63.129.16/32_ethernet1/3_10.26.129.129"
         ],
         "passed": "False"
     },
     "missing": {
         "missing_keys": [
-            "default_0.0.0.0/0_ethernet1/3"
+            "default_0.0.0.0/0_ethernet1/3_10.26.129.129"
         ],
         "passed": "False"
     },
     "changed": {
         # highlight-start
         "changed_raw": {
-            "default_10.26.130.0/25_ethernet1/2": {
+            "default_10.26.130.0/25_ethernet1/2_10.26.129.1": {
                 "added": {
                     "added_keys": [],
                     "passed": "True"
