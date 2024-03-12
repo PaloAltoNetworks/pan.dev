@@ -762,12 +762,12 @@ checks_configuration:
 
 ### `jobs`
 
-Verify if there are any running/pending jobs in the job queue. Any job with a status different than `FIN` will cause
-the check to fail.
+Verify if there are any running/pending jobs in the job queue. Any job with a type, status or result different than set in the
+parameters (by default checks only whether the job status equals to `FIN`), will cause the check to fail.
 
 Does not require configuration.
 
-**Method**: [`CheckFirewall.check_non_finished_jobs()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_non_finished_jobs)
+**Method**: [`CheckFirewall.check_non_matching_jobs()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_non_matching_jobs)
 
 ### `ntp_sync`
 
@@ -919,7 +919,7 @@ The sample output containing a snapshot for *route tables*, *licenses*, and *IPS
     },
   }.
   "routes": {
-    "default_0.0.0.0/0_ethernet1/3": {
+    "default_0.0.0.0/0_ethernet1/3_10.26.129.129": {
       "virtual-router": "default",
       "destination": "0.0.0.0/0",
       "nexthop": "10.26.129.129",
@@ -961,11 +961,13 @@ Following state areas are available:
 snapshots_config = [
   'nics',
   'routes',
+  'bgp_peers',
   'license',
   'arp_table',
   'content_version',
   'session_stats',
   'ip_sec_tunnels',
+  'fib_routes',
 ]
 ```
 
@@ -978,11 +980,13 @@ snapshots_config = [
 snapshots_config:
   - nics
   - routes
+  - bgp_peers
   - license
   - arp_table
   - content_version
   - session_stats
   - ip_sec_tunnels
+  - fib_routes
 ```
 
 ```mdx-code-block
@@ -1028,6 +1032,18 @@ Takes a snapshot of the Route Table (this includes routes populated from DHCP as
 
 **Method:** [`FirewallProxy.get_routes()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_routes)
 
+### `bgp_peers`
+
+Takes a snapshot of configuration of BGP peers along with their status.
+
+**Method:** [`FirewallProxy.get_bgp_peers()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_bgp_peers)
+
+### `fib_routes`
+
+Takes a snapshot of the Forwarding table (routes that are actually taken into forwarding decisions based on routing table).
+
+**Method:** [`FirewallProxy.get_fib()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_fib)
+
 ### `session_stats`
 
 Gets information about the session statistics, such as current sessions count per a session type (TCP, UDP, etc).
@@ -1064,6 +1080,13 @@ reports = [
         'properties': ['!flags'],
         'count_change_threshold': 10
     }},
+    {'fib_routes': {
+        'properties': ['!flags'],
+        'count_change_threshold': 10
+    }},
+    {'bgp_peers': {
+        'properties': ['status']
+    }},
     'content_version',
     {'session_stats': {
         'thresholds': [
@@ -1097,6 +1120,13 @@ reports:
       properties:
         - "!flags"
       count_change_threshold: 10
+  - fib_routes:
+      properties:
+        - "!flags"
+      count_change_threshold: 10
+  - bgp_peers:
+      properties:
+        - "status"
   - content_version
   - session_stats:
       thresholds:
@@ -1393,6 +1423,117 @@ reports:
 </Tabs>
 ```
 
+### `bgp_peers`
+
+Compares configuration and the status of BGP peers.
+
+**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`properties` | (optional) a set of properties to skip when comparing two BGP peers, all properties are checked when this parameter is skipped
+`count_change_threshold` | (optional) maximum difference percentage of changed entries in BGP peers in both snapshots, skipped when this property is not specified
+
+**Sample configuration**
+
+The following configuration compares the status of BGP peers as
+captured in snapshots.
+
+This report produces the standardized dictionary.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'bgp_peers': {
+            'properties': ['status']
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - bgp_peers:
+      properties:
+        - 'status'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### `fib_routes`
+
+Provides a report on differences between FIB Table entries. It includes:
+
+- availability of a fib entry in one of the snapshots,
+- for fib entries available in two snapshots, difference in fib entry properties, such as destination, next hop, flags etc.
+
+**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`properties` | (optional) a set of properties to skip when comparing two fib entries, all properties are checked when this parameter is skipped
+`count_change_threshold` | (optional) maximum difference percentage of changed entries for fib routes in both snapshots, skipped when this property is not specified
+
+**Sample configuration**
+
+The following configuration:
+
+- compares FIB Table entries between both snapshots, but when comparing two entries the `flags` parameter is not taken into consideration,
+- calculates the count of changed FIB Table entries from both snapshots and marks comparison as failed if the difference is bigger than 10%.
+
+This report produces the standardized dictionary.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'fib_routes': {
+            'properties': ['!flags'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - fib_routes:
+      properties:
+        - '!flags'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 ### `session_stats`
 
 This report is slightly different than reports made with the [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold) method as the snapshot data is different (refer to the [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats) method documentation for details).
@@ -1460,14 +1601,14 @@ Please see the sections below for details of each health check:
 
 ### `device_root_certificate_issue`
 
-Checks if a device is impacted, or is to be impacted, by the [expiration of the device root certificate.](https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA14u0000008Vp5CAE)
+Checks if a device is impacted, or is to be impacted, by the [expiration of the device root certificate](https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA14u0000008Vp5CAE).
 
 This test by default checks only if the software version is an affected version and fails if it is.
 
 If the `fail_when_affected_version_only` parameter is set to False, however, it will check to see if the issue is corrected
 by the device running and updated content version.
 
-**Method:** [`CheckFirewall.check_arp_entry()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_arp_entry)
+**Method:** [`CheckFirewall.check_device_root_certificate_issue()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_device_root_certificate_issue)
 
 **Configuration parameters**
 
