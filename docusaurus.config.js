@@ -709,11 +709,13 @@ const config = {
           "email-dlp": {
             specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
             outputDir: "products/email-dlp/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           dlp: {
             specPath: "openapi-specs/dlp/DLPAPI.yaml",
             outputDir: "products/dlp/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
