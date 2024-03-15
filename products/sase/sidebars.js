@@ -63,6 +63,10 @@ module.exports = {
           type: "doc",
           id: "sase/docs/user-accounts",
         },
+        {
+          type: "doc",
+          id: "sase/docs/rate-limiting",
+        },
       ],
     },
     {

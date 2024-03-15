@@ -1,0 +1,62 @@
+---
+id: rate-limiting
+title: Rate Limiting
+description: Understanding API rate limiting
+hide_title: false
+hide_table_of_contents: false
+keywords:
+  - sase
+---
+
+The Strata Cloud Manager infrastructure is designed to handle high volumes of API calls to support application integrations, 
+automation workflows, and service orchestration use cases.  However, rate limits are needed to ensure responsible and equitable 
+use across all API users.
+
+## Actions
+The API rate limit for Strata Cloud Management is calculated based on the number of calls received from a specific source 
+IP address within a rolling 60-second window.  If the number of API calls exceeds this threshold, subsequent calls will be rejected 
+until the average call volume fall below the rate limiting threshold.  If an excessive number of APIs are received from a specific 
+source, the requestor may be banned for a period of time.
+
+## Thresholds
+| Requests | Seconds | Action | Duration |
+| :---: | :---: | --- | :---: |
+| > 2000 | 60 | [429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) | n/a |
+| > 2500 | 60 | [403 Forbidden](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403) | 180 seconds |
+
+:::info
+These rate limiting thresholds and actions are subject to change over time.  Please be sure to bookmark and check this page if you 
+encounter rate limit actions unexpectedly.
+:::
+
+## Design Considerations
+When developing client integrations with Strata Cloud Manager, it is important to consider the volume of API requests that are 
+made.  Excessive API call volume will result in rate limit actions that may negatively impact client applications.  Factoring rate 
+limits into your application will provide application reliability and a better user experience.
+
+### Exponential Backoff
+An exponential backoff algorithm retries requests exponentially, increasing the waiting time between retries up to a maximum backoff time. For example:
+
+1. Send the initial API request
+2. If the request fails, wait 1 + `random_number_milliseconds` seconds and retry the request.
+3. If the request fails, wait 2 + `random_number_milliseconds` seconds and retry the request.
+4. If the request fails, wait 4 + `random_number_milliseconds` seconds and retry the request.
+5. And so on, up to a `maximum_backoff` time.
+6. Continue waiting and retrying up to some maximum number of retries, but do not increase the wait period between retries.
+
+where:
+
+* The wait time is `min(((2^n)+random_number_milliseconds), maximum_backoff)`, with `n` incremented by 1 for each iteration (request).
+
+* `random_number_milliseconds` is a random number of milliseconds less than or equal to 1000. This helps to avoid cases in which many 
+clients are synchronized by some situation and all retry at once, sending requests in synchronized waves. The value of 
+`random_number_milliseconds` is recalculated after each retry request.
+
+* `maximum_backoff` can be any value up to 60 seconds. The appropriate value depends on the use case.
+
+The client can continue retrying after it has reached the maximum_backoff time. Retries after this point do not need to continue increasing 
+backoff time. For example, suppose a client uses a maximum_backoff time of 10 seconds. After reaching this value, the client can retry 
+every 10 seconds. At some point, clients should be prevented from retrying indefinitely.
+
+The wait time between retries and the number of retries depend on your use case and network conditions.
+
