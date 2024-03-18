@@ -65,7 +65,7 @@
         ],
         "summary": "Onboard Cloud Accounts",
         "description": "Onboard the cloud accounts to CSPM in order to secure the unmanaged assets identified by the CDEM dashboard.",
-        "operationId": "onboardCloudAccounts",
+        "operationId": "onboard-Cloud-Accounts",
         "requestBody": {
           "content": {
             "application/json": {
@@ -139,7 +139,7 @@
         ],
         "summary": "Get Findings of an Asset ",
         "description": "Get the list of findings of an asset by asset id. Findings are security issues, including vulnerabilities discovered on the asset. ",
-        "operationId": "getAssetFindings",
+        "operationId": "get-asset-findings",
         "parameters": [
           {
             "name": "asset_id",
@@ -149,6 +149,14 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -188,7 +196,7 @@
         ],
         "summary": "Get Asset Findings Filter",
         "description": "Get the list of filters and their possible values based on which you can retrieve the findings of an asset.",
-        "operationId": "getFindingFilters",
+        "operationId": "get-finding-filters",
         "parameters": [
           {
             "name": "asset_id",
@@ -230,6 +238,80 @@
         ]
       }
     },
+    "/asm/api/v1/asset/snooze": {
+      "post": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Snooze list of unmanaged assets.",
+        "description": "Snooze list of unmanaged assets.",
+        "operationId": "asset-snooze",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetSnoozeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/reopen": {
+      "post": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Unsnooze list of snoozed unmanaged assets.",
+        "description": "Unsnooze list of snoozed unmanaged assets.",
+        "operationId": "asset-unsnooze",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetSnoozeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
     "/asm/api/v1/asset/email": {
       "post": {
         "tags": [
@@ -242,7 +324,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SidecarOverview"
+                "$ref": "#/components/schemas/SideCarAssetEmailDetails"
               }
             }
           }
@@ -254,6 +336,47 @@
               "application/json": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/download": {
+      "post": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Download list of unmanaged assets.",
+        "description": "Download list of unmanaged assets based on filters.",
+        "operationId": "asset-download",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetInventoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
                 }
               }
             }
@@ -397,7 +520,7 @@
         ],
         "summary": "Get Service Details",
         "description": "Get details of a service by service id",
-        "operationId": "fetchAsmServiceDetails",
+        "operationId": "fetch-asm-service-details",
         "parameters": [
           {
             "name": "serviceId",
@@ -420,7 +543,7 @@
           {
             "name": "all_service_detail",
             "in": "query",
-            "description": "Expand service details input",
+            "description": "Boolean flag to fetch all service details",
             "required": false,
             "schema": {
               "type": "string"
@@ -455,7 +578,7 @@
         ],
         "summary": "Get Industry Benchmark Data",
         "description": "Get industry benchmark data which is used to identify the vulnerabilities and security risks.",
-        "operationId": "getIndustryBenchmarks",
+        "operationId": "get-industry-benchmarks",
         "responses": {
           "200": {
             "description": "OK",
@@ -483,7 +606,7 @@
         ],
         "summary": "Get Convertible Accounts",
         "description": "Get the list of accounts that are not managed by CSPM but can be onboarded to CSPM.",
-        "operationId": "getConvertibleCloudAccounts",
+        "operationId": "get-convertible-cloud-accounts",
         "parameters": [
           {
             "name": "alert_categories",
@@ -540,15 +663,16 @@
         ],
         "summary": "Get Convertible Assets",
         "description": "Get the list of unmanaged assets that can be onboarded to CSPM.",
-        "operationId": "listAssets",
+        "operationId": "list-assets",
         "parameters": [
           {
             "name": "convertible",
             "in": "query",
-            "description": "Convertible input",
+            "description": "Filter assets based on if they are convertible.",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "false"
             }
           },
           {
@@ -658,7 +782,7 @@
         ],
         "summary": "Get Asset Top Risks",
         "description": "Get the list of top risks for assets.",
-        "operationId": "getTopRisks",
+        "operationId": "get-top-risks",
         "responses": {
           "200": {
             "description": "OK",
@@ -741,7 +865,7 @@
         ],
         "summary": "Get Convertible Assets Count",
         "description": "Get the total number of convertible assets.",
-        "operationId": "getAssetCounts",
+        "operationId": "get-asset-counts",
         "responses": {
           "200": {
             "description": "OK",
@@ -841,6 +965,54 @@
         ]
       }
     },
+    "/asm/api/v1/asset/{assetId}/flowlog-relationships": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Fetch Flowlog relationships of unmanged asset.",
+        "description": "Fetch Flowlog relationships between unmanged assets and managed assets.",
+        "operationId": "fetch-flowlog-relationships",
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "path",
+            "description": "ID of unmanaged asset",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "snapshot_date",
+            "in": "query",
+            "description": "Snapshot date",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
     "/asm/api/v1/asset/{asmAssetId}/service": {
       "get": {
         "tags": [
@@ -848,7 +1020,7 @@
         ],
         "summary": "Get List of Service for an Asset",
         "description": "Get the list of services for assets by asset-id.",
-        "operationId": "fetchAsmServicesLinkedToAsset",
+        "operationId": "fetch-asm-services-linked-to-asset",
         "parameters": [
           {
             "name": "asmAssetId",
@@ -904,7 +1076,7 @@
         ],
         "summary": "Get Asset Filters",
         "description": "Gets the list of supported asset filters and their values based on which you can fetch asset details.",
-        "operationId": "getAssetFilters",
+        "operationId": "get-asset-filters",
         "responses": {
           "200": {
             "description": "OK",
@@ -1058,8 +1230,15 @@
             "type": "string"
           },
           "searchText": {
-            "title": "Seach text",
+            "title": "Search text",
             "type": "string"
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1098,10 +1277,79 @@
               "Medium",
               "Low"
             ]
+          },
+          "nextPageToken": {
+            "type": "string"
           }
         }
       },
-      "SidecarOverview": {
+      "AssetSnoozeRequest": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "temporarySnooze": {
+            "type": "boolean"
+          },
+          "snoozeTimeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "RelativeTimeDuration": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year",
+              "epoch",
+              "login"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RelativeTimeRangeConfig": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/RelativeTimeDuration"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "AsmAssetsInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "SideCarAssetEmailDetails": {
         "type": "object",
         "properties": {
           "pcAssetId": {
@@ -1153,6 +1401,45 @@
           },
           "type": {
             "title": "Type",
+            "type": "string"
+          },
+          "snoozeStatus": {
+            "type": "string"
+          },
+          "snoozeStartTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snoozeEndTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "temporarySnooze": {
+            "type": "boolean"
+          },
+          "isFlowlogRelationshipAvailable": {
+            "type": "boolean"
+          },
+          "snapshotDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userEmailIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "asmAssets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AsmAssetsInfo"
+            }
+          },
+          "comment": {
             "type": "string"
           }
         }
@@ -1214,6 +1501,13 @@
               "UNMANAGED"
             ],
             "default": "UNMANAGED"
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1274,6 +1568,13 @@
               "AZURE",
               "ALIBABA_CLOUD"
             ]
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1393,6 +1694,12 @@
             }
           },
           "assetTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "snoozeStatus": {
             "type": "array",
             "items": {
               "type": "string"
