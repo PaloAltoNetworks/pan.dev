@@ -1,0 +1,1022 @@
+{
+  "components": {
+    "requestBodies": {
+      "GcpCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
+      "GcpResourceControllerRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GcpResourceControllerRequestModel"
+            }
+          }
+        },
+        "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account",
+        "required": true
+      },
+      "Resources": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Resources"
+            }
+          }
+        },
+        "description": "Cloud service provider resource IDs",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "AccountStatusMessage": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "staticMessage": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CloudAccount": {
+        "properties": {
+          "accountId": {
+            "description": "Organization resource ID if `accountType` is **organization**.\n\n Project ID if `accountType` is **account** or **masterServiceAccount**. \n\nWorkspace domain name if `accountType` is **workspace_domain**.",
+            "type": "string"
+          },
+          "accountType": {
+            "description": "Cloud Account Type.\n\n**account**: GCP Project \n\n**organization**: GCP Organization\n\n**masterServiceAccount**: Onboard all GCP projects that are accessible by the service account\n\n**workspace_domain**: GCP Workspace",
+            "enum": [
+              "account",
+              "masterServiceAccount",
+              "organization",
+              "workspace_domain"
+            ],
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Enable or disable this account on Prisma Cloud.\n\n Default value: **false**",
+            "type": "boolean"
+          },
+          "groupIds": {
+            "description": "List of Account Groups that must be mapped to this account. To get the account group ids,call **[List Account Groups](/prisma-cloud/api/cspm/get-account-groups/)** API",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "Account name for the GCP account that will be onboarded on Prisma Cloud. (must be unique)",
+            "type": "string"
+          },
+          "projectId": {
+            "description": "ID of the project.\n\nGet the project ID from the credentials json file that is generated from the GCP Terraform template. ",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "accountType",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CloudAccountStatus": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusMessage": {
+            "$ref": "#/components/schemas/AccountStatusMessage"
+          }
+        },
+        "type": "object"
+      },
+      "Credentials": {
+        "description": "Add contents of the JSON file, which contains the credentials, that is generated from the GCP Terraform template.",
+        "properties": {
+          "auth_provider_x509_cert_url": {
+            "type": "string"
+          },
+          "auth_uri": {
+            "type": "string"
+          },
+          "client_email": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_x509_cert_url": {
+            "type": "string"
+          },
+          "private_key": {
+            "type": "string"
+          },
+          "private_key_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "token_uri": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Feature": {
+        "description": "Model for Feature",
+        "properties": {
+          "defaultMemberState": {
+            "description": "Enable or disable the feature for all the member accounts linked to this organization. You can enable or disable the defaultMemberState only if the feature state is enabled for the organization. Applicable only for ```Serverless Function Scanning``` and ```Agentless Workload Scanning``` features.",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "description": "Feature name obtained from **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "example": "Remediation",
+            "type": "string"
+          },
+          "state": {
+            "description": "Feature state. Whether to be enabled or disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GcpCloudAccountRequestModel": {
+        "description": "Model containing the request for GCP Standalone, Organization and Master Service Account",
+        "properties": {
+          "accountGroupCreationMode": {
+            "description": "Default value: **MANUAL**\n\n**MANUAL**: Account will be mapped to the account group mentioned in `defaultAccountGroupId`.\n\n**AUTO**: Automatically creates account groups for each top-level folder in the hierarchy.\n\n**RECURSIVE**: Automatically creates account groups for the folders that are nested within the GCP organization hierarchy.\n\nApplicable only if the `accountType` is **organization**.",
+            "enum": [
+              "MANUAL",
+              "AUTO",
+              "RECURSIVE"
+            ],
+            "type": "string"
+          },
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "compressionEnabled": {
+            "description": "Enable or disable compressed network flow log generation.\n\nDefault value: **false**",
+            "type": "boolean"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "dataflowEnabledProject": {
+            "description": "Project ID where the Dataflow API is enabled .\n\nRequired if `compressionEnabled` is set to **true** and if the `accountType` is **organization**.\n\nOptional if the `accountType` is **account** or **masterServiceAccount**",
+            "type": "string"
+          },
+          "defaultAccountGroupId": {
+            "description": "Applicable only\n\n* If `accountType` is **organization** and `accountGroupCreationMode` is **MANUAL**.\n\n* If `accountType` is **masterServiceAccount**.",
+            "type": "string"
+          },
+          "features": {
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, see **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "flowLogStorageBucket": {
+            "description": "Cloud Storage Bucket name that is used store the flow logs.",
+            "type": "string"
+          },
+          "hierarchySelection": {
+            "description": "Applicable only if `accountType` is **organization**. \n\nInclude/Exclude a list of GCP folders, GCP projects under the organization.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            },
+            "type": "array"
+          },
+          "organizationName": {
+            "description": "GCP Organization name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cloudAccount",
+          "credentials",
+          "defaultAccountGroupId"
+        ],
+        "type": "object"
+      },
+      "GcpNodeModel": {
+        "description": "Model for GcpNode",
+        "properties": {
+          "displayName": {
+            "description": "Display name",
+            "type": "string"
+          },
+          "hasChild": {
+            "description": "true = Has child",
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Node ID",
+            "type": "string"
+          },
+          "parent": {
+            "description": "Parent",
+            "type": "string"
+          },
+          "type": {
+            "description": "Node type",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GcpResourceControllerRequestModel": {
+        "description": "Model containing the request for GCP Resources",
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/CloudAccount"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "type": "object"
+      },
+      "HierarchySelection": {
+        "description": "Model for HierarchySelection",
+        "properties": {
+          "displayName": {
+            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "example": "Root",
+            "type": "string"
+          },
+          "nodeType": {
+            "description": "Member account node type. Supported values based on cloud type: \n\n**aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ],
+            "type": "string"
+          },
+          "resourceId": {
+            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) \n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)",
+            "example": "root",
+            "type": "string"
+          },
+          "selectionType": {
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListChildrenApiResponseModel": {
+        "description": "Model for ListChildrenApiResponse",
+        "properties": {
+          "folderNextPageToken": {
+            "description": "Next page token for folder",
+            "type": "string"
+          },
+          "organizationName": {
+            "description": "Organization name",
+            "type": "string"
+          },
+          "projectNextPageToken": {
+            "description": "Next page token for project",
+            "type": "string"
+          },
+          "response": {
+            "description": "List of node info",
+            "items": {
+              "$ref": "#/components/schemas/GcpNodeModel"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Resources": {
+        "description": "Resources Model for Identifying Ancestors",
+        "properties": {
+          "resourceIds": {
+            "description": "Array of resource IDs (Subscription and/or Management Group IDs)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "type": "object"
+      },
+      "RestApiResponseModel": {
+        "description": "Model for RestApiResponse",
+        "properties": {
+          "nextPageToken": {
+            "description": "Next page token",
+            "type": "string"
+          },
+          "response": {
+            "description": "Response",
+            "items": {
+              "$ref": "#/components/schemas/GcpNodeModel"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "To monitor the resources on your GCP cloud infrastructure, you must first add your GCP accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between GCP and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (GCP) APIs enable you to add and manage GCP accounts on Prisma Cloud. For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n",
+    "title": "GCP Cloud Accounts API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/cas/v1/gcp_account": {
+      "post": {
+        "description": "Onboard a new gcp cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the GCP credentials by calling **[Generate and Download the GCP Terraform template](/prisma-cloud/api/cspm/generate-template-link-gcp-gcp)** API",
+        "operationId": "add-gcp-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add Cloud Account (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cas/v1/gcp_account/{id}": {
+      "put": {
+        "description": "Update the GCP cloud account information that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-gcp-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Cloud Account (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/gcp": {
+      "post": {
+        "description": "Lists the status of a GCP Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-gcp-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Cloud Account Status (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cloud/{cloud_type}/accounts/{account_id}/hierarchy": {
+      "get": {
+        "description": "For GCP only. Get the previously saved resource hierarchy for the specified cloud account ID.",
+        "operationId": "get-previously-saved-resource-hierarchy",
+        "parameters": [
+          {
+            "description": "Cloud type",
+            "in": "path",
+            "name": "cloud_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gcp"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "GCP account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/HierarchySelection"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Saved Resource Hierarchy (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cloud/gcp/parent/{parent_id}/children": {
+      "post": {
+        "description": "For GCP only. List all the children, both folder resources and project resources, of the given parent. A parent can be an organization resource or a folder resource.  \r\n\r\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.\n",
+        "operationId": "get-list-of-children-under-parent",
+        "parameters": [
+          {
+            "description": "GCP parent resource ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Token to request next page of projects",
+            "in": "query",
+            "name": "projectNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page size for paging projects. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no projects.",
+            "in": "query",
+            "name": "projectPageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Token to request next page of folders",
+            "in": "query",
+            "name": "folderNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page size for paging folders. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no folders.",
+            "in": "query",
+            "name": "folderPageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Parent type",
+            "in": "query",
+            "name": "parentType",
+            "required": true,
+            "schema": {
+              "enum": [
+                "folders",
+                "organizations"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpResourceControllerRequestModel"
+              }
+            }
+          },
+          "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListChildrenApiResponseModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Children of Parent (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cloud/{cloud_type}/parent/{parent_id}/folders": {
+      "post": {
+        "description": "For GCP only. List all the child folders of the given parent. A parent can be an organization resource or a folder resource.  \r\n\r\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.\n",
+        "operationId": "get-list-of-folders-under-parent",
+        "parameters": [
+          {
+            "description": "Cloud type",
+            "in": "path",
+            "name": "cloud_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gcp"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "GCP parent ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Token to request next page of folders",
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page size. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no folders.",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Parent type",
+            "in": "query",
+            "name": "parentType",
+            "required": true,
+            "schema": {
+              "enum": [
+                "folders",
+                "organizations"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpResourceControllerRequestModel"
+              }
+            }
+          },
+          "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GcpNodeModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Folders of Parent (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cloud/{cloud_type}/parent/{parent_id}/projects": {
+      "post": {
+        "description": "For GCP only. List all the child projects of the given parent. A parent can be an organization resource or a folder resource.  \r\n\r\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.\n",
+        "operationId": "get-list-of-projects-under-parent",
+        "parameters": [
+          {
+            "description": "Cloud type",
+            "in": "path",
+            "name": "cloud_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gcp"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "GCP parent ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Token to request next page of projects",
+            "in": "query",
+            "name": "nextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page size. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no projects.",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Parent type",
+            "in": "query",
+            "name": "parentType",
+            "required": true,
+            "schema": {
+              "enum": [
+                "folders",
+                "organizations"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Service Account Key (JSON) file content",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GcpNodeModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Projects of Parent (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    },
+    "/cloud/{cloud_type}/accounts/{account_id}/ancestors": {
+      "post": {
+        "description": "For GCP only. Lists the ancestors of the given projects and folders for the specified cloud account ID. A successful response returns an array of projects and/or folders each of which is mapped to an array of ancestor resource IDs.  \r\n\r\nThe body parameters resourceIds are required.\n",
+        "operationId": "get-ancestors-for-given-projects-folders",
+        "parameters": [
+          {
+            "description": "Cloud Type",
+            "in": "path",
+            "name": "cloud_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gcp"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resources"
+              }
+            }
+          },
+          "description": "Cloud service provider resource IDs",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GcpNodeModel"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Ancestors (GCP)",
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Cloud Accounts (GCP)",
+      "description": "To monitor the resources on your GCP cloud infrastructure, you must first add your GCP accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between GCP and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (GCP) APIs enable you to add and manage GCP accounts on Prisma Cloud. For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    }
+  ]
+}

@@ -302,6 +302,26 @@
           "roleArn": {
             "description": "AWS Role ARN",
             "type": "string"
+          },
+          "customMemberRoleNameEnabled": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType**.\n\n The default value is false. If it is set to true, you must provide a **memberRole** name."
+          },
+          "skipOverrideMemberRoleName": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType**.\n\n The default value is true. If it is set to false, the existing Role Name and external ID for the member accounts will be retained."
+          },
+          "unifiedCftDisabled": {
+            "type": "boolean",
+            "description": "Applicable only for the organization accountType.\n\n The default value is false. If it is set true, you will get different CFT's for Management and Member accounts."
+          },
+          "memberRoleName": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType** and when **customMemberRoleNameEnabled** is set to true."
+          },
+          "useTenantExternalId": {
+            "type": "boolean",
+            "description": "Specify whether to use tenantExternalId,  the default is `false`"
           }
         },
         "required": [
@@ -427,6 +447,10 @@
           "roleArn": {
             "description": "AWS Role ARN",
             "type": "string"
+          },
+          "useTenantExternalId": {
+            "type": "boolean",
+            "description": "Specify whether to use tenantExternalId,  the default is `false`"
           }
         },
         "required": [
@@ -587,6 +611,162 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/cas/v1/aws_account": {
+      "post": {
+        "description": "Onboard a new aws cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the externalId and AWS CFT template by calling either **[Generate and Download the CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**",
+        "operationId": "add-aws-cloud-account",
+        "parameters": [
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Add Cloud Account (AWS)",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{id}": {
+      "put": {
+        "description": "Update information related to aws cloud account.\n\n**Note:** To enable or disable a cloud account, use [Update Cloud Account Status](https://pan.dev/prisma-cloud/api/cspm/update-cloud-account-status/) API.",
+        "operationId": "update-aws-cloud-account",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "true = Skip account status checks to improve response time",
+            "in": "query",
+            "name": "skipStatusChecks",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Update Cloud Account (AWS)",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cas/v1/cloud_account/status/aws": {
+      "post": {
+        "description": "Lists status messages of the specified AWS cloud account.",
+        "operationId": "get-aws-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Get Cloud Account Status (AWS)",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
     "/dlp/api/v1/config/awsorg/status": {
       "post": {
         "deprecated": true,
@@ -740,6 +920,314 @@
           }
         ],
         "summary": "Get Data Security Config (AWS Org)",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{parent_id}/children": {
+      "post": {
+        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws-legacy",
+        "parameters": [
+          {
+            "description": "Parent OU ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The page token to request the next page of accounts. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "accountNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of accounts to return. An  **accountFetchCount** of 0 returns a nextPageToken but no accounts.",
+            "in": "query",
+            "name": "accountFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The page token to request next set of OUs. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "ouNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of OUs to return. An **ouFetchCount** of 0 returns a nextPageToken but no OUs.",
+            "in": "query",
+            "name": "ouFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsListChildrenApiResponseModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "permission_error / bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Children of Parent (AWS) - Legacy",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{account_id}/ancestors": {
+      "post": {
+        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous-legacy",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AwsNodeModel"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Ancestors (AWS) - Legacy",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{parent_id}/children": {
+      "post": {
+        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws",
+        "parameters": [
+          {
+            "description": "Parent OU ID",
+            "in": "path",
+            "name": "parent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The page token to request the next page of accounts. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "accountNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of accounts to return. An  **accountFetchCount** of 0 returns a nextPageToken but no accounts.",
+            "in": "query",
+            "name": "accountFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The page token to request next set of OUs. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "in": "query",
+            "name": "ouNextPageToken",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Total number of OUs to return. An **ouFetchCount** of 0 returns a nextPageToken but no OUs.",
+            "in": "query",
+            "name": "ouFetchCount",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgChildrenRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsListChildrenApiResponseModel"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "permission_error / bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Children of Parent (AWS)",
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ]
+      }
+    },
+    "/cas/v1/aws_account/{account_id}/ancestors": {
+      "post": {
+        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous",
+        "parameters": [
+          {
+            "description": "Account ID",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgAncestorRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AwsNodeModel"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "List Ancestors (AWS)",
         "tags": [
           "Cloud Accounts (AWS)"
         ]
