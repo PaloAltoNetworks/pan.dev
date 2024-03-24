@@ -15,7 +15,7 @@ module.exports = {
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`32-03`),
+      value: versionCrumb(`32-04`),
     },
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
@@ -92,6 +92,20 @@ module.exports = {
         "compute/api/32-02/set-up-console",
         "compute/api/32-02/stable-endpoints",
         require("./api/32-02/sidebar"),
+      ],
+    },
+  ],
+  compute_3203: [
+    {
+      type: "category",
+      label: "Prisma Cloud Compute Edition - 32.03",
+      collapsed: true,
+      items: [
+        "compute/api/32-03/compute-api-reference-home",
+        "compute/api/32-03/access-api-self-hosted",
+        "compute/api/32-03/set-up-console",
+        "compute/api/32-03/stable-endpoints",
+        require("./api/32-03/sidebar"),
       ],
     },
   ],
