@@ -812,13 +812,6 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-03/",
           },
-          compute_31: {
-            specPath: "openapi-specs/compute/31-00",
-            outputDir: "products/compute/api/31-00",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/31-00/",
-          },
         },
       },
     ],
