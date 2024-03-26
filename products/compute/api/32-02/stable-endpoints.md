@@ -1,22 +1,22 @@
 ---
 id: stable-endpoints
 title: Supported Endpoints
-sidebar_label: Supported Endpoints
-slug: /compute/api/30-02
 ---
 
-With every release the Prisma Cloud Compute Edition APIs are versioned to indicate the release number to which they correspond.
+With every release the Compute APIs are versioned to indicate the release number to which they correspond.
 The version-specific APIs are supported for the subsequent two major releases.
 
 With API versioning, as your Console is upgraded to newer versions, you can continue to use older versioned APIs with stability and migrate to newer version APIs at your convenience within the N-2 support lifecycle.
 
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
 
-### Latest API Versions of Prisma Cloud Compute Edition
+### Previous API Versions of Prisma Cloud Compute Edition
 
-To view the documentation for the latest versions of the supported Prisma Cloud Compute Edition releases, visit:
+All minor or maintainance versions (xx) of 32.xx release have n-2 support for backward compatibility. The documentation for all the supported releases is available at:
 
-* [Prisma Cloud Compute Edition - Latest](/compute/api/)
+* [Prisma Cloud Compute Edition - 32.02](/compute/api/)
+* [Prisma Cloud Compute Edition - 31.02](/compute/api/31-02/)
+* [Prisma Cloud Compute Edition - 30.03](/compute/api/30-03/)
 
 ## Versioning
 
@@ -32,16 +32,16 @@ Where:
   - api/v1/cloud/discovery/entities, get
   - api/v1/registry/webhook/webhook, delete
   - api/v1/registry/webhook/webhook, post
-  - api/v1/settings/license, post
   - api/v1/signup, post
   - api/v1/util/prisma-cloud-jenkins-plugin.hpi, get
   - api/v1/util/tas-tile, get
+
 - `vVersion` - Points to a version-specific API, where `Version` specifies the major and minor parts of a release's version string.
 
 As a best practice, update your scripts to use the version-specific API endpoints to ensure that your implementation is fully supported.
 For the version-specific APIs, you will have access to the API Reference and Release Notes documentation for changes or updates that may impact you.
 
-When using the version-specific endpoints, you will need to update your automation scripts approximately once a year to stay in sync with the product [Support lifecycle for connected components](https://docs.prismacloud.io/en/compute-edition/30/admin-guide/upgrade/support-lifecycle). 
+When using the version-specific endpoints, you will need to update your automation scripts approximately once a year to stay in sync with the product [Support lifecycle for connected components](https://docs.prismacloud.io/en/classic/compute-admin-guide/upgrade/support-lifecycle). If you are upgraded to Darwin, see [Support Lifecycle for Connected Components](https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/upgrade/support-lifecycle).
 
 Starting with version 30.xx, each maintenance release (like 30.01, 30.02, and so on) may contain new features and improvements. As a result, the URLs for the APIs will be updated to reflect the version. 
 
