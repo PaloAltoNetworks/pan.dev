@@ -4,11 +4,58 @@
     "title": "On-demand Alert Notification APIs (Alerts side)",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
   "paths": {
     "/alerts/api/v1/notification/ondemand": {
       "post": {
         "summary": "Create On Demand Notification",
-        "description": "Create on demand notification for an alert. Supported channels are: \n1. Jira\n2. Email \n3. Slack\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n",
+        "description": "Create on demand notification for an alert. Supported channels are: \n1. Jira\n2. Email \n3. Slack\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\nFor details about the request body parameters required for each notification channel, see the following table:\n\n**Request Parameters**|**Jira**|**Email**|**Slack**\n:----|:----|:----|:----\nalertId|Required|Required|Required\nonDemandNotificationConfig.integrationType|Required|Required|Required\nonDemandNotificationConfig.templateId|Required|Not required|Not required\nonDemandNotificationConfig.recipients|Required|Required|Required\ntranslation.body|Not required|Optional|Optional\ntranslation.details.sender|Not required|Required|Required\ntranslation.details.recipients|Not required|Required|Required\ntranslation.details.callbackUrl|Not required|Optional|Optional\ntranslation.details.assetCallbackUrl|Not required|Optional|Optional\n\n",
         "operationId": "create-Ondemand-Notification",
         "tags": [
           "Alerts"
@@ -21,7 +68,7 @@
                 "$ref": "#/components/schemas/OnDemandNotificationConfigRequest"
               },
               "examples": {
-                "1": {
+                "Jira": {
                   "summary": "On-demand Jira Notification Config Request",
                   "value": {
                     "alertId": "P-17952602",
@@ -34,7 +81,7 @@
                     }
                   }
                 },
-                "2": {
+                "Email": {
                   "summary": "On-demand Email Notification Config Request",
                   "value": {
                     "alertId": "P-486491",
@@ -56,7 +103,7 @@
                     }
                   }
                 },
-                "3": {
+                "Slack": {
                   "summary": "On-demand Slack Notification Config Request",
                   "value": {
                     "alertId": "A-292704246",
@@ -89,7 +136,7 @@
                   "$ref": "#/components/schemas/NotificationResponse"
                 },
                 "examples": {
-                  "1": {
+                  "Jira": {
                     "summary": "On-demand Jira Notification Response",
                     "value": {
                       "success": 1,
@@ -112,7 +159,7 @@
                       "failedEvents": {}
                     }
                   },
-                  "2": {
+                  "Email": {
                     "summary": "On-demand Email Notification Response",
                     "value": {
                       "success": 1,
@@ -133,7 +180,7 @@
                       "failedEvents": {}
                     }
                   },
-                  "3": {
+                  "Slack": {
                     "summary": "On-demand Slack Notification Response",
                     "value": {
                       "success": 1,
@@ -207,24 +254,21 @@
       "OnDemandNotificationConfigRequest": {
         "title": "OnDemandNotificationConfigRequest (/alerts/api/v1/notification/ondemand or /config Request)",
         "type": "object",
-        "required": true,
+        "required": [
+          "alertId",
+          "onDemandNotificationConfig"
+        ],
         "properties": {
-          "prismaId": {
-            "required": false,
-            "type": "long"
-          },
           "alertId": {
-            "required": true,
+            "description": "Id of the alert for which Notification needs to be sent",
             "type": "string"
           },
           "onDemandNotificationConfig": {
             "type": "object",
-            "required": true,
             "$ref": "#/components/schemas/OnDemandNotificationConfig"
           },
           "translation": {
             "type": "object",
-            "required": false,
             "$ref": "#/components/schemas/Translation"
           }
         }
@@ -232,32 +276,42 @@
       "OnDemandNotificationConfig": {
         "title": "OnDemandNotificationConfig",
         "type": "object",
+        "required": [
+          "integrationType",
+          "templateId",
+          "recipients"
+        ],
         "properties": {
           "id": {
-            "required": false,
+            "description": "Id of the alert for which Notification needs to be sent",
             "type": "string"
           },
           "clientId": {
-            "required": false,
+            "description": "Id to identify the category of request. For Jira, Email, Slack, it can be CS",
             "type": "string"
           },
           "generatorType": {
-            "required": false,
+            "description": "For ad-hoc notification, its value should be REALTIME",
             "type": "string"
           },
           "integrationType": {
-            "required": true,
+            "description": "Can be either Jira, Email or Slack",
             "type": "string"
           },
           "templateId": {
-            "required": true,
+            "description": "Jira template Id",
             "type": "string"
           },
           "recipients": {
-            "required": true,
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
+            "description": "List of Integration id for jira or email for email or channel for slack etc.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "email1",
+                "email2",
+                "email3"
+              ]
             }
           }
         }
@@ -265,23 +319,38 @@
       "Translation": {
         "title": "Translation",
         "type": "object",
+        "required": [
+          "body"
+        ],
         "properties": {
           "body": {
-            "required": true,
+            "description": "Message Body. Applicable for email and slack.",
             "type": "string"
           },
           "details": {
-            "required": false,
+            "description": "Its a map of key-value pair. It contains details like Subject, Alert Url, Asset Url etc.",
             "type": "object",
             "additionalProperties": {
-              "type": "string"
+              "type": "string",
+              "properties": {
+                "callbackUrl": {
+                  "type": "string"
+                },
+                "assetCallbackUrl": {
+                  "type": "string"
+                }
+              }
             }
           },
           "attachments": {
-            "required": false,
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
+            "description": "This field contains the list of paths to the S3 file from where the attachment needs to be fetched.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "attachmentUrl1",
+                "attachmentUrl2"
+              ]
             }
           }
         }
@@ -687,11 +756,12 @@
       "ErrorResponse": {
         "title": "ErrorResponse",
         "type": "object",
-        "required": true,
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "object",
-            "required": true,
             "$ref": "#/components/schemas/Error"
           }
         }
@@ -699,22 +769,21 @@
       "Error": {
         "title": "Error",
         "type": "object",
-        "required": true,
+        "required": [
+          "code",
+          "message"
+        ],
         "properties": {
           "code": {
-            "required": true,
             "type": "string"
           },
           "message": {
-            "required": true,
             "type": "string"
           },
           "target": {
-            "required": false,
             "type": "string"
           },
           "details": {
-            "required": false,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Error"
@@ -743,52 +812,5 @@
         }
       }
     }
-  },
-  "servers": [
-    {
-      "url": "https://api.prismacloud.io"
-    },
-    {
-      "url": "https://api2.prismacloud.io"
-    },
-    {
-      "url": "https://api3.prismacloud.io"
-    },
-    {
-      "url": "https://api4.prismacloud.io"
-    },
-    {
-      "url": "https://api.anz.prismacloud.io"
-    },
-    {
-      "url": "https://api.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api2.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api.gov.prismacloud.io"
-    },
-    {
-      "url": "https://api.prismacloud.cn"
-    },
-    {
-      "url": "https://api.ca.prismacloud.io"
-    },
-    {
-      "url": "https://api.sg.prismacloud.io"
-    },
-    {
-      "url": "https://api.uk.prismacloud.io"
-    },
-    {
-      "url": "https://api.ind.prismacloud.io"
-    },
-    {
-      "url": "https://api.jp.prismacloud.io"
-    },
-    {
-      "url": "https://api.fr.prismacloud.io"
-    }
-  ]
+  }
 }

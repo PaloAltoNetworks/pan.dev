@@ -709,11 +709,13 @@ const config = {
           "email-dlp": {
             specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
             outputDir: "products/email-dlp/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           dlp: {
             specPath: "openapi-specs/dlp/DLPAPI.yaml",
             outputDir: "products/dlp/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
@@ -765,8 +767,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.02",
-            label: "v32.02",
+            version: "32.03",
+            label: "v32.03",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
@@ -798,19 +800,19 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-01/",
           },
+          compute_3202: {
+            specPath: "openapi-specs/compute/32-02",
+            outputDir: "products/compute/api/32-02",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-02/",
+          },
           compute_31: {
             specPath: "openapi-specs/compute/31-00",
             outputDir: "products/compute/api/31-00",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/31-00/",
-          },
-          compute_3002: {
-            specPath: "openapi-specs/compute/30-02",
-            outputDir: "products/compute/api/30-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/30-02/",
           },
         },
       },
