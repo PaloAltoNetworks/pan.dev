@@ -10,18 +10,20 @@ Go to **Compute > Manage > System > Utilities** and copy the **Path to Console**
 All example commands specify a variable called `CONSOLE`, which represents the address for your Console.
 
 You can access the Compute API with your Prisma Cloud user credentials.
+
 Note that only Prisma Cloud users with the System Admin role can access Compute.
+
 By default, the Prisma Cloud System Admin role is mapped to the Prisma Cloud Compute Administrator role.
 
 For automated workflows, you'll want to provision a service account with the minimum required permissions.
 
 ## Accessing the API using token authentication
 
-Get your Compute Console's address, retrieve an token, then use the token to access the API.
+Get your Compute Console's address, retrieve a token, and then use the token to access the API.
 
 The Prisma Cloud Compute token is valid for 60 minutes, and you can use it to access Compute APIs for 60 minutes.
 Internally the token contains a Prisma Cloud platform token, which is only valid for 10 minutes.
-To renew the Compute token, you must have a valid platform token, since Prisma Cloud platform handles all authentication.
+To renew the Compute token, you must have a valid platform token, since the Prisma Cloud platform handles all authentication.
 
 As a result, you must renew your Compute token every 10 minutes.
 We recommend that you renew the Compute token every 5 minutes (half the lifetime of the platform token).
@@ -68,7 +70,7 @@ $ curl \
   "https://<CONSOLE>/api/v<VERSION>/policies/compliance/container"
 ```
 
-### Accessing the API using Prisma Cloud login token
+## Accessing the API using Prisma Cloud login token
 
 Use the following method when you want to access Compute APIs from your Prisma Cloud user account:
 
