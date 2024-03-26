@@ -1,3 +1,3 @@
 module.exports = {
-  aiops_api: ["email-dlp/api/emaildlpoverview", require("./api/sidebar")],
+  email_dlp: ["email-dlp/api/emaildlpoverview", require("./api/sidebar")],
 };
