@@ -7,7 +7,7 @@
     "license": {
       "name": "Public"
     },
-    "version": "v1"
+    "version": "1.0.0"
   },
   "servers": [
     {
@@ -210,7 +210,7 @@
         "tags": [
           "Search"
         ],
-        "summary": "Perform Asynchronous Config Search",
+        "summary": "Perform config search asynchronously and receive results in CSV format",
         "description": "Receive the results of an RQL config query from reporting service asynchronously in CSV format. With config queries, you can retrieve resource information, identify misconfigurations, gain operational insights, and uncover policy and compliance violations.",
         "operationId": "search-config-async-csv-download",
         "requestBody": {
@@ -299,6 +299,111 @@
           "404": {
             "description": "not_found",
             "content": {}
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice”": "true",
+        "x-public": "true",
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/search/api/v2/config": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Perform Config Search V2",
+        "description": "* Returns the results of an RQL config query.\n* With config queries, you can retrieve resource information, identify misconfigurations, gain operational insights, and uncover policy and compliance violations. \n* The request specification now includes the startTime value, indicating the start time for the search. Additionally, the end time is implicitly set to the current system time. \n* The response has been updated to the transition of the value associated with 'resourceType' to newer  and more descriptive name. (Ex: Instance to \"EC2 Instance\" for config query to list  all EC2 instances). Additionally, A new field 'resourceTypeId' is introduced, which serves as a unique identifier for the resourceType",
+        "operationId": "search-config-v2",
+        "requestBody": {
+          "description": "Config rule search by query request parameters model",
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigSearchByQueryV2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigSearchV1ResponseResourceMetaModelV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "conflict_saved_search"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-microservice”": "true",
+        "x-public": "true",
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/search/api/v2/config/{id}": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Perform Config Search by Search Id V2",
+        "description": "* Returns the results of an RQL config query.\n* With config queries, you can retrieve resource information, identify misconfigurations, gain operational insights, and uncover policy and compliance violations. \n* The request specification now includes the startTime value, indicating the start time for the search. Additionally, the end time is implicitly set to the current system time. \n* The response has been updated to the transition of the value associated with 'resourceType' to newer  and more descriptive name. (Ex: Instance to \"EC2 Instance\" for config query to list  all EC2 instances). Additionally, A new field 'resourceTypeId' is introduced, which serves as a unique identifier for the resourceType",
+        "operationId": "search-config-by-search-id-v2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Search ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Config rule search by search id request parameters model",
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigSearchBySearchIdV2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigSearchV1ResponseResourceMetaModelV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "conflict_saved_search"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -864,6 +969,271 @@
   },
   "components": {
     "schemas": {
+      "ConfigSearchByQueryV2Request": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "skipSearchCreation": {
+            "type": "boolean",
+            "description": "Skip Search Creation",
+            "readOnly": true
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Results per page"
+          },
+          "withResourceJson": {
+            "type": "boolean",
+            "description": "true = include resource JSON. Default is false."
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "startTime"
+          },
+          "skipResult": {
+            "type": "boolean",
+            "description": "Skip Search Result",
+            "readOnly": true
+          },
+          "sort": {
+            "type": "array",
+            "description": "Sort field data",
+            "items": {
+              "$ref": "#/components/schemas/SortConfigRuleSortField"
+            }
+          },
+          "query": {
+            "type": "string",
+            "description": "RQL query"
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Page Token"
+          }
+        }
+      },
+      "ConfigSearchBySearchIdV2Request": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Results per page"
+          },
+          "withResourceJson": {
+            "type": "boolean",
+            "description": "true = include resource JSON. Default is false."
+          },
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "startTime"
+          },
+          "sort": {
+            "type": "array",
+            "description": "Sort field data",
+            "items": {
+              "$ref": "#/components/schemas/SortConfigRuleSortField"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Page Token"
+          }
+        }
+      },
+      "ConfigSearchV1ResponseResourceMetaModelV3": {
+        "type": "object",
+        "properties": {
+          "totalRows": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The total number of matching resources"
+          },
+          "items": {
+            "type": "array",
+            "description": "List of matching resources",
+            "items": {
+              "$ref": "#/components/schemas/ResourceMetaModelV3"
+            }
+          },
+          "dynamicColumns": {
+            "type": "array",
+            "description": "Set of names of custom resource attributes",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Encoded page token to continue pagination"
+          },
+          "infoMsg": {
+            "type": "string"
+          },
+          "sortAllowedColumns": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string",
+            "description": "Search id"
+          }
+        }
+      },
+      "ResourceMetaModelV3": {
+        "type": "object",
+        "description": "Model containing resource metadata",
+        "properties": {
+          "rrn": {
+            "type": "string",
+            "description": "RRN"
+          },
+          "stateId": {
+            "type": "string",
+            "description": "State ID"
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Asset ID"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account name"
+          },
+          "accountGroupName": {
+            "type": "string",
+            "description": "Account group name"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type",
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "OTHER",
+              "IBM"
+            ]
+          },
+          "regionId": {
+            "type": "string",
+            "description": "Region ID"
+          },
+          "regionName": {
+            "type": "string",
+            "description": "Region name"
+          },
+          "service": {
+            "type": "string",
+            "description": "Service"
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "Resource type"
+          },
+          "insertTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Insertion timestamp"
+          },
+          "createdTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Creation timestamp"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Deleted"
+          },
+          "vpcId": {
+            "type": "string",
+            "description": "Virtual private cloud ID"
+          },
+          "vpcName": {
+            "type": "string",
+            "description": "Virtual private cloud name"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Tags",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "riskGrade": {
+            "type": "string",
+            "description": "Risk grade"
+          },
+          "data": {
+            "type": "object",
+            "description": "Raw JSON data for the resource"
+          },
+          "dynamicData": {
+            "type": "object",
+            "description": "Dynamic data",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "hasNetwork": {
+            "type": "boolean",
+            "description": "Has network"
+          },
+          "hasExternalFinding": {
+            "type": "boolean",
+            "description": "Has external finding"
+          },
+          "hasExternalIntegration": {
+            "type": "boolean",
+            "description": "Has external integration"
+          },
+          "allowDrillDown": {
+            "type": "boolean",
+            "description": "allowDrillDown"
+          },
+          "hasExtFindingRiskFactors": {
+            "type": "boolean",
+            "description": "Has risk factors"
+          },
+          "resourceConfigJsonAvailable": {
+            "type": "boolean",
+            "description": "allowDrillDown"
+          },
+          "resourceTypeId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "resourceTypeId"
+          }
+        }
+      },
       "AbsoluteTimeRangeConfigModel": {
         "allOf": [
           {
@@ -2021,52 +2391,6 @@
             }
           }
         }
-      },
-      "RRNModel": {
-        "type": "object",
-        "properties": {
-          "cloudType": {
-            "type": "string",
-            "description": "Cloud type",
-            "readOnly": true,
-            "enum": [
-              "ALL",
-              "AWS",
-              "AZURE",
-              "GCP",
-              "ALIBABA_CLOUD",
-              "OCI",
-              "OTHER",
-              "IBM"
-            ]
-          },
-          "resourceType": {
-            "type": "string",
-            "description": "Resource type",
-            "readOnly": true
-          },
-          "regionId": {
-            "type": "string",
-            "description": "Region ID",
-            "readOnly": true
-          },
-          "accountId": {
-            "type": "string",
-            "description": "Account ID",
-            "readOnly": true
-          },
-          "idmapId": {
-            "type": "string",
-            "description": "Hashed generated ID",
-            "readOnly": true
-          },
-          "resourceId": {
-            "type": "string",
-            "description": "Resource ID",
-            "readOnly": true
-          }
-        },
-        "description": "Model for RRN"
       },
       "RelativeTimeDurationModel": {
         "type": "object",
