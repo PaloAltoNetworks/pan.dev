@@ -289,7 +289,14 @@ module.exports = {
   ],
   saseauth: ["sase/api/auth/auth-api", require("./api/auth/sidebar")],
   saseiam: ["sase/api/iam/iam-api", require("./api/iam/sidebar")],
-  sasemt: ["sase/api/mt-monitor/msp-api", require("./api/mt-monitor/sidebar")],
+  sasemonitor: [
+    "sase/api/mt-monitor/msp-api",
+    require("./api/mt-monitor/sidebar"),
+  ],
+  sasemtnotify: [
+    "sase/api/mt-notifications/notifications-api",
+    require("./api/mt-notifications/sidebar"),
+  ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
