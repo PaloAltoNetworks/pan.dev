@@ -1,6 +1,6 @@
 ---
 id: cspm-gs
-title: Cloud Security Posture Management
+title: Cloud Security
 sidebar_label: Getting Started
 hide_table_of_contents: true
 sidebar_position: 1

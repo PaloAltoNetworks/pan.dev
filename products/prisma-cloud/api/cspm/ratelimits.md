@@ -1,6 +1,6 @@
 ---
 id: rate-limits
-title: Prisma Cloud API Rate Limits
+title: Rate Limits
 sidebar_label: Rate Limits
 ---
 
