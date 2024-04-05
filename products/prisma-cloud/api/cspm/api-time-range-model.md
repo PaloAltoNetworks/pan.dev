@@ -1,18 +1,18 @@
 ---
 id: api-time-range-model
-title: Prisma Cloud CSPM API Time Range Model
+title: Time Range Model
 sidebar_label: Time Range Model
 ---
 
-Some Prisma Cloud Cloud Security Posture Management (CSPM) API request or response objects include a time range model. Depending on the endpoint, this model can describe a time range in different ways. The examples below illustrate the different uses of this model.
+Several Cloud Security API request or response objects include a time range model. Depending on the endpoint, this model can describe a time range in different ways. The examples below illustrate the different uses of this model.
 
-- [Time Range Model for Most CSPM Endpoints](#time-range-model-for-most-cspm-endpoints)
+- [Time Range Model for Most Cloud Security Endpoints](#time-range-model-for-most-cspm-endpoints)
 - [Compliance Report, Posture, and Asset Inventory Time Range Model](#compliance-report-posture-and-asset-inventory-time-range-model)
 - [Alert Dismissal Time Range Model](#alert-dismissal-time-range-model)
 
-## Time Range Model for Most CSPM Endpoints
+## Time Range Model for Most Cloud Security Endpoints
 
-​The following time range model descriptions apply to all public CSPM endpoints that use a time range model except for compliance report, compliance posture, asset inventory, and alert dismissal endpoints.
+​The following time range model descriptions apply to all public Cloud Security endpoints that use a time range model except for compliance report, compliance posture, asset inventory, and alert dismissal endpoints.
 
 - [Absolute time](#absolute-time)
 - [Relative time](#relative-time)

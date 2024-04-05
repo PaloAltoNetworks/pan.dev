@@ -1244,6 +1244,20 @@
           "impactCount": {
             "type": "integer"
           },
+          "highestCVSS": {
+            "type": "integer"
+          },
+          "highestSeverity": {
+            "type": "string"
+          },
+          "firstPublishedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastModifiedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
           "distroDetailsList": {
             "type": "array",
             "items": {
@@ -1266,12 +1280,20 @@
             "type": "string"
           },
           "severity": {
-            "type": "integer"
+            "type": "string"
           },
           "affectedVersion": {
             "type": "string"
           },
           "fixedTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "publishedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "modifiedDate": {
             "type": "integer",
             "format": "int64"
           }
@@ -1472,6 +1494,316 @@
                   }
                 }
               }
+            }
+          }
+        }
+      },
+      "TraceStage": {
+        "type": "object",
+        "description": "A ordered collection of subsequent trace stages",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "A unique name of the trace stage",
+            "enum": [
+              "CODE",
+              "BUILD",
+              "DEPLOY",
+              "RUN"
+            ]
+          },
+          "apiIds": {
+            "type": "array",
+            "description": "A collection of api-ids for this stage. If none are provided, then we utilize what the collection of ides that are default to this stage",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cveId": {
+            "type": "string",
+            "description": "CVE Identifier",
+            "required": true
+          },
+          "repoId": {
+            "type": "string",
+            "description": "Repo Identifier",
+            "required": true
+          }
+        }
+      },
+      "AssetTraceRequest": {
+        "type": "object",
+        "description": "Asset Trace request",
+        "properties": {
+          "source": {
+            "type": "object",
+            "description": "The source from which the trace originates",
+            "properties": {
+              "unifiedAssetIds": {
+                "type": "array",
+                "description": "Set of unified asset identifiers",
+                "required": true
+              },
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "CODE",
+                  "BUILD",
+                  "DEPLOY",
+                  "RUN"
+                ],
+                "description": "The stage of the source Assets"
+              }
+            }
+          },
+          "traceStages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TraceStage"
+            }
+          },
+          "nextPageToken": {
+            "type": "integer",
+            "description": "The optional next page token"
+          }
+        }
+      },
+      "AssetTraceGraphResponse": {
+        "type": "object",
+        "properties": {
+          "graph": {
+            "$ref": "#/components/schemas/AssetTraceGraph"
+          }
+        }
+      },
+      "AssetTraceGraph": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/PrimaryAssetStageNode"
+                },
+                {
+                  "$ref": "#/components/schemas/AssetStageNode"
+                }
+              ]
+            }
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Edge"
+            }
+          }
+        }
+      },
+      "PrimaryAssetStageNode": {
+        "type": "object",
+        "description": "A dictionary of the trace node identifier and the associated node",
+        "additionalProperties": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Label representing the asset name"
+            },
+            "type": {
+              "type": "string",
+              "default": "PrimaryAsset",
+              "description": "Type of Node"
+            },
+            "metadata": {
+              "$ref": "#/components/schemas/AssetStageNodeMetadata"
+            }
+          }
+        }
+      },
+      "AssetStageNode": {
+        "type": "object",
+        "description": "A dictionary of the trace node identifier and the associated node",
+        "additionalProperties": {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Label representing the asset name"
+            },
+            "type": {
+              "type": "string",
+              "default": "Asset",
+              "description": "Type of Node"
+            },
+            "metadata": {
+              "$ref": "#/components/schemas/AssetStageNodeMetadata"
+            }
+          }
+        }
+      },
+      "AssetStageNodeMetadata": {
+        "type": "object",
+        "description": "Metadata associated with the AssetNode",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": "string",
+              "description": "Stage of the Asset",
+              "enum": [
+                "CODE",
+                "BUILD",
+                "DEPLOY",
+                "RUN"
+              ]
+            },
+            "unifiedAssetId": {
+              "type": "string",
+              "description": "Unified Asset Identifier"
+            },
+            "assetName": {
+              "type": "string",
+              "description": "Asset Name"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Count of the nodes in a stage"
+            },
+            "attributes": {
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "packageManagerFileName": {
+                    "type": "string",
+                    "description": "File location in the Repo"
+                  },
+                  "dockerFileName": {
+                    "description": "Docker file name",
+                    "type": "string"
+                  },
+                  "pipelineName": {
+                    "type": "string",
+                    "description": "Name of the pipeline"
+                  },
+                  "pipelineType": {
+                    "type": "string",
+                    "description": "Pipeline Type"
+                  },
+                  "jobInstanceName": {
+                    "type": "string",
+                    "description": "Job Instance Name"
+                  },
+                  "filePath": {
+                    "type": "string",
+                    "description": "The path of the file in the repo"
+                  },
+                  "fileName": {
+                    "type": "string",
+                    "description": "The name of the file"
+                  },
+                  "repoName": {
+                    "type": "string",
+                    "description": "The name of the repo"
+                  },
+                  "repoOwner": {
+                    "type": "string",
+                    "description": "The owner of the repo"
+                  },
+                  "packageName": {
+                    "type": "string",
+                    "description": "The package name of the CVE"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "The package version of the CVE"
+                  },
+                  "subType": {
+                    "type": "string",
+                    "description": "Asset Sub Type",
+                    "enum": [
+                      "File",
+                      "Package"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Edge": {
+        "type": "object",
+        "description": "The edges of the C2C Tracing graph",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Edge label"
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of the source asset",
+            "required": true
+          },
+          "target": {
+            "type": "string",
+            "description": "Identifier of the target asset",
+            "required": true
+          },
+          "directed": {
+            "type": "boolean",
+            "description": "Boolean value representing whether the edge is directed"
+          },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "Deployed From",
+              "Built By",
+              "Contains",
+              "Is Contained In",
+              "Triggered By",
+              "Deployed As",
+              "Built",
+              "Triggered"
+            ],
+            "description": "Relation between the source and target nodes"
+          },
+          "relationshipTypeId": {
+            "type": "integer",
+            "description": "Relationship Type ID between the edges"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AssetNode": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Label representing the asset name"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PrimaryAssetNode",
+              "AssetNode"
+            ],
+            "description": "Type of Node"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Metadata associated with the AssetNode",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {}
             }
           }
         }
