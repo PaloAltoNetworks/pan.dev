@@ -786,27 +786,6 @@ const config = {
               },
             },
           },
-          compute_32: {
-            specPath: "openapi-specs/compute/32-00",
-            outputDir: "products/compute/api/32-00",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-00/",
-          },
-          compute_3201: {
-            specPath: "openapi-specs/compute/32-01",
-            outputDir: "products/compute/api/32-01",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-01/",
-          },
-          compute_3202: {
-            specPath: "openapi-specs/compute/32-02",
-            outputDir: "products/compute/api/32-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-02/",
-          },
           compute_3203: {
             specPath: "openapi-specs/compute/32-03",
             outputDir: "products/compute/api/32-03",
