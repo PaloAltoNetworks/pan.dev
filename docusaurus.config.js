@@ -786,7 +786,7 @@ const config = {
               },
             },
           },
-          compute_32: {
+          compute_3200: {
             specPath: "openapi-specs/compute/32-00",
             outputDir: "products/compute/api/32-00",
             showExtensions: true,
