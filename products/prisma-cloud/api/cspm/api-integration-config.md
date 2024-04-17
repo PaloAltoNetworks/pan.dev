@@ -217,6 +217,7 @@ To update a Cortex XSOAR integration, make your request as described in
   "enabled": true,
   "integrationConfig": {
     "apiKey": "",
+    "demistoVersion":"6.0",
     "hostUrl": ""
   },
   "integrationType": "demisto",
