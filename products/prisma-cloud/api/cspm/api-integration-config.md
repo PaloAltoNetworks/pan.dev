@@ -202,6 +202,9 @@ To add a Cortex XSOAR integration, make your request as described in
 | ------- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
 | hostUrl | The Cortex XSOAR instance FQDN/IP&mdash;either the name or the IP address of the instance                              | string     | _required_                |
 | apiKey  | The consumer key you configured when you created the Prisma Cloud application access in your Cortex XSOAR environment. | string     | _required_                |
+| demistoVersion  | The Cortex XSOAR version. Possible values - 6.0 and 8.0  | string     | _required_                |
+| apiKeyID  | The key ID linked to the consumer key (apiKey). This parameter is required only for Cortex XSOAR 8.0. | string     | null                |
+
 
 To update a Cortex XSOAR integration, make your request as described in
 [Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
