@@ -433,6 +433,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/mt-sp-interconnect",
+                      label: "Multitenant Backbone",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -673,6 +678,11 @@ const config = {
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
             outputDir: "products/sase/api/mt-notifications",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          mtbackbone: {
+            specPath: "openapi-specs/sase/mt-sp-interconnect",
+            outputDir: "products/sase/api/mt-sp-interconnect",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           access: {

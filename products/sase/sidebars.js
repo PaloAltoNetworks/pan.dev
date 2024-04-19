@@ -297,6 +297,10 @@ module.exports = {
     "sase/api/mt-notifications/notifications-api",
     require("./api/mt-notifications/sidebar"),
   ],
+  sasemtbackbone: [
+    "sase/api/mt-sp-interconnect/mt-sp-interconnect",
+    require("./api/mt-sp-interconnect/sidebar"),
+  ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
