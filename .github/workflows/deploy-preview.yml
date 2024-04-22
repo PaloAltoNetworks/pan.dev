@@ -23,7 +23,7 @@ jobs:
             echo "is-org-member-result=$(gh api -X GET orgs/PaloAltoNetworks/memberships/${{ github.actor }} | jq -r .message)" >> "$GITHUB_OUTPUT"
           fi
     env:
-      GH_TOKEN: ${{ secrets.PAT }}
+      GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
 
   analyze:
     if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
@@ -41,17 +41,17 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
   analyze_unsafe:
     if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
@@ -70,17 +70,17 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
   build:
     name: Build
@@ -94,12 +94,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
@@ -144,7 +144,7 @@ jobs:
       - name: Build site
         run: yarn build-github && zip -r build.zip build
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: build
           path: build.zip
@@ -157,15 +157,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'yarn'
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: build
 
@@ -174,7 +174,7 @@ jobs:
 
       - name: Deploy to Firebase
         id: deploy_preview
-        uses: FirebaseExtended/action-hosting-deploy@4d0d0023f1d92b9b7d16dda64b3d7abd2c98974b # v0.7.0
+        uses: FirebaseExtended/action-hosting-deploy@120e124148ab7016bec2374e5050f15051255ba2 # v0.7.1
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'
