@@ -299,7 +299,7 @@ module.exports = {
   ],
   sasemtbackbone: [
     "sase/api/mt-sp-interconnect/mt-sp-interconnect",
-    require("./api/mt-sp-interconnect/sidebar"),
+    require("./api/mt-interconnect/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
