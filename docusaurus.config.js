@@ -428,6 +428,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/mt-notifications",
+                      label: "Multitenant Notifications",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -663,6 +668,11 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          mtnotifications: {
+            specPath: "openapi-specs/sase/mt-notifications",
+            outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           access: {

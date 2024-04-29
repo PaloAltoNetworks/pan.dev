@@ -34,8 +34,7 @@ The monitoring functionality exposed by these APIs can also be performed using t
 
 ## Authentication
 
-Use the [Prisma SASE API Quick Start](/sase/docs/getstarted) for information about the Authentication Service
-common authentication mechanism and base URL.
+See the [Prisma SASE API Get Started](/sase/docs/getstarted) for information about base URLs, authentication, and obtaining access tokens.
 
 ## API Requests
 
