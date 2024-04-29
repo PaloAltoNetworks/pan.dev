@@ -13,7 +13,7 @@ Welcome to the Prisma Access Configuration APIs. These APIs are available to Pri
 Prisma Access Cloud Management for service onboarding, configuration, and operations. Panorama managed tenants
 will continue to utilize the [Prisma Access APIs for Panorama](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-panorama-admin/prisma-access-overview/prisma-access-apis).
 
-The Prisma Access Configuration APIs use [Authentication Service](/sase/api/auth) for API authorization and access.
+See the [Prisma SASE API Get Started](/sase/docs/getstarted) for information about base URLs, authentication, and obtaining access tokens.
 After you obtain an [access token](/sase/docs/access-tokens),
 you can use these APIs to configure your Prisma Access deployments.
 

@@ -1,0 +1,1977 @@
+openapi: 3.0.2
+info:
+  title: Multi-Tenant Notifications API
+  version: "1.0"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    NotifProfileList:
+      type: array
+      items:
+        $ref: '#/components/schemas/NotifProfile'
+    NotifProfile:
+      required:
+        - profileName
+        - opState
+        - status
+        - tenantList
+        - notifTypeDetails
+        - notifChannels
+      type: object
+      properties:
+        id:
+          description: Notification Profile Id
+          type: string
+        profileName:
+          description: Notification Profile Name
+          type: string
+        description:
+          description: Notification Profile Description
+          type: string
+        opState:
+          description: Notification Profile Operational State
+          type: string
+          enum:
+            - ENABLED
+            - DISABLED
+        status:
+          description: Notification Profile Status
+          type: string
+        tenantList:
+          description: Input Tenant List
+          type: array
+          items:
+            type: string
+        excludeTenantList:
+          description: List of excluded tenants
+          type: array
+          items:
+            type: string
+        notifTypeDetails:
+          description: Notification Type Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifTypeDetail'
+        notifChannels:
+          description: Notification Channel List
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifChannel'
+        successTenant:
+          description: List of child tenants that got the incident profile
+          type: array
+          items:
+            type: string
+        failureTenant:
+          description: List of child tenants that didn't get the incident profile
+          type: array
+          items:
+            type: string
+
+    NotifTypeDetail:
+      required:
+        - type
+        - notifCategoryList
+      type: object
+      properties:
+        type:
+          description: Notification Type
+          type: string
+          enum:
+            - INCIDENTS
+            - UPGRADES
+            - ANNOUNCEMENTS
+        notifCategoryList:
+          description: List of notification type categories
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifCategoryDetail'
+    NotifCategoryDetail:
+      required:
+        - name
+        - bestPractice
+        - subCategoryList
+      type: object
+      properties:
+        name:
+          description: Notification type category name
+          type: string
+        bestPractice:
+          description: Best practice flag for category
+          type: boolean
+        subCategoryList:
+          description: List of notification type sub-categories
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifSubCategoryDetail'
+    NotifSubCategoryDetail:
+      required:
+        - name
+        - bestPractice
+        - needLicense
+      type: object
+      properties:
+        name:
+          description: Notification type sub-category name
+          type: string
+        bestPractice:
+          description: Best practice flag for sub-category
+          type: boolean
+        needLicense:
+          description: Need license flag for sub-category
+          type: boolean
+
+    NotifChannel:
+      required:
+        - name
+        - type
+      type: object
+      properties:
+        name:
+          description: Notification channel name
+          type: string
+        type:
+          description: Notification channel type
+          type: string
+          enum:
+            - EMAIL
+            - WEBHOOK
+        emailChannelDetails:
+          description: Email channel details
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/EmailChannelDetails'
+        webhookChannelDetails:
+          description: Webhook channel details
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/WebhookChannelDetails'
+        template:
+          description: Channel output template
+          type: object
+          properties:
+            name:
+              description: Output channel template name
+              type: string
+            templateJson:
+              description: JSON describing the output channel template
+              type: string
+    EmailChannelDetails:
+      required:
+        - emails
+      type: object
+      properties:
+        emails:
+          description: List of emails
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailDetails'
+    EmailDetails:
+      required:
+        - name
+        - emailId
+      type: object
+      properties:
+        name:
+          description: Email owner name
+          type: string
+        emailId:
+          description: Email id
+          type: string
+    WebhookChannelDetails:
+      required:
+        - urls
+        - authType
+        - token
+      type: object
+      properties:
+        urls:
+          description: List of Webhook URLs - do not include token in the URL
+          type: array
+          items:
+            type: string
+        authType:
+          description: Webhook Authentication Type
+          type: string
+          enum:
+            - NO_AUTH
+            - TOKEN
+        token:
+          description: Webhook token value
+          type: string
+
+    NotifListApiReqBody:
+      type: object
+      properties:
+        filters:
+          description: List of output channels that the notification is sent on
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifFilter'
+        sortByList:
+          description: List of output channels that the notification is sent on
+          type: array
+          items:
+            $ref: '#/components/schemas/SortBy'
+        page:
+          type: object
+          description: Page number
+          properties:
+            num:
+              type: integer
+              description: Page number
+            size:
+              type: integer
+              description: Page size
+    NotifFilter:
+      type: object
+      properties:
+        field:
+          description: Filter field
+          type: string
+        values:
+          description: Filter field values
+          type: array
+          items:
+            type: string
+            enum:
+              - readState
+              - notifType
+              - category
+              - subCategory
+              - inApp
+    SortBy:
+      type: object
+      properties:
+        field:
+          description: Sort field
+          type: string
+          enum:
+            - createdTime
+            - impactedTenantCount
+        sortBy:
+          description: Ascending or Descending
+          type: string
+          enum:
+            - DESC
+            - ASC
+
+    MtNotificationList:
+      type: array
+      items:
+        $ref: '#/components/schemas/MtNotification'
+    MtNotification:
+      required:
+        - name
+        - body
+        - aggKey
+        - notifReadState
+        - impactedTenants
+        - impactedTenantCount
+        - notifChannels
+      type: object
+      properties:
+        id:
+          description: Notification id
+          type: string
+        name:
+          description: Notification name
+          type: string
+        body:
+          description: Description of the notification
+          type: string
+        action:
+          description: Action to be taken on receiving the notification (if applicable)
+          type: string
+        createdTime:
+          description: Notification creation time
+          type: number
+        aggKey:
+          type: object
+          description: Multi-Tenant Notification Aggregation Key
+          properties:
+            tag:
+              $ref: '#/components/schemas/MtNotifAggKey'
+        impactedTenants:
+          description: List of impacted tenants
+          type: array
+          items:
+            type: string
+        impactedTenantCount:
+          description: Number of tenants impacted by the multi-tenant notification
+          type: number
+        notifReadState:
+          $ref: '#/components/schemas/NotifReadState'
+        notifChannels:
+          description: List of output channels that the notification is sent on
+          type: array
+          items:
+            $ref: '#/components/schemas/NotifChannel'
+        notifType:
+          description: Notification type
+          type: string
+    MtNotifAggKey:
+      required:
+        - tsgId
+        - notifType
+        - category
+        - subCategory
+        - inAppFlag
+      type: object
+      properties:
+        tsgId:
+          description: TSG Id
+          type: string
+        notifType:
+          description: Notification Type
+          type: string
+          enum:
+            - INCIDENTS
+            - UPGRADES
+            - ANNOUNCEMENTS
+        category:
+          description: Notification category - is associated with notification type
+          type: string
+        subCategory:
+          description: Notification sub-category - is associated with notification type and notification category 
+          type: string
+        inAppFlag:
+          description: InApp Notification Flag
+          type: boolean
+    NotifStateChangeApiBody:
+      type: object
+      properties:
+        notifIds:
+          description: List of notification IDs
+          type: array
+          items:
+            type: string
+        readState:
+          $ref: '#/components/schemas/NotifReadState'
+    NotifReadState:
+      type: string
+      description: Read state of the notification
+      enum:
+        - READ
+        - UNREAD
+
+security:
+  - bearerAuth: []
+paths:
+  /api/cloud/2.0/agg/notifications/profiles:
+    get:
+      tags:
+        - NotificationProfiles
+      summary: List Notification Profiles
+      description: |-
+        ### Overview
+        List the notification profiles associated with the current tenant.
+
+        The current tenant TSG Id is obtained from the user JWT.
+
+        This is a per-tenant query.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifProfileList'
+              examples:
+                example-0:
+                  summary: Empty Profile List
+                  value:
+                    data: []
+                    requestId: 1e9a1f56-8ef4-47d3-864e-37b22c75bc84
+                example-1:
+                  summary: Profile List
+                  value:
+                    data:
+                      - description: Notification Test Upgrades Announcements Profile
+                        excludeTenantList: []
+                        successTenant: []
+                        failureTenant: []
+                        status: SUCCESS
+                        id: 1a0cb68d-5c91-4c5c-82ca-d0123a001fc7
+                        notifChannels:
+                          - name: Webhook Channel
+                            type: WEBHOOK
+                            webhookChannelDetails:
+                              urls:
+                                - www.test-3.webhook.com
+                                - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                              authType: NO_AUTH
+                          - emailChannelDetails:
+                              emails:
+                                - emailId: swamiananthawork@gmail.com
+                                  name: Swami Work
+                                - emailId: dummy.email@gmail2.com
+                                  name: Dummy email
+                                - emailId: prad.bapat@gmail.com
+                                  name: Pradnya Bapat
+                            name: Email Channel
+                            type: EMAIL
+                        notifTypeDetails:
+                          - notifCategoryList:
+                              - bestPractice: false
+                                name: Dataplane
+                                subCategoryList:
+                                  - bestPractice: false
+                                    name: In Progress
+                            type: UPGRADES
+                          - notifCategoryList:
+                            type: ANNOUNCEMENTS
+                        opState: ENABLED
+                        profileName: Upgrades Announcements Profile
+                        tenantList:
+                          - '1681604441'
+                          - '1037879421'
+                          - '1721119209'
+                      - description: Notification Test Upgrades Profile
+                        excludeTenantList: []
+                        successTenant: []
+                        failureTenant: []
+                        status: SUCCESS
+                        id: 1cdabde0-01d6-4727-912b-e53bc620a82f
+                        notifChannels:
+                          - name: Webhook Channel
+                            type: WEBHOOK
+                            webhookChannelDetails:
+                              urls:
+                                - www.test-3.webhook.com
+                                - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                              authType: NO_AUTH
+                          - emailChannelDetails:
+                              emails:
+                                - emailId: swamiananthawork@gmail.com
+                                  name: Swami Work
+                                - emailId: dummy.email@gmail2.com
+                                  name: Dummy email
+                                - emailId: prad.bapat@gmail.com
+                                  name: Pradnya Bapat
+                            name: Email Channel
+                            type: EMAIL
+                        notifTypeDetails:
+                          - notifCategoryList:
+                              - bestPractice: false
+                                name: Dataplane
+                                subCategoryList:
+                                  - bestPractice: true
+                                    name: Error
+                            type: UPGRADES
+                        opState: ENABLED
+                        profileName: Upgrades Profile
+                        tenantList:
+                          - '1681604441'
+                          - '1037879421'
+                          - '1721119209'
+                    requestId: b0da2438-92b0-4294-8a7e-31a356b746c7
+    post:
+      tags:
+        - NotificationProfiles
+      summary: Create a Notification Profile
+      description: |-
+        ### Overview
+        Create a new notification profile by providing the profile name and the inputs & outputs used by the profile
+
+        The inputs are:
+        - Impacted tenants, notification type, notification categories & sub-categories
+
+        The outputs are:
+        - Output channels
+
+        The newly created notification profile is diabled by default.
+
+        The profile must be explicitly enabled for the profile to act on notification inputs and generate notifications.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifProfile'
+            examples:
+              Upgrades Profile:
+                value:
+                  profileName: Upgrades_Profile
+                  opState: ENABLED
+                  description: Notification Test Upgrades Profile
+                  tenantList:
+                    - '1681604441'
+                    - '1721119209'
+                    - '1037879421'
+                  notifTypeDetails:
+                    - type: UPGRADES
+                      notifCategoryList:
+                        - name: Dataplane
+                          subCategoryList:
+                            - name: Error
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                          - www.test-3.webhook.com
+                        authType: NO_AUTH
+                    - name: Email Channel
+                      type: EMAIL
+                      emailChannelDetails:
+                        emails:
+                          - name: Pradnya Bapat
+                            emailId: prad.bapat@gmail.com
+                          - name: Swami Work
+                            emailId: swamiananthawork@gmail.com
+              Announcements Profile:
+                value:
+                  profileName: Announcements_Profile
+                  opState: DISABLED
+                  description: Notification Test Announcements Profile
+                  tenantList:
+                    - '1681604441'
+                    - '1721119209'
+                    - '1037879421'
+                  notifTypeDetails:
+                    - type: ANNOUNCEMENTS
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                          - www.test-3.webhook.com
+                        authType: NO_AUTH
+                    - name: Email Channel
+                      type: EMAIL
+                      emailChannelDetails:
+                        emails:
+                          - name: Swami Work
+                            emailId: swamiananthawork@gmail.com
+              Incidents Profile:
+                value:
+                  profileName: Incidents_Profile
+                  opState: DISABLED
+                  description: Notification Test Incidents Profile
+                  tenantList:
+                    - '1681604441'
+                    - '1721119209'
+                    - '1037879421'
+                  notifTypeDetails:
+                    - type: INCIDENTS
+                      notifCategoryList:
+                        - name: RN
+                          subCategoryList:
+                            - name: INC_RN_SITE_DOWN
+                            - name: INC_RN_PRIMARY_WAN_BGP_DOWN
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                          - www.test-3.webhook.com
+                        authType: NO_AUTH
+                    - name: Email Channel
+                      type: EMAIL
+                      emailChannelDetails:
+                        emails:
+                          - name: Swami Work
+                            emailId: swamiananthawork@gmail.com
+              Announcements and Upgrades Profile:
+                value:
+                  profileName: Announcements_Upgrades_Profile
+                  opState: DISABLED
+                  description: Notification Test Profile
+                  tenantList:
+                    - '1681604441'
+                    - '1721119209'
+                    - '1037879421'
+                  notifTypeDetails:
+                    - type: ANNOUNCEMENTS
+                    - type: UPGRADES
+                      notifCategoryList:
+                        - name: Dataplane
+                          subCategoryList:
+                            - name: Scheduled
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                          - www.test-3.webhook.com
+                        authType: NO_AUTH
+                    - name: Email Channel
+                      type: EMAIL
+                      emailChannelDetails:
+                        emails:
+                          - name: Swami Work
+                            emailId: swamiananthawork@gmail.com
+              Profile With Token in Webhook:
+                value:
+                  profileName: Upgrades_Profile
+                  opState: DISABLED
+                  description: Notification Test Upgrades Profile
+                  tenantList:
+                    - '1681604441'
+                    - '1721119209'
+                    - '1037879421'
+                  notifTypeDetails:
+                    - type: UPGRADES
+                      notifCategoryList:
+                        - name: Dataplane
+                          subCategoryList:
+                            - name: Error
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                          - www.test-3.webhook.com
+                        authType: TOKEN
+                        token: '*****'
+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifProfile'
+              examples:
+                example-0:
+                  summary: Upgrade Profile
+                  value:
+                    requestId: 00aff65a-9768-4365-842f-741e4a1095d6
+                    data:
+                      id: 0616b91f-21df-47a4-b8ef-311399b762c3
+                      profileName: Upgrades_Profile
+                      opState: ENABLED
+                      description: Notification Test Upgrades Profile
+                      tenantList:
+                        - '1681604441'
+                        - '1721119209'
+                        - '1037879421'
+                      excludeTenantList: []
+                      successTenant: []
+                      failureTenant: []
+                      status: SUCCESS
+                      notifTypeDetails:
+                        - type: UPGRADES
+                          notifCategoryList:
+                            - name: Dataplane
+                              bestPractice: false
+                              subCategoryList:
+                                - name: Error
+                                  bestPractice: true
+                      notifChannels:
+                        - name: Webhook Channel
+                          type: WEBHOOK
+                          emailChannelDetails: null
+                          webhookChannelDetails:
+                            urls:
+                              - www.test-3.webhook.com
+                              - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                            authType: NO_AUTH
+                            basicAuth: null
+                            token: null
+                          template: null
+                        - name: Email Channel
+                          type: EMAIL
+                          emailChannelDetails:
+                            emails:
+                              - name: Swami Work
+                                emailId: swamiananthawork@gmail.com
+                              - name: Pradnya Bapat
+                                emailId: prad.bapat@gmail.com
+                          webhookChannelDetails: null
+                          template: null
+                    error: null
+                example-1:
+                  summary: Announcement Profile
+                  value:
+                    requestId: 00aff65a-9768-4365-842f-741e4a1095d6
+                    data:
+                      id: 0616b91f-21df-47a4-b8ef-311399b762c3
+                      profileName: Announcements_Profile
+                      opState: DISABLED
+                      description: Notification Test Announcements Profile
+                      tenantList:
+                        - '1681604441'
+                        - '1721119209'
+                        - '1037879421'
+                      excludeTenantList: []
+                      successTenant: []
+                      failureTenant: []
+                      status: SUCCESS
+                      notifTypeDetails:
+                        - type: ANNOUNCEMENTS
+                      notifChannels:
+                        - name: Webhook Channel
+                          type: WEBHOOK
+                          emailChannelDetails: null
+                          webhookChannelDetails:
+                            urls:
+                              - www.test-3.webhook.com
+                              - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                            authType: NO_AUTH
+                            basicAuth: null
+                            token: null
+                          template: null
+                        - name: Email Channel
+                          type: EMAIL
+                          emailChannelDetails:
+                            emails:
+                              - name: Swami Work
+                                emailId: swamiananthawork@gmail.com
+                              - name: Pradnya Bapat
+                                emailId: prad.bapat@gmail.com
+                          webhookChannelDetails: null
+                          template: null
+                    error: null
+                example-2:
+                  summary: Incidents Profile
+                  value:
+                    data:
+                      description: Notification Test Incidents Profile
+                      excludeTenantList: []
+                      successTenant: []
+                      failureTenant: []
+                      status: SUCCESS
+                      id: 1cdabde0-01d6-4727-912b-e53bc620a82f
+                      notifChannels:
+                        - name: Webhook Channel
+                          type: WEBHOOK
+                          webhookChannelDetails:
+                            urls:
+                              - www.test-3.webhook.com
+                              - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                            authType: NO_AUTH
+                        - emailChannelDetails:
+                            emails:
+                              - emailId: swamiananthawork@gmail.com
+                                name: Swami Work
+                              - emailId: prad.bapat@gmail.com
+                                name: Pradnya Bapat
+                          name: Email Channel
+                          type: EMAIL
+                      notifTypeDetails:
+                        - notifCategoryList:
+                            - bestPractice: false
+                              name: RN
+                              subCategoryList:
+                                - bestPractice: true
+                                  name: INC_SC_SITE_DOWN
+                                - bestPractice: true
+                                  name: INC_SC_PRIMARY_WAN_BGP_DOWN
+                          type: INCIDENTS
+                      opState: DISABLED
+                      profileName: Incidents_Profile
+                      tenantList:
+                        - '1681604441'
+                        - '1037879421'
+                        - '1721119209'
+                    requestId: 18ad77fd-594c-4a35-8a3b-14bf6a63d6ca
+                example-3:
+                  summary: Announcements and Upgrade Profile
+                  value:
+                    requestId: cc87ff93-9a00-4950-ac2c-f17db9586651
+                    data:
+                      id: 2c12cfa3-5428-40c4-bced-b6671e96e476
+                      profileName: Announcements_Upgrades_Profile
+                      opState: DISABLED
+                      description: Notification Test Profile
+                      tenantList:
+                        - '1127223253'
+                        - '1091039496'
+                        - '1418299734'
+                      excludeTenantList: []
+                      notifTypeDetails:
+                        - type: ANNOUNCEMENTS
+                          notifCategoryList: []
+                        - type: UPGRADES
+                          notifCategoryList:
+                            - name: Dataplane
+                              bestPractice: false
+                              subCategoryList:
+                                - name: Scheduled
+                                  bestPractice: true
+                      notifChannels:
+                        - name: Webhook Channel
+                          type: WEBHOOK
+                          emailChannelDetails: null
+                          webhookChannelDetails:
+                            urls:
+                              - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                            authType: NO_AUTH
+                          template: null
+                        - name: Email Channel
+                          type: EMAIL
+                          emailChannelDetails:
+                            emails:
+                              - name: Swami Work
+                                emailId: swamiananthawork@gmail.com
+                              - name: Pradnya Bapat
+                                emailId: prad.bapat@gmail.com
+                          webhookChannelDetails: null
+                          template: null
+                    error: null
+                example-4:
+                  summary: Profile with Token in Webhook
+                  value:
+                    data:
+                      description: Notification Profile 1
+                      excludeTenantList: []
+                      id: 29b05f89-ec27-4af8-a124-b74b71d32b85
+                      notifChannels:
+                        - name: Webhook Channel
+                          type: WEBHOOK
+                          webhookChannelDetails:
+                            urls:
+                              - https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                              - www.test-3.webhook.com
+                            authType: TOKEN
+                            token: '******'
+                      notifTypeDetails:
+                        - notifCategoryList:
+                            - bestPractice: false
+                              name: Dataplane
+                              subCategoryList:
+                                - bestPractice: true
+                                  name: Scheduled
+                          type: UPGRADES
+                      opState: DISABLED
+                      profileName: Profile31
+                      tenantList:
+                        - Tenant_41
+                        - Tenant_31
+                        - Tenant_01
+                        - Tenant_21
+                        - Tenant_11
+                    requestId: 6ec915e6-9d5f-45b9-8a61-d742b1493a0c
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: Duplicate Profile Name Error
+                  value:
+                    error:
+                      errorCode: 60005
+                      errorType: VALIDATION_ERROR
+                      httpStatus: 400
+                      msg: Notification Profile with the same name already exists
+                    requestId: a11f7b59-1b67-4e52-ad37-9c639b4d739d
+                example-1:
+                  summary: Blank Profile Name Error
+                  value:
+                    classViolations: []
+                    parameterViolations:
+                      - constraintType: PARAMETER
+                        message: profileName cannot be blank
+                        path: addNotificationProfile.notifProfile.profileName
+                        value: ''
+                    propertyViolations: []
+                    returnValueViolations: []
+  /api/cloud/2.0/agg/notifications/profiles/{notification-profile-id}:
+    get:
+      tags:
+        - NotificationProfiles
+      summary: Get a Tenant's Notification Profile
+      description: |-
+        ### Overview
+
+        Get the notification profile associated with the current tenant.
+
+        Pass the notification profile Id as path param
+
+        The current tenant TSG Id is obtained from the user JWT.
+
+        This is a per-tenant query.
+      parameters:
+        - name: notification-profile-id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifProfile'
+              example:
+                data:
+                  description: Upgrades Notification Profile
+                  excludeTenantList: []
+                  successTenant: []
+                  failureTenant: []
+                  status: SUCCESS
+                  id: 9a71cf75-4266-4e63-bcd0-5e9a2ede13a8
+                  notifChannels:
+                    - name: Webhook Channel
+                      type: WEBHOOK
+                      webhookChannelDetails:
+                        urls:
+                          - www.test-3.webhook.com
+                          - >-
+                            https://webhook.site/0b168876-c339-45d5-babe-c49bb02c35e6
+                        authType: NO_AUTH
+                    - emailChannelDetails:
+                        emails:
+                          - emailId: new@email.com
+                            name: new@email.com
+                          - emailId: swamiananthawork@gmail.com
+                            name: Swami Work
+                          - emailId: dummy.email@gmail2.com
+                            name: Dummy email
+                          - emailId: prad.bapat@gmail.com
+                            name: Pradnya Bapat
+                          - emailId: zdfgdsfg@vsfgv.sdf
+                            name: zdfgdsfg@vsfgv.sdf
+                      name: Email Channel
+                      type: EMAIL
+                  notifTypeDetails:
+                    - notifCategoryList:
+                        - bestPractice: false
+                          name: Dataplane
+                          subCategoryList:
+                            - bestPractice: false
+                              name: Other Updates
+                            - bestPractice: false
+                              name: Postponed
+                            - bestPractice: true
+                              name: Error
+                            - bestPractice: true
+                              name: Completed
+                            - bestPractice: false
+                              name: Rolled back
+                      type: UPGRADES
+                  opState: ENABLED
+                  profileName: Upgrades_Profile
+                  tenantList:
+                    - '1444672864'
+                    - '1750393864'
+                    - '1034376033'
+                    - '1611363357'
+                    - '1213310096'
+                    - '1797990641'
+                requestId: 0cbf27c6-7539-41e8-aa88-0ca05d9f7375
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error:
+                  errorCode: 60004
+                  errorType: VALIDATION_ERROR
+                  httpStatus: 404
+                  msg: Notification Profile not found
+                requestId: 61e29573-8df8-4423-af60-a88f1ee86950
+    delete:
+      tags:
+        - NotificationProfiles
+      summary: Delete a Notification Profile
+      description: |-
+        ### Overview
+
+        Delete the notification associated with the specified notification ID.
+
+      parameters:
+        - name: notification-profile-id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+              example:
+                data: Successfully deleted notification profile:e6ea3fef-53c4-4be6-855b-44fcbae60735
+                requestId: fe2dc319-8171-41b5-8077-98762d92706a
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                data: null
+                error:
+                  httpStatus: 404
+                  errorCode: 60004
+                  errorType: VALIDATION_ERROR
+                  msg: Notification Profile not found
+                  details: null
+  /api/cloud/2.0/agg/notifications/profiles/opstate:
+    put:
+      tags:
+        - NotificationProfiles
+      summary: Enable / Disable Profile
+      description: |-
+        ### Overview
+        This API is used to enable / disable the input notification profile.
+
+        The notification profile must be enabled to act on the notification inputs and generate the required multi-tenant notifications
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profileId:
+                  description: Notification profile id
+                  type: string
+                opState:
+                  description: New operational state value
+                  type: string
+                  enum:
+                    - ENABLED
+                    - DISABLED
+            examples:
+              Enable Profile:
+                value:
+                  profileId: '5678987898098'
+                  opState: ENABLED
+              Disable Profile:
+                value:
+                  profileId: '5678987898098'
+                  opState: DISABLED
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profileId:
+                    description: Notification profile id
+                    type: string
+                  opState:
+                    description: New operational state value
+                    type: string
+                    enum:
+                      - ENABLED
+                      - DISABLED
+              examples:
+                example-0:
+                  summary: Enable Profile
+                  value:
+                    data:
+                      opState: ENABLED
+                      profileId: 251155bd-a0ad-41ef-8b01-b4ca10ad2634
+                    requestId: a10b6d7d-7c7c-41c4-8257-1606cc71e67e
+                example-1:
+                  summary: Disable Profile
+                  value:
+                    data:
+                      opState: DISABLED
+                      profileId: 251155bd-a0ad-41ef-8b01-b4ca10ad2634
+                    requestId: 343b6dfa-1a23-4e96-a1fd-fdbeee034b75
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                data: null
+                error:
+                  httpStatus: 404
+                  errorCode: 60004
+                  errorType: VALIDATION_ERROR
+                  msg: Notification Profile not found
+                  details: null
+  /api/cloud/2.0/agg/notifications/profiles/types:
+    get:
+      tags:
+        - NotificationProfiles
+      summary: Retrieve Notification Types
+      description: >-
+        ### Overview
+
+        List valid notifications types, categories for each type and
+        sub-categories under each category.
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifTypeDetail'
+              example:
+                data:
+                  - type: ANNOUNCEMENTS
+                  - notifCategoryList:
+                      - bestPractice: false
+                        name: RN
+                        subCategoryList:
+                          - bestPractice: true
+                            name: INC_RN_ECMP_BGP_DOWN
+                          - bestPractice: true
+                            name: INC_RN_SECONDARY_WAN_BGP_DOWN
+                          - bestPractice: false
+                            name: INC_RN_PRIMARY_WAN_BGP_FLAP
+                          - bestPractice: false
+                            name: INC_RN_SPN_LONG_DURATION_CAPACITY_EXCEEDED_THRESHOLD
+                          - bestPractice: true
+                            name: INC_RN_ECMP_TUNNEL_RTT_EXCEEDED_BASELINE
+                          - bestPractice: true
+                            name: INC_RN_PRIMARY_WAN_TUNNEL_DOWN
+                          - bestPractice: true
+                            name: INC_RN_PRIMARY_WAN_TUNNEL_RTT_EXCEEDED_BASELINE
+                          - bestPractice: true
+                            name: INC_RN_PRIMARY_WAN_BGP_DOWN
+                          - bestPractice: true
+                            name: INC_RN_SECONDARY_WAN_TUNNEL_RTT_EXCEEDED_BASELINE
+                          - bestPractice: false
+                            name: INC_RN_PRIMARY_WAN_TUNNEL_FLAP
+                          - bestPractice: true
+                            name: INC_RN_SITE_LONG_DURATION_EXCEEDED_CAPACITY
+                          - bestPractice: false
+                            name: INC_RN_SITE_LONG_DURATION_CAPACITY_EXCEEDED_THRESHOLD
+                          - bestPractice: false
+                            name: INC_RN_SECONDARY_WAN_BGP_FLAP
+                          - bestPractice: true
+                            name: INC_RN_SPN_LONG_DURATION_EXCEEDED_CAPACITY
+                          - bestPractice: true
+                            name: INC_RN_SITE_DOWN
+                          - bestPractice: false
+                            name: INC_RN_ECMP_BGP_FLAP
+                          - bestPractice: false
+                            name: INC_RN_SECONDARY_WAN_TUNNEL_FLAP
+                          - bestPractice: true
+                            name: INC_RN_ECMP_TUNNEL_DOWN
+                          - bestPractice: false
+                            name: INC_RN_ECMP_TUNNEL_FLAP
+                          - bestPractice: false
+                            name: INC_RN_SITE_CAPACITY_PREDICTION
+                          - bestPractice: true
+                            name: INC_RN_SECONDARY_WAN_TUNNEL_DOWN
+                      - bestPractice: false
+                        name: Authentication
+                        subCategoryList:
+                          - bestPractice: false
+                            name: INC_RN_AUTH_SERVER_UNREACHABLE_ALL_PA_LOCATIONS
+                          - bestPractice: true
+                            name: INC_CIE_AGENT_DISCONNECT
+                          - bestPractice: false
+                            name: INC_MU_AUTH_SERVER_UNREACHABLE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: >-
+                              INC_PORTAL_CLIENTLESS_VPN_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: INC_RN_AUTH_SERVER_UNREACHABLE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: >-
+                              INC_GLOBALPROTECT_GW_USER_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_ALL_PA_LOCATIONS
+                          - bestPractice: true
+                            name: INC_CIE_DIRECTORY_DISCONNECT
+                          - bestPractice: false
+                            name: >-
+                              INC_GLOBALPROTECT_PORTAL_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_ALL_PA_LOCATIONS
+                          - bestPractice: false
+                            name: INC_MU_AUTH_SERVER_UNREACHABLE_ALL_PA_LOCATIONS
+                          - bestPractice: false
+                            name: >-
+                              INC_PORTAL_CLIENTLESS_VPN_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_ALL_PA_LOCATIONS
+                          - bestPractice: true
+                            name: >-
+                              INC_GLOBALPROTECT_GW_USER_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_PER_PA_LOCATION
+                          - bestPractice: true
+                            name: >-
+                              INC_GLOBALPROTECT_PORTAL_AUTH_TIMEOUT_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_PER_PA_LOCATION
+                      - bestPractice: false
+                        name: SC
+                        subCategoryList:
+                          - bestPractice: false
+                            name: INC_SC_PRIMARY_WAN_BGP_FLAP
+                          - bestPractice: true
+                            name: INC_SC_SECONDARY_WAN_TUNNEL_DOWN
+                          - bestPractice: true
+                            name: INC_SC_SITE_DOWN
+                          - bestPractice: true
+                            name: INC_SC_SECONDARY_WAN_TUNNEL_RTT_EXCEEDED_BASELINE
+                          - bestPractice: false
+                            name: INC_SC_PRIMARY_WAN_TUNNEL_FLAP
+                          - bestPractice: true
+                            name: INC_SC_SITE_LONG_DURATION_EXCEEDED_CAPACITY
+                          - bestPractice: true
+                            name: INC_SC_PRIMARY_WAN_BGP_DOWN
+                          - bestPractice: true
+                            name: INC_SC_PRIMARY_WAN_TUNNEL_DOWN
+                          - bestPractice: true
+                            name: INC_SC_SECONDARY_WAN_BGP_DOWN
+                          - bestPractice: false
+                            name: INC_SC_SITE_CAPACITY_PREDICTION
+                          - bestPractice: false
+                            name: >-
+                              INC_SC_SITE_LONG_DURATION_CAPACITY_EXCEEDED_THRESHOLD
+                          - bestPractice: true
+                            name: INC_SC_PRIMARY_WAN_TUNNEL_RTT_EXCEEDED_BASELINE
+                          - bestPractice: false
+                            name: INC_SC_SECONDARY_WAN_TUNNEL_FLAP
+                          - bestPractice: false
+                            name: INC_SC_SECONDARY_WAN_BGP_FLAP
+                      - bestPractice: false
+                        name: Security
+                        subCategoryList:
+                          - bestPractice: false
+                            name: >-
+                              INC_GENERALIZED_BLOCK_SECURITY_RULE_COVERED_BY_LOWER_ORDER_ALLOW_RULE
+                          - bestPractice: true
+                            name: >-
+                              INC_SHADOWED_ALLOW_SECURITY_RULE_COVERED_BY_HIGHER_ORDER_BLOCK_RULE
+                          - bestPractice: false
+                            name: >-
+                              INC_REDUNDANT_BLOCK_SECURITY_RULE_COVERED_BY_HIGHER_ORDER_BLOCK_RULE
+                          - bestPractice: false
+                            name: >-
+                              INC_REDUNDANT_BLOCK_SECURITY_RULE_COVERED_BY_LOWER_ORDER_BLOCK_RULE
+                          - bestPractice: true
+                            name: >-
+                              INC_REDUNDANT_ALLOW_SECURITY_RULE_COVERED_BY_HIGHER_ORDER_ALLOW_RULE
+                          - bestPractice: false
+                            name: >-
+                              INC_GENERALIZED_ALLOW_SECURITY_RULE_COVERED_BY_LOWER_ORDER_BLOCK_RULE
+                          - bestPractice: true
+                            name: >-
+                              INC_SHADOWED_BLOCK_SECURITY_RULE_COVERED_BY_HIGHER_ORDER_ALLOW_RULE
+                          - bestPractice: false
+                            name: >-
+                              INC_REDUNDANT_ALLOW_SECURITY_RULE_COVERED_BY_LOWER_ORDER_ALLOW_RULE
+                      - bestPractice: false
+                        name: Prisma Access Infrastructure
+                        subCategoryList:
+                          - bestPractice: true
+                            name: INC_PA_SERVICE_DEGRADATION_PA_LOCATION
+                          - bestPractice: true
+                            name: INC_PA_SERVICE_DEGRADATION_RN_SITE_CONNECTIVITY
+                          - bestPractice: true
+                            name: INC_PA_SERVICE_DEGRADATION_SC_CONNECTIVITY
+                      - bestPractice: false
+                        name: ZTNA
+                        subCategoryList:
+                          - bestPractice: false
+                            name: INC_ZTNA_CONNECTOR_TUNNEL_DOWN
+                          - bestPractice: false
+                            name: INC_ZTNA_CONNECTOR_APP_STATUS_DOWN_PARTIAL
+                          - bestPractice: false
+                            name: INC_ZTNA_CONNECTOR_APP_STATUS_DOWN
+                      - bestPractice: false
+                        name: MU
+                        subCategoryList:
+                          - bestPractice: false
+                            name: >-
+                              INC_MU_IP_POOL_BLOCK_UTILIZATION_EXCEEDED_THRESHOLD
+                          - bestPractice: true
+                            name: INC_MU_IP_POOL_BLOCK_UTILIZATION_EXCEEDED_CAPACITY
+                      - bestPractice: false
+                        name: DNS
+                        subCategoryList:
+                          - bestPractice: false
+                            name: INC_RN_DNS_SERVER_UNREACHABLE_ALL_PA_LOCATIONS
+                          - bestPractice: false
+                            name: INC_MU_DNS_SERVER_UNREACHABLE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: INC_MU_DNS_SERVER_UNREACHABLE_ALL_PA_LOCATIONS
+                          - bestPractice: false
+                            name: INC_RN_DNS_SERVER_UNREACHABLE_PER_PA_LOCATION
+                      - bestPractice: false
+                        name: GP
+                        subCategoryList:
+                          - bestPractice: false
+                            name: INC_GP_CLIENT_VERSION_UNSUPPORTED
+                      - bestPractice: false
+                        name: Application Experience
+                        subCategoryList:
+                          - bestPractice: true
+                            name: >-
+                              INC_RN_APP_EXPERIENCE_DEGRADED_PERFORMANCE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: >-
+                              INC_RN_APP_EXPERIENCE_DEGRADED_PERFORMANCE_ALL_PA_LOCATIONS
+                          - bestPractice: true
+                            name: >-
+                              INC_MU_APP_EXPERIENCE_DEGRADED_PERFORMANCE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: >-
+                              INC_MU_APP_EXPERIENCE_DEGRADED_PERFORMANCE_ALL_PA_LOCATIONS
+                          - bestPractice: false
+                            name: INC_MU_APP_EXPERIENCE_UNREACHABLE_ALL_PA_LOCATIONS
+                          - bestPractice: true
+                            name: INC_RN_APP_EXPERIENCE_UNREACHABLE_PER_PA_LOCATION
+                          - bestPractice: true
+                            name: INC_MU_APP_EXPERIENCE_UNREACHABLE_PER_PA_LOCATION
+                          - bestPractice: false
+                            name: INC_RN_APP_EXPERIENCE_UNREACHABLE_ALL_PA_LOCATIONS
+                    type: INCIDENTS
+                  - notifCategoryList:
+                      - bestPractice: false
+                        name: Dataplane
+                        subCategoryList:
+                          - bestPractice: false
+                            name: Postponed
+                          - bestPractice: true
+                            name: Error
+                          - bestPractice: false
+                            name: Other
+                          - bestPractice: true
+                            name: Completed
+                          - bestPractice: false
+                            name: Rolled back
+                          - bestPractice: true
+                            name: In Progress
+                          - bestPractice: true
+                            name: Scheduled
+                          - bestPractice: false
+                            name: Retry
+                          - bestPractice: true
+                            name: Cancelled
+                    type: UPGRADES
+                requestId: 07acc707-dfb2-4f63-be53-a827fe7c38d1
+  /api/cloud/2.0/agg/notifications/profiles/webhook/test:
+    post:
+      tags:
+        - NotificationProfiles
+      summary: Webhook Connectivity Check
+      description: |-
+        ### Overview
+
+        Test webhook connectivity from the multi-tenant notification service
+        to the provided notification webhook URL
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookChannelDetails'
+            examples:
+              No Auth:
+                value:
+                  auth_type: NO_AUTH
+                  urls:
+                    - www.test-1.webhook.com
+              Token Authentication:
+                value:
+                  urls:
+                    - www.test-1.webhook.com
+                  auth_type: TOKEN
+                  token: 698767879
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                data: Webhook Connectivity Check Success
+                requestId: 8f29ba1a-3e5f-41a9-830f-20e4b1db9e19
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: Invalid Tenant List
+                  value:
+                    requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                    data: null
+                    error:
+                      httpStatus: 400
+                      errorCode: 60001
+                      errorType: VALIDATION_ERROR
+                      msg: Webhook must be valid https url
+  /api/cloud/2.0/agg/notifications/profiles/retryOp:
+    post:
+      tags:
+        - NotificationProfiles
+      summary: Incident Profile Retry Operation
+      description: |-
+        ### Overview
+        Multi-Tenant Incident Profiles are pushed down to each of the selected child tenants.
+
+        If the incident profile was not successfully pushed to one or more child tenants,
+        then the user has the option of retrying the incident profile push to the selected child tenants.
+
+        This API provides the mechanism to retry the incident profile push to the selected child tenants.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profileId:
+                  description: Notification profile id
+                  type: string
+                tenantList:
+                  type: array
+                  description: List of TSG Ids
+                  items:
+                    type: string
+              example:
+                profileId: <notification-profile-id>
+                tenantList:
+                  - tsgId1
+                  - tsgId2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+              example:
+                data: Successfully triggered retry operation:e6ea3fef-53c4-4be6-855b-44fcbae60735
+                requestId: fe2dc319-8171-41b5-8077-98762d92706a
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: Invalid Tenant List
+                  value:
+                    requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                    data: null
+                    error:
+                      httpStatus: 400
+                      errorCode: 60040
+                      errorType: VALIDATION_ERROR
+                      msg: Invalid tenants in the list
+                      details: Invalid tenants in the retry operation tenant1, tenant2
+                example-1:
+                  summary: Invalid Operation
+                  value:
+                    requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                    data: null
+                    error:
+                      httpStatus: 400
+                      errorCode: 60036
+                      errorType: VALIDATION_ERROR
+                      msg: Retry is allowed only for incidents profile
+                      details: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                requestId: ec1c092c-c4da-40fb-86d7-12544715021c
+                data: null
+                error:
+                  httpStatus: 404
+                  errorCode: 60004
+                  errorType: VALIDATION_ERROR
+                  msg: Notification Profile not found
+                  details: null
+  /api/cloud/2.0/agg/notifications/list:
+    post:
+      tags:
+        - Notifications
+      summary: List Notifications
+      description: |-
+        ### Overview
+
+        List notifications for all child tenants for the current tenant.
+
+        The current tenant TSG ID is extracted from user JWT.
+
+        This is a per-user query.
+
+        <u><b>API Body parameters:</b></u>
+
+        - filters:
+            - readState - valid values are READ, UNREAD
+            - notifType - UPGRADES, ANNOUNCEMENTS
+            - By default, if no filters are provided then readState is READ and UNREAD and `notifType` is all the values
+        - sortByList:
+            - field - valid values are createdTime or impactedTenantCount
+            - sortBy - value values are DESC or ASC
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifListApiReqBody'
+            examples:
+              All Notifications:
+                value:
+                  filters:
+                    - field: readState
+                      values:
+                        - READ
+                        - UNREAD
+                    - field: notifType
+                      values:
+                        - UPGRADES
+                        - ANNOUNCEMENTS
+                  sortByList:
+                    - field: createdTime
+                      sortBy: DESC
+              Unread Upgrades:
+                value:
+                  filters:
+                    - field: readState
+                      values:
+                        - UNREAD
+                    - field: notifType
+                      values:
+                        - UPGRADES
+                  sortByList:
+                    - field: createdTime
+                      sortBy: DESC
+              Unread Announcements:
+                value:
+                  filters:
+                    - field: readState
+                      values:
+                        - UNREAD
+                    - field: notifType
+                      values:
+                        - ANNOUNCEMENTS
+                  sortByList:
+                    - field: createdTime
+                      sortBy: DESC
+              Notifications list with Pagination:
+                value:
+                  filters:
+                    - field: readState
+                      values:
+                        - UNREAD
+                    - field: notifType
+                      values:
+                        - ANNOUNCEMENTS
+                  sortByList:
+                    - field: createdTime
+                      sortBy: DESC
+                  page:
+                    - num: 0
+                      size: 10
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MtNotificationList'
+              examples:
+                example-0:
+                  summary: All Notifications
+                  value:
+                    data:
+                      notificationCounts:
+                        readCount: 1
+                        unreadCount: 0
+                      notificationList:
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Completed
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          id: e8ebd16c-66ab-4113-aa1e-ab274c46322a
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Completed for 1091039496
+                          createdTime: 1698966600461
+                          impactedTenantCount: 1
+                          readState: READ
+                      totalCount: 0
+                    requestId: 635d3b26-913a-4451-a5de-0eda8da45040
+                example-1:
+                  summary: Unread Upgrades
+                  value:
+                    data:
+                      notificationCounts:
+                        readCount: 0
+                        unreadCount: 0
+                      notificationList: []
+                      totalCount: 0
+                    requestId: 8772a19b-fd60-4640-87b3-2b5e81645b58
+                example-2:
+                  summary: Unread Announcements
+                  value:
+                    data:
+                      notificationCounts:
+                        readCount: 0
+                        unreadCount: 0
+                      notificationList: []
+                      totalCount: 0
+                    requestId: 04099fe9-5f9a-4d53-a542-1388931c3a13
+                example-3:
+                  summary: Notification list with Pagination
+                  value:
+                    data:
+                      notificationCounts:
+                        readCount: 0
+                        unreadCount: 10
+                      notificationList:
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Upcoming
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          id: 44dab57c-e834-48da-a84a-2d1f99adc857
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Upcoming for 1091039496
+                          createdTime: 1698873900440
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: In Progress for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: In Progress
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: In Progress for 1091039496
+                          id: b3c09288-a69d-42ee-b617-279674ff3ec1
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane: In
+                            Progress for 1091039496
+                          createdTime: 1698873900344
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Completed
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          id: 050607cb-a61c-498a-8275-b65672102bbe
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Completed for 1091039496
+                          createdTime: 1698873900325
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Upcoming
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          id: ac0a2269-3a32-4d5b-9552-837275afba1a
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Upcoming for 1091039496
+                          createdTime: 1698873600215
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: In Progress for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: In Progress
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: In Progress for 1091039496
+                          id: e00e4db4-90a0-4708-a5cc-12b6b4d28c9c
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane: In
+                            Progress for 1091039496
+                          createdTime: 1698873600121
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Upcoming
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          id: 6477d3d5-b9ef-4ca6-9637-e2ac7f0164b6
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Upcoming for 1091039496
+                          createdTime: 1698873300631
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Completed
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          id: 5c3b3a0e-1ab6-42e3-afce-28530de13933
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Completed for 1091039496
+                          createdTime: 1698873300526
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Upcoming
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          id: aba778fd-2e97-48bd-a7b8-2bf963316310
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Upcoming for 1091039496
+                          createdTime: 1698873000205
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Completed
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Completed for 1091039496
+                          id: 123f0890-7eb1-4073-8ed4-4ef71f7a4af1
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Completed for 1091039496
+                          createdTime: 1698873000108
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                        - action: >-
+                            Action: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          aggKey:
+                            category: Dataplane
+                            inAppFlag: true
+                            notifType: UPGRADES
+                            subCategory: Upcoming
+                            tsgId: '1091039496'
+                          body: >-
+                            Body: Multi-Tenant UPGRADES Notification of
+                            Dataplane: Upcoming for 1091039496
+                          id: 4598f13c-8030-4f87-94ea-a0989022457a
+                          name: >-
+                            Multi-Tenant UPGRADES Notification of Dataplane:
+                            Upcoming for 1091039496
+                          createdTime: 1698872700502
+                          impactedTenantCount: 1
+                          readState: UNREAD
+                      totalCount: 4498
+                    requestId: d921f075-733e-4091-a060-ef92a16cbfc0
+  /api/cloud/2.0/agg/notifications/list/count:
+    post:
+      tags:
+        - Notifications
+      summary: Notification Count
+      description: |-
+        ### Overview
+
+        Get notification count with the ability to filter by state or type.
+
+        This is a per-user query.
+
+        <u><b>API Body parameters:</b></u>
+
+        - filters:
+            - readState - valid values are READ, UNREAD
+            - notifType - UPGRADES, ANNOUNCEMENTS
+            - By default, if no filters are provided then `readState` is READ and UNREAD and `notifType` is all the values
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifListApiReqBody'
+            example:
+              filters:
+                - field: readState
+                  values:
+                    - UNREAD
+                - field: notifType
+                  values:
+                    - UPGRADES
+              sortByList:
+                - field: createdTime
+                  sortBy: DESC
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  readCount:
+                    type: number
+                    description: Number of read notifications
+                  unreadCount:
+                    type: number
+                    description: Number of unread notifications
+              example:
+                data:
+                  readCount: 10
+                  unreadCount: 20
+                header:
+                  createdAt: '2023-09-24T00:42:15Z'
+                  clientRequestId: 641b3290-3a3c-4e2e-a6c4-fd9d009c7e14
+                  dataCount: 1
+                  status:
+                    subCode: 200
+  /api/cloud/2.0/agg/notifications/list/state:
+    post:
+      tags:
+        - Notifications
+      summary: Set Read State
+      description: >-
+        ### Overview
+
+        Set the `readState` value to READ or UNREAD for the list of notifications
+        specified in the notifIds list in the API body.
+
+        This is a per-user query.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifStateChangeApiBody'
+            example:
+              notifIds:
+                - e8ebd16c-66ab-4113-aa1e-ab274c46322a
+              readState: READ
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifStateChangeApiBody'
+              example:
+                data:
+                  notifIds:
+                    - e8ebd16c-66ab-4113-aa1e-ab274c46322a
+                  readState: READ
+                requestId: 9e5f8df2-616b-41bc-b928-0f438d715605
+  /api/cloud/2.0/agg/notifications/list/state/{notification-id}:
+    get:
+      tags:
+        - Notifications
+      summary: Get Read State
+      description: >-
+        ### Overview
+
+
+        Get `readState` of the notification whose id specified in the API path
+        parameter.
+
+
+        This is a per-user query.
+
+      parameters:
+        - name: notification-profile-id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifStateChangeApiBody'
+              example:
+                data:
+                  aggKey:
+                    category: UPGRADES_category1
+                    notifType: UPGRADES
+                    subCategory: UPGRADES_category1_sub_category
+                    tsgId: '1091039496'
+                    inAppFlag: true
+                  body: body
+                  id: '1'
+                  impactedTenantCount: 2
+                  impactedTenants:
+                    - '1091039497'
+                    - '1091039496'
+                  name: abc
+                  channels: []
+                  createdTime: 1
+                  readState: READ
+                requestId: d99c59a0-f271-41b4-b9af-8d7c72829aa6
+tags:
+- name: NotificationProfiles
+- name: Notifications
