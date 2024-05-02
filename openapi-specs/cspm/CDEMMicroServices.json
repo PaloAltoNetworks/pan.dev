@@ -152,6 +152,132 @@
         ]
       }
     },
+    "/asm/api/v1/asset/{asset_id}/vulnerability": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Get Vulnerabilities for Unmanaged Asset.",
+        "description": "Returns list of vulnerabilities for unmanaged asset.",
+        "operationId": "asset-vulnerability",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "snapshot_date",
+            "in": "query",
+            "description": "Snapshot time in milliseconds.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "examples": {
+              "Example for 1st January 2023": {
+                "value": 1672531200000
+              }
+            }
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": false,
+            "description": "Asset manage type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MANAGED",
+                "UNMANAGED"
+              ],
+              "default": "UNMANAGED"
+            }
+          },
+          {
+            "name": "manage_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "UNMANAGED"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InferredCveResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Asset not found"
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/vulnerability": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Get Impacted Distros for a Vulnerability.",
+        "description": "Returns list of distros affected by a CVE.",
+        "operationId": "vulnerability",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerabilityResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
     "/asm/api/v1/asset/{asset_id}/finding": {
       "post": {
         "tags": [
@@ -2567,6 +2693,118 @@
           },
           "nextPageToken": {
             "title": "Next page token",
+            "type": "string"
+          }
+        }
+      },
+      "VulnerabilityResponse": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "float"
+          },
+          "severity": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impactedDistros": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactedDistro"
+            }
+          }
+        }
+      },
+      "ImpactedDistro": {
+        "type": "object",
+        "properties": {
+          "distro": {
+            "type": "string"
+          },
+          "impactCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distroDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DistroDetails"
+            }
+          }
+        }
+      },
+      "InferredCveResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InferredCveMetaData"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "InferredCveMetaData": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string"
+          },
+          "distro": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "firstObserved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "matchType": {
+            "type": "string"
+          }
+        }
+      },
+      "DistroDetails": {
+        "type": "object",
+        "properties": {
+          "cvssScore": {
+            "type": "number",
+            "format": "float"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "severity": {
             "type": "string"
           }
         }
