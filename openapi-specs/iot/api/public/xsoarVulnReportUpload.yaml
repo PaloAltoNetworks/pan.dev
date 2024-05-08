@@ -1,0 +1,106 @@
+parameters:
+- description: The customer ID to which the API call is directed
+  in: query
+  name: customerid
+  required: true
+  schema:
+    type: string
+- description: The name of vendor that generated the device vulnerability scan report
+  in: query
+  name: scanType
+  required: true
+  enum: ['rapid7', 'qualys', 'tenable']
+  schema:
+    type: string
+- description: The Mongo Id of the scan job that initiated by customer from IoT UI portal
+  in: query
+  name: jobid
+  required: false
+  schema:
+    type: string
+- description: The report Id generated from device scan vendor
+  in: query
+  name: reportid
+  required: true
+  schema:
+    type: string
+- description: The PDF file name generated from device scan vendor
+  in: query
+  name: pdfFileName
+  required: true
+  schema:
+    type: string
+- description: The metadata file name generated from device scan vendor
+  in: query
+  name: xmlFileName
+  required: true
+  schema:
+    type: string
+- description: The status of the initiated scan job
+  in: query
+  name: status
+  required: true
+  schema:
+    type: string
+- description: The message that can be passed from Xsoar server to IoT side
+  in: query
+  name: message
+  required: true
+  schema:
+    type: string
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - reportPDF
+          - xml
+        properties:
+          reportPDF:
+            type: string
+            format: binary
+            description: The PDF file path
+          xml:
+            type: string
+            format: binary
+            description: The metadata file path
+      examples:
+        payloadExample:
+          summary: The path of the both files
+          value:
+            reportPDF: '/The/Path/of/PDF'
+            xml: '/The/Path/of/metadata'
+responses:
+  '200':
+    description: Successful Response
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas.yaml#/schemas/xsoarReportUploadResponse'
+        examples:
+          xsoarReportUploadResponse:
+            $ref: '../../components/examples.yaml#/examples/xsoarReportUploadResponse'
+  '4XX':
+    description: Client Error Response
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas.yaml#/schemas/ErrorResponse'
+        examples:
+          Bad Request:
+            $ref: '../../components/examples.yaml#/examples/BadRequestResponseExample'
+          Forbidden access:
+            $ref: '../../components/examples.yaml#/examples/UnauthorizedResponseExample'
+          Too many requests:
+            $ref: '../../components/examples.yaml#/examples/RateLimitResponseExample'
+  '5XX':
+    description: Server Error Response
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas.yaml#/schemas/ErrorResponse'
+        examples:
+          xsoarReportUploadResponse:
+            $ref: '../../components/examples.yaml#/examples/ServerErrorResponseExample'
