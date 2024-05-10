@@ -680,9 +680,9 @@ const config = {
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          mtbackbone: {
-            specPath: "openapi-specs/sase/mt-sp-interconnect",
-            outputDir: "products/sase/api/mt-sp-interconnect",
+          mtinterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect",
+            outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           access: {
