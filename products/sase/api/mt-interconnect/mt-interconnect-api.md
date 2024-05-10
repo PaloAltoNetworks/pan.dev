@@ -1,8 +1,8 @@
 ---
-id: mt-sp-interconnect
+id: mt-interconnect
 title: Multitenant Backbone APIs
 sidebar_label: Multitenant Backbone APIs
-slug: /sase/api/mt-sp-interconnect
+slug: /sase/api/mt-interconnect
 keywords:
   - SASE
   - Reference

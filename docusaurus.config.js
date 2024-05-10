@@ -433,8 +433,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/mt-sp-interconnect",
-                      label: "Multitenant Backbone",
+                      to: "sase/api/mt-interconnect",
+                      label: "Multitenant Interconnect",
                       icon: "api-doc",
                     },
                     {
