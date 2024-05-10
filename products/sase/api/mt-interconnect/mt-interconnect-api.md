@@ -1,7 +1,7 @@
 ---
 id: mt-interconnect
-title: Multitenant Backbone APIs
-sidebar_label: Multitenant Backbone APIs
+title: Multitenant Interconnect APIs
+sidebar_label: Multitenant Interconnect APIs
 slug: /sase/api/mt-interconnect
 keywords:
   - SASE
