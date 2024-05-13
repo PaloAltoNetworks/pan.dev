@@ -1,6 +1,6 @@
 ---
 id: gcp-account-onboarding
-title: Onboard GCP Projects and organization
+title: Onboard GCP Project and organization
 sidebar_position: 2
 ---
 
