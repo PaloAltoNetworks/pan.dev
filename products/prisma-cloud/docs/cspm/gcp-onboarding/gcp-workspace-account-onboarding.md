@@ -1,6 +1,6 @@
 ---
 id: gcp-workspace-account-onboarding
-title: Onboard GCP Workspace Account 
+title: Onboard GCP Workspace  
 sidebar_position: 3
 ---
 
