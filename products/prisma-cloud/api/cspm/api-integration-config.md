@@ -10,6 +10,62 @@ The request body for some of the endpoints includes an `integrationConfig` param
 
 Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. For more details, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations). If you are upgraded to the Darwin release, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations).
 
+### Amazon Security Lake
+
+Prisma Cloud integrates with Amazon Security Lake to ingest Prisma Cloud Open Cybersecurity Schema Framework (OCSF) compliant vulnerability security data into Amazon Security Lake.
+
+Note that you can configure only one Amazon Security Lake per customer.
+
+#### Add, Update, or Test an Amazon Security Lake Integration
+
+To add an Amazon Security Lake integration, make your request as described in
+[Add Integration](/prisma-cloud/api/cspm/create-integration-v-1). As part of the request body, the `integrationType` parameter is `aws_sdl`, and the `integrationConfig` parameter contains the following key/value pairs.
+
+| Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| s3Uri          | Amazon S3 bucket URI. Format: `s3://bucketname/ or s3://bucketname/foldername/`                                                                                              | string     | _required_                |
+| region         | AWS region where the S3 bucket resides                                                                            | string     | _required_                |
+| roleArn        | Role ARN associated with the IAM role on Prisma Cloud                                                             | string     | _required_                |
+| externalId     | External ID associated with the IAM role on Prisma Cloud. Any new or updated value must be a unique 128-bit UUID. | string     | _required_                |
+
+To update an Amazon Security Lake integration, make your request as described in
+[Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
+
+To test an Amazon Security Lake integration, make your request as described in
+[Test Integration](/prisma-cloud/api/cspm/test-integration).
+
+##### Example Request Body to Add an Amazon Security Lake Integration
+
+```json
+{
+  "integrationType": "aws_sdl",
+  "name": "",
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": ""
+  }
+}
+```
+
+##### Example Request Body to Test an Amazon Security Lake Integration
+
+```json
+{
+  "integrationType": "aws_sdl",
+  "name": "",
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": ""
+  }
+}
+```
+
 ### Amazon S3
 
 Prisma Cloud integrates with Amazon S3 to stream Prisma Cloud alerts to an Amazon S3 bucket or folder.
@@ -202,6 +258,9 @@ To add a Cortex XSOAR integration, make your request as described in
 | ------- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
 | hostUrl | The Cortex XSOAR instance FQDN/IP&mdash;either the name or the IP address of the instance                              | string     | _required_                |
 | apiKey  | The consumer key you configured when you created the Prisma Cloud application access in your Cortex XSOAR environment. | string     | _required_                |
+| demistoVersion  | The Cortex XSOAR version. Possible values: 6.0 and 8.0.  | string     | _required_                |
+| apiKeyID  | The key ID linked to the consumer key (apiKey). This parameter is required only for Cortex XSOAR 8.0. | string     | null                |
+
 
 To update a Cortex XSOAR integration, make your request as described in
 [Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
@@ -214,6 +273,7 @@ To update a Cortex XSOAR integration, make your request as described in
   "enabled": true,
   "integrationConfig": {
     "apiKey": "",
+    "demistoVersion":"6.0",
     "hostUrl": ""
   },
   "integrationType": "demisto",
