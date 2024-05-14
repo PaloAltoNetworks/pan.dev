@@ -82,6 +82,10 @@ for file in *.json; do
         {"url":"https://api.jp.prismacloud.io"},
         {"url":"https://api.fr.prismacloud.io"}]' | \
 
+    # Remove all x-redlock-auth from each endpoint parameters object if they exist
+    # securitySchemes requires the x-redlock-auth should only appear in the security fields 
+    jq '.paths |= del(.[][].parameters[]? | select(.name!=null ) | select (.name | contains("x-redlock-auth")))' | \
+
     # add securityScheme to every spec file
     jq '.components.securitySchemes |= { "x-redlock-auth": {
         "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
