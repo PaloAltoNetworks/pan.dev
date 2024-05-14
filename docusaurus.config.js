@@ -484,11 +484,6 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "API FAQs",
-                      to: "access/docs/insights/pai-faqs",
-                      icon: "doc",
-                    },
-                    {
                       label: "Get Started 3.0",
                       to: "access/docs/insights/getting_started-30",
                       icon: "doc",
