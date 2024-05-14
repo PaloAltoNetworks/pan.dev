@@ -9,10 +9,7 @@ keywords:
   - API
 ---
 
-The Prisma Access Insights 2.0 APIs allow you to query your Prisma Access tenant for the health of
-your Prisma Access network deployment. The 2.0 APIs are are intended for cloud-managed Prisma Access
-customers, where the tenants have been onboarded by Palo Alto Networks using a Tenant Service Group
-(TSG) identifier.
+The Prisma Access Insights 2.0 APIs has been deprecated. We highly recommend migrating to Prisma Access Insights 3.0
 
 To validate your tenant ID go to the Prisma Access Hub, click on the Prisma Access Insights
 application name, and look in the **Manage Apps** section.
