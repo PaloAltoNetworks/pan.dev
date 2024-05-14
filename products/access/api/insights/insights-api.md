@@ -11,9 +11,6 @@ keywords:
 
 The Prisma Access Insights 2.0 APIs has been deprecated. We highly recommend migrating to Prisma Access Insights 3.0
 
-To validate your tenant ID go to the Prisma Access Hub, click on the Prisma Access Insights
-application name, and look in the **Manage Apps** section.
-
 To use 1.0 APIs, see [1.0 APIs](/access/api/insights/1.0).
 
 For information about access tokens and base URLs, please see
