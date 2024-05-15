@@ -8,8 +8,10 @@ Defenders enforce the policies you set in the Prisma Cloud Compute console and p
 To take advantage of the agent-based security features of Prisma Cloud, you must deploy a Defender agent.
 
 ## Prerequisites
+
 Make sure that:
-- Your system meets the [requirement](https://github.com/PaloAltoNetworks/prisma-cloud-docs/blob/master/compute/admin_guide/install/system_requirements.adoc).
+
+- Your system meets the [System Requirements](https://docs.prismacloud.io/en/compute-edition/32/admin-guide/install/system-requirements)
 - The Prisma Cloud Compute console can access the systems running at your end.
     - PCCE (Self-hosted)
         - The default port is 8083 which is outgoing from Defender to Prisma Cloud Compute.
