@@ -766,6 +766,7 @@ const config = {
             outputDir: "products/prisma-cloud/api/cspm",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             hideSendButton: false,
+            proxy: "https://cors.pan.dev",
           },
           code: {
             specPath: "openapi-specs/code",
