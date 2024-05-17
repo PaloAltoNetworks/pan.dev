@@ -13,3 +13,12 @@ Rate limits are expressed using two values: `Rate Limit` and `Burst Rate`
 - **Rate Limit**: Number of individual requests per second allowed by the endpoint.
 - **Burst Rate**: Maximum number of concurrent requests allowed in one second.
 
+**User rate limiting**
+
+The rate limiting behavior is based upon the Token Bucket Algorithm and evaluates limits on a per user basis.
+
+Users are identified via a key derived from the authentication token present in all Prisma Cloud API requests.
+
+:::note
+If a user has multiple authentication tokens, the limits apply to the user and not to the discrete authentication tokens.
+:::
