@@ -777,8 +777,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.04",
-            label: "v32.04",
+            version: "32.05",
+            label: "v32.05",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
@@ -795,13 +795,6 @@ const config = {
                 baseUrl: "/compute/api/30-03/",
               },
             },
-          },
-          compute_3200: {
-            specPath: "openapi-specs/compute/32-00",
-            outputDir: "products/compute/api/32-00",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-00/",
           },
           compute_3201: {
             specPath: "openapi-specs/compute/32-01",
@@ -823,6 +816,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-03/",
+          },
+          compute_3204: {
+            specPath: "openapi-specs/compute/32-04",
+            outputDir: "products/compute/api/32-04",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-04/",
           },
         },
       },

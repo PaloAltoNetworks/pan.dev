@@ -1,12 +1,10 @@
 ---
 id: gcp-account-onboarding
-title: Automate GCP Cloud Account Onboarding
-sidebar_position: 5
+title: Onboard GCP Project and organization
+sidebar_position: 2
 ---
 
-Onboarding a GCP account, such as GCP project or GCP Organization, on Prisma Cloud connects all the respective GCP resources to Prisma Cloud. 
-
-You can onboard a single GCP project or multiple GCP projects to Prisma Cloud. If you want to onboard multiple projects, you must either onboard each project separately or allow Prisma Cloud to automatically onboard all GCP projects attached to the service account linked to the onboarded project. Prisma Cloud refers to this service account as a **Master Service Account**.
+In keeping with the GCP resource hierarchy, you can choose whether you want Prisma Cloud to monitor one or more GCP Projects or all projects that are under your GCP Organization. If you want to onboard multiple projects, you must either onboard each project separately or allow Prisma Cloud to automatically onboard all GCP projects attached to the service account linked to the onboarded project. Prisma Cloud refers to this service account as a **Master Service Account**.
 
 All the sections in this topic contain sample requests and responses for onboarding resources under a GCP Project, a GCP organization, and a Master Service Account.
 
@@ -150,7 +148,41 @@ Get the list of supported features based on the cloud type, account type, and de
   ```
   </details>
 
-    
+ **Sample Request and Response for GCP Workspace**  
+
+<details>
+  <summary>Sample Request</summary>
+
+   ```bash
+        curl --request POST 'https://api.prismacloud.io/cas/v1/features/cloud/gcp' \
+        --header 'accept: application/json' \
+        --header 'content-type: application/json' \
+        --header 'x-redlock-auth: <YOUR_TOKEN>' \
+        --data-raw '{
+        "accountType": "workspaceDomain"
+        }'
+
+  ```
+  </details>
+
+  <details>
+  <summary> Sample Response </summary>
+
+  ```json
+    {
+    "cloudType": "gcp",
+    "deploymentType": "global",
+    "accountType": "workspaceDomain",
+    "licenseType": "ENTERPRISE",
+    "supportedFeatures": [
+        "Cloud Visibility Compliance and Governance"
+    ]
+    }
+
+  ```
+  </details>   
+
+  
   
 ## 2. Generate the Terraform Template
 
