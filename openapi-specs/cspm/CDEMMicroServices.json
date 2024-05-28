@@ -1142,10 +1142,104 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "object"
                 }
               }
             }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/{asset_id}/vulnerability": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Get Vulnerabilities in an Asset by ID.",
+        "description": "Returns list of all the vulnerabilities in an asset by ID. The endpoint is used to get the details that are displayed in the Top Risks from Unmanaged Assets widget.",
+        "operationId": "asset-vulnerability",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "description": "Asset ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "snapshot_date",
+            "in": "query",
+            "description": "Snapshot time in milliseconds",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "examples": {
+              "Example for 1st January 2023": {
+                "description": "Example for 1st January 2023",
+                "value": 1672531200000
+              }
+            }
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset type.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
+          },
+          {
+            "name": "manage_type",
+            "in": "query",
+            "description": "Asset management type indicates if the asset is managed by Prisma Cloud.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MANAGED",
+                "UNMANAGED"
+              ]
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "description": "Next page token value from the previous API call to fetch the remaining data.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InferredCveResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Asset not found"
           }
         },
         "x-public": "true",
@@ -1267,6 +1361,73 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/vulnerability": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Get Impacted Distros for a Vulnerability.",
+        "description": "Get the list of all the distributions(distros) and its packages that are impacted by a vulnerability based on CVE ID.",
+        "operationId": "vulnerability",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "description": "CVE id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerabilityResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/snoozed-regex": {
+      "get": {
+        "tags": [
+          "Cloud Discovery and Exposure Management"
+        ],
+        "summary": "Get Snooze Regex Pattern",
+        "description": "Retrieve the list of regex patterns used to snooze or unsnooze assets. You can snooze or unsnooze assets that match a regex pattern. These patterns can be fetched using this API.",
+        "operationId": "list-snoozed-pattern",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
@@ -1479,6 +1640,14 @@
             "items": {
               "type": "string"
             }
+          },
+          "accountMappingStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+
+            }
           }
         }
       },
@@ -1667,6 +1836,9 @@
           },
           "reason": {
             "title": "Reason for snooze",
+            "type": "string"
+          },
+          "regex": {
             "type": "string"
           }
         }
@@ -1882,6 +2054,13 @@
             "items": {
               "type": "string"
             }
+          },
+          "accountMappingStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1969,6 +2148,13 @@
             ]
           },
           "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountMappingStatus": {
             "uniqueItems": true,
             "type": "array",
             "items": {
@@ -2627,6 +2813,7 @@
             "format": "int32"
           },
           "nextPageToken": {
+            "title": "Next page token",
             "type": "string"
           }
         }
@@ -2716,6 +2903,12 @@
             "type": "array",
             "items": {
               "title": "List of snooze status",
+              "type": "string"
+            }
+          },
+          "accountMappingStatus": {
+            "type": "array",
+            "items": {
               "type": "string"
             }
           }
