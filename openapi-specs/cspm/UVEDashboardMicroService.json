@@ -9,6 +9,10 @@
     {
       "name": "Unified Vulnerability Explorer",
       "description": "API for displaying Vulnerability Dashboard"
+    },
+    {
+      "name": "Asset Trace",
+      "description": "API for displaying Vulnerability Dashboard"
     }
   ],
   "paths": {
@@ -385,7 +389,110 @@
           }
         },
         "x-public": "true",
-        "x-ga": "24.1.2-darwin",
+        "x-ga": "24.1.2",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v3/dashboard/vulnerabilities/prioritised": {
+      "get": {
+        "summary": "Get Prioritized Vulnerabilities V3",
+        "description": "Returns the top-priority unique vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, and vulnerable packages in use along with the number of assets they occur in",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "prioritised-vulnerability-v3",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "description": "Type of Asset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
+            }
+          },
+          {
+            "name": "life_cycle",
+            "description": "Life Cycle stage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
         "security": [
           {
             "x-redlock-auth": []
@@ -600,7 +707,101 @@
           }
         },
         "x-public": "true",
-        "x-ga": "24.1.1-darwin",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v2/dashboard/vulnerabilities/prioritised-vuln": {
+      "get": {
+        "summary": "Get Top Impacting Vulnerabilities V2",
+        "description": "Returns the CVEs of top critical vulnerabilities in your environment based on the risk score. Each CVE includes risk factors, epssScore, severity, CVSS, risk factors, and assets impacted.",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "top-prioritised-vulnerability-v2",
+        "parameters": [
+          {
+            "name": "life_cycle",
+            "description": "Life Cycle stage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
+            }
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": 5
+            },
+            "description": "Number of  results to be returned"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopPrioritizedVulnerabilitiesV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
         "security": [
           {
             "x-redlock-auth": []
@@ -681,7 +882,86 @@
           }
         },
         "x-public": "true",
-        "x-ga": "24.1.1-darwin",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/cve-overview": {
+      "get": {
+        "summary": "Get CVE Overview Sidecar",
+        "description": "Get the detailed information for a given cve. Basically, the cve metadata",
+        "tags": [
+          "Unified Vulnerability Explorer"
+        ],
+        "operationId": "cve-overview-v2",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "CVE-2021-44288"
+            },
+            "description": "CVE ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveOverviewV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
         "security": [
           {
             "x-redlock-auth": []
@@ -879,7 +1159,6 @@
           }
         },
         "x-public": "true",
-        "x-ga": "24.1.1-darwin",
         "security": [
           {
             "x-redlock-auth": []
@@ -931,17 +1210,6 @@
           },
           "values": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrendCount"
-            }
-          }
-        }
-      },
-      "Values": {
-        "type": "array",
-        "properties": {
-          "values": {
-            "type": "object",
             "items": {
               "$ref": "#/components/schemas/TrendCount"
             }
@@ -1096,6 +1364,33 @@
           }
         }
       },
+      "PrioritizedVulnerabilitiesV3": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilities": {
+            "type": "integer"
+          },
+          "urgent": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "patchable": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "exploitable": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "internetExposed": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          },
+          "packageInUse": {
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+          }
+        }
+      },
       "VulnerabilityInfo": {
         "type": "object",
         "properties": {
@@ -1120,6 +1415,21 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Cve"
+            }
+          }
+        }
+      },
+      "TopPrioritizedVulnerabilitiesV2": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedDateTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cve": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cve2"
             }
           }
         }
@@ -1151,6 +1461,46 @@
           },
           "assetsImpacted": {
             "$ref": "#/components/schemas/AssetsImpacted"
+          }
+        }
+      },
+      "Cve2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "epssScore": {
+            "type": "number",
+            "format": "integer"
+          },
+          "completeEpssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "epssScorePrevious": {
+            "type": "number",
+            "format": "integer"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assetsImpacted": {
+            "$ref": "#/components/schemas/AssetsImpacted"
+          },
+          "assetsAtRisk": {
+            "type": "number",
+            "format": "long"
           }
         }
       },
@@ -1196,6 +1546,18 @@
             "type": "number",
             "format": "double"
           },
+          "epssScore": {
+            "type": "number",
+            "format": "integer"
+          },
+          "completeEpssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "epssScorePrevious": {
+            "type": "number",
+            "format": "integer"
+          },
           "packageName": {
             "type": "string"
           },
@@ -1226,6 +1588,83 @@
           },
           "cpuArch": {
             "type": "string"
+          },
+          "impactedDistrosList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactedDistros"
+            }
+          }
+        }
+      },
+      "CveOverviewV2": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "cvss": {
+            "type": "number",
+            "format": "double"
+          },
+          "lifeCycle": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severity": {
+            "type": "string"
+          },
+          "impactedAssetsCount": {
+            "type": "integer"
+          },
+          "impactedAssetsRuntimeCount": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "packageType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impactedPackages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cvssDetails": {
+            "$ref": "#/components/schemas/CvssDetails"
+          },
+          "environmentFactors": {
+            "$ref": "#/components/schemas/EnvironmentFactors"
+          },
+          "exploitDetails": {
+            "$ref": "#/components/schemas/ExploitDetails"
+          },
+          "epssDetails": {
+            "$ref": "#/components/schemas/EpssDetails"
+          },
+          "additionalDetails": {
+            "$ref": "#/components/schemas/AdditionalDetails"
           },
           "impactedDistrosList": {
             "type": "array",
@@ -1431,19 +1870,19 @@
           "type": "object",
           "properties": {
             "dayNum": {
-              "type": "long",
+              "type": "number",
               "description": "Count down of the day backwards from present day"
             },
             "totalCount": {
-              "type": "long",
+              "type": "number",
               "description": "Number of vulnerabilities in the given day"
             },
             "remediatedCount": {
-              "type": "long",
+              "type": "number",
               "description": "Number of vulnerabilities remediated for the given day"
             },
             "epochTimestamp": {
-              "type": "long",
+              "type": "number",
               "description": "Time upto which the entry was recorded"
             }
           }
@@ -1521,15 +1960,17 @@
           },
           "cveId": {
             "type": "string",
-            "description": "CVE Identifier",
-            "required": true
+            "description": "CVE Identifier"
           },
           "repoId": {
             "type": "string",
-            "description": "Repo Identifier",
-            "required": true
+            "description": "Repo Identifier"
           }
-        }
+        },
+        "required": [
+          "cveId",
+          "repoId"
+        ]
       },
       "AssetTraceRequest": {
         "type": "object",
@@ -1541,8 +1982,10 @@
             "properties": {
               "unifiedAssetIds": {
                 "type": "array",
-                "description": "Set of unified asset identifiers",
-                "required": true
+                "items": {
+                  "type": "string"
+                },
+                "description": "Set of unified asset identifiers"
               },
               "stage": {
                 "type": "string",
@@ -1554,7 +1997,10 @@
                 ],
                 "description": "The stage of the source Assets"
               }
-            }
+            },
+            "required": [
+              "unifiedAssetIds"
+            ]
           },
           "traceStages": {
             "type": "array",
@@ -1744,13 +2190,11 @@
           },
           "source": {
             "type": "string",
-            "description": "Identifier of the source asset",
-            "required": true
+            "description": "Identifier of the source asset"
           },
           "target": {
             "type": "string",
-            "description": "Identifier of the target asset",
-            "required": true
+            "description": "Identifier of the target asset"
           },
           "directed": {
             "type": "boolean",
@@ -1780,7 +2224,11 @@
               "type": "string"
             }
           }
-        }
+        },
+        "required": [
+          "source",
+          "target"
+        ]
       },
       "AssetNode": {
         "type": "object",
@@ -1804,6 +2252,127 @@
             "additionalProperties": {
               "type": "object",
               "properties": {}
+            }
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "firstSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "packageType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impactedPackages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CvssDetails": {
+        "type": "object",
+        "properties": {
+          "publishedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastModifiedDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attackVector": {
+            "type": "string"
+          },
+          "exploitAvailability": {
+            "type": "string"
+          },
+          "confidentiality": {
+            "type": "string"
+          },
+          "attackComplexity": {
+            "type": "string"
+          },
+          "userInteractionRequired": {
+            "type": "string"
+          },
+          "integrity": {
+            "type": "string"
+          },
+          "exploitable": {
+            "type": "boolean"
+          },
+          "patchable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EnvironmentFactors": {
+        "type": "object",
+        "properties": {
+          "internetExposed": {
+            "type": "boolean"
+          },
+          "packageInUse": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExploitDetails": {
+        "type": "object",
+        "properties": {
+          "cisaLink": {
+            "type": "string"
+          },
+          "cisaKind": {
+            "type": "string"
+          }
+        }
+      },
+      "EpssDetails": {
+        "type": "object",
+        "properties": {
+          "epss": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "epss_previous": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "probabilityScore": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AdditionalDetails": {
+        "type": "object",
+        "properties": {
+          "nvdLinks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vendorLinks": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           }
         }
