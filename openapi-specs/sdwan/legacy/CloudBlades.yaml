@@ -68,6 +68,76 @@ components:
             '
           type: string
       type: object
+    Parameter:
+      properties:
+        default_value:
+          description: 'The default value.
+
+            '
+          type: object
+        display_label:
+          description: 'The display label of the SD-WAN app.
+
+            '
+          type: string
+        help_text:
+          description: 'The help text in the app.
+
+            '
+          type: string
+        key:
+          description: 'The SD-WAN app config key.
+
+            '
+          type: string
+        max_length:
+          description: 'The max length of the SD-WAN app parameters.
+
+            '
+          type: integer
+        max_value:
+          description: 'The max value of the SD-WAN app parameters.
+
+            '
+          type: object
+        min_value:
+          description: 'The min value of the SD-WAN app parameters.
+
+            '
+          type: object
+        regex:
+          description: 'The regex values.
+
+            '
+          type: string
+        required:
+          description: 'The SD-WAN app required parameters.
+
+            '
+          type: boolean
+        sensitive:
+          description: 'The SD-WAN app sensitive parameters.
+
+            '
+          type: boolean
+        type:
+          description: 'The SD-WAN app parameters type.
+
+            '
+          enum:
+          - INTEGER
+          - FLOAT
+          - STRING
+          - TEXT
+          - EMAIL
+          - LIST_INTEGER
+          - LIST_FLOAT
+          - LIST_STRING
+          - LIST_INTEGER_MULTI_SELECT
+          - LIST_FLOAT_MULTI_SELECT
+          - LIST_STRING_MULTI_SELECT
+          - BOOLEAN
+          type: string
     ParameterListValueResponse:
       properties:
         display_label:
@@ -429,6 +499,114 @@ components:
       - version
       - name
       - tenant_id
+    SDWANAppReleaseInfo:
+      properties:
+        default_release:
+          description: 'The default release of the app.
+
+            '
+          type: boolean
+        description:
+          description: 'The description of the SD-WAN app. Max length = 256.
+
+            '
+        name:
+          description: 'The name of the SD-WAN app.
+
+            '
+          type: string
+        parameters:
+          description: 'The app parameters.
+
+            '
+          items:
+            $ref: '#/components/schemas/Parameter'
+          type: array
+        permissions:
+          description: 'The permissions of the SD-WAN app.
+
+            '
+          items:
+            description: Permissions
+            type: string
+          type: array
+        release_date:
+          description: 'The release date of the SD-WAN app.
+
+            '
+          format: int64
+          type: integer
+        release_notes:
+          description: 'The release notes of the SD-WAN app.
+
+            '
+          type: string
+        state:
+          description: 'The release state of the SD-WAN app.
+
+            '
+          enum:
+          - INIT
+          - ALPHA
+          - BETA
+          - GA
+          - DEPRECATED
+          - TO_BE_DELETED
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the application.
+            Maximum 10 unique tags of length 128 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        version:
+          description: 'The version of the SD-WAN app.
+
+            '
+          type: string
+    SDWANAppReleaseInfoResponse:
+      properties:
+        author:
+          $ref: '#/components/schemas/Author'
+          description: 'Details of the SD-WAN app owner.
+
+            '
+        description:
+          description: 'The description of the SD-WAN app. Max length = 256.
+
+            '
+        id:
+          description: 'The SD-WAN app ID.
+
+            '
+          type: string
+        name:
+          description: 'The name of the SD-WAN app.
+
+            '
+          type: string
+        releases:
+          description: 'The release information of the SD-WAN apps.
+
+            '
+          items:
+            $ref: '#/components/schemas/SDWANAppReleaseInfo'
+          type: array
+        tags:
+          description: 'A information field that can be added to identify the application.
+            Maximum 10 unique tags of length 128 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - author
+      - name
     SDWANAppReleaseInfoResponseV2N1:
       properties:
         author:
@@ -691,6 +869,64 @@ info:
   version: Latest
 openapi: 3.0.0
 paths:
+  /v2.0/api/tenants/{tenant_id}/sdwanapps:
+    get:
+      description: GET existing tenant SD-WAN applications with release information.
+      operationId: get-v2.0-api-tenants-tenant_id-sdwanapps
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SDWANAppReleaseInfoResponse'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: GET existing tenant SD-WAN applications with release information. (v2.0)
+      tags:
+      - CloudBlades
+  /v2.0/api/tenants/{tenant_id}/sdwanapps/{app_id}:
+    get:
+      description: GET existing tenant SD-WAN application with release information.
+      operationId: get-v2.0-api-tenants-tenant_id-sdwanapps-app_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: SDWAN-APP tenant App ID
+        in: path
+        name: app_id
+        required: true
+        schema:
+          description: App Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SDWANAppReleaseInfoResponse'
+          description: Successful Operation
+      summary: GET existing tenant SD-WAN application with release information. (v2.0)
+      tags:
+      - CloudBlades
   /v2.0/api/tenants/{tenant_id}/sdwanapps/{app_id}/configs:
     get:
       description: List all the SD-WAN application configurations.
