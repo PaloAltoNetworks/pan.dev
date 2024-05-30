@@ -46,20 +46,8 @@ components:
           type: string
     Aggregate:
       properties:
-        data:
-          description: 'The details of the aggregate data.
-
-            '
-          items:
-            $ref: '#/components/schemas/AggregateData'
-          type: array
         field:
           description: Field
-          type: string
-        name:
-          description: 'The name of the query response.
-
-            '
           type: string
         operator:
           description: Operator
@@ -70,28 +58,42 @@ components:
           - avg
           - sum
           type: string
-        statistic:
-          description: 'QoS application aggregate statistics.
-
-            '
-          type: string
-        unit:
-          description: 'The unit.
-
-            '
-          type: string
-    AggregateData:
+    BaseEventState:
       properties:
-        value:
-          description: 'Value of the aggregate data.
+        event_code:
+          description: "The event code. \n"
+          type: string
+        event_id:
+          description: "The event ID.        \n"
+          type: string
+        id:
+          description: Id
+          type: string
+        priority:
+          description: "The priority set for the event. \n"
+          format: int32
+          type: integer
+        standing:
+          description: 'The standing event. True or False.
 
             '
-          type: number
-        view:
-          description: 'View the aggregate date.
+          type: boolean
+        suppressed:
+          description: 'The events are suppressed. True or False.
 
             '
-          type: object
+          type: boolean
+        suppressed_info:
+          $ref: '#/components/schemas/SuppressedInfo'
+          description: 'The information on the suppressed events.
+
+            '
+        timestamp:
+          description: 'The time stamp of the event.
+
+            '
+          format: int64
+          type: integer
     BulkResponse:
       properties:
         count:
@@ -977,7 +979,7 @@ components:
             '
           format: int64
           type: integer
-    SiteQueryFilterV4N8:
+    SiteQueryFilter:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -1001,12 +1003,10 @@ components:
 
             '
           type: string
-        extended_tags:
-          description: "Extended tags allow operators to add more information into\
-            \ the site object. Current extended tags allow for additional configuration\
-            \ related to Prisma Access and ZScaler to be added.              \n"
+        events:
+          description: Events
           items:
-            $ref: '#/components/schemas/ExtendedTag'
+            $ref: '#/components/schemas/BaseEventState'
           type: array
         id:
           description: 'The ID.
@@ -1018,25 +1018,8 @@ components:
           description: 'The geographical cordinates for the site address.
 
             '
-        multicast_peer_group_id:
-          description: 'The multicast peer group ID.
-
-            '
-          type: string
         name:
           description: 'The site name (Max size = 128).
-
-            '
-          type: string
-        nat_policysetstack_id:
-          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
-            API.
-
-            '
-          type: string
-        network_policysetstack_id:
-          description: 'ID for the Path Policyset Stack. Can be retrieved using networkpolicysetstack
-            API.
 
             '
           type: string
@@ -1046,18 +1029,9 @@ components:
 
             '
           type: string
-        priority_policysetstack_id:
-          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
-            API.
-
-            '
-          type: string
         security_policyset_id:
-          description: Security Policyset Id
-          type: string
-        security_policysetstack_id:
-          description: 'ID for the Security Policyset Stack. Can be retrieved using
-            ngfwpolicysetstack API.
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
 
             '
           type: string
@@ -1067,24 +1041,7 @@ components:
 
             '
           type: string
-        tags:
-          description: 'A information field that can be added to identify the site.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
-
-            '
-          type: string
-      required:
-      - element_cluster_role
-      - admin_state
-      - name
-    SiteQueryFilterV4N9:
+    SiteQueryFilterV4N2:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -1108,15 +1065,6 @@ components:
 
             '
           type: string
-        extended_tags:
-          description: 'Extended tags allow operators to add more information into
-            the site object. Current extended tags allow for additional configuration
-            related to Prisma Access and ZScaler to be added.
-
-            '
-          items:
-            $ref: '#/components/schemas/ExtendedTag'
-          type: array
         id:
           description: 'The ID.
 
@@ -1127,30 +1075,79 @@ components:
           description: 'The geographical cordinates for the site address.
 
             '
-        multicast_peer_group_id:
-          description: 'The multicast peer group ID.
-
-            '
-          type: string
         name:
           description: 'The site name (Max size = 128).
 
             '
           type: string
-        nat_policysetstack_id:
-          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
+        network_policysetstack_id:
+          description: Network Policysetstack Id
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: Priority Policysetstack Id
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
+
+            '
+          type: string
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
             API.
+
+            '
+          type: string
+    SiteQueryFilterV4N3:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
 
             '
           type: string
         network_policysetstack_id:
-          description: 'ID for the Path Policyset Stack. Can be retrieved using networkpolicysetstack
-            API.
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
 
             '
-          type: string
-        perfmgmt_policysetstack_id:
-          description: "ID for the Performance Policyset Stack. \n"
           type: string
         policy_set_id:
           description: 'The ID for the Original Network Policy Set. Can be retrieved
@@ -1170,12 +1167,6 @@ components:
 
             '
           type: string
-        security_policysetstack_id:
-          description: 'ID for the Security Policyset Stack. Can be retrieved using
-            ngfwpolicysetstack API.
-
-            '
-          type: string
         service_binding:
           description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
             API.
@@ -1190,16 +1181,7 @@ components:
             description: Tags
             type: string
           type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
-
-            '
-          type: string
-      required:
-      - element_cluster_role
-      - admin_state
-      - name
-    SiteScreenV4N8:
+    SiteQueryFilterV4N4:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -1223,13 +1205,6 @@ components:
 
             '
           type: string
-        extended_tags:
-          description: "Extended tags allow operators to add more information into\
-            \ the site object. Current extended tags allow for additional configuration\
-            \ related to Prisma Access and ZScaler to be added.              \n"
-          items:
-            $ref: '#/components/schemas/ExtendedTag'
-          type: array
         id:
           description: 'The ID.
 
@@ -1240,139 +1215,19 @@ components:
           description: 'The geographical cordinates for the site address.
 
             '
-        multicast_peer_group_id:
-          description: 'The multicast peer group ID.
-
-            '
-          type: string
         name:
           description: 'The site name (Max size = 128).
 
             '
           type: string
         nat_policysetstack_id:
-          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
-            API.
-
-            '
+          description: Nat Policysetstack Id
           type: string
         network_policysetstack_id:
-          description: 'ID for the Path Policyset Stack. Can be retrieved using networkpolicysetstack
-            API.
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
 
             '
-          type: string
-        policy_set_id:
-          description: 'The ID for the Original Network Policy Set. Can be retrieved
-            using policysets API.
-
-            '
-          type: string
-        priority_policysetstack_id:
-          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
-            API.
-
-            '
-          type: string
-        security_policyset_id:
-          description: Security Policyset Id
-          type: string
-        security_policysetstack_id:
-          description: 'ID for the Security Policyset Stack. Can be retrieved using
-            ngfwpolicysetstack API.
-
-            '
-          type: string
-        service_binding:
-          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
-            API.
-
-            '
-          type: string
-        tags:
-          description: 'A information field that can be added to identify the site.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
-
-            '
-          type: string
-      required:
-      - element_cluster_role
-      - admin_state
-      - name
-    SiteScreenV4N9:
-      properties:
-        address:
-          $ref: '#/components/schemas/Address'
-          description: 'The address of the site.
-
-            '
-        admin_state:
-          description: 'The site mode of operation, can be in one of three states:
-            Active - the site is in Control mode and network policy is applied. Monitor
-            - the site is in Analytics mode, no network policy is applied. Disabled:
-            the site is disabled.
-
-            '
-          type: string
-        description:
-          description: 'Description for the site (Max size = 1024).
-
-            '
-        element_cluster_role:
-          description: 'This attribute describes the type i.e. SPOKE or HUB.
-
-            '
-          type: string
-        extended_tags:
-          description: 'Extended tags allow operators to add more information into
-            the site object. Current extended tags allow for additional configuration
-            related to Prisma Access and ZScaler to be added.
-
-            '
-          items:
-            $ref: '#/components/schemas/ExtendedTag'
-          type: array
-        id:
-          description: 'The ID.
-
-            '
-          type: string
-        location:
-          $ref: '#/components/schemas/Location'
-          description: 'The geographical cordinates for the site address.
-
-            '
-        multicast_peer_group_id:
-          description: 'The multicast peer group ID.
-
-            '
-          type: string
-        name:
-          description: 'The site name (Max size = 128).
-
-            '
-          type: string
-        nat_policysetstack_id:
-          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
-            API.
-
-            '
-          type: string
-        network_policysetstack_id:
-          description: 'ID for the Path Policyset Stack. Can be retrieved using networkpolicysetstack
-            API.
-
-            '
-          type: string
-        perfmgmt_policysetstack_id:
-          description: "ID for the Performance Policyset Stack. \n"
           type: string
         policy_set_id:
           description: 'The ID for the Original Network Policy Set. Can be retrieved
@@ -1392,9 +1247,93 @@ components:
 
             '
           type: string
-        security_policysetstack_id:
-          description: 'ID for the Security Policyset Stack. Can be retrieved using
-            ngfwpolicysetstack API.
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
+            API.
+
+            '
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the site.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+    SiteQueryFilterV4N5:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        extended_tags:
+          description: 'Extended Tags: Valid ListObject(allowDuplicate = false, allowEmpty
+            = true, allowNull = true, listMaxSize = 10, message = INVALID_EXTENDED_TAG_SIZE_OR_DUPLICATE,
+            required = false) '
+          items:
+            $ref: '#/components/schemas/ExtendedTag'
+          type: array
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
+
+            '
+          type: string
+        nat_policysetstack_id:
+          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
+            API.
+
+            '
+          type: string
+        network_policysetstack_id:
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
+
+            '
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
+            API.
+
+            '
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
 
             '
           type: string
@@ -1412,11 +1351,6 @@ components:
             description: Tags
             type: string
           type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
-
-            '
-          type: string
       required:
       - element_cluster_role
       - admin_state
@@ -1472,7 +1406,7 @@ components:
       required:
       - site_id
       - tenant_id
-    SiteV4N8:
+    SiteV4N2:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -1496,15 +1430,6 @@ components:
 
             '
           type: string
-        extended_tags:
-          description: 'Extended tags allow operators to add more information into
-            the site object. Current extended tags allow for additional configuration
-            related to Prisma Access and ZScaler to be added.
-
-            '
-          items:
-            $ref: '#/components/schemas/ExtendedTag'
-          type: array
         id:
           description: 'The ID.
 
@@ -1515,31 +1440,20 @@ components:
           description: 'The geographical cordinates for the site address.
 
             '
-        multicast_peer_group_id:
-          description: 'The multicast peer group ID.
-
-            '
-          type: string
         name:
           description: 'The site name (Max size = 128).
 
             '
           type: string
-        nat_policysetstack_id:
-          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
-            API.
-
-            '
-          type: string
         network_policysetstack_id:
-          description: 'ID for the Path Policyset Stack. Can be retrieved using networkpolicysetstack
-            API.
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
 
             '
           type: string
         policy_set_id:
           description: 'The ID for the Original Network Policy Set. Can be retrieved
-            using policysets API.
+            using policy sets API.
 
             '
           type: string
@@ -1551,32 +1465,13 @@ components:
           type: string
         security_policyset_id:
           description: 'The ID for the Original Security Policy Set. Can be retrieved
-            using securitypolicysets API.
-
-            '
-          type: string
-        security_policysetstack_id:
-          description: 'ID for the Security Policyset Stack. Can be retrieved using
-            ngfwpolicysetstack API.
+            using security policy sets API.
 
             '
           type: string
         service_binding:
           description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
             API.
-
-            '
-          type: string
-        tags:
-          description: 'A information field that can be added to identify the site.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
 
             '
           type: string
@@ -1584,7 +1479,366 @@ components:
       - element_cluster_role
       - admin_state
       - name
-    SiteV4N9:
+    SiteV4N3:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
+
+            '
+          type: string
+        network_policysetstack_id:
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
+
+            '
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
+            API.
+
+            '
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
+
+            '
+          type: string
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
+            API.
+
+            '
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the site.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - element_cluster_role
+      - admin_state
+      - name
+    SiteV4N4:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
+
+            '
+          type: string
+        nat_policysetstack_id:
+          description: 'Nat Policysetstack Id: Digits(fraction = 0, integer = 20,
+            error = INVALID_NAT_POLICYSETSTACK_ID: Invalid nat policy set stack id.) '
+          type: string
+        network_policysetstack_id:
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
+
+            '
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
+            API.
+
+            '
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
+
+            '
+          type: string
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
+            API.
+
+            '
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the site.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - element_cluster_role
+      - admin_state
+      - name
+    SiteV4N5:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        extended_tags:
+          description: 'Extended Tags: Valid ListObject(allowDuplicate = false, allowEmpty
+            = true, allowNull = true, listMaxSize = 10, message = INVALID_EXTENDED_TAG_SIZE_OR_DUPLICATE,
+            required = false) '
+          items:
+            $ref: '#/components/schemas/ExtendedTag'
+          type: array
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
+
+            '
+          type: string
+        nat_policysetstack_id:
+          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
+            API.
+
+            '
+          type: string
+        network_policysetstack_id:
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
+
+            '
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
+            API.
+
+            '
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
+
+            '
+          type: string
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
+            API.
+
+            '
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the site.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - element_cluster_role
+      - admin_state
+      - name
+    SiteV4N6:
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+          description: 'The address of the site.
+
+            '
+        admin_state:
+          description: 'The site mode of operation, can be in one of three states:
+            Active - the site is in Control mode and network policy is applied. Monitor
+            - the site is in Analytics mode, no network policy is applied. Disabled:
+            the site is disabled.
+
+            '
+          type: string
+        description:
+          description: 'Description for the site (Max size = 1024).
+
+            '
+        element_cluster_role:
+          description: 'This attribute describes the type i.e. SPOKE or HUB.
+
+            '
+          type: string
+        extended_tags:
+          description: 'Extended tags allow operators to add more information into
+            the site object. Current extended tags allow for additional configuration
+            related to Prisma Access and ZScaler to be added.
+
+            '
+          items:
+            $ref: '#/components/schemas/ExtendedTag'
+          type: array
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+          description: 'The geographical cordinates for the site address.
+
+            '
+        name:
+          description: 'The site name (Max size = 128).
+
+            '
+          type: string
+        nat_policysetstack_id:
+          description: 'ID for the NAT Policyset Stack. Can be retrieved using natpolicysetstack
+            API.
+
+            '
+          type: string
+        network_policysetstack_id:
+          description: 'The ID for the Path Policyset Stack. Can be retrieved using
+            networkpolicysetstack API.
+
+            '
+          type: string
+        policy_set_id:
+          description: 'The ID for the Original Network Policy Set. Can be retrieved
+            using policysets API.
+
+            '
+          type: string
+        priority_policysetstack_id:
+          description: 'ID for the QoS Policyset Stack. Can be retrieved using prioritypolicysetstack
+            API.
+
+            '
+          type: string
+        security_policyset_id:
+          description: 'The ID for the Original Security Policy Set. Can be retrieved
+            using securitypolicysets API.
+
+            '
+          type: string
+        security_policysetstack_id:
+          description: Security Policysetstack Id
+          type: string
+        service_binding:
+          description: 'Bind a site to a set of domains. Can be retrieved using sericebindingmaps
+            API.
+
+            '
+          type: string
+        tags:
+          description: 'A information field that can be added to identify the site.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - element_cluster_role
+      - admin_state
+      - name
+    SiteV4N7:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -1649,9 +1903,6 @@ components:
 
             '
           type: string
-        perfmgmt_policysetstack_id:
-          description: "ID for the Performance Policyset Stack. \n"
-          type: string
         policy_set_id:
           description: 'The ID for the Original Network Policy Set. Can be retrieved
             using policysets API.
@@ -1690,11 +1941,6 @@ components:
             description: Tags
             type: string
           type: array
-        vrf_context_profile_id:
-          description: 'The VRF (Virtual Routing and Forwarding) profile ID.
-
-            '
-          type: string
       required:
       - element_cluster_role
       - admin_state
@@ -1913,6 +2159,22 @@ components:
           items:
             $ref: '#/components/schemas/SwitchOverEvent'
           type: array
+    SuppressedInfo:
+      properties:
+        root_cause_event_ids:
+          description: 'The event IDs of the root causes.
+
+            '
+          items:
+            description: Root Cause Event Ids
+            type: string
+          type: array
+        suppressed_time:
+          description: 'The suppressed event time.
+
+            '
+          format: date
+          type: string
     SwitchOverEvent:
       properties:
         active:
@@ -1971,6 +2233,78 @@ components:
       required:
       - keep_alive_failure_count
       - keep_alive_interval
+    WANInterface:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        description:
+          description: 'The description of the WAN interface config.
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config.
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+      required:
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
     WANInterfaceQuery:
       properties:
         aggregate:
@@ -2127,6 +2461,438 @@ components:
           description: 'Vpnlink Configuration: Valid Nullable '
       required:
       - site_id
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
+    WANInterfaceScreen:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        description:
+          description: 'The description of the WAN interface config.
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config.
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+      required:
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
+    WANInterfaceScreenV2N2:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+      required:
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
+    WANInterfaceScreenV2N3:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
+    WANInterfaceScreenV2N4:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_config:
+          $ref: '#/components/schemas/LQMConfig'
+          description: 'The link quality monitoring parameters.
+
+            '
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - label_id
+      - bfd_mode
+      - bw_config_mode
+      - network_id
+    WANInterfaceScreenV2N5:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_config:
+          $ref: '#/components/schemas/LQMConfig'
+          description: 'The link quality monitoring parameters.
+
+            '
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        type:
+          description: Type
+          enum:
+          - PUBLIC_WAN
+          - PRIVATE_WAN
+          type: string
+        vpnlink_configuration:
+          $ref: '#/components/schemas/VPNLinkConfiguration'
+          description: 'The configuration of the VPN link.
+
+            '
+      required:
       - label_id
       - bfd_mode
       - bw_config_mode
@@ -2380,6 +3146,352 @@ components:
 
             '
           type: boolean
+    WANInterfaceV2N2:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+      required:
+      - bfd_mode
+    WANInterfaceV2N3:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config.
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config.
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - bfd_mode
+    WANInterfaceV2N4:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_config:
+          $ref: '#/components/schemas/LQMConfig'
+          description: 'The link quality monitoring parameters.
+
+            '
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - bfd_mode
+    WANInterfaceV2N5:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: Bwc Enabled
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config (size max = 256).
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_config:
+          $ref: '#/components/schemas/LQMConfig'
+          description: 'The link quality monitoring parameters.
+
+            '
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config (size max = 128).
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the application.
+            Maximum 10 Unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        type:
+          description: Type
+          enum:
+          - PUBLIC_WAN
+          - PRIVATE_WAN
+          type: string
+        vpnlink_configuration:
+          $ref: '#/components/schemas/VPNLinkConfiguration'
+          description: 'Vpnlink Configuration: Valid '
+      required:
+      - bfd_mode
     WANInterfaceV2N6:
       properties:
         bfd_mode:
@@ -3036,7 +4148,6 @@ paths:
                   - code: INVALID_JSON_EXTRA_ATTRIBUTE
                   - code: ADVERTISEMENT_INTERVAL_INVALID_DECIMAL
                   - code: ADVERTISEMENT_INTERVAL_REQD
-                  - code: ADVERTISEMENT_INTERVAL_LOWER_THAN_ONE_SEC_ERR
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -3252,6 +4363,254 @@ paths:
       summary: Get Element WAN Interface Status (v2.1)
       tags:
       - Site Configuration
+  /v2.1/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
+    get:
+      description: Get all Site WAN interfaces
+      operationId: get-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterface'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all Site WAN interfaces (v2.1)
+      tags:
+      - Site Configuration
+    post:
+      description: Create site WAN interface
+      operationId: post-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreen'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterface'
+          description: Successful Operation
+      summary: Create site WAN interface (v2.1)
+      tags:
+      - Site Configuration
+  /v2.1/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/query:
+    post:
+      description: Query db for Site WAN interfaces that match query parameters
+      operationId: post-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceQuery'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Query db for Site WAN interfaces that match query parameters (v2.1)
+      tags:
+      - Site Configuration
+  /v2.1/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}:
+    delete:
+      description: Delete existing WAN interface
+      operationId: delete-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterface'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_CONFIGURED
+                  - code: WAN_INTERFACE_CONFIG_IN_ZONE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete existing WAN interface (v2.1)
+      tags:
+      - Site Configuration
+    get:
+      description: Get a specific Site WAN interface
+      operationId: get-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterface'
+          description: Successful Operation
+      summary: Get a specific Site WAN interface (v2.1)
+      tags:
+      - Site Configuration
+    put:
+      description: Update the Site WAN interface
+      operationId: put-v2.1-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreen'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterface'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update the Site WAN interface (v2.1)
+      tags:
+      - Site Configuration
   /v2.1/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}/status:
     get:
       description: Get the status of a specific site wan interface.
@@ -3287,6 +4646,600 @@ paths:
                 $ref: '#/components/schemas/WANInterfaceState'
           description: Successful Operation
       summary: Get Site WAN Interface Status (v2.1)
+      tags:
+      - Site Configuration
+  /v2.2/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
+    get:
+      description: Get all Site WAN interfaces
+      operationId: get-v2.2-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceV2N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all Site WAN interfaces (v2.2)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new Site WAN interface
+      operationId: post-v2.2-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N2'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new Site WAN interface (v2.2)
+      tags:
+      - Site Configuration
+  /v2.2/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}:
+    delete:
+      description: Delete existing WAN interface
+      operationId: delete-v2.2-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_CONFIGURED
+                  - code: WAN_INTERFACE_CONFIG_IN_ZONE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete existing WAN interface (v2.2)
+      tags:
+      - Site Configuration
+    get:
+      description: Get a specific Site WAN interface
+      operationId: get-v2.2-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N2'
+          description: Successful Operation
+      summary: Get a specific Site WAN interface (v2.2)
+      tags:
+      - Site Configuration
+    put:
+      description: Update the Site WAN interface
+      operationId: put-v2.2-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N2'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceScreenV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update the Site WAN interface (v2.2)
+      tags:
+      - Site Configuration
+  /v2.3/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
+    get:
+      description: Get all Site WAN interfaces
+      operationId: get-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceV2N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all Site WAN interfaces (v2.3)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new Site WAN interface
+      operationId: post-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N3'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new Site WAN interface (v2.3)
+      tags:
+      - Site Configuration
+  /v2.3/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/query:
+    post:
+      description: Query db for Site WAN interfaces that match query parameters
+      operationId: post-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceQuery'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+      summary: Query db for Site WAN interfaces that match query parameters (v2.3)
+      tags:
+      - Site Configuration
+  /v2.3/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}:
+    delete:
+      description: Delete existing WAN interface
+      operationId: delete-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_CONFIGURED
+                  - code: WAN_INTERFACE_CONFIG_IN_ZONE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete existing WAN interface (v2.3)
+      tags:
+      - Site Configuration
+    get:
+      description: Get a specific Site WAN interface
+      operationId: get-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N3'
+          description: Successful Operation
+      summary: Get a specific Site WAN interface (v2.3)
+      tags:
+      - Site Configuration
+    put:
+      description: Update the Site WAN interface
+      operationId: put-v2.3-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N3'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update the Site WAN interface (v2.3)
+      tags:
+      - Site Configuration
+  /v2.4/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
+    get:
+      description: Get all Site WAN interfaces
+      operationId: get-v2.4-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceV2N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all Site WAN interfaces (v2.4)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new Site WAN interface
+      operationId: post-v2.4-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N4'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+                  - code: WANINTERFACE_LQM_CONFIG_NOT_ALLOWED
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_FIELDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS_SIZE
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_STATISTIC
+                  - code: WANINTERFACE_LQM_CONFIG_DUPLICATE_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_INTER_PACKET_GAP
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new Site WAN interface (v2.4)
       tags:
       - Site Configuration
   /v2.4/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/query:
@@ -3342,6 +5295,230 @@ paths:
       summary: Query DB for Site WAN Interfaces (v2.4)
       tags:
       - Site Configuration
+  /v2.4/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}:
+    delete:
+      description: Delete existing WAN interface
+      operationId: delete-v2.4-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_CONFIGURED
+                  - code: WAN_INTERFACE_CONFIG_IN_ZONE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete existing WAN interface (v2.4)
+      tags:
+      - Site Configuration
+    get:
+      description: Get a specific Site WAN interface
+      operationId: get-v2.4-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N4'
+          description: Successful Operation
+      summary: Get a specific Site WAN interface (v2.4)
+      tags:
+      - Site Configuration
+    put:
+      description: Update the Site WAN interface
+      operationId: put-v2.4-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N4'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_DUPLICATE_LABEL_FOR_SITE
+                  - code: WANINTERFACE_LQM_CONFIG_NOT_ALLOWED
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_FIELDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS_SIZE
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_STATISTIC
+                  - code: WANINTERFACE_LQM_CONFIG_DUPLICATE_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_INTER_PACKET_GAP
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update the Site WAN interface (v2.4)
+      tags:
+      - Site Configuration
+  /v2.5/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
+    get:
+      description: Get all Site WAN interfaces
+      operationId: get-v2.5-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceV2N5'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all Site WAN interfaces (v2.5)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new Site WAN interface
+      operationId: post-v2.5-api-tenants-tenant_id-sites-site_id-waninterfaces
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N5'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new Site WAN interface (v2.5)
+      tags:
+      - Site Configuration
   /v2.5/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/query:
     post:
       description: Queries the DB for Site WAN Interfaces that match the query parameters.
@@ -3382,6 +5559,158 @@ paths:
                   type: object
           description: Successful Operation
       summary: Query DB for Site WAN Interfaces (v2.5)
+      tags:
+      - Site Configuration
+  /v2.5/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces/{wan_interface_id}:
+    delete:
+      description: Delete existing WAN interface
+      operationId: delete-v2.5-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_CONFIGURED
+                  - code: WAN_INTERFACE_CONFIG_IN_ZONE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete existing WAN interface (v2.5)
+      tags:
+      - Site Configuration
+    get:
+      description: Get a specific Site WAN interface
+      operationId: get-v2.5-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N5'
+          description: Successful Operation
+      summary: Get a specific Site WAN interface (v2.5)
+      tags:
+      - Site Configuration
+    put:
+      description: Update the Site WAN interface
+      operationId: put-v2.5-api-tenants-tenant_id-sites-site_id-waninterfaces-wan_interface_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: WAN interface Id
+        in: path
+        name: wan_interface_id
+        required: true
+        schema:
+          description: Wan Interface Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceScreenV2N5'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANInterfaceV2N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: WANINTERFACE_CONFIG_INVALID_SITE_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_NETWORK_ID
+                  - code: WANINTERFACE_CONFIG_INVALID_BANDWIDTH
+                  - code: WANINTERFACE_CONFIG_LABEL_NOT_FOUND
+                  - code: WANINTERFACE_CONFIG_INVALID_LABEL
+                  - code: WANINTERFACE_LQM_CONFIG_NOT_ALLOWED
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_FIELDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS_SIZE
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_STATISTIC
+                  - code: WANINTERFACE_LQM_CONFIG_DUPLICATE_HUB_SITE_IDS
+                  - code: WANINTERFACE_LQM_CONFIG_INVALID_INTER_PACKET_GAP
+                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_INTERVAL
+                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_FAILURE_COUNT
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Update the Site WAN interface (v2.5)
       tags:
       - Site Configuration
   /v2.6/api/tenants/{tenant_id}/sites/{site_id}/waninterfaces:
@@ -4969,265 +7298,12 @@ paths:
       summary: Get Hub Cluster Status (v4.0)
       tags:
       - Site Configuration
-  /v4.8/api/tenants/{tenant_id}/sites:
+  /v4.1/api/tenants/{tenant_id}/sites:
     get:
-      description: Get all the sites of a tenant.
-      operationId: get-v4.8-api-tenants-tenant_id-sites
+      description: Get Sites of a tenant
+      operationId: get-v4.1-api-tenants-tenant_id-sites
       parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/SiteV4N8'
-                      type: array
-                  type: object
-          description: Successful Operation
-      summary: Get Sites of a Tenant (v4.8)
-      tags:
-      - Site Configuration
-    post:
-      description: Create a new site.
-      operationId: post-v4.8-api-tenants-tenant_id-sites
-      parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SiteScreenV4N8'
-        description: Details of the site to be created
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SiteV4N8'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_SITE_CONFIG
-                  - code: POLICY_NOT_AVAILABLE
-                  - code: NGFWSETSTACK_NOT_FOUND
-                  - code: SITE_STATE_INVALID
-                  - code: MULTICAST_INVALID_PEER_GROUP_ID
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create a New Site (v4.8)
-      tags:
-      - Site Configuration
-  /v4.8/api/tenants/{tenant_id}/sites/query:
-    post:
-      description: Queries the DB for limit number of sites that match the query parameters.
-      operationId: post-v4.8-api-tenants-tenant_id-sites-query
-      parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SiteQuery'
-        description: Query Details for the site
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/SiteQueryFilterV4N8'
-                      type: array
-                  type: object
-          description: Successful Operation
-      summary: Query DB for Number of Sites that Match Query Params (v4.8)
-      tags:
-      - Site Configuration
-  /v4.8/api/tenants/{tenant_id}/sites/{site_id}:
-    delete:
-      description: Delete a particular site.
-      operationId: delete-v4.8-api-tenants-tenant_id-sites-site_id
-      parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SiteV4N8'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: SITE_NOT_FOUND
-                  - code: UNKNOWN_SITE
-                  - code: DELETE_FORBIDDEN_INVALID_STATE
-                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
-                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
-                  - code: DELETE_FORBIDDEN_ELEMENT_OR_ELEMENT_SHELL_EXISTS
-                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete a Site (v4.8)
-      tags:
-      - Site Configuration
-    get:
-      description: Get the site if a particular tenant.
-      operationId: get-v4.8-api-tenants-tenant_id-sites-site_id
-      parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SiteV4N8'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: SITE_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Site of Tenant (v4.8)
-      tags:
-      - Site Configuration
-    put:
-      description: Update an existing site.
-      operationId: put-v4.8-api-tenants-tenant_id-sites-site_id
-      parameters:
-      - description: The tenant ID.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SiteScreenV4N8'
-        description: Details of the site to update
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SiteV4N8'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: POLICY_CONFIG_INVALID_FOR_HUB_SITE
-                  - code: INVALID_SECURITY_POLICYSET
-                  - code: INVALID_POLICY_CONFIGURATION
-                  - code: INVALID_NETWORK_POLICYSETSTACK
-                  - code: NGFWSETSTACK_NOT_FOUND
-                  - code: DEFAULT_NETWORK_POLICYSETSTACK_NOT_AVAILABLE
-                  - code: INVALID_PRIORITY_POLICYSETSTACK
-                  - code: DEFAULT_PRIORITY_POLICYSETSTACK_NOT_AVAILABLE
-                  - code: POLICYSETSTACK_CONFIG_NOT_SUPPORTED
-                  - code: DEFAULT_POLICY_NOT_CONFIGURED
-                  - code: SITE_CONFIG_SERVICEBINDING_INVALID_FOR_HUB
-                  - code: SITE_CONFIG_SERVICEBINDING_DOES_NOT_EXIST
-                  - code: SITE_STATE_INVALID
-                  - code: SITE_ELEMENT_CLUSTER_ROLE_UPDATE_NOT_ALLOWED
-                  - code: INVALID_POLICYSET
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: MULTICAST_INVALID_PEER_GROUP_ID
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update a Site (v4.8)
-      tags:
-      - Site Configuration
-  /v4.9/api/tenants/{tenant_id}/sites:
-    get:
-      description: Get all the sites of a tenant.
-      operationId: get-v4.9-api-tenants-tenant_id-sites
-      parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -5244,18 +7320,18 @@ paths:
                 - properties:
                     items:
                       items:
-                        $ref: '#/components/schemas/SiteV4N9'
+                        $ref: '#/components/schemas/Site'
                       type: array
                   type: object
           description: Successful Operation
-      summary: Get Sites of a Tenant (v4.9)
+      summary: Get Sites of a tenant (v4.1)
       tags:
       - Site Configuration
     post:
-      description: Create a new site.
-      operationId: post-v4.9-api-tenants-tenant_id-sites
+      description: Create a new site
+      operationId: post-v4.1-api-tenants-tenant_id-sites
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -5266,14 +7342,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SiteV4N9'
+              $ref: '#/components/schemas/Site'
         description: Details of the site to be created
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SiteScreenV4N9'
+                $ref: '#/components/schemas/Site'
           description: Successful Operation
         '400':
           content:
@@ -5281,28 +7357,27 @@ paths:
               example:
                 value:
                   _error:
+                  - code: SITE_ALREADY_EXISTS
+                  - code: SITE_ADMIN_STATE_MISSING
+                  - code: SITE_ROLE_MISSING
+                  - code: INVALID_PRIORITY_POLICYSETSTACK_ID
+                  - code: INVALID_EXTENDED_TAG_SIZE_OR_DUPLICATE
+                  - code: INVALID_NETWORK_POLICYSETSTACK_ID
+                  - code: INVALID_NAT_POLICYSETSTACK_ID
                   - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_SITE_CONFIG
                   - code: POLICY_NOT_AVAILABLE
-                  - code: NGFWSETSTACK_NOT_FOUND
-                  - code: SITE_STATE_INVALID
-                  - code: MULTICAST_INVALID_PEER_GROUP_ID
-                  - code: SITE_CONFIG_PERFMGMT_POLICY_NOT_SUPPORTED
-                  - code: SITE_CONFIG_PERFMGMT_POLICYSETSTACK_FORBIDDEN
-                  - code: SITE_CONFIG_PERFMGMT_POLICYSETSTACK_NOT_FOUND
-                  - code: PERFMGMT_DEFAULT_STACK_NOT_FOUND
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create a New Site (v4.9)
+      summary: Create a new site (v4.1)
       tags:
       - Site Configuration
-  /v4.9/api/tenants/{tenant_id}/sites/query:
+  /v4.1/api/tenants/{tenant_id}/sites/query:
     post:
-      description: Queries the DB for limit number of sites that match the query parameters.
-      operationId: post-v4.9-api-tenants-tenant_id-sites-query
+      description: Queries db for limit number of sites that match query params.
+      operationId: post-v4.1-api-tenants-tenant_id-sites-query
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -5325,27 +7400,36 @@ paths:
                 - properties:
                     items:
                       items:
-                        $ref: '#/components/schemas/SiteQueryFilterV4N9'
+                        $ref: '#/components/schemas/SiteQueryFilter'
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for Number of Sites that Match Query Params (v4.9)
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_QUERY_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Queries db for limit number of sites that match query params. (v4.1)
       tags:
       - Site Configuration
-  /v4.9/api/tenants/{tenant_id}/sites/{site_id}:
+  /v4.1/api/tenants/{tenant_id}/sites/{site_id}:
     delete:
-      description: Delete a particular site.
-      operationId: delete-v4.9-api-tenants-tenant_id-sites-site_id
+      description: Delete a site
+      operationId: delete-v4.1-api-tenants-tenant_id-sites-site_id
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
+      - description: Site Id
         in: path
         name: site_id
         required: true
@@ -5357,7 +7441,256 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SiteV4N9'
+                $ref: '#/components/schemas/Site'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_ALREADY_EXISTS
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.1)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant
+      operationId: get-v4.1-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant (v4.1)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing site
+      operationId: put-v4.1-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Site'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_ALREADY_EXISTS
+                  - code: SITE_ADMIN_STATE_MISSING
+                  - code: SITE_ROLE_MISSING
+                  - code: INVALID_PRIORITY_POLICYSETSTACK_ID
+                  - code: INVALID_EXTENDED_TAG_SIZE_OR_DUPLICATE
+                  - code: INVALID_NETWORK_POLICYSETSTACK_ID
+                  - code: INVALID_NAT_POLICYSETSTACK_ID
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+                  - code: SITE_CONFIG_POLICYSET_DOES_NOT_EXIST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing site (v4.1)
+      tags:
+      - Site Configuration
+  /v4.2/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get Sites of a tenant
+      operationId: get-v4.2-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N2'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Sites of a tenant (v4.2)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new site
+      operationId: post-v4.2-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N2'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new site (v4.2)
+      tags:
+      - Site Configuration
+  /v4.2/api/tenants/{tenant_id}/sites/query:
+    post:
+      description: Queries db for limit number of sites that match query params.
+      operationId: post-v4.2-api-tenants-tenant_id-sites-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteQuery'
+        description: Query Details for the site
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteQueryFilterV4N2'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Queries db for limit number of sites that match query params. (v4.2)
+      tags:
+      - Site Configuration
+  /v4.2/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.2-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N2'
           description: Successful Operation
         '400':
           content:
@@ -5370,27 +7703,26 @@ paths:
                   - code: DELETE_FORBIDDEN_INVALID_STATE
                   - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
                   - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
-                  - code: DELETE_FORBIDDEN_ELEMENT_OR_ELEMENT_SHELL_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
                   - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete a Site (v4.9)
+      summary: Delete a site (v4.2)
       tags:
       - Site Configuration
     get:
-      description: Get the site if a particular tenant.
-      operationId: get-v4.9-api-tenants-tenant_id-sites-site_id
+      description: Get Site of a tenant
+      operationId: get-v4.2-api-tenants-tenant_id-sites-site_id
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
+      - description: Site Id
         in: path
         name: site_id
         required: true
@@ -5402,7 +7734,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SiteV4N9'
+                $ref: '#/components/schemas/SiteV4N2'
           description: Successful Operation
         '400':
           content:
@@ -5414,22 +7746,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Site of Tenant (v4.9)
+      summary: Get Site of a tenant (v4.2)
       tags:
       - Site Configuration
     put:
-      description: Update an existing site.
-      operationId: put-v4.9-api-tenants-tenant_id-sites-site_id
+      description: Update an existing site
+      operationId: put-v4.2-api-tenants-tenant_id-sites-site_id
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: ID of the site. More details on the site can be retrieved by
-          querying the sites API.
+      - description: Site Id
         in: path
         name: site_id
         required: true
@@ -5440,14 +7771,1159 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SiteScreenV4N9'
+              $ref: '#/components/schemas/SiteV4N2'
         description: Details of the site to update
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SiteV4N9'
+                $ref: '#/components/schemas/SiteV4N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing site (v4.2)
+      tags:
+      - Site Configuration
+  /v4.3/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get Sites of a tenant
+      operationId: get-v4.3-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Sites of a tenant (v4.3)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new site
+      operationId: post-v4.3-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N3'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new site (v4.3)
+      tags:
+      - Site Configuration
+  /v4.3/api/tenants/{tenant_id}/sites/query:
+    post:
+      description: Queries db for limit number of sites that match query params.
+      operationId: post-v4.3-api-tenants-tenant_id-sites-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteQuery'
+        description: Query Details for the site
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteQueryFilterV4N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Queries db for limit number of sites that match query params. (v4.3)
+      tags:
+      - Site Configuration
+  /v4.3/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.3-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.3)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant
+      operationId: get-v4.3-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant (v4.3)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing site
+      operationId: put-v4.3-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N3'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: POLICY_CONFIG_INVALID_FOR_HUB_SITE
+                  - code: INVALID_SECURITY_POLICYSET
+                  - code: INVALID_POLICY_CONFIGURATION
+                  - code: INVALID_NETWORK_POLICYSETSTACK
+                  - code: DEFAULT_NETWORK_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: INVALID_PRIORITY_POLICYSETSTACK
+                  - code: DEFAULT_PRIORITY_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: POLICYSETSTACK_CONFIG_NOT_SUPPORTED
+                  - code: DEFAULT_POLICY_NOT_CONFIGURED
+                  - code: SITE_CONFIG_SERVICEBINDING_INVALID_FOR_HUB
+                  - code: SITE_CONFIG_SERVICEBINDING_DOES_NOT_EXIST
+                  - code: INVALID_POLICYSET
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing site (v4.3)
+      tags:
+      - Site Configuration
+  /v4.4/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get Sites of a tenant
+      operationId: get-v4.4-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Sites of a tenant (v4.4)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new site
+      operationId: post-v4.4-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N4'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new site (v4.4)
+      tags:
+      - Site Configuration
+  /v4.4/api/tenants/{tenant_id}/sites/query:
+    post:
+      description: Queries db for limit number of sites that match query params.
+      operationId: post-v4.4-api-tenants-tenant_id-sites-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteQuery'
+        description: Query Details for the site
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteQueryFilterV4N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Queries db for limit number of sites that match query params. (v4.4)
+      tags:
+      - Site Configuration
+  /v4.4/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.4-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.4)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant
+      operationId: get-v4.4-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant (v4.4)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing site
+      operationId: put-v4.4-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N4'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: POLICY_CONFIG_INVALID_FOR_HUB_SITE
+                  - code: INVALID_SECURITY_POLICYSET
+                  - code: INVALID_POLICY_CONFIGURATION
+                  - code: INVALID_NETWORK_POLICYSETSTACK
+                  - code: DEFAULT_NETWORK_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: INVALID_PRIORITY_POLICYSETSTACK
+                  - code: DEFAULT_PRIORITY_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: POLICYSETSTACK_CONFIG_NOT_SUPPORTED
+                  - code: DEFAULT_POLICY_NOT_CONFIGURED
+                  - code: SITE_CONFIG_SERVICEBINDING_INVALID_FOR_HUB
+                  - code: SITE_CONFIG_SERVICEBINDING_DOES_NOT_EXIST
+                  - code: INVALID_POLICYSET
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing site (v4.4)
+      tags:
+      - Site Configuration
+  /v4.5/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get Sites of a tenant
+      operationId: get-v4.5-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N5'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get Sites of a tenant (v4.5)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new site
+      operationId: post-v4.5-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N5'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+                  - code: SITE_STATE_INVALID
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new site (v4.5)
+      tags:
+      - Site Configuration
+  /v4.5/api/tenants/{tenant_id}/sites/query:
+    post:
+      description: Queries db for limit number of sites that match query params.
+      operationId: post-v4.5-api-tenants-tenant_id-sites-query
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteQuery'
+        description: Query Details for the site
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteQueryFilterV4N5'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Queries db for limit number of sites that match query params. (v4.5)
+      tags:
+      - Site Configuration
+  /v4.5/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.5-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.5)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant
+      operationId: get-v4.5-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant (v4.5)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing site
+      operationId: put-v4.5-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N5'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N5'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: POLICY_CONFIG_INVALID_FOR_HUB_SITE
+                  - code: INVALID_SECURITY_POLICYSET
+                  - code: INVALID_POLICY_CONFIGURATION
+                  - code: INVALID_NETWORK_POLICYSETSTACK
+                  - code: DEFAULT_NETWORK_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: INVALID_PRIORITY_POLICYSETSTACK
+                  - code: DEFAULT_PRIORITY_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: POLICYSETSTACK_CONFIG_NOT_SUPPORTED
+                  - code: DEFAULT_POLICY_NOT_CONFIGURED
+                  - code: SITE_CONFIG_SERVICEBINDING_INVALID_FOR_HUB
+                  - code: SITE_CONFIG_SERVICEBINDING_DOES_NOT_EXIST
+                  - code: SITE_STATE_INVALID
+                  - code: SITE_ELEMENT_CLUSTER_ROLE_UPDATE_NOT_ALLOWED
+                  - code: INVALID_POLICYSET
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing site (v4.5)
+      tags:
+      - Site Configuration
+  /v4.6/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get all sites of a tenant
+      operationId: get-v4.6-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N6'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all sites of a tenant (v4.6)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a new v4.5 site
+      operationId: post-v4.6-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N6'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N6'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+                  - code: NGFWSETSTACK_NOT_FOUND
+                  - code: SITE_STATE_INVALID
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a new v4.5 site (v4.6)
+      tags:
+      - Site Configuration
+  /v4.6/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.6-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N6'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.6)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant by tenant ID and its ID
+      operationId: get-v4.6-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N6'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant by tenant ID and its ID (v4.6)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing v4.6 site
+      operationId: put-v4.6-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N6'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N6'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: POLICY_CONFIG_INVALID_FOR_HUB_SITE
+                  - code: INVALID_SECURITY_POLICYSET
+                  - code: INVALID_POLICY_CONFIGURATION
+                  - code: INVALID_NETWORK_POLICYSETSTACK
+                  - code: NGFWSETSTACK_NOT_FOUND
+                  - code: DEFAULT_NETWORK_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: INVALID_PRIORITY_POLICYSETSTACK
+                  - code: DEFAULT_PRIORITY_POLICYSETSTACK_NOT_AVAILABLE
+                  - code: POLICYSETSTACK_CONFIG_NOT_SUPPORTED
+                  - code: DEFAULT_POLICY_NOT_CONFIGURED
+                  - code: SITE_CONFIG_SERVICEBINDING_INVALID_FOR_HUB
+                  - code: SITE_CONFIG_SERVICEBINDING_DOES_NOT_EXIST
+                  - code: SITE_STATE_INVALID
+                  - code: SITE_ELEMENT_CLUSTER_ROLE_UPDATE_NOT_ALLOWED
+                  - code: INVALID_POLICYSET
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update an existing v4.6 site (v4.6)
+      tags:
+      - Site Configuration
+  /v4.7/api/tenants/{tenant_id}/sites:
+    get:
+      description: Get all sites of a tenant
+      operationId: get-v4.7-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SiteV4N7'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get all sites of a tenant (v4.7)
+      tags:
+      - Site Configuration
+    post:
+      description: Create a site
+      operationId: post-v4.7-api-tenants-tenant_id-sites
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N7'
+        description: Details of the site to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N7'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_SITE_CONFIG
+                  - code: POLICY_NOT_AVAILABLE
+                  - code: NGFWSETSTACK_NOT_FOUND
+                  - code: SITE_STATE_INVALID
+                  - code: MULTICAST_INVALID_PEER_GROUP_ID
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create a site (v4.7)
+      tags:
+      - Site Configuration
+  /v4.7/api/tenants/{tenant_id}/sites/{site_id}:
+    delete:
+      description: Delete a site
+      operationId: delete-v4.7-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N7'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+                  - code: UNKNOWN_SITE
+                  - code: DELETE_FORBIDDEN_INVALID_STATE
+                  - code: DELETE_FORBIDDEN_SITE_WAN_EXISTS
+                  - code: DELETE_FORBIDDEN_SITE_WAN_LQM_CONFIG_EXISTS
+                  - code: DELETE_FORBIDDEN_ELEMENT_EXISTS
+                  - code: SITE_CONFIG_DELETE_NOTALLOWED_SERVICEENDPOINT_EXISTS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete a site (v4.7)
+      tags:
+      - Site Configuration
+    get:
+      description: Get Site of a tenant by tenant ID and its ID
+      operationId: get-v4.7-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N7'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SITE_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Site of a tenant by tenant ID and its ID (v4.7)
+      tags:
+      - Site Configuration
+    put:
+      description: Update an existing site
+      operationId: put-v4.7-api-tenants-tenant_id-sites-site_id
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: Site Id
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteV4N7'
+        description: Details of the site to update
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteV4N7'
           description: Successful Operation
         '400':
           content:
@@ -5473,14 +8949,10 @@ paths:
                   - code: INVALID_JSON_EXTRA_ATTRIBUTE
                   - code: INVALID_JSON_COMMON_ATTR_MISMATCH
                   - code: MULTICAST_INVALID_PEER_GROUP_ID
-                  - code: SITE_CONFIG_PERFMGMT_POLICY_NOT_SUPPORTED
-                  - code: SITE_CONFIG_PERFMGMT_POLICYSETSTACK_FORBIDDEN
-                  - code: SITE_CONFIG_PERFMGMT_POLICYSETSTACK_NOT_FOUND
-                  - code: SITE_CONFIG_PERFMGMT_POLICYSETSTACK_REMOVED
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update a Site (v4.9)
+      summary: Update an existing site (v4.7)
       tags:
       - Site Configuration
 servers:
