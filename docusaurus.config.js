@@ -661,16 +661,24 @@ const config = {
           },
           insights: {
             specPath: "openapi-specs/access/insights/3.0",
-            outputDir: "products/access/api/insights",
+            outputDir: "products/access/api/insights/",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "3.0",
-            label: "v3.0",
+            version: "2.0",
+            label: "v2.0",
             baseUrl: "/access/api/insights/",
+
+            specPath: "openapi-specs/access/insights/2.0",
+            outputDir: "products/access/api/insights/",
+            sidebarOptions: { groupPathsBy: "tag" },
+            version: "2.0",
+            label: "v2.0",
+            baseUrl: "/access/api/insights/2.0/",
+
             versions: {
               "2.0": {
                 specPath: "openapi-specs/access/insights/2.0",
                 outputDir: "products/access/api/insights/2.0",
-                label: "v1.0",
+                label: "v2.0",
                 baseUrl: "/access/api/insights/2.0/",
               },
               "1.0": {
