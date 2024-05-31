@@ -665,14 +665,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
             version: "3.0",
             label: "v3.0",
-            baseUrl: "/access/api/insights/3.0/",
-
-            specPath: "openapi-specs/access/insights/2.0",
-            outputDir: "products/access/api/insights/",
-            sidebarOptions: { groupPathsBy: "tag" },
-            version: "2.0",
-            label: "v2.0",
-            baseUrl: "/access/api/insights/2.0/",
+            baseUrl: "/access/api/insights/",
 
             versions: {
               "2.0": {
