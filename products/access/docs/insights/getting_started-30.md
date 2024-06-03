@@ -23,33 +23,6 @@ other SASE APIs. That is, you must have a TSG and a service account that has rol
 Prisma Access Insights instance. To understand this process, see
 [Prisma SASE API Get Started](/sase/docs/getstarted).
 
-## Base URLs
-
-While you use Prisma SASE to obtain an access token for use with your Prisma Access 3.0
-APIs, you do not use the same FQDN as do the other Prisma SASE APIs.
-
-All requests go to the same base URL:
-
-`https://pa-<region>.api.prismaaccess.com`
-
-where _&lt;region&gt;_ identifies your tenant's Cortex Data Lake (CDL) region. Available
-regions are:
-
-| Region    | URL                          |
-| --------- | ---------------------------- |
-| US        | pa-us01.api.prismaaccess.com |
-| EU        | pa-eu01.api.prismaaccess.com |
-| UK        | pa-uk01.api.prismaaccess.com |
-| Singapore | pa-sg01.api.prismaaccess.com |
-| Canada    | pa-ca01.api.prismaaccess.com |
-| Japan     | pa-jp01.api.prismaaccess.com |
-| Australia | pa-au01.api.prismaaccess.com |
-| Germany   | pa-de01.api.prismaaccess.com |
-| India     | pa-in01.api.prismaaccess.com |
-
-You chose your region when you initially configured your Prisma Access Insights
-instance.
-
 ## Full API URL
 
 The full URL for an API request includes the base URL, plus the API URI described in the API
