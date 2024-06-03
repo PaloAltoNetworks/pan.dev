@@ -10,7 +10,7 @@ components:
             $ref: '#/components/schemas/AggregateData'
           type: array
         field:
-          description: Field
+          description: Field (ref.doc.key:0:Aggregate.field)
           type: string
         name:
           description: 'The name of the query response.
@@ -18,7 +18,7 @@ components:
             '
           type: string
         operator:
-          description: Operator
+          description: Operator (ref.doc.key:0:Aggregate.operator)
           enum:
           - max
           - count
@@ -270,98 +270,63 @@ components:
 
             '
           type: object
-    BulkConfigCreateTemplate:
+    BulkConfigCreateScreen:
       properties:
         data:
-          description: 'Data required to deploy new sites at scale using the site
-            template.
-
-            '
-          type: string
-        disabled:
-          description: 'List the disabled site profiles.
-
-            '
-          type: boolean
-        disabled_reason:
-          description: "Reason to disable the site profile.          \n"
+          description: Data
           type: string
         id:
-          description: 'The ID.
-
-            '
-          type: string
-        inactive:
-          description: 'List the inactive site profiles.
-
-            '
-          type: boolean
-        inactive_reason:
-          description: 'Reason for the site profile to be inactive.
-
-            '
-          type: string
-        region:
-          description: 'The site region.
-
-            '
+          description: Id
           type: string
         site_id:
-          description: 'The site ID.
-
-            '
+          description: 'Site Id: Digits(fraction = 0, integer = 50, SITEID_INVALID) '
           type: string
         site_type:
-          description: 'The site type.
-
-            '
-          enum:
-          - NONE
-          - HUB
-          - SPOKE
-          - PA_WE_BR
-          - PA_WE_DC
-          - PA_CONN
-          type: string
-        status:
-          description: 'The site deployment status.
-
-            '
-          type: string
-        status_description:
-          description: 'The description of the site deployment status.
-
-            '
+          description: 'Site Type: Required(error = SITE_ROLE_MISSING: Site role missing.)
+            ValidateEnum(enumClass = classOf[ElementClusterRole], error = INVALID_SITE_TYPE:
+            Invalid site type, nullAllowed = false) '
           type: string
         template_description:
-          description: 'The site template description. Max length = 256.
-
-            '
-          type: string
-        template_id:
-          description: 'The template ID.
-
-            '
+          description: 'Template Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
           type: string
         template_name:
-          description: 'The site template name. Max length = 128.
-
-            '
-          type: string
-        tenant_id:
-          description: 'The tenant ID.
-
-            '
+          description: 'Template Name: Required(error = TEMPLATE_NAME_REQUIRED: Template
+            name missing) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the
+            resource exceeds limit., min = 0) '
           type: string
         variable_map:
-          description: 'Data required to deploy new sites at scale using this template.
-
-            '
           type: object
       required:
       - site_type
       - template_name
-      - tenant_id
+    BulkConfigCreateScreenUpdate:
+      properties:
+        data:
+          description: Data
+          type: string
+        id:
+          description: Id
+          type: string
+        site_type:
+          description: 'Site Type: Required(error = SITE_ROLE_MISSING: Site role missing.)
+            ValidateEnum(enumClass = classOf[ElementClusterRole], error = INVALID_SITE_TYPE:
+            Invalid site type, nullAllowed = false) '
+          type: string
+        template_description:
+          description: 'Template Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
+        template_name:
+          description: 'Template Name: Required(error = TEMPLATE_NAME_REQUIRED: Template
+            name missing) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the
+            resource exceeds limit., min = 0) '
+          type: string
+        variable_map:
+          type: object
+      required:
+      - site_type
+      - template_name
     BulkConfigPush:
       properties:
         deployment_id:
@@ -373,6 +338,9 @@ components:
           description: 'The ID.
 
             '
+          type: string
+        site_id:
+          description: Site Id
           type: string
         template_id:
           description: 'The template ID.
@@ -476,6 +444,12 @@ components:
 
             '
           type: string
+        isSiteDeleted:
+          description: IsSiteDeleted
+          type: boolean
+        site_id:
+          description: Site Id
+          type: string
         site_name:
           description: "List by the site name.          \n"
           type: string
@@ -509,6 +483,16 @@ components:
 
             '
           type: object
+    BulkConfigPushScreen:
+      properties:
+        id:
+          description: Id
+          type: string
+        variable_map:
+          description: Variable Map
+          items:
+            type: object
+          type: array
     BulkConfigStatus:
       properties:
         id:
@@ -520,7 +504,9 @@ components:
             '
           type: string
         status_description:
-          description: "The description of the site deployment status.\n\n      \n"
+          description: 'The description of the site deployment status.
+
+            '
           type: string
     ElementQueryFilter:
       properties:
@@ -674,6 +660,7 @@ components:
           - ACTIVE_BOUND_TO_SITE_FAILED
           - OOS
           - ACTIVE_DECLAIM_IN_PROGRESS
+          - ACTIVE_DECLAIMED
           type: string
       required:
       - site_id
@@ -784,14 +771,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkConfigCreate'
+              $ref: '#/components/schemas/BulkConfigCreateScreen'
         description: Details of the Site Profile to be created
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkConfigCreateTemplate'
+                $ref: '#/components/schemas/BulkConfigCreate'
           description: Successful Operation
         '400':
           content:
@@ -810,6 +797,9 @@ paths:
                   - code: SITEID_OR_DATA_IS_MANDATORY
                   - code: INVALID_SITEID
                   - code: INVALID_SITE_TYPE
+                  - code: INVALID_VARIABLE_CHARACTER
+                  - code: TEMPLATE_CREATION_NOT_ALLOWED_ON_SHELL
+                  - code: DUPLICATE_RESOURCE
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -1005,7 +995,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkConfigCreateTemplate'
+              $ref: '#/components/schemas/BulkConfigCreateScreenUpdate'
         description: update of the Site Profile
       responses:
         '200':
@@ -1026,6 +1016,7 @@ paths:
                   - code: INVALID_UPDATE_OPERATION
                   - code: TEMPLATE_INVALID_FORMAT
                   - code: TEMPLATE_VARIABLE_MISMATCH
+                  - code: INVALID_VARIABLE_CHARACTER
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -1055,7 +1046,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Error'
+              $ref: '#/components/schemas/BulkConfigPushScreen'
         description: Details of the Site Profile to be deployed
       responses:
         '200':
@@ -1081,6 +1072,7 @@ paths:
                   - code: INVALID_JSON_EXTRA_ATTRIBUTE
                   - code: TEMPLATE_NOT_AVAILABLE
                   - code: INVALID_VARIABLE_MAP_DATA_TYPE
+                  - code: INVALID_VARIABLE_CHARACTER
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request

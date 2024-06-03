@@ -2,8 +2,20 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: 'The details of the aggregate data.
+
+            '
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
           description: 'The field value.
+
+            '
+          type: string
+        name:
+          description: 'The name of the query response.
 
             '
           type: string
@@ -18,6 +30,28 @@ components:
           - avg
           - sum
           type: string
+        statistic:
+          description: 'The aggregate statistics.
+
+            '
+          type: string
+        unit:
+          description: 'The unit.
+
+            '
+          type: string
+    AggregateData:
+      properties:
+        value:
+          description: 'Value of the aggregate data.
+
+            '
+          type: number
+        view:
+          description: 'View the aggregate date.
+
+            '
+          type: object
     BaseCustomDHCPOptions:
       properties:
         option_definition:
@@ -203,6 +237,9 @@ components:
 
             '
           type: boolean
+        lifesize:
+          $ref: '#/components/schemas/Lifesize'
+          description: Lifesize
         lifetime:
           description: 'The life time for the ESP Group. The default lifetime of an
             ESP Group is 24 hours.
@@ -210,6 +247,9 @@ components:
             '
           format: int32
           type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
         mode:
           description: 'The IPsec config ESP tunnel mode.
 
@@ -225,8 +265,10 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
+        responder_sase_proposals:
+          $ref: '#/components/schemas/ResponderSaseProposals'
+          description: Responder Sase Proposals
       required:
-      - proposals
       - mode
     Error:
       properties:
@@ -254,6 +296,9 @@ components:
 
             '
           type: boolean
+        authentication_multiple:
+          description: Authentication Multiple
+          type: integer
         key_exchange:
           description: 'The key exchange for the IKE group = IKEv1 or IKEv2.
 
@@ -269,6 +314,9 @@ components:
             '
           format: int32
           type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
         port:
           description: 'The port number of the communication port. The default port
             is 500. The port number configured in the IKE group has to be the same
@@ -293,7 +341,6 @@ components:
             '
           type: boolean
       required:
-      - proposals
       - key_exchange
     IKEV1Params:
       properties:
@@ -338,12 +385,18 @@ components:
       required:
       - end_ip
       - start_ip
-    IPSECAuthentication:
+    IPSECAuthenticationV1:
       properties:
         certificate:
           description: 'The certificate authentication for the IPsec Profile.
 
             '
+          type: string
+        certificate_profile_id:
+          description: Certificate Profile Id
+          type: string
+        comment:
+          description: Comment
           type: string
         ikev1_params:
           $ref: '#/components/schemas/IKEV1Params'
@@ -361,11 +414,18 @@ components:
           - DN
           - HOSTNAME
           - CUSTOM
+          - NONE
           type: string
         local_id_custom:
           description: 'The custom local ID.
 
             '
+          type: string
+        local_pa_certificate_id:
+          description: Local Pa Certificate Id
+          type: string
+        pa_master_key_id:
+          description: Pa Master Key Id
           type: string
         passphrase:
           description: Passphrase
@@ -373,6 +433,15 @@ components:
         passphrase_encrypted:
           description: 'Passphrase Encrypted: JsonIgnore(value = true) '
           type: string
+        peer_id_check:
+          description: Peer Id Check
+          enum:
+          - EXACT
+          - WILDCARD
+          type: string
+        permit_peer_id_mismatch:
+          description: Permit Peer Id Mismatch
+          type: boolean
         private_key:
           description: 'The private key file uploaded for certificate authentication.
 
@@ -398,6 +467,9 @@ components:
         secret_hash:
           description: 'Secret Hash: JsonIgnore(value = true) '
           type: string
+        strict_validation_peer_extended_key_use:
+          description: Strict Validation Peer Extended Key Use
+          type: boolean
         type:
           description: 'The authentication type = PSK or Certificates.
 
@@ -416,7 +488,7 @@ components:
     IPSECProfile:
       properties:
         authentication:
-          $ref: '#/components/schemas/IPSECAuthentication'
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
           description: 'The details of the authentication mode for the IPsec Profile.
 
             '
@@ -538,7 +610,7 @@ components:
     IPSECProfileQueryFilter:
       properties:
         authentication:
-          $ref: '#/components/schemas/IPSECAuthentication'
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
           description: 'The details of the authentication mode for the IPsec Profile.
 
             '
@@ -592,7 +664,7 @@ components:
     IPSECProfileScreen:
       properties:
         authentication:
-          $ref: '#/components/schemas/IPSECAuthentication'
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
           description: 'The details of the authentication mode for the IPsec Profile.
 
             '
@@ -641,41 +713,6 @@ components:
       - authentication
       - ike_group
       - esp_group
-      - name
-    LANNetwork:
-      properties:
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
-
-            '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: "The scope of the network. \n"
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-        security_policy_set:
-          $ref: '#/components/schemas/SecurityPolicySet'
-          description: 'The details of the security policy set configured for the
-            network.
-
-            '
-      required:
-      - scope
       - name
     LANNetworkQuery:
       properties:
@@ -747,41 +784,6 @@ components:
             '
           format: int64
           type: integer
-    LANNetworkQueryFilter:
-      properties:
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
-
-            '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: "The scope of the network. \n"
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-        security_policy_set:
-          $ref: '#/components/schemas/SecurityPolicySet'
-          description: 'The details of the security policy set configured for the
-            network.
-
-            '
-      required:
-      - scope
-      - name
     LANNetworkQueryFilterResponse:
       properties:
         description:
@@ -832,7 +834,7 @@ components:
       - site_id
       - scope
       - name
-    LANNetworkQueryFilterV3N1:
+    LANNetworkQueryFilterV3N2:
       properties:
         description:
           description: 'The description of the LAN network. Maz size = 256.
@@ -844,6 +846,11 @@ components:
         ipv4_config:
           $ref: '#/components/schemas/LanNetworkIPv4Config'
           description: 'The Ipv4 config of the LAN network. Maz size = 256.
+
+            '
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
 
             '
         name:
@@ -876,73 +883,7 @@ components:
       required:
       - scope
       - name
-    LANNetworkScreen:
-      properties:
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
-
-            '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: "The scope of the network. \n"
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-        security_policy_set:
-          $ref: '#/components/schemas/SecurityPolicySet'
-          description: 'The details of the security policy set configured for the
-            network.
-
-            '
-      required:
-      - scope
-      - name
-    LANNetworkScreenV3:
-      properties:
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
-
-            '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: 'The scope of the network.
-
-            '
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-      required:
-      - scope
-      - name
-    LANNetworkScreenV3N1:
+    LANNetworkQueryFilterV3N3:
       properties:
         description:
           description: 'The description of the LAN network. Maz size = 256.
@@ -956,77 +897,9 @@ components:
           description: 'The Ipv4 config of the LAN network. Maz size = 256.
 
             '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: 'The scope of the network.
-
-            '
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-        tags:
-          description: "An information field that can be added to identify the LAN\
-            \ network. Maximum 10 unique tags of length 1024 each are allowed. \n"
-          items:
-            description: Tags
-            type: string
-          type: array
-      required:
-      - scope
-      - name
-    LANNetworkV3:
-      properties:
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
-
-            '
-        name:
-          description: 'The name of the LAN network. Max size = 128.
-
-            '
-          type: string
-        network_context_id:
-          description: 'The network context ID.
-
-            '
-          type: string
-        scope:
-          description: 'The scope of the network.
-
-            '
-          enum:
-          - GLOBAL
-          - LOCAL
-          type: string
-      required:
-      - scope
-      - name
-    LANNetworkV3N1:
-      properties:
-        description:
-          description: 'The description of the LAN network. Maz size = 256.
-
-            '
-        id:
-          description: "The ID of the LAN network. \n"
-          type: string
-        ipv4_config:
-          $ref: '#/components/schemas/LanNetworkIPv4Config'
-          description: 'The Ipv4 config of the LAN network. Maz size = 256.
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
 
             '
         name:
@@ -1056,6 +929,214 @@ components:
             description: Tags
             type: string
           type: array
+        vrf_context_id:
+          description: "The vrf context id. \n"
+          type: string
+      required:
+      - scope
+      - name
+    LANNetworkScreenV3N2:
+      properties:
+        description:
+          description: 'The description of the LAN network. Maz size = 256.
+
+            '
+        id:
+          description: "The ID of the LAN network. \n"
+          type: string
+        ipv4_config:
+          $ref: '#/components/schemas/LanNetworkIPv4Config'
+          description: 'The Ipv4 config of the LAN network. Maz size = 256.
+
+            '
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
+
+            '
+        name:
+          description: 'The name of the LAN network. Max size = 128.
+
+            '
+          type: string
+        network_context_id:
+          description: 'The network context ID.
+
+            '
+          type: string
+        scope:
+          description: 'The scope of the network.
+
+            '
+          enum:
+          - GLOBAL
+          - LOCAL
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the LAN
+            network. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - scope
+      - name
+    LANNetworkScreenV3N3:
+      properties:
+        description:
+          description: 'The description of the LAN network. Maz size = 256.
+
+            '
+        id:
+          description: "The ID of the LAN network. \n"
+          type: string
+        ipv4_config:
+          $ref: '#/components/schemas/LanNetworkIPv4Config'
+          description: 'The Ipv4 config of the LAN network. Maz size = 256.
+
+            '
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
+
+            '
+        name:
+          description: 'The name of the LAN network. Max size = 128.
+
+            '
+          type: string
+        network_context_id:
+          description: 'The network context ID.
+
+            '
+          type: string
+        scope:
+          description: 'The scope of the network.
+
+            '
+          enum:
+          - GLOBAL
+          - LOCAL
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the LAN
+            network. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        vrf_context_id:
+          description: "The VRF (Virtual Routing and Forwarding) ID.             \
+            \ \n"
+          type: string
+      required:
+      - scope
+      - name
+    LANNetworkV3N2:
+      properties:
+        description:
+          description: 'The description of the LAN network. Maz size = 256.
+
+            '
+        id:
+          description: "The ID of the LAN network. \n"
+          type: string
+        ipv4_config:
+          $ref: '#/components/schemas/LanNetworkIPv4Config'
+          description: 'The Ipv4 config of the LAN network. Maz size = 256.
+
+            '
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
+
+            '
+        name:
+          description: 'The name of the LAN network. Max size = 128.
+
+            '
+          type: string
+        network_context_id:
+          description: 'The network context ID.
+
+            '
+          type: string
+        scope:
+          description: 'The scope of the network.
+
+            '
+          enum:
+          - GLOBAL
+          - LOCAL
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the LAN
+            network. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - scope
+      - name
+    LANNetworkV3N3:
+      properties:
+        description:
+          description: 'The description of the LAN network. Maz size = 256.
+
+            '
+        id:
+          description: "The ID of the LAN network. \n"
+          type: string
+        ipv4_config:
+          $ref: '#/components/schemas/LanNetworkIPv4Config'
+          description: 'The Ipv4 config of the LAN network. Maz size = 256.
+
+            '
+        ipv6_config:
+          $ref: '#/components/schemas/LanNetworkIPv6Config'
+          description: 'The Ipv6 config of the LAN network. Maz size = 256.
+
+            '
+        name:
+          description: 'The name of the LAN network. Max size = 128.
+
+            '
+          type: string
+        network_context_id:
+          description: 'The network context ID.
+
+            '
+          type: string
+        scope:
+          description: 'The scope of the network.
+
+            '
+          enum:
+          - GLOBAL
+          - LOCAL
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the LAN
+            network. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        vrf_context_id:
+          description: 'The VRF (Virtual Routing and Forwarding) ID.
+
+            '
+          type: string
       required:
       - scope
       - name
@@ -1108,6 +1189,33 @@ components:
             description: Prefixes
             type: string
           type: array
+    LanNetworkIPv6Config:
+      properties:
+        default_routers:
+          description: 'The LAN config default routers.
+
+            '
+          items:
+            description: Default Routers
+            type: string
+          type: array
+        prefixes:
+          description: 'The LAN config IPv6 prefix.
+
+            '
+          items:
+            description: Prefixes
+            type: string
+          type: array
+    Lifesize:
+      properties:
+        units:
+          description: Units
+          type: string
+        value:
+          description: Value
+          format: int32
+          type: integer
     ListQueryResponse:
       properties:
         count:
@@ -1254,6 +1362,7 @@ components:
           - AES128CTR
           - AES192CTR
           - AES256CTR
+          - AES128CCM16
           - AES128CCM64
           - AES192CCM64
           - AES256CCM64
@@ -1263,8 +1372,10 @@ components:
           - AES128CCM128
           - AES192CCM128
           - AES256CCM128
+          - AES128GCM16
           - AES128GCM64
           - AES192GCM64
+          - AES256GCM16
           - AES256GCM64
           - AES128GCM96
           - AES192GCM96
@@ -1304,35 +1415,116 @@ components:
           - AES128GMAC
           - AES192GMAC
           - AES256GMAC
+          - NONE
           type: string
       required:
       - hash
       - encryption
       - dh_groups
-    SecurityPolicySet:
+    ResponderSaseProposals:
       properties:
-        description:
-          description: 'The description of the security policy set. Max size = 256.
-
-            '
-        id:
-          description: 'The security policy set ID.
-
-            '
-          type: string
-        name:
-          description: 'The name of the security policy set. Max size = 128.
-
-            '
-          type: string
-        policyrule_order:
-          description: "The order for the execution of the policy rule. \n"
+        dh_group:
+          description: Dh Group
           items:
-            description: Policyrule Order
+            description: Dh Group
+            enum:
+            - NONE
+            - MODP768
+            - MODP1024
+            - MODP1536
+            - MODP2048
+            - MODP3072
+            - MODP4096
+            - MODP6144
+            - MODP8192
+            - MODP1024S160
+            - MODP2048S224
+            - MODP2048S256
+            - ECP192
+            - ECP224
+            - ECP256
+            - ECP384
+            - ECP521
+            - ECP224BP
+            - ECP256BP
+            - ECP384BP
+            - ECP512BP
+            - CURVE25519
             type: string
           type: array
-      required:
-      - name
+        encryption:
+          description: 'The encryption values.
+
+            '
+          items:
+            description: Encryption
+            enum:
+            - NONE
+            - AES128
+            - AES192
+            - AES256
+            - AES128CTR
+            - AES192CTR
+            - AES256CTR
+            - AES128CCM16
+            - AES128CCM64
+            - AES192CCM64
+            - AES256CCM64
+            - AES128CCM96
+            - AES192CCM96
+            - AES256CCM96
+            - AES128CCM128
+            - AES192CCM128
+            - AES256CCM128
+            - AES128GCM16
+            - AES128GCM64
+            - AES192GCM64
+            - AES256GCM16
+            - AES256GCM64
+            - AES128GCM96
+            - AES192GCM96
+            - AES256GCM96
+            - AES128GCM128
+            - AES192GCM128
+            - AES256GCM128
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - TRIPLEDES
+            - BLOWFISH128
+            - BLOWFISH192
+            - BLOWFISH256
+            - CAMELLIA128
+            - CAMELLIA192
+            - CAMELLIA256
+            - SERPENT128
+            - SERPENT192
+            - SERPENT256
+            - TWOFISH128
+            - TWOFISH192
+            - TWOFISH256
+            type: string
+          type: array
+        hash:
+          description: 'The hash values.
+
+            '
+          items:
+            description: Hash
+            enum:
+            - MD5
+            - SHA1
+            - SHA256
+            - SHA384
+            - SHA512
+            - SHA256_96
+            - AESXCBC
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - NONE
+            type: string
+          type: array
     SiteIPFixPrefixAssociation:
       properties:
         id:
@@ -1375,7 +1567,6 @@ components:
           type: string
       required:
       - ip_address
-      - mac
       - name
     VPNLinkConfiguration:
       properties:
@@ -1392,93 +1583,6 @@ components:
       required:
       - keep_alive_failure_count
       - keep_alive_interval
-    WANInterfaceLabel:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: "The name of the WAN interface label. Max size = 128. \n"
-          type: string
-    WANInterfaceLabelQuery:
-      properties:
-        aggregate:
-          $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of WAN interface labels that match the
-            query parameters.
-
-            '
-        dest_page:
-          description: 'The destination page.
-
-            '
-          format: int32
-          type: integer
-        getDeleted:
-          description: 'The number of WAN interface labels for a time frame.
-
-            '
-          type: boolean
-        group_by:
-          description: 'Group the WAN interface labels for the query.
-
-            '
-          items:
-            description: Group By
-            type: string
-          type: array
-        id:
-          description: "Lists the WAN interface labels by ID.    \n"
-          type: string
-        last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
-          format: int64
-          type: integer
-        limit:
-          description: 'The query limit.
-
-            '
-          format: int32
-          type: integer
-        next_query:
-          description: 'The  limit.
-
-            '
-          type: object
-        query_params:
-          type: object
-        retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
-          items:
-            description: Retrieved Fields
-            type: string
-          type: array
-        retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
-          type: boolean
-        sort_params:
-          type: object
-        total_count:
-          description: 'The total number of query parameters.
-
-            '
-          format: int64
-          type: integer
     WANInterfaceLabelQueryFilterV2N4:
       properties:
         bwc_enabled:
@@ -1534,8 +1638,11 @@ components:
           description: 'The configuration of the VPN link.
 
             '
-    WANInterfaceLabelScreen:
+    WANInterfaceLabelQueryFilterV2N5:
       properties:
+        bwc_enabled:
+          description: "The bwc parameters.        \n"
+          type: boolean
         description:
           description: 'The description of the WAN interface label. Maz size = 256.
 
@@ -1545,91 +1652,26 @@ components:
 
             '
           type: string
+        l3_reachability:
+          $ref: '#/components/schemas/WANL3Reachability'
+          description: 'The WAN L3 reachability information.
+
+            '
         label:
-          description: "The label of the WAN interface.               \n"
+          description: 'The label of the WAN interface.
+
+            '
           type: string
+        lqm_enabled:
+          description: "The link quality monitoring parameters.              \n"
+          type: boolean
         name:
           description: 'The name of the WAN interface label. Max size = 128.
 
             '
           type: string
-    WANInterfaceLabelScreenV2N1:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: 'The name of the WAN interface label. Max size = 128.
-
-            '
-          type: string
-        tags:
-          description: 'An information field that can be added to identify the WAN
-            interface label. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-    WANInterfaceLabelScreenV2N2:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: 'The name of the WAN interface label. Max size = 128.
-
-            '
-          type: string
-        tags:
-          description: 'An information field that can be added to identify the WAN
-            interface label. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-        vpnlink_configuration:
-          $ref: '#/components/schemas/VPNLinkConfiguration'
-          description: 'The configuration of the VPN link.
-
-            '
-    WANInterfaceLabelScreenV2N3:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: 'The name of the WAN interface label. Max size = 128.
+        probe_profile_id:
+          description: 'The probe profile ID.
 
             '
           type: string
@@ -1648,6 +1690,11 @@ components:
           type: boolean
         use_for_controller_connections:
           description: 'Indicates if the use for controller connections is selected.
+
+            '
+          type: boolean
+        use_lqm_for_non_hub_paths:
+          description: 'Indicates if the use for lqm for non hub paths is enabled.
 
             '
           type: boolean
@@ -1711,8 +1758,11 @@ components:
           description: 'The configuration of the VPN link.
 
             '
-    WANInterfaceLabelV2N1:
+    WANInterfaceLabelScreenV2N5:
       properties:
+        bwc_enabled:
+          description: "The bwc parameters.        \n"
+          type: boolean
         description:
           description: 'The description of the WAN interface label. Maz size = 256.
 
@@ -1722,72 +1772,26 @@ components:
 
             '
           type: string
+        l3_reachability:
+          $ref: '#/components/schemas/WANL3Reachability'
+          description: 'The WAN L3 reachability information.
+
+            '
         label:
-          description: "The label of the WAN interface.               \n"
+          description: 'The label of the WAN interface.
+
+            '
           type: string
+        lqm_enabled:
+          description: "The link quality monitoring parameters.              \n"
+          type: boolean
         name:
           description: 'The name of the WAN interface label. Max size = 128.
 
             '
           type: string
-        tags:
-          description: 'An information field that can be added to identify the WAN
-            interface label. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-    WANInterfaceLabelV2N2:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: 'The name of the WAN interface label. Max size = 128.
-
-            '
-          type: string
-        tags:
-          description: 'An information field that can be added to identify the WAN
-            interface label. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
-          items:
-            description: Tags
-            type: string
-          type: array
-        vpnlink_configuration:
-          $ref: '#/components/schemas/VPNLinkConfiguration'
-          description: 'The configuration of the VPN link.
-
-            '
-    WANInterfaceLabelV2N3:
-      properties:
-        description:
-          description: 'The description of the WAN interface label. Maz size = 256.
-
-            '
-        id:
-          description: 'The ID of the WAN interface label.
-
-            '
-          type: string
-        label:
-          description: "The label of the WAN interface.               \n"
-          type: string
-        name:
-          description: 'The name of the WAN interface label. Max size = 128.
+        probe_profile_id:
+          description: 'The probe profile ID.
 
             '
           type: string
@@ -1805,8 +1809,14 @@ components:
             \ selected.              \n"
           type: boolean
         use_for_controller_connections:
-          description: "Indicates if the use for controller connections is selected.\
-            \ \n"
+          description: 'Indicates if the use for controller connections is selected.
+
+            '
+          type: boolean
+        use_lqm_for_non_hub_paths:
+          description: 'Indicates if the use for lqm for non hub paths is enabled.
+
+            '
           type: boolean
         vpnlink_configuration:
           $ref: '#/components/schemas/VPNLinkConfiguration'
@@ -1837,6 +1847,71 @@ components:
           type: boolean
         name:
           description: 'The name of the WAN interface label. Max size = 128.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the WAN
+            interface label. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        use_for_application_reachability_probes:
+          description: "Indicates if the use for application reachability probe is\
+            \ selected.              \n"
+          type: boolean
+        use_for_controller_connections:
+          description: 'Indicates if the use for controller connections is selected.
+
+            '
+          type: boolean
+        use_lqm_for_non_hub_paths:
+          description: 'Indicates if the use for lqm for non hub paths is enabled.
+
+            '
+          type: boolean
+        vpnlink_configuration:
+          $ref: '#/components/schemas/VPNLinkConfiguration'
+          description: 'The configuration of the VPN link.
+
+            '
+    WANInterfaceLabelV2N5:
+      properties:
+        bwc_enabled:
+          description: "The bwc parameters.        \n"
+          type: boolean
+        description:
+          description: 'The description of the WAN interface label. Maz size = 256.
+
+            '
+        id:
+          description: 'The ID of the WAN interface label.
+
+            '
+          type: string
+        l3_reachability:
+          $ref: '#/components/schemas/WANL3Reachability'
+          description: 'The WAN L3 reachability information.
+
+            '
+        label:
+          description: 'The label of the WAN interface.
+
+            '
+          type: string
+        lqm_enabled:
+          description: "The link quality monitoring parameters.              \n"
+          type: boolean
+        name:
+          description: 'The name of the WAN interface label. Max size = 128.
+
+            '
+          type: string
+        probe_profile_id:
+          description: 'The probe profile ID.
 
             '
           type: string
@@ -1959,6 +2034,119 @@ components:
           type: array
       required:
       - bfd_mode
+    WANInterfaceQueryFilterV2N5:
+      properties:
+        bfd_mode:
+          description: 'Allowed values: aggressive - For fast failure detection of
+            links. This mode is the default mode and is recommended by Prisma SD-WAN.
+            non_aggressive - when you want to reduce the amount of probe traffic,
+            or for links that are subjected to high loss or poor quality.
+
+            '
+          enum:
+          - aggressive
+          - non_aggressive
+          type: string
+        bw_config_mode:
+          description: 'The bandwidth config mode.
+
+            '
+          enum:
+          - auto
+          - manual
+          - manual_bwm_disabled
+          type: string
+        bwc_enabled:
+          description: 'The bwc parameters.
+
+            '
+          type: boolean
+        cost:
+          description: 'Cost value for the site WAN interface should be within range
+            0-1024.
+
+            '
+          type: integer
+        description:
+          description: 'The description of the WAN interface config.
+
+            '
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        label_id:
+          description: 'The WAN interface label or Circuit label ID. This can be retrieved
+            using the waninterfacelabels API.
+
+            '
+          type: string
+        link_bw_down:
+          description: 'The circuit downstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        link_bw_up:
+          description: 'The circuit upstream capacity in MB.
+
+            '
+          format: double
+          type: number
+        lqm_config:
+          $ref: '#/components/schemas/LQMConfig'
+          description: 'The link quality monitoring parameters.
+
+            '
+        lqm_enabled:
+          description: 'The link quality monitoring parameters.
+
+            '
+          type: boolean
+        name:
+          description: 'The name of the WAN interface config.
+
+            '
+          type: string
+        network_id:
+          description: 'The network ID.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the WAN
+            interface. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        type:
+          description: Type
+          enum:
+          - PUBLIC_WAN
+          - PRIVATE_WAN
+          type: string
+        vpnlink_configuration:
+          $ref: '#/components/schemas/VPNLinkConfiguration'
+          description: 'Vpnlink Configuration: Valid Valid '
+      required:
+      - bfd_mode
+    WANL3Reachability:
+      properties:
+        probe_config_ids:
+          description: "The probe configuration IDs.        \n"
+          items:
+            description: Probe Config Ids
+            type: string
+          type: array
+        use_element_default:
+          description: 'The default element used.
+
+            '
+          type: boolean
     WANNetwork:
       properties:
         id:
@@ -2332,6 +2520,7 @@ paths:
                   - code: IPSECCONFIG_ESPGROUP_REQUIRED
                   - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
                   - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
+                  - code: IPSECCONFIG_AUTO_CREATED
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -2395,6 +2584,7 @@ paths:
                   - code: IPSECCONFIG_ESPGROUP_REQUIRED
                   - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
                   - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
+                  - code: IPSECCONFIG_AUTO_CREATED
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -2594,374 +2784,6 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update LAN Segment (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/sites/{site_id}/lannetworks:
-    get:
-      description: List all the LAN networks.
-      operationId: get-sdwan-v2.0-api-sites-site_id-lannetworks
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                oneOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - $ref: '#/components/schemas/BulkResponse'
-          description: Successful Operation
-      summary: Get LAN Networks (v2.0)
-      tags:
-      - Network Constructs
-    post:
-      description: Create a new LAN segment.
-      operationId: post-sdwan-v2.0-api-sites-site_id-lannetworks
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LANNetworkScreen'
-        description: Details of the network to be created
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetwork'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_INPUT
-                  - code: NO_LAN_NET_PREFIX
-                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
-                  - code: INVALID_NETWORK_CONTEXT
-                  - code: INVALID_IPV4_PREFIX
-                  - code: SAME_IPV4_PREFIX
-                  - code: INVALID_IPADDRESS
-                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
-                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
-                  - code: INVALID_APP_ID
-                  - code: LAN_NETWORK_ADD_FAILURE
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create LAN Segment (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/sites/{site_id}/lannetworks/query:
-    post:
-      description: Query LAN networks that match query parameters.
-      operationId: post-sdwan-v2.0-api-sites-site_id-lannetworks-query
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LANNetworkQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/LANNetworkQueryFilter'
-                      type: array
-                  type: object
-          description: Successful Operation
-      summary: Query LAN Networks (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/sites/{site_id}/lannetworks/{lannetwork_id}:
-    delete:
-      description: Delete an existing LAN network.
-      operationId: delete-sdwan-v2.0-api-sites-site_id-lannetworks-lannetwork_id
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetwork'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: LAN_NETWORK_IN_USE
-                  - code: LANNETWORK_IS_USED_IN_SECURITY_ZONES
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete LAN Network (v2.0)
-      tags:
-      - Network Constructs
-    get:
-      description: List a LAN network.
-      operationId: get-sdwan-v2.0-api-sites-site_id-lannetworks-lannetwork_id
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetwork'
-          description: Successful Operation
-      summary: Get LAN Network (v2.0)
-      tags:
-      - Network Constructs
-    put:
-      description: Update an existing LAN network.
-      operationId: put-sdwan-v2.0-api-sites-site_id-lannetworks-lannetwork_id
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LANNetworkScreen'
-        description: Details of the network to be updated
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetwork'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: INVALID_JSON_INPUT
-                  - code: NO_LAN_NET_PREFIX
-                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
-                  - code: INVALID_NETWORK_CONTEXT
-                  - code: INVALID_IPV4_PREFIX
-                  - code: SAME_IPV4_PREFIX
-                  - code: INVALID_IPADDRESS
-                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
-                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
-                  - code: INVALID_APP_ID
-                  - code: OVERLAPPING_LAN_NET_PREFIXES
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update LAN Network (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/waninterfacelabels:
-    get:
-      description: List all the WAN interface labels for a tenant.
-      operationId: get-sdwan-v2.0-api-waninterfacelabels
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/BulkResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabel'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Labels (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/waninterfacelabels/query:
-    post:
-      description: Query the DB for WAN interface labels that match query parameters.
-      operationId: post-sdwan-v2.0-api-waninterfacelabels-query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelQuery'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for WAN Interface Labels (v2.0)
-      tags:
-      - Network Constructs
-  /sdwan/v2.0/api/waninterfacelabels/{wantinterface_label_id}:
-    get:
-      description: List a specific WAN interface label.
-      operationId: get-sdwan-v2.0-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabel'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Label (v2.0)
-      tags:
-      - Network Constructs
-    put:
-      description: Update a specific WAN interface label.
-      operationId: put-sdwan-v2.0-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelScreen'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabel'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: WAN_INTERFACE_LABEL_MISMATCH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update WAN Interface Label (v2.0)
       tags:
       - Network Constructs
   /sdwan/v2.0/api/wannetworks:
@@ -3263,6 +3085,7 @@ paths:
                 value:
                   _error:
                   - code: INVALID_JSON_VALUE
+                  - code: IPSECCONFIG_AUTO_CREATED
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
@@ -3327,148 +3150,11 @@ paths:
                   - code: IPSECCONFIG_ESPGROUP_REQUIRED
                   - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
                   - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
+                  - code: IPSECCONFIG_AUTO_CREATED
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update IPSEC Profile (v2.1)
-      tags:
-      - Network Constructs
-  /sdwan/v2.1/api/waninterfacelabels:
-    get:
-      description: List all the WAN interface labels for a tenant.
-      operationId: get-sdwan-v2.1-api-waninterfacelabels
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/BulkResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelV2N1'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Labels (v2.1)
-      tags:
-      - Network Constructs
-  /sdwan/v2.1/api/waninterfacelabels/query:
-    post:
-      description: Query the DB for WAN interface labels that match query parameters.
-      operationId: post-sdwan-v2.1-api-waninterfacelabels-query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelQuery'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for WAN Interface Labels (v2.1)
-      tags:
-      - Network Constructs
-  /sdwan/v2.1/api/waninterfacelabels/{wantinterface_label_id}:
-    get:
-      description: List a specific WAN interface label.
-      operationId: get-sdwan-v2.1-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N1'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Label (v2.1)
-      tags:
-      - Network Constructs
-    put:
-      description: Update a specific WAN interface label.
-      operationId: put-sdwan-v2.1-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelScreenV2N1'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N1'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: WAN_INTERFACE_LABEL_MISMATCH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update WAN Interface Label (v2.1)
       tags:
       - Network Constructs
   /sdwan/v2.1/api/wannetworks:
@@ -3650,288 +3336,6 @@ paths:
       summary: Update WAN Network (v2.1)
       tags:
       - Network Constructs
-  /sdwan/v2.2/api/waninterfacelabels:
-    get:
-      description: List all the WAN interface labels for a tenant.
-      operationId: get-sdwan-v2.2-api-waninterfacelabels
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/BulkResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelV2N2'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Labels (v2.2)
-      tags:
-      - Network Constructs
-  /sdwan/v2.2/api/waninterfacelabels/query:
-    post:
-      description: Query the DB for WAN interface labels that match query parameters.
-      operationId: post-sdwan-v2.2-api-waninterfacelabels-query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelQuery'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for WAN Interface Labels (v2.2)
-      tags:
-      - Network Constructs
-  /sdwan/v2.2/api/waninterfacelabels/{wantinterface_label_id}:
-    get:
-      description: List a specific WAN interface label.
-      operationId: get-sdwan-v2.2-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Label (v2.2)
-      tags:
-      - Network Constructs
-    put:
-      description: Update a specific WAN interface label.
-      operationId: put-sdwan-v2.2-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelScreenV2N2'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_INTERVAL
-                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_FAILURE_COUNT
-                  - code: VPNLINK_CONFIG_REQUIRED
-                  - code: WAN_INTERFACE_LABEL_MISMATCH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update WAN Interface Label (v2.2)
-      tags:
-      - Network Constructs
-  /sdwan/v2.3/api/waninterfacelabels:
-    get:
-      description: List all the WAN interface labels for a tenant.
-      operationId: get-sdwan-v2.3-api-waninterfacelabels
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/BulkResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelV2N3'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Labels (v2.3)
-      tags:
-      - Network Constructs
-  /sdwan/v2.3/api/waninterfacelabels/query:
-    post:
-      description: Query the DB for WAN interface labels that match query parameters.
-      operationId: post-sdwan-v2.3-api-waninterfacelabels-query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/WANInterfaceLabelQuery'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for WAN Interface Labels (v2.3)
-      tags:
-      - Network Constructs
-  /sdwan/v2.3/api/waninterfacelabels/{wantinterface_label_id}:
-    get:
-      description: List a specific WAN interface label.
-      operationId: get-sdwan-v2.3-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N3'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get WAN Interface Label (v2.3)
-      tags:
-      - Network Constructs
-    put:
-      description: Update a specific WAN interface label.
-      operationId: put-sdwan-v2.3-api-waninterfacelabels-wantinterface_label_id
-      parameters:
-      - description: The ID of the WAN interface label.
-        in: path
-        name: wantinterface_label_id
-        required: true
-        schema:
-          description: Wantinterface Label Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WANInterfaceLabelScreenV2N3'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WANInterfaceLabelV2N3'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_INTERVAL
-                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_FAILURE_COUNT
-                  - code: VPNLINK_CONFIG_REQUIRED
-                  - code: WAN_INTERFACE_LABEL_MISMATCH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update WAN Interface Label (v2.3)
-      tags:
-      - Network Constructs
   /sdwan/v2.4/api/waninterfacelabels:
     get:
       description: List all the WAN interface labels for a tenant.
@@ -4074,18 +3478,46 @@ paths:
       summary: Update WAN Interface Label (v2.4)
       tags:
       - Network Constructs
-  /sdwan/v3.0/api/sites/{site_id}/lannetworks:
+  /sdwan/v2.5/api/waninterfacelabels:
     get:
-      description: List all the LAN networks.
-      operationId: get-sdwan-v3.0-api-sites-site_id-lannetworks
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
+      description: List all the WAN interface labels for a tenant.
+      operationId: get-sdwan-v2.5-api-waninterfacelabels
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/WANInterfaceLabelV2N5'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get WAN Interface Labels (v2.5)
+      tags:
+      - Network Constructs
+  /sdwan/v2.5/api/waninterfacelabels/query:
+    post:
+      description: Query the DB for WAN interface labels that match query parameters.
+      operationId: post-sdwan-v2.5-api-waninterfacelabels-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WANInterfaceQueryFilterV2N5'
       responses:
         '200':
           content:
@@ -4096,36 +3528,9 @@ paths:
                 - properties:
                     items:
                       items:
-                        $ref: '#/components/schemas/LANNetworkV3'
+                        $ref: '#/components/schemas/WANInterfaceLabelQueryFilterV2N5'
                       type: array
                   type: object
-          description: Successful Operation
-      summary: Get LAN Networks (v3.0)
-      tags:
-      - Network Constructs
-    post:
-      description: Create a new LAN network.
-      operationId: post-sdwan-v3.0-api-sites-site_id-lannetworks
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LANNetworkScreenV3'
-        description: Details of the network to be created
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetworkV3'
           description: Successful Operation
         '400':
           content:
@@ -4133,156 +3538,67 @@ paths:
               example:
                 value:
                   _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: INVALID_JSON_INPUT
-                  - code: NO_LAN_NET_PREFIX
-                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
-                  - code: INVALID_NETWORK_CONTEXT
-                  - code: PREFIX_EXACT_MATCH_WITH_OTHER_SITE
-                  - code: INVALID_IPV4_PREFIX
-                  - code: SAME_IPV4_PREFIX
-                  - code: INVALID_IPADDRESS
-                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
-                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
-                  - code: LAN_NETWORK_ADD_FAILURE
+                  - code: BAD_REQUEST
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create LAN Network (v3.0)
+      summary: Query DB for WAN Interface Labels (v2.5)
       tags:
       - Network Constructs
-  /sdwan/v3.0/api/sites/{site_id}/lannetworks/query:
-    post:
-      description: Query LAN networks that match query parameters.
-      operationId: post-sdwan-v3.0-api-sites-site_id-lannetworks-query
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LANNetworkQuery'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/LANNetworkV3'
-                      type: array
-                  type: object
-          description: Successful Operation
-      summary: Query LAN Networks (v3.0)
-      tags:
-      - Network Constructs
-  /sdwan/v3.0/api/sites/{site_id}/lannetworks/{lannetwork_id}:
-    delete:
-      description: Delete an existing LAN network.
-      operationId: delete-sdwan-v3.0-api-sites-site_id-lannetworks-lannetwork_id
-      parameters:
-      - description: The ID of the site.
-        in: path
-        name: site_id
-        required: true
-        schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LANNetworkV3'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: LAN_NETWORK_IN_USE
-                  - code: LANNETWORK_IS_USED_IN_SECURITY_ZONES
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete LAN Network (v3.0)
-      tags:
-      - Network Constructs
+  /sdwan/v2.5/api/waninterfacelabels/{wantinterface_label_id}:
     get:
-      description: List a LAN network.
-      operationId: get-sdwan-v3.0-api-sites-site_id-lannetworks-lannetwork_id
+      description: List a specific WAN interface label.
+      operationId: get-sdwan-v2.5-api-waninterfacelabels-wantinterface_label_id
       parameters:
-      - description: The ID of the site.
+      - description: The ID of the WAN interface label.
         in: path
-        name: site_id
+        name: wantinterface_label_id
         required: true
         schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
+          description: Wantinterface Label Id
           type: string
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3'
+                $ref: '#/components/schemas/WANInterfaceLabelV2N5'
           description: Successful Operation
-      summary: Get LAN Network (v3.0)
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get WAN Interface Label (v2.5)
       tags:
       - Network Constructs
     put:
-      description: Update an existing LAN network.
-      operationId: put-sdwan-v3.0-api-sites-site_id-lannetworks-lannetwork_id
+      description: Update a specific WAN interface label.
+      operationId: put-sdwan-v2.5-api-waninterfacelabels-wantinterface_label_id
       parameters:
-      - description: The ID of the site.
+      - description: The ID of the WAN interface label.
         in: path
-        name: site_id
+        name: wantinterface_label_id
         required: true
         schema:
-          description: Site Id
-          type: string
-      - description: The ID of the LAN network.
-        in: path
-        name: lannetwork_id
-        required: true
-        schema:
-          description: Lannetwork Id
+          description: Wantinterface Label Id
           type: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LANNetworkScreenV3'
-        description: Details of the network to be updated
+              $ref: '#/components/schemas/WANInterfaceLabelScreenV2N5'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3'
+                $ref: '#/components/schemas/WANInterfaceLabelV2N5'
           description: Successful Operation
         '400':
           content:
@@ -4290,29 +3606,35 @@ paths:
               example:
                 value:
                   _error:
+                  - code: WAN_INTERFACE_LABEL_NOT_FOUND
                   - code: INVALID_JSON_EXTRA_ATTRIBUTE
                   - code: INVALID_JSON_COMMON_ATTR_MISMATCH
-                  - code: INVALID_JSON_INPUT
-                  - code: NO_LAN_NET_PREFIX
-                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
-                  - code: INVALID_NETWORK_CONTEXT
-                  - code: INVALID_IPV4_PREFIX
-                  - code: SAME_IPV4_PREFIX
-                  - code: INVALID_IPADDRESS
-                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
-                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
-                  - code: PREFIX_EXACT_MATCH_WITH_OTHER_SITE
-                  - code: OVERLAPPING_LAN_NET_PREFIXES
+                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_INTERVAL
+                  - code: VPNLINK_CONFIG_INVALID_KEEP_ALIVE_FAILURE_COUNT
+                  - code: VPNLINK_CONFIG_REQUIRED
+                  - code: WAN_INTERFACE_LABEL_MISMATCH
+                  - code: WANINTERFACE_LABEL_USE_FOR_NON_HUB_PATHS_INVALID
+                  - code: L3_REACHABILITY_MAX_PROBE_CONFIGS_LIMIT_EXCEEDED
+                  - code: INVALID_PROBE_PROFILE
+                  - code: WANINTERFACE_L3_REACHABILITY_OVERRIDING_PROBE_CONFIGS_FROM_LABEL_PROFILE
+                  - code: L3_REACHABILITY_PROBE_CONFIGS_CANONT_BE_SET_ELEMENT_DEFAULT_CONFIGURED
+                  - code: L3_REACHABILITY_PROBE_CONFIGS_REQUIRED_WHEN_ELEMENT_DEFAULT_NOT_USED
+                  - code: PROBE_CONFIGS_CANNOT_BE_SPECIFIED_WITHOUT_PROBE_PROFILE
+                  - code: WANINTERFACE_LABEL_PROBE_PROFILE_DOES_NOT_CONTAIN_PROBE_CONFIGS
+                  - code: PROBE_CONFIG_VALID_L3_REACHABILITY_PROTOCOL_MISSING
+                  - code: PROBE_CONFIG_VALID_L3_REACHABILITY_DIRECT_PATH_MISSING
+                  - code: L3_REACHABILITY_PROBE_CONFIGS_REQUIRED
+                  - code: L3_REACHABILITY_CAN_NOT_BE_UNSET_FROM_LABEL
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update LAN Network (v3.0)
+      summary: Update WAN Interface Label (v2.5)
       tags:
       - Network Constructs
-  /sdwan/v3.1/api/lannetworks/query:
+  /sdwan/v3.2/api/lannetworks/query:
     post:
       description: Query the DB for site LAN networks that match query parameters.
-      operationId: post-sdwan-v3.1-api-lannetworks-query
+      operationId: post-sdwan-v3.2-api-lannetworks-query
       requestBody:
         content:
           application/json:
@@ -4342,13 +3664,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query DB for Site LAN Networks (v3.1)
+      summary: Query DB for Site LAN Networks (v3.2)
       tags:
       - Network Constructs
-  /sdwan/v3.1/api/sites/{site_id}/lannetworks:
+  /sdwan/v3.2/api/sites/{site_id}/lannetworks:
     get:
       description: List all the LAN networks.
-      operationId: get-sdwan-v3.1-api-sites-site_id-lannetworks
+      operationId: get-sdwan-v3.2-api-sites-site_id-lannetworks
       parameters:
       - description: The ID of the site.
         in: path
@@ -4367,16 +3689,16 @@ paths:
                 - properties:
                     items:
                       items:
-                        $ref: '#/components/schemas/LANNetworkV3N1'
+                        $ref: '#/components/schemas/LANNetworkV3N2'
                       type: array
                   type: object
           description: Successful Operation
-      summary: Get LAN Networks (v3.1)
+      summary: Get LAN Networks (v3.2)
       tags:
       - Network Constructs
     post:
       description: Create a new LAN network.
-      operationId: post-sdwan-v3.1-api-sites-site_id-lannetworks
+      operationId: post-sdwan-v3.2-api-sites-site_id-lannetworks
       parameters:
       - description: The ID of the site.
         in: path
@@ -4389,14 +3711,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LANNetworkScreenV3N1'
+              $ref: '#/components/schemas/LANNetworkScreenV3N2'
         description: Details of the network to be created
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3N1'
+                $ref: '#/components/schemas/LANNetworkV3N2'
           description: Successful Operation
         '400':
           content:
@@ -4416,16 +3738,20 @@ paths:
                   - code: DEFAULT_ROUTER_PREFIX_MISMATCH
                   - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
                   - code: LAN_NETWORK_ADD_FAILURE
+                  - code: INVALID_IPV6_PREFIX
+                  - code: NO_LAN_NET_V6_PREFIX
+                  - code: DEFAULT_ROUTER_V6_EXCEEDS_LIMIT
+                  - code: SAME_IPV6_PREFIX
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create LAN Network (v3.1)
+      summary: Create LAN Network (v3.2)
       tags:
       - Network Constructs
-  /sdwan/v3.1/api/sites/{site_id}/lannetworks/query:
+  /sdwan/v3.2/api/sites/{site_id}/lannetworks/query:
     post:
       description: Query LAN networks that match query parameters.
-      operationId: post-sdwan-v3.1-api-sites-site_id-lannetworks-query
+      operationId: post-sdwan-v3.2-api-sites-site_id-lannetworks-query
       parameters:
       - description: The ID of the site.
         in: path
@@ -4449,17 +3775,17 @@ paths:
                 - properties:
                     items:
                       items:
-                        $ref: '#/components/schemas/LANNetworkQueryFilterV3N1'
+                        $ref: '#/components/schemas/LANNetworkQueryFilterV3N2'
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query LAN Networks (v3.1)
+      summary: Query LAN Networks (v3.2)
       tags:
       - Network Constructs
-  /sdwan/v3.1/api/sites/{site_id}/lannetworks/{lannetwork_id}:
+  /sdwan/v3.2/api/sites/{site_id}/lannetworks/{lannetwork_id}:
     delete:
       description: Delete an existing LAN network.
-      operationId: delete-sdwan-v3.1-api-sites-site_id-lannetworks-lannetwork_id
+      operationId: delete-sdwan-v3.2-api-sites-site_id-lannetworks-lannetwork_id
       parameters:
       - description: The ID of the site.
         in: path
@@ -4480,7 +3806,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3N1'
+                $ref: '#/components/schemas/LANNetworkV3N2'
           description: Successful Operation
         '400':
           content:
@@ -4493,12 +3819,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete LAN Network (v3.1)
+      summary: Delete LAN Network (v3.2)
       tags:
       - Network Constructs
     get:
       description: List a LAN network.
-      operationId: get-sdwan-v3.1-api-sites-site_id-lannetworks-lannetwork_id
+      operationId: get-sdwan-v3.2-api-sites-site_id-lannetworks-lannetwork_id
       parameters:
       - description: The ID of the site.
         in: path
@@ -4519,14 +3845,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3N1'
+                $ref: '#/components/schemas/LANNetworkV3N2'
           description: Successful Operation
-      summary: Get LAN Network (v3.1)
+      summary: Get LAN Network (v3.2)
       tags:
       - Network Constructs
     put:
       description: Update an existing LAN network.
-      operationId: put-sdwan-v3.1-api-sites-site_id-lannetworks-lannetwork_id
+      operationId: put-sdwan-v3.2-api-sites-site_id-lannetworks-lannetwork_id
       parameters:
       - description: The ID of the site.
         in: path
@@ -4546,14 +3872,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LANNetworkScreenV3N1'
+              $ref: '#/components/schemas/LANNetworkScreenV3N2'
         description: Details of the network to be updated
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LANNetworkV3N1'
+                $ref: '#/components/schemas/LANNetworkV3N2'
           description: Successful Operation
         '400':
           content:
@@ -4574,10 +3900,293 @@ paths:
                   - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
                   - code: PREFIX_EXACT_MATCH_WITH_OTHER_SITE
                   - code: OVERLAPPING_LAN_NET_PREFIXES
+                  - code: INVALID_IPV6_PREFIX
+                  - code: NO_LAN_NET_V6_PREFIX
+                  - code: DEFAULT_ROUTER_V6_EXCEEDS_LIMIT
+                  - code: SAME_IPV6_PREFIX
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update LAN Network (v3.1)
+      summary: Update LAN Network (v3.2)
+      tags:
+      - Network Constructs
+  /sdwan/v3.3/api/lannetworks/query:
+    post:
+      description: Query the DB for site LAN networks that match query parameters.
+      operationId: post-sdwan-v3.3-api-lannetworks-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LANNetworkQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/LANNetworkQueryFilterResponse'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query DB for Site LAN Networks (v3.3)
+      tags:
+      - Network Constructs
+  /sdwan/v3.3/api/sites/{site_id}/lannetworks:
+    get:
+      description: List all the LAN networks.
+      operationId: get-sdwan-v3.3-api-sites-site_id-lannetworks
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/LANNetworkV3N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get LAN Networks (v3.3)
+      tags:
+      - Network Constructs
+    post:
+      description: Create a new LAN network.
+      operationId: post-sdwan-v3.3-api-sites-site_id-lannetworks
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LANNetworkScreenV3N3'
+        description: Details of the network to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LANNetworkV3N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_INPUT
+                  - code: NO_LAN_NET_PREFIX
+                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
+                  - code: INVALID_NETWORK_CONTEXT
+                  - code: PREFIX_EXACT_MATCH_WITH_OTHER_SITE
+                  - code: INVALID_IPV4_PREFIX
+                  - code: SAME_IPV4_PREFIX
+                  - code: INVALID_IPADDRESS
+                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
+                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
+                  - code: LAN_NETWORK_ADD_FAILURE
+                  - code: INVALID_IPV6_PREFIX
+                  - code: NO_LAN_NET_V6_PREFIX
+                  - code: DEFAULT_ROUTER_V6_EXCEEDS_LIMIT
+                  - code: SAME_IPV6_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create LAN Network (v3.3)
+      tags:
+      - Network Constructs
+  /sdwan/v3.3/api/sites/{site_id}/lannetworks/query:
+    post:
+      description: Query LAN networks that match query parameters.
+      operationId: post-sdwan-v3.3-api-sites-site_id-lannetworks-query
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LANNetworkQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/LANNetworkQueryFilterV3N3'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Query LAN Networks (v3.3)
+      tags:
+      - Network Constructs
+  /sdwan/v3.3/api/sites/{site_id}/lannetworks/{lannetwork_id}:
+    delete:
+      description: Delete an existing LAN network.
+      operationId: delete-sdwan-v3.3-api-sites-site_id-lannetworks-lannetwork_id
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The ID of the LAN network.
+        in: path
+        name: lannetwork_id
+        required: true
+        schema:
+          description: Lannetwork Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LANNetworkV3N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: LAN_NETWORK_IN_USE
+                  - code: LANNETWORK_IS_USED_IN_SECURITY_ZONES
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete LAN Network (v3.3)
+      tags:
+      - Network Constructs
+    get:
+      description: List a LAN network.
+      operationId: get-sdwan-v3.3-api-sites-site_id-lannetworks-lannetwork_id
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The ID of the LAN network.
+        in: path
+        name: lannetwork_id
+        required: true
+        schema:
+          description: Lannetwork Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LANNetworkV3N3'
+          description: Successful Operation
+      summary: Get LAN Network (v3.3)
+      tags:
+      - Network Constructs
+    put:
+      description: Update an existing LAN network.
+      operationId: put-sdwan-v3.3-api-sites-site_id-lannetworks-lannetwork_id
+      parameters:
+      - description: The ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: The ID of the LAN network.
+        in: path
+        name: lannetwork_id
+        required: true
+        schema:
+          description: Lannetwork Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LANNetworkScreenV3N3'
+        description: Details of the network to be updated
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LANNetworkV3N3'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+                  - code: INVALID_JSON_INPUT
+                  - code: NO_LAN_NET_PREFIX
+                  - code: ONLY_ONE_DEFAULT_ROUTER_SUPPORTED
+                  - code: INVALID_NETWORK_CONTEXT
+                  - code: INVALID_IPV4_PREFIX
+                  - code: SAME_IPV4_PREFIX
+                  - code: INVALID_IPADDRESS
+                  - code: DEFAULT_ROUTER_PREFIX_MISMATCH
+                  - code: SAME_IPV4_DEFAULT_ROUTER_ADDRESS
+                  - code: PREFIX_EXACT_MATCH_WITH_OTHER_SITE
+                  - code: OVERLAPPING_LAN_NET_PREFIXES
+                  - code: INVALID_IPV6_PREFIX
+                  - code: NO_LAN_NET_V6_PREFIX
+                  - code: DEFAULT_ROUTER_V6_EXCEEDS_LIMIT
+                  - code: SAME_IPV6_PREFIX
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update LAN Network (v3.3)
       tags:
       - Network Constructs
 servers:
