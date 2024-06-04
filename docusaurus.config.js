@@ -501,12 +501,12 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
+                      to: "access/api/insights/2.0",
                       label: "Prisma Access Insights 2.0",
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
+                      to: "access/api/insights/3.0",
                       label: "Prisma Access Insights 3.0",
                       icon: "api-doc",
                     },
