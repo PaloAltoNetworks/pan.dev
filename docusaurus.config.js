@@ -668,12 +668,6 @@ const config = {
             baseUrl: "/access/api/insights/",
 
             versions: {
-              "3.0": {
-                specPath: "openapi-specs/access/insights/3.0",
-                outputDir: "products/access/api/insights/3.0",
-                label: "v2.0",
-                baseUrl: "/access/api/insights/3.0/",
-              },
               "2.0": {
                 specPath: "openapi-specs/access/insights/2.0",
                 outputDir: "products/access/api/insights/2.0",
