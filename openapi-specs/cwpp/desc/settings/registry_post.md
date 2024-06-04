@@ -15,15 +15,15 @@ It can be one of the following strings:
 * Docker Trusted Registry: `dtr`
 * Google Container Registry: `gcr`
 * GitLab Container Registry: `gitlab`
+* Harbor Registry: `harbor`
 * IBM Cloud Container Registry: `bluemix`
 * JFrog Artifactory: `jfrog`
 * Red Hat OpenShift: `redhat`
 * Sonatype Nexus: `sonatype`
 
+**Note**: From Lagrange 22.11 release or later, you can add a maximum of 19,999 registry entries in **Defend > Vulnerabilities > Images > Registry settings**. 
 
-**Note**: From 22.11 (Lagrange) release or later, you can add a maximum of 19,999 registry entries in **Defend > Vulnerabilities > Images > Registry settings**. 
-
-The API response returns an HTTP 400 error, if the number of registry specifications exceeds the maximum allowable limit of 19,999 registry entries.
+The API response returns an HTTP 400 error if the number of registry specifications exceeds the maximum allowable limit of 19,999 registry entries.
 
 **cURL Request**
 
@@ -53,8 +53,8 @@ Starting with 30.03, you can directly add a GitLab Container Registry.
 To add settings for a GitLab Container Registry, you must specify the following parameters:
 
 * **version**:  Specify the value *gitlab* for GitLab Container Registry.
-* **registry**: Specify the GitLab registry URL address. Example, for native registries, you can specify the address as "https://registry.gitlab.com" 
-* **credentialID**: Specify the GitLab credential that you added in the credential store in Prisma Cloud Compute. For example, an API token that has atleast the *read_api* scope.
+* **registry**: Specify the GitLab registry URL address. For example, for native registries, you can specify the address as "https://registry.gitlab.com" 
+* **credentialID**: Specify the GitLab credential that you added in the credential store in Prisma Cloud Compute. For example, an API token that has at least the *read_api* scope.
 * **gitlabRegistrySpec**: Specify at least one of the following fields:
     * **userID**: Specify your GitLab user ID to add all registries associated with it.
     * **projectIDs**: Specify the project IDs to add all registries associated with a GitLab project.
