@@ -2,12 +2,14 @@
 id: insights-api
 title: Prisma Access Insights 2.0 APIs
 sidebar_label: Prisma Access Insights APIs
-slug: /access/api/insights
+slug: /access/api/insights/2.0
 keywords:
   - SASE
   - Reference
   - API
 ---
+
+The Prisma Access Insights 2.0 APIs are deprecated. Please use the [3.0 APIs](/access/api/insights) instead.
 
 The Prisma Access Insights 2.0 APIs allow you to query your Prisma Access tenant for the health of
 your Prisma Access network deployment. The 2.0 APIs are are intended for cloud-managed Prisma Access
