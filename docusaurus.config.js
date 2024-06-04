@@ -474,8 +474,8 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      label: "Get Started 1.0",
-                      to: "access/docs/insights/getting_started-10",
+                      label: "Get Started 3.0",
+                      to: "access/docs/insights/getting_started-30",
                       icon: "doc",
                     },
                     {
@@ -484,8 +484,8 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Get Started 3.0",
-                      to: "access/docs/insights/getting_started-30",
+                      label: "Get Started 1.0",
+                      to: "access/docs/insights/getting_started-10",
                       icon: "doc",
                     },
                     {
