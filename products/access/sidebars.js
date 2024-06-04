@@ -33,7 +33,7 @@ module.exports = {
       value: versionCrumb(`v2.0`),
     },
     "access/api/insights/insights-api",
-    require("./api/insights/sidebar"),
+    require("./api/insights/2.0/sidebar"),
   ],
   saseinsightsv3: [
     {
@@ -48,7 +48,7 @@ module.exports = {
       value: versionCrumb(`v3.0`),
     },
     "access/api/insights/insights-api",
-    require("./api/insights/sidebar"),
+    require("./api/insights/3.0/sidebar"),
   ],
   saseprismaaccess: [
     "access/api/prisma-access-config/config-api",

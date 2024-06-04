@@ -45,12 +45,18 @@ API call using the `Prisma-Tenant` custom HTTP header.
 
 **Note** The `Bearer` keyword must be present before the auth token itself.
 
-curl -L -X POST 'https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/location_gp_mobile_users_logins' \
--H 'Content-Type: application/json' \
--H 'Accept: application/json' \
--H 'Authorization: Bearer <TOKEN>' \
---data-raw '{
+ #!/bin/bash
+       echo "  "
+    #
+    # Replace
+    # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
+    #
+    curl -L -X POST 'https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/location_gp_mobile_users_logins' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Authorization: Bearer <TOKEN>' \
+    --data-raw '{
   "edge_location_display_name": "US West",
   "event_time": "1709226000000",
   "node_type": 48
-}'
+ }'
