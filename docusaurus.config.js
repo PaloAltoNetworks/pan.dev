@@ -506,7 +506,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights/3.0",
+                      to: "access/api/insights",
                       label: "Prisma Access Insights 3.0",
                       icon: "api-doc",
                     },

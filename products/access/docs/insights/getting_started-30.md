@@ -47,7 +47,7 @@ API call using the `Prisma-Tenant` custom HTTP header.
 
  #!/bin/bash
        echo "  "
-    #
+    
     # Replace
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
     #
