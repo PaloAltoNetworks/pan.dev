@@ -32,8 +32,8 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`v2.0`),
     },
-    "access/api/insights/insights-api",
-    require("./api/insights/sidebar"),
+    "access/api/insights/2.0/insights-api",
+    require("./api/insights/2.0/sidebar"),
   ],
   saseinsightsv3: [
     {
