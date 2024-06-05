@@ -16,6 +16,7 @@ and retrieve query results using the following Prisma Access Insights APIs.
 
 | Customer      | API Version | API                                                                                                                                                                                                                                        |
 | ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Single Tenant | 3.0         | [Resource Query](/access/api/insights/post-insights-v-3-0-resource-query-mobileusers-90-days-user-list/) |
 | MSSP          | 2.0         | [Resource Query](/access/api/insights/get-api-sase-v-2-0-resource-resource-name)<br />[Resource Custom Query](/access/api/insights/get-api-sase-v-2-0-resource-custom-feature-name-request-name)                                           |
 | Single Tenant | 1.0         | [Resource Query](/access/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-resource-name)<br />[Resource Custom Query](/access/api/insights/1.0/get-api-sase-v-1-0-resource-tenant-tenant-id-custom-feature-name-request-name) |
 
