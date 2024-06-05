@@ -2,7 +2,7 @@
 id: insights-api
 title: Prisma Access Insights 3.0 APIs
 sidebar_label: Prisma Access Insights APIs
-slug: /access/api/insights/3.0
+slug: /access/api/insights
 keywords:
   - SASE
   - Reference
