@@ -40,13 +40,10 @@ can query for external alerts using:
 
 ## Sample: API Request
 
-**Note** You must provide the TSG_ID that you specified for the scope of your access token in the
-API call using the `Prisma-Tenant` custom HTTP header.
-
 **Note** The `Bearer` keyword must be present before the auth token itself.
 
- #!/bin/bash
-       echo "  "
+    #!/bin/bash
+    echo "  "
     
     # Replace
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
@@ -56,7 +53,7 @@ API call using the `Prisma-Tenant` custom HTTP header.
     -H 'Accept: application/json' \
     -H 'Authorization: Bearer <TOKEN>' \
     --data-raw '{
-  "edge_location_display_name": "US West",
-  "event_time": "1709226000000",
-  "node_type": 48
- }'
+    "edge_location_display_name": "US West",
+    "event_time": "1709226000000",
+    "node_type": 48
+    }'
