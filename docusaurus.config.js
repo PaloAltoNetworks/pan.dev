@@ -780,8 +780,7 @@ const config = {
           cspm: {
             specPath: "openapi-specs/cspm",
             outputDir: "products/prisma-cloud/api/cspm",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            hideSendButton: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" }
           },
           code: {
             specPath: "openapi-specs/code",
