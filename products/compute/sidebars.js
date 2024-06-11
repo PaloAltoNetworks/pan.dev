@@ -101,7 +101,7 @@ module.exports = {
       ],
     },
   ],
-  compute_3204: [
+  compute_3205: [
     {
       type: "category",
       label: "Prisma Cloud Compute Edition - 32.05",
