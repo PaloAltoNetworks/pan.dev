@@ -7,6 +7,10 @@ This endpoint maps to the image table in **Monitor > Compliance > Images > Deplo
 
 > _**Note:**_ The `image` object of the response was created for internal use of Prisma Cloud Compute for image scanning and analysis. Therefore, its inner fields are not saved in the database and will return empty in the endpoint response. You can get some of its values, such as `labels` and `history`, from the main structure of the response.
 
+You can use the wildcard (*) character as input to filter the retrieved images.
+
+If no entry is present in the database, the search returns an empty list.
+
 Consider the following available options to retrieve when you use the `fields` query parameter:
 - labels
 - repoTag.repo
@@ -14,6 +18,7 @@ Consider the following available options to retrieve when you use the `fields` q
 - clusters
 - hosts
 - repoTag.tag
+  
 ### cURL Request
 
 Refer to the following cURL command that retrieves a compact scan report for all images:
