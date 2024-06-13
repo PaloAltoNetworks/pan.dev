@@ -36,21 +36,6 @@ module.exports = {
     require("./api/insights/sidebar"),
   ],
 
-  saseinsightsv3: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(insightsVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`v3.0`),
-    },
-    "access/api/insights/insights-api",
-    require("./api/insights/sidebar"),
-  ],
   saseprismaaccess: [
     "access/api/prisma-access-config/config-api",
     require("./api/prisma-access-config/sidebar"),
