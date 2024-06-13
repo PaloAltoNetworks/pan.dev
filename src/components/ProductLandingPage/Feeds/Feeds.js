@@ -36,12 +36,12 @@ function Feeds() {
             {imageFeeds.map((feed, i) => {
               const cardImageSrc =
                 feed.thumbnail ||
-                (feed.content.match(/<img[^>]+src="([^">]+)"/)
-                  ? feed.content.match(/<img[^>]+src="([^">]+)"/)[1]
+                (feed.content_html.match(/<img[^>]+src="([^">]+)"/)
+                  ? feed.content_html.match(/<img[^>]+src="([^">]+)"/)[1]
                   : null);
 
               return (
-                <Link key={i} to={feed.link}>
+                <Link key={i} to={feed.url}>
                   <div className="feeds-image-text-wrapper">
                     <img
                       src={cardImageSrc || "/img/stock-feed.jpg"}
@@ -58,7 +58,7 @@ function Feeds() {
           <ul className="feeds-list">
             {feeds.map((feed, i) => (
               <li key={i} className="feeds-list__item">
-                <Link to={feed.link}>{feed.title}</Link>
+                <Link to={feed.url}>{feed.title}</Link>
                 <img
                   className="external-icon"
                   src="/img/icons/external-icon.png"
