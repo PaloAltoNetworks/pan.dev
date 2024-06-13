@@ -63,8 +63,8 @@ function Medium() {
 
     const cardImgSrc =
       blog.thumbnail ||
-      (blog.content.match(/<img[^>]+src="([^">]+)"/)
-        ? blog.content.match(/<img[^>]+src="([^">]+)"/)[1]
+      (blog.content_html.match(/<img[^>]+src="([^">]+)"/)
+        ? blog.content_html.match(/<img[^>]+src="([^">]+)"/)[1]
         : null);
 
     return (
@@ -80,14 +80,14 @@ function Medium() {
           <h3 className="avater__name">{blog.title}</h3>
           <div className="avatar__intro margin-left--none">
             <p className={clsx("text--secondary", styles.blogAuthor)}>
-              By: {blog.author}
+              By: {blog.author?.name}
             </p>
           </div>
           <br />
           <div className="avatar__intro margin-left--none">
             <div className={styles.content}>
               <BrowserOnly>
-                {() => <p>{getFirstParagraph(blog.content)}</p>}
+                {() => <p>{getFirstParagraph(blog.content_html)}</p>}
               </BrowserOnly>
             </div>
           </div>
@@ -96,7 +96,7 @@ function Medium() {
           <Link
             className="button button--outline button--primary button--block"
             variant="plain"
-            href={blog.link}
+            href={blog.url}
             target="_blank"
             uppercase="false"
           >
