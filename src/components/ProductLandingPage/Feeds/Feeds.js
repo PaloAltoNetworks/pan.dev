@@ -11,11 +11,12 @@ function Feeds() {
   const hashicorpFeeds = feedsJson.items.slice(2, 6);
 
   const filterMediumTerraform = (item) => {
-    const categories = item.categories;
+    const title = item.title;
+    const content_html = item.content_html;
 
-    for (let i = 0; i < categories.length; i++) {
-      if (categories[i].toLowerCase().includes("terraform")) return true;
-    }
+    if (title && title.toLowerCase().includes("terraform")) return true;
+    if (content_html && content_html.toLowerCase().includes("terraform"))
+      return true;
   };
 
   const filteredMediumTerraform = mediumFeedsJson.items.filter(
