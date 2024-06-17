@@ -261,7 +261,7 @@ const config = {
                   ],
                 },
                 {
-                  label: "Cortex Data Lake",
+                  label: "Strata Logging Service",
                   to: "#",
                   logoClass: "panos",
                   docs: [
