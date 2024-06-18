@@ -775,7 +775,6 @@ const config = {
             specPath: "openapi-specs/cspm",
             outputDir: "products/prisma-cloud/api/cspm",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            hideSendButton: true,
           },
           code: {
             specPath: "openapi-specs/code",
@@ -787,8 +786,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.05",
-            label: "v32.05",
+            version: "32.06",
+            label: "v32.06",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
@@ -805,13 +804,6 @@ const config = {
                 baseUrl: "/compute/api/30-03/",
               },
             },
-          },
-          compute_3201: {
-            specPath: "openapi-specs/compute/32-01",
-            outputDir: "products/compute/api/32-01",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-01/",
           },
           compute_3202: {
             specPath: "openapi-specs/compute/32-02",
@@ -833,6 +825,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-04/",
+          },
+          compute_3205: {
+            specPath: "openapi-specs/compute/32-05",
+            outputDir: "products/compute/api/32-05",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-05/",
           },
         },
       },
