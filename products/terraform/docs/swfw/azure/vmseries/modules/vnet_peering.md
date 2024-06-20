@@ -26,50 +26,126 @@ A terraform module for deploying a Virtual Network Peering and its components re
 
 ## Usage
 
-For usage refer to any example module.
+Simple usage example:
+
+```hcl
+local_peer_config = {
+  name                = "peer-local_vnet-to-remote_vnet"
+  resource_group_name = "local_resourcegroup_name"
+  vnet_name           = "local_vnet_name"
+}
+
+remote_peer_config = {
+  name                = "peer-remote_vnet-to-local_vnet"
+  resource_group_name = "remote_resourcegroup_name"
+  vnet_name           = "remote_vnet_name"
+}
+```
 
 ## Reference
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
 ### Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2, < 2.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.25 |
+- `terraform`, version: >= 1.5, < 2.0
+- `azurerm`, version: ~> 3.98
 
 ### Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.25 |
+- `azurerm`, version: ~> 3.98
 
-### Modules
 
-No modules.
 
 ### Resources
 
-| Name | Type |
-|------|------|
-| [azurerm_virtual_network_peering.local](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network_peering.remote](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network.local_peer](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
-| [azurerm_virtual_network.remote_peer](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
+- `virtual_network_peering` (managed)
+- `virtual_network_peering` (managed)
+- `virtual_network` (data)
+- `virtual_network` (data)
 
-### Inputs
+### Required Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix name appended to the peering names. | `string` | `""` | no |
-| <a name="input_local_peer_config"></a> [local\_peer\_config](#input\_local\_peer\_config) | A map that contains the local peer configuration.<br />Mandatory Values: <br />- `vnet_name`                   - (`string`, required) the local peer VNET name.<br />- `resource_group_name          - (`string`, required) : the resource group name of the local peer<br />- `allow\_virtual\_network\_access - (`bool`, optional, defaults to `true`) : allows communication between the two peering VNETs<br />- `allow_forwarded_traffic`     - (`bool`, optional, defaults to `true`) : allows traffic forwarded from the remote VNET but not originated from within it<br />- `allow_gateway_transit`       - (`bool`, optional, defaults to `false`) : controls the learning of routes from local VNET (gateway or route server) into the remote VNET. Must be true if `use_remote_gateways` is `true` for remote peer<br />- `use_remote_gateways`         - (`bool`, optional, defaults to `false`) : controls the learning of routes from the remote VNET (gateway or route server) into the local VNET<br />- `name`                        - (`string`, optional, defaults to `<var.name_prefix><var.local_peer_config.vnet_name>-to-<var.remote_peer_config.vnet_name>`) : the name of the local VNET peering | `map(any)` | n/a | yes |
-| <a name="input_remote_peer_config"></a> [remote\_peer\_config](#input\_remote\_peer\_config) | A map that contains the remote peer configuration.<br />Mandatory Values :<br />- `vnet_name`                   - (`string`, required) : the remote peer VNET name.<br />- `resource_group_name          - (`string`, required) : the resource group name of the remote peer<br />- `allow\_virtual\_network\_access - (`bool`, optional, defaults to `true`) : allows communication between the two peering VNETs<br />- `allow_forwarded_traffic`     - (`bool`, optional, defaults to `true`) : allows traffic forwarded from the local VNET but not originated from within it<br />- `allow_gateway_transit`       - (`bool`, optional, defaults to `false`) : controls the learning of routes from remote VNET (gateway or route server) into the local VNET. Must be true if `use_remote_gateways` is `true` for local peer<br />- `use_remote_gateways`         - (`bool`, optional, defaults to `false`) : controls the learning of routes from the local VNET (gateway or route server) into the remote VNET<br />- `name`                        - (`string`, optional, defaults to `<var.name_prefix><var.remote_peer_config.vnet_name>-to-<var.local_peer_config.vnet_name>`) : the name of the local VNET peering | `map(any)` | n/a | yes |
+Name | Type | Description
+--- | --- | ---
+[`local_peer_config`](#local_peer_config) | `object` | A map that contains the local peer configuration.
+[`remote_peer_config`](#remote_peer_config) | `object` | A map that contains the remote peer configuration.
+
+
 
 ### Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_local_peering_name"></a> [local\_peering\_name](#output\_local\_peering\_name) | The name of the local VNET peering. |
-| <a name="output_remote_peering_name"></a> [remote\_peering\_name](#output\_remote\_peering\_name) | The name of the remote VNET peering. |
-| <a name="output_local_peering_id"></a> [local\_peering\_id](#output\_local\_peering\_id) | The ID of the local VNET peering. |
-| <a name="output_remote_peering_id"></a> [remote\_peering\_id](#output\_remote\_peering\_id) | The ID of the remote VNET peering. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+Name |  Description
+--- | ---
+`local_peering_name` | The name of the local VNET peering.
+`remote_peering_name` | The name of the remote VNET peering.
+`local_peering_id` | The ID of the local VNET peering.
+`remote_peering_id` | The ID of the remote VNET peering.
+
+### Required Inputs details
+
+#### local_peer_config
+
+A map that contains the local peer configuration.
+Mandatory Values: 
+- `name`                         - (`string`, required) the name of the local VNET peering.
+- `resource_group_name`          - (`string`, required) the resource group name of the local peer.
+- `vnet_name`                    - (`string`, required) the local peer VNET name.
+- `allow_virtual_network_access` - (`bool`, optional, defaults to `true`) allows communication between the two peering VNETs.
+- `allow_forwarded_traffic`      - (`bool`, optional, defaults to `true`) allows traffic forwarded from the remote VNET but not
+                                   originated from within it.
+- `allow_gateway_transit`        - (`bool`, optional, defaults to `false`) controls the learning of routes from local VNET
+                                   (gateway or route server) into the remote VNET. Must be true if `use_remote_gateways` is
+                                   `true` for remote peer.
+- `use_remote_gateways`          - (`bool`, optional, defaults to `false`) controls the learning of routes from the remote VNET
+                                   (gateway or route server) into the local VNET.
+
+
+Type: 
+
+```hcl
+object({
+    name                         = string
+    resource_group_name          = string
+    vnet_name                    = string
+    allow_virtual_network_access = optional(bool, true)
+    allow_forwarded_traffic      = optional(bool, true)
+    allow_gateway_transit        = optional(bool, false)
+    use_remote_gateways          = optional(bool, false)
+  })
+```
+
+
+<sup>[back to list](#modules-required-inputs)</sup>
+
+#### remote_peer_config
+
+A map that contains the remote peer configuration.
+Mandatory Values: 
+- `name`                         - (`string`, required) the name of the remote VNET peering.
+- `resource_group_name`          - (`string`, required) the resource group name of the remote peer.
+- `vnet_name`                    - (`string`, required) the remote peer VNET name.
+- `allow_virtual_network_access` - (`bool`, optional, defaults to `true`) allows communication between the two peering VNETs.
+- `allow_forwarded_traffic`      - (`bool`, optional, defaults to `true`) allows traffic forwarded from the local VNET but not
+                                   originated from within it.
+- `allow_gateway_transit`        - (`bool`, optional, defaults to `false`) controls the learning of routes from remote VNET
+                                   (gateway or route server) into the local VNET. Must be true if `use_remote_gateways` is
+                                  `true` for remote peer.
+- `use_remote_gateways`          - (`bool`, optional, defaults to `false`) controls the learning of routes from the local VNET
+                                   (gateway or route server) into the remote VNET.
+
+
+Type: 
+
+```hcl
+object({
+    name                         = string
+    resource_group_name          = string
+    vnet_name                    = string
+    allow_virtual_network_access = optional(bool, true)
+    allow_forwarded_traffic      = optional(bool, true)
+    allow_gateway_transit        = optional(bool, false)
+    use_remote_gateways          = optional(bool, false)
+  })
+```
+
+
+<sup>[back to list](#modules-required-inputs)</sup>
