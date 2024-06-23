@@ -32,28 +32,16 @@
         "required": ["policy", "severity", "firstDetected"],
         "type": "object"
       },
-      "BenchmarkEnum": {
-        "enum": [
-          "CIS KUBERNETES V1.5",
-          "CIS AWS V1.2",
-          "CIS AZURE V1.1",
-          "PCI-DSS V3.2",
-          "NIST-800-53",
-          "ISO27001",
-          "SOC2",
-          "CIS GCP V1.1",
-          "HIPAA",
-          "FEDRAMP (MODERATE)",
-          "PCI-DSS V3.2.1",
-          "CIS AWS V1.3",
-          "CIS AZURE V1.3",
-          "CIS DOCKER V1.2",
-          "CIS EKS V1.1",
-          "CIS GKE V1.1",
-          "CIS KUBERNETES V1.6",
-          "SLSA"
-        ],
-        "type": "string"
+      "BaseViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": ["violationId", "suppressionType", "comment"],
+        "type": "object"
       },
       "BranchScanFilters": {
         "anyOf": [
@@ -65,71 +53,64 @@
       "BranchScanMoreThanOneRepoFilters": {
         "additionalProperties": false,
         "properties": {
-          "branch": {
-            "description": " ",
-            "type": "string"},
+          "benchmarks": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_BenchmarkEnum_"
+            },
+            "type": "array"
+          },
+          "branch": { "type": "string" },
           "checkStatus": { "$ref": "#/components/schemas/CheckStatus" },
           "codeCategories": {
-            "description": "Code category filter (`codeCategories`) is also available as a search criteria (`scopes`). \n As a search criteria the `scopes` field is optional. And you can provide more than one code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. \n The following code category scopes are applicable to this endpoint: \n - `IacMisconfiguration`: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources. \n - `vulnerabilites`: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers. \n - `buildintegrity`: Findings related to the integrity and security of the build pipeline or the software supply chain. \n - `Secrets`: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files. \n - `Licenses`: Filter value to retrieve issues related to the non-compliance with license requirements.",
             "items": { "$ref": "#/components/schemas/ProjectsV2CodeCategory" },
-            "type": "array"},
-          "fileTypes": { 
-            "description": "File type filter. Use one of the available file type strings to retrieve issues with files of that type.",
-            "items": { "type": "string" }, 
-            "type": "array"},
-          "fixableOnly": { "type": "boolean" },
-          "gitUsers": {
-            "description": "Git user filter. Filter security findings based on the Git user who modified the code or configuration files.", 
-            "items": { "type": "string" }, 
-            "type": "array"},
-          "iacCategories": {
-            "description": "(optional) Infrastructure as code categories filter: \n - `IAM` (Identity and Access Management): Issues related to IAM configurations. \n - `Monitoring`: Issues related to monitoring and observability configurations. \n - `Networking`: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups. \n - `Kubernetes`: Issues specific to Kubernetes cluster configurations. \n - `General`: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene. \n - `Storage`: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings. \n - `Public`: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. \n - `Drift`: Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates. \n - `Compute`: Issues related to compute resources, including virtual machine configurations, instance roles, or container security.",
+            "type": "array"
+          },
+          "cwes": { "items": { "type": "string" }, "type": "array" },
+          "fileTypes": {
             "items": {
-              "enum": [
-                "IAM",
-                "Monitoring",
-                "Networking",
-                "Kubernetes",
-                "General",
-                "Storage",
-                "Public",
-                "Drift",
-                "Compute"
-              ],
-              "type": "string"
+              "$ref": "#/components/schemas/EnumValues_FileMetadata-at-type_"
+            },
+            "type": "array"
+          },
+          "fixableOnly": { "type": "boolean" },
+          "gitUsers": { "items": { "type": "string" }, "type": "array" },
+          "iacCategories": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_IncidentConfiguration-at-category_"
             },
             "type": "array"
           },
           "iacLabels": {
-            "description": "IaC filter. Use one of the following IaC labels to retrieve corresponding issues: \n - `CustomPolicy`: whether or not the presented security issue is associated with a custom policy created by the user. \n - `HasFix`: whether or not a fix suggestion is provided for the presented security issue.",
-            "items": { "$ref": "#/components/schemas/IacLabels" },
+            "items": { "$ref": "#/components/schemas/EnumValues_IacLabels_" },
             "type": "array"
           },
-          "iacTags": { 
-            "description": "\n - Filter violation based on the tag assigned to the resource.",
-            "items": { "type": "string" },
-            "type": "array"},
+          "iacTags": { "items": { "type": "string" }, "type": "array" },
           "licenseType": {
             "items": { "$ref": "#/components/schemas/LicenseEnum" },
             "type": "array"
           },
+          "owasp": { "items": { "type": "string" }, "type": "array" },
           "repositories": {
-            "description": "Repositories filter for retrieving issues detected the default branch scans specified repositories.",
             "items": { "type": "string" },
             "minItems": 2,
-            "type": "array"},
+            "type": "array"
+          },
+          "sastLabels": {
+            "items": { "$ref": "#/components/schemas/SastLabelValue" },
+            "type": "array"
+          },
           "secretsRiskFactors": {
-            "description": "Secrets risk factor filter: \n - `PublicRepository`: Secret was found in a public repository. \n - `PrivateRepository`: Secret was found in a private repository. \n - `User`: User who committed the secret. \n - `Privileged`: Secret is for a role with privileged access to a Cloud Service Provider account. \n - `Valid`: Secret has been validated as an active secret by the service provider. \n - `Invalid`: Secret received an invalid response when used against the service provider’s API. \n - `Unknown`: Secret that could not be verified. \n - `FoundInHistory`: Secret was found in the Git history but not in the most recent commit.",
             "items": { "$ref": "#/components/schemas/SecretsRiskFactor" },
-            "type": "array"},
+            "type": "array"
+          },
           "severities": {
-            "description": "Severity filter: \n - `Critical`: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation. \n - `High`: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority. \n - `Medium`: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention. \n - `Low`: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture. \n - `Info`: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.",
             "items": { "$ref": "#/components/schemas/Severity" },
-            "type": "array"},
+            "type": "array"
+          },
           "vulnerabilityRiskFactors": {
-            "description": "Vulnerability Risk Factors filter. Use one of the following vulnerability risk factor labels to retrieve corresponding issues: \n - `Attack Complexity`: Level of effort or skill required for an attacker to exploit a vulnerability. A higher complexity indicates that it is more challenging for an attacker to exploit the vulnerability. \n - `Attack Vector`: Path or means through which an attacker can exploit a vulnerability. It describes the method or entry point an attacker can use to access the vulnerable system or application. \n - `DoS (Denial of Service)`: DoS vulnerabilities that can be exploited to disrupt or disable the normal functioning of a system or application. \n - `HasFix`: Vulnerabilities that have a fix or solution, such as a patch, update, or recommended mitigation steps to address the vulnerability. \n - `RemoteExecution`: Vulnerabilities that can be exploited remotely, without direct physical or local access to the target system. \n - `ExploitInTheWild`: Vulnerabilities with reports of active exploits in real-world attacks. If a vulnerability has an exploit in the wild, it means that attackers are actively taking advantage of the vulnerability. \n - `ExploitPOC`:  Proof of Concept exploits are vulnerabilities with a proof of concept code or demonstration that showcases the vulnerability's exploitation.",
             "items": { "$ref": "#/components/schemas/VulnerabilityRiskFactor" },
-            "type": "array"}
+            "type": "array"
+          }
         },
         "required": ["repositories"],
         "type": "object"
@@ -137,71 +118,58 @@
       "BranchScanScanAllReposFilters": {
         "additionalProperties": false,
         "properties": {
-          "branch": { 
-            "description": " ",
-            "type": "string" 
+          "benchmarks": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_BenchmarkEnum_"
+            },
+            "type": "array"
           },
+          "branch": { "type": "string" },
           "checkStatus": { "$ref": "#/components/schemas/CheckStatus" },
           "codeCategories": {
-            "description": "Code category filter (`codeCategories`) is also available as a search criteria (`scopes`). \n As a search criteria the `scopes` field is optional. And you can provide more than one code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. \n The following code category scopes are applicable to this endpoint: \n - `IacMisconfiguration`: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources. \n - `vulnerabilites`: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers. \n - `buildintegrity`: Findings related to the integrity and security of the build pipeline or the software supply chain. \n - `Secrets`: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files. \n - `Licenses`: Filter value to retrieve issues related to the non-compliance with license requirements.",
             "items": { "$ref": "#/components/schemas/ProjectsV2CodeCategory" },
             "type": "array"
           },
-          "fileTypes": { 
-            "description": "File type filter. Use one of the available file type strings to retrieve issues with files of that type.",
-            "items": { "type": "string" }, 
-            "type": "array"},
-          "fixableOnly": { "type": "boolean" },
-          "gitUsers": { 
-            "description": "Git user filter. Filter security findings based on the Git user who modified the code or configuration files.", 
-            "items": { "type": "string" }, 
-            "type": "array" },
-          "iacCategories": {
-            "description": "(optional) Infrastructure as code categories filter: \n - `IAM` (Identity and Access Management): Issues related to IAM configurations. \n - `Monitoring`: Issues related to monitoring and observability configurations. \n - `Networking`: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups. \n - `Kubernetes`: Issues specific to Kubernetes cluster configurations. \n - `General`: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene. \n - `Storage`: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings. \n - `Public`: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. \n - `Drift`: Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates. \n - `Compute`: Issues related to compute resources, including virtual machine configurations, instance roles, or container security.",
+          "cwes": { "items": { "type": "string" }, "type": "array" },
+          "fileTypes": {
             "items": {
-              "enum": [
-                "IAM",
-                "Monitoring",
-                "Networking",
-                "Kubernetes",
-                "General",
-                "Storage",
-                "Public",
-                "Drift",
-                "Compute"
-              ],
-              "type": "string"              
+              "$ref": "#/components/schemas/EnumValues_FileMetadata-at-type_"
+            },
+            "type": "array"
+          },
+          "fixableOnly": { "type": "boolean" },
+          "gitUsers": { "items": { "type": "string" }, "type": "array" },
+          "iacCategories": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_IncidentConfiguration-at-category_"
             },
             "type": "array"
           },
           "iacLabels": {
-            "description": "IaC filter. Use one of the following IaC labels to retrieve corresponding issues: \n - `CustomPolicy`: whether or not the presented security issue is associated with a custom policy created by the user. \n - `HasFix`: whether or not a fix suggestion is provided for the presented security issue.",
-            "items": { "$ref": "#/components/schemas/IacLabels" },
+            "items": { "$ref": "#/components/schemas/EnumValues_IacLabels_" },
             "type": "array"
           },
-          "iacTags": { 
-            "description": "\n- Filter violation based on the tag assigned to the resource.",
-            "items": { "type": "string" }, 
-            "type": "array" 
-          },
+          "iacTags": { "items": { "type": "string" }, "type": "array" },
           "licenseType": {
             "items": { "$ref": "#/components/schemas/LicenseEnum" },
             "type": "array"
           },
+          "owasp": { "items": { "type": "string" }, "type": "array" },
           "repositories": {
-            "description": "Repositories filter for retrieving issues detected the default branch scans specified repositories.",
             "items": { "type": "string" },
             "maxItems": 0,
             "minItems": 0,
             "type": "array"
           },
+          "sastLabels": {
+            "items": { "$ref": "#/components/schemas/SastLabelValue" },
+            "type": "array"
+          },
           "secretsRiskFactors": {
-            "description": "Secrets risk factor filter: \n - `PublicRepository`: Secret was found in a public repository. \n - `PrivateRepository`: Secret was found in a private repository. \n - `User`: User who committed the secret. \n - `Privileged`: Secret is for a role with privileged access to a Cloud Service Provider account. \n - `Valid`: Secret has been validated as an active secret by the service provider. \n - `Invalid`: Secret received an invalid response when used against the service provider’s API. \n - `Unknown`: Secret that could not be verified. \n - `FoundInHistory`: Secret was found in the Git history but not in the most recent commit.",
             "items": { "$ref": "#/components/schemas/SecretsRiskFactor" },
             "type": "array"
           },
           "severities": {
-            "description": "Severity filter: \n - `Critical`: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation. \n - `High`: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority. \n - `Medium`: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention. \n - `Low`: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture. \n - `Info`: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.",
             "items": { "$ref": "#/components/schemas/Severity" },
             "type": "array"
           },
@@ -215,73 +183,58 @@
       "BranchScanSingleRepoFilters": {
         "additionalProperties": false,
         "properties": {
-          "branch": { 
-            "description": "Branch description.",
-            "type": "string" 
+          "benchmarks": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_BenchmarkEnum_"
+            },
+            "type": "array"
           },
-          "checkStatus": { "$ref": "#/components/schemas/CheckStatus" 
-          },
+          "branch": { "type": "string" },
+          "checkStatus": { "$ref": "#/components/schemas/CheckStatus" },
           "codeCategories": {
-            "description": "Code category filter (`codeCategories`) is also available as a search criteria (`scopes`). \n As a search criteria the `scopes` field is optional. And you can provide more than one code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. \n The following code category scopes are applicable to this endpoint: \n - `IacMisconfiguration`: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources. \n - `vulnerabilites`: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers. \n - `buildintegrity`: Findings related to the integrity and security of the build pipeline or the software supply chain. \n - `Secrets`: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files. \n - `Licenses`: Filter value to retrieve issues related to the non-compliance with license requirements.",
             "items": { "$ref": "#/components/schemas/ProjectsV2CodeCategory" },
             "type": "array"
           },
+          "cwes": { "items": { "type": "string" }, "type": "array" },
           "fileTypes": {
-            "description": "File type filter. Use one of the available file type strings to retrieve issues with files of that type.",
-            "items": { "type": "string" }, 
-            "type": "array"},
-          "fixableOnly": { "type": "boolean" },
-          "gitUsers": { 
-            "description": "Git user filter. Filter security findings based on the Git user who modified the code or configuration files.", 
-            "items": { "type": "string" }, 
-            "type": "array" 
-          },
-          "iacCategories": {
-            "description": "(optional) Infrastructure as code categories filter: \n - `IAM` (Identity and Access Management): Issues related to IAM configurations. \n - `Monitoring`: Issues related to monitoring and observability configurations. \n - `Networking`: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups. \n - `Kubernetes`: Issues specific to Kubernetes cluster configurations. \n - `General`: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene. \n - `Storage`: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings. \n - `Public`: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. \n - `Drift`: Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates. \n - `Compute`: Issues related to compute resources, including virtual machine configurations, instance roles, or container security.",
             "items": {
-              "enum": [
-                "IAM",
-                "Monitoring",
-                "Networking",
-                "Kubernetes",
-                "General",
-                "Storage",
-                "Public",
-                "Drift",
-                "Compute"
-              ],
-              "type": "string"
+              "$ref": "#/components/schemas/EnumValues_FileMetadata-at-type_"
+            },
+            "type": "array"
+          },
+          "fixableOnly": { "type": "boolean" },
+          "gitUsers": { "items": { "type": "string" }, "type": "array" },
+          "iacCategories": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_IncidentConfiguration-at-category_"
             },
             "type": "array"
           },
           "iacLabels": {
-            "description": "IaC filter. Use one of the following IaC labels to retrieve corresponding issues: \n - `CustomPolicy`: whether or not the presented security issue is associated with a custom policy created by the user. \n - `HasFix`: whether or not a fix suggestion is provided for the presented security issue.",
-            "items": { "$ref": "#/components/schemas/IacLabels" },
+            "items": { "$ref": "#/components/schemas/EnumValues_IacLabels_" },
             "type": "array"
           },
-          "iacTags": { 
-            "description": "\n- Filter violation based on the tag assigned to the resource.",
-            "items": { "type": "string" }, 
-            "type": "array" 
-          },
+          "iacTags": { "items": { "type": "string" }, "type": "array" },
           "licenseType": {
             "items": { "$ref": "#/components/schemas/LicenseEnum" },
             "type": "array"
           },
+          "owasp": { "items": { "type": "string" }, "type": "array" },
           "repositories": {
-            "description": "Repositories filter for retrieving issues detected the default branch scans specified repositories.",
             "items": { "type": "string" },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
           },
+          "sastLabels": {
+            "items": { "$ref": "#/components/schemas/SastLabelValue" },
+            "type": "array"
+          },
           "secretsRiskFactors": {
-            "description": "Secrets risk factor filter: \n - `PublicRepository`: Secret was found in a public repository. \n - `PrivateRepository`: Secret was found in a private repository. \n - `User`: User who committed the secret. \n - `Privileged`: Secret is for a role with privileged access to a Cloud Service Provider account. \n - `Valid`: Secret has been validated as an active secret by the service provider. \n - `Invalid`: Secret received an invalid response when used against the service provider’s API. \n - `Unknown`: Secret that could not be verified. \n - `FoundInHistory`: Secret was found in the Git history but not in the most recent commit.",
             "items": { "$ref": "#/components/schemas/SecretsRiskFactor" },
             "type": "array"
           },
           "severities": {
-            "description": "Severity filter: \n - `Critical`: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation. \n - `High`: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority. \n - `Medium`: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention. \n - `Low`: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture. \n - `Info`: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.",
             "items": { "$ref": "#/components/schemas/Severity" },
             "type": "array"
           },
@@ -290,6 +243,104 @@
             "type": "array"
           }
         },
+        "type": "object"
+      },
+      "CICDCve": {
+        "additionalProperties": false,
+        "properties": {
+          "CICDRunId": { "format": "double", "type": "number" },
+          "bulkSuppression": { "type": "boolean" },
+          "id": { "type": "string" },
+          "justification": { "$ref": "#/components/schemas/Justification" },
+          "repository": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "violationId",
+          "resourceId",
+          "CICDRunId",
+          "repository"
+        ],
+        "type": "object"
+      },
+      "CICDLicenseToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "bulkSuppression": { "type": "boolean" },
+          "causePackageId": { "type": "string" },
+          "fileId": { "type": "string" },
+          "justification": { "$ref": "#/components/schemas/Justification" },
+          "license": { "type": "string" },
+          "repository": { "type": "string" },
+          "rootPackageId": { "type": "string" },
+          "run": { "format": "double", "type": "number" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "justification",
+          "causePackageId",
+          "rootPackageId",
+          "license",
+          "run",
+          "bulkSuppression",
+          "repository",
+          "fileId"
+        ],
+        "type": "object"
+      },
+      "CICDViolation": {
+        "additionalProperties": false,
+        "properties": {
+          "CICDRunId": { "format": "double", "type": "number" },
+          "bulkSuppression": { "type": "boolean" },
+          "commentIds": { "items": { "type": "string" }, "type": "array" },
+          "creationDate": { "type": "string" },
+          "errorLines": {
+            "items": { "format": "double", "type": "number" },
+            "type": "array"
+          },
+          "frameworkType": { "type": "string" },
+          "justification": { "$ref": "#/components/schemas/Justification" },
+          "justificationId": { "nullable": true, "type": "string" },
+          "metadataChecksMetadataPath": { "type": "string" },
+          "metadataLines": {
+            "items": { "format": "double", "type": "number" },
+            "type": "array"
+          },
+          "repository": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "runtimeId": { "nullable": true, "type": "string" },
+          "runtimeSourceId": { "nullable": true, "type": "string" },
+          "s3FilePath": { "type": "string" },
+          "s3FixFilePath": { "nullable": true, "type": "string" },
+          "severity": { "type": "string" },
+          "status": { "type": "string" },
+          "updatedDate": { "type": "string" },
+          "vcsCommentLine": { "nullable": true, "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "metadataChecksMetadataPath",
+          "metadataLines",
+          "violationId",
+          "resourceId",
+          "frameworkType",
+          "s3FilePath",
+          "CICDRunId",
+          "justificationId",
+          "status",
+          "repository",
+          "s3FixFilePath",
+          "creationDate",
+          "updatedDate",
+          "commentIds",
+          "vcsCommentLine",
+          "errorLines",
+          "severity"
+        ],
         "type": "object"
       },
       "CVE": {
@@ -360,86 +411,72 @@
         "type": "string"
       },
       "CheckStatus": {
-        "description": "Security violation status filter. Filter scan results using a status value: \n - `Error`: Security violation was detected. \n - `Passed`: No security violation. \n - `Suppressed`: A security issue was identified, but was acknowledged and intentionally suppressed. \n - `FixPending`: An automated fix has been issued to the security violation, and is currently being applied to the associated resource.",
         "enum": ["Error", "Passed", "Suppressed", "FixPending"],
         "type": "string"
       },
       "CicdRunsFilters": {
         "additionalProperties": false,
         "properties": {
+          "benchmarks": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_BenchmarkEnum_"
+            },
+            "type": "array"
+          },
           "checkStatus": { "$ref": "#/components/schemas/CheckStatus" },
           "codeCategories": {
-            "description": "The `scopes` search criteria is also available as a filter.",
             "items": { "$ref": "#/components/schemas/ProjectsV2CodeCategory" },
             "type": "array"
           },
+          "cwes": { "items": { "type": "string" }, "type": "array" },
           "enforcementLevel": {
-            "description": "Scan Status filter. Use one of the following scan statuses to retrieve corresponding issues: \n - `HARD_FAIL`: The HARD_FAIL enforcement level indicates that a policy violation must be addressed, and it will result in a failure condition. When a violation is categorized as HARD_FAIL, it means that it is considered critical and must be resolved before the scan or evaluation can pass. \n - `SOFT_FAIL`: The SOFT_FAIL enforcement level represents a policy violation that is not critical but should still be addressed. While a SOFT_FAIL violation does not result in an immediate failure condition, it is considered a warning or advisory, indicating a potential security or compliance issue that needs attention. \n - `PASS`: The PASS enforcement level indicates that a policy is being evaluated, and no violations or issues have been identified. When a policy evaluation results in a PASS status, it means that the criteria defined by the policy have been met, and no corrective action is required. \n - `UNKNOWN`: The UNKNOWN enforcement level signifies that the status or evaluation of a policy could not be determined. This may occur due to various reasons, such as missing or incomplete information, unsupported configurations, or other limitations in the scanning process.",
             "items": { "$ref": "#/components/schemas/ScanStatuses" },
             "type": "array"
           },
-          "fileTypes": { 
-            "description": "File type filter. Use one of the available file type strings to retrieve issues with files of that type.",
-            "items": { "type": "string" }, "type": "array" },
-          "fixableOnly": { "type": "boolean" },
-          "gitUsers": { 
-            "description": "Git user filter. Filter security findings based on the Git user who modified the code or configuration files.",
-            "items": { "type": "string" }, 
-            "type": "array" },
-          "iacCategories": {
-            "description": "(optional) Infrastructure as code categories filter: \n - `IAM` (Identity and Access Management): Issues related to IAM configurations. \n - `Monitoring`: Issues related to monitoring and observability configurations. \n - `Networking`: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups. \n - `Kubernetes`: Issues specific to Kubernetes cluster configurations. \n - `General`: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene. \n - `Storage`: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings. \n - `Public`: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. \n - `Drift`: Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates.  \n - `Compute`: Issues related to compute resources, including virtual machine configurations, instance roles, or container security.    \n - `Secrets`: Issues related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys. \n - `Serverless`: Issues specific to serverless function configurations, such as function permissions or environment variable protection. \n - `Elasticsearch`: Issues related to Elasticsearch configurations, such as exposed clusters, lack of encryption, or insecure access controls. \n - `Logging`: Issues related to log management and monitoring. \n - `Policy3D`: Issues related to 3rd-party policies or standards. It involves evaluating and ensuring compliance with external security policies or regulatory frameworks.",
+          "fileTypes": {
             "items": {
-              "enum": [
-                "IAM",
-                "Monitoring",
-                "Networking",
-                "Kubernetes",
-                "General",
-                "Storage",
-                "Public",
-                "Drift",
-                "Compute"
-              ],
-              "type": "string"
+              "$ref": "#/components/schemas/EnumValues_FileMetadata-at-type_"
+            },
+            "type": "array"
+          },
+          "fixableOnly": { "type": "boolean" },
+          "gitUsers": { "items": { "type": "string" }, "type": "array" },
+          "iacCategories": {
+            "items": {
+              "$ref": "#/components/schemas/EnumValues_IncidentConfiguration-at-category_"
             },
             "type": "array"
           },
           "iacLabels": {
-            "description": "IaC label filter. Use one of the following IaC labels to retrieve corresponding issues: \n - `CustomPolicy`: whether or not the presented security issue is associated with a custom policy created by the user. \n - `HasFix`: whether or not a fix suggestion is provided for the presented security issue.",
-            "items": { "$ref": "#/components/schemas/IacLabels" },
+            "items": { "$ref": "#/components/schemas/EnumValues_IacLabels_" },
             "type": "array"
           },
-          "iacTags": { 
-            "description": "Filter violation based on the tag assigned to the resource.",
-            "items": { "type": "string" }, "type": "array" },
+          "iacTags": { "items": { "type": "string" }, "type": "array" },
           "licenseType": {
-            "description": "License type filter. Use one of the available license type strings to retrieve identified violations affiliated with the specified license type.",
             "items": { "$ref": "#/components/schemas/LicenseEnum" },
             "type": "array"
           },
+          "owasp": { "items": { "type": "string" }, "type": "array" },
           "repositories": {
-            "description": "Repositories filter for retrieving issues detected in PR scans and CICD runs on specific repository.",
             "items": { "type": "string" },
             "maxItems": 1,
             "minItems": 1,
             "type": "array"
           },
-          "runId": { 
-            "description": "(required): Scan ID filter. Provide a PR scan or CICD run ID to retrieve issues from the corresponding PR scan or CICD run.",
-            "format": "double", 
-            "type": "number" },
+          "runId": { "format": "double", "type": "number" },
+          "sastLabels": {
+            "items": { "$ref": "#/components/schemas/SastLabelValue" },
+            "type": "array"
+          },
           "secretsRiskFactors": {
-            "description": " Secrets risk factor filter: \n - `PublicRepository`: Secret was found in a public repository. \n - `PrivateRepository`: Secret was found in a private repository. \n - `User`: User who committed the secret. \n - `Privileged`: Secret is for a role with privileged access to a Cloud Service Provider account. \n - `Valid`: Secret has been validated as an active secret by the service provider. \n - `Invalid`: Secret received an invalid response when used against the service provider’s API. \n - `Unknown`: Secret that could not be verified. \n - `FoundInHistory`: Secret was found in the Git history but not in the most recent commit.",
             "items": { "$ref": "#/components/schemas/SecretsRiskFactor" },
             "type": "array"
           },
           "severities": {
-            "description": "Severity filter. \n - `Critical`: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation. \n - `High`: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority. \n - `Medium`: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention. \n - `Low`: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture. \n - `Info`: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.",
             "items": { "$ref": "#/components/schemas/Severity" },
             "type": "array"
           },
           "vulnerabilityRiskFactors": {
-            "description": "Vulnerability Risk Factors filter. Use one of the following vulnerability risk factor labels to retrieve corresponding issues: \n - `Attack Complexity`: Level of effort or skill required for an attacker to exploit a vulnerability. A higher complexity indicates that it is more challenging for an attacker to exploit the vulnerability. \n - `Attack Vector`: Path or means through which an attacker can exploit a vulnerability. It describes the method or entry point an attacker can use to access the vulnerable system or application. \n - `DoS` (Denial of Service): DoS vulnerabilities that can be exploited to disrupt or disable the normal functioning of a system or application. \n - `HasFix`: Vulnerabilities that have a fix or solution, such as a patch, update, or recommended mitigation steps to address the vulnerability. \n - `RemoteExecution`: Vulnerabilities that can be exploited remotely, without direct physical or local access to the target system. \n - `ExploitInTheWild`: Vulnerabilities with reports of active exploits in real-world attacks. If a vulnerability has an exploit in the wild, it means that attackers are actively taking advantage of the vulnerability. \n - `ExploitPOC`:  \"Proof of Concept\" exploits are vulnerabilities with a proof of concept code or demonstration that showcases the vulnerability's exploitation.",
             "items": { "$ref": "#/components/schemas/VulnerabilityRiskFactor" },
             "type": "array"
           }
@@ -448,6 +485,49 @@
         "type": "object"
       },
       "CodeStatus": { "enum": ["hasFix"], "nullable": false, "type": "string" },
+      "CvesAccountsViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "accountIds": { "items": { "type": "string" }, "type": "array" },
+          "comment": { "type": "string" },
+          "cves": { "items": { "type": "string" }, "type": "array" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "suppressionType",
+          "comment",
+          "accountIds",
+          "cves"
+        ],
+        "type": "object"
+      },
+      "CvesViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "accountIds": { "items": { "type": "string" }, "type": "array" },
+          "comment": { "type": "string" },
+          "cves": {
+            "items": {
+              "properties": {
+                "cve": { "type": "string" },
+                "id": { "type": "string" },
+                "uuid": { "type": "string" }
+              },
+              "required": ["uuid", "id", "cve"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "expirationTime": { "format": "double", "type": "number" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": ["violationId", "suppressionType", "comment", "cves"],
+        "type": "object"
+      },
       "DefaultBranchViolationToFix": {
         "additionalProperties": false,
         "properties": {
@@ -491,6 +571,138 @@
           "fullId"
         ],
         "type": "object"
+      },
+      "EnumValues_BenchmarkEnum_": {
+        "enum": [
+          "CIS KUBERNETES V1.5",
+          "CIS AWS V1.2",
+          "CIS AZURE V1.1",
+          "PCI-DSS V3.2",
+          "NIST-800-53",
+          "ISO27001",
+          "SOC2",
+          "CIS GCP V1.1",
+          "HIPAA",
+          "FEDRAMP (MODERATE)",
+          "PCI-DSS V3.2.1",
+          "CIS AWS V1.3",
+          "CIS AZURE V1.3",
+          "CIS DOCKER V1.2",
+          "CIS EKS V1.1",
+          "CIS GKE V1.1",
+          "CIS KUBERNETES V1.6",
+          "SLSA"
+        ],
+        "nullable": false,
+        "type": "string"
+      },
+      "EnumValues_FileMetadata-at-type_": {
+        "enum": [
+          "build.gradle",
+          "gradle.properties",
+          "build.gradle.kts",
+          "pom.xml",
+          "requirements.txt",
+          "package-lock.json",
+          "package.json",
+          "bower.json",
+          "go.sum",
+          "go.mod",
+          "tf",
+          "json",
+          "yml",
+          "yaml",
+          "template",
+          ".checkov.baseline",
+          "hcl",
+          "Dockerfile",
+          "gradle-wrapper.properties",
+          "METADATA",
+          "bicep",
+          "Pipfile.lock",
+          "Pipfile",
+          "yarn.lock",
+          "Gemfile",
+          "Gemfile.lock",
+          "gemspec",
+          "env",
+          "settings.py",
+          "main.py",
+          "application.py",
+          "config.py",
+          "app.js",
+          "config.js",
+          "dev.js",
+          "db.properties",
+          "application.properties",
+          "private.pem",
+          "privatekey.pem",
+          "index.php",
+          "config.php",
+          "config.xml",
+          "strings.xml",
+          "app.module.ts",
+          "environment.ts",
+          "tpl",
+          "tfvars",
+          "unknown",
+          "csproj",
+          "packages.config",
+          "Directory.Packages.props",
+          "paket.dependencies",
+          "paket.references",
+          "paket.lock",
+          "sln",
+          "config",
+          "composer.json",
+          "composer.lock"
+        ],
+        "nullable": false,
+        "type": "string"
+      },
+      "EnumValues_IacLabels_": {
+        "enum": ["CustomPolicy", "HasFix"],
+        "nullable": false,
+        "type": "string"
+      },
+      "EnumValues_IncidentConfiguration-at-category_": {
+        "enum": [
+          "IAM",
+          "Compute",
+          "Monitoring",
+          "Networking",
+          "Kubernetes",
+          "General",
+          "Storage",
+          "Secrets",
+          "Public",
+          "Vulnerabilities",
+          "Drift",
+          "BuildIntegrity",
+          "Licenses",
+          "Logging",
+          "Serverless",
+          "Elasticsearch",
+          "VCS",
+          "Policy3D",
+          "Sast",
+          "Artifact Integrity Validation",
+          "Cider Kill Chain",
+          "Credential Hygiene",
+          "Data Protection",
+          "Dependency Chain Abuse",
+          "Dependency Chains",
+          "Flow Control Mechanisms",
+          "Input Validation",
+          "Patches & Updates",
+          "Pipeline-Based Access Controls (PBAC)",
+          "Pipeline Flow Control",
+          "Poisoned Pipeline Execution (PPE)",
+          "System Configuration",
+          "Supply Chain"
+        ],
+        "nullable": false,
+        "type": "string"
       },
       "ErrorInFile": {
         "additionalProperties": false,
@@ -643,71 +855,18 @@
         ],
         "type": "object"
       },
-      "FileType": {
-        "enum": [
-          "tf",
-          "json",
-          "yml",
-          "yaml",
-          "template",
-          ".checkov.baseline",
-          "hcl",
-          "Dockerfile",
-          "package.json",
-          "package-lock.json",
-          "bower.json",
-          "pom.xml",
-          "build.gradle",
-          "build.gradle.kts",
-          "gradle.properties",
-          "gradle-wrapper.properties",
-          "go.sum",
-          "go.mod",
-          "requirements.txt",
-          "METADATA",
-          "bicep",
-          "Pipfile.lock",
-          "Pipfile",
-          "yarn.lock",
-          "Gemfile",
-          "Gemfile.lock",
-          "gemspec",
-          "env",
-          "settings.py",
-          "main.py",
-          "application.py",
-          "config.py",
-          "app.js",
-          "config.js",
-          "dev.js",
-          "db.properties",
-          "application.properties",
-          "private.pem",
-          "privatekey.pem",
-          "index.php",
-          "config.php",
-          "config.xml",
-          "strings.xml",
-          "app.module.ts",
-          "environment.ts",
-          "tpl",
-          "tfvars",
-          "unknown",
-          "csproj",
-          "packages.config",
-          "Directory.Packages.props",
-          "paket.dependencies",
-          "paket.references",
-          "paket.lock",
-          "sln",
-          "config",
-          "composer.json",
-          "composer.lock"
-        ],
-        "type": "string"
-      },
       "FileTypeEnum": {
         "enum": [
+          "build.gradle",
+          "gradle.properties",
+          "build.gradle.kts",
+          "pom.xml",
+          "requirements.txt",
+          "package-lock.json",
+          "package.json",
+          "bower.json",
+          "go.sum",
+          "go.mod",
           "tf",
           "json",
           "yml",
@@ -716,17 +875,7 @@
           ".checkov.baseline",
           "hcl",
           "Dockerfile",
-          "package.json",
-          "package-lock.json",
-          "bower.json",
-          "pom.xml",
-          "build.gradle",
-          "build.gradle.kts",
-          "gradle.properties",
           "gradle-wrapper.properties",
-          "go.sum",
-          "go.mod",
-          "requirements.txt",
           "METADATA",
           "bicep",
           "Pipfile.lock",
@@ -799,7 +948,7 @@
             "type": "array"
           },
           "fileTypes": {
-            "items": { "$ref": "#/components/schemas/FileType" },
+            "items": { "$ref": "#/components/schemas/ProjectFileType" },
             "type": "array"
           },
           "repository": { "type": "string" },
@@ -852,7 +1001,7 @@
           },
           "filePath": { "type": "string" },
           "fileTypes": {
-            "items": { "$ref": "#/components/schemas/FileType" },
+            "items": { "$ref": "#/components/schemas/ProjectFileType" },
             "type": "array"
           },
           "repository": { "type": "string" },
@@ -909,10 +1058,7 @@
         "required": ["data", "hasNext"],
         "type": "object"
       },
-      "IacLabels": { 
-        "enum": ["CustomPolicy", "HasFix"], 
-        "type": "string" 
-      },
+      "IacLabels": { "enum": ["CustomPolicy", "HasFix"], "type": "string" },
       "IacPolicyResponse": {
         "additionalProperties": false,
         "properties": {
@@ -958,6 +1104,7 @@
           "Licenses",
           "Drift",
           "Policy3D",
+          "Sast",
           "Artifact Integrity Validation",
           "Cider Kill Chain",
           "Credential Hygiene",
@@ -974,6 +1121,16 @@
           "Supply Chain"
         ],
         "type": "string"
+      },
+      "Justification": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "createdBy": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" }
+        },
+        "required": ["comment", "createdBy"],
+        "type": "object"
       },
       "LicLabel": {
         "properties": {
@@ -1014,7 +1171,6 @@
         "type": "object"
       },
       "LicenseEnum": {
-        "description": "License type filter. Use one of the available license type strings to retrieve identified violations affiliated with the specified license type.",
         "enum": [
           "OSI_APACHE",
           "OSI_ARTISTIC",
@@ -1515,6 +1671,23 @@
         ],
         "type": "string"
       },
+      "LicenseTypeSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "licenseTypes": { "items": { "type": "string" }, "type": "array" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "suppressionType",
+          "comment",
+          "licenseTypes"
+        ],
+        "type": "object"
+      },
       "LicensesGroupedByResourceResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1555,17 +1728,56 @@
         "required": ["moduleReferences", "moduleFile", "fixedCode", "code"],
         "type": "object"
       },
+      "OpenSearchPaginationRequest": {
+        "properties": {
+          "limit": { "format": "double", "type": "number" },
+          "offset": { "format": "double", "type": "number" },
+          "searchAfter": { "items": { "type": "string" }, "type": "array" },
+          "useSearchAfterPagination": { "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "OrganizationAndPolicyToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "organizationId": { "type": "string" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "suppressionType",
+          "comment",
+          "organizationId"
+        ],
+        "type": "object"
+      },
       "PacakgeLabelsValue": { "enum": ["Indirect Package"], "type": "string" },
+      "PackageLicenseSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "packages": { "items": { "type": "string" }, "type": "array" },
+          "suppressByRoot": { "type": "boolean" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "suppressionType",
+          "comment",
+          "packages",
+          "suppressByRoot"
+        ],
+        "type": "object"
+      },
       "PaginationRequest": {
         "properties": {
-          "limit": { 
-            "description": "Number of items to return. A non-negative integer that indicates the number of issues from the result list to return. By default, all the matching issues are returned. The default value is 100 and the maximum value is 10000.",
-            "format": "double", 
-            "type": "number" },
-          "offset": { 
-            "description": "A non-negative integer that indicates the number of items from the start of the results list to skip in the response. The offset parameter, along with the limit parameter, enables you to paginate the results. For example, if you use an offset value of 100 and a limit of 200, the response will contain issues starting from 101 to 300 in the results (matching issues) list. The default value is 0 for no offset, which returns results starting from the first issue.",
-            "format": "double", 
-            "type": "number" }
+          "limit": { "format": "double", "type": "number" },
+          "offset": { "format": "double", "type": "number" }
         },
         "type": "object"
       },
@@ -1577,6 +1789,21 @@
           { "$ref": "#/components/schemas/LicensesGroupedByResourceResponse" }
         ]
       },
+      "ProjectFileType": {
+        "enum": [
+          "build.gradle",
+          "gradle.properties",
+          "build.gradle.kts",
+          "pom.xml",
+          "requirements.txt",
+          "package-lock.json",
+          "package.json",
+          "bower.json",
+          "go.sum",
+          "go.mod"
+        ],
+        "type": "string"
+      },
       "ProjectsV2CodeCategory": {
         "enum": [
           "IacMisconfiguration",
@@ -1585,12 +1812,44 @@
           "ImageReferencerLicenses",
           "Vulnerabilities",
           "Licenses",
-          "Secrets"
+          "Secrets",
+          "BuildIntegrityRepo",
+          "BuildIntegrityOrg",
+          "BuildIntegrity",
+          "Weaknesses"
         ],
         "type": "string"
       },
       "ResourceScanType": {
-        "enum": ["Buildtime", "Runtime"],
+        "enum": ["Runtime", "Buildtime"],
+        "type": "string"
+      },
+      "ResourceToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "accountId": { "type": "string" },
+          "id": { "type": "string" }
+        },
+        "required": ["id", "accountId"],
+        "type": "object"
+      },
+      "ResourceViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "resources": {
+            "items": { "$ref": "#/components/schemas/ResourceToSuppress" },
+            "type": "array"
+          },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": ["violationId", "suppressionType", "comment", "resources"],
+        "type": "object"
+      },
+      "SastLabelValue": {
+        "enum": ["CustomPolicy", "CWE top 25", "OWASP top 10"],
         "type": "string"
       },
       "ScanStatuses": {
@@ -1616,14 +1875,10 @@
       "SearchControllerParams": {
         "properties": {
           "scopes": {
-            "description": "(optional) You can provide one or more code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. The following code category scopes are applicable to this endpoint: \n - `IacMisconfiguration`: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources. \n - `vulnerabilites`: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers. \n - `buildintegrity`: Findings related to the integrity and security of the build pipeline or the software supply chain. \n - `Secrets`: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files. \n - `Licenses`: Filter value to retrieve issues related to the non-compliance with license requirements.",
             "items": { "$ref": "#/components/schemas/ProjectsV2CodeCategory" },
             "type": "array"
           },
-          "term": { 
-            "description": "The `term` field is required. It can be a single word, or multiple words joined by the ‘or’ and ‘and’ logical operators.", 
-            "type": "string" 
-          }
+          "term": { "type": "string" }
         },
         "required": ["term"],
         "type": "object"
@@ -1646,7 +1901,7 @@
         "type": "string"
       },
       "Severity": {
-        "enum": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
+        "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
         "type": "string"
       },
       "SmartFix": {
@@ -1695,6 +1950,76 @@
         ],
         "type": "string"
       },
+      "SourcesViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "accountIds": { "items": { "type": "string" }, "type": "array" },
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "suppressionType": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": ["violationId", "suppressionType", "comment", "accountIds"],
+        "type": "object"
+      },
+      "SubmitActionsMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "owner": { "type": "string" },
+          "pr": { "type": "string" },
+          "repoName": { "type": "string" },
+          "runNumber": { "format": "double", "type": "number" },
+          "sourceBranchName": { "type": "string" }
+        },
+        "required": ["owner", "repoName", "runNumber"],
+        "type": "object"
+      },
+      "SubmitActionsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cvesToSuppress": {
+            "items": { "$ref": "#/components/schemas/CICDCve" },
+            "type": "array"
+          },
+          "metadata": { "$ref": "#/components/schemas/SubmitActionsMetadata" },
+          "sourceType": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/SubmitActionsType" },
+          "violationsToFix": {
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/CICDViolation" },
+                { "$ref": "#/components/schemas/DefaultBranchViolationToFix" },
+                { "$ref": "#/components/schemas/VulnerabilityToFix" }
+              ]
+            },
+            "type": "array"
+          },
+          "violationsToSuppress": {
+            "items": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/CICDViolation" },
+                {
+                  "$ref": "#/components/schemas/CvesAccountsViolationToSuppress"
+                },
+                { "$ref": "#/components/schemas/ResourceViolationToSuppress" },
+                { "$ref": "#/components/schemas/TagsViolationToSuppress" },
+                { "$ref": "#/components/schemas/SourcesViolationToSuppress" },
+                { "$ref": "#/components/schemas/BaseViolationToSuppress" },
+                { "$ref": "#/components/schemas/CvesViolationToSuppress" },
+                { "$ref": "#/components/schemas/LicenseTypeSuppress" },
+                { "$ref": "#/components/schemas/PackageLicenseSuppress" },
+                { "$ref": "#/components/schemas/CICDLicenseToSuppress" },
+                {
+                  "$ref": "#/components/schemas/OrganizationAndPolicyToSuppress"
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": ["type", "violationsToFix", "violationsToSuppress"],
+        "type": "object"
+      },
       "SubmitActionsResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1703,6 +2028,7 @@
         "required": ["data"],
         "type": "object"
       },
+      "SubmitActionsType": { "enum": ["default", "pr"], "type": "string" },
       "SubmitResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1723,6 +2049,28 @@
           "resourcesToFix": { "items": { "type": "string" }, "type": "array" }
         },
         "required": ["repositoryId", "resourcesToFix", "packagesToFix"],
+        "type": "object"
+      },
+      "TagsViolationToSuppress": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": { "type": "string" },
+          "expirationTime": { "format": "double", "type": "number" },
+          "suppressionType": { "type": "string" },
+          "tags": {
+            "items": {
+              "properties": {
+                "key": { "type": "string" },
+                "value": { "type": "string" }
+              },
+              "required": ["value", "key"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "violationId": { "type": "string" }
+        },
+        "required": ["violationId", "suppressionType", "comment", "tags"],
         "type": "object"
       },
       "Type": {
@@ -1918,9 +2266,38 @@
           "RemoteExecution",
           "ExploitInTheWild",
           "ExploitPOC",
-          "IsUsed"
+          "IsUsed",
+          "ReachableFunction",
+          "ManifestInRuntime",
+          "RepositoryInRuntime",
+          "PackageInRuntime"
         ],
         "type": "string"
+      },
+      "VulnerabilityToFix": {
+        "additionalProperties": false,
+        "properties": {
+          "frameworkType": { "type": "string" },
+          "id": { "type": "string" },
+          "owner": { "type": "string" },
+          "packageName": { "type": "string" },
+          "packageVersion": { "type": "string" },
+          "repoName": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "s3FilePath": { "type": "string" },
+          "violationId": { "type": "string" }
+        },
+        "required": [
+          "violationId",
+          "resourceId",
+          "frameworkType",
+          "s3FilePath",
+          "owner",
+          "repoName",
+          "packageName",
+          "packageVersion"
+        ],
+        "type": "object"
       },
       "module": {
         "additionalProperties": false,
@@ -1961,6 +2338,7 @@
   "paths": {
     "/code/api/v1/errors/file": {
       "post": {
+        "deprecated": true,
         "description": "List errors in files",
         "operationId": "getErrorsInFile",
         "parameters": [
@@ -2045,20 +2423,22 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Lists All Errors in File Path",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/file\"\n\nquerystring = {\"limit\":\"SOME_INTEGER_VALUE\",\"offset\":\"SOME_INTEGER_VALUE\"}\n\npayload = {\n    \"CICDRunId\": 0,\n    \"authors\": [\"string\"],\n    \"branch\": \"string\",\n    \"categories\": [\"IAM\"],\n    \"codeStatus\": [\"hasFix\"],\n    \"excludeCategories\": [\"IAM\"],\n    \"filePath\": \"string\",\n    \"fileTypes\": [\"tf\"],\n    \"repository\": \"string\",\n    \"repositoryId\": \"string\",\n    \"search\": {\n        \"options\": [\"path\"],\n        \"text\": \"string\",\n        \"title\": \"title\"\n    },\n    \"severities\": [\"INFO\"],\n    \"sourceTypes\": [\"Github\"],\n    \"tags\": [\n        {\n            \"key\": \"string\",\n            \"value\": \"string\"\n        }\n    ],\n    \"types\": [\"Errors\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/file\"\n\nquerystring = {\"limit\":\"SOME_INTEGER_VALUE\",\"offset\":\"SOME_INTEGER_VALUE\"}\n\npayload = {\n    \"CICDRunId\": 0,\n    \"authors\": [\"string\"],\n    \"branch\": \"string\",\n    \"categories\": [\"IAM\"],\n    \"codeStatus\": [\"hasFix\"],\n    \"excludeCategories\": [\"IAM\"],\n    \"filePath\": \"string\",\n    \"fileTypes\": [\"build.gradle\"],\n    \"repository\": \"string\",\n    \"repositoryId\": \"string\",\n    \"search\": {\n        \"options\": [\"path\"],\n        \"text\": \"string\",\n        \"title\": \"title\"\n    },\n    \"severities\": [\"CRITICAL\"],\n    \"sourceTypes\": [\"Github\"],\n    \"tags\": [\n        {\n            \"key\": \"string\",\n            \"value\": \"string\"\n        }\n    ],\n    \"types\": [\"Errors\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/code/api/v1/errors/file?limit=SOME_INTEGER_VALUE&offset=SOME_INTEGER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"CICDRunId\":0,\"authors\":[\"string\"],\"branch\":\"string\",\"categories\":[\"IAM\"],\"codeStatus\":[\"hasFix\"],\"excludeCategories\":[\"IAM\"],\"filePath\":\"string\",\"fileTypes\":[\"tf\"],\"repository\":\"string\",\"repositoryId\":\"string\",\"search\":{\"options\":[\"path\"],\"text\":\"string\",\"title\":\"title\"},\"severities\":[\"INFO\"],\"sourceTypes\":[\"Github\"],\"tags\":[{\"key\":\"string\",\"value\":\"string\"}],\"types\":[\"Errors\"]}'"
+            "source": "curl --request POST \\\n  --url 'http://undefinedundefined/code/api/v1/errors/file?limit=SOME_INTEGER_VALUE&offset=SOME_INTEGER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"CICDRunId\":0,\"authors\":[\"string\"],\"branch\":\"string\",\"categories\":[\"IAM\"],\"codeStatus\":[\"hasFix\"],\"excludeCategories\":[\"IAM\"],\"filePath\":\"string\",\"fileTypes\":[\"build.gradle\"],\"repository\":\"string\",\"repositoryId\":\"string\",\"search\":{\"options\":[\"path\"],\"text\":\"string\",\"title\":\"title\"},\"severities\":[\"CRITICAL\"],\"sourceTypes\":[\"Github\"],\"tags\":[{\"key\":\"string\",\"value\":\"string\"}],\"types\":[\"Errors\"]}'"
           }
         ]
       }
     },
     "/code/api/v1/errors/files": {
       "post": {
+        "deprecated": true,
         "description": "List files with errors",
         "operationId": "getErrorsFiles",
         "parameters": [],
@@ -2104,20 +2484,22 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Lists Files with Errors",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/files\"\n\npayload = {\n    \"CICDRunId\": 0,\n    \"authors\": [\"string\"],\n    \"branch\": \"string\",\n    \"categories\": [\"IAM\"],\n    \"codeStatus\": [\"hasFix\"],\n    \"excludeCategories\": [\"IAM\"],\n    \"fileTypes\": [\"tf\"],\n    \"repository\": \"string\",\n    \"repositoryId\": \"string\",\n    \"search\": {\n        \"options\": [\"path\"],\n        \"text\": \"string\",\n        \"title\": \"title\"\n    },\n    \"severities\": [\"INFO\"],\n    \"sourceTypes\": [\"Github\"],\n    \"tags\": [\n        {\n            \"key\": \"string\",\n            \"value\": \"string\"\n        }\n    ],\n    \"types\": [\"Errors\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/files\"\n\npayload = {\n    \"CICDRunId\": 0,\n    \"authors\": [\"string\"],\n    \"branch\": \"string\",\n    \"categories\": [\"IAM\"],\n    \"codeStatus\": [\"hasFix\"],\n    \"excludeCategories\": [\"IAM\"],\n    \"fileTypes\": [\"build.gradle\"],\n    \"repository\": \"string\",\n    \"repositoryId\": \"string\",\n    \"search\": {\n        \"options\": [\"path\"],\n        \"text\": \"string\",\n        \"title\": \"title\"\n    },\n    \"severities\": [\"CRITICAL\"],\n    \"sourceTypes\": [\"Github\"],\n    \"tags\": [\n        {\n            \"key\": \"string\",\n            \"value\": \"string\"\n        }\n    ],\n    \"types\": [\"Errors\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/errors/files \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"CICDRunId\":0,\"authors\":[\"string\"],\"branch\":\"string\",\"categories\":[\"IAM\"],\"codeStatus\":[\"hasFix\"],\"excludeCategories\":[\"IAM\"],\"fileTypes\":[\"tf\"],\"repository\":\"string\",\"repositoryId\":\"string\",\"search\":{\"options\":[\"path\"],\"text\":\"string\",\"title\":\"title\"},\"severities\":[\"INFO\"],\"sourceTypes\":[\"Github\"],\"tags\":[{\"key\":\"string\",\"value\":\"string\"}],\"types\":[\"Errors\"]}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/errors/files \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"CICDRunId\":0,\"authors\":[\"string\"],\"branch\":\"string\",\"categories\":[\"IAM\"],\"codeStatus\":[\"hasFix\"],\"excludeCategories\":[\"IAM\"],\"fileTypes\":[\"build.gradle\"],\"repository\":\"string\",\"repositoryId\":\"string\",\"search\":{\"options\":[\"path\"],\"text\":\"string\",\"title\":\"title\"},\"severities\":[\"CRITICAL\"],\"sourceTypes\":[\"Github\"],\"tags\":[{\"key\":\"string\",\"value\":\"string\"}],\"types\":[\"Errors\"]}'"
           }
         ]
       }
     },
     "/code/api/v1/errors/files/{uuid}": {
       "get": {
+        "deprecated": true,
         "description": "Get the file metadata by UUID based on the customer's repository",
         "operationId": "getErrorsInFiles",
         "parameters": [
@@ -2171,17 +2553,18 @@
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/files/{uuid}\"\n\nquerystring = {\"include\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/files/{uuid}\"\n\nquerystring = {\"include\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/code/api/v1/errors/files/{uuid}?include=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/errors/files/{uuid}?include=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
           }
         ]
       }
     },
     "/code/api/v1/errors/getFixedCode": {
       "post": {
+        "deprecated": true,
         "description": "Returns a remediated resource code",
         "operationId": "getFixedCode",
         "parameters": [],
@@ -2219,20 +2602,22 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Get Fixed Resource Code using the selectedFix",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/getFixedCode\"\n\npayload = {\"error\": {\n        \"errorLines\": [0],\n        \"fixPath\": \"string\",\n        \"fixedCode\": \"string\",\n        \"fixes\": [\n            {\n                \"code\": \"string\",\n                \"fixedCode\": \"string\",\n                \"id\": \"string\",\n                \"inspectedKey\": \"string\",\n                \"percent\": 0,\n                \"recommenderType\": \"string\",\n                \"times\": 0\n            }\n        ],\n        \"frameworkType\": \"string\",\n        \"fullId\": \"string\",\n        \"inspectedKey\": \"string\",\n        \"metadataChecksMetadataPath\": \"string\",\n        \"metadataLines\": [0],\n        \"owner\": \"string\",\n        \"repoName\": \"string\",\n        \"resourceCode\": \"string\",\n        \"resourceId\": \"string\",\n        \"runtimeId\": \"string\",\n        \"runtimeSourceId\": \"string\",\n        \"s3FilePath\": \"string\",\n        \"selectedFix\": \"string\",\n        \"violationId\": \"string\"\n    }}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/getFixedCode\"\n\npayload = {\"error\": {\n        \"errorLines\": [0],\n        \"fixPath\": \"string\",\n        \"fixedCode\": \"string\",\n        \"fixes\": [\n            {\n                \"code\": \"string\",\n                \"fixedCode\": \"string\",\n                \"id\": \"string\",\n                \"inspectedKey\": \"string\",\n                \"percent\": 0,\n                \"recommenderType\": \"string\",\n                \"times\": 0\n            }\n        ],\n        \"frameworkType\": \"string\",\n        \"fullId\": \"string\",\n        \"inspectedKey\": \"string\",\n        \"metadataChecksMetadataPath\": \"string\",\n        \"metadataLines\": [0],\n        \"owner\": \"string\",\n        \"repoName\": \"string\",\n        \"resourceCode\": \"string\",\n        \"resourceId\": \"string\",\n        \"runtimeId\": \"string\",\n        \"runtimeSourceId\": \"string\",\n        \"s3FilePath\": \"string\",\n        \"selectedFix\": \"string\",\n        \"violationId\": \"string\"\n    }}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/errors/getFixedCode \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"error\":{\"errorLines\":[0],\"fixPath\":\"string\",\"fixedCode\":\"string\",\"fixes\":[{\"code\":\"string\",\"fixedCode\":\"string\",\"id\":\"string\",\"inspectedKey\":\"string\",\"percent\":0,\"recommenderType\":\"string\",\"times\":0}],\"frameworkType\":\"string\",\"fullId\":\"string\",\"inspectedKey\":\"string\",\"metadataChecksMetadataPath\":\"string\",\"metadataLines\":[0],\"owner\":\"string\",\"repoName\":\"string\",\"resourceCode\":\"string\",\"resourceId\":\"string\",\"runtimeId\":\"string\",\"runtimeSourceId\":\"string\",\"s3FilePath\":\"string\",\"selectedFix\":\"string\",\"violationId\":\"string\"}}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/errors/getFixedCode \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"error\":{\"errorLines\":[0],\"fixPath\":\"string\",\"fixedCode\":\"string\",\"fixes\":[{\"code\":\"string\",\"fixedCode\":\"string\",\"id\":\"string\",\"inspectedKey\":\"string\",\"percent\":0,\"recommenderType\":\"string\",\"times\":0}],\"frameworkType\":\"string\",\"fullId\":\"string\",\"inspectedKey\":\"string\",\"metadataChecksMetadataPath\":\"string\",\"metadataLines\":[0],\"owner\":\"string\",\"repoName\":\"string\",\"resourceCode\":\"string\",\"resourceId\":\"string\",\"runtimeId\":\"string\",\"runtimeSourceId\":\"string\",\"s3FilePath\":\"string\",\"selectedFix\":\"string\",\"violationId\":\"string\"}}'"
           }
         ]
       }
     },
     "/code/api/v1/errors/gitBlameAuthors": {
       "get": {
+        "deprecated": true,
         "description": "Get all git blame author names per full repo name (owner and name)",
         "operationId": "getGitBlameAuthors",
         "parameters": [
@@ -2268,20 +2653,103 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "List Git Authors of a Repository",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/gitBlameAuthors\"\n\nquerystring = {\"fullRepoName\":\"SOME_STRING_VALUE\",\"sourceType\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/gitBlameAuthors\"\n\nquerystring = {\"fullRepoName\":\"SOME_STRING_VALUE\",\"sourceType\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/code/api/v1/errors/gitBlameAuthors?fullRepoName=SOME_STRING_VALUE&sourceType=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/errors/gitBlameAuthors?fullRepoName=SOME_STRING_VALUE&sourceType=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+          }
+        ]
+      }
+    },
+    "/code/api/v1/errors/submitActions": {
+      "post": {
+        "deprecated": true,
+        "description": "This api receive type of submit (PR\\DEFAULT), array of violationsToSuppress and array of violationsToFix, and\ninvoke the suppress\\fix function in the correct service (cicd\\remediations)",
+        "operationId": "submitActions",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "type": "default",
+                "violationsToFix": [
+                  {
+                    "fixedCode": "",
+                    "frameworkType": "Terraform",
+                    "fullId": "BC_AWS_S3_14::milkanas/terragoat::/terraform/aws/s3.tf:aws_s3_bucket.data",
+                    "metadataChecksMetadataPath": "checkov/milkanast/milkanas/terragoat/master/checkov_results/terraform/checks_metadata.json",
+                    "metadataLines": [1, 13],
+                    "owner": "milkanas",
+                    "repoName": "terragoat",
+                    "resourceId": "/terraform/aws/s3.tf:aws_s3_bucket.data",
+                    "runtimeId": null,
+                    "runtimeSourceId": null,
+                    "s3FilePath": "checkov/milkanast/milkanas/terragoat/master/src/terraform/aws/s3.tf",
+                    "violationId": "BC_AWS_S3_14"
+                  }
+                ],
+                "violationsToSuppress": [
+                  {
+                    "comment": "this is justification comment",
+                    "resources": [
+                      {
+                        "accountId": "orevron/terragoat",
+                        "id": "BC_GIT_6::orevron/terragoat::/terraform/providers.tf:4ec71f2183bf24b28320d0c2839bdd08c255f0bb"
+                      },
+                      {
+                        "accountId": "orevron/terragoat",
+                        "id": "BC_GIT_6::orevron/terragoat::/terraform/lambda.tf:ca61f30c56f9b66c8802632d559a391acd02d01d"
+                      }
+                    ],
+                    "suppressionType": "Resources",
+                    "violationId": "BC_AWS_S3_13"
+                  }
+                ]
+              },
+              "schema": { "$ref": "#/components/schemas/SubmitActionsRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitActionsResponse"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": { "description": "Insufficient role permissions" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "type: TYPE not supported." }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Submit Remediation and Suppression Actions",
+        "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_CREATE"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/submitActions\"\n\npayload = {\n    \"cvesToSuppress\": [\n        {\n            \"CICDRunId\": 0,\n            \"bulkSuppression\": True,\n            \"id\": \"string\",\n            \"justification\": {\n                \"comment\": \"string\",\n                \"createdBy\": \"string\",\n                \"expirationTime\": 0\n            },\n            \"repository\": \"string\",\n            \"resourceId\": \"string\",\n            \"violationId\": \"string\"\n        }\n    ],\n    \"metadata\": {\n        \"owner\": \"string\",\n        \"pr\": \"string\",\n        \"repoName\": \"string\",\n        \"runNumber\": 0,\n        \"sourceBranchName\": \"string\"\n    },\n    \"sourceType\": \"string\",\n    \"type\": \"default\",\n    \"violationsToFix\": [\n        {\n            \"CICDRunId\": 0,\n            \"bulkSuppression\": True,\n            \"commentIds\": [\"string\"],\n            \"creationDate\": \"string\",\n            \"errorLines\": [0],\n            \"frameworkType\": \"string\",\n            \"justification\": {\n                \"comment\": \"string\",\n                \"createdBy\": \"string\",\n                \"expirationTime\": 0\n            },\n            \"justificationId\": \"string\",\n            \"metadataChecksMetadataPath\": \"string\",\n            \"metadataLines\": [0],\n            \"repository\": \"string\",\n            \"resourceId\": \"string\",\n            \"runtimeId\": \"string\",\n            \"runtimeSourceId\": \"string\",\n            \"s3FilePath\": \"string\",\n            \"s3FixFilePath\": \"string\",\n            \"severity\": \"string\",\n            \"status\": \"string\",\n            \"updatedDate\": \"string\",\n            \"vcsCommentLine\": \"string\",\n            \"violationId\": \"string\"\n        }\n    ],\n    \"violationsToSuppress\": [\n        {\n            \"CICDRunId\": 0,\n            \"bulkSuppression\": True,\n            \"commentIds\": [\"string\"],\n            \"creationDate\": \"string\",\n            \"errorLines\": [0],\n            \"frameworkType\": \"string\",\n            \"justification\": {\n                \"comment\": \"string\",\n                \"createdBy\": \"string\",\n                \"expirationTime\": 0\n            },\n            \"justificationId\": \"string\",\n            \"metadataChecksMetadataPath\": \"string\",\n            \"metadataLines\": [0],\n            \"repository\": \"string\",\n            \"resourceId\": \"string\",\n            \"runtimeId\": \"string\",\n            \"runtimeSourceId\": \"string\",\n            \"s3FilePath\": \"string\",\n            \"s3FixFilePath\": \"string\",\n            \"severity\": \"string\",\n            \"status\": \"string\",\n            \"updatedDate\": \"string\",\n            \"vcsCommentLine\": \"string\",\n            \"violationId\": \"string\"\n        }\n    ]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/errors/submitActions \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"cvesToSuppress\":[{\"CICDRunId\":0,\"bulkSuppression\":true,\"id\":\"string\",\"justification\":{\"comment\":\"string\",\"createdBy\":\"string\",\"expirationTime\":0},\"repository\":\"string\",\"resourceId\":\"string\",\"violationId\":\"string\"}],\"metadata\":{\"owner\":\"string\",\"pr\":\"string\",\"repoName\":\"string\",\"runNumber\":0,\"sourceBranchName\":\"string\"},\"sourceType\":\"string\",\"type\":\"default\",\"violationsToFix\":[{\"CICDRunId\":0,\"bulkSuppression\":true,\"commentIds\":[\"string\"],\"creationDate\":\"string\",\"errorLines\":[0],\"frameworkType\":\"string\",\"justification\":{\"comment\":\"string\",\"createdBy\":\"string\",\"expirationTime\":0},\"justificationId\":\"string\",\"metadataChecksMetadataPath\":\"string\",\"metadataLines\":[0],\"repository\":\"string\",\"resourceId\":\"string\",\"runtimeId\":\"string\",\"runtimeSourceId\":\"string\",\"s3FilePath\":\"string\",\"s3FixFilePath\":\"string\",\"severity\":\"string\",\"status\":\"string\",\"updatedDate\":\"string\",\"vcsCommentLine\":\"string\",\"violationId\":\"string\"}],\"violationsToSuppress\":[{\"CICDRunId\":0,\"bulkSuppression\":true,\"commentIds\":[\"string\"],\"creationDate\":\"string\",\"errorLines\":[0],\"frameworkType\":\"string\",\"justification\":{\"comment\":\"string\",\"createdBy\":\"string\",\"expirationTime\":0},\"justificationId\":\"string\",\"metadataChecksMetadataPath\":\"string\",\"metadataLines\":[0],\"repository\":\"string\",\"resourceId\":\"string\",\"runtimeId\":\"string\",\"runtimeSourceId\":\"string\",\"s3FilePath\":\"string\",\"s3FixFilePath\":\"string\",\"severity\":\"string\",\"status\":\"string\",\"updatedDate\":\"string\",\"vcsCommentLine\":\"string\",\"violationId\":\"string\"}]}'"
           }
         ]
       }
     },
     "/code/api/v1/errors/supply-chain-fix": {
       "post": {
+        "deprecated": true,
         "description": "The API is responsible for handling remediations from the supply chain screen. It receives a repository's UUID,\na list of IaC resources UUIDs and a list of packages UUIDs to be remediated, and returns the remediation response when available",
         "operationId": "supply-chain-fix",
         "parameters": [],
@@ -2321,21 +2789,21 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Submit Remediation Operations from Supply Chain Screen",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSSupplyChain_CREATE"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/errors/supply-chain-fix\"\n\npayload = {\n    \"packagesToFix\": [\"string\"],\n    \"repositoryId\": \"string\",\n    \"resourcesToFix\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/errors/supply-chain-fix\"\n\npayload = {\n    \"packagesToFix\": [\"string\"],\n    \"repositoryId\": \"string\",\n    \"resourcesToFix\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/errors/supply-chain-fix \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"packagesToFix\":[\"string\"],\"repositoryId\":\"string\",\"resourcesToFix\":[\"string\"]}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/errors/supply-chain-fix \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"packagesToFix\":[\"string\"],\"repositoryId\":\"string\",\"resourcesToFix\":[\"string\"]}'"
           }
         ]
       }
     },
-    "/code/api/v2/code-issues/branch_scan": {
+    "/api/v2/code-issues/branch_scan": {
       "post": {
-        "description": "Retrieves the code errors detected by Application Security during periodic scans.",
         "operationId": "getPeriodicFindings",
         "parameters": [],
         "requestBody": {
@@ -2347,21 +2815,22 @@
                     "properties": {
                       "filters": {
                         "$ref": "#/components/schemas/BranchScanFilters",
-                        "description": "Filters to retrieve selective issues. Use the following fields to filter the search results."
+                        "description": "Filters to retrieve selective issues. Use the following fields to filter the search results:\n- checkStatus: Security violation status filter. Filter scan results using a status value:\n     - Error: Security violation was detected.\n     - Passed: No security violation\n     - Suppressed: A security issue was identified, but was acknowledged and intentionally suppressed.\n     - FixPending: An automated fix has been issued to the security violation, and is currently being applied to the associated resource.\n- gitUsers: Git user filter. Filter security findings based on the Git user who modified the code or configuration files.\n- codeCategories: The `scopes` search criteria is also available as a filter.\n- secretsRiskFactors: Secrets risk factor filter:\n     - PublicRepository: Secret was found in a public repository.\n     - PrivateRepository: Secret was found in a private repository.\n     - User: User who committed the secret.\n     - Privileged: Secret is for a role with privileged access to a Cloud Service Provider account.\n     - Valid: Secret has been validated as an active secret by the service provider.\n     - Invalid: Secret received an invalid response when used against the service provider’s API.\n     - Unknown: Secret that could not be verified.\n     - FoundInHistory: Secret was found in the Git history but not in the most recent commit.\n- iacCategories (optional): Infrastructure as code categories filter:\n     - IAM (Identity and Access Management): Issues related to IAM configurations.\n     - Logging: Issues related to log management and monitoring.\n     - Monitoring: Issues related to monitoring and observability configurations.\n     - Networking: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups.\n     - Kubernetes: Issues specific to Kubernetes cluster configurations.\n     - General: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene.\n     - Serverless: Issues specific to serverless function configurations, such as function permissions or environment variable protection\n     - Elasticsearch: Issues related to Elasticsearch configurations, such as exposed clusters, lack of encryption, or insecure access controls.\n     - Storage: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings.\n     - Secrets: Issues related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys.\n     - Public: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. Vulnerabilities - Vulnerabilities in your code or infrastructure including issues related to outdated software versions, known security vulnerabilities, or insecure dependencies. Compute - Issues related to compute resources, including virtual machine configurations, instance roles, or container security. VCS (Version Control Systems) -  Issues associated with version control systems, such as Git repositories. Build Integrity - Issues related to the integrity of your build processes or artifacts. It involves ensuring that the build pipeline is secure, free from tampering, and follows secure build practices. Licenses - Issues related to open-source licenses in your codebase. Drift - Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates. Policy3D - Issues related to 3rd-party policies or standards. It involves evaluating and ensuring compliance with external security policies or regulatory frameworks.\n- severities: Severity filter:\n     - Critical: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation.\n     - High: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority.\n     - Medium: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention.\n     - Low: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture.\n     - Info: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.\n- iacTags: Filter violation based on the tag assigned to the resource.\n- fileTypes: File type filter. Use one of the available file type strings to retrieve issues with files of that type.\n- Benchmarks: Benchmarks filter. Use one of the available benchmark strings to retrieve issues based on the corresponding security benchmark or compliance standard.\n- iacLabels: IaC filter. Use one of the following IaC labels to retrieve corresponding issues:\n     - CustomPolicy: whether or not the presented security issue is associated with a custom policy created by the user.\n     - HasFix: whether or not a fix suggestion is provided for the presented security issue.\n- vulnerabilityRiskFactors: Vulnerability Risk Factors filter. Use one of the following vulnerability risk factor labels to retrieve corresponding issues:\n     - Attack Complexity: Level of effort or skill required for an attacker to exploit a vulnerability. A higher complexity indicates that it is more challenging for an attacker to exploit the vulnerability.\n     - Attack Vector: Path or means through which an attacker can exploit a vulnerability. It describes the method or entry point an attacker can use to access the vulnerable system or application.\n     - DoS (Denial of Service): DoS vulnerabilities that can be exploited to disrupt or disable the normal functioning of a system or application.\n     - HasFix: Vulnerabilities that have a fix or solution, such as a patch, update, or recommended mitigation steps to address the vulnerability.\n     - RemoteExecution: Vulnerabilities that can be exploited remotely, without direct physical or local access to the target system.\n     - ExploitInTheWild: Vulnerabilities with reports of active exploits in real-world attacks. If a vulnerability has an exploit in the wild, it means that attackers are actively taking advantage of the vulnerability.\n     - ExploitPOC:  \"Proof of Concept\" exploits are vulnerabilities with a proof of concept code or demonstration that showcases the vulnerability's exploitation.\n- licenseType: License type filter. Use one of the available license type strings to retrieve identified violations affiliated with the specified license type.\n- repositories: Repositories filter for retrieving issues detected the default branch scans specified repositories."
                       },
                       "search": {
                         "$ref": "#/components/schemas/SearchControllerParams",
-                        "description": "The `search` field allows you to search for a given term or set of terms across issues of a particular type or types. The `search` field consists of the `term` and the `scopes` fields.\n - `term`: field is required. It can be a single word, or multiple words joined by the ‘or’ and ‘and’ logical operators."
+                        "description": "The `search` field allows you to search for a given term or set of terms across issues of a particular type or types. The `search` field consists of the `term` and the `scopes` fields.\n - term: field is required. It can be a single word, or multiple words joined by the ‘or’ and ‘and’ logical operators.\n - scopes: field is optional. You can provide one or more code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. The following code category scopes are applicable to this endpoint:\n     - IacMisconfiguration: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources.\n     - vulnerabilites: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers.\n     - buildintegrity: Findings related to the integrity and security of the build pipeline or the software supply chain.\n     - Secrets: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files.\n     - Licenses: Filter value to retrieve issues related to the non-compliance with license requirements."
                       }
                     },
                     "required": ["filters"],
                     "type": "object"
                   },
-                  { "$ref": "#/components/schemas/PaginationRequest" }
+                  { "$ref": "#/components/schemas/OpenSearchPaginationRequest" }
                 ]
               }
             }
           },
+          "description": "- offset: A non-negative integer that indicates the number of items from the start of the results list to skip in the response. The offset parameter, along with the limit parameter, enables you to paginate the results. For example, if you use an offset value of 100 and a limit of 200, the response will contain issues starting from 101 to 300 in the results (matching issues) list. The default value is 0 for no offset, which returns results starting from the first issue.\n- limit: Number of items to return. A non-negative integer that indicates the number of issues from the result list to return. By default, all the matching issues are returned. The default value is 100 and the maximum value is 10000.\n- useSearchAfterPagination: boolean - If true, use searchAfter pagination instead of offset pagination. Offset/limit is not supported for more than 10K records.\n- searchAfter: string array - An opaque cursor for pagination. Used with useSearchAfterPagination and limit. Send it on the second request from the response.",
           "required": true
         },
         "responses": {
@@ -2380,21 +2849,21 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Get Code Issues from Periodic Scans",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/code-issues/branch_scan\"\n\npayload = {\n    \"filters\": {\n        \"benchmarks\": [\"CIS KUBERNETES V1.5\"],\n        \"branch\": \"string\",\n        \"checkStatus\": \"Error\",\n        \"codeCategories\": [\"IacMisconfiguration\"],\n        \"fileTypes\": [\"string\"],\n        \"fixableOnly\": True,\n        \"gitUsers\": [\"string\"],\n        \"iacCategories\": [\"IAM\"],\n        \"iacLabels\": [\"CustomPolicy\"],\n        \"iacTags\": [\"string\"],\n        \"licenseType\": [\"OSI_APACHE\"],\n        \"repositories\": [],\n        \"secretsRiskFactors\": [\"PublicRepository\"],\n        \"severities\": [\"INFO\"],\n        \"vulnerabilityRiskFactors\": [\"AttackComplexity\"]\n    },\n    \"search\": {\n        \"scopes\": [\"IacMisconfiguration\"],\n        \"term\": \"string\"\n    },\n    \"limit\": 0,\n    \"offset\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/api/v2/code-issues/branch_scan\"\n\npayload = {\n    \"filters\": {\n        \"benchmarks\": [\"CIS KUBERNETES V1.5\"],\n        \"branch\": \"string\",\n        \"checkStatus\": \"Error\",\n        \"codeCategories\": [\"IacMisconfiguration\"],\n        \"cwes\": [\"string\"],\n        \"fileTypes\": [\"build.gradle\"],\n        \"fixableOnly\": True,\n        \"gitUsers\": [\"string\"],\n        \"iacCategories\": [\"IAM\"],\n        \"iacLabels\": [\"CustomPolicy\"],\n        \"iacTags\": [\"string\"],\n        \"licenseType\": [\"OSI_APACHE\"],\n        \"owasp\": [\"string\"],\n        \"repositories\": [],\n        \"sastLabels\": [\"CustomPolicy\"],\n        \"secretsRiskFactors\": [\"PublicRepository\"],\n        \"severities\": [\"CRITICAL\"],\n        \"vulnerabilityRiskFactors\": [\"AttackComplexity\"]\n    },\n    \"search\": {\n        \"scopes\": [\"IacMisconfiguration\"],\n        \"term\": \"string\"\n    },\n    \"limit\": 0,\n    \"offset\": 0,\n    \"searchAfter\": [\"string\"],\n    \"useSearchAfterPagination\": True\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/code-issues/branch_scan \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"benchmarks\":[\"CIS KUBERNETES V1.5\"],\"branch\":\"string\",\"checkStatus\":\"Error\",\"codeCategories\":[\"IacMisconfiguration\"],\"fileTypes\":[\"string\"],\"fixableOnly\":true,\"gitUsers\":[\"string\"],\"iacCategories\":[\"IAM\"],\"iacLabels\":[\"CustomPolicy\"],\"iacTags\":[\"string\"],\"licenseType\":[\"OSI_APACHE\"],\"repositories\":[],\"secretsRiskFactors\":[\"PublicRepository\"],\"severities\":[\"INFO\"],\"vulnerabilityRiskFactors\":[\"AttackComplexity\"]},\"search\":{\"scopes\":[\"IacMisconfiguration\"],\"term\":\"string\"},\"limit\":0,\"offset\":0}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/api/v2/code-issues/branch_scan \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"benchmarks\":[\"CIS KUBERNETES V1.5\"],\"branch\":\"string\",\"checkStatus\":\"Error\",\"codeCategories\":[\"IacMisconfiguration\"],\"cwes\":[\"string\"],\"fileTypes\":[\"build.gradle\"],\"fixableOnly\":true,\"gitUsers\":[\"string\"],\"iacCategories\":[\"IAM\"],\"iacLabels\":[\"CustomPolicy\"],\"iacTags\":[\"string\"],\"licenseType\":[\"OSI_APACHE\"],\"owasp\":[\"string\"],\"repositories\":[],\"sastLabels\":[\"CustomPolicy\"],\"secretsRiskFactors\":[\"PublicRepository\"],\"severities\":[\"CRITICAL\"],\"vulnerabilityRiskFactors\":[\"AttackComplexity\"]},\"search\":{\"scopes\":[\"IacMisconfiguration\"],\"term\":\"string\"},\"limit\":0,\"offset\":0,\"searchAfter\":[\"string\"],\"useSearchAfterPagination\":true}'"
           }
         ]
       }
     },
-    "/code/api/v2/code-issues/code_review_scan": {
+    "/api/v2/code-issues/code_review_scan": {
       "post": {
-        "description": "Retrieves the code errors detected by Application Security during CI/CD scans.",
         "operationId": "getCicdFindings",
         "parameters": [],
         "requestBody": {
@@ -2406,11 +2875,11 @@
                     "properties": {
                       "filters": {
                         "$ref": "#/components/schemas/CicdRunsFilters",
-                        "description": "Filters to retrieve selective issues. Use the given fields to filter the search results:"
+                        "description": "Filters to retrieve selective issues. Use the following fields to filter the search results:\n- checkStatus: Security violation status filter. Filter scan results using a status value:\n     - Error: Security violation was detected.\n     - Passed: No security violation\n     - Suppressed: A security issue was identified, but was acknowledged and intentionally suppressed.\n     - FixPending: An automated fix has been issued to the security violation, and is currently being applied to the associated resource.\n- gitUsers: Git user filter. Filter security findings based on the Git user who modified the code or configuration files.\n- codeCategories: The `scopes` search criteria is also available as a filter.\n- secretsRiskFactors: Secrets risk factor filter:\n     - PublicRepository: Secret was found in a public repository.\n     - PrivateRepository: Secret was found in a private repository.\n     - User: User who committed the secret.\n     - Privileged: Secret is for a role with privileged access to a Cloud Service Provider account.\n     - Valid: Secret has been validated as an active secret by the service provider.\n     - Invalid: Secret received an invalid response when used against the service provider’s API.\n     - Unknown: Secret that could not be verified.\n     - FoundInHistory: Secret was found in the Git history but not in the most recent commit.\n- iacCategories (optional): Infrastructure as code categories filter:\n     - IAM (Identity and Access Management): Issues related to IAM configurations.\n     - Logging: Issues related to log management and monitoring.\n     - Monitoring: Issues related to monitoring and observability configurations.\n     - Networking: Issues related to network configurations, such as open ports, insecure protocols, or misconfigured security groups.\n     - Kubernetes: Issues specific to Kubernetes cluster configurations.\n     - General: Issues that do not fit into specific predefined categories. It may include issues related to best practices, compliance checks, or general security hygiene.\n     - Serverless: Issues specific to serverless function configurations, such as function permissions or environment variable protection\n     - Elasticsearch: Issues related to Elasticsearch configurations, such as exposed clusters, lack of encryption, or insecure access controls.\n     - Storage: Issues related to storage configurations, such as public buckets, insecure access policies, or encryption settings.\n     - Secrets: Issues related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys.\n     - Public: Issues related to public-facing resources, such as exposed APIs, publicly accessible assets, or misconfigured CDN (Content Delivery Network) settings. Vulnerabilities - Vulnerabilities in your code or infrastructure including issues related to outdated software versions, known security vulnerabilities, or insecure dependencies. Compute - Issues related to compute resources, including virtual machine configurations, instance roles, or container security. VCS (Version Control Systems) -  Issues associated with version control systems, such as Git repositories. Build Integrity - Issues related to the integrity of your build processes or artifacts. It involves ensuring that the build pipeline is secure, free from tampering, and follows secure build practices. Licenses - Issues related to open-source licenses in your codebase. Drift - Issues related to configuration drift, where the actual deployed infrastructure deviates from the desired state defined in the IaC templates. Policy3D - Issues related to 3rd-party policies or standards. It involves evaluating and ensuring compliance with external security policies or regulatory frameworks.\n- severities: Severity filter:\n     - Critical: High-risk vulnerabilities or misconfigurations that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation.\n     - High: Significant security issues that have the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority.\n     - Medium: Issues that pose a potential security risk that are less severe than Critical and High. Remediation of these issues should be prioritized, but they may not require immediate attention.\n     - Low: Low severity indicates issues that have a minimal impact on security or are relatively low-risk. While they may not pose an immediate threat, it is still recommended to address them to maintain a robust security posture.\n     - Info: Info severity is used for informational findings or recommendations that do not pose an immediate security risk but provide helpful guidance, best practices, or suggestions for optimization. These findings can be considered as part of ongoing security hygiene efforts.\n- iacTags: Filter violation based on the tag assigned to the resource.\n- fileTypes: File type filter. Use one of the available file type strings to retrieve issues with files of that type.\n- Benchmarks: Benchmarks filter. Use one of the available benchmark strings to retrieve issues based on the corresponding security benchmark or compliance standard.\n- iacLabels: IaC filter. Use one of the following IaC labels to retrieve corresponding issues:\n     - CustomPolicy: whether or not the presented security issue is associated with a custom policy created by the user.\n     - HasFix: whether or not a fix suggestion is provided for the presented security issue.\n- vulnerabilityRiskFactors: Vulnerability Risk Factors filter. Use one of the following vulnerability risk factor labels to retrieve corresponding issues:\n     - Attack Complexity: Level of effort or skill required for an attacker to exploit a vulnerability. A higher complexity indicates that it is more challenging for an attacker to exploit the vulnerability.\n     - Attack Vector: Path or means through which an attacker can exploit a vulnerability. It describes the method or entry point an attacker can use to access the vulnerable system or application.\n     - DoS (Denial of Service): DoS vulnerabilities that can be exploited to disrupt or disable the normal functioning of a system or application.\n     - HasFix: Vulnerabilities that have a fix or solution, such as a patch, update, or recommended mitigation steps to address the vulnerability.\n     - RemoteExecution: Vulnerabilities that can be exploited remotely, without direct physical or local access to the target system.\n     - ExploitInTheWild: Vulnerabilities with reports of active exploits in real-world attacks. If a vulnerability has an exploit in the wild, it means that attackers are actively taking advantage of the vulnerability.\n     - ExploitPOC:  \"Proof of Concept\" exploits are vulnerabilities with a proof of concept code or demonstration that showcases the vulnerability's exploitation.\n- licenseType: License type filter. Use one of the available license type strings to retrieve identified violations affiliated with the specified license type.\n- repositories: Repositories filter for retrieving issues detected in PR scans and CICD runs on specific repository.\n- runId (required): Scan ID filter. Provide a PR scan or CICD run ID to retrieve issues from the corresponding PR scan or CICD run.\n- enforcementLevel: Scan Status filter. Use one of the following scan statuses to retrieve corresponding issues:\n     - HARD_FAIL: The HARD_FAIL enforcement level indicates that a policy violation must be addressed, and it will result in a failure condition. When a violation is categorized as HARD_FAIL, it means that it is considered critical and must be resolved before the scan or evaluation can pass.\n     - SOFT_FAIL: The SOFT_FAIL enforcement level represents a policy violation that is not critical but should still be addressed. While a SOFT_FAIL violation does not result in an immediate failure condition, it is considered a warning or advisory, indicating a potential security or compliance issue that needs attention.\n     - PASS: The PASS enforcement level indicates that a policy is being evaluated, and no violations or issues have been identified. When a policy evaluation results in a PASS status, it means that the criteria defined by the policy have been met, and no corrective action is required.\n     - UNKNOWN: The UNKNOWN enforcement level signifies that the status or evaluation of a policy could not be determined. This may occur due to various reasons, such as missing or incomplete information, unsupported configurations, or other limitations in the scanning process."
                       },
                       "search": {
                         "$ref": "#/components/schemas/SearchControllerParams",
-                        "description": "The `search` field allows you to search for a given term or set of terms across issues of a particular type or types. The `search` field consists of the `term` and the `scopes` fields. The `term` field is required."
+                        "description": "The `search` field allows you to search for a given term or set of terms across issues of a particular type or types. The `search` field consists of the `term` and the `scopes` fields.\n - term: field is required. It can be a single word, or multiple words joined by the ‘or’ and ‘and’ logical operators.\n - scopes: field is optional. You can provide one or more code categories in this field. The platform searches for the `term` across issues that have the code categories you provide. The following code category scopes are applicable to this endpoint:\n     - IacMisconfiguration: Issues with Infrastructure-as-Code (IaC or iac) templates and scripts that provision and manage cloud resources.\n     - vulnerabilites: Findings related to known security vulnerabilities in open-source packages used in applications that could be exploited by attackers.\n     - buildintegrity: Findings related to the integrity and security of the build pipeline or the software supply chain.\n     - Secrets: Findings related to the handling and management of sensitive information, such as API keys, passwords, or cryptographic keys, within code files.\n     - Licenses: Filter value to retrieve issues related to the non-compliance with license requirements."
                       }
                     },
                     "required": ["filters"],
@@ -2420,7 +2889,9 @@
                 ]
               }
             }
-          }
+          },
+          "description": "- offset: A non-negative integer that indicates the number of items from the start of the results list to skip in the response. The offset parameter, along with the limit parameter, enables you to paginate the results. For example, if you use an offset value of 100 and a limit of 200, the response will contain issues starting from 101 to 300 in the results (matching issues) list. The default value is 0 for no offset, which returns results starting from the first issue.\n- limit: Number of items to return. A non-negative integer that indicates the number of issues from the result list to return. By default, all the matching issues are returned. The default value is 100 and the maximum value is 10000.",
+          "required": true
         },
         "responses": {
           "200": {
@@ -2438,21 +2909,22 @@
         "security": [{ "CustomAuthorizer": [] }],
         "summary": "Get Code Issues from Pull Requests Scans and CICD Runs",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/code-issues/code_review_scan\"\n\npayload = {\n    \"filters\": {\n        \"benchmarks\": [\"CIS KUBERNETES V1.5\"],\n        \"checkStatus\": \"Error\",\n        \"codeCategories\": [\"IacMisconfiguration\"],\n        \"enforcementLevel\": [\"HARD_FAIL\"],\n        \"fileTypes\": [\"string\"],\n        \"fixableOnly\": True,\n        \"gitUsers\": [\"string\"],\n        \"iacCategories\": [\"IAM\"],\n        \"iacLabels\": [\"CustomPolicy\"],\n        \"iacTags\": [\"string\"],\n        \"licenseType\": [\"OSI_APACHE\"],\n        \"repositories\": [\"string\"],\n        \"runId\": 0,\n        \"secretsRiskFactors\": [\"PublicRepository\"],\n        \"severities\": [\"INFO\"],\n        \"vulnerabilityRiskFactors\": [\"AttackComplexity\"]\n    },\n    \"search\": {\n        \"scopes\": [\"IacMisconfiguration\"],\n        \"term\": \"string\"\n    },\n    \"limit\": 0,\n    \"offset\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/api/v2/code-issues/code_review_scan\"\n\npayload = {\n    \"filters\": {\n        \"benchmarks\": [\"CIS KUBERNETES V1.5\"],\n        \"checkStatus\": \"Error\",\n        \"codeCategories\": [\"IacMisconfiguration\"],\n        \"cwes\": [\"string\"],\n        \"enforcementLevel\": [\"HARD_FAIL\"],\n        \"fileTypes\": [\"build.gradle\"],\n        \"fixableOnly\": True,\n        \"gitUsers\": [\"string\"],\n        \"iacCategories\": [\"IAM\"],\n        \"iacLabels\": [\"CustomPolicy\"],\n        \"iacTags\": [\"string\"],\n        \"licenseType\": [\"OSI_APACHE\"],\n        \"owasp\": [\"string\"],\n        \"repositories\": [\"string\"],\n        \"runId\": 0,\n        \"sastLabels\": [\"CustomPolicy\"],\n        \"secretsRiskFactors\": [\"PublicRepository\"],\n        \"severities\": [\"CRITICAL\"],\n        \"vulnerabilityRiskFactors\": [\"AttackComplexity\"]\n    },\n    \"search\": {\n        \"scopes\": [\"IacMisconfiguration\"],\n        \"term\": \"string\"\n    },\n    \"limit\": 0,\n    \"offset\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/code-issues/code_review_scan \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"benchmarks\":[\"CIS KUBERNETES V1.5\"],\"checkStatus\":\"Error\",\"codeCategories\":[\"IacMisconfiguration\"],\"enforcementLevel\":[\"HARD_FAIL\"],\"fileTypes\":[\"string\"],\"fixableOnly\":true,\"gitUsers\":[\"string\"],\"iacCategories\":[\"IAM\"],\"iacLabels\":[\"CustomPolicy\"],\"iacTags\":[\"string\"],\"licenseType\":[\"OSI_APACHE\"],\"repositories\":[\"string\"],\"runId\":0,\"secretsRiskFactors\":[\"PublicRepository\"],\"severities\":[\"INFO\"],\"vulnerabilityRiskFactors\":[\"AttackComplexity\"]},\"search\":{\"scopes\":[\"IacMisconfiguration\"],\"term\":\"string\"},\"limit\":0,\"offset\":0}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/api/v2/code-issues/code_review_scan \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"benchmarks\":[\"CIS KUBERNETES V1.5\"],\"checkStatus\":\"Error\",\"codeCategories\":[\"IacMisconfiguration\"],\"cwes\":[\"string\"],\"enforcementLevel\":[\"HARD_FAIL\"],\"fileTypes\":[\"build.gradle\"],\"fixableOnly\":true,\"gitUsers\":[\"string\"],\"iacCategories\":[\"IAM\"],\"iacLabels\":[\"CustomPolicy\"],\"iacTags\":[\"string\"],\"licenseType\":[\"OSI_APACHE\"],\"owasp\":[\"string\"],\"repositories\":[\"string\"],\"runId\":0,\"sastLabels\":[\"CustomPolicy\"],\"secretsRiskFactors\":[\"PublicRepository\"],\"severities\":[\"CRITICAL\"],\"vulnerabilityRiskFactors\":[\"AttackComplexity\"]},\"search\":{\"scopes\":[\"IacMisconfiguration\"],\"term\":\"string\"},\"limit\":0,\"offset\":0}'"
           }
         ]
       }
     },
-    "/code/api/v2/git/blameAuthors": {
+    "/api/v2/git/blameAuthors": {
       "post": {
-        "description": "Get list of repositories authors\n\n| Name             | Required            | Type          | In   | Description                                                                     |\n|------------------|---------------------|---------------|------|---------------------------------------------------------------------------------|\n| repositories     | no - default all user permitted repositories   | array<string>  | body  | array of repositories to get git blame authors for |\n| search           | no                                             | string         | query | repositories to filter by                          |\n| page             | no                                             | number         | query | pagination page number                             |\n| pageSize         | no                                             | number         | query | limit query results                                |\n\nRequest Example 1:\n```json ```\nResponse Example 1:\n```json\n[\n    { \"data\": [\"yoni\", \"yehuda\"], hasNext: false }\n]\n```\n\n\nRequest Example 2:\n```json ```\nResponse Example 2:\n```json\n[\n     { \"data\": [\"yoni\", \"yehuda\"], hasNext: false }\n]\n```",
+        "description": "Get list of repositories authors\n\n| Name             | Required            | Type          | In   | Description                                                                     |\n|------------------|---------------------|---------------|------|---------------------------------------------------------------------------------|\n| repositories     | no - default all user permitted repositories   | array<string>  | body  | array of repositories to get git blame authors for |\n| search           | no                                             | string         | query | repositories to filter by                          |\n| page             | no                                             | number         | query | pagination page number                             |\n| pageSize         | no                                             | number         | query | limit query results                                |\n\nRequest Example 1:\n```json\n { \"repositories\": [\"prismacloudcas/terragoat\", \"prismacloudcas/checkov\"] }\n```\nResponse Example 1:\n```json\n[\n    { \"data\": [\"yoni\", \"yehuda\"], hasNext: false }\n]\n```\n\n\nRequest Example 2:\n```json\n { \"search\": \"prismacloudcas/terragoat\", \"page\": 0, \"pageSize\": 100  }\n```\nResponse Example 2:\n```json\n[\n     { \"data\": [\"yoni\", \"yehuda\"], hasNext: false }\n]\n```",
         "operationId": "getBlameAuthors",
         "parameters": [
           {
@@ -2502,21 +2974,22 @@
           "500": { "description": "Could not get git blames authors" }
         },
         "security": [{ "CustomAuthorizer": [] }],
-        "summary": "Get repositories blame authors",
+        "summary": "Get Repositories Blame Authors",
         "tags": ["Errors"],
+        "x-bc-required-permissions": ["CCSProjects_READ"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/git/blameAuthors\"\n\nquerystring = {\"search\":\"SOME_STRING_VALUE\",\"page\":\"SOME_NUMBER_VALUE\",\"pageSize\":\"SOME_NUMBER_VALUE\"}\n\npayload = {\"repositories\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/api/v2/git/blameAuthors\"\n\nquerystring = {\"search\":\"SOME_STRING_VALUE\",\"page\":\"SOME_NUMBER_VALUE\",\"pageSize\":\"SOME_NUMBER_VALUE\"}\n\npayload = {\"repositories\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url 'https://api.prismacloud.io/code/api/v2/git/blameAuthors?search=SOME_STRING_VALUE&page=SOME_NUMBER_VALUE&pageSize=SOME_NUMBER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"]}'"
+            "source": "curl --request POST \\\n  --url 'http://undefinedundefined/api/v2/git/blameAuthors?search=SOME_STRING_VALUE&page=SOME_NUMBER_VALUE&pageSize=SOME_NUMBER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"]}'"
           }
         ]
       }
     }
   },
-  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "servers": null,
   "tags": [{ "name": "Errors" }]
 }
