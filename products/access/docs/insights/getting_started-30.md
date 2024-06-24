@@ -33,8 +33,7 @@ All requests go to the same base URL:
 
 ## Full API URL
 
-The full URL for an API request includes the base URL, plus the API URI described in the API reference documentation. For example, a customer using the US region
-can query for external alerts using:
+The full URL for an API request includes the base URL, plus the API URI described in the API reference documentation. For example, a customer can query for application list using:
 
 `https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/applications/application_list`
 
