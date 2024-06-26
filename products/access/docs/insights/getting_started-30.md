@@ -47,12 +47,15 @@ The full URL for an API request includes the base URL, plus the API URI describe
     # Replace
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
     #
-    curl -L -X POST 'https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/location_gp_mobile_users_logins' \
+    curl -L -X POST 'https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/applications/application_list' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
     -H 'Authorization: Bearer <TOKEN>' \
     --data-raw '{
-    "edge_location_display_name": "US West",
-    "event_time": "1709226000000",
-    "node_type": 48
-    }'
+        "filter": {
+       "rules": [ {
+                "property": "event_time",
+                "operator": "last_n_hours",
+                "values": [
+                    3
+                ] } ] } }
