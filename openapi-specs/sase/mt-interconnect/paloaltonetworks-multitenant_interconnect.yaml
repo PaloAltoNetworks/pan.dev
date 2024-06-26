@@ -8,26 +8,11 @@ components:
       required:
       - ipPoolId
       type: object
-    BackboneEntry:
+    BackboneEntryRequest:
       properties:
-        connectionStats:
-          $ref: '#/components/schemas/ConnectionStats'
-        connections:
-          items:
-            $ref: '#/components/schemas/ConnectionEntry'
-          type: array
-        id:
-          type: string
         name:
           pattern: \S
           type: string
-        status:
-          type: string
-        tenants:
-          items:
-            type: string
-          type: array
-          uniqueItems: true
       required:
       - name
       type: object
@@ -87,37 +72,17 @@ components:
       - BPS_20G
       - BPS_50G
       type: string
-    ConnectionEntry:
+    ConnectionEntryRequest:
       properties:
         bandwidth:
           $ref: '#/components/schemas/Bandwidth'
         bgpPeerAsn:
           format: int64
           type: integer
-        bgpPeerIp:
-          type: string
-        bgpPeerStatus:
-          type: string
-        cloudRouterAsn:
-          format: int64
-          type: integer
-        cloudRouterIp:
-          type: string
         edgeAvailability:
           $ref: '#/components/schemas/EdgeAvailability'
-        id:
-          type: string
-        med:
-          format: int64
-          type: integer
-        monitorInfo:
-          type: object
-        msg:
-          type: string
         name:
           pattern: \S
-          type: string
-        pairingKey:
           type: string
         partnerEmail:
           pattern: \S
@@ -125,29 +90,9 @@ components:
         partnerName:
           pattern: \S
           type: string
-        permittedActions:
-          items:
-            $ref: '#/components/schemas/SpInterconnectActions'
-          type: array
         region:
           pattern: \S
           type: string
-        spInterconnectName:
-          type: string
-        state:
-          type: string
-        status:
-          type: string
-        tenantCount:
-          format: int64
-          type: integer
-        tenants:
-          items:
-            type: string
-          type: array
-        upSince:
-          format: int64
-          type: integer
       required:
       - name
       - partnerName
@@ -205,26 +150,6 @@ components:
           items:
             type: string
           type: array
-      type: object
-    ConnectionStats:
-      properties:
-        active:
-          format: int64
-          type: integer
-        failed:
-          format: int64
-          type: integer
-        pending:
-          format: int64
-          type: integer
-        staging:
-          format: int64
-          type: integer
-        total:
-          format: int64
-          type: integer
-        totalBandwidth:
-          type: string
       type: object
     EdgeAvailability:
       enum:
@@ -304,10 +229,6 @@ components:
       - properties
       - filter
       type: object
-    SpInterconnectActions:
-      enum:
-      - DELETE_CONNECTION
-      type: string
     TimeFilter:
       properties:
         operator:
@@ -344,7 +265,7 @@ info:
     \ on a per-SP and per-Prisma Access location or region basis, ensuring flexibility\
     \ and efficiency in network operations.\n\nThese APIs use the common SASE authentication\
     \ mechanism and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
-    \ guide for more information.\n\nThis Open API spec file was created on June 04,\
+    \ guide for more information.\n\nThis Open API spec file was created on June 26,\
     \ 2024. To check for a more recent version of this file, see\n[Interconnect APIs\
     \ on pan.dev](https://pan.dev/sase/api/mt-sp-interconnect/mt-interconnect-api.html).\n\
     \n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
@@ -352,22 +273,12 @@ info:
     \nAll other marks mentioned herein may be trademarks of their respective companies.\n"
   title: Multitenant Interconnect APIs
   version: '1.0'
-openapi: 3.0.0
+openapi: 3.0.2
 paths:
-  /api/cloud/2.0/interconnect/backbones:
+  /mt/monitor/v1/interconnect/backbones:
     get:
-      description: 'Lists all the created backbones along with the backbone ID.
-
-        '
-      operationId: get-api-cloud-2.0-interconnect-backbones
-      parameters:
-      - description: "A google backbone is set as a default query parameter. Unless\
-          \ users specifies any other query parameter, the API will use Google's global\
-          \ network\ninfrastructure for executing queries or routing traffic. \n"
-        in: query
-        name: defaultBackbone
-        schema:
-          type: boolean
+      description: Get all backbones
+      operationId: get-mt-monitor-v1-interconnect-backbones
       responses:
         '200':
           content:
@@ -406,17 +317,17 @@ paths:
           description: Bad Request
       security:
       - Bearer: []
-      summary: List backbones
+      summary: Get all backbones
       tags:
       - Backbone
     post:
-      description: "You can create a backbone by providing a name. \n"
-      operationId: post-api-cloud-2.0-interconnect-backbones
+      description: Create new backbone
+      operationId: post-mt-monitor-v1-interconnect-backbones
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BackboneEntry'
+              $ref: '#/components/schemas/BackboneEntryRequest'
       responses:
         '200':
           content:
@@ -470,14 +381,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Create backbone
+      summary: Create new backbone
       tags:
       - Backbone
-  /api/cloud/2.0/interconnect/backbones/{backboneId}:
+  /mt/monitor/v1/interconnect/backbones/{backboneId}:
     delete:
-      description: "Delete a backbone using an ID. You can get the ID when you create\
-        \ a backbone. \n"
-      operationId: delete-api-cloud-2.0-interconnect-backbones-backboneid
+      description: Delete backbone
+      operationId: delete-mt-monitor-v1-interconnect-backbones-backboneid
       parameters:
       - in: path
         name: backboneId
@@ -528,13 +438,10 @@ paths:
       tags:
       - Backbone
     get:
-      description: "You can get details on the backbone using ID. \n"
-      operationId: get-api-cloud-2.0-interconnect-backbones-backboneid
+      description: Get backbone by id
+      operationId: get-mt-monitor-v1-interconnect-backbones-backboneid
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: path
+      - in: path
         name: backboneId
         required: true
         schema:
@@ -590,18 +497,15 @@ paths:
           description: Not Found
       security:
       - Bearer: []
-      summary: Backbone details
+      summary: Get backbone by id
       tags:
       - Backbone
-  /api/cloud/2.0/interconnect/backbones/{backboneId}/connections:
+  /mt/monitor/v1/interconnect/backbones/{backboneId}/connections:
     get:
-      description: "Get connection details using backbone ID. \n"
-      operationId: get-api-cloud-2.0-interconnect-backbones-backboneid-connections
+      description: Get connections in backbone
+      operationId: get-mt-monitor-v1-interconnect-backbones-backboneid-connections
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: path
+      - in: path
         name: backboneId
         required: true
         schema:
@@ -632,19 +536,14 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Connection details
+      summary: Get connections in backbone
       tags:
       - Connection
     post:
-      description: 'Create a connection using backbone ID.
-
-        '
-      operationId: post-api-cloud-2.0-interconnect-backbones-backboneid-connections
+      description: Create connection in backbone
+      operationId: post-mt-monitor-v1-interconnect-backbones-backboneid-connections
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: path
+      - in: path
         name: backboneId
         required: true
         schema:
@@ -653,7 +552,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConnectionEntry'
+              $ref: '#/components/schemas/ConnectionEntryRequest'
       responses:
         '201':
           content:
@@ -716,18 +615,15 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Create Connection
+      summary: Create connection in backbone
       tags:
       - Connection
-  /api/cloud/2.0/interconnect/backbones/{backboneId}/connections/{connectionId}:
+  /mt/monitor/v1/interconnect/backbones/{backboneId}/connections/{connectionId}:
     delete:
-      description: "Delete a connection using backbone ID. \n"
-      operationId: delete-api-cloud-2.0-interconnect-backbones-backboneid-connections-connectionid
+      description: Delete connection by id
+      operationId: delete-mt-monitor-v1-interconnect-backbones-backboneid-connections-connectionid
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: path
+      - in: path
         name: backboneId
         required: true
         schema:
@@ -766,19 +662,14 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Delete Connection
+      summary: Delete connection by id
       tags:
       - Connection
     get:
-      description: 'Get connection details using ID.
-
-        '
-      operationId: get-api-cloud-2.0-interconnect-backbones-backboneid-connections-connectionid
+      description: Get connection by Id
+      operationId: get-mt-monitor-v1-interconnect-backbones-backboneid-connections-connectionid
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: path
+      - in: path
         name: backboneId
         required: true
         schema:
@@ -827,13 +718,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Connection details by ID
+      summary: Get connection by Id
       tags:
       - Connection
-  /api/cloud/2.0/interconnect/ip-pool:
+  /mt/monitor/v1/interconnect/ip-pool:
     get:
-      description: "Get details of all the IP Pools. \n"
-      operationId: get-api-cloud-2.0-interconnect-ip-pool
+      description: Get all ip pools
+      operationId: get-mt-monitor-v1-interconnect-ip-pool
       responses:
         '200':
           content:
@@ -883,15 +774,12 @@ paths:
           description: Bad Request
       security:
       - Bearer: []
-      summary: IP Pools details
+      summary: Get all ip pools
       tags:
       - IPPool
     post:
-      description: 'Create a new IP Pool by selecting either Prisma Access or get
-        your own IP.
-
-        '
-      operationId: post-api-cloud-2.0-interconnect-ip-pool
+      description: Create new IP Pool
+      operationId: post-mt-monitor-v1-interconnect-ip-pool
       requestBody:
         content:
           application/json:
@@ -928,15 +816,13 @@ paths:
           description: Internal Error
       security:
       - Bearer: []
-      summary: Create IP Pool
+      summary: Create new IP Pool
       tags:
       - IPPool
-  /api/cloud/2.0/interconnect/ip-pool/assign:
+  /mt/monitor/v1/interconnect/ip-pool/assign:
     post:
-      description: "After you create an IP Pool, you can assign a region and the status\
-        \ becomes active. \n\nNote: Once you assign an IP Pool, you cannot update\
-        \ or delete an IP Pool. \n"
-      operationId: post-api-cloud-2.0-interconnect-ip-pool-assign
+      description: Assign an IP Pool
+      operationId: post-mt-monitor-v1-interconnect-ip-pool-assign
       requestBody:
         content:
           application/json:
@@ -971,15 +857,13 @@ paths:
           description: Internal Error
       security:
       - Bearer: []
-      summary: Assign IP Pool
+      summary: Assign an IP Pool
       tags:
       - IPPool
-  /api/cloud/2.0/interconnect/ip-pool/region:
+  /mt/monitor/v1/interconnect/ip-pool/region:
     get:
-      description: 'Get IP Pool regions and edge locations.
-
-        '
-      operationId: get-api-cloud-2.0-interconnect-ip-pool-region
+      description: Get IP Pool regions and edgeLocations
+      operationId: get-mt-monitor-v1-interconnect-ip-pool-region
       responses:
         '200':
           content:
@@ -1002,20 +886,15 @@ paths:
           description: Success
       security:
       - Bearer: []
-      summary: IP Pool regions
+      summary: Get IP Pool regions and edgeLocations
       tags:
       - IPPool
-  /api/cloud/2.0/interconnect/ip-pool/{ipPoolId}:
+  /mt/monitor/v1/interconnect/ip-pool/{ipPoolId}:
     delete:
-      description: 'Delete an IP Pool using an ID.
-
-        '
-      operationId: delete-api-cloud-2.0-interconnect-ip-pool-ippoolid
+      description: Get ip pool by id
+      operationId: delete-mt-monitor-v1-interconnect-ip-pool-ippoolid
       parameters:
-      - description: 'Provide IP Pool ID
-
-          '
-        in: path
+      - in: path
         name: ipPoolId
         required: true
         schema:
@@ -1032,14 +911,12 @@ paths:
           description: Success
       security:
       - Bearer: []
-      summary: Delete IP Pool
+      summary: Get ip pool by id
       tags:
       - IPPool
     get:
-      description: 'Get IP pool details by prividing an ID.
-
-        '
-      operationId: get-api-cloud-2.0-interconnect-ip-pool-ippoolid
+      description: Get ip pool by id
+      operationId: get-mt-monitor-v1-interconnect-ip-pool-ippoolid
       parameters:
       - in: path
         name: ipPoolId
@@ -1084,19 +961,14 @@ paths:
           description: Bad Request
       security:
       - Bearer: []
-      summary: IP Pool by ID
+      summary: Get ip pool by id
       tags:
       - IPPool
     put:
-      description: 'Update an IP Pool using an ID.
-
-        '
-      operationId: put-api-cloud-2.0-interconnect-ip-pool-ippoolid
+      description: Update IP Pool
+      operationId: put-mt-monitor-v1-interconnect-ip-pool-ippoolid
       parameters:
-      - description: 'Provide IP Pool ID
-
-          '
-        in: path
+      - in: path
         name: ipPoolId
         required: true
         schema:
@@ -1133,17 +1005,11 @@ paths:
       summary: Update IP Pool
       tags:
       - IPPool
-  /api/cloud/2.0/interconnect/monitor/backbones/theatres:
+  /mt/monitor/v1/interconnect/monitor/backbones/theatres:
     get:
-      description: 'Monitor a group of regions.
-
-        '
-      operationId: get-api-cloud-2.0-interconnect-monitor-backbones-theatres
+      operationId: get-mt-monitor-v1-interconnect-monitor-backbones-theatres
       parameters:
-      - description: 'Provide backbone ID
-
-          '
-        in: query
+      - in: query
         name: backboneId
         schema:
           type: string
@@ -1169,15 +1035,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Monitor regions
+      summary: Autogenerated summary
       tags:
       - BackboneMonitoring
-  /api/cloud/2.0/interconnect/monitor/backbones/throughput:
+  /mt/monitor/v1/interconnect/monitor/backbones/throughput:
     post:
-      description: "Provides comprehensive data on the rate of ingress and egress\
-        \ data traffic, offering insights into bandwidth utilization and network performance.\
-        \ \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-backbones-throughput
+      description: Get Ingress/Egress Throughput
+      operationId: post-mt-monitor-v1-interconnect-monitor-backbones-throughput
       requestBody:
         content:
           application/json:
@@ -1266,21 +1130,15 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress throughput
+      summary: Backbone Stats
       tags:
       - BackboneMonitoring
-  /api/cloud/2.0/interconnect/monitor/backbones/throughput/{tsgId}:
+  /mt/monitor/v1/interconnect/monitor/backbones/throughput/{tsgId}:
     post:
-      description: "Provides detailed measurements of the rate at which data is transmitted\
-        \ into and out of a network for \neach individual tenant within a multi-tenant\
-        \ environment.\n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-backbones-throughput-tsgid
+      description: Get Ingress/Egress Throughput by tenant
+      operationId: post-mt-monitor-v1-interconnect-monitor-backbones-throughput-tsgid
       parameters:
-      - description: "A sub-tenant TSG ID retrieves and provides the unique indentifier\
-          \ (TSG ID) associated with a specific sub-tenant within the multi-tenant\
-          \ architecture, \nproviding precise tenant management and resource allocation.\
-          \ \n"
-        example: 123456789
+      - example: 123456789
         in: path
         name: tsgId
         required: true
@@ -1374,18 +1232,15 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress throughput by tenant
+      summary: Backbone Stats by Tenant
       tags:
       - BackboneMonitoring
-  /api/cloud/2.0/interconnect/monitor/backbones/traffic:
+  /mt/monitor/v1/interconnect/monitor/backbones/traffic:
     post:
-      description: "Provides details on ingress/egress network traffic specific to\
-        \ each tenant within a multi-tenant environment. \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-backbones-traffic
+      description: Get Ingress/Egress Traffic
+      operationId: post-mt-monitor-v1-interconnect-monitor-backbones-traffic
       parameters:
-      - description: "Duration for which the network or application state is considered\
-          \ valid. \n"
-        example: false
+      - example: false
         in: query
         name: lifeTime
         schema:
@@ -1479,21 +1334,15 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress traffic
+      summary: Backbone Stats
       tags:
       - BackboneMonitoring
-  /api/cloud/2.0/interconnect/monitor/backbones/traffic/{tsgId}:
+  /mt/monitor/v1/interconnect/monitor/backbones/traffic/{tsgId}:
     post:
-      description: 'Retrieves the ingress/egress traffic data categorized by tenant.
-
-        '
-      operationId: post-api-cloud-2.0-interconnect-monitor-backbones-traffic-tsgid
+      description: Get Ingress/Egress Traffic by tenant
+      operationId: post-mt-monitor-v1-interconnect-monitor-backbones-traffic-tsgid
       parameters:
-      - description: "A sub-tenant TSG ID retrieves and provides the unique indentifier\
-          \ (TSG ID) associated with a specific sub-tenant within the multi-tenant\
-          \ architecture, \nproviding precise tenant management and resource allocation.\
-          \ \n"
-        example: 123456789
+      - example: 123456789
         in: path
         name: tsgId
         required: true
@@ -1590,14 +1439,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress traffic by tenant
+      summary: Backbone Stats by Tenant
       tags:
       - BackboneMonitoring
-  /api/cloud/2.0/interconnect/monitor/connections/connectionStats:
+  /mt/monitor/v1/interconnect/monitor/connections/connectionStats:
     post:
-      description: "Offers detailed metrics on the performance and realibity of a\
-        \ network connection. \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-connections-connectionstats
+      description: Get the connection stats
+      operationId: post-mt-monitor-v1-interconnect-monitor-connections-connectionstats
       requestBody:
         content:
           application/json:
@@ -1617,7 +1465,7 @@ paths:
                   - function: avg
                     property: egress_throughput
                   - function: avg
-                    property: ingress_throughput
+                    property: egress_throughput
               Connections Per Backbone:
                 value:
                   filter:
@@ -1670,15 +1518,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Connection statistics
+      summary: Get Connection Stats
       tags:
       - ConnectionMonitoring
-  /api/cloud/2.0/interconnect/monitor/connections/latency:
+  /mt/monitor/v1/interconnect/monitor/connections/latency:
     post:
-      description: "Provides precise measurements of the time delay experienced in\
-        \ data transmission across a network connection, \nenabling real-time monitoring\
-        \ and optimization of network performance. \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-connections-latency
+      description: Get the latency metrics
+      operationId: post-mt-monitor-v1-interconnect-monitor-connections-latency
       requestBody:
         content:
           application/json:
@@ -1724,15 +1570,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Latency materics
+      summary: Get Latency
       tags:
       - ConnectionMonitoring
-  /api/cloud/2.0/interconnect/monitor/connections/throughput:
+  /mt/monitor/v1/interconnect/monitor/connections/throughput:
     post:
-      description: "Provides detailed metrics on the rate of incoming (ingress) and\
-        \ outgoing (egress) data traffic, allowing for \nreal-time monitoring and\
-        \ analysis of network performance and bandwidth utilization. \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-connections-throughput
+      description: Get Ingress/Egress Throughput
+      operationId: post-mt-monitor-v1-interconnect-monitor-connections-throughput
       requestBody:
         content:
           application/json:
@@ -1784,15 +1628,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress throughput
+      summary: Get Connection Stats
       tags:
       - ConnectionMonitoring
-  /api/cloud/2.0/interconnect/monitor/connections/traffic:
+  /mt/monitor/v1/interconnect/monitor/connections/traffic:
     post:
-      description: "Provides comprehensive data on incoming (ingress) and outgoing\
-        \ (egress) netwrok traffic, \nenabling moniotoring and anlysis of traffic\
-        \ patterns, bandwidth usage, and network performance. \n"
-      operationId: post-api-cloud-2.0-interconnect-monitor-connections-traffic
+      description: Get Ingress/Egress Traffic
+      operationId: post-mt-monitor-v1-interconnect-monitor-connections-traffic
       requestBody:
         content:
           application/json:
@@ -1843,15 +1685,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Ingress/Egress traffic
+      summary: Get Connection Stats
       tags:
       - ConnectionMonitoring
-  /api/cloud/2.0/interconnect/monitor/ip-pool-usage:
+  /mt/monitor/v1/interconnect/monitor/ip-pool-usage:
     get:
-      description: "Provides a real-time and historical data on the allocation and\
-        \ utilization of IP addresses within a specified pool, enabling efficient\
-        \ network resource management. \n"
-      operationId: get-api-cloud-2.0-interconnect-monitor-ip-pool-usage
+      description: Get IP Pool usage
+      operationId: get-mt-monitor-v1-interconnect-monitor-ip-pool-usage
       responses:
         '200':
           content:
@@ -1873,14 +1713,13 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: IP Pool usage
+      summary: Get IP Pool usage for a SP
       tags:
       - IPPoolMonitor
-  /api/cloud/2.0/interconnect/regions:
+  /mt/monitor/v1/interconnect/regions:
     get:
-      description: "Get list of all the supported regions and you can use this during\
-        \ the creation of a connection. \n"
-      operationId: get-api-cloud-2.0-interconnect-regions
+      description: Get list of supported regions
+      operationId: get-mt-monitor-v1-interconnect-regions
       responses:
         '200':
           content:
@@ -1920,9 +1759,39 @@ paths:
           description: Success
       security:
       - Bearer: []
-      summary: Supported regions
+      summary: Get list of supported regions
       tags:
       - Region
+  /mt/monitor/v1/interconnect/tenant/info:
+    get:
+      operationId: get-mt-monitor-v1-interconnect-tenant-info
+      parameters:
+      - example: 123456789
+        in: query
+        name: root_tsgId
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Backbone Details of a tenant:
+                  value:
+                  - backboneId: PA_Default
+                    backboneName: PA_Default
+                    cdlTenantId: '1781443287'
+                    tsgId: '1600181220'
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Autogenerated summary
+      tags:
+      - TenantInformation
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
@@ -1941,6 +1810,10 @@ tags:
 - description: "You can select or assign an IP Pool to a region of your choice from\
     \ the given list. \n"
   name: Region API
+- description: 'A Tenant is an entity or a customer that is associated with a backbone.
+
+    '
+  name: Tenant Information API
 - description: "Monitor the performance and status of all backbones. You can track\
     \ egress and ingress throughput, view detailed egress and ingress statistics,\
     \ and monitor egress and ingress throughput by providing tenant information. \n\
