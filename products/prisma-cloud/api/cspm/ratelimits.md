@@ -26,6 +26,12 @@ If a user has multiple authentication tokens, the limits apply to the user and n
 
 Response headers include detailed information on the status of the endpoint's rate limiting behavior and information on the remaining number of requests for the current user. 
 
+| Header Name | Header Description |
+| ----------- | ------------------ |
+| `X-RateLimit-Burst-Capacity` | The maximum number of concurrent requests allowed within the current time window before rate limiting is enforced. |
+| `X-RateLimit-Remaining`  | The number of requests the client is still allowed to make within the current time window before hitting the rate limit. |
+| `X-RateLimit-Replenish-Rate` | The rate at which the client's request quota is refilled, in requests per second. This value is the same as the "Rate Limit" value. |
+
 - `X-RateLimit-Burst-Capacity`: The maximum number of _current_ requests before rate limiting is enforced.
 - `X-RateLimit-Remaining`: Remaining requests until receiving `HTTP 429 - Too Many Requests`
 - `X-RateLimit-Replenish-Rate`: Requests per second at which the bucket is refilled. _(This value is the same as the "Rate Limit" value)_
