@@ -53,19 +53,19 @@
   ],
   "tags": [
     {
-      "name": "Cloud Discovery and Exposure Management",
-      "description": "Discovery and Exposure Management(CDEM) APIs help you in identifying unmanaged or exposed assets that must be secured."
+      "name": "Discovery and Exposure Management",
+      "description": "Discovery and Exposure Management(CDEM) APIs help you in identifying unmanaged or exposed assets that must be secured. You can use the APIs in this section to fetch the details that are displayed in the Discovery and Exposure Management(CDEM) dashboard. \n For more information about Discovery and Exposure Management(CDEM) dashboard, see [Discovery and Exposure Management(CDEM) dashboard](https://docs.prismacloud.io/en/enterprise-edition/content-collections/dashboards/dashboards-discovery-exposure-management)"
     }
   ],
   "paths": {
     "/asm/api/v1/convert-cloud-account": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Onboard Cloud Accounts",
         "description": "Onboard the cloud accounts to CSPM in order to secure the unmanaged assets identified by the CDEM dashboard.",
-        "operationId": "onboardCloudAccounts",
+        "operationId": "onboard-Cloud-Accounts",
         "requestBody": {
           "content": {
             "application/json": {
@@ -77,11 +77,21 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AccountConversionResponseList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -98,7 +108,7 @@
     "/asm/api/v1/asset": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Assets List",
         "description": "Get the list of assets based on cloud-type, asset-type, manage-type, and service-type.",
@@ -114,11 +124,21 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AssetInventoryResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -135,11 +155,11 @@
     "/asm/api/v1/asset/{asset_id}/finding": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Findings of an Asset ",
         "description": "Get the list of findings of an asset by asset id. Findings are security issues, including vulnerabilities discovered on the asset. ",
-        "operationId": "getAssetFindings",
+        "operationId": "get-asset-findings",
         "parameters": [
           {
             "name": "asset_id",
@@ -149,6 +169,14 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -163,11 +191,21 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/FindingResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -184,11 +222,11 @@
     "/asm/api/v1/asset/{asset_id}/finding/filters": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Asset Findings Filter",
         "description": "Get the list of filters and their possible values based on which you can retrieve the findings of an asset.",
-        "operationId": "getFindingFilters",
+        "operationId": "get-finding-filters",
         "parameters": [
           {
             "name": "asset_id",
@@ -212,11 +250,107 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/FindingFilter"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/snooze": {
+      "post": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Snooze Unmanaged Assets",
+        "description": "You can temporarily or permanently snooze the notifications from your unmanaged (internet-exposed) assets.",
+        "operationId": "asset-snooze",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetSnoozeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/reopen": {
+      "post": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Unsnooze Unmanaged Assets",
+        "description": "Unsnooze list of snoozed unmanaged assets.",
+        "operationId": "asset-unsnooze",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetUnsnoozeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -233,27 +367,80 @@
     "/asm/api/v1/asset/email": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
-        "summary": "Send Asset Details via Email",
+        "summary": "Email Asset Details",
         "description": "Sends email with details of assets.",
         "operationId": "send-asset-detail-email-from-sidecar",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SidecarOverview"
+                "$ref": "#/components/schemas/SideCarAssetEmailDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "Asset not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SideCarAssetEmailDetails"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/download": {
+      "post": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Download Unmanaged Assets",
+        "description": "Download list of unmanaged assets based on filters.",
+        "operationId": "asset-download",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetInventoryRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "404": {
+            "description": "Asset not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -270,7 +457,7 @@
     "/asm/api/v1/asset/aggregation-by-resource-type": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Aggregated Asset Count by Asset Type",
         "description": "Get count of assets aggregated by asset type based on cloud provider,service type,asset-type, and manage-type.",
@@ -286,11 +473,21 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AssetL2View"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -307,7 +504,7 @@
     "/asm/api/v1/asset/aggregation-by-cloud-type": {
       "post": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Aggregated Asset Count by Cloud Type",
         "description": "Get count of assets aggregated by cloud service provider.",
@@ -322,12 +519,22 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "404": {
+            "description": "Data not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudDistribution"
                 }
               }
             }
@@ -344,11 +551,11 @@
     "/asm/api/v1/service": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Services",
         "description": "Get the list of services.",
-        "operationId": "listServices",
+        "operationId": "list-services",
         "parameters": [
           {
             "name": "snapshot_date",
@@ -372,11 +579,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AsmServicesList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -393,11 +610,11 @@
     "/asm/api/v1/service/{serviceId}": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Service Details",
         "description": "Get details of a service by service id",
-        "operationId": "fetchAsmServiceDetails",
+        "operationId": "fetch-asm-service-details",
         "parameters": [
           {
             "name": "serviceId",
@@ -420,7 +637,7 @@
           {
             "name": "all_service_detail",
             "in": "query",
-            "description": "Expand service details input",
+            "description": "Boolean flag to fetch all service details",
             "required": false,
             "schema": {
               "type": "string"
@@ -429,12 +646,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
+          "404": {
+            "description": "Service not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsmSideCarServiceDetails"
                 }
               }
             }
@@ -451,18 +678,28 @@
     "/asm/api/v1/industry-benchmarks": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Industry Benchmark Data",
         "description": "Get industry benchmark data which is used to identify the vulnerabilities and security risks.",
-        "operationId": "getIndustryBenchmarks",
+        "operationId": "get-industry-benchmarks",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/BenchmarkingResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -479,11 +716,11 @@
     "/asm/api/v1/dashboard/convertible-accounts": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Convertible Accounts",
         "description": "Get the list of accounts that are not managed by CSPM but can be onboarded to CSPM.",
-        "operationId": "getConvertibleCloudAccounts",
+        "operationId": "get-convertible-cloud-accounts",
         "parameters": [
           {
             "name": "alert_categories",
@@ -515,11 +752,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/ConvertibleCloudAccounts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -536,19 +783,20 @@
     "/asm/api/v1/dashboard/asset": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Convertible Assets",
         "description": "Get the list of unmanaged assets that can be onboarded to CSPM.",
-        "operationId": "listAssets",
+        "operationId": "list-assets",
         "parameters": [
           {
             "name": "convertible",
             "in": "query",
-            "description": "Convertible input",
+            "description": "Filter assets based on if they are convertible.",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "false"
             }
           },
           {
@@ -589,12 +837,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
+          "404": {
+            "description": "Data not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsmDashboardListAssetsResponse"
                 }
               }
             }
@@ -611,10 +869,10 @@
     "/asm/api/v1/dashboard/asset/trend": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
-        "summary": "Get Asset Trend for last 90 days",
-        "description": "Get asset trend for managed, unmanaged, and remediated assets.",
+        "summary": "Get Asset Trend",
+        "description": "Get asset trend for managed, unmanaged, and remediated assets for last 90 days.",
         "operationId": "fetch-assets-by-manage-type-and-remediation",
         "parameters": [
           {
@@ -630,14 +888,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AssetTrend"
-                  }
+                  "$ref": "#/components/schemas/AssetTrend"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -654,18 +919,28 @@
     "/asm/api/v1/dashboard/asset/top-risk": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Asset Top Risks",
         "description": "Get the list of top risks for assets.",
-        "operationId": "getTopRisks",
+        "operationId": "get-top-risks",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AsmAssetsTopRisks"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -682,18 +957,28 @@
     "/asm/api/v1/dashboard/asset/internet-exposure-risk": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Internet Exposure Risk Distribution",
         "description": "Get the internet exposure risk statistics of every asset type for last 24 hours",
         "operationId": "fetch-internet-exposure-asm-assets",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AsmInternetExposureRisk"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -710,17 +995,27 @@
     "/asm/api/v1/dashboard/asset/geolocation": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Assets Count Across Location",
         "operationId": "fetch-asset-by-geo-location",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AssetsByGeoLocation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -737,18 +1032,28 @@
     "/asm/api/v1/dashboard/asset/count": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Convertible Assets Count",
         "description": "Get the total number of convertible assets.",
-        "operationId": "getAssetCounts",
+        "operationId": "get-asset-counts",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/AsmDashboardAssetCounts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -765,7 +1070,7 @@
     "/asm/api/v1/asset/{asset_id}": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Asset Details by ID",
         "description": "Get asset overview or details by asset id.",
@@ -823,11 +1128,167 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/{asset_id}/vulnerability": {
+      "get": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Get Vulnerabilities in an Asset by ID",
+        "description": "Returns list of all the vulnerabilities in an asset by ID. You can use this endpoint to get the details that are displayed in the Top Risks from Unmanaged Assets widget.",
+        "operationId": "asset-vulnerability",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "description": "Asset ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "snapshot_date",
+            "in": "query",
+            "description": "Snapshot time in milliseconds",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset type is the types of scanned assets.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
+          },
+          {
+            "name": "manage_type",
+            "in": "query",
+            "description": "Asset management type indicates if the asset is managed by Prisma Cloud.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MANAGED",
+                "UNMANAGED"
+              ]
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "description": "Next page is the token from the previous API call to fetch the remaining data.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InferredCveResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Asset not found"
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/{assetId}/flowlog-relationships": {
+      "get": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Get Flow Logs of Unmanaged Assets",
+        "description": "Fetch traffic flow log between internet-exposed (unmanaged) and secure (managed) assets.",
+        "operationId": "fetch-flowlog-relationships",
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "path",
+            "description": "ID of unmanaged asset",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "snapshot_date",
+            "in": "query",
+            "description": "Snapshot date",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsmAssetFlowLogRelationshipsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -844,11 +1305,11 @@
     "/asm/api/v1/asset/{asmAssetId}/service": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get List of Service for an Asset",
         "description": "Get the list of services for assets by asset-id.",
-        "operationId": "fetchAsmServicesLinkedToAsset",
+        "operationId": "fetch-asm-services-linked-to-asset",
         "parameters": [
           {
             "name": "asmAssetId",
@@ -879,11 +1340,88 @@
         ],
         "responses": {
           "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetSideCarAsmServices"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/vulnerability": {
+      "get": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Get Impacted Distros for a Vulnerability",
+        "description": "Get the list of all the distributions(distros) and its packages that are impacted by the vulnerability based on the CVE ID.",
+        "operationId": "vulnerability",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "description": "CVE id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerabilityResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/asm/api/v1/asset/snoozed-regex": {
+      "get": {
+        "tags": [
+          "Discovery and Exposure Management"
+        ],
+        "summary": "Get Snooze Regex Pattern",
+        "description": "Retrieve the list of regex patterns used to snooze or unsnooze assets. You can snooze or unsnooze assets that match a regex pattern. These patterns can be fetched using this API.",
+        "operationId": "list-snoozed-pattern",
+        "responses": {
+          "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/SnoozedRegexResponse"
                 }
               }
             }
@@ -900,18 +1438,28 @@
     "/asm/api/v1/asset/filters": {
       "get": {
         "tags": [
-          "Cloud Discovery and Exposure Management"
+          "Discovery and Exposure Management"
         ],
         "summary": "Get Asset Filters",
-        "description": "Gets the list of supported asset filters and their values based on which you can fetch asset details.",
-        "operationId": "getAssetFilters",
+        "description": "Returns the list of supported asset filters and their values. You can use these filters and their values on other APIs to fetch the required assets.",
+        "operationId": "get-asset-filters",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Ok",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AssetFilterResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -963,6 +1511,25 @@
           }
         }
       },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
       "AccountConversionResponse": {
         "type": "object",
         "properties": {
@@ -1004,11 +1571,10 @@
             "format": "int64"
           },
           "cloudTypes": {
-            "title": "Cloud types",
+            "description": "Cloud types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Cloud types",
               "type": "string",
               "enum": [
                 "AWS",
@@ -1016,40 +1582,34 @@
                 "AZURE",
                 "ALIBABA_CLOUD"
               ]
-            },
-            "enum": [
-              "AWS",
-              "GCP",
-              "AZURE",
-              "ALIBABA_CLOUD"
-            ]
+            }
           },
           "assetTypes": {
-            "title": "Asset types",
+            "description": "Asset types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Asset types",
               "type": "string",
-              "default": "['Domain', 'ResponsiveIP']"
-            },
-            "default": "['Domain', 'ResponsiveIP']"
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
           },
           "manageType": {
             "title": "Manage type",
             "type": "string",
+            "default": "UNMANAGED",
             "enum": [
               "MANAGED",
               "UNMANAGED"
-            ],
-            "default": "UNMANAGED"
+            ]
           },
           "serviceTypes": {
-            "title": "Service types",
+            "description": "Service types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Service types",
               "type": "string"
             }
           },
@@ -1058,8 +1618,107 @@
             "type": "string"
           },
           "searchText": {
-            "title": "Seach text",
+            "title": "Search text",
             "type": "string"
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Indicates if the notifications from these assets are snoozed.",
+              "enum": [
+                "SNOOZED",
+                "ACTIVE"
+              ]
+            }
+          },
+          "accountMappingStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "**Mapped** indicates that the asset is connected to a parent account or organizational unit (OU) on Prisma Cloud, whereas **unmapped** signifies that the asset is not associated with any parent account or OU on Prisma Cloud.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MAPPED",
+                "UNMAPPED"
+              ]
+            }
+          }
+        }
+      },
+      "AssetInventory": {
+        "type": "object",
+        "properties": {
+          "asmAssetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "cloudType": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "AWS",
+                "AZURE",
+                "GCP",
+                "ALIBABA_CLOUD"
+              ]
+            }
+          },
+          "dateAdded": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastObserved": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snoozeStatus": {
+            "type": "string",
+            "description": "Indicates if the notifications from these assets are snoozed.",
+            "enum": [
+              "SNOOZED",
+              "ACTIVE"
+            ]
+          },
+          "snoozeStartTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snoozeEndTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "temporarySnooze": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AssetInventoryResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetInventory"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          },
+          "moreData": {
+            "type": "boolean"
           }
         }
       },
@@ -1098,10 +1757,160 @@
               "Medium",
               "Low"
             ]
+          },
+          "nextPageToken": {
+            "type": "string"
           }
         }
       },
-      "SidecarOverview": {
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "FindingResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "FindingFilter": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severities": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AssetUnsnoozeRequest": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "uniqueItems": true,
+            "description": "List of asset ids.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regex": {
+            "type": "string",
+            "description": "Regular expression to filter the assets. The snooze setting will be applied to all the assets that match this regular expression."
+          }
+        }
+      },
+      "AssetSnoozeRequest": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "description": "List of asset ids",
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "temporarySnooze": {
+            "description": "True to snooze the notifications temporarily and false to snooze the notifications permanently. To snooze notifications temporarily, you must also specify the snoozeTimeRange.",
+            "type": "boolean"
+          },
+          "snoozeTimeRange": {
+            "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+          },
+          "reason": {
+            "description": "Reason for snooze.",
+            "type": "string"
+          },
+          "regex": {
+            "type": "string",
+            "description": "Regular expression to filter the assets. The snooze setting will be applied to all the assets that match this regular expression."
+          }
+        }
+      },
+      "RelativeTimeDuration": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year",
+              "epoch",
+              "login"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A value for the time unit.",
+            "format": "int32"
+          }
+        }
+      },
+      "RelativeTimeRangeConfig": {
+        "description": "Snooze time range config",
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/RelativeTimeDuration"
+          },
+          "type": {
+            "type": "string",
+            "description": "Value must be **relative** to indicate relative time range model."
+          }
+        }
+      },
+      "AsmAssetsInfo": {
+        "title": "List of assets",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "SideCarAssetEmailDetails": {
         "type": "object",
         "properties": {
           "pcAssetId": {
@@ -1118,11 +1927,10 @@
             "type": "string"
           },
           "cloudTypes": {
-            "title": "Set of cloud types",
+            "description": "Set of cloud types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Set of cloud types",
               "type": "string",
               "enum": [
                 "AWS",
@@ -1154,6 +1962,54 @@
           "type": {
             "title": "Type",
             "type": "string"
+          },
+          "snoozeStatus": {
+            "type": "string",
+            "description": "Indicates if the notifications from these assets are snoozed.",
+            "enum": [
+              "SNOOZED",
+              "ACTIVE"
+            ]
+          },
+          "snoozeStartTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snoozeEndTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "temporarySnooze": {
+            "type": "boolean"
+          },
+          "isFlowlogRelationshipAvailable": {
+            "type": "boolean"
+          },
+          "snapshotDate": {
+            "description": "Snapshot date in ms",
+            "type": "integer",
+            "format": "int64"
+          },
+          "userEmailIds": {
+            "description": "List of user email ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "asmAssets": {
+            "description": "List of assets",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AsmAssetsInfo"
+            }
+          },
+          "comment": {
+            "title": "Optional email comment",
+            "type": "string"
           }
         }
       },
@@ -1161,11 +2017,10 @@
         "type": "object",
         "properties": {
           "cloudTypes": {
-            "title": "Cloud types",
+            "description": "Cloud types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Cloud types",
               "type": "string",
               "enum": [
                 "AWS",
@@ -1173,13 +2028,7 @@
                 "AZURE",
                 "ALIBABA_CLOUD"
               ]
-            },
-            "enum": [
-              "AWS",
-              "GCP",
-              "AZURE",
-              "ALIBABA_CLOUD"
-            ]
+            }
           },
           "snapshotDate": {
             "title": "Snapshot date",
@@ -1187,33 +2036,83 @@
             "format": "int64"
           },
           "serviceTypes": {
-            "title": "Service types",
+            "description": "Service types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Service types",
               "type": "string"
             }
           },
           "assetTypes": {
-            "title": "Asset types",
+            "description": "Asset types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Asset types",
               "type": "string",
-              "default": "['Domain', 'ResponsiveIP']"
-            },
-            "default": "['Domain', 'ResponsiveIP']"
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
           },
           "manageType": {
             "title": "Manage type",
             "type": "string",
+            "default": "UNMANAGED",
             "enum": [
               "MANAGED",
               "UNMANAGED"
-            ],
-            "default": "UNMANAGED"
+            ]
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Indicates if the notifications from these assets are snoozed.",
+              "enum": [
+                "SNOOZED",
+                "ACTIVE"
+              ]
+            }
+          },
+          "accountMappingStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "**Mapped** indicates that the asset is connected to a parent account or organizational unit (OU) on Prisma Cloud, whereas **unmapped** signifies that the asset is not associated with any parent account or OU on Prisma Cloud.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MAPPED",
+                "UNMAPPED"
+              ]
+            }
+          }
+        }
+      },
+      "AssetCountView": {
+        "type": "object",
+        "properties": {
+          "assetType": {
+            "description": "Asset type",
+            "type": "string"
+          },
+          "count": {
+            "description": "Value of count",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AssetL2View": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetCountView"
+            }
           }
         }
       },
@@ -1226,40 +2125,39 @@
             "format": "int64"
           },
           "assetTypes": {
-            "title": "Asset types",
+            "description": "Asset types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Asset types",
               "type": "string",
-              "default": "['Domain', 'ResponsiveIP']"
-            },
-            "default": "['Domain', 'ResponsiveIP']"
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
           },
           "manageType": {
             "title": "Manage type",
             "type": "string",
+            "default": "UNMANAGED",
             "enum": [
               "MANAGED",
               "UNMANAGED"
-            ],
-            "default": "UNMANAGED"
+            ]
           },
           "serviceTypes": {
-            "title": "Service types",
+            "description": "Service types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Service types",
               "type": "string"
             }
           },
           "cloudTypes": {
-            "title": "Cloud types",
+            "description": "Cloud types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "title": "Cloud types",
               "type": "string",
               "enum": [
                 "AWS",
@@ -1267,13 +2165,358 @@
                 "AZURE",
                 "ALIBABA_CLOUD"
               ]
-            },
+            }
+          },
+          "snoozeStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Indicates if the notifications from these assets are snoozed.",
+              "enum": [
+                "SNOOZED",
+                "ACTIVE"
+              ]
+            }
+          },
+          "accountMappingStatus": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "**Mapped** indicates that the asset is connected to a parent account or organizational unit (OU) on Prisma Cloud, whereas **unmapped** signifies that the asset is not associated with any parent account or OU on Prisma Cloud.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MAPPED",
+                "UNMAPPED"
+              ]
+            }
+          }
+        }
+      },
+      "CloudDistribution": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudTypeCount"
+            }
+          }
+        }
+      },
+      "CloudTypeCount": {
+        "type": "object",
+        "properties": {
+          "cloudType": {
+            "description": "Cloud type",
+            "type": "string",
             "enum": [
               "AWS",
-              "GCP",
               "AZURE",
+              "GCP",
               "ALIBABA_CLOUD"
             ]
+          },
+          "count": {
+            "description": "Value of count",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AsmServicesList": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "List of services",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Service"
+            }
+          },
+          "totalCount": {
+            "description": "Total count of services",
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextPageToken": {
+            "description": "Next page token",
+            "type": "string"
+          }
+        }
+      },
+      "Service": {
+        "description": "List of services",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Service ID",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "Service name",
+            "type": "string"
+          },
+          "serviceType": {
+            "description": "Service type",
+            "type": "string"
+          }
+        }
+      },
+      "AsmSideCarServiceDetails": {
+        "type": "object",
+        "properties": {
+          "overview": {
+            "$ref": "#/components/schemas/Overview"
+          },
+          "ips": {
+            "description": "List of IPs",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ip"
+            }
+          },
+          "certificates": {
+            "description": "List of certificates",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Certificate"
+            }
+          },
+          "serviceDetails": {
+            "description": "Service details",
+            "type": "object",
+            "additionalProperties": {
+              "description": "Service details",
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Certificate": {
+        "description": "List of certificates",
+        "type": "object",
+        "properties": {
+          "certificate": {
+            "type": "string"
+          },
+          "issuerName": {
+            "type": "string"
+          },
+          "validFrom": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validTo": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastObserved": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Ip": {
+        "description": "List of IPs",
+        "type": "object",
+        "properties": {
+          "ip": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "lastObserved": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Overview": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "serviceType": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstObserved": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastObserved": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ipsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "certificatesCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "BenchmarkingResponse": {
+        "type": "object",
+        "properties": {
+          "topPercentile": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "AccountDetails": {
+        "description": "List of convertible accounts",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name",
+            "type": "string"
+          },
+          "id": {
+            "description": "Account ID",
+            "type": "string"
+          },
+          "cloudType": {
+            "description": "Cloud type",
+            "type": "string"
+          },
+          "assetsCount": {
+            "description": "Count of assets",
+            "type": "integer",
+            "format": "int64"
+          },
+          "conversionStatus": {
+            "description": "Status of account conversion",
+            "type": "string"
+          },
+          "conversionMessage": {
+            "description": "Conversion message",
+            "type": "string"
+          }
+        }
+      },
+      "ConvertibleCloudAccounts": {
+        "type": "object",
+        "properties": {
+          "nextPageToken": {
+            "description": "Next page token",
+            "type": "string"
+          },
+          "count": {
+            "description": "Count of convertible accounts",
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "description": "List of convertible accounts",
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountDetails"
+            }
+          }
+        }
+      },
+      "AsmDashboardListAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "List of assets",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "nextPageToken": {
+            "description": "Next page token",
+            "type": "string"
+          }
+        }
+      },
+      "Asset": {
+        "description": "List of assets",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Asset ID",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "Asset name",
+            "type": "string"
+          },
+          "type": {
+            "description": "Asset type",
+            "type": "string"
+          },
+          "issuesMetadata": {
+            "description": "List of issues metadata",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IssuesMetadata"
+            }
+          },
+          "cloudTypes": {
+            "description": "List of cloud types",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "AWS",
+                "GCP",
+                "AZURE",
+                "ALIBABA_CLOUD"
+              ]
+            }
+          },
+          "isConvertible": {
+            "description": "Convertible",
+            "type": "boolean"
+          },
+          "cloudAccountId": {
+            "description": "Cloud account ID",
+            "type": "string"
+          },
+          "cloudAccountName": {
+            "description": "Cloud account name",
+            "type": "string"
+          },
+          "conversionStatus": {
+            "description": "Account conversion status",
+            "type": "string"
+          }
+        }
+      },
+      "IssuesMetadata": {
+        "description": "List of issues metadata",
+        "type": "object",
+        "properties": {
+          "alertCategories": {
+            "type": "string"
+          },
+          "issueTypes": {
+            "type": "string"
           }
         }
       },
@@ -1281,18 +2524,59 @@
         "type": "object",
         "properties": {
           "ts": {
+            "description": "Timestamp",
             "type": "integer",
             "format": "int64"
           },
           "managedAssetCount": {
+            "description": "Count of managed assets",
             "type": "integer",
             "format": "int64"
           },
           "unmanagedAssetCount": {
+            "description": "Count of unmanaged assets",
             "type": "integer",
             "format": "int64"
           },
           "remediatedAssetCount": {
+            "description": "Count of remediated assets",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AsmAssetsTopRisks": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "List of risks",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Risk"
+            }
+          }
+        }
+      },
+      "Risk": {
+        "description": "List of risks",
+        "type": "object",
+        "properties": {
+          "alertCategories": {
+            "description": "Alert categories",
+            "type": "string"
+          },
+          "convertibleCount": {
+            "description": "Count of convertible assests",
+            "type": "integer",
+            "format": "int64"
+          },
+          "nonConvertibleCount": {
+            "description": "Count of non-convertible assets",
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "description": "Total count of assets",
             "type": "integer",
             "format": "int64"
           }
@@ -1302,6 +2586,7 @@
         "type": "object",
         "properties": {
           "lastScanTs": {
+            "description": "Timestamp of last CDEM scan",
             "type": "integer",
             "format": "int64"
           },
@@ -1320,26 +2605,32 @@
         }
       },
       "Assets": {
+        "description": "Remediated assets",
         "type": "object",
         "properties": {
           "count": {
+            "description": "Count of assets",
             "type": "integer",
             "format": "int64"
           },
           "delta": {
+            "description": "Delta of last 24hrs",
             "type": "number",
             "format": "double"
           }
         }
       },
       "AssetsRatio": {
+        "description": "Unmanaged assets ratio",
         "type": "object",
         "properties": {
           "value": {
+            "description": "Ratio value",
             "type": "number",
             "format": "double"
           },
           "delta": {
+            "description": "Delta of last 24hrs",
             "type": "number",
             "format": "double"
           }
@@ -1349,6 +2640,7 @@
         "type": "object",
         "properties": {
           "value": {
+            "description": "List of assets grouped by geolocation",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GeoLocation"
@@ -1357,22 +2649,269 @@
         }
       },
       "GeoLocation": {
+        "description": "List of assets grouped by geolocation",
         "type": "object",
         "properties": {
           "country": {
+            "description": "Country name",
             "type": "string"
+          },
+          "count": {
+            "description": "Asset count",
+            "type": "integer",
+            "format": "int32"
+          },
+          "convertible": {
+            "description": "Convertible assets count",
+            "type": "integer",
+            "format": "int32"
+          },
+          "nonConvertible": {
+            "description": "Non-convertible assets count",
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AsmDashboardAssetCounts": {
+        "type": "object",
+        "properties": {
+          "convertible": {
+            "description": "Count of convertible assets",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "InferredCveMetaData": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string"
+          },
+          "distro": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "firstObserved": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "matchType": {
+            "type": "string"
+          }
+        }
+      },
+      "InferredCveResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InferredCveMetaData"
+            }
           },
           "count": {
             "type": "integer",
             "format": "int32"
           },
-          "convertible": {
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AsmAssetFlowLogRelationshipsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Data"
+          }
+        }
+      },
+      "Connection": {
+        "description": "List of connections",
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Data": {
+        "type": "object",
+        "properties": {
+          "connections": {
+            "description": "List of connections",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            }
+          },
+          "nodes": {
+            "description": "List of nodes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Node"
+            }
+          }
+        }
+      },
+      "Node": {
+        "description": "List of nodes",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "ID",
+            "type": "string"
+          },
+          "assetManageType": {
+            "description": "Asset manage type",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name",
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "Service name",
+            "type": "string"
+          },
+          "assetCategory": {
+            "description": "Asset category",
+            "type": "string"
+          },
+          "ipAddresses": {
+            "description": "List of IP addressess",
+            "type": "array",
+            "items": {
+              "description": "List of IP addressess",
+              "type": "string"
+            }
+          },
+          "vpcName": {
+            "description": "VPC name",
+            "type": "string"
+          },
+          "cloudAccountId": {
+            "description": "Cloud account ID",
+            "type": "string"
+          },
+          "cloudAccountName": {
+            "description": "Cloud account name",
+            "type": "string"
+          },
+          "cloudAccountRegionName": {
+            "description": "Cloud account region",
+            "type": "string"
+          }
+        }
+      },
+      "AssetSideCarAsmServices": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "List of services",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Service"
+            }
+          },
+          "nextPageToken": {
+            "description": "Next page token",
+            "type": "string"
+          }
+        }
+      },
+      "DistroDetails": {
+        "type": "object",
+        "properties": {
+          "cvssScore": {
+            "type": "number",
+            "format": "float"
+          },
+          "packageName": {
+            "type": "string"
+          },
+          "release": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          }
+        }
+      },
+      "ImpactedDistro": {
+        "type": "object",
+        "properties": {
+          "distro": {
+            "type": "string"
+          },
+          "impactCount": {
             "type": "integer",
             "format": "int32"
           },
-          "nonConvertible": {
-            "type": "integer",
-            "format": "int32"
+          "distroDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DistroDetails"
+            }
+          }
+        }
+      },
+      "VulnerabilityResponse": {
+        "type": "object",
+        "properties": {
+          "cveId": {
+            "type": "string"
+          },
+          "cvssScore": {
+            "type": "number",
+            "format": "float"
+          },
+          "severity": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impactedDistros": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactedDistro"
+            }
+          }
+        }
+      },
+      "SnoozedRegexResponse": {
+        "type": "object",
+        "properties": {
+          "regex": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1380,22 +2919,58 @@
         "type": "object",
         "properties": {
           "serviceTypes": {
+            "description": "List of service types",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "cloudTypes": {
+            "description": "List of cloud types",
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "AWS",
+                "GCP",
+                "AZURE",
+                "ALIBABA_CLOUD"
+              ]
             }
           },
           "assetTypes": {
+            "description": "List of asset types",
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "Domain",
+                "ResponsiveIP"
+              ]
+            }
+          },
+          "snoozeStatus": {
+            "description": "List of snooze status",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Indicates if the notifications from these assets are snoozed.",
+              "enum": [
+                "SNOOZED",
+                "ACTIVE"
+              ]
+            }
+          },
+          "accountMappingStatus": {
+            "type": "array",
+            "description": "**Mapped** indicates that the asset is connected to a parent account or organizational unit (OU) on Prisma Cloud, whereas **unmapped** signifies that the asset is not associated with any parent account or OU on Prisma Cloud.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MAPPED",
+                "UNMAPPED"
+              ]
             }
           }
         }

@@ -1,6 +1,6 @@
 ---
 id: basic-request
-title: Application Security API Request Basics
+title: API Request Basics
 sidebar_label: API Request Basics
 keywords:
   - Developer
@@ -28,7 +28,7 @@ To have the right privileges to make a Application Security API request, you mus
 To have the right authorization for a Application Security API request, follow the high-level steps below:
 
 1. [Create and Manage Access Keys](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/create-access-keys). If you are upgraded to Darwin, see [Create and Manage Access Keys](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys).
-2. Make a CSPM API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
+2. Make a Cloud Security API request to [log in](/prisma-cloud/api/cspm/app-login) . A successful request returns a JSON Web Token (JWT).
 
 All the Application Security API requests use this JWT in the API request [header](/prisma-cloud/api/code/api-headers) for authorization. Note that for security, a JWT is valid for only ten minutes. If your session must be active beyond that limit, you can [extend a session](/prisma-cloud/api/cspm/extend-session/).
 
@@ -36,7 +36,7 @@ See [Getting Started](/prisma-cloud/docs/cspm/cspm-gs) for detailed steps to obt
 
 ## Components of a Application Security Request
 
-The sections below note specific details about some of the components of a successful CSPM API request.
+The sections below note specific details about some of the components of a successful Cloud Security API request.
 
 ### Base URL
 

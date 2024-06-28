@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -20,7 +22,7 @@ title: Palo Alto Networks Panorama Module for Azure
 
 A terraform module for deploying a working Panorama instance in Azure.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/panorama) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/panorama)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/panorama) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/panorama)
 
 ## Usage
 
@@ -39,7 +41,7 @@ The acceptance applies to the entirety of your Azure Subscription.
 
 ```hcl
 module "panorama" {
-  source  = "PaloAltoNetworks/vmseries-modules/azurerm//modules/panorama"
+  source  = "PaloAltoNetworks/swfw-modules/azurerm//modules/panorama"
 
   panorama_name       = var.panorama_name
   resource_group_name = azurerm_resource_group.this.name

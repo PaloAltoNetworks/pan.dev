@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -22,7 +24,7 @@ Panorama is a centralized management system that provides global visibility and 
 
 The Terraform code presented here will deploy Palo Alto Networks Panorama management platform in Azure in management only mode (without additional logging disks). For option on how to add additional logging disks - please refer to panorama [module documentation](../../modules/panorama#input_logging_disks)
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/standalone_panorama) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/standalone_panorama)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/standalone_panorama) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/standalone_panorama)
 
 ## Topology
 
@@ -33,7 +35,8 @@ This is a non zonal deployment. The deployed infrastructure consists of:
   * a Network Security Group to give access to Panorama's public interface
 * a Panorama appliance with a public IP assigned to the management interface
 
-![standalone-panorama](a2394f73-c0a8-4878-8693-825356abbd23.png)
+![standalone-panorama](b2dadd69-f5b5-4ac4-b356-467ef79cbb0b.png)
+
 
 ## Prerequisites
 

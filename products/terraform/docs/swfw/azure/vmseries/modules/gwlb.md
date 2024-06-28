@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -20,7 +22,7 @@ title: Gateway Load Balancer Module for Azure
 
 A Terraform module for deploying a Gateway Load Balancer for VM-Series firewalls.
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/gwlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/gwlb)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/gwlb) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/gwlb)
 
 ## Usage
 

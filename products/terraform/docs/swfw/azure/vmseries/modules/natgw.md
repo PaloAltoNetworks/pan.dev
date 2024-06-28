@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - azure
 pagination_next: null
 pagination_prev: null
@@ -18,7 +20,7 @@ title: NAT Gateway module
 
 # NAT Gateway module
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/modules/natgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/submodules/natgw)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/modules/natgw) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/submodules/natgw)
 
 ## Purpose
 
@@ -32,7 +34,7 @@ To deploy this resource in it's minimum configuration following code snippet can
 
 ```terraform
 module "natgw" {
-  source = "PaloAltoNetworks/vmseries-modules/azurerm//modules/natgw"
+  source = "PaloAltoNetworks/swfw-modules/azurerm//modules/natgw"
 
   name                = "NATGW_name"
   resource_group_name = "resource_group_name"

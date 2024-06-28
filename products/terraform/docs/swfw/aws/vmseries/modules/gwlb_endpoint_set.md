@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -21,7 +23,7 @@ title: AWS GWLB Endpoint Set
 This module creates a set of [VPC GWLB Endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpce-gateway-load-balancer.html)
 over a range of one or more Availability Zones. All the Endpoints transfer the traffic to the same Gateway Load Balancer (GWLB).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/modules/gwlb_endpoint_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/submodules/gwlb_endpoint_set)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/modules/gwlb_endpoint_set) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/submodules/gwlb_endpoint_set)
 
 ## Reference
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -9,6 +9,8 @@ keywords:
 - terraform
 - vmseries
 - vm-series
+- swfw
+- software-firewalls
 - aws
 pagination_next: null
 pagination_prev: null
@@ -22,11 +24,12 @@ title: 'Reference Architecture with Terraform: VM-Series in AWS, Isolated Design
 Palo Alto Networks produces several [validated reference architecture design and deployment documentation guides](https://www.paloaltonetworks.com/resources/reference-architectures), which describe well-architected and tested deployments. When deploying VM-Series in a public cloud, the reference architectures guide users toward the best security outcomes, whilst reducing rollout time and avoiding common integration efforts.
 The Terraform code presented here will deploy Palo Alto Networks VM-Series firewalls in AWS based on the centralized design; for a discussion of other options, please see the design guide from [the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules/tree/main/examples/isolated_design) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/isolated_design)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules/tree/main/examples/isolated_design) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/isolated_design)
 
 ## Reference Architecture Design
 
-![Simplified High Level Topology Diagram](f1dbcd98-43c4-4038-ab47-a9239d4b1e8b.png)
+![Simplified High Level Topology Diagram](f85ab263-941f-4a54-8b90-29e3c9201a03.png)
+
 
 This code implements:
 - an _isolated design_, which secures outbound and inbound traffic flows using AWS Gateway Load Balancer (GWLB). Application resources are segmented across multiple VPCs that distribute traffic to the dedicated VPC for security services where the VM-Series are deployed.
@@ -41,14 +44,14 @@ The Isolated Design model centralizes the security instances in a dedicated secu
 Inbound traffic originates outside the VPC and is destined to applications or services hosted within your VPCs, such as web servers. This design uses the GWLB and VM-Series firewalls in the security VPC, with GWLB endpoints in the application VPCs for the transparent inspection of inbound traffic.
 
 
+![image](e3359141-f6f6-43a9-a308-3c7d03774429.png)
 
-![](8527796a-9e26-48bd-b903-11e118efc611.png)
 
 ## Prerequisites
 
 The following steps should be followed before deploying the Terraform code presented here.
 
-1. Deploy Panorama e.g. by using [Panorama example](https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest/examples/panorama_standalone)
+1. Deploy Panorama e.g. by using [Panorama example](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest/examples/panorama_standalone)
 2. Prepare device group, template, template stack in Panorama
 3. Download and install plugin `sw_fw_license` for managing licenses
 4. Configure bootstrap definition and license manager
