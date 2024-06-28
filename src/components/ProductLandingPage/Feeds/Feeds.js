@@ -11,11 +11,12 @@ function Feeds() {
   const hashicorpFeeds = feedsJson.items.slice(2, 6);
 
   const filterMediumTerraform = (item) => {
-    const categories = item.categories;
+    const title = item.title;
+    const content_html = item.content_html;
 
-    for (let i = 0; i < categories.length; i++) {
-      if (categories[i].toLowerCase().includes("terraform")) return true;
-    }
+    if (title && title.toLowerCase().includes("terraform")) return true;
+    if (content_html && content_html.toLowerCase().includes("terraform"))
+      return true;
   };
 
   const filteredMediumTerraform = mediumFeedsJson.items.filter(
@@ -35,12 +36,12 @@ function Feeds() {
             {imageFeeds.map((feed, i) => {
               const cardImageSrc =
                 feed.thumbnail ||
-                (feed.content.match(/<img[^>]+src="([^">]+)"/)
-                  ? feed.content.match(/<img[^>]+src="([^">]+)"/)[1]
+                (feed.content_html.match(/<img[^>]+src="([^">]+)"/)
+                  ? feed.content_html.match(/<img[^>]+src="([^">]+)"/)[1]
                   : null);
 
               return (
-                <Link key={i} to={feed.link}>
+                <Link key={i} to={feed.url}>
                   <div className="feeds-image-text-wrapper">
                     <img
                       src={cardImageSrc || "/img/stock-feed.jpg"}
@@ -57,7 +58,7 @@ function Feeds() {
           <ul className="feeds-list">
             {feeds.map((feed, i) => (
               <li key={i} className="feeds-list__item">
-                <Link to={feed.link}>{feed.title}</Link>
+                <Link to={feed.url}>{feed.title}</Link>
                 <img
                   className="external-icon"
                   src="/img/icons/external-icon.png"

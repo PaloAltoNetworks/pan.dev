@@ -242,8 +242,13 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Terraform",
-                      to: "terraform/docs/cloudngfw/",
+                      label: "Terraform - AWS",
+                      to: "terraform/docs/cloudngfw",
+                      icon: "doc",
+                    },
+                    {
+                      label: "Terraform - Azure",
+                      to: "terraform/docs/cloudngfw",
                       icon: "doc",
                     },
                   ],
@@ -317,7 +322,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/dlp-api-resources",
+                      to: "dlp/api",
                       label: "Data Loss Prevention API",
                       icon: "api-doc",
                     },
@@ -420,6 +425,11 @@ const config = {
                     {
                       to: "sase/api/mt-monitor",
                       label: "Aggregate Monitoring",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/mt-notifications",
+                      label: "Multitenant Notifications",
                       icon: "api-doc",
                     },
                     {
@@ -660,6 +670,11 @@ const config = {
             outputDir: "products/sase/api/mt-monitor",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          mtnotifications: {
+            specPath: "openapi-specs/sase/mt-notifications",
+            outputDir: "products/sase/api/mt-notifications",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
@@ -704,6 +719,13 @@ const config = {
           "email-dlp": {
             specPath: "openapi-specs/email-dlp/EmailDLPAPI.yaml",
             outputDir: "products/email-dlp/api",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          dlp: {
+            specPath: "openapi-specs/dlp/DLPAPI.yaml",
+            outputDir: "products/dlp/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           cloudngfw: {
@@ -743,7 +765,6 @@ const config = {
             specPath: "openapi-specs/cspm",
             outputDir: "products/prisma-cloud/api/cspm",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            hideSendButton: true,
           },
           code: {
             specPath: "openapi-specs/code",
@@ -755,8 +776,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.02",
-            label: "v32.02",
+            version: "32.06",
+            label: "v32.06",
             showExtensions: true,
             baseUrl: "/compute/api/",
             versions: {
@@ -774,33 +795,33 @@ const config = {
               },
             },
           },
-          compute_32: {
-            specPath: "openapi-specs/compute/32-00",
-            outputDir: "products/compute/api/32-00",
+          compute_3202: {
+            specPath: "openapi-specs/compute/32-02",
+            outputDir: "products/compute/api/32-02",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-00/",
+            baseUrl: "/compute/api/32-02/",
           },
-          compute_3201: {
-            specPath: "openapi-specs/compute/32-01",
-            outputDir: "products/compute/api/32-01",
+          compute_3203: {
+            specPath: "openapi-specs/compute/32-03",
+            outputDir: "products/compute/api/32-03",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-01/",
+            baseUrl: "/compute/api/32-03/",
           },
-          compute_31: {
-            specPath: "openapi-specs/compute/31-00",
-            outputDir: "products/compute/api/31-00",
+          compute_3204: {
+            specPath: "openapi-specs/compute/32-04",
+            outputDir: "products/compute/api/32-04",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/31-00/",
+            baseUrl: "/compute/api/32-04/",
           },
-          compute_3002: {
-            specPath: "openapi-specs/compute/30-02",
-            outputDir: "products/compute/api/30-02",
+          compute_3205: {
+            specPath: "openapi-specs/compute/32-05",
+            outputDir: "products/compute/api/32-05",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/30-02/",
+            baseUrl: "/compute/api/32-05/",
           },
         },
       },

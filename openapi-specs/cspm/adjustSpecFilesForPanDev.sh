@@ -61,6 +61,9 @@ for file in *.json; do
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
 
+    # delete all 5xx error from endpoints
+    jq '.paths |= del(.[][].responses | .[keys[] | select(contains("5xx","5XX","500", "501", "502","503", "504", "505", "506", "507", "508","509","510","511", "529", "530","598","599"))])' | \
+
     # add server urls
     jq '.servers |= [
         {"url":"https://api.prismacloud.io"},
@@ -78,6 +81,10 @@ for file in *.json; do
         {"url":"https://api.ind.prismacloud.io"},
         {"url":"https://api.jp.prismacloud.io"},
         {"url":"https://api.fr.prismacloud.io"}]' | \
+
+    # Remove all x-redlock-auth from each endpoint parameters object if they exist
+    # securitySchemes requires the x-redlock-auth should only appear in the security fields 
+    jq '.paths |= del(.[][].parameters[]? | select(.name!=null ) | select (.name | contains("x-redlock-auth")))' | \
 
     # add securityScheme to every spec file
     jq '.components.securitySchemes |= { "x-redlock-auth": {

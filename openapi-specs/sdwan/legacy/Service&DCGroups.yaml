@@ -42,7 +42,7 @@ components:
             $ref: '#/components/schemas/AggregateData'
           type: array
         field:
-          description: Field
+          description: Field (ref.doc.key:0:Aggregate.field)
           type: string
         name:
           description: 'The name of the query response.
@@ -50,7 +50,7 @@ components:
             '
           type: string
         operator:
-          description: Operator
+          description: Operator (ref.doc.key:0:Aggregate.operator)
           enum:
           - max
           - count
@@ -68,11 +68,6 @@ components:
 
             '
           type: string
-      required:
-      - statistic
-      - unit
-      - name
-      - data
     AggregateData:
       properties:
         value:
@@ -81,11 +76,10 @@ components:
             '
           type: number
         view:
-          description: "View the aggregate date. \n"
+          description: 'View the aggregate date.
+
+            '
           type: object
-      required:
-      - value
-      - view
     Error:
       properties:
         _error:
@@ -95,8 +89,14 @@ components:
     ErrorResponse:
       properties:
         code:
+          description: 'The error code.
+
+            '
           type: string
         message:
+          description: 'The error message.
+
+            '
           type: string
     HttpProbe:
       properties:
@@ -156,19 +156,19 @@ components:
     ListQueryResponse:
       properties:
         count:
-          description: 'The count of the query list.
+          description: 'The actual count.
 
             '
           format: int32
           type: integer
         deleted_count:
-          description: 'The deleted number of queries.
+          description: 'The deleted number.
 
             '
           format: int64
           type: integer
         deleted_ids:
-          description: 'The deleted query IDs.
+          description: 'The deleted IDs.
 
             '
           items:
@@ -194,7 +194,7 @@ components:
             '
           type: string
         total_count:
-          description: 'Total number of queries.
+          description: 'Total number.
 
             '
           format: int64
@@ -203,18 +203,18 @@ components:
     ListResponse:
       properties:
         count:
-          description: 'The number of responses.
+          description: 'The actual count.
 
             '
           format: int32
           type: integer
         id:
-          description: 'The ID of the response.
+          description: 'The ID.
 
             '
           type: string
         tenant_id:
-          description: 'The ID of the tenant.
+          description: 'The tenant ID.
 
             '
           type: string
@@ -240,12 +240,17 @@ components:
     SEPLivelinessProbeV2N2:
       properties:
         http:
-          description: 'Http: Valid '
+          description: 'The values for probing interval, failure count, HTTP status
+            codes, and URL.
+
+            '
           items:
             $ref: '#/components/schemas/HttpProbe'
           type: array
         icmp_ping:
-          description: 'Icmp Ping: Valid '
+          description: 'The values for probing interval, failure count, and IP address.
+
+            '
           items:
             $ref: '#/components/schemas/IcmpPingProbe'
           type: array
@@ -506,7 +511,7 @@ components:
       required:
       - service_bindings
       - name
-    ServiceEndpointV2N2:
+    ServiceEndpointV2N3:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -551,6 +556,11 @@ components:
 
             '
           type: string
+        sase_properties:
+          $ref: '#/components/schemas/SaseServiceEndpointProperties'
+          description: 'The sase service endpoint properties.
+
+            '
         service_link_peers:
           $ref: '#/components/schemas/ServiceLinkPeers'
           description: 'The value of the hostname and IP addresses.
@@ -581,7 +591,7 @@ components:
       - admin_up
       - type
       - name
-    ServiceEndpointV2N3:
+    ServiceEndpointV2N4:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -606,6 +616,11 @@ components:
           description: 'The description of the service endpoint. Max size = 256.
 
             '
+        disable_tunnel_reoptimization:
+          description: 'Disable tunnel reoptimization. True or False.
+
+            '
+          type: boolean
         id:
           description: 'The ID of the service endpoint.
 
@@ -1928,263 +1943,6 @@ paths:
       summary: Update Service Label (v2.1)
       tags:
       - Service & DC Groups
-  /v2.2/api/tenants/{tenant_id}/serviceendpoints:
-    get:
-      description: List all the servie endpoints.
-      operationId: get-v2.2-api-tenants-tenant_id-serviceendpoints
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/ServiceEndpointV2N2'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Service Endpoint List (v2.2)
-      tags:
-      - Service & DC Groups
-    post:
-      description: Create a new service endpoint.
-      operationId: post-v2.2-api-tenants-tenant_id-serviceendpoints
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_INPUT
-                  - code: UNKNOWN_SITE
-                  - code: SERVICEENDPOINT_EXIST_WITH_SITE
-                  - code: SERVICEENDPOINT_NAME_REQD
-                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
-                  - code: DESCRIPTION_SIZE_EXCEEDED
-                  - code: ADMIN_UP_REQD
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create Service Endpoint List (v2.2)
-      tags:
-      - Service & DC Groups
-  /v2.2/api/tenants/{tenant_id}/serviceendpoints/query:
-    post:
-      description: Query the DB for limit number of service bindings that match the
-        query parameters.
-      operationId: post-v2.2-api-tenants-tenant_id-serviceendpoints-query
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/ServiceEndpointV2N2'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: BAD_REQUEST
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for Service Bindings (v2.2)
-      tags:
-      - Service & DC Groups
-  /v2.2/api/tenants/{tenant_id}/serviceendpoints/{service_endpoint_id}:
-    delete:
-      description: Delete a service endpoint.
-      operationId: delete-v2.2-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-                  - code: SERVICEENDPOINT_IS_IN_USE
-                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SERVICEBINDING_EXISTS
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
-    get:
-      description: List a service endpoint.
-      operationId: get-v2.2-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
-    put:
-      description: Update a service endpoint.
-      operationId: put-v2.2-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_INPUT
-                  - code: UNKNOWN_SITE
-                  - code: SERVICEENDPOINT_CONFIG_UPDATE_NOTALLOWED
-                  - code: SERVICEENDPOINT_NAME_REQD
-                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
-                  - code: DESCRIPTION_SIZE_EXCEEDED
-                  - code: ADMIN_UP_REQD
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
   /v2.3/api/tenants/{tenant_id}/serviceendpoints:
     get:
       description: List all the servie endpoints.
@@ -2311,7 +2069,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query DB for Service Bindings (v2.3)
+      summary: Query DB for Service Bindings (v2.2)
       tags:
       - Service & DC Groups
   /v2.3/api/tenants/{tenant_id}/serviceendpoints/{service_endpoint_id}:
@@ -2443,6 +2201,266 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update Service Endpoint (v2.3)
+      tags:
+      - Service & DC Groups
+  /v2.4/api/tenants/{tenant_id}/serviceendpoints:
+    get:
+      description: List all the servie endpoints.
+      operationId: get-v2.4-api-tenants-tenant_id-serviceendpoints
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ServiceEndpointV2N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Service Endpoint List (v2.4)
+      tags:
+      - Service & DC Groups
+    post:
+      description: Create a new service endpoint.
+      operationId: post-v2.4-api-tenants-tenant_id-serviceendpoints
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_INPUT
+                  - code: UNKNOWN_SITE
+                  - code: SERVICEENDPOINT_EXIST_WITH_SITE
+                  - code: SERVICEENDPOINT_NAME_REQD
+                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_SIZE_EXCEEDED
+                  - code: ADMIN_UP_REQD
+                  - code: SERVICEENDPOINT_CREATE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Service Endpoint List (v2.4)
+      tags:
+      - Service & DC Groups
+  /v2.4/api/tenants/{tenant_id}/serviceendpoints/query:
+    post:
+      description: Query the DB for limit number of service bindings that match the
+        query parameters.
+      operationId: post-v2.4-api-tenants-tenant_id-serviceendpoints-query
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ServiceEndpointV2N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query DB for Service Bindings (v2.4)
+      tags:
+      - Service & DC Groups
+  /v2.4/api/tenants/{tenant_id}/serviceendpoints/{service_endpoint_id}:
+    delete:
+      description: Delete a service endpoint.
+      operationId: delete-v2.4-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+                  - code: SERVICEENDPOINT_IS_IN_USE
+                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SERVICEBINDING_EXISTS
+                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete Service Endpoint (v2.4)
+      tags:
+      - Service & DC Groups
+    get:
+      description: List a service endpoint.
+      operationId: get-v2.4-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Service Endpoint (v2.4)
+      tags:
+      - Service & DC Groups
+    put:
+      description: Update a service endpoint.
+      operationId: put-v2.4-api-tenants-tenant_id-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_INPUT
+                  - code: UNKNOWN_SITE
+                  - code: SERVICEENDPOINT_CONFIG_UPDATE_NOTALLOWED
+                  - code: SERVICEENDPOINT_NAME_REQD
+                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_SIZE_EXCEEDED
+                  - code: ADMIN_UP_REQD
+                  - code: SERVICEENDPOINT_UPDATE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Service Endpoint (v2.4)
       tags:
       - Service & DC Groups
 servers:
