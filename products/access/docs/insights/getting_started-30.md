@@ -40,6 +40,7 @@ The full URL for an API request includes the base URL, plus the API URI describe
 ## Sample: API Request
 
 **Note** The `Bearer` keyword must be present before the auth token itself.
+**Note** To get data on a sub-tenant level, please add a Prisma-Tenant header.<tsg_id><sub_tenant_id>
 
     #!/bin/bash
     echo "  "
@@ -47,7 +48,7 @@ The full URL for an API request includes the base URL, plus the API URI describe
     # Replace
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
     #
-    curl -L -X POST 'https://api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/applications/application_list' \
+    curl -L -X POST 'https:https://<TENANT_REGION_API_SERVER>/api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/applications/application_list' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
     -H 'Authorization: Bearer <TOKEN>' \
