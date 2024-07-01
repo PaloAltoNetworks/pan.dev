@@ -40,6 +40,7 @@ The full URL for an API request includes the base URL, plus the API URI describe
 ## Sample: API Request
 
 **Note** The `Bearer` keyword must be present before the auth token itself.
+
 **Note** To get data on a sub-tenant level, please add a Prisma-Tenant header.<tsg_id><sub_tenant_id>
 
     #!/bin/bash
