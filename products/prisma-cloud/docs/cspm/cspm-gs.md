@@ -61,7 +61,7 @@ To generate the JWT token open Git Bash by typing "Git Bash" in Windows search a
 
 **The JWT token output:**
 
-    {"token":"shashashjhhhhhhhhhhhhhhhhhhhhhhhjjbjhghgVGGGAGHKBksjjlsksknsjsbhsghsgjhsgshghskgshsjhhjsjhsgsgshsghsghjsjs"]}
+    {"token":"shashashjhhhhhhhhhhhhhhhhhhhhhhhjjbjhghgVGGGAGHKBksjjlsksknsjsbhsghsgjhsgshghskgshsjhhjsjhsgsgshsghsghjsjs"}
 
 A JWT token is returned which will be valid for 10-minutes. You can then use the JWT token when calling the other Prisma Cloud [REST API methods](https://prisma.pan.dev/api/cloud/).
 
