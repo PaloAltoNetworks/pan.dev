@@ -25,7 +25,7 @@ Prisma Access Insights instance. To understand this process, see
 ## Base URLs
 
 While you use Prisma SASE to obtain an access token for use with your Prisma Access 3.0
-APIs, you do not use the same FQDN as do the other Prisma SASE APIs.
+APIs, you do not use the same FQDN as do the other Prisma SASE APIs. Also, this API requires the x-panw-region header. See About [x-panw-region](/sase/docs/api-call/#about-x-panw-region) for usage information.
 
 All requests go to the same base URL:
 
