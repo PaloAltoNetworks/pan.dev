@@ -776,6 +776,7 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -796,6 +797,7 @@ const config = {
             version: "32.06",
             label: "v32.06",
             showExtensions: true,
+            hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
               31.02: {
