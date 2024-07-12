@@ -17,7 +17,9 @@ The Prisma Access Insights APIs allow you to retrieve selected information from 
 Insights platform. All API requests must use HTTPS, and they must use HTTP/1.1. All requests go to
 the same base URL:
 
-`https://pa-<region>.api.prismaaccess.com`
+```
+https://pa-<region>.api.prismaaccess.com
+```
 
 where _&lt;region&gt;_ identifies your tenant's Cortex Data Lake (CDL) region. Available
 regions are:
@@ -43,7 +45,9 @@ The full URL for an API request includes the base URL, plus the API URI describe
 reference documentation. For example, a customer using the US region
 can query for external alerts using:
 
+```
     https://pa-us01.api.prismaaccess.com/api/sase/v1.0/resource/tenant/{super_tenant_id}/query/prisma_sase_external_alerts_current
+```
 
 ## Generate an API Key
 
@@ -69,6 +73,7 @@ minutes after they are issued.
 To generate a JWT access token, provide your API key on the Authorization
 header for a call to `api/sase/v1.0/jwt/tenant/<PA_TENANT_ID>`. For example:
 
+```
     # Replace
     # <TENANT_REGION_API_SERVER> - Tenant's Prisma Access Region FQDN
     # <PA_TENANT_ID> - Tenant Id
@@ -77,9 +82,11 @@ header for a call to `api/sase/v1.0/jwt/tenant/<PA_TENANT_ID>`. For example:
     curl -X POST --location "https://<TENANT_REGION_API_SERVER>/api/sase/v1.0/jwt/tenant/<PA_TENANT_ID>" \
          -H "Authorization: ApiKey <API_KEY>" \
          -H "Content-Type: application/json"
+```
 
 ## Sample: API Request
 
+```
     #!/bin/bash
        echo "  "
     #
@@ -90,3 +97,4 @@ header for a call to `api/sase/v1.0/jwt/tenant/<PA_TENANT_ID>`. For example:
     curl -o --location "https://<TENANT_REGION_API_SERVER>/api/sase/v1.0/resource/tenant/{super_tenant_id}/query/prisma_sase_external_alerts_current" \
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Content-Type: application/json"
+```

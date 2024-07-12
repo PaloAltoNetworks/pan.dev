@@ -32,7 +32,9 @@ APIs, you do not use the same FQDN as do the other Prisma SASE APIs.
 
 All requests go to the same base URL:
 
-`https://pa-<region>.api.prismaaccess.com`
+```
+https://pa-<region>.api.prismaaccess.com
+```
 
 where _&lt;region&gt;_ identifies your tenant's Cortex Data Lake (CDL) region. Available
 regions are:
@@ -58,7 +60,9 @@ The full URL for an API request includes the base URL, plus the API URI describe
 reference documentation. For example, a customer using the US region
 can query for external alerts using:
 
-`https://pa-us01.api.prismaaccess.com/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current`
+```
+https://pa-us01.api.prismaaccess.com/api/sase/v2.0/resource/query/prisma_sase_external_alerts_current
+```
 
 ## Sample: API Request
 
@@ -67,6 +71,7 @@ API call using the `Prisma-Tenant` custom HTTP header.
 
 **Note** The `Bearer` keyword must be present before the auth token itself.
 
+```
     #!/bin/bash
        echo "  "
     #
@@ -79,3 +84,4 @@ API call using the `Prisma-Tenant` custom HTTP header.
         -H "Authorization: Bearer <JWT_TOKEN_BASE64_ENCODED>" \
         -H "Prisma-Tenant <TSG_ID>" \
         -H "Content-Type: application/json"
+```

@@ -40,6 +40,8 @@ For example, the following query retrieves a list of all the login user names in
 that accessed Global Protect in the US West region. No more than 100 records will be returned in
 the query response.
 
+
+```
     POST https://{{host}}/api/sase/v1.0/resource/tenant/{{tenant_id}}/query/gp_logs
     Authorization: Bearer {{jwt_token}}
     Content-Type: application/json
@@ -79,6 +81,7 @@ the query response.
       },
       "count": 100
     }
+```
 
 ## Query Components
 

@@ -20,12 +20,16 @@ the response type is `grouped-summary`. It can contain the following fields:
 
 Use the format
 
+```
     page==<page>;limit==<limit>[;sortBy==<field>;sortOrder==asc] | none
+```
 
 For example, 
 
+```
     page==0;limit==10;sortBy==application;sortOrder==asc
 
     page==0;limit==20
+```
 
 where page and limit are required and are the page number and number of results per page. sortBy / sortOrder are optional. If no pagination is specified, the default is page==0;limit=50. To disable paging, use pagination=none
