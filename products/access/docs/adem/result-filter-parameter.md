@@ -19,15 +19,21 @@ the score classification:
 
 Use the format 
 
+```
     Score.<field1>==<category>,..; 
+```
 
 For example, to limit score results by category, use 
 
+```
     Score.endpointScore==fair, good 
+```
 
 or 
 
+```
     Score.application==good; Score.lan==fair,good
+```
 
 This parameter is supported by 
 [/agent/score](/access/api/adem/get-agent-v-2-measure-agent-score/) 

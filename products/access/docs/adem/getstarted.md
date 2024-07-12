@@ -46,6 +46,7 @@ API call using the `Prisma-Tenant` custom HTTP header.
 
 **Note** The `Bearer` keyword must be present before the auth token itself.
 
+```
     #!/bin/bash
        echo "  "
     #
@@ -60,3 +61,4 @@ API call using the `Prisma-Tenant` custom HTTP header.
         -H "Prisma-Tenant <TSG_ID>" \
         -H "Prisma-SubTenant <subtenant_id>" \
         -H "Content-Type: application/json"
+```

@@ -16,13 +16,15 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
+```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/internet/metric? timerange=last_30_day&filter=email=auntyjack@panwsase.com
      
     header = { "prisma-tenant": "<tenant-id>" }
-
+```
 
 ## Response
 
+```
     [
        {
             "meetingUuid": "fa05d660556b49e7b979bb1bd2171328",
@@ -117,4 +119,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             "score": 40
         },…..
     ]
-
+```
