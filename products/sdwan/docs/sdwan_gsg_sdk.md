@@ -185,6 +185,8 @@ The jd_detailed function can be used to see the detailed request and response th
 
 
     RESPONSE DATA:
+
+```
         {
            "count": 10,
            "_updated_on_utc": 0,
@@ -270,6 +272,7 @@ The jd_detailed function can be used to see the detailed request and response th
         "_etag": 0
 
         }
+```
 
 The API call above retrieves all the sites on this tenant. We’ve extracted the information from cgx_content into sitelist, which is a list of python dictionaries.
 
@@ -293,6 +296,7 @@ The API call above retrieves all the sites on this tenant. We’ve extracted the
 
 To retrieve information about a specific site, site ID can be passed when making the GET request. See snippet below.
 
+```
     #Query single site, AUTOMATION_LAB
 
     response = cgx_session.get.sites(site_id=”15427379313890067”)
@@ -337,9 +341,11 @@ To retrieve information about a specific site, site ID can be passed when making
     	"element_cluster_role": "SPOKE",
     	"_error": null
     }
+```
 
 For some GET requests, resource IDs can be mandatory eg: to query interfaces, a site ID and an element ID needs to be provided when making the request. Doing a query on elements returns both the element ID and the ID of the site it is attached to.
 
+```
     resp = cgx_session.get.elements(element_id="14994857839570076")
     if resp.cgx_status:
     	print json.dumps(resp.cgx_content, indent=4)
@@ -383,15 +389,19 @@ For some GET requests, resource IDs can be mandatory eg: to query interfaces, a 
     	"_created_on_utc": 14994857839570076,
     	"_etag": 19165
     }
+```
 
 Use Site ID and Element ID to query interfaces
 
+```
     resp = cgx_session.get.interfaces(site_id="14994572648820033", element_id="14994857839570076")
+```
 
 ### PUT Method
 
 To edit or update an attribute already configured on the controller, the PUT operation must be used. The snippet below shows how to modify the description for an interface. More information on the resources that can be queried using the PUT method are listed at https://cloudgenix.github.io/sdk-python/put_api.m.html.
 
+```
     #PUT operation: Edit interface description
 
     sid = "14994572648820033"
@@ -517,11 +527,13 @@ To edit or update an attribute already configured on the controller, the PUT ope
     	"_created_on_utc": 14994857989600144,
     	"_etag": 9
     }
+```
 
 ### POST Method
 
 The POST method is used to create a new resource, that currently does not exist on the controller. The snippet below provides an example on how to create a loopback interface using the POST operation. More information on the resources that can be queried using the POST method are listed at https://cloudgenix.github.io/sdk-python/post_api.m.html.
 
+```
     #Create loopback interface
     payload = {
     	"type":"loopback",
@@ -656,11 +668,13 @@ The POST method is used to create a new resource, that currently does not exist 
     	"_created_on_utc": 15583850118960176,
     	"_etag": 1
     }
+```
 
 ### DELETE Method
 
 The DELETE method is used to delete resources created by the user. Not all resources can be deleted, and an error is returned if an attempt to delete an unqualified resource is made. The snippet below goes over the delete operation of the loopback interface created in the previous section. The interface ID can be retrieved from the API response of the POST request in the previous example. More information on the resources that can be deleted using the DELETE method is listed at https://cloudgenix.github.io/sdk-python/delete_api.m.html.
 
+```
     #Delete loopback interface
 
     sid = "15427379313890067"
@@ -740,6 +754,7 @@ The DELETE method is used to delete resources created by the user. Not all resou
     	"_created_on_utc": 15583850118960176,
     	"_etag": 1
     }
+```
 
 #### Want to contribute? See something missing?
 

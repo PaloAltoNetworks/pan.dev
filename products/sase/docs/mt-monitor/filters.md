@@ -429,6 +429,7 @@ Object with the following properties:
 
 For example:
 
+```
     {
       "properties": [
         {
@@ -453,6 +454,7 @@ For example:
         }
       ]
     }
+```
 
 ### AppSrcProperty
 
