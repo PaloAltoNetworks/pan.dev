@@ -265,7 +265,7 @@ Object with the following properties:
 | -------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | property | string           | Property field name. Must be `threat_severity`.                                                                                                                                                                             |
 | operator | string           | Operator to run on the `property` field. Must be `in`.                                                                                                                                                                      |
-| values   | array of strings | Property values. Can be one or more of the following when used with `threat_severity` and `in`: `Critical` - critical severity`High` - high severity<`Medium` - medium severity |
+| values   | array of strings | Property values. Can be one or more of the following when used with `threat_severity` and `in`: `Critical` - critical severity`High` - high severity\<`Medium` - medium severity |
 
 For example:
 

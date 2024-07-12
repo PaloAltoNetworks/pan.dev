@@ -38,6 +38,7 @@ To install pip, use the apt-get utility: **sudo apt-get install python3-pip**
 
 We are now ready to start scripting. You may need to install a few other python libraries depending on your scripting needs. Here are some recommendations.
 
+```
     pip install requests
     pip install pandas
     (sdk) Terminal:sdk sdkuser$ pip install cloudgenix
@@ -79,6 +80,7 @@ We are now ready to start scripting. You may need to install a few other python 
     Collecting asn1crypto>=0.21.0 (from cryptography>=1.3.4; extra == "security"->requests[security]>=2.18.4->cloudgenix)
     Using cached https://files.pythonhosted.org/packages/ea/cd/35485615f45f30a510576f1a56d1e0a
     7ad7bd8ab5ed7cdc600ef7cd06222/asn1crypto-0.2
+```
 
 ## API Endpoint
 
@@ -156,6 +158,7 @@ https://cloudgenix.github.io/sdk-python/get_api.m.html.
 
 The jd_detailed function can be used to see the detailed request and response that transpired between the client and the API endpoint.
 
+```
     cloudgenix.jd_detailed(response)
     REQUEST: GET /v4.3/api/tenants/1092/sites
     REQUEST HEADERS:
@@ -182,7 +185,7 @@ The jd_detailed function can be used to see the detailed request and response th
     	Pragma: no-cache
     	Expires: 0
     	Strict-Transport-Security: 31536000; includeSubDomains
-
+```
 
     RESPONSE DATA:
 
