@@ -4,14 +4,13 @@ title: Rate Limits
 sidebar_label: Rate Limits
 ---
 
-Prisma Cloud uses API Rate Limits to protect the performance and availability of its services. We use the **Token Bucket** algorithm to evaluate limits on a **per-user** basis. Users are identified by using a key generated from the authentication token present in Prisma Cloud API requests. If a user has multiple authentication tokens, the limits apply to the user and not to the discrete authentication tokens.
-
-Rate limits are expressed using two values: Rate Limit and Burst Rate
-
-- **Rate Limit:** Number of individual requests per second allowed by the endpoint.
+Prisma Cloud APIs use rate limiting to protect service performance and availability. Rate limiting is enforced on the following API metrics: 
+- **Request Rate Limit:** Number of individual requests allowed in a given duration (usually seconds) by the endpoint.
 - **Burst Rate:** Maximum number of concurrent requests allowed in one second.
 
-Rate limits vary by the API endpoint being used. If an endpoint has rate limits, they will be documented in that endpoint's description.
+The actual limits (rates) enforced on both metrics may vary across API endpoints. The limits applicable to a specific endpoint are listed on the endpoint's documentation page. 
+
+Prisma Cloud APIs enforce the applicable rate limits on a **per-user** basis using a key generated from the user’s authentication token in API requests. If a user has multiple authentication tokens, the limits apply to the user and not to the discrete authentication tokens.
 
 ### Rate Limit Response Headers
 
@@ -19,14 +18,14 @@ APIs that are subject to rate limits will include relevant `X-RateLimit-*` respo
 
 | Header Name | Header Description |
 | ----------- | ------------------ |
-| `X-RateLimit-Burst-Capacity` | The maximum number of *concurrent* requests before rate limiting is enforced. |
+| `X-RateLimit-Burst-Capacity` | Number of *concurrent* requests allowed for the endpoint |
 | `X-RateLimit-Remaining`  | Number of requests remaining within the current time window before receiving `HTTP 429 - Too Many Requests` |
-| `X-RateLimit-Replenish-Rate` | This defines the sustained request rate |
+| `X-RateLimit-Replenish-Rate` | Number of requests allowed on a sustained basis. This value is the same as the Request Rate Limit. |
 | `X-RateLimit-Requested-Tokens` | The number of tokens used by the request |
 
 ### Handling Rate Limits
 
-If you exceed the rate limit, you will receive a `HTTP 429 - Too Many Requests` response and the `X-RateLimit-Remaining` header will be `0`.
+When a client exceeds a defined rate limit, it receives an `HTTP 429 - Too Many Requests` response and the `X-RateLimit-Remaining` header will be `0`. To gracefully handle rate limits, a client script or program should:
 
-- **Monitor Rate Limit Headers**: Pay attention to the rate limit headers in API responses to track your remaining quota and replenish rate.
-- **Implement Exponential Backoff**: If you encounter a 429 response, implement an exponential backoff algorithm to retry your request after a calculated delay.
+- **Monitor Rate Limit Headers** to track theremaining quota and replenish rate.
+- **Implement Exponential Backoff** to recover from a 429 response.
