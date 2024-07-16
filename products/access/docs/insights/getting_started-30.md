@@ -49,8 +49,9 @@ The full URL for an API request includes the base URL, plus the API URI describe
     # Replace
     # <JWT_TOKEN_BASE64_ENCODED> - JWT Token from the previous script
     #
-    curl -L -X POST 'https:https://<TENANT_REGION_API_SERVER>/api.sase.paloaltonetworks.com/insights/v3.0/resource/query/locations/applications/application_list' \
+    curl -L -X POST 'https://<TENANT_REGION_API_SERVER>/api.sase.paloaltonetworks.com' \
     -H 'Content-Type: application/json' \
+    -H "X-PANW-Region: de" \
     -H 'Accept: application/json' \
     -H 'Authorization: Bearer <TOKEN>' \
     --data-raw '{
