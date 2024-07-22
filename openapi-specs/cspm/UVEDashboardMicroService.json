@@ -184,6 +184,124 @@
         ]
       }
     },
+    "/uve/api/v3/dashboard/vulnerabilities/overview": {
+      "get": {
+        "summary": "Get Vulnerability Overview V3",
+        "description": "Returns a summary of the total unique vulnerabilities, vulnerabilities count and also the count of vulnerabilities remediated along with the severity wise division for each of these counts. The percentage indicates the difference between today's and seven days prior data",
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "operationId": "vulnerability-dashboard-overview-v3",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "required": false,
+            "description": "Type of Asset",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "iac",
+                "package",
+                "deployedImage",
+                "serverlessFunction",
+                "host",
+                "registryImage",
+                "vmImage"
+              ]
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle stage",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code",
+                "build",
+                "deploy",
+                "run"
+              ]
+            }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            },
+            "description": "Severity"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewWidgetV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
     "/uve/api/v1/dashboard/vulnerabilities/prioritised": {
       "get": {
         "summary": "Get Prioritized Vulnerabilities",
@@ -1435,6 +1553,14 @@
           }
         }
       },
+      "OverviewWidgetV3": {
+        "type": "object",
+        "properties": {
+          "overviewSummary": {
+            "$ref": "#/components/schemas/OverviewSummaryV3"
+          }
+        }
+      },
       "TrendCount": {
         "type": "object",
         "properties": {
@@ -1451,6 +1577,50 @@
             "format": "int64"
           },
           "totalRemediationCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "OverviewSummaryV3": {
+        "type": "object",
+        "description": "Provides Summary of the uniqueCVES, vulnerabilities count and remediated vulnerabilities count",
+        "properties": {
+          "totalUniqueCves": {
+            "$ref": "#/components/schemas/VulnerabilityCountBySeverityV3"
+          },
+          "totalVulnerabilities": {
+            "$ref": "#/components/schemas/VulnerabilityCountBySeverityV3"
+          },
+          "totalRemediated": {
+            "$ref": "#/components/schemas/VulnerabilityCountBySeverityV3"
+          }
+        }
+      },
+      "VulnerabilityCountBySeverityV3": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "criticalCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "highCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mediumCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lowCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "percentageChange": {
             "type": "integer",
             "format": "int64"
           }
