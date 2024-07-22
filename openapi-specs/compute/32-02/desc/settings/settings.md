@@ -1,1 +1,0 @@
-Configure your Prisma Cloud Compute installation.
