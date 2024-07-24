@@ -4,6 +4,8 @@ By default, the API endpoint displays the progress of a regular scan.
 ## View regular registry scan progress
 For a regular scan, use the API path only without any query parameters.
 
+> **Note:**  The `hostname` and `scanTime` fields will not be populated for `discovery` and `imageScan` parameters in the API response.
+
 ### cURL Request
 
 Refer to the following example cURL request that retrieves the ongoing scan details for a regular registry scan:
@@ -23,9 +25,7 @@ Refer to the following example cURL response:
 [
     {
         "discovery": {
-            "hostname": "",
             "id": "",
-            "scanTime": "0001-01-01T00:00:00Z",
             "type": "",
             "discovery": false,
             "total": 4,
@@ -33,9 +33,7 @@ Refer to the following example cURL response:
             "title": "Step 1/2 discovering tags in registry us-west2-docker.pkg.dev: Discovered tags in 2/4 repositories with 1 Defenders"
         },
         "imageScan": {
-            "hostname": "",
             "id": "",
-            "scanTime": "0001-01-01T00:00:00Z",
             "type": "",
             "discovery": false,
             "total": 2,
@@ -43,10 +41,10 @@ Refer to the following example cURL response:
             "title": "Step 2/2 scanning images in registry us-west2-docker.pkg.dev: Scanned 0/2 images with 1 Defender"
         },
         "isScanOngoing": true
+        "specScanStartTime": "0001-01-01T00:00:00Z"
     }
 ]
 ```
-
 ## View on-demand registry scan progress
 
 For an on-demand scan that is started using the `/registry/scan` endpoint with the following fields:
@@ -77,9 +75,7 @@ Refer to the following example cURL response:
 [
   {
         "discovery": {
-            "hostname": "",
             "id": "",
-            "scanTime": "0001-01-01T00:00:00Z",
             "type": "",
             "discovery": false,
             "total": 1,
@@ -87,9 +83,7 @@ Refer to the following example cURL response:
             "title": "Step 1/2 discovering tags in repository: library/alpine, tag: 3.16"
         },
         "imageScan": {
-            "hostname": "",
             "id": "",
-            "scanTime": "0001-01-01T00:00:00Z",
             "type": "",
             "discovery": false,
             "total": 1,
@@ -97,6 +91,7 @@ Refer to the following example cURL response:
             "title": "Step 2/2 scanning images in repository: library/alpine, tag: 3.16"
         },
         "isScanOngoing": false
+        "specScanStartTime": "0001-01-01T00:00:00Z"
     }
 ]
 ```
