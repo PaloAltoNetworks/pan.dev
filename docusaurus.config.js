@@ -433,6 +433,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/mt-interconnect",
+                      label: "Multitenant Interconnect",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -675,6 +680,11 @@ const config = {
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          mtinterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect",
+            outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
@@ -778,8 +788,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.06",
-            label: "v32.06",
+            version: "32.07",
+            label: "v32.07",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -797,13 +807,6 @@ const config = {
                 baseUrl: "/compute/api/30-03/",
               },
             },
-          },
-          compute_3202: {
-            specPath: "openapi-specs/compute/32-02",
-            outputDir: "products/compute/api/32-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-02/",
           },
           compute_3203: {
             specPath: "openapi-specs/compute/32-03",
@@ -825,6 +828,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-05/",
+          },
+          compute_3206: {
+            specPath: "openapi-specs/compute/32-06",
+            outputDir: "products/compute/api/32-06",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-06/",
           },
         },
       },
