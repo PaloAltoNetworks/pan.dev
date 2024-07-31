@@ -438,6 +438,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/remote-networks",
+                      label: "Remote Networks",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
