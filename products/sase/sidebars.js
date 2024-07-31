@@ -301,6 +301,10 @@ module.exports = {
     "sase/api/mt-interconnect/mt-interconnect",
     require("./api/mt-interconnect/sidebar"),
   ],
+  saseremotenetworks: [
+    "sase/api/remote-networks/remote-networks",
+    require("./api/remote-networks/sidebar"),
+  ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),

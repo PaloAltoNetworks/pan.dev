@@ -685,6 +685,11 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          remotenetworks: {
+            specPath: "openapi-specs/sase/remote-networks",
+            outputDir: "products/sase/api/remote-networks",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
