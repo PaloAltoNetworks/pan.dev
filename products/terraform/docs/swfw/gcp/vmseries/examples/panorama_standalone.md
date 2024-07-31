@@ -68,12 +68,12 @@ Apply complete! Resources: 8 added, 0 changed, 0 destroyed. (Number of resources
 
 Outputs:
 
-panorama_private_ips = {
+panorama_private_ips = \{
   "panorama-01" = "172.21.21.2"
-}
-panorama_public_ips = {
+\}
+panorama_public_ips = \{
   "panorama-01" = "x.x.x.x"
-}
+\}
 ```
 
 
@@ -128,8 +128,8 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | A string to prefix resource namings | `string` | `""` | no |
-| <a name="input_networks"></a> [networks](#input\_networks) | A map containing each network setting.<br /><br />Example of variable deployment :<pre>networks = {<br />  "panorama-vpc" = {<br />    vpc\_name                        = "firewall-vpc"<br />    create\_network                  = true<br />    delete\_default\_routes\_on\_create = "false"<br />    mtu                             = "1460"<br />    routing\_mode                    = "REGIONAL"<br />    subnetworks = {<br />      "panorama-sub" = {<br />        name              = "panorama-subnet"<br />        create\_subnetwork = true<br />        ip\_cidr\_range     = "172.21.21.0/24"<br />        region            = "us-central1"<br />      }<br />    }<br />    firewall\_rules = {<br />      "allow-panorama-ingress" = {<br />        name             = "panorama-mgmt"<br />        source\_ranges    = ["1.1.1.1/32", "2.2.2.2/32"]<br />        priority         = "1000"<br />        allowed\_protocol = "all"<br />        allowed\_ports    = []<br />      }<br />    }<br />  }</pre>For a full list of available configuration items - please refer to [module documentation](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/vpc#input_networks)<br /><br />Multiple keys can be added and will be deployed by the code | `any` | n/a | yes |
-| <a name="input_panoramas"></a> [panoramas](#input\_panoramas) | A map containing each panorama setting.<br /><br />Example of variable deployment :<pre>panoramas = {<br />  "panorama-01" = {<br />    panorama\_name     = "panorama-01"<br />    panorama\_vpc      = "panorama-vpc"<br />    panorama\_subnet   = "panorama-subnet"<br />    panorama\_version  = "panorama-byol-1000"<br />    ssh\_keys          = "admin:PUBLIC-KEY"<br />    attach\_public\_ip  = true<br />    private\_static\_ip = "172.21.21.2"<br />  }<br />}</pre>For a full list of available configuration items - please refer to [module documentation](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/panorama#inputs)<br /><br />Multiple keys can be added and will be deployed by the code | `any` | n/a | yes |
+| <a name="input_networks"></a> [networks](#input\_networks) | A map containing each network setting.<br /><br />Example of variable deployment :<pre>networks = \{<br />  "panorama-vpc" = \{<br />    vpc\_name                        = "firewall-vpc"<br />    create\_network                  = true<br />    delete\_default\_routes\_on\_create = "false"<br />    mtu                             = "1460"<br />    routing\_mode                    = "REGIONAL"<br />    subnetworks = \{<br />      "panorama-sub" = \{<br />        name              = "panorama-subnet"<br />        create\_subnetwork = true<br />        ip\_cidr\_range     = "172.21.21.0/24"<br />        region            = "us-central1"<br />      \}<br />    \}<br />    firewall\_rules = \{<br />      "allow-panorama-ingress" = \{<br />        name             = "panorama-mgmt"<br />        source\_ranges    = ["1.1.1.1/32", "2.2.2.2/32"]<br />        priority         = "1000"<br />        allowed\_protocol = "all"<br />        allowed\_ports    = []<br />      \}<br />    \}<br />  \}</pre>For a full list of available configuration items - please refer to [module documentation](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/vpc#input_networks)<br /><br />Multiple keys can be added and will be deployed by the code | `any` | n/a | yes |
+| <a name="input_panoramas"></a> [panoramas](#input\_panoramas) | A map containing each panorama setting.<br /><br />Example of variable deployment :<pre>panoramas = \{<br />  "panorama-01" = \{<br />    panorama\_name     = "panorama-01"<br />    panorama\_vpc      = "panorama-vpc"<br />    panorama\_subnet   = "panorama-subnet"<br />    panorama\_version  = "panorama-byol-1000"<br />    ssh\_keys          = "admin:PUBLIC-KEY"<br />    attach\_public\_ip  = true<br />    private\_static\_ip = "172.21.21.2"<br />  \}<br />\}</pre>For a full list of available configuration items - please refer to [module documentation](https://github.com/PaloAltoNetworks/terraform-google-swfw-modules/tree/main/modules/panorama#inputs)<br /><br />Multiple keys can be added and will be deployed by the code | `any` | n/a | yes |
 | <a name="input_project"></a> [project](#input\_project) | The project name to deploy the infrastructure in to. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region into which to deploy the infrastructure in to | `string` | `"us-central1"` | no |
 

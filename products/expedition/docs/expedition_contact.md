@@ -25,7 +25,7 @@ experience assisting others.
 
 Access the <a href="https://live.paloaltonetworks.com/t5/expedition-migration-tool/ct-p/migration_tool"> Live Community Site </a>
 
-To report bugs, requests for new features or personal contact, please reach us via the Expedition team email <fwmigrate@paloaltonetworks.com>
+To report bugs, requests for new features or personal contact, please reach us via the Expedition team email \<fwmigrate\@paloaltonetworks.com\>
 
 | Role                                              | Members                           | e-mail                                             |
 | ------------------------------------------------- | --------------------------------- | -------------------------------------------------- |

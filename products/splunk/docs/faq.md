@@ -63,7 +63,7 @@ My question isn't answered here, how do I get answers?
 
 Here are a few ways to get your questions answered. Search for answers in this order:
 
--   Check the App Documentation at <http://pansplunk.readthedocs.io>
+-   Check the App Documentation at \<http://pansplunk.readthedocs.io\>
 -   Search on [Splunk Answers](http://answers.splunk.com/app/questions/491.html)
 -   If you can't find an answer or need support, ask a question using the instructions on the [Get Support](/splunk/docs/support) page.
 
