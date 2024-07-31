@@ -393,9 +393,8 @@ paths:
       - Application
   /insights/v3.0/resource/query/locations/location_current_status_count:
     post:
-      description: 'Retrieves the total of the current location.
-
-        '
+      description: "Retrieves the total of the current location count per node type\
+        \ and location state. \n"
       operationId: post-insights-v3.0-resource-query-locations-location_current_status_count
       parameters:
       - description: "Region mapping for the tenant. \n"
@@ -416,14 +415,38 @@ paths:
         content:
           application/json:
             examples:
+              Mobile User - with adem filter:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values:
+                      - 7
+                    - operator: in
+                      property: mu_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                      - 3
+                    - operator: in
+                      property: deployment_type
+                      values:
+                      - mu
+                      - rn
+                    - operator: in
+                      property: user_experience_score
+                      values:
+                      - fair
+                      - good
+                  properties:
+                  - property: mu_state
+                  - property: current_mu_locations
               Monitor > Prisma Access Locations > Prisma Access Location RN Status:
                 value:
                   filter:
                     rules:
-                    - operator: last_n_hours
-                      property: event_time
-                      values:
-                      - 5
                     - operator: in
                       property: rn_state
                       values:
@@ -435,10 +458,6 @@ paths:
                 value:
                   filter:
                     rules:
-                    - operator: last_n_hours
-                      property: event_time
-                      values:
-                      - 5
                     - operator: in
                       property: sc_state
                       values:
@@ -455,6 +474,17 @@ paths:
                     values:
                     - 5
               properties:
+                application_name:
+                  description: Application name
+                  example: doordash
+                  type: string
+                deployment_type:
+                  description: Filters for specific ADEM deployments
+                  enum:
+                  - mu
+                  - rn
+                  example: mu
+                  type: string
                 edge_location_display_name:
                   description: Name of PA location
                   example: US West
@@ -505,6 +535,22 @@ paths:
                   - 2
                   example: 1
                   type: integer
+                site_experience_score:
+                  description: Quality of application
+                  enum:
+                  - poor
+                  - fair
+                  - good
+                  example: good
+                  type: string
+                user_experience_score:
+                  description: Quality of application
+                  enum:
+                  - poor
+                  - fair
+                  - good
+                  example: good
+                  type: string
               required: []
               type: object
         required: true
@@ -547,6 +593,21 @@ paths:
                   current_sc_locations:
                     description: Count of the service-connection locations
                     type: integer
+                  ep_state:
+                    description: Location EP State
+                    type: integer
+                  mu_state:
+                    description: Location MU State
+                    type: integer
+                  nhp_state:
+                    description: Location NHP State
+                    type: integer
+                  rn_state:
+                    description: Location RN State
+                    type: integer
+                  sc_state:
+                    description: Location SC State
+                    type: integer
                 type: object
           description: OK
       security:
@@ -556,9 +617,8 @@ paths:
       - Location
   /insights/v3.0/resource/query/locations/location_gp_mobile_users_logins:
     post:
-      description: 'Provides details of all Provider-Aggregatable (PA) location with
-        security connections and remote networks including their coordinates, and
-        counts of remote networks and security connections.
+      description: 'Provides details of the top five Provider-Aggregatable (PA) location
+        by mobile users count.
 
         '
       operationId: post-insights-v3.0-resource-query-locations-location_gp_mobile_users_logins
@@ -766,6 +826,7 @@ paths:
                   edge_location_display_name: US West
                   latitude: 37.7749
                   longitude: -122.4194
+                  rn_count: 1
                   rn_status: Up
                   rn_up_count: 1
                   sc_count: 7
@@ -775,8 +836,9 @@ paths:
                   edge_location_display_name: US Northeast
                   latitude: 40.71455
                   longitude: -74.00714
+                  rn_count: 1
                   rn_status: Up
-                  rn_up_count: 0
+                  rn_up_count: 1
                   sc_count: 3
                   sc_status: Up
                   sc_up_count: 0
@@ -787,6 +849,7 @@ paths:
                     edge_location_display_name: US West
                     latitude: 37.7749
                     longitude: -122.4194
+                    rn_count: 1
                     rn_status: Up
                     rn_up_count: 1
                     sc_count: 7
@@ -804,6 +867,9 @@ paths:
                     type: number
                   longitude:
                     description: Longitude for the PA Location
+                    type: number
+                  rn_count:
+                    description: Number of RN sites configured
                     type: number
                   rn_status:
                     description: RN Status of the PA Location - UP/DOWN
@@ -844,11 +910,9 @@ paths:
       - Location
   /insights/v3.0/resource/query/mobileusers/connected_entity_count:
     post:
-      description: 'Provides a total number of users and devices connected to GlobalProtect
-        gateway. If you have ADEM license, this API also gives you a total number
-        of user and devices monitored by ADEM agent.
-
-        '
+      description: "Retrieves the total number of users and devices connected to the\
+        \ GlobalProtect gateway. \nThe count will also include users and devices monitored\
+        \ by the ADEM Agent if an ADEM or DEM license is present.\n"
       operationId: post-insights-v3.0-resource-query-mobileusers-connected_entity_count
       parameters:
       - description: CDL Region
@@ -941,7 +1005,6 @@ paths:
                 application_score_aggregate_value:
                   description: Quality of application
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -969,7 +1032,6 @@ paths:
                 device_score_aggregate_value:
                   description: Quality of device score aggregate
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -990,7 +1052,6 @@ paths:
                 internet_score_aggregate_value:
                   description: Quality of internet
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -999,7 +1060,6 @@ paths:
                 lan_score_aggregate_value:
                   description: Quality of LAN
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1012,7 +1072,6 @@ paths:
                 pa_score_aggregate_value:
                   description: Quality of PA
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1045,7 +1104,6 @@ paths:
                 wifi_score_aggregate_value:
                   description: Quality of wifi
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1085,9 +1143,9 @@ paths:
       - MobileUsers
   /insights/v3.0/resource/query/mobileusers/gp/noc_current_connected_user_list:
     post:
-      description: 'Generates a list of all users currently live on the GlobalProtect
-        gateway. Utilize the timerange filter to compute the experience score if a
-        ADEM license is available.
+      description: 'Retrieves a list of all users currently active on the GlobalProtect
+        gateway. If a DEM or ADEM license is present, the Time Range filter is used
+        to compute the experience score.
 
         '
       operationId: post-insights-v3.0-resource-query-mobileusers-gp-noc_current_connected_user_list
@@ -1230,8 +1288,8 @@ paths:
       - MobileUsers
   /insights/v3.0/resource/query/mobileusers/user_list:
     post:
-      description: 'Provides a list of all GlobalProtect users who connected within
-        the requested time range, including all their details.
+      description: 'Retrieves a list of all mobile users who connected within the
+        specified time range, including all their details.
 
         '
       operationId: post-insights-v3.0-resource-query-mobileusers-user_list
@@ -1364,7 +1422,6 @@ paths:
                 application_score_aggregate_value:
                   description: Quality of application
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1392,7 +1449,6 @@ paths:
                 device_score_aggregate_value:
                   description: Quality of device score aggregate
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1413,7 +1469,6 @@ paths:
                 internet_score_aggregate_value:
                   description: Quality of internet
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1422,7 +1477,6 @@ paths:
                 lan_score_aggregate_value:
                   description: Quality of LAN
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1439,7 +1493,6 @@ paths:
                 pa_score_aggregate_value:
                   description: Quality of PA
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1480,7 +1533,6 @@ paths:
                 wifi_score_aggregate_value:
                   description: Quality of wifi
                   enum:
-                  - unknown
                   - poor
                   - fair
                   - good
@@ -1771,8 +1823,10 @@ paths:
       - MobileUsers
   /insights/v3.0/resource/query/sites/rn_list:
     post:
-      description: "Provides you a list of all networks that are accessed remotely.\
-        \ \n"
+      description: 'Retrieves a list of all branch sites and remote networks along
+        with their details.
+
+        '
       operationId: post-insights-v3.0-resource-query-sites-rn_list
       parameters:
       - description: "Region mapping for the tenant. \n"
@@ -2097,8 +2151,7 @@ paths:
       - Sites
   /insights/v3.0/resource/query/sites/sc_list:
     post:
-      description: 'Provides you a list of service connections for a specific website
-        or network.
+      description: 'Retrieves the status of sites, remote networks, and service connections.
 
         '
       operationId: post-insights-v3.0-resource-query-sites-sc_list
@@ -2351,14 +2404,13 @@ paths:
           description: OK
       security:
       - Bearer: []
-      summary: List of service connections
+      summary: Status of Branch Site and Data Center
       tags:
       - Sites
   /insights/v3.0/resource/query/sites/site_status:
     post:
-      description: 'To get status of sites and or Remote Networks, and service connections.
-
-        '
+      description: "Retrieves a list of data centers and service connections and their\
+        \ details. \n"
       operationId: post-insights-v3.0-resource-query-sites-site_status
       parameters:
       - description: "Region mapping for the tenant. \n"
@@ -2514,7 +2566,7 @@ paths:
           description: OK
       security:
       - Bearer: []
-      summary: Remote Networks or Site status
+      summary: List of Data Centers
       tags:
       - Sites
 servers:
@@ -2524,14 +2576,14 @@ tags:
 
     '
   name: Location API
-- description: 'Sites API
-
-    '
-  name: Sites API
 - description: 'Mobile users API
 
     '
   name: Mobile Users API
+- description: 'Sites API
+
+    '
+  name: Sites API
 - description: 'Application API
 
     '
