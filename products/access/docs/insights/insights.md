@@ -48,3 +48,4 @@ following header on your call:
     Prisma-Tenant:{tsg_id}:{sub_tenant_id}
 
 For more information regarding the 2.0 APIs, see [Getting Started with the 2.0 APIs](/access/docs/insights/getting_started-20).
+
