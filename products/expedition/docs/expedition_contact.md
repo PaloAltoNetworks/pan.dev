@@ -25,13 +25,13 @@ experience assisting others.
 
 Access the <a href="https://live.paloaltonetworks.com/t5/expedition-migration-tool/ct-p/migration_tool"> Live Community Site </a>
 
-To report bugs, requests for new features or personal contact, please reach us via the Expedition team email <fwmigrate@paloaltonetworks.com>
+To report bugs, requests for new features or personal contact, please reach us via the Expedition team email \<fwmigrate\@paloaltonetworks.com\>
 
 | Role                                              | Members                           | e-mail                                             |
 | ------------------------------------------------- | --------------------------------- | -------------------------------------------------- |
-| <small>Senior Manager Solutions Architect</small> | <small>David Puigdomenech</small> | <small><dpuigdomenec@paloaltonetworks.com></small> |
-| <small>Architecture and Analytics </small>        | <small>Didac Gil</small>          | <small><dgildelaig@paloaltonetworks.com></small>   |
-| <small>API development </small>                   | <small>Anna Carreras</small>      | <small><abarbany@paloaltonetworks.com></small>     |
-| <small>Solution Architect </small>                | <small>Sathesh Anandh </small>    | <small><sanandh@paloaltonetworks.com> </small>     |
-| <small>Front-End development </small>             | <small>Janosch Zbick</small>      | <small><jzbick@paloaltonetworks.com></small>       |
-| <small>Technical Solution Architect </small>      | <small>Lynn Chiang</small>        | <small><lychiang@paloaltonetworks.com></small>     |
+| Senior Manager Solutions Architect | David Puigdomenech | \<dpuigdomenec@paloaltonetworks.com\> |
+| Architecture and Analytics         | Didac Gil          | \<dgildelaig@paloaltonetworks.com\>   |
+| API development                    | Anna Carreras      | \<abarbany@paloaltonetworks.com\>     |
+| Solution Architect                 | Sathesh Anandh     | \<sanandh@paloaltonetworks.com\>      |
+| Front-End development              | Janosch Zbick      | \<jzbick@paloaltonetworks.com\>       |
+| Technical Solution Architect       | Lynn Chiang        | \<lychiang@paloaltonetworks.com\>     |

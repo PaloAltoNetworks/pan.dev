@@ -14,6 +14,7 @@ operator. Multiple filter rules can also be evaluated using [boolean](#boolean-o
 
 For example:
 
+```
     "filter":{
         "rules":[
             {
@@ -27,6 +28,7 @@ For example:
                 "values":["gp"]}
              ]
     },
+```
 
 ## Numeric Operators
 
@@ -35,12 +37,14 @@ include wildcards in these operators.
 
 Example:
 
+```
     "filter":{
                 "rules":[{
                 "property":"node_type",
                 "operator":"equals",
                 "values":[48]
               },
+```
 
 - equal &lt;_value_&gt;
 
@@ -82,11 +86,13 @@ include wildcards in these operators.
 
 Example:
 
+```
     {
        "property":"user_type",
        "operator":"in",
        "values":["gp"]
     }
+```
 
 - equal &lt;_value_&gt;
 

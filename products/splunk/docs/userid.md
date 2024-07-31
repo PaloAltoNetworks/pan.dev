@@ -26,9 +26,9 @@ When Splunk receives authentication logs from an external system (like a RADIUS 
 
 This method is recommended because it is more efficient.
 
-**Step 1: Configure log forwarding on Splunk** <http://docs.splunk.com/Documentation/Splunk/6.3.0/Forwarding/Forwarddatatothird-partysystemsd>
+**Step 1: Configure log forwarding on Splunk** \<http://docs.splunk.com/Documentation/Splunk/6.3.0/Forwarding/Forwarddatatothird-partysystemsd\>
 
-**Step 2: Configure syslog receiving on User-ID firewall/agent** <https://www.paloaltonetworks.com/documentation/70/pan-os/pan-os/user-id/configure-user-id-to-receive-user-mappings-from-a-syslog-sender.html>
+**Step 2: Configure syslog receiving on User-ID firewall/agent** \<https://www.paloaltonetworks.com/documentation/70/pan-os/pan-os/user-id/configure-user-id-to-receive-user-mappings-from-a-syslog-sender.html\>
 
 Method 2: Searchbar Command
 ---------------------------
@@ -46,4 +46,4 @@ To simplify administration, you can configure one firewall to be the redistribut
 
 ![](/splunk/img/userid_distribution.png)
 
-**Configure a Firewall to Share User Mapping Data with Other Firewalls** <https://www.paloaltonetworks.com/documentation/70/pan-os/pan-os/user-id/configure-a-firewall-to-share-user-mapping-data-with-other-firewalls.html>
+**Configure a Firewall to Share User Mapping Data with Other Firewalls** \<https://www.paloaltonetworks.com/documentation/70/pan-os/pan-os/user-id/configure-a-firewall-to-share-user-mapping-data-with-other-firewalls.html\>

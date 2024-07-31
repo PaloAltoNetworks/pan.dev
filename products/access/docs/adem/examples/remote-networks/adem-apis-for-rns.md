@@ -14,13 +14,15 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
+```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_days&endpoint-type=rnAgent&response-type=summary
      
     header = { "prisma-tenant": "<tenant-id>" }
-
+```
 
 ## Response
 
+```
     {
         "startTime": 1691334000,
         "endTime": 1693926000,
@@ -39,4 +41,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             "internet": 68.1
         }
     }
-
+```
