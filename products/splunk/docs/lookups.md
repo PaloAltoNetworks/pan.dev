@@ -62,7 +62,7 @@ Create the following saved searches in the TA, by creating the file: `$SPLUNK_HO
     enableSched = 1
     realtime_schedule = 0
     request.ui_dispatch_view = flashtimeline
-    search = | pancontentpack <IP-or-hostname> apps | outputlookup createinapp=true app_lookup
+    search = | pancontentpack [IP-or-hostname] apps | outputlookup createinapp=true app_lookup
     disabled = 0
 
     [Palo Alto Networks - Retrieve ContentPack Threats]
@@ -72,10 +72,10 @@ Create the following saved searches in the TA, by creating the file: `$SPLUNK_HO
     enableSched = 1
     realtime_schedule = 0
     request.ui_dispatch_view = flashtimeline
-    search = | pancontentpack <IP-or-hostname> threats | outputlookup createinapp=true threat_lookup
+    search = | pancontentpack [IP-or-hostname] threats | outputlookup createinapp=true threat_lookup
     disabled = 0
 
-Set `<IP-or-hostname>` to the IP or hostname of your Firewall or Panorama. Ensure you set the credentials for this device in the Add-on configuration. See [Configure Adaptive Response](../adaptive-response#configure-adaptive-response) for more information.
+Set `[IP-or-hostname]` to the IP or hostname of your Firewall or Panorama. Ensure you set the credentials for this device in the Add-on configuration. See [Configure Adaptive Response](../adaptive-response#configure-adaptive-response) for more information.
 
 This example updates the lookup tables every Saturday at 12:05 AM for apps and 12:10 AM for threats. Change the cron_schedule to your desired update schedule.
 

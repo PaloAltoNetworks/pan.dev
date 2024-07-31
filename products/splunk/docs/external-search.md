@@ -33,7 +33,7 @@ This feature is only available with the Palo Alto Networks App for Splunk and re
 
 Example CLI command :
 
-    set deviceconfig system log-link Splunk.Dst url http://<SPLUNK SERVER>:8000/en-US/app/SplunkforPaloAltoNetworks/external_search?search=(dest_ip%20eq%20'{dst}')
+    set deviceconfig system log-link Splunk.Dst url http://[SPLUNK SERVER]:8000/en-US/app/SplunkforPaloAltoNetworks/external_search?search=(dest_ip%20eq%20'{dst}')
 
 Other possible fields to search :
 
