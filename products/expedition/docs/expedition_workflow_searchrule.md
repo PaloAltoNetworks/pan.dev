@@ -89,7 +89,7 @@ API syntax for creating a new device :
 
 :::
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -137,7 +137,7 @@ API syntax for creating a new project:
 | POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>{ **"project"**:"project1", **"description"**:"Project for testing" }</small> |
 | example | <small>`https://localhost/api/v1/project`</small> | <small>{"project":"MyLittleProject", "description":"A migration project"}</small>                 |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -179,7 +179,7 @@ API syntax for upload PAN-OS config into device :
 | POST    | <small>"https://localhost/api/v1/device/{device_id}/upload_config"</small> | <small>**"device_id"**: device_Id</small> |
 | Example | <small>"https://localhost/api/v1/device/23/upload_config"</small>          |                                           |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -216,7 +216,7 @@ API syntax for the step:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/import/device`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"device_id"**:device_Id }</small> |
 | example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>{"device_id":"23""}</small>                                                                     |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -258,7 +258,7 @@ API syntax for the step:
 | GET     | <small>`https://localhost/api/v1/project/{project_id}/source`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"device_id"**:device_Id} </small> |
 | example | <small>`https://localhost/api/v1/project/22/source`</small>           | <small>{**"device_id"**: 23}</small>                                                                   |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -332,7 +332,7 @@ API syntax for the step:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"name"**:filter_name,**"filter"**:filter, **"reference"**:filter_reference,**"source"**:sourceId}</small> |
 | example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\"",**"reference"**: "all allowed rules", **"source"** :4486} </small>               |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -374,7 +374,7 @@ data = {
     }
 ```
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -425,7 +425,7 @@ When we combine two single filters , we will use syntax below:
 **<i>filter</i>** filter_name1.success **or** **<i>filter</i>** filter_name2.success  
 
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -472,7 +472,7 @@ data = {
     }
 ```
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -518,7 +518,7 @@ data = {
     }
 ```
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -564,7 +564,7 @@ data = {
     }
 ```
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -604,7 +604,7 @@ API syntax for the step:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id<br/>in_body<br/> {**"source_id"**: source_id of the PAN-OS config file} </small> |
 | example | <small>`https://localhost/api/v1/project/22/tools/filter/6/execute`</small>                     | <small>{**"source_id"**: "23564"} </small>                                                                                                                   |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -644,7 +644,7 @@ API syntax for the step:
 | GET     | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
 | example | <small>`https://localhost/api/v1/project/22/tools/filter/6/success`</small>                     |                                                                                     |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -676,7 +676,7 @@ API syntax for the step:
 | GET     | <small>`https://localhost/api/v1/project/{project_id}/collection/{Collection_Id}/content`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"collection_id"**:collection_Id</small> |
 | example | <small>`https://localhost/api/v1/project/22/collection/20793/content`</small>                     |                                                                                             |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
