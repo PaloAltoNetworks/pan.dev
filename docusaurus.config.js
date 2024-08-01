@@ -443,11 +443,6 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
-                      label: "Prisma Access Insights",
-                      icon: "api-doc",
-                    },
-                    {
                       label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
