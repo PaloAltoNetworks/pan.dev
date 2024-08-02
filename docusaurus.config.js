@@ -443,11 +443,6 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
-                      label: "Prisma Access Insights",
-                      icon: "api-doc",
-                    },
-                    {
                       label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
@@ -489,6 +484,11 @@ const config = {
                       icon: "doc",
                     },
                     {
+                      label: "Get Started 3.0",
+                      to: "access/docs/insights/getting_started-30",
+                      icon: "doc",
+                    },
+                    {
                       label: "API FAQs",
                       to: "access/docs/insights/pai-faqs",
                       icon: "doc",
@@ -501,8 +501,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
+                      to: "access/api/insights/2.0",
                       label: "Prisma Access Insights 2.0",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights 3.0",
                       icon: "api-doc",
                     },
                   ],
@@ -655,13 +660,19 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           insights: {
-            specPath: "openapi-specs/access/insights/2.0",
+            specPath: "openapi-specs/access/insights/3.0",
             outputDir: "products/access/api/insights",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "2.0",
-            label: "v2.0",
+            version: "3.0",
+            label: "v3.0",
             baseUrl: "/access/api/insights/",
             versions: {
+              "2.0": {
+                specPath: "openapi-specs/access/insights/2.0",
+                outputDir: "products/access/api/insights/2.0",
+                label: "v2.0",
+                baseUrl: "/access/api/insights/2.0",
+              },
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
