@@ -67,7 +67,7 @@ API syntax for creating a new project:
 | POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>{ **"project"**:Name of the project, **"description"**:Description of the project }</small> |
 | example | <small>`https://localhost/api/v1/project`</small> | <small>{"project":"MyLittleProject", "description":"A migration project"}</small>                               |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 { label: 'Php', value: 'php', },
@@ -138,7 +138,7 @@ API syntax for the step:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/migration`</small> | <small>_in url_<br/> **"project_id"**:"ProjectId"<br/>in_body<br/> {**"device_type"**:"panorama or firewall" }</small> |
 | example | <small>`https://localhost/api/v1/project/22/migration`</small>           | <small>{"device_type":"panorama"}</small>                                                                              |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -184,7 +184,7 @@ Available vendorname parameter can be used in the path are below:
 **sonicwall** (Require Panser container )
 :::
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -219,7 +219,7 @@ API syntax for discovery 3rd party vendors' configurations:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_Id}/resource/{resource_Id}/discover`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId<br/>**"resource_id"**:resourceId<br/></small> |
 | example | <small>`https://localhost/api/v1/project/22/migration/25/resource/35/discovery`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25, <br/> **"resource_id"**: 35</small>              |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -273,7 +273,7 @@ API syntax for mapping 3rd party vendors' configurations:
 | example | <small>`https://localhost/api/v1/project/22/migration/25/resource/35/map`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25, <br/> **"resource_id"**: 35</small>              |  
 
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -319,7 +319,7 @@ API syntax for Converting 3rd party vendors' configurations:
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_Id}/convert`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId</small> |
 | example | <small>`https://localhost/api/v1/project/22/migration/25/convert`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25 </small>              |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -351,7 +351,7 @@ The API syntax for Importing the converted PAN-OS Configuration into the project
 | POST    | <small>`https://localhost/api/v1/project/{project_id}/import/device`</small> | <small>_in url_<br/>**"project"**: "projectID"<br/><br/>_in body_<br/>{ **"device_id"**: "deviceId" }</small> |
 | example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>_in url_<br/>project=22<br/><br/>_in body_<br/>{ "device_id": "23" }</small>                           |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
