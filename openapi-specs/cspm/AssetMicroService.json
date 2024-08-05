@@ -97,6 +97,46 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetResponse"
+                }
+              }
+            }
           }
         },
         "x-public": "true",
@@ -134,30 +174,39 @@
         "description": "Request object for id translation"
       },
       "Problem": {
+        "required": [
+          "createdTs",
+          "parameters"
+        ],
         "type": "object",
         "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string"
+          },
           "instance": {
             "type": "string",
             "format": "uri"
           },
-          "type": {
-            "type": "string",
-            "format": "uri"
+          "createdTs": {
+            "type": "integer",
+            "format": "int64"
           },
           "parameters": {
             "type": "object",
             "additionalProperties": {
               "type": "object"
             }
-          },
-          "title": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/StatusType"
-          },
-          "detail": {
-            "type": "string"
           }
         }
       },
@@ -317,7 +366,7 @@
           "assetId": {
             "type": "string",
             "description": "Unified Asset Id or RRN (Restricted Resource Name)",
-            "example": "[rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx or unified-asset-id]"
+            "example": "rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx or unified-asset-id"
           },
           "type": {
             "type": "string",
@@ -355,22 +404,7 @@
             "type": "array",
             "description": "External Finding Types",
             "items": {
-              "type": "string",
-              "description": "External Finding Types",
-              "enum": [
-                "HOST_VULNERABILITY_CVE",
-                "CONTAINER_IMAGE_VULNERABILITY_CVE",
-                "VIRTUAL_IMAGE_VULNERABILITY_CVE",
-                "SERVERLESS_VULNERABILITY",
-                "PACKAGE_VULNERABILITY",
-                "COMPLIANCE_CIS",
-                "GUARD_DUTY_HOST",
-                "GUARD_DUTY_IAM",
-                "INSPECTOR_RBA",
-                "INSPECTOR_SBP",
-                "NETWORK_REACHABILITY",
-                "AZURE_SECURITY_CENTER_ALERTS"
-              ]
+              "$ref": "#/components/schemas/FindingType"
             }
           },
           "riskFactors": {
@@ -445,7 +479,7 @@
           },
           "vulnerabilityInfoTypeId": {
             "type": "string",
-            "description": "CVE Idf, or Package Id or Layer Id. The value needs to be fetched from one of the group by api calls"
+            "description": "CVE Id, or Package Id or Layer Id. The value needs to be fetched from one of the group by api calls"
           },
           "vulnerabilityInfoType": {
             "type": "string",
@@ -475,6 +509,71 @@
           }
         },
         "description": "List of Attack Path Ids"
+      },
+      "FindingType": {
+        "type": "object",
+        "description": "External Finding Types",
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "COMPLIANCE_CIS",
+              "GUARD_DUTY_HOST",
+              "GUARD_DUTY_IAM",
+              "INSPECTOR_RBA",
+              "INSPECTOR_SBP",
+              "NETWORK_REACHABILITY",
+              "AZURE_SECURITY_CENTER_ALERTS",
+              "UNCLASSIFIED",
+              "COMMAND_AND_CONTROL",
+              "CREDENTIAL_ACCESS",
+              "CROSS_ACCOUNT_TRUST",
+              "DATA_EXFILTRATION",
+              "DEFENSE_EVASION",
+              "DISCOVERY",
+              "HIGH_PRIVILEGED_ROLE",
+              "INITIAL_ACCESS",
+              "INTERNET_EXPOSURE",
+              "KEYS_AND_SECRETS",
+              "LATERAL_MOVEMENT",
+              "MALWARE",
+              "MFA",
+              "MISCONFIGURATION",
+              "NETWORK_ANOMALY",
+              "PRIVILEGE_ESCALATION",
+              "RECONNAISSANCE",
+              "RESOURCE_HIJACKING",
+              "SSH_BRUTE_FORCE",
+              "UNAUTHORIZED_ACCESS",
+              "UNENCRYPTED_DATA",
+              "UNUSED_PRIVILEGES",
+              "USER_ANOMALY",
+              "WEAK_PASSWORD",
+              "SENSITIVE_DATA_EXPOSURE",
+              "INJECTIONS",
+              "VULNERABILITY_SCANNING",
+              "SHELLSHOCK",
+              "KNOWN_BOTS",
+              "UNKNOWN_BOTS",
+              "VIRTUAL_PATCHES",
+              "WEB_ATTACK",
+              "BOT_ACTIVITY",
+              "WEB_SCRAPING",
+              "CUSTOM",
+              "VULNERABILITY"
+            ]
+          },
+          {
+            "type": "string",
+            "enum": [
+              "HOST_VULNERABILITY_CVE",
+              "CONTAINER_IMAGE_VULNERABILITY_CVE",
+              "VIRTUAL_IMAGE_VULNERABILITY_CVE",
+              "SERVERLESS_VULNERABILITY",
+              "PACKAGE_VULNERABILITY"
+            ]
+          }
+        ]
       },
       "WorkLoadFilters": {
         "type": "object",
@@ -560,6 +659,10 @@
           "alertTime": {
             "type": "integer",
             "format": "int64"
+          },
+          "hyperionPolicy": {
+            "type": "boolean",
+            "writeOnly": true
           }
         }
       },
@@ -661,9 +764,6 @@
             "items": {
               "type": "object"
             }
-          },
-          "assetJson": {
-            "type": "object"
           }
         }
       },
@@ -854,6 +954,13 @@
             "additionalProperties": {
               "type": "object"
             }
+          },
+          "additionalInformation": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "writeOnly": true
           }
         }
       },
@@ -888,7 +995,7 @@
             "$ref": "#/components/schemas/GraphQLErrorDebugInfo"
           },
           "classification": {
-            "type": "string"
+            "type": "object"
           }
         }
       },
@@ -1233,7 +1340,7 @@
           },
           "relationshipCounts": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "vulnerabilityCounts": {
             "type": "object"
@@ -1271,7 +1378,7 @@
           "packageInfo": {
             "type": "object"
           },
-          "vulnerabilitiesAggregates": {
+          "vulnerabilityAggregates": {
             "type": "object"
           },
           "alertsCount": {
@@ -1325,17 +1432,20 @@
           "renderAttribute": {
             "$ref": "#/components/schemas/RenderAttribute"
           },
+          "ipAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "timeline": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TimelineAttribute"
             }
           },
-          "ipAddresses": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "trueInternetExposure": {
+            "type": "string"
           }
         },
         "description": "Asset Domain Service Object type."
