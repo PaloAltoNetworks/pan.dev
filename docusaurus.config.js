@@ -438,6 +438,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/remote-networks",
+                      label: "Remote Networks",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -694,6 +699,11 @@ const config = {
           mtinterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect",
             outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          remotenetworks: {
+            specPath: "openapi-specs/sase/remote-networks",
+            outputDir: "products/sase/api/remote-networks",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
