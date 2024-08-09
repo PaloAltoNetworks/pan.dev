@@ -578,6 +578,59 @@ const config = {
                 },
               ],
             },
+            {
+              label: "Strata Cloud Manager",
+              to: "#",
+              colorclass: "sase",
+              description:
+                "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
+              products: [
+                {
+                  label: "Prisma SASE",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      to: "sase/docs",
+                      label: "Prisma SASE Developer's Guide",
+                      icon: "doc",
+                    },
+                    {
+                      to: "/sase/docs/release-notes/changelog",
+                      label: "Prisma SASE Changelog",
+                      icon: "doc",
+                    },
+                    {
+                      to: "sase/docs/release-notes/release-notes",
+                      label: "Prisma SASE Release Notes",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "sase/api/tenancy",
+                      label: "Tenancy Service",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/iam",
+                      label: "Identity and Access Management",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/auth",
+                      label: "Authentication Service",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/subscription",
+                      label: "Subscription Service",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
