@@ -122,17 +122,27 @@ against the list of valid configuration items.
 There are no hardcoded items against which the configuration is checked. This class is used in many places in this package
 and it uses a specific [`dialect`](/panos/docs/panos-upgrade-assurance/dialect).
 
+`ConfigElement` (`str`, `dict`): Type alias for a configuration element in `requested_config` which is either a string or a
+    dictionary with a single key. This alias is being used over the `ConfigParser` class to increase clarification.
+
+:::note
+Configuration elements beginning with an exclamation mark (!) is referred to as `not-element`s in this dialect and it should
+be considered such in any place documented in the `ConfigParser` class. Please refer to the `dialect` documentation for
+details.
+:::
+
 __Attributes__
 
 
-- `_requested_config_names (set)`: Contains only element names of the requested configuration. When no requested configuration is
-    passed (implicit `'all'`), this is equal to `self.valid_elements`.
+- `_requested_config_element_names (set)`: Contains only element names of the requested configuration. When no requested
+    configuration is passed, this is equal to `self.valid_elements` which is like an implicit `'all'`.
+- `_requested_all_not_elements (bool)`: Identifies if requested configurations consists of all `not-element`s.
 
 ### `ConfigParser.__init__`
 
 ```python
 def __init__(valid_elements: Iterable,
-             requested_config: Optional[List[Union[str, dict]]] = None)
+             requested_config: Optional[List[ConfigElement]] = None)
 ```
 
 ConfigParser constructor.
@@ -142,13 +152,16 @@ Introduces some initial verification logic:
 * `valid_elements` is converted to `set` - this way we get rid of all duplicates,
 * if `requested_config` is `None` we immediately treat it as if `all`  was passed implicitly
     (see [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)) - it's expanded to `valid_elements`
-* `_requested_config_names` is introduced as `requested_config` stripped of any element configurations. Additionally, we
-    do verification if elements of this variable match `valid_elements`. An exception is thrown if not.
+* `_requested_config_element_names` is introduced as `requested_config` stripped of any element configurations.
+    Meaning top level keys of nested dictionaries in the `requested_config` are used as element names.
+    Additionally, we do verification if all elements of this variable match `valid_elements`,
+    if they do not, an exception is thrown by default.
+* `_requested_all_not_elements` is set to `True` if all elements of `requested_config` are `not-element`s.
 
 __Parameters__
 
 
-- __valid_elements__ (`iterable`): Valid elements against which we check the requested config.
+- __valid_elements__ (`Iterable`): Valid elements against which we check the requested config.
 - __requested_config__ (`list, optional`): (defaults to `None`) A list of requested configuration items with an optional
     configuration.
 
@@ -157,31 +170,81 @@ __Raises__
 
 - `UnknownParameterException`: An exception is raised when a requested configuration element is not one of the valid elements.
 
-### `ConfigParser._is_element_included`
+### `ConfigParser.is_all_not_elements`
 
 ```python
-def _is_element_included(element: str) -> bool
+@staticmethod
+def is_all_not_elements(config: Iterable[ConfigElement]) -> bool
 ```
 
-Method verifying if a config element is a correct (supported) value.
-
-This method can also handle `not-elements` (see [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)).
+Method to check if all config elements are `not-element`s (all exclusive).
 
 __Parameters__
 
 
-- __element__ (`str`): The config element to verify. This can be a `not-element`. This parameter is verified against
-    `self.valid_elements` `set`. Key word `'all'` is also accepted.
+- __config__ (`Iterable`): List of config elements.
 
 __Returns__
 
-`bool`: `True` if the value is correct, `False` otherwise.
+
+`bool`: `True` if all config elements are `not-element`s (exclusive) or config is empty, otherwise returns `False`.
+
+### `ConfigParser.is_element_included`
+
+```python
+@staticmethod
+def is_element_included(element_name: str,
+                        config: Union[Iterable[ConfigElement], None],
+                        all_not_elements_check: bool = True) -> bool
+```
+
+Method verifying if a given element name should be included according to the config.
+
+__Parameters__
+
+
+- __element_name__ (`str`): Element name to check if it's included in the provided `config`.
+- __config__ (`Iterable`): Config to check against.
+- __all_not_elements_check__ (`bool, optional`): (defaults to `True`) Accept element as included if all the `config` elements are
+    `not-element`s; otherwise it checks if the element is explicitly included without making an
+    [`is_all_not_elements()`](#configparseris_all_not_elements) method call.
+
+__Returns__
+
+
+`bool`: `True` if element name is included or if all config elements are `not-element`s depending on the
+    `all_not_elements_check` parameter.
+
+### `ConfigParser.is_element_explicit_excluded`
+
+```python
+@staticmethod
+def is_element_explicit_excluded(
+        element_name: str, config: Union[Iterable[ConfigElement],
+                                         None]) -> bool
+```
+
+Method verifying if a given element should be excluded according to the config.
+
+Explicit excluded means the element is present as a `not-element` in the requested config, for example "ntp_sync" is
+excluded explicitly in the following config `["!ntp_sync", "candidate_config"]`.
+
+__Parameters__
+
+
+- __element_name__ (`str`): Element name to check if it's present as a `not-element` in the provided `config`.
+- __config__ (`Iterable`): Config to check against.
+
+__Returns__
+
+
+`bool`: `True` if element is present as a `not-element`, otherwise `False`.
 
 ### `ConfigParser._extract_element_name`
 
 ```python
 @staticmethod
-def _extract_element_name(config: Union[str, dict]) -> str
+def _extract_element_name(element: ConfigElement) -> str
 ```
 
 Method that extracts the name from a config element.
@@ -192,35 +255,109 @@ If a config element is a string, the actual config element is returned. For elem
 __Parameters__
 
 
-- __config__ (`str, dict`): A config element to provide a name for.
+- __element__ (`ConfigElement`): A config element to provide a name for.
 
 __Raises__
 
 
-- `WrongDataTypeException`: Thrown when config does not meet requirements.
+- `WrongDataTypeException`: Thrown when element does not meet requirements.
 
 __Returns__
 
 
 `str`: The config element name.
 
-### `ConfigParser._expand_all`
+### `ConfigParser._iter_config_element_names`
 
 ```python
-def _expand_all() -> None
+@staticmethod
+def _iter_config_element_names(
+        config: Iterable[ConfigElement]) -> Iterator[str]
 ```
 
-Expand key word `'all'` to  `self.valid_elements`.
+Generator for extracted config element names.
 
-During expansion, elements from `self.valid_elements` which are already available in `self.requested_config` are skipped.
-This way we do not introduce duplicates for elements that were provided explicitly.
+This method provides a convenient way to iterate over configuration items with their config element names extracted by
+[`_extract_element_name()`](#configparser_extract_element_name) method.
 
-This method directly operates on `self.requested_config`.
+__Parameters__
+
+
+- __config__ (`Iterable`): Iterable config items as str or dict.
+
+__Returns__
+
+
+`Iterator`: For config element names extracted by [`ConfigParser._extract_element_name()`](#configparser_extract_element_name)
+
+### `ConfigParser._strip_element_name`
+
+```python
+def _strip_element_name(element_name: str) -> str
+```
+
+Get element name with exclamation mark removed if so.
+
+Returns element name removing exclamation mark for a `not-element` config.
+
+__Parameters__
+
+
+- __element_name__ (`str`): Element name.
+
+__Returns__
+
+
+`str`: Element name with exclamation mark stripped of from the beginning.
+
+### `ConfigParser._is_valid_element_name`
+
+```python
+def _is_valid_element_name(element_name: str) -> bool
+```
+
+Method verifying if a config element name is a correct (supported) value.
+
+This method can also handle `not-element`s (see [`dialect`](/panos/docs/panos-upgrade-assurance/dialect)).
+
+__Parameters__
+
+
+- __element_name__ (`str`): The config element name to verify. This can be a `not-element` as well. This parameter is verified
+     against `self.valid_elements` set. Key word `'all'` is also accepted.
+
+__Returns__
+
+
+`bool`: `True` if the value is correct, `False` otherwise.
+
+### `ConfigParser.get_config_element_by_name`
+
+```python
+def get_config_element_by_name(
+        element_name: str) -> Union[ConfigElement, None]
+```
+
+Get configuration element from requested configuration for the provided config element name.
+
+This method returns config element as str or dict from `self.requested_config` for the provided config element name.
+It does not support returning `not-element` of a given config element.
+
+__Parameters__
+
+
+- __element_name__ (`str`): Element name.
+
+__Returns__
+
+
+`ConfigElement`: str if element is provided as string or dict if element is provided as dict with optional configuration in
+    the requested configuration.
 
 ### `ConfigParser.prepare_config`
 
 ```python
-def prepare_config() -> List[Union[str, dict]]
+def prepare_config() -> List[ConfigElement]
 ```
 
 Parse the input config and return a machine-usable configuration.
@@ -232,7 +369,8 @@ This method handles most of the [`dialect`](/panos/docs/panos-upgrade-assurance/
 
 __Returns__
 
-`list`: The parsed configuration.
+
+`List[ConfigElement]`: The parsed configuration.
 
 ### `interpret_yes_no`
 
