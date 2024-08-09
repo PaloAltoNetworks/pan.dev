@@ -581,7 +581,7 @@ const config = {
             {
               label: "Strata Cloud Manager",
               to: "#",
-              colorclass: "sase",
+              colorclass: "scm",
               description:
                 "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
               products: [
