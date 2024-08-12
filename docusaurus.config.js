@@ -362,27 +362,26 @@ const config = {
               label: "Strata Cloud Manager",
               to: "#",
               colorclass: "scm",
-              description:
-                "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
+              description: "Discover Strata Cloud Manager APIs.",
               products: [
                 {
-                  label: "Prisma SASE",
+                  label: "Strata Cloud Manager",
                   to: "#",
                   logoClass: "prisma",
                   docs: [
                     {
-                      to: "sase/docs",
-                      label: "Prisma SASE Developer's Guide",
+                      to: "scm/docs/home",
+                      label: "Strata Cloud Manager Developer's Guide",
                       icon: "doc",
                     },
                     {
-                      to: "/sase/docs/release-notes/changelog",
-                      label: "Prisma SASE Changelog",
+                      to: "scm/docs/release-notes/changelog",
+                      label: "Strata Cloud Manager Changelog",
                       icon: "doc",
                     },
                     {
-                      to: "sase/docs/release-notes/release-notes",
-                      label: "Prisma SASE Release Notes",
+                      to: "scm/docs/release-notes/release-notes",
+                      label: "Strata Cloud Manager Release Notes",
                       icon: "doc",
                     },
                   ],
