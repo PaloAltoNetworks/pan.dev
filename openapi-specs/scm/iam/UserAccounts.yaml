@@ -1,0 +1,107 @@
+components:
+  schemas:
+    user_register:
+      description: ''
+      properties:
+        email:
+          description: "The email address that you want to use to create this \nSSO\
+            \ user account.\n"
+          example: someemail33@somedomain.com
+          type: string
+        firstname:
+          description: 'The user''s familiar name.
+
+            '
+          example: John
+          type: string
+        lastname:
+          description: 'The user''s surname, or family name.
+
+            '
+          example: Smith
+          type: string
+      required:
+      - email
+      - firstname
+      - lastname
+      title: Root Type for user_register
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Create Palo Alto Networks SSO accounts, and verify login accounts.\
+    \ \nA [login account](/scm/docs/user-accounts#log-in-accounts), \nas well as\
+    \ an [access policy](/scm/api/iam/accesspolicies), is required in order\nfor\
+    \ a user to gain access to Prisma SASE products for administrative\nor monitoring\
+    \ purposes.\n"
+  title: User Accounts
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /iam/v1/sso_users:
+    get:
+      description: "Verify that the email address provided to this API corresponds\
+        \ to\nan existing [login account](/scm/docs/user-accounts#log-in-accounts).\n\
+        \nThis API contains a JSON object in it's response. If the \n`profile_exists`\
+        \ field in that object is `true`, then the\nemail address is associated with\
+        \ a login account. \n\nIf `profile_exists` is `false`, a login account is\
+        \ not found for this email address.\nIn that case, a login account must be\
+        \ created for the user before\nthe user can perform the actions identified\
+        \ by any access policies\nassigned to the user's account. \n"
+      operationId: get-iam-v1-sso_users
+      parameters:
+      - description: 'The email address used to identify the login account that you
+          want to verify.
+
+          '
+        in: query
+        name: email
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Profile Exists:
+                  value:
+                    profile_exists: true
+          description: Successful response.
+      security:
+      - Bearer: []
+      summary: Verify a user account
+      tags:
+      - UserAccounts
+    post:
+      description: "Create a new Palo Alto Networks SSO account. If the email address\
+        \ that you provide to this\nrequest is already used for an existing login\
+        \ account, then this request\nreturns `200` without performing any other operations.\n\
+        \nSee [Manage User Accounts](/scm/docs/user-accounts) \nfor information about\
+        \ login accounts.\n"
+      operationId: post-iam-v1-sso_users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_register'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_register'
+          description: Successful response - user registered for SSO
+      security:
+      - Bearer: []
+      summary: Create an SSO account
+      tags:
+      - UserAccounts
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: UserAccounts

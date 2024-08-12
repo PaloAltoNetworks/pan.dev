@@ -387,22 +387,22 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "sase/api/tenancy",
+                      to: "scm/api/tenancy/tenancy-api",
                       label: "Tenancy Service",
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/iam",
+                      to: "scm/api/iam/iam-api",
                       label: "Identity and Access Management",
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/auth",
+                      to: "scm/api/auth/auth-api",
                       label: "Authentication Service",
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/subscription",
+                      to: "scm/api/subscription/subscription-api",
                       label: "Subscription Service",
                       icon: "api-doc",
                     },
@@ -701,9 +701,22 @@ const config = {
               groupPathsBy: "tag",
             },
           },
+          scmauth: {
+            specPath: "openapi-specs/scm/auth",
+            outputDir: "products/scm/api/auth",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+          },
           iam: {
             specPath: "openapi-specs/sase/iam",
             outputDir: "products/sase/api/iam",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          scmiam: {
+            specPath: "openapi-specs/scm/iam",
+            outputDir: "products/scm/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           adem: {
@@ -763,9 +776,19 @@ const config = {
             outputDir: "products/sase/api/subscription",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          scmsub: {
+            specPath: "openapi-specs/scm/subscription",
+            outputDir: "products/scm/api/subscription",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           tenancy: {
             specPath: "openapi-specs/sase/tenancy",
             outputDir: "products/sase/api/tenancy",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          scmtenancy: {
+            specPath: "openapi-specs/scm/tenancy",
+            outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {

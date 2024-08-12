@@ -1,0 +1,166 @@
+components:
+  responses:
+    roles_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/_pagination'
+            - properties:
+                items:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/role'
+                  type: array
+              type: object
+      description: Successful response.
+  schemas:
+    _pagination:
+      properties:
+        count:
+          default: 1
+          description: Total count of the items
+          type: integer
+      required:
+      - count
+      - items
+      type: object
+    permission_set_access:
+      description: A permission set that you want to grant to this custom role. Permission
+        sets are maintained by Palo Alto Networks. Use permission sets for a custom
+        role if you are using it to grant a user access who uses the UI.
+      example:
+        access_types:
+        - read
+        id: iam.management
+      properties:
+        access_types:
+          description: 'The type of access (`read` and/or `write`) granted for this
+            permission set.
+
+            '
+          items:
+            type: string
+          type: array
+        id:
+          description: "The ID of a permission set included in this custom role. \n"
+          type: string
+      title: Root Type for permission_set_access
+      type: object
+    role:
+      example:
+        aggregated_permissions:
+        - prisma_access.config.get
+        - iam.service_account.create
+        - iam.access_policy.create
+        app_id: app_id
+        description: Full access to all functions.
+        label: Superuser
+        name: superuser
+        permission_sets:
+        - access_type: read
+          id: prisma_access.config
+        permissions:
+        - iam.service_account.create
+        - iam.access_policy.create
+      properties:
+        aggregated_permissions:
+          description: 'Identifies all permissions available to this TSG. This is
+            a union of the permissions available to the
+
+            TSG, as well as the permissions available to its child TSGs.
+
+            '
+          items:
+            type: string
+          type: array
+        description:
+          description: ''
+          type: string
+        label:
+          description: 'The text displayed in the user interface for this role.
+
+            '
+          type: string
+        name:
+          description: 'The role name.
+
+            '
+          type: string
+        permission_sets:
+          items:
+            $ref: '#/components/schemas/permission_set_access'
+          type: array
+        permissions:
+          description: 'The permissions granted to this role.
+
+            '
+          items:
+            type: string
+          type: array
+      required:
+      - label
+      title: Root Type for role
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Roles are used to identify a collection of [permissions](/scm/api/iam/permissions)
+    that are granted
+
+    to a user or service account. Roles are assigned to a user or service account
+    using
+
+    [access policies](/scm/api/iam/accesspolicies).
+
+    '
+  title: Roles
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /iam/v1/roles:
+    get:
+      description: 'Retrieve a list of all roles.
+
+        '
+      operationId: get-iam-v1-roles
+      responses:
+        '200':
+          $ref: '#/components/responses/roles_list'
+      security:
+      - Bearer: []
+      summary: List all roles
+      tags:
+      - Roles
+  /iam/v1/roles/{name}:
+    get:
+      description: 'Get a specified role.
+
+        '
+      operationId: get-iam-v1-roles-name
+      parameters:
+      - description: Role Name
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/role'
+          description: Successful response - returns a single `role`.
+      security:
+      - Bearer: []
+      summary: Get a role
+      tags:
+      - Roles
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: Roles
