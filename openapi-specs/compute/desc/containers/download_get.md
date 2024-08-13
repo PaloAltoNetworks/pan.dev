@@ -2,7 +2,7 @@ Downloads container scan reports in CSV format.
 
 You can download the container scan reports in CSV format in Console under **Monitor > Compliance > Containers**.
 
-**Note**: The query parameter `fields` is not supported for this API endpoint.
+**Note**: The query parameter `fields` is not supported for this endpoint and `offset` and `limit` query parameters are ignored as this API endpoint downloads all the results. 
 
 ### cURL Request
 

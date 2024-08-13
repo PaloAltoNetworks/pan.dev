@@ -222,7 +222,7 @@ For operations content the **`not`** operator is not available.
 | ------ | --------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | POST   | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>name, filter</small> | <small>{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""}**</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -295,7 +295,7 @@ Updates the parameters of a specific filter
 | ------ | --------------------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | PUT    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>name, filter</small> | <small>{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""}**</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -364,11 +364,11 @@ Everytime a filter is modified, it will be marked as potentially_invalid, since 
 | ------ | --------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
 | DELETE | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/22`</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
-}>  
+}>   
 <TabItem value="python">
 
 ```python
@@ -424,11 +424,11 @@ The successful Json response will be similar to the following:
 | ------ | --------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
 | GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/success`</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
-}>  
+}>   
 <TabItem value="python">
 
 ```python
@@ -485,11 +485,11 @@ The successful Json response will be similar to the following:
 | ------ | ---------------------------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------- |
 | GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/`</small> | <small>{project_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter`</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
-}>  
+}>   
 <TabItem value="python">
 
 ```python
@@ -550,7 +550,7 @@ The successful Json response will be similar to the following:
 | ------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
 | POST   | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/execute`</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]
@@ -659,7 +659,7 @@ The successful Json response will be similar to the following:
 | ------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
 | GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/history`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/history`</small> |
 
-<Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
+<Tabs defaultValue={null}
 values={[
 { label: 'Python', value: 'python', },
 ]

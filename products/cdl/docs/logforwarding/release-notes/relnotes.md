@@ -13,10 +13,14 @@ keywords:
 
 These release notes highlight API changes made to the Log Forwarding APIs.
 
-In addition, you can refer to the TechDocs [product documentation](https://docs.paloaltonetworks.com/content/techdocs/en_US/cortex/cortex-data-lake/cortex-data-lake-getting-started/get-started-with-log-forwarding-app.html) for release information about non-API feature enhancements:
+In addition, you can refer to the TechDocs [product documentation](https://docs.paloaltonetworks.com/strata-logging-service/administration/forward-logs) for release information about non-API feature enhancements:
 
 See also the [change log](/cdl/logforwarding/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
+
+## June 2024
+
+Rebranded from Cortex Data Lake to Strata Logging Service
 
 ## September 2022
 

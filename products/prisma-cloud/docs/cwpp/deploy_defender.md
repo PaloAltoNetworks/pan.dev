@@ -41,7 +41,7 @@ Secure your workloads, tasks (apps) by embedding a Defender into the workloads.
 ### Manual Deployment:
 Use this deployment when you want to secure all tasks (apps) or workloads in a cloud container irrespective of whether the containers are self-managed, Amazon ECS managed, or docker managed.
 
-1. Download the App Embedded Defender bundle by using the [App Embedded Defender](/prisma-cloud/api/cwpp/get-images-twistlock-defender-app-embedded-tar-gz) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
+1. Download the App Embedded Defender bundle by using the [App Embedded Defender](https://pan.dev/prisma-cloud/api/cwpp/get-images-twistlock-defender-app-embedded-tar-gz) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
 
     ```bash
     $ curl -sSL -k --header "authorization: Bearer <key>" https://<CONSOLE>/api/v<VERSION>/images/twistlock_defender_app_embedded.tar.gz -O
@@ -72,7 +72,7 @@ Choose your template for deployment based on whether you wish to secure applicat
 #### Native template:
 Use this cURL sample request to protect a Amazon ECS Fargate task definition in native format.
 
-- Generate a protected task definition using the [Defender Fargate](prisma-cloud/api/cwpp/post-defenders-fargate-json/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
+- Generate a protected task definition using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-json/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
 
   ```bash
     $ curl -k \
@@ -87,7 +87,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 #### CloudFormation template (in JSON):
 Use this cURL sample request to protect a Amazon ECS Fargate task definition in CloudFormation template in JSON.
 
-- Generate a protected template using the [Defender Fargate](prisma-cloud/api/cwpp/post-defenders-fargate-json/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+- Generate a protected template using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-json/)![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
   ```bash
   $ curl -k \
@@ -103,7 +103,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 #### CloudFormation template (in YAML):
 Use this cURL sample request to protect a Amazon ECS Fargate task definition in CloudFormation template in YAML.
 
-- Generate a protected template using the [Defender Fargate](prisma-cloud/api/cwpp/post-defenders-fargate-yaml/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+- Generate a protected template using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-yaml/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
   ```bash
   $ curl -k \
@@ -120,7 +120,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 
 Use this deployment when you want to secure applications (or tasks) in docker managed containers.
 
-1. Deploy using the [App Embedded Defender](prisma-cloud/api/cwpp/post-defenders-app-embedded/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint. 
+1. Deploy using the [App Embedded Defender](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-app-embedded/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint. 
 
 2. Enter or assign values for the following mandatory fields in the cURL example below:
     - appID: ID of the application.
@@ -152,7 +152,7 @@ You can protect the Azure and AWS serverless functions by directly embedding the
 ### AWS Serverless (Lambda Layers) Deployment
 Use this deployment to embed Defender to AWS Lambda Layers so that all serverless functions are invoked with security.
 
-1. Download the Serverless Defender bundle for AWS Lambda layer by using the [Serverless Defender](prisma-cloud/api/cwpp/post-images-twistlock-defender-layer-zip/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+1. Download the Serverless Defender bundle for AWS Lambda layer by using the [Serverless Defender](https://pan.dev/prisma-cloud/api/cwpp/post-images-twistlock-defender-layer-zip/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
     Specify the function name, runtime, and region in the following API cURL request:
 
@@ -172,7 +172,7 @@ Use this deployment to embed Defender to AWS Lambda Layers so that all serverles
 ### AWS Serverless (Embedded)
 Use this deployment to embed Defender to secure each AWS Lambda function.
 
-1. Download the Serverless Defender bundle by using the [Serverless Defender](prisma-cloud/api/cwpp/post-defenders-serverless-bundle/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+1. Download the Serverless Defender bundle by using the [Serverless Defender](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-serverless-bundle/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
     
     Specify the runtime*, provider*, function name, and region.
 
@@ -236,7 +236,7 @@ Use this deployment to embed Defender to secure each AWS Lambda function.
 #### Azure serverless
 Use this deployment to embed Defender to secure each Azure serverless function.
 
-1. Download the Serverless Defender bundle by using the [Serverless Defender](prisma-cloud/api/cwpp/post-defenders-serverless-bundle/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
+1. Download the Serverless Defender bundle by using the [Serverless Defender](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-serverless-bundle/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
     
     Specify the runtime*, provider*, function name, and region.
         
@@ -277,6 +277,5 @@ Use this deployment to embed Defender to secure each Azure serverless function.
     ```
 
 5. Generate the value for the **TW_POLICY** environment variable by specifying your serverless function's name (defined in key-value pair).
-
 
 

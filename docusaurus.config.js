@@ -261,7 +261,7 @@ const config = {
                   ],
                 },
                 {
-                  label: "Cortex Data Lake",
+                  label: "Strata Logging Service",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -433,13 +433,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/adem/autonomous-dem-api",
-                      label: "Autonomous DEM",
+                      to: "sase/api/mt-interconnect",
+                      label: "Multitenant Interconnect",
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
-                      label: "Prisma Access Insights",
+                      to: "access/api/adem/autonomous-dem-api",
+                      label: "Autonomous DEM",
                       icon: "api-doc",
                     },
                     {
@@ -484,6 +484,11 @@ const config = {
                       icon: "doc",
                     },
                     {
+                      label: "Get Started 3.0",
+                      to: "access/docs/insights/getting_started-30",
+                      icon: "doc",
+                    },
+                    {
                       label: "API FAQs",
                       to: "access/docs/insights/pai-faqs",
                       icon: "doc",
@@ -496,8 +501,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
+                      to: "access/api/insights/2.0",
                       label: "Prisma Access Insights 2.0",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights 3.0",
                       icon: "api-doc",
                     },
                   ],
@@ -650,13 +660,19 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           insights: {
-            specPath: "openapi-specs/access/insights/2.0",
+            specPath: "openapi-specs/access/insights/3.0",
             outputDir: "products/access/api/insights",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "2.0",
-            label: "v2.0",
+            version: "3.0",
+            label: "v3.0",
             baseUrl: "/access/api/insights/",
             versions: {
+              "2.0": {
+                specPath: "openapi-specs/access/insights/2.0",
+                outputDir: "products/access/api/insights/2.0",
+                label: "v2.0",
+                baseUrl: "/access/api/insights/2.0",
+              },
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
@@ -674,6 +690,11 @@ const config = {
             specPath: "openapi-specs/sase/mt-notifications",
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          mtinterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect",
+            outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
@@ -760,6 +781,7 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
           },
           cspm: {
             specPath: "openapi-specs/cspm",
@@ -777,9 +799,10 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.05",
-            label: "v32.05",
+            version: "32.07",
+            label: "v32.07",
             showExtensions: true,
+            hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
               31.02: {
@@ -796,20 +819,6 @@ const config = {
               },
             },
           },
-          compute_3201: {
-            specPath: "openapi-specs/compute/32-01",
-            outputDir: "products/compute/api/32-01",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-01/",
-          },
-          compute_3202: {
-            specPath: "openapi-specs/compute/32-02",
-            outputDir: "products/compute/api/32-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-02/",
-          },
           compute_3203: {
             specPath: "openapi-specs/compute/32-03",
             outputDir: "products/compute/api/32-03",
@@ -823,6 +832,20 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-04/",
+          },
+          compute_3205: {
+            specPath: "openapi-specs/compute/32-05",
+            outputDir: "products/compute/api/32-05",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-05/",
+          },
+          compute_3206: {
+            specPath: "openapi-specs/compute/32-06",
+            outputDir: "products/compute/api/32-06",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-06/",
           },
         },
       },

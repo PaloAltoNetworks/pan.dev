@@ -1,0 +1,4544 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "v1",
+    "title": "Prisma Cloud REST API Doc",
+    "contact": {},
+    "license": {
+      "name": "Public"
+    }
+  },
+  "tags": [
+    {
+      "name": "Cloud Accounts (AWS)",
+      "description": "To monitor the resources on your AWS cloud infrastructure, you must first add your AWS accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between AWS and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (AWS) APIs enable you to add and manage AWS accounts on Prisma Cloud. For end to end workflow to onboarding an AWS account using APIs, see [Automate AWS Cloud Account Onboarding](/prisma-cloud/docs/cspm/aws-cloud-account-onboarding/).\n For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    },
+    {
+      "name": "Cloud Accounts (All)",
+      "description": "You can use the APIs in this category to perform operations that are nonspecific to cloud account types, such as listing all the cloud accounts, listing supported features, and deleting an account.\n\nFor operations that are specific to the cloud type or cloud provider, see:\n* [Cloud Accounts (AWS)](/prisma-cloud/api/cspm/cloud-accounts-aws/)\n* [Cloud Accounts (Azure)](/prisma-cloud/api/cspm/cloud-accounts-azure/) \n* [Cloud Accounts (GCP)](/prisma-cloud/api/cspm/cloud-accounts-gcp/)\n* [Cloud Accounts (OCI and Alibaba)](/prisma-cloud/api/cspm/cloud-accounts-oci-and-alibaba/)\n"
+    },
+    {
+      "name": "Cloud Accounts (Azure)",
+      "description": "To monitor the resources on your Azure cloud infrastructure, you must first add your Azure accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between Azure and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (Azure) APIs enable you to add and manage Azure accounts on Prisma Cloud. For end to end workflow to onboarding an Azure account using APIs, see [Automate Azure Cloud Account Onboarding](/prisma-cloud/docs/cspm/azure-account-onboarding/).\n For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    },
+    {
+      "name": "Cloud Accounts (GCP)",
+      "description": "To monitor the resources on your GCP cloud infrastructure, you must first add your GCP accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between GCP and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (GCP) APIs enable you to add and manage GCP accounts on Prisma Cloud. For end to end workflow to onboarding an GCP account using APIs, see [Automate GCP Cloud Account Onboarding](/prisma-cloud/docs/cspm/gcp-account-onboarding/).\n For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    },
+    {
+      "name": "Cloud Accounts (OCI and Alibaba)",
+      "description": "To monitor the resources on your OCI or Alibaba cloud infrastructure, you must first add your OCI or Alibaba accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between your cloud infrastructure provider and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (OCI and Alibaba) APIs enable you to add and manage OCI or Alibaba accounts on Prisma Cloud. For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    }
+  ],
+  "paths": {
+    "/account/{accountId}/config/status": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Account Status Details",
+        "description": "Returns a list of Prisma Cloud services whose status indicates a warning or error for the given cloud account ID. Includes status details for each listed service.",
+        "operationId": "list-cloud-account-status-details",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Cloud account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountConfigStatusView"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/aws_account": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "Add Cloud Account (AWS)",
+        "description": "Onboard a new aws cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the externalId and AWS CFT template by calling either **[Generate and Download the CFT Template Endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**",
+        "operationId": "add-aws-cloud-account",
+        "parameters": [
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/aws_account/{account_id}/ancestors": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "List Ancestors (AWS)",
+        "description": "Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgAncestorRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AwsNodeModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/aws_account/{id}": {
+      "put": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "Update Cloud Account (AWS)",
+        "description": "Update details of an AWS cloud account that is already present in Prisma Cloud. **Note:** To enable or disable a cloud account, use [Update Cloud Account Status](https://pan.dev/prisma-cloud/api/cspm/update-cloud-account-status/) API.",
+        "operationId": "update-aws-cloud-account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids / invalid_account_type"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/aws_account/{parent_id}/children": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "List Children of Parent (AWS)",
+        "description": "For AWS only. Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws",
+        "parameters": [
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "Parent OU ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNextPageToken",
+            "in": "query",
+            "description": "The page token to request the next page of accounts. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountFetchCount",
+            "in": "query",
+            "description": "Total number of accounts to return. An  **accountFetchCount** of 0 returns a nextPageToken but no accounts.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ouNextPageToken",
+            "in": "query",
+            "description": "The page token to request next set of OUs. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ouFetchCount",
+            "in": "query",
+            "description": "Total number of OUs to return. An **ouFetchCount** of 0 returns a nextPageToken but no OUs.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsOrgChildrenRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account JSON",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsListChildrenApiResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "permission_error / bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/azure_account": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "Add Cloud Account (Azure)",
+        "description": "Onboard a new azure cloud account onto the Prisma Cloud platform. \n\n**Prerequisite**: Generate and download the Terraform template by calling Generate and Download the Azure Terraform Template. \n\n**Note**: For Azure China, Terraform template generation is not supported. You must create the app registration and the required roles manually.",
+        "operationId": "add-azure-cloud-account",
+        "parameters": [
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AzureCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/azure_account/{account_id}": {
+      "put": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "Update Cloud Account (Azure)",
+        "description": "Update the cloud account that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-azure-cloud-account",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AzureCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/cloud_account/status/aws": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "Get Cloud Account Status (AWS)",
+        "description": "Lists status messages of the specified AWS cloud account.",
+        "operationId": "get-aws-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "412": {
+            "description": "external_id_empty_or_not_generated. To generate CFT and externalId call **[Generate and Download the AWS CFT Template endpoint](/prisma-cloud/api/cspm/generate-cft-template-aws)** or **[Generate the AWS CFT Template Link Endpoint](/prisma-cloud/api/cspm/generate-cft-template-link-aws)**"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/cloud_account/status/azure": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "Get Cloud Account Status (Azure)",
+        "description": "Lists the status of a Azure Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-azure-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/cloud_account/status/gcp": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "Get Cloud Account Status (GCP)",
+        "description": "Lists the status of a GCP Cloud account. You can use this API to verify the status of the security capabilities which you will be onboarding on Prisma Cloud.",
+        "operationId": "get-gcp-cloud-account-status",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/gcp_account": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "Add Cloud Account (GCP)",
+        "description": "Onboard a new gcp cloud account onto the Prisma Cloud platform.\n\n **Prerequisite**: Generate the GCP credentials by calling **[Generate and Download the GCP Terraform template](/prisma-cloud/api/cspm/generate-template-link-gcp-gcp)** API",
+        "operationId": "add-gcp-cloud-account",
+        "parameters": [
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/GcpCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cas/v1/gcp_account/{id}": {
+      "put": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "Update Cloud Account (GCP)",
+        "description": "Update the GCP cloud account information that has been onboarded onto the Prisma Cloud platform.",
+        "operationId": "update-gcp-cloud-account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/GcpCloudAccountRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Accounts",
+        "description": "Lists all cloud accounts onboarded onto the Prisma Cloud platform.",
+        "operationId": "get-cloud-accounts",
+        "parameters": [
+          {
+            "name": "excludeAccountGroupDetails",
+            "in": "query",
+            "description": "true = Exclude account group details. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountViewModel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{account_id}/ancestors": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "List Ancestors (AWS) - Legacy",
+        "description": "For AWS only. Lists the ancestors of the given member accounts and organizational units (OUs) for the specified cloud account ID. A successful response returns an array of accounts and/or OUs each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-members-ous-legacy",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/get-ancestors-for-given-members-ous-legacyBody"
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AwsNodeModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/awsAccounts/{parent_id}/children": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (AWS)"
+        ],
+        "summary": "List Children of Parent (AWS) - Legacy",
+        "description": "Lists all the children of the given parent organizational unit (OU).The listed children include both OU resources and account resources.",
+        "operationId": "get-list-of-children-under-parent-aws-legacy",
+        "parameters": [
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "Parent OU ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNextPageToken",
+            "in": "query",
+            "description": "The page token to request the next page of accounts. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountFetchCount",
+            "in": "query",
+            "description": "Total number of accounts to return. An  **accountFetchCount** of 0 returns a nextPageToken but no accounts.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ouNextPageToken",
+            "in": "query",
+            "description": "The page token to request next set of OUs. The response from a previous request provides this token. If the token has characters outside the ASCII character set, URL encode the token before using it to make a request.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ouFetchCount",
+            "in": "query",
+            "description": "Total number of OUs to return. An **ouFetchCount** of 0 returns a nextPageToken but no OUs.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/get-ancestors-for-given-members-ous-legacyBody"
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsListChildrenApiResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "permission_error / bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{account_id}/ancestors": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "List Ancestors (Azure)",
+        "description": "Lists the ancestors of the given Azure management groups and subscriptions for the specified cloud account (Azure tenant) ID. Each resource ID in the request body is either a management group ID or a subscription ID. A successful response returns an array of ancestors for each given resource ID.",
+        "operationId": "get-ancestors-for-given-subscriptions-and-management-groups",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resources"
+              }
+            }
+          },
+          "description": "Cloud service provider resource IDs",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/components/schemas/AzureAncestorsModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud-accounts-manager/v1/cloudAccounts/azureAccounts/{parent_id}/children": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (Azure)"
+        ],
+        "summary": "List Children of Parent (Azure)",
+        "description": "Lists all the children, both management groups and subscriptions, under the given parent. A parent can be either an Azure tenant or a management group.",
+        "operationId": "list-children-under-parent",
+        "parameters": [
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "Parent Resource ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AzureListChildrenRequestModel"
+              }
+            }
+          },
+          "description": "Azure cloud account parameters",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AzureHierarchyNodeModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/gcp/parent/{parent_id}/children": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "List Children of Parent (GCP)",
+        "description": "List all the children, both folder resources and project resources, of the given parent. A parent can be an organization resource or a folder resource. \n\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.",
+        "operationId": "get-list-of-children-under-parent",
+        "parameters": [
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "GCP parent resource ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectNextPageToken",
+            "in": "query",
+            "description": "Token to request next page of projects",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectPageSize",
+            "in": "query",
+            "description": "Page size for paging projects. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no projects.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "folderNextPageToken",
+            "in": "query",
+            "description": "Token to request next page of folders",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "folderPageSize",
+            "in": "query",
+            "description": "Page size for paging folders. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no folders.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentType",
+            "in": "query",
+            "description": "Parent type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "folders",
+                "organizations"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/GcpResourceControllerRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListChildrenApiResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/cloud/name": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Account Names - GET",
+        "description": "Returns a list of cloud account IDs and names.",
+        "operationId": "get-cloud-account-names",
+        "parameters": [
+          {
+            "name": "onlyActive",
+            "in": "query",
+            "description": "Returns IDs and names of active accounts only. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "accountGroupIds",
+            "in": "query",
+            "description": "Returns IDs and names of accounts that belong to the specified account group IDs",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "cloudType",
+            "in": "query",
+            "description": "Returns IDs and names of accounts that belong to the specified cloudType and accountGroup",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeOthers",
+            "in": "query",
+            "description": "Returns none cloudAccount and none cloudAccountId in response if includeOthers is true",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountIdentity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-microservice": "true",
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Account Names - POST",
+        "description": "Returns a list of cloud account IDs and names.",
+        "operationId": "get-cloud-account-names-by-post",
+        "parameters": [
+          {
+            "name": "onlyActive",
+            "in": "query",
+            "description": "Returns IDs and names of active accounts only. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "cloudType",
+            "in": "query",
+            "description": "Returns IDs and names of accounts that belong to the specified cloudType and accountGroup",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeOthers",
+            "in": "query",
+            "description": "Returns none cloudAccount and none cloudAccountId in response if includeOthers is true",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountListRequestModel"
+              }
+            }
+          },
+          "description": "Cloud Account Groups",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountIdentity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/oci/terraform": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (OCI and Alibaba)"
+        ],
+        "summary": "Generate Zipped Terraform Script (OCI)",
+        "description": "Generates a zipped Terraform template to help you onboard your Oracle Cloud Infrastructure account to Prisma Cloud. You can use this template in the OCI Tenant Console to get a User OCID. Note that the generated keys will be valid for 24 hours.",
+        "operationId": "generateterraformscript",
+        "requestBody": {
+          "content": {
+            "application/json; charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/TerraformProvisionerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_parameter_value"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/status/{cloud_type}": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (OCI and Alibaba)"
+        ],
+        "summary": "Get Cloud Account Status (OCI and Alibaba)",
+        "description": "Lists status messages of the specified cloud account.  \r\n\r\nThis request performs a cloud account on-boarding trial run. You can use this request to validate your parameters before \n you use [Add Cloud Account](/prisma-cloud/api/cspm/add-cloud-account).\n",
+        "operationId": "get-cloud-account-status",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/get-cloud-account-statusBody"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountStatus"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/type": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Types",
+        "description": "Returns all the cloud types.",
+        "operationId": "get-cloud-types",
+        "parameters": [
+          {
+            "name": "onlyAccessible",
+            "in": "query",
+            "description": "**true** = return only cloud types to which the user has access and for which he has onboarded cloud accounts. Default is **false**.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "includeOthers",
+            "in": "query",
+            "description": "returns other cloudType in response if includeOthers is true",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (OCI and Alibaba)"
+        ],
+        "summary": "Add Cloud Account (OCI and Alibaba)",
+        "description": "Onboard a new cloud account onto the Prisma Cloud platform. \r\n\r\nThe request body parameters differ depending on the cloud type of the account you want to add.\n      \n### Request Body to Add an Alibaba Account\nThe table below lists the request body parameters to add an Alibaba account.\n\nParameter  | Type | Description | Default Value or Required\n-----------| ---- | ----------- | -------------\n accountId | string | AWS account ID | Required\n groupIds | array of strings  | List of account group IDs for this account  | Required\n name | string  | Name to be used for the account on the Prisma Cloud platform (must be unique)  | Required\n roleArn | string | Unique identifier for an Alibaba RAM role resource | Required\n enabled | boolean | Whether or not the account is enabled | Default is **false**\n deploymentType | string | Deployment type. <br/> Valid values: **ali-int**, **ali-cn**, **ali-fn** <br/> **ali-int:** Alibaba International <br/> **ali-cn:** Alibaba China. Allows you to monitor all the resources in the Alibaba China region, but does not monitor resources in the Alibaba Finance region. <br/> **ali-fn:** Alibaba Finance. Applicable only for the Alibaba China region. Allows you to monitor resources located only in the Alibaba Finance regions.| Optional\n\n#### Request Body Example\n```json\n{\n  \"accountId\": \"\",\n  \"groupIds\": [],\n  \"name\": \"\",\n  \"enabled\": true,\n  \"ramArn\": \"\"\n}\n```\n### Requirements and Request Body to Add an OCI Account\nTo add an Oracle Cloud Infrastructure (OCI) account, you must:\n\n1. Use [Generate Zipped Terraform Script (OCI)](/prisma-cloud/api/cspm/generateterraformscript) in the console | Required\n\n#### Request Body Example\n```json\n{\n  \"accountType\":\"tenant\",\n  \"defaultAccountGroupId\":\"\",\n  \"enabled\":true,\n  \"name\":\"\",\n  \"groupName\":\"\",\n  \"homeRegion\":\"\",\n  \"policyName\":\"\",\n  \"accountId\":\"\",\n  \"userName\":\"\",\n  \"userOcid\":\"\"\n}\n```\n",
+        "operationId": "add-cloud-account",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          },
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/add-cloud-accountBody"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "duplicate_cloud_account_name / duplicate_cloud_account / invalid_account_id_format / duplicate_cloud_account_needs_upgrade / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/accounts/{account_id}/ancestors": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "List Ancestors (GCP)",
+        "description": "Lists the ancestors of the given projects and folders for the specified cloud account ID. A successful response returns an array of projects and/or folders each of which is mapped to an array of ancestor resource IDs.",
+        "operationId": "get-ancestors-for-given-projects-folders",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "gcp"
+              ]
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GcpAncestorRequestModel"
+              }
+            }
+          },
+          "description": "Cloud service provider resource IDs",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/components/schemas/GcpNodeModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/accounts/{account_id}/hierarchy": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "Get Saved Resource Hierarchy (GCP)",
+        "description": "Get the previously saved resource hierarchy for the specified cloud account ID.",
+        "operationId": "get-previously-saved-resource-hierarchy",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "gcp"
+              ]
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "GCP account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/HierarchySelection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/parent/{parent_id}/folders": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "List Folders of Parent (GCP)",
+        "description": "List all the child folders of the given parent. A parent can be an organization resource or a folder resource.\n\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.",
+        "operationId": "get-list-of-folders-under-parent",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "gcp"
+              ]
+            }
+          },
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "GCP parent ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nextPageToken",
+            "in": "query",
+            "description": "Token to request next page of folders",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Page size. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no folders.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentType",
+            "in": "query",
+            "description": "Parent type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "folders",
+                "organizations"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/GcpResourceControllerRequestModel"
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/GcpNodeModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/parent/{parent_id}/projects": {
+      "post": {
+        "tags": [
+          "Cloud Accounts (GCP)"
+        ],
+        "summary": "List Projects of Parent (GCP)",
+        "description": "List all the child projects of the given parent. A parent can be an organization resource or a folder resource.\n\nThe request body parameter is the content of the Service Account Key (JSON) file, which is required.",
+        "operationId": "get-list-of-projects-under-parent",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "gcp"
+              ]
+            }
+          },
+          {
+            "name": "parent_id",
+            "in": "path",
+            "description": "GCP parent ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nextPageToken",
+            "in": "query",
+            "description": "Token to request next page of projects",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Page size. Valid range is 1-300 inclusive. A page size of 0 returns a nextPageToken but no projects.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parentType",
+            "in": "query",
+            "description": "Parent type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "folders",
+                "organizations"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "description": "Service Account Key (JSON) file content",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestApiResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request / unauthorized_access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/{id}": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "Get Cloud Account Details",
+        "description": "Returns top level information about the cloud account.",
+        "operationId": "get-cloud-account",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "aws",
+                "azure",
+                "gcp",
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeGroupInfo",
+            "in": "query",
+            "description": "true = Include account group info. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudAccountModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "put": {
+        "tags": [
+          "Cloud Accounts (OCI and Alibaba)"
+        ],
+        "summary": "Update Cloud Account (OCI and Alibaba)",
+        "description": "Update information related to a cloud account. \r\n\r\nThe request body parameters differ depending on the cloud type of the account you want to add.\n\n\n### Request Body to Update an Alibaba Account\nThe table below lists the request body parameters.\n\nParameter  | Type | Description |  Required?\n-----------| ---- | ----------- | -------------\naccountId |string | AWS account ID | Required\n groupIds | array of strings  | List of account group IDs for this account  | Required\n name | string  | Name to be used for the account on the Prisma Cloud platform (must be unique)  | Required\n roleArn | string | Unique identifier for an Alibaba RAM role resource | Required\n enabled | boolean | Whether or not the account is enabled | Required\n deploymentType | string | Deployment type. <br/> Valid values: **ali-int**, **ali-cn**, **ali-fn** <br/> **ali-int:** Alibaba International <br/> **ali-cn:** Alibaba China. Allows you to monitor all the resources in the Alibaba China region, but does not monitor resources in the Alibaba Finance region. <br/> **ali-fn:** Alibaba Finance. Applicable only for the Alibaba China region. Allows you to monitor resources located only in the Alibaba Finance regions.| Optional\n\n#### Request Body Example\n```json\n{\n  \"accountId\": \"\",\n  \"groupIds\": [],\n  \"name\": \"\",\n  \"enabled\": true,\n  \"ramArn\": \"\"\n}\n```\n### Request Body to Update an OCI Account\nThe table below lists the request body parameters to add an OCI account.\n\nParameter  | Type | Description | Required?\n-----------| ---- | ----------- | -------------\n accountType | string | OCI Account type. Current valid value is **tenant**. | Required\n defaultAccountGroupId | string | Account group ID for this account. Used for alert rules. |  Required\n enabled | boolean | Whether or not to enable the account |  Required\n name | string  | Name of the OCI tenant you want Prisma Cloud to monitor | Required\n groupName | string | OCI identity group name that you define. Can be an existing group |  Required\n homeRegion | string  | OCI tenancy home region |  Required\n policyName | string  | OCI identity policy name that you define. Can be an existing policy that has the right policy statements. |  Required\n accountId | string  | OCID of your OCI tenancy | Required\n userName | string  | OCI identity user name that you define. Can be an existing user that has the right privileges. |  Required\n userOcid | string  | User OCID from your OCI Tenant Console after you apply the zip file from [Generate Zipped Terraform Script (OCI)](/prisma-cloud/api/cspm/generateterraformscript) in the console |  Required\n\n#### Request Body Example\n```json\n{\n  \"accountType\":\"tenant\",\n  \"defaultAccountGroupId\":\"\",\n  \"enabled\":true,\n  \"name\":\"\",\n  \"groupName\":\"\",\n  \"homeRegion\":\"\",\n  \"policyName\":\"\",\n  \"accountId\":\"\",\n  \"userName\":\"\",\n  \"userOcid\":\"\"\n}\n```      \n",
+        "operationId": "update-cloud-account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          },
+          {
+            "name": "skipStatusChecks",
+            "in": "query",
+            "description": "true = Skip account status checks to improve response time",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/add-cloud-accountBody"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / duplicate_cloud_account_name / duplicate_cloud_account / cannot_select_zero_account_groups / invalid_account_group_ids"
+          },
+          "404": {
+            "description": "invalid_account_type"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "delete": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "Delete Cloud Account",
+        "description": "Deletes the onboarded cloud account that has the specified cloud account ID.",
+        "operationId": "delete-cloud-account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "aws",
+                "azure",
+                "gcp",
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_cloud_type / bad_request"
+          },
+          "403": {
+            "description": "cannot_delete_org_child"
+          },
+          "404": {
+            "description": "invalid_cloud_type / invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "patch": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "Patch Cloud Account",
+        "description": "Enable / disable cloud account (and children) OR Update the Account Groups it belongs to",
+        "operationId": "patch-cloud-account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "aws",
+                "azure",
+                "gcp",
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudAccountPatchModel"
+              }
+            }
+          },
+          "description": "Cloud Account Patch",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / invalid_account_patch"
+          },
+          "404": {
+            "description": "invalid_cloud_type / invalid_account_id_format"
+          },
+          "405": {
+            "description": "cloud_account_already_enabled / cloud_account_already_disabled"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{cloud_type}/{id}/project": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Org Accounts",
+        "description": "Lists all cloud accounts onboarded onto the Prisma Cloud platform as children of an organization.",
+        "operationId": "get-cloud-org-accounts",
+        "parameters": [
+          {
+            "name": "cloud_type",
+            "in": "path",
+            "description": "Cloud Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "aws",
+                "azure",
+                "gcp",
+                "alibaba_cloud",
+                "oci"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeAccountGroupDetails",
+            "in": "query",
+            "description": "true = Exclude account group details. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudAccountViewModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "not_found / not_an_org"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{id}/owners": {
+      "get": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "List Cloud Account Owners",
+        "description": "Returns the email addresses of all owners for the specified cloud account ID.",
+        "operationId": "get-cloud-account-owners",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_account_id_format"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/cloud/{id}/status/{enabled}": {
+      "patch": {
+        "tags": [
+          "Cloud Accounts (All)"
+        ],
+        "summary": "Update Cloud Account Status",
+        "description": "Enable or disable cloud account.",
+        "operationId": "update-cloud-account-status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "enabled",
+            "in": "path",
+            "description": "Status To Set",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "updateChildren",
+            "in": "query",
+            "description": "Allows for updating status of children cloud accounts if any. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "invalid_account_id_format / invalid_account_patch"
+          },
+          "404": {
+            "description": "invalid_account_id_format"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
+  "components": {
+    "requestBodies": {
+      "LoggingAccountCFTRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LoggingAccountCFTRequest"
+            }
+          }
+        },
+        "description": "Logging Account CFT",
+        "required": true
+      },
+      "GcpCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GcpCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
+      "AzureCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AzureCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
+      "BucketModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BucketModel"
+            }
+          }
+        }
+      },
+      "AwsCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      },
+      "LoggingArchiveAccountModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LoggingArchiveAccountModel"
+            }
+          }
+        }
+      },
+      "get-ancestors-for-given-members-ous-legacyBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "description": "Cloud Account JSON",
+        "required": true
+      },
+      "GcpResourceControllerRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GcpResourceControllerRequestModel"
+            }
+          }
+        },
+        "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account",
+        "required": true
+      },
+      "get-cloud-account-statusBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "add-cloud-accountBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "description": "Cloud Account",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "AbsoluteTimeRangeConfigModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/components/schemas/TimeModel"
+              }
+            },
+            "description": "Model for AbsoluteTimeRangeConfig"
+          }
+        ]
+      },
+      "AccountGroupInfo": {
+        "type": "object",
+        "properties": {
+          "groupName": {
+            "type": "string",
+            "description": "Group name"
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "description": "Last modified by",
+            "readOnly": true
+          },
+          "groupId": {
+            "type": "string",
+            "description": "group id",
+            "readOnly": true
+          },
+          "autoCreated": {
+            "type": "boolean",
+            "description": "auto created",
+            "readOnly": true
+          }
+        },
+        "description": "Account group info linked to a cloud account"
+      },
+      "AccountListRequestModel": {
+        "type": "object",
+        "required": [
+          "timeRange"
+        ],
+        "properties": {
+          "accountIds": {
+            "type": "array",
+            "description": "List of account IDs",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountGroupIds": {
+            "type": "array",
+            "description": "List of account group IDs",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aggregate": {
+            "type": "boolean",
+            "description": "true = aggregate"
+          },
+          "filterKey": {
+            "type": "string",
+            "description": "Filter key"
+          },
+          "filterValue": {
+            "type": "string",
+            "description": "Filter value"
+          },
+          "groupBy": {
+            "type": "string",
+            "description": "Group items by this value"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Limit of items per request. Default is 1000."
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "csvHeaderRequired": {
+            "type": "boolean"
+          }
+        },
+        "description": "Model for AccountListRequest"
+      },
+      "AccountStatusMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "staticMessage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AlibabaCloudAccountModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ramArn": {
+                "type": "string",
+                "description": "Ram ARN"
+              },
+              "cloudAccountStatus": {
+                "type": "object",
+                "description": "Internal use only",
+                "readOnly": true
+              }
+            },
+            "description": "Model for Alibaba Cloud Account"
+          }
+        ]
+      },
+      "AwsCloudAccountModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "externalId": {
+                "type": "string",
+                "description": "External ID",
+                "readOnly": true
+              },
+              "roleArn": {
+                "type": "string",
+                "description": "Role ARN"
+              },
+              "storageScanConfig": {
+                "$ref": "#/components/schemas/StorageScanConfigModel"
+              },
+              "assumeRoleAccount": {
+                "type": "string",
+                "description": "Internal use only",
+                "readOnly": true
+              },
+              "eventbridgeRuleNamePrefix": {
+                "type": "string",
+                "description": "Amazon Event Bridge Rule Name"
+              },
+              "useTenantExternalId": {
+                "type": "boolean",
+                "description": "Attribute tells whether to use Tenant ExternalId or not"
+              }
+            },
+            "description": "Model for AWS Cloud Account"
+          }
+        ]
+      },
+      "AwsCloudAccountRequestModel": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "accountType",
+          "name",
+          "roleArn"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AWS Account ID"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True to enable ingestion of logs to Prisma Cloud. The default value is True. \\n **NOTE:** Ingestion will be stopped if enabled is set to False"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name to be used for the account on the Prisma Cloud platform (must be unique)"
+          },
+          "roleArn": {
+            "type": "string",
+            "description": "AWS Role ARN"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization",
+              "account"
+            ]
+          },
+          "features": {
+            "type": "array",
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, call **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "groupIds": {
+            "type": "array",
+            "description": "Account Group Ids for this account",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultAccountGroupId": {
+            "type": "string",
+            "description": "*Applicable only for accountType: **organization**.*\n\n This is the Default Account Group ID for the AWS organization and its member accounts."
+          },
+          "hierarchySelection": {
+            "type": "array",
+            "description": "*Applicable only for accountType: **organization**.*\n\n Include/Exclude a list of AWS Organization Units (OU), AWS accounts, and AWS Organizations to onboard under this organization.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "customMemberRoleNameEnabled": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType**.\n\n The default value is false. If it is set to true, you must provide a **memberRole** name."
+          },
+          "skipOverrideMemberRoleName": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType**.\n\n The default value is true. If it is set to false, the existing Role Name and external ID for the member accounts will be retained."
+          },
+          "unifiedCftDisabled": {
+            "type": "boolean",
+            "description": "Applicable only for the organization accountType.\n\n The default value is false. If it is set true, you will get different CFT's for Management and Member accounts."
+          },
+          "memberRoleName": {
+            "type": "boolean",
+            "description": "Applicable only for the **organization accountType** and when **customMemberRoleNameEnabled** is set to true."
+          },
+          "useTenantExternalId": {
+            "type": "boolean",
+            "description": "Specify whether to use tenantExternalId,  the default is `false`"
+          }
+        },
+        "description": "Model containing the request for AWS Standalone and Org Cloud Account"
+      },
+      "AwsCloudOrgModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "externalId": {
+                "type": "string",
+                "description": "External ID",
+                "readOnly": true
+              },
+              "roleArn": {
+                "type": "string",
+                "description": "Role ARN"
+              },
+              "storageScanConfig": {
+                "$ref": "#/components/schemas/StorageScanConfigModel"
+              },
+              "assumeRoleAccount": {
+                "type": "string",
+                "description": "Internal use only",
+                "readOnly": true
+              },
+              "eventbridgeRuleNamePrefix": {
+                "type": "string",
+                "description": "Amazon Event Bridge Rule Name"
+              },
+              "useTenantExternalId": {
+                "type": "boolean",
+                "description": "Attribute tells whether to use Tenant ExternalId or not"
+              },
+              "defaultAccountGroupId": {
+                "type": "string",
+                "description": "Default Account Group"
+              },
+              "memberRoleName": {
+                "type": "string",
+                "description": "Role Name in Member Accounts"
+              },
+              "memberExternalId": {
+                "type": "string",
+                "description": "External Id in Member Accounts"
+              },
+              "memberRoleStatus": {
+                "type": "boolean",
+                "description": "Role Creation Status in Member Accounts"
+              },
+              "hierarchySelection": {
+                "type": "array",
+                "description": "List of selected resources for hierarchy selection",
+                "items": {
+                  "$ref": "#/components/schemas/HierarchySelection"
+                }
+              },
+              "customMemberRoleNameEnabled": {
+                "type": "boolean"
+              },
+              "unifiedCftDisabled": {
+                "type": "boolean"
+              },
+              "skipOverrideMemberRoleName": {
+                "type": "boolean"
+              }
+            },
+            "description": "Model for AWS Cloud Org"
+          }
+        ]
+      },
+      "AwsListChildrenApiResponseModel": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "description": "List of node info",
+            "items": {
+              "$ref": "#/components/schemas/AwsOrgTreeNode"
+            }
+          },
+          "accountNextPageToken": {
+            "type": "string",
+            "description": "Next page token for account"
+          },
+          "ouNextPageToken": {
+            "type": "string",
+            "description": "Next page token for Organizational Unit"
+          }
+        },
+        "description": "Model for AwsListChildrenApiResponse"
+      },
+      "AwsNodeModel": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "description": "Resource ID"
+          },
+          "ancestors": {
+            "type": "array",
+            "description": "List of ancestors",
+            "items": {
+              "$ref": "#/components/schemas/AwsOrgTreeNode"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Status"
+          },
+          "responseCode": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Response code"
+          }
+        },
+        "description": "Model for AncestorApiResponse"
+      },
+      "AwsOrgAncestorRequestModel": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "accountType",
+          "resourceIds",
+          "roleArn"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AWS Account ID"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True to enable ingestion of logs to Prisma Cloud. The default value is True. \\n **NOTE:** Ingestion will be stopped if enabled is set to False"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "roleArn": {
+            "type": "string",
+            "description": "AWS Role ARN"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization"
+            ]
+          },
+          "resourceIds": {
+            "type": "array",
+            "description": "Array of resource IDs (account IDs and/or OU IDs)",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Model containing the request for AWS Org Ancestors"
+      },
+      "AwsOrgChildrenRequestModel": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "accountType",
+          "roleArn"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "AWS Account ID"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True to enable ingestion of logs to Prisma Cloud. The default value is True. \\n **NOTE:** Ingestion will be stopped if enabled is set to False"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "roleArn": {
+            "type": "string",
+            "description": "AWS Role ARN"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "organization"
+            ]
+          },
+          "useTenantExternalId": {
+            "type": "boolean",
+            "description": "Specify whether to use tenantExternalId,  the default is `false`"
+          }
+        },
+        "description": "Model containing the request for AWS Org Children"
+      },
+      "AwsOrgTreeNode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Node ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "Node type",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name"
+          },
+          "parent": {
+            "type": "string",
+            "description": "Parent"
+          },
+          "hasChild": {
+            "type": "boolean",
+            "description": "Has Child",
+            "enum": [
+              true,
+              false
+            ]
+          }
+        },
+        "description": "Model for Aws Org Tree Node"
+      },
+      "AwsS3FlowLogsLoggingAccountsModel": {
+        "type": "object",
+        "properties": {
+          "loggingAccountId": {
+            "type": "string",
+            "description": "Account ID of the Logging Account"
+          },
+          "awsS3FlowLogsLoggingAccountId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Logging Account Internal ID"
+          },
+          "buckets": {
+            "type": "array",
+            "description": "List of buckets for the feature",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bucketIds": {
+            "type": "array",
+            "description": "List of bucket Ids for the feature",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "description": "Model for AWS S3 Flow Logs Feature Logging Accounts Configuration"
+      },
+      "AwsS3FlowLogsModel": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Prisma Account ID from cloud_account table"
+          },
+          "loggingAccounts": {
+            "type": "array",
+            "description": "List of logging accounts with selected buckets for the given feature",
+            "items": {
+              "$ref": "#/components/schemas/AwsS3FlowLogsLoggingAccountsModel"
+            }
+          }
+        },
+        "description": "Model for AWS S3 Flow Logs Feature Configuration"
+      },
+      "AzureAncestorsModel": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "description": "Resource ID"
+          },
+          "ancestors": {
+            "type": "array",
+            "description": "List of ancestors",
+            "items": {
+              "$ref": "#/components/schemas/AzureHierarchyNodeModel"
+            }
+          }
+        },
+        "description": "Model for Azure GetAncestors API Response"
+      },
+      "AzureCloudAccountRequestModel": {
+        "type": "object",
+        "required": [
+          "clientId",
+          "cloudAccount",
+          "environmentType",
+          "key",
+          "tenantId"
+        ],
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/AzureCloudAccountRequestModelCloudAccount"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Application (Client) ID"
+          },
+          "environmentType": {
+            "type": "string",
+            "description": "* **azure** -  Commercial deployment type.\nApplicable for Prisma Commercial and Government stacks\n\n * **azure_gov** - Government deployment type.\nApplicable for Prisma Commercial and Government stacks..\n\n * **azure_china** - Applicable for Prisma China Stack.",
+            "enum": [
+              "azure",
+              "azure_gov",
+              "azure_china"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "Application key/client secret"
+          },
+          "monitorFlowLogs": {
+            "type": "boolean",
+            "description": "If set to true, it ingests Network Security Group Flow Logs to Prisma Cloud"
+          },
+          "servicePrincipalId": {
+            "type": "string",
+            "description": "Service Principal ID"
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "Directory (Tenant) ID"
+          },
+          "features": {
+            "type": "array",
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, call **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "defaultAccountGroupId": {
+            "type": "string",
+            "description": "*Required only for accountType: **tenant**.*\n\n This is the Default Account Group ID for the Azure Tenant and its Management Groups/Subscriptions."
+          },
+          "hierarchySelection": {
+            "type": "array",
+            "description": "*Required only for accountType: **tenant**.*\n\n Include or Exclude a list of Azure Management Groups and Azure Subscriptions to onboard under this Tenant.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "rootSyncEnabled": {
+            "type": "boolean",
+            "description": "*Applicable only for accountType: **tenant***\n\n In order to onboard the **tenant** and its associated **management groups** and **subscriptions**, ```rootSyncEnabled``` must be set to ```true```"
+          },
+          "accountGroupMode": {
+            "type": "string",
+            "description": "*Applicable only for role: **System Admin** and account type: **tenant** when ```rootSyncEnabled``` is set to ```true```.*\n\n* **MANUAL** - Create account groups manually in Prisma Cloud.\n\n* **AUTOMAP** - Automatically creates the account groups in Prisma Cloud replicating the hierarchy in Azure Cloud.",
+            "enum": [
+              "MANUAL",
+              "AUTOMAP"
+            ]
+          }
+        },
+        "description": "Model containing the request for Azure Standalone and Tenant Cloud Account"
+      },
+      "AzureCloudAccountRequestModelCloudAccount": {
+        "type": "object",
+        "required": [
+          "accountType",
+          "name"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Azure Subscription ID. Required field for accountType: **account**\n\n"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "account",
+              "tenant"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True to enable ingestion of logs to Prisma Cloud. The default value is True. \\n **NOTE:** Ingestion will be stopped if enabled is set to False"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name to be used for the account on the Prisma Cloud platform (must be unique)"
+          },
+          "groupIds": {
+            "type": "array",
+            "description": "Account Group Ids for this account.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AzureHierarchyNodeModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Node ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "Node type",
+            "enum": [
+              "TENANT",
+              "MANAGEMENT_GROUP",
+              "ACCOUNT"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name"
+          },
+          "parent": {
+            "type": "string",
+            "description": "Parent"
+          },
+          "hasChild": {
+            "type": "boolean",
+            "description": "true = Has child"
+          }
+        },
+        "description": "Model for AzureNode in the Tenant Hierarchy"
+      },
+      "AzureListChildrenRequestModel": {
+        "type": "object",
+        "required": [
+          "clientId",
+          "cloudAccount",
+          "environmentType",
+          "key",
+          "rootSyncEnabled",
+          "servicePrincipalId",
+          "tenantId"
+        ],
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/AzureListChildrenRequestModelCloudAccount"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Application (Client) ID"
+          },
+          "environmentType": {
+            "type": "string",
+            "description": "* **azure** -  Commercial deployment type.\nApplicable for Prisma Commercial and Government stacks\n\n * **azure_gov** - Government deployment type.\nApplicable for Prisma Commercial and Government stacks..\n\n * **azure_china** - Applicable for Prisma China Stack.",
+            "enum": [
+              "azure",
+              "azure_gov",
+              "azure_china"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "Application key/client secret"
+          },
+          "monitorFlowLogs": {
+            "type": "boolean",
+            "description": "Automatically ingest flow logs"
+          },
+          "servicePrincipalId": {
+            "type": "string",
+            "description": "Service Principal ID"
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "Directory (Tenant) ID"
+          },
+          "rootSyncEnabled": {
+            "type": "boolean",
+            "description": "true = Azure tenant has children. Must be true."
+          }
+        },
+        "description": "Model containing the request for List children of Azure Tenant Cloud Account"
+      },
+      "AzureListChildrenRequestModelCloudAccount": {
+        "type": "object",
+        "required": [
+          "accountType"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Azure account ID"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "enum": [
+              "tenant"
+            ]
+          }
+        }
+      },
+      "AzureSubscriptionModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "description": "Model for Azure Cloud Account"
+          }
+        ]
+      },
+      "AzureTenantModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "description": "Model for Azure Tenant"
+          }
+        ]
+      },
+      "BucketModel": {
+        "type": "object",
+        "required": [
+          "bucketName",
+          "bucketRegion",
+          "loggingAccountId"
+        ],
+        "properties": {
+          "bucketName": {
+            "type": "string",
+            "description": "S3 Bucket Name"
+          },
+          "bucketRegion": {
+            "type": "string",
+            "description": "S3 Bucket Region"
+          },
+          "bucketPathPrefixes": {
+            "type": "string",
+            "description": "Bucket Path Prefixes"
+          },
+          "keyArn": {
+            "type": "string",
+            "description": "CMS Key ARN"
+          },
+          "loggingAccountId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Log Archive Account Id"
+          },
+          "featureMap": {
+            "type": "object",
+            "description": "Monitored account and bucket purpose details",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "lastUpdatedTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Last Updated Timestamp"
+          }
+        },
+        "description": "Model for S3 Bucket"
+      },
+      "CloudAccountConfigStatusView": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Prisma Cloud service"
+          },
+          "status": {
+            "type": "string",
+            "description": "Service status"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message with details about service status"
+          },
+          "remediation": {
+            "type": "string",
+            "description": "Suggestions for remediation"
+          },
+          "subComponents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudAccountConfigStatusView"
+            }
+          }
+        },
+        "description": "Model for Cloud Account Config Status View"
+      },
+      "CloudAccountIdentity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of Account/ Project/ Master Service Account/ Organization"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of Account/ Project/ Master Service Account/ Organization"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type of Account/ Project/ Master Service Account/ Organization",
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "IBM"
+            ]
+          },
+          "parentAccountName": {
+            "type": "string",
+            "description": "Parent Org Name of Account/ Project"
+          }
+        },
+        "description": "Model for Cloud Account Identity"
+      },
+      "CloudAccountModel": {
+        "type": "object",
+        "properties": {
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "readOnly": true,
+            "enum": [
+              "ACCOUNT",
+              "MASTER_SERVICE_ACCOUNT",
+              "COMPARTMENT",
+              "ORGANIZATION",
+              "TENANT"
+            ]
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type",
+            "readOnly": true,
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "OTHER"
+            ]
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "description": "Last Modified By",
+            "readOnly": true
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Time account was last updated",
+            "readOnly": true
+          },
+          "protectionMode": {
+            "type": "string",
+            "description": "Protection Mode",
+            "readOnly": true,
+            "enum": [
+              "MONITOR",
+              "MONITOR_AND_PROTECT"
+            ]
+          },
+          "groupIds": {
+            "type": "array",
+            "description": "Group Ids",
+            "readOnly": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "storageScanEnabled": {
+            "type": "boolean",
+            "description": "Storage Scan Enabled"
+          },
+          "deploymentType": {
+            "type": "string",
+            "description": "Deployment Type",
+            "enum": [
+              "AZURE",
+              "AZURE_GOVERNMENT",
+              "AZURE_CHINA",
+              "AWS",
+              "AWS_GOVERNMENT",
+              "AWS_CHINA",
+              "OCI",
+              "OCI_GOVERNMENT",
+              "OCI_CHINA",
+              "GCP",
+              "GCP_GOVERNMENT",
+              "GCP_CHINA",
+              "ALIBABA_CLOUD",
+              "ALIBABA_CLOUD_GOVERNMENT",
+              "ALIBABA_CLOUD_CHINA",
+              "ALIBABA_CLOUD_FINANCE"
+            ]
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "description": "Account group details of groups associated with this account",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          },
+          "autoConsent": {
+            "type": "string"
+          },
+          "associatedAccountGroupsCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Associated Account Groups Count with this cloud account"
+          },
+          "storageUUID": {
+            "type": "string",
+            "description": "Storage UUID"
+          },
+          "cloudAccountOwner": {
+            "type": "string",
+            "description": "Cloud account owner"
+          },
+          "cloudAccountOwnerCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Cloud account owner count",
+            "readOnly": true
+          },
+          "parentAccountId": {
+            "type": "string"
+          },
+          "features": {
+            "type": "array",
+            "description": "Features",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enabled"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID"
+          },
+          "addedOn": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Added On",
+            "readOnly": true
+          }
+        },
+        "description": "Model for Cloud Account Interface"
+      },
+      "CloudAccountPatchModel": {
+        "type": "object",
+        "properties": {
+          "groupIds": {
+            "type": "array",
+            "description": "Associated Account Group Ids",
+            "items": {
+              "type": "string"
+            }
+          },
+          "autoConsent": {
+            "type": "string",
+            "description": "Auto Consent State",
+            "enum": [
+              "enabled/disabled"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Cloud Account Status",
+            "enum": [
+              false
+            ]
+          },
+          "updateChildrenStatus": {
+            "type": "boolean",
+            "description": "Update Children status",
+            "enum": [
+              false
+            ]
+          }
+        },
+        "description": "Model for Account Group View"
+      },
+      "CloudAccountStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusMessage": {
+            "$ref": "#/components/schemas/AccountStatusMessage"
+          }
+        }
+      },
+      "CloudAccountViewModel": {
+        "type": "object",
+        "properties": {
+          "parentAccountId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type",
+            "readOnly": true,
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "OTHER"
+            ]
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "readOnly": true,
+            "enum": [
+              "ACCOUNT",
+              "MASTER_SERVICE_ACCOUNT",
+              "COMPARTMENT",
+              "ORGANIZATION",
+              "TENANT"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enabled"
+          },
+          "lastModifiedTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Time account was last updated",
+            "readOnly": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "description": "Last Modified By",
+            "readOnly": true
+          },
+          "storageScanEnabled": {
+            "type": "boolean",
+            "description": "Storage Scan Enabled"
+          },
+          "storageUUID": {
+            "type": "string",
+            "description": "Storage UUID"
+          },
+          "protectionMode": {
+            "type": "string",
+            "description": "Protection Mode",
+            "readOnly": true,
+            "enum": [
+              "MONITOR",
+              "MONITOR_AND_PROTECT"
+            ]
+          },
+          "cloudAccountOwner": {
+            "type": "string",
+            "description": "Cloud account owner"
+          },
+          "deploymentType": {
+            "type": "string",
+            "description": "Deployment Type",
+            "enum": [
+              "AZURE",
+              "AZURE_GOVERNMENT",
+              "AZURE_CHINA",
+              "AWS",
+              "AWS_GOVERNMENT",
+              "AWS_CHINA",
+              "OCI",
+              "OCI_GOVERNMENT",
+              "OCI_CHINA",
+              "GCP",
+              "GCP_GOVERNMENT",
+              "GCP_CHINA",
+              "ALIBABA_CLOUD",
+              "ALIBABA_CLOUD_GOVERNMENT",
+              "ALIBABA_CLOUD_CHINA",
+              "ALIBABA_CLOUD_FINANCE"
+            ]
+          },
+          "features": {
+            "type": "array",
+            "description": "Features",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "associatedAccountGroupsCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Associated Account Groups Count with this cloud account"
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "description": "Account group details of groups associated with this account",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          },
+          "cloudAccountOwnerCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Cloud account owner count",
+            "readOnly": true
+          },
+          "groups": {
+            "type": "array",
+            "description": "Groups",
+            "readOnly": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Account Config Status"
+          },
+          "numberOfChildAccounts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID"
+          },
+          "addedOn": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Added On",
+            "readOnly": true
+          },
+          "groupIds": {
+            "type": "array",
+            "description": "Group Ids",
+            "readOnly": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Model for Cloud Account View"
+      },
+      "Credentials": {
+        "type": "object",
+        "properties": {
+          "token_uri": {
+            "type": "string"
+          },
+          "private_key_id": {
+            "type": "string"
+          },
+          "client_x509_cert_url": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "auth_uri": {
+            "type": "string"
+          },
+          "auth_provider_x509_cert_url": {
+            "type": "string"
+          },
+          "client_email": {
+            "type": "string"
+          },
+          "private_key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          }
+        },
+        "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account"
+      },
+      "Feature": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Remediation",
+            "description": "Feature name obtained from **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**"
+          },
+          "state": {
+            "type": "string",
+            "description": "Feature state. Whether to be enabled or disabled",
+            "enum": [
+              "enabled",
+              "disabled"
+            ]
+          },
+          "defaultMemberState": {
+            "type": "string",
+            "description": "Enable or disable the feature for all the member accounts linked to this organization. You can enable or disable the defaultMemberState only if the feature state is enabled for the organization. Applicable only for Serverless Function Scanning and Agentless Workload Scanning features.",
+            "enum": [
+              "enabled",
+              "disabled"
+            ]
+          }
+        },
+        "description": "Model for Feature"
+      },
+      "FromNowTimeRangeConfigModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Time range object",
+                "enum": [
+                  "MINUTE",
+                  "HOUR",
+                  "DAY",
+                  "WEEK",
+                  "MONTH",
+                  "YEAR",
+                  "EPOCH",
+                  "LOGIN"
+                ]
+              }
+            },
+            "description": "Model for FromNowTimeRangeConfig"
+          }
+        ]
+      },
+      "GcpAccountLandingPageModel": {
+        "type": "object",
+        "properties": {
+          "flowLogStorageBucket": {
+            "type": "string"
+          },
+          "dataflowEnabledProject": {
+            "type": "string"
+          },
+          "compressionEnabled": {
+            "type": "boolean"
+          },
+          "accountGroupCreationMode": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "AUTO",
+              "RECURSIVE"
+            ]
+          },
+          "projectId": {
+            "type": "string",
+            "readOnly": true
+          },
+          "authenticationType": {
+            "type": "string",
+            "readOnly": true
+          },
+          "cloudAccount": {
+            "$ref": "#/components/schemas/GcpAccountViewModel"
+          },
+          "clientEmail": {
+            "type": "string",
+            "readOnly": true
+          }
+        }
+      },
+      "GcpAccountViewModel": {
+        "type": "object",
+        "properties": {
+          "parentAccountId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type",
+            "readOnly": true,
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "OTHER"
+            ]
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "readOnly": true,
+            "enum": [
+              "ACCOUNT",
+              "MASTER_SERVICE_ACCOUNT",
+              "COMPARTMENT",
+              "ORGANIZATION",
+              "TENANT"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enabled"
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "description": "Last Modified By",
+            "readOnly": true
+          },
+          "storageScanEnabled": {
+            "type": "boolean",
+            "description": "Storage Scan Enabled"
+          },
+          "storageUUID": {
+            "type": "string",
+            "description": "Storage UUID"
+          },
+          "protectionMode": {
+            "type": "string",
+            "description": "Protection Mode",
+            "enum": [
+              "MONITOR",
+              "MONITOR_AND_PROTECT"
+            ]
+          },
+          "cloudAccountOwner": {
+            "type": "string",
+            "description": "Cloud account owner"
+          },
+          "deploymentType": {
+            "type": "string",
+            "description": "Deployment Type",
+            "enum": [
+              "AZURE",
+              "AZURE_GOVERNMENT",
+              "AZURE_CHINA",
+              "AWS",
+              "AWS_GOVERNMENT",
+              "AWS_CHINA",
+              "OCI",
+              "OCI_GOVERNMENT",
+              "OCI_CHINA",
+              "GCP",
+              "GCP_GOVERNMENT",
+              "GCP_CHINA",
+              "ALIBABA_CLOUD",
+              "ALIBABA_CLOUD_GOVERNMENT",
+              "ALIBABA_CLOUD_CHINA",
+              "ALIBABA_CLOUD_FINANCE"
+            ]
+          },
+          "features": {
+            "type": "array",
+            "description": "Features",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "associatedAccountGroupsCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Associated Account Groups Count with this cloud account"
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "description": "Account group details of groups associated with this account",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          },
+          "cloudAccountOwnerCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Cloud account owner count",
+            "readOnly": true
+          },
+          "lastModifiedEpochMillis": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "customerPrismaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID"
+          },
+          "deploymentTypeDescription": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "description": "GCP Account View Model"
+      },
+      "GcpAncestorRequestModel": {
+        "type": "object",
+        "required": [
+          "resourceIds"
+        ],
+        "properties": {
+          "resourceIds": {
+            "type": "array",
+            "description": "Array of resource IDs (project IDs and/or folder IDs)",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "description": "Model containing the request for GCP Ancestors"
+      },
+      "GcpCloudAccountRequestModel": {
+        "type": "object",
+        "required": [
+          "cloudAccount",
+          "credentials",
+          "defaultAccountGroupId"
+        ],
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/GcpCloudAccountRequestModelCloudAccount"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "compressionEnabled": {
+            "type": "boolean",
+            "description": "Enable or disable compressed network flow log generation.\n\nDefault value: **false**"
+          },
+          "dataflowEnabledProject": {
+            "type": "string",
+            "description": "Project ID where the Dataflow API is enabled .\n\nRequired if `compressionEnabled` is set to **true** and if the `accountType` is **organization**.\n\nOptional if the `accountType` is **account** or **masterServiceAccount**"
+          },
+          "flowLogStorageBucket": {
+            "type": "string",
+            "description": "Cloud Storage Bucket name that is used store the flow logs."
+          },
+          "accountGroupCreationMode": {
+            "type": "string",
+            "description": "Default value: **MANUAL**\n\n**MANUAL**: Account will be mapped to the account group mentioned in `defaultAccountGroupId`.\n\n**AUTO**: Automatically creates account groups for each top-level folder in the hierarchy.\n\n**RECURSIVE**: Automatically creates account groups for the folders that are nested within the GCP organization hierarchy.\n\nApplicable only if the `accountType` is **organization**.",
+            "enum": [
+              "MANUAL",
+              "AUTO",
+              "RECURSIVE"
+            ]
+          },
+          "defaultAccountGroupId": {
+            "type": "string",
+            "description": "Applicable only\n\n* If `accountType` is **organization** and `accountGroupCreationMode` is **MANUAL**.\n\n* If `accountType` is **masterServiceAccount**."
+          },
+          "hierarchySelection": {
+            "type": "array",
+            "description": "Applicable only if `accountType` is **organization**. \n\nInclude/Exclude a list of GCP folders, GCP projects under the organization.",
+            "items": {
+              "$ref": "#/components/schemas/HierarchySelection"
+            }
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "GCP Organization name"
+          },
+          "features": {
+            "type": "array",
+            "description": "Features to be enabled and/ or disabled. To get a list of all the supported features, see **[Fetch Supported Features endpoint](/prisma-cloud/api/cspm/fetch-supported-features)**",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          }
+        },
+        "description": "Model containing the request for GCP Standalone, Organization, Master Service Account and Workspace Domain"
+      },
+      "GcpCloudAccountRequestModelCloudAccount": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "accountType",
+          "name"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Organization resource ID if `accountType` is **organization**.\n\n Project ID if `accountType` is **account** or **masterServiceAccount**.\n\nWorkspace domain name if `accountType` is **workspace_domain**."
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type.\n\n**account**: GCP Project \n\n**organization**: GCP Organization\n\n**masterServiceAccount**: Onboards all GCP projects that are accessible by the service account\n\n**workspace_domain**: GCP Workspace.",
+            "enum": [
+              "account",
+              "masterServiceAccount",
+              "organization",
+              "workspace_domain"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enable or disable this account on Prisma Cloud.\n\n Default value: **false**"
+          },
+          "name": {
+            "type": "string",
+            "description": "Account name for the GCP account that will be onboarded on Prisma Cloud. (must be unique)"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "ID of the project.\n\nGet the project ID from the credentials json file that is generated from the GCP Terraform template. "
+          },
+          "groupIds": {
+            "type": "array",
+            "description": "List of Account Groups that must be mapped to this account. To get the account group ids,call **[List Account Groups](/prisma-cloud/api/cspm/get-account-groups/)** API",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GcpCloudOrgModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "description": "Model for GCP Cloud Account"
+          }
+        ]
+      },
+      "GcpCloudProjectModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "description": "Model for GCP Cloud Account"
+          }
+        ]
+      },
+      "GcpNodeModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Node ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "Node type",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name"
+          },
+          "parent": {
+            "type": "string",
+            "description": "Parent"
+          },
+          "hasChild": {
+            "type": "boolean",
+            "description": "true = Has child",
+            "readOnly": true
+          }
+        },
+        "description": "Model for GcpNode"
+      },
+      "GcpResourceControllerRequestModel": {
+        "type": "object",
+        "properties": {
+          "cloudAccount": {
+            "$ref": "#/components/schemas/GcpResourceControllerRequestModelCloudAccount"
+          },
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "description": "Model containing the request for GCP Resources"
+      },
+      "GcpResourceControllerRequestModelCloudAccount": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "GCP organization resource ID"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "readOnly": true,
+            "enum": [
+              "ORGANIZATION"
+            ]
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "UP",
+              "DOWN",
+              "UNKNOWN",
+              "OUT_OF_SERVICE"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "HierarchySelection": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "example": "root",
+            "description": "To get the list of resource IDs and its details, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) \n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Root",
+            "description": "To get the display name of resource, Refer List Children of Parent. \n\n **aws**: [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) \n\n **gcp**: [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**\n\n**azure**: [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)"
+          },
+          "nodeType": {
+            "type": "string",
+            "description": "Member account node type. Supported values based on cloud type: \n\n**aws**:  ORG, OU, or ACCOUNT\n\n **gcp**: ORG, FOLDER, or PROJECT\n\n**azure**: SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT",
+            "enum": [
+              "ORG",
+              "FOLDER",
+              "PROJECT",
+              "SUBSCRIPTION",
+              "MANAGEMENT_GROUP",
+              "TENANT",
+              "ACCOUNT",
+              "OU"
+            ]
+          },
+          "selectionType": {
+            "type": "string",
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ]
+          }
+        },
+        "description": "Model for HierarchySelection"
+      },
+      "ListChildrenApiResponseModel": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "description": "List of node info",
+            "items": {
+              "$ref": "#/components/schemas/GcpNodeModel"
+            }
+          },
+          "projectNextPageToken": {
+            "type": "string",
+            "description": "Next page token for project"
+          },
+          "folderNextPageToken": {
+            "type": "string",
+            "description": "Next page token for folder"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Organization name"
+          }
+        },
+        "description": "Model for ListChildrenApiResponse"
+      },
+      "LoggingAccountCFTRequest": {
+        "type": "object",
+        "properties": {
+          "awsPartition": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "loggingAccountId": {
+            "type": "string"
+          },
+          "loggingAccountRoleName": {
+            "type": "string"
+          },
+          "trustedEntity": {
+            "type": "string"
+          },
+          "partitionName": {
+            "type": "string",
+            "enum": [
+              "US_GLOBAL",
+              "US_GOV",
+              "CHINA"
+            ]
+          },
+          "loggingAccountBuckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BucketModel"
+            }
+          }
+        }
+      },
+      "LoggingArchiveAccountModel": {
+        "type": "object",
+        "required": [
+          "externalId",
+          "loggingAccountBuckets",
+          "loggingAccountId",
+          "loggingAccountName",
+          "loggingAccountRoleArn",
+          "loggingAccountRoleName",
+          "status"
+        ],
+        "properties": {
+          "loggingAccountId": {
+            "type": "string",
+            "description": "CSP Cloud Account Id"
+          },
+          "loggingAccountName": {
+            "type": "string",
+            "description": "Account Name"
+          },
+          "loggingAccountRoleName": {
+            "type": "string",
+            "description": "Account Role Name",
+            "readOnly": true
+          },
+          "loggingAccountRoleArn": {
+            "type": "string",
+            "description": "Account Role ARN"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External Id for Account",
+            "readOnly": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Account status",
+            "readOnly": true
+          },
+          "loggingAccountBuckets": {
+            "type": "string",
+            "description": "List of buckets associated with account"
+          }
+        },
+        "description": "Logging Archive Account Model"
+      },
+      "MonitoredAccountModel": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cloudType": {
+            "type": "string",
+            "description": "Cloud Type",
+            "readOnly": true,
+            "enum": [
+              "ALL",
+              "AWS",
+              "AZURE",
+              "GCP",
+              "ALIBABA_CLOUD",
+              "OCI",
+              "IBM"
+            ]
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Cloud Account Type",
+            "readOnly": true,
+            "enum": [
+              "ACCOUNT",
+              "MASTER_SERVICE_ACCOUNT",
+              "COMPARTMENT",
+              "MANAGEMENT_GROUP",
+              "ORGANIZATION",
+              "TENANT",
+              "WORKSPACE_DOMAIN"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enabled"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID"
+          },
+          "featureEnabled": {
+            "type": "boolean",
+            "description": "aws audit logs enabled"
+          },
+          "featureName": {
+            "type": "string",
+            "description": "feature name"
+          },
+          "featureMode": {
+            "type": "string",
+            "description": "feature mode"
+          },
+          "createdTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "feature created timestamp"
+          },
+          "lastUpdatedTs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "feature last updated timestamp"
+          }
+        },
+        "description": "Model for Monitored Account"
+      },
+      "OciCloudAccountModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CloudAccountModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "protectionMode": {
+                "type": "string",
+                "description": "Protection Mode",
+                "enum": [
+                  "MONITOR",
+                  "MONITOR_AND_PROTECT"
+                ]
+              },
+              "userName": {
+                "type": "string",
+                "description": "User Name"
+              },
+              "userOcid": {
+                "type": "string",
+                "description": "User OCID"
+              },
+              "groupName": {
+                "type": "string",
+                "description": "Group Name"
+              },
+              "policyName": {
+                "type": "string",
+                "description": "Policy Name"
+              },
+              "homeRegion": {
+                "type": "string",
+                "description": "Home Region"
+              },
+              "defaultAccountGroupId": {
+                "type": "string",
+                "description": "Default Account Group Id"
+              },
+              "cloudAccountStatus": {
+                "type": "object",
+                "description": "Internal use only",
+                "readOnly": true
+              }
+            },
+            "description": "Model for OCI Cloud Account"
+          }
+        ]
+      },
+      "RelativeTimeDurationModel": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "Time unit",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of time units"
+          }
+        },
+        "description": "Model for RelativeTimeDuration"
+      },
+      "RelativeTimeRangeConfigModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/components/schemas/RelativeTimeDurationModel"
+              },
+              "relativeTimeType": {
+                "type": "string",
+                "description": "Direction in which to count time. Default = BACKWARD",
+                "enum": [
+                  "BACKWARD",
+                  "FORWARD"
+                ]
+              }
+            },
+            "description": "Model for RelativeTimeRangeConfig"
+          }
+        ]
+      },
+      "Resources": {
+        "type": "object",
+        "properties": {
+          "resourceIds": {
+            "type": "array",
+            "description": "Array of resource IDs (Subscription and/or Management Group IDs)",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Resources Model for Identifying Ancestors"
+      },
+      "RestApiResponseModel": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "description": "Response",
+            "items": {
+              "$ref": "#/components/schemas/GcpNodeModel"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Next page token"
+          }
+        },
+        "description": "Model for RestApiResponse"
+      },
+      "RestApiResponseModelListGcpNodeModel": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "array",
+            "description": "Response",
+            "items": {
+              "$ref": "#/components/schemas/GcpNodeModel"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Next page token"
+          }
+        },
+        "description": "Model for RestApiResponse"
+      },
+      "StorageBucket": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "StorageScanConfigModel": {
+        "type": "object",
+        "properties": {
+          "scanOption": {
+            "type": "string",
+            "description": "Storage Scan Option",
+            "enum": [
+              "Realtime",
+              "Custom",
+              "Full",
+              "Historical"
+            ]
+          },
+          "buckets": {
+            "type": "object",
+            "description": "Selected List of S3 Buckets for forward and backward scan",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "snsTopicArn": {
+            "type": "string",
+            "description": "SNS Topic ARN created on DLP SNS topic"
+          }
+        },
+        "description": "Model for AWS Storage Scan Configuration"
+      },
+      "TerraformProvisionerRequest": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "groupName",
+          "policyName",
+          "userName"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "OCID of the OCI tenancy"
+          },
+          "userName": {
+            "type": "string",
+            "description": "OCI identity user name"
+          },
+          "groupName": {
+            "type": "string",
+            "description": "OCI identity group name"
+          },
+          "policyName": {
+            "type": "string",
+            "description": "OCI identity policy name"
+          },
+          "generateKeys": {
+            "type": "boolean",
+            "description": "true = Generate keys. Default is false. Generated keys are valid for 24 hours."
+          }
+        },
+        "description": "Model for Generate Terraform Script API"
+      },
+      "TimeModel": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Start timestamp"
+          },
+          "endTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "End timestamp"
+          }
+        },
+        "description": "Model for Time"
+      },
+      "TimeRangeConfigModel": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Time type",
+            "enum": [
+              "relative"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/RelativeTimeDurationModel"
+          }
+        },
+        "description": "Model for TimeRangeConfig"
+      },
+      "TmpModel": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message"
+          }
+        }
+      },
+      "ToNowTimeRangeConfigModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Time range object",
+                "enum": [
+                  "MINUTE",
+                  "HOUR",
+                  "DAY",
+                  "WEEK",
+                  "MONTH",
+                  "YEAR",
+                  "EPOCH",
+                  "LOGIN"
+                ]
+              }
+            },
+            "description": "Model for ToNowTimeRangeConfig"
+          }
+        ]
+      },
+      "credential_source": {
+        "type": "object",
+        "properties": {
+          "regional_cred_verification_url": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "region_url": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

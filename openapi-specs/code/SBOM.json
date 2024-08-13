@@ -1,0 +1,350 @@
+{
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "securitySchemes": {
+      "CustomAuthorizer": {
+        "in": "header",
+        "name": "authorization",
+        "type": "apiKey",
+        "x-amazon-apigateway-authorizer": {
+          "authorizerResultTtlInSeconds": 0,
+          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-v2-authorizer-{UniqueTag}{Alias}/invocations",
+          "identitySource": "method.request.header.authorization",
+          "type": "request"
+        },
+        "x-amazon-apigateway-authtype": "custom"
+      }
+    },
+    "schemas": {
+      "BOMMaterials": {
+        "enum": ["oss", "iac", "images", "all"],
+        "type": "string"
+      },
+      "BOMReportFormat": { "enum": ["csv", "cyclonedx"], "type": "string" },
+      "CveRow": {
+        "additionalProperties": false,
+        "properties": {
+          "cvss": { "format": "double", "type": "number" },
+          "cvssVectorString": { "type": "string" },
+          "description": { "type": "string" },
+          "fixedVersion": { "type": "string" },
+          "id": { "type": "string" },
+          "link": { "type": "string" },
+          "publishedDate": { "format": "date-time", "type": "string" },
+          "riskFactors": { "$ref": "#/components/schemas/ParsedRiskFactors" },
+          "severity": { "type": "string" },
+          "summary": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "severity",
+          "link",
+          "description",
+          "publishedDate",
+          "cvss",
+          "cvssVectorString",
+          "riskFactors"
+        ],
+        "type": "object"
+      },
+      "DependencyRow": {
+        "additionalProperties": false,
+        "properties": {
+          "cves": {
+            "items": { "$ref": "#/components/schemas/CveRow" },
+            "type": "array"
+          },
+          "id": { "type": "string" },
+          "license": { "type": "string" },
+          "maxSeverity": { "format": "double", "type": "number" },
+          "name": { "type": "string" },
+          "origin": { "type": "string" },
+          "srcCount": { "format": "double", "type": "number" },
+          "version": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "origin",
+          "license",
+          "srcCount",
+          "maxSeverity",
+          "cves"
+        ],
+        "type": "object"
+      },
+      "Filters": {
+        "additionalProperties": false,
+        "properties": {
+          "cve": {
+            "description": "CVE-ID",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "license": {
+            "description": "License identifier",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "name": { "description": "Package name", "type": "string" },
+          "origin": {
+            "description": "Package language framwork/ecosystem",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "repositoryId": {
+            "description": "VCS repository ID",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "riskFactors": {
+            "$ref": "#/components/schemas/RiskFactorsFilters",
+            "description": "CVE risk factors"
+          },
+          "severity": {
+            "description": "CVE severiry based on CVSS score",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "sourceId": { "items": { "type": "string" }, "type": "array" },
+          "workspaceIds": {
+            "description": "VCS workspace/integration ID",
+            "items": { "type": "string" },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GeneratedBOMReport": {
+        "additionalProperties": false,
+        "properties": {
+          "format": { "$ref": "#/components/schemas/BOMReportFormat" },
+          "reportLink": { "type": "string" }
+        },
+        "required": ["reportLink", "format"],
+        "type": "object"
+      },
+      "GeneratedBOMReportResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bomResponse": {
+            "items": { "$ref": "#/components/schemas/GeneratedBOMReport" },
+            "type": "array"
+          }
+        },
+        "required": ["bomResponse"],
+        "type": "object"
+      },
+      "ParsedRiskFactors": {
+        "additionalProperties": false,
+        "properties": {
+          "ContainerRunningAsRoot": { "type": "boolean" },
+          "ExploitExists": { "type": "boolean" },
+          "ExploitInTheWild": { "type": "boolean" },
+          "ListeningPorts": { "type": "boolean" },
+          "NoMandatorySecurityProfileApplied": { "type": "boolean" },
+          "PackageInUse": { "type": "boolean" },
+          "ReachableFromInternet": { "type": "boolean" },
+          "RunningAsPrivilegedContainer": { "type": "boolean" },
+          "attackComplexity": { "type": "string" },
+          "attackVector": { "type": "string" },
+          "doS": { "type": "boolean" },
+          "exploitPOC": { "type": "boolean" },
+          "recentVulnerability": { "type": "boolean" },
+          "remoteExecution": { "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "RiskFactorsFilters": {
+        "additionalProperties": false,
+        "properties": {
+          "attackComplexity": {
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "attackVector": { "items": { "type": "string" }, "type": "array" },
+          "containerRunningAsRoot": { "type": "boolean" },
+          "doS": { "type": "boolean" },
+          "exploitExists": { "type": "boolean" },
+          "exploitInTheWild": { "type": "boolean" },
+          "exploitPOC": { "type": "boolean" },
+          "hasFix": { "type": "boolean" },
+          "listeningPorts": { "type": "boolean" },
+          "noMandatorySecurityProfileApplied": { "type": "boolean" },
+          "packageInUse": { "type": "boolean" },
+          "reachableFromInternet": { "type": "boolean" },
+          "recentVulnerability": { "type": "boolean" },
+          "remoteExecution": { "type": "boolean" },
+          "runningAsPrivilegedContainer": { "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "SortingOptions": {
+        "enum": [
+          "name",
+          "version",
+          "license",
+          "srcCount",
+          "cves",
+          "maxSeverity"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "The SBOM endpoints are listed below.\n",
+    "title": "Prisma Cloud SBOM API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/code/api/v1/bom/getBOMReport/{repoId}": {
+      "get": {
+        "description": "Get a BOM Report",
+        "operationId": "getBOMReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repoId",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "schema": { "enum": ["csv", "cyclonedx"], "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "material",
+            "required": true,
+            "schema": {
+              "enum": ["oss", "iac", "images", "all"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "bomResponse": [
+                        {
+                          "format": "csv",
+                          "reportLink": "Presigned BOM Report Link"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratedBOMReportResponse"
+                }
+              }
+            },
+            "description": "Get BOM Report"
+          },
+          "401": { "description": "Unauthorized to get the BOM report" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get BOM Report" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get BOM Report",
+        "tags": ["SBOM"],
+        "x-bc-required-permissions": [
+          "CCSDevelopmentPipelinesCodeReviews_READ",
+          "CCSDevelopmentPipelinesProjects_READ",
+          "CCSSupplyChain_READ"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/bom/getBOMReport/{repoId}\"\n\nquerystring = {\"format\":\"SOME_STRING_VALUE\",\"material\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/bom/getBOMReport/{repoId}?format=SOME_STRING_VALUE&material=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+          }
+        ]
+      }
+    },
+    "/code/api/v1/sbom/dependencies": {
+      "post": {
+        "description": "Get all open-source packages found in your organization's version control system (VCS).",
+        "operationId": "sbomDependencies",
+        "parameters": [
+          {
+            "description": "Page number to retrieve",
+            "in": "query",
+            "name": "page",
+            "required": true,
+            "schema": { "format": "double", "type": "number" }
+          },
+          {
+            "description": "Amount of dependencies to retrieve",
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": { "format": "double", "type": "number" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "filters": { "$ref": "#/components/schemas/Filters" },
+                  "sortBy": { "$ref": "#/components/schemas/SortingOptions" },
+                  "sortDesc": { "type": "boolean" }
+                },
+                "required": ["filters"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/DependencyRow" },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Got dependencies list"
+          },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get Dependencies",
+        "tags": ["SBOM"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/sbom/dependencies\"\n\nquerystring = {\"page\":\"SOME_NUMBER_VALUE\",\"limit\":\"SOME_NUMBER_VALUE\"}\n\npayload = {\n    \"filters\": {\n        \"cve\": [\"string\"],\n        \"license\": [\"string\"],\n        \"name\": \"string\",\n        \"origin\": [\"string\"],\n        \"repositoryId\": [\"string\"],\n        \"riskFactors\": {\n            \"attackComplexity\": [\"string\"],\n            \"attackVector\": [\"string\"],\n            \"containerRunningAsRoot\": True,\n            \"doS\": True,\n            \"exploitExists\": True,\n            \"exploitInTheWild\": True,\n            \"exploitPOC\": True,\n            \"hasFix\": True,\n            \"listeningPorts\": True,\n            \"noMandatorySecurityProfileApplied\": True,\n            \"packageInUse\": True,\n            \"reachableFromInternet\": True,\n            \"recentVulnerability\": True,\n            \"remoteExecution\": True,\n            \"runningAsPrivilegedContainer\": True\n        },\n        \"severity\": [\"string\"],\n        \"sourceId\": [\"string\"],\n        \"workspaceIds\": [\"string\"]\n    },\n    \"sortBy\": \"name\",\n    \"sortDesc\": True\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url 'http://undefinedundefined/code/api/v1/sbom/dependencies?page=SOME_NUMBER_VALUE&limit=SOME_NUMBER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"cve\":[\"string\"],\"license\":[\"string\"],\"name\":\"string\",\"origin\":[\"string\"],\"repositoryId\":[\"string\"],\"riskFactors\":{\"attackComplexity\":[\"string\"],\"attackVector\":[\"string\"],\"containerRunningAsRoot\":true,\"doS\":true,\"exploitExists\":true,\"exploitInTheWild\":true,\"exploitPOC\":true,\"hasFix\":true,\"listeningPorts\":true,\"noMandatorySecurityProfileApplied\":true,\"packageInUse\":true,\"reachableFromInternet\":true,\"recentVulnerability\":true,\"remoteExecution\":true,\"runningAsPrivilegedContainer\":true},\"severity\":[\"string\"],\"sourceId\":[\"string\"],\"workspaceIds\":[\"string\"]},\"sortBy\":\"name\",\"sortDesc\":true}'"
+          }
+        ]
+      }
+    }
+  },
+  "servers": null,
+  "tags": [{ "name": "SBOM" }]
+}

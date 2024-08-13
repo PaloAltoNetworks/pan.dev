@@ -234,12 +234,17 @@ components:
     SEPLivelinessProbeV2N2:
       properties:
         http:
-          description: 'Http: Valid '
+          description: 'The values for probing interval, failure count, HTTP status
+            codes, and URL.
+
+            '
           items:
             $ref: '#/components/schemas/HttpProbe'
           type: array
         icmp_ping:
-          description: 'Icmp Ping: Valid '
+          description: 'The values for probing interval, failure count, and IP address.
+
+            '
           items:
             $ref: '#/components/schemas/IcmpPingProbe'
           type: array
@@ -500,7 +505,7 @@ components:
       required:
       - service_bindings
       - name
-    ServiceEndpointV2N2:
+    ServiceEndpointV2N3:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -545,6 +550,11 @@ components:
 
             '
           type: string
+        sase_properties:
+          $ref: '#/components/schemas/SaseServiceEndpointProperties'
+          description: 'The sase service endpoint properties.
+
+            '
         service_link_peers:
           $ref: '#/components/schemas/ServiceLinkPeers'
           description: 'The value of the hostname and IP addresses.
@@ -575,7 +585,7 @@ components:
       - admin_up
       - type
       - name
-    ServiceEndpointV2N3:
+    ServiceEndpointV2N4:
       properties:
         address:
           $ref: '#/components/schemas/Address'
@@ -600,6 +610,11 @@ components:
           description: 'The description of the service endpoint. Max size = 256.
 
             '
+        disable_tunnel_reoptimization:
+          description: 'Disable tunnel reoptimization. True or False.
+
+            '
+          type: boolean
         id:
           description: 'The ID of the service endpoint.
 
@@ -1741,218 +1756,6 @@ paths:
       summary: Update Service Label (v2.1)
       tags:
       - Service & DC Groups
-  /sdwan/v2.2/api/serviceendpoints:
-    get:
-      description: List all the servie endpoints.
-      operationId: get-sdwan-v2.2-api-serviceendpoints
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/ServiceEndpointV2N2'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Service Endpoint List (v2.2)
-      tags:
-      - Service & DC Groups
-    post:
-      description: Create a new service endpoint.
-      operationId: post-sdwan-v2.2-api-serviceendpoints
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_INPUT
-                  - code: UNKNOWN_SITE
-                  - code: SERVICEENDPOINT_EXIST_WITH_SITE
-                  - code: SERVICEENDPOINT_NAME_REQD
-                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
-                  - code: DESCRIPTION_SIZE_EXCEEDED
-                  - code: ADMIN_UP_REQD
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create Service Endpoint List (v2.2)
-      tags:
-      - Service & DC Groups
-  /sdwan/v2.2/api/serviceendpoints/query:
-    post:
-      description: Query the DB for limit number of service bindings that match the
-        query parameters.
-      operationId: post-sdwan-v2.2-api-serviceendpoints-query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/ServiceEndpointV2N2'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: BAD_REQUEST
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for Service Bindings (v2.2)
-      tags:
-      - Service & DC Groups
-  /sdwan/v2.2/api/serviceendpoints/{service_endpoint_id}:
-    delete:
-      description: Delete a service endpoint.
-      operationId: delete-sdwan-v2.2-api-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-                  - code: SERVICEENDPOINT_IS_IN_USE
-                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SERVICEBINDING_EXISTS
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
-    get:
-      description: List a service endpoint.
-      operationId: get-sdwan-v2.2-api-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
-    put:
-      description: Update a service endpoint.
-      operationId: put-sdwan-v2.2-api-serviceendpoints-service_endpoint_id
-      parameters:
-      - description: The ID of the service endpoint.
-        in: path
-        name: service_endpoint_id
-        required: true
-        schema:
-          description: Service Endpoint Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ServiceEndpointV2N2'
-        description: Service Endpoint
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceEndpointV2N2'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_INPUT
-                  - code: UNKNOWN_SITE
-                  - code: SERVICEENDPOINT_CONFIG_UPDATE_NOTALLOWED
-                  - code: SERVICEENDPOINT_NAME_REQD
-                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
-                  - code: DESCRIPTION_SIZE_EXCEEDED
-                  - code: ADMIN_UP_REQD
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update Service Endpoint (v2.2)
-      tags:
-      - Service & DC Groups
   /sdwan/v2.3/api/serviceendpoints:
     get:
       description: List all the servie endpoints.
@@ -2166,6 +1969,221 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update Service Endpoint (v2.3)
+      tags:
+      - Service & DC Groups
+  /sdwan/v2.4/api/serviceendpoints:
+    get:
+      description: List all the servie endpoints.
+      operationId: get-sdwan-v2.4-api-serviceendpoints
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ServiceEndpointV2N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Service Endpoint List (v2.4)
+      tags:
+      - Service & DC Groups
+    post:
+      description: Create a new service endpoint.
+      operationId: post-sdwan-v2.4-api-serviceendpoints
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_INPUT
+                  - code: UNKNOWN_SITE
+                  - code: SERVICEENDPOINT_EXIST_WITH_SITE
+                  - code: SERVICEENDPOINT_NAME_REQD
+                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_SIZE_EXCEEDED
+                  - code: ADMIN_UP_REQD
+                  - code: SERVICEENDPOINT_CREATE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Service Endpoint List (v2.4)
+      tags:
+      - Service & DC Groups
+  /sdwan/v2.4/api/serviceendpoints/query:
+    post:
+      description: Query the DB for limit number of service bindings that match the
+        query parameters.
+      operationId: post-sdwan-v2.4-api-serviceendpoints-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ServiceEndpointV2N4'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query DB for Service Bindings (v2.4)
+      tags:
+      - Service & DC Groups
+  /sdwan/v2.4/api/serviceendpoints/{service_endpoint_id}:
+    delete:
+      description: Delete a service endpoint.
+      operationId: delete-sdwan-v2.4-api-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+                  - code: SERVICEENDPOINT_IS_IN_USE
+                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SERVICEBINDING_EXISTS
+                  - code: SERVICEENDPOINT_DELETE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete Service Endpoint (v2.4)
+      tags:
+      - Service & DC Groups
+    get:
+      description: List a service endpoint.
+      operationId: get-sdwan-v2.4-api-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Service Endpoint (v2.4)
+      tags:
+      - Service & DC Groups
+    put:
+      description: Update a service endpoint.
+      operationId: put-sdwan-v2.4-api-serviceendpoints-service_endpoint_id
+      parameters:
+      - description: The ID of the service endpoint.
+        in: path
+        name: service_endpoint_id
+        required: true
+        schema:
+          description: Service Endpoint Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceEndpointV2N4'
+        description: Service Endpoint
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceEndpointV2N4'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_INPUT
+                  - code: UNKNOWN_SITE
+                  - code: SERVICEENDPOINT_CONFIG_UPDATE_NOTALLOWED
+                  - code: SERVICEENDPOINT_NAME_REQD
+                  - code: SERVICEENDPOINT_NAME_EXCEEDS_LIMIT
+                  - code: DESCRIPTION_SIZE_EXCEEDED
+                  - code: ADMIN_UP_REQD
+                  - code: SERVICEENDPOINT_UPDATE_NOTALLOWED_SASE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Service Endpoint (v2.4)
       tags:
       - Service & DC Groups
 servers:
