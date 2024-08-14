@@ -406,6 +406,11 @@ const config = {
                       label: "Subscription Service",
                       icon: "api-doc",
                     },
+                    {
+                      to: "scm/api/security-services/security-services-api",
+                      label: "Security Services",
+                      icon: "api-doc",
+                    },
                   ],
                 },
               ],
@@ -789,6 +794,11 @@ const config = {
           scmtenancy: {
             specPath: "openapi-specs/scm/tenancy",
             outputDir: "products/scm/api/tenancy",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          scmsecurity: {
+            specPath: "openapi-specs/scm/security-services",
+            outputDir: "products/scm/api/security-services",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {

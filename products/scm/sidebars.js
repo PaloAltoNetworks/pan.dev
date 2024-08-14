@@ -77,12 +77,13 @@ module.exports = {
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
   scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
-  sasesubscription: [
+  scmsubscription: [
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
   ],
-  sasetenancy: [
-    "scm/api/tenancy/tenancy-api",
-    require("./api/tenancy/sidebar"),
+  scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
+  scmsecurityservices: [
+    "scm/api/security-services/security-services-api",
+    require("./api/security-services/sidebar"),
   ],
 };
