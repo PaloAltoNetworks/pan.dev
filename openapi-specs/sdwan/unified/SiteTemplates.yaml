@@ -88,6 +88,23 @@ components:
             '
           format: int64
           type: integer
+    BulkConfigCloneTemplateScreen:
+      properties:
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        template_description:
+          description: 'The site template description. Max length = 256.
+
+            '
+          type: string
+        template_name:
+          description: 'The site template name. Max length = 128.
+
+            '
+          type: string
     BulkConfigCreate:
       properties:
         data:
@@ -296,26 +313,35 @@ components:
     BulkConfigCreateScreenUpdate:
       properties:
         data:
-          description: Data
+          description: 'Data required to deploy new sites at scale using the site
+            template.
+
+            '
           type: string
         id:
-          description: Id
+          description: 'The ID.
+
+            '
           type: string
         site_type:
-          description: 'Site Type: Required(error = SITE_ROLE_MISSING: Site role missing.)
-            ValidateEnum(enumClass = classOf[ElementClusterRole], error = INVALID_SITE_TYPE:
-            Invalid site type, nullAllowed = false) '
+          description: 'The site type. Branch or DC.
+
+            '
           type: string
         template_description:
-          description: 'Template Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
-            Description length exceeds limit, min = 0) '
+          description: 'The site template description. Max length = 256.
+
+            '
           type: string
         template_name:
-          description: 'Template Name: Required(error = TEMPLATE_NAME_REQUIRED: Template
-            name missing) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the
-            resource exceeds limit., min = 0) '
+          description: 'The site template name. Max length = 128.
+
+            '
           type: string
         variable_map:
+          description: 'Data required to deploy new sites at scale using this template.
+
+            '
           type: object
       required:
       - site_type
@@ -479,10 +505,14 @@ components:
     BulkConfigPushScreen:
       properties:
         id:
-          description: Id
+          description: 'The ID.
+
+            '
           type: string
         variable_map:
-          description: Variable Map
+          description: 'Data required to deploy new sites at scale using this template.
+
+            '
           items:
             type: object
           type: array
@@ -964,6 +994,50 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update Site Profile (v2.0)
+      tags:
+      - Site Templates
+  /sdwan/v2.0/api/bulkconfigurations/sitetemplates/{site_template_id}/clone:
+    post:
+      description: Clone a site profile.
+      operationId: post-sdwan-v2.0-api-bulkconfigurations-sitetemplates-site_template_id-clone
+      parameters:
+      - description: ID of the site template.
+        in: path
+        name: site_template_id
+        required: true
+        schema:
+          description: Site Template Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkConfigCloneTemplateScreen'
+        description: Clone of the Site Profile
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkConfigCreate'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON
+                  - code: INPUT_JSON_EMPTY
+                  - code: TEMPLATE_NAME_EXISTS
+                  - code: INVALID_INPUT_PARAM
+                  - code: INVALID_OPERATION
+                  - code: INVALID_TEMPLATE_PARAM
+                  - code: ATTEMPT_TO_CLONE_IMPORTED_TEMPLATE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Clone Site Profile (v2.0)
       tags:
       - Site Templates
   /sdwan/v2.0/api/bulkconfigurations/sitetemplates/{site_template_id}/deployments:
