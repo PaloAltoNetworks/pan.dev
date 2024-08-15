@@ -1545,6 +1545,45 @@ components:
       - linked_accounts
       - first_name
       - email
+    PASdwanTenantProvisionStatus:
+      properties:
+        completedAt:
+          description: 'The integration complete time.
+
+            '
+          format: int64
+          type: integer
+        failureCount:
+          description: "The integration failure count, if any.               \n"
+          format: int32
+          type: integer
+        id:
+          description: "The ID. \n"
+          type: string
+        provisionStatus:
+          description: 'The tenant provision status.
+
+            '
+          enum:
+          - INIT
+          - IN_PROGRESS
+          - SUCCESS
+          - FAILURE
+          - NOT_APPLICABLE
+          type: string
+        startedAt:
+          description: 'The integration start time.
+
+            '
+          format: int64
+          type: integer
+        taskStatus:
+          description: 'The task status details.
+
+            '
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+          type: array
     PasswordChange:
       properties:
         oldPassword:
@@ -1805,37 +1844,55 @@ components:
     SamlRequest:
       properties:
         LoginHint:
-          description: LoginHint
+          description: 'The hint for login credentials.
+
+            '
           type: string
         RelayState:
-          description: RelayState
+          description: 'The relay state.
+
+            '
           type: string
         SAMLRequest:
-          description: SAMLRequest
+          description: 'SAML request.
+
+            '
           type: string
         api_endpoint:
-          description: Api Endpoint
+          description: "The API endpoint.        \n"
           type: string
         id:
-          description: Id
+          description: "The ID. \n"
           type: string
         login_region:
-          description: Login Region
+          description: 'The log in region.
+
+            '
           type: string
         method:
-          description: Method
+          description: 'The API method details.
+
+            '
           type: string
         requestId:
-          description: RequestId
+          description: 'The request ID.
+
+            '
           type: string
         url:
-          description: Url
+          description: 'The URL.
+
+            '
           type: string
         urlpath:
-          description: Urlpath
+          description: 'The URL path.
+
+            '
           type: string
         username:
-          description: Username
+          description: 'The username.
+
+            '
           type: string
     SamlResponse:
       properties:
@@ -1992,6 +2049,64 @@ components:
           type: array
       required:
       - repeatPassword
+    TaskStatus:
+      properties:
+        bgp_peer_id:
+          description: 'The ID of the BGP peer.
+
+            '
+          type: string
+        completedAt:
+          description: "The task completion time.               \n"
+          format: int64
+          type: integer
+        currentStatus:
+          description: "The task current status. \n"
+          enum:
+          - INIT
+          - IN_PROGRESS
+          - SUCCESS
+          - FAILURE
+          - NOT_APPLICABLE
+          type: string
+        element_id:
+          description: 'The element ID.
+
+            '
+          type: string
+        error:
+          description: 'Any error messages.
+
+            '
+          type: string
+        interface_id:
+          description: 'The interface ID.
+
+            '
+          type: string
+        message:
+          description: 'Error/task messages.
+
+            '
+          type: string
+        name:
+          description: "The name of the task.               \n"
+          type: string
+        service_link_id:
+          description: "The service link status. \n"
+          type: string
+        startedAt:
+          description: 'The integration start time.
+
+            '
+          format: int64
+          type: integer
+        updatedAt:
+          description: 'The integration update time.
+
+            '
+          format: int64
+          type: integer
     Tenant:
       properties:
         address:
@@ -2123,7 +2238,7 @@ components:
         tsg_id:
           description: Tsg Id
           type: string
-    TenantV2N7:
+    TenantV2N10:
       properties:
         ? ''
         : description: X Panw Region
@@ -2133,6 +2248,16 @@ components:
           description: 'The address of the site.
 
             '
+        adem_enabled:
+          description: 'The site is ADEM enabled. True or False.
+
+            '
+          type: boolean
+        app_acceleration_enabled:
+          description: 'App acceleration enabled. True or False.
+
+            '
+          type: boolean
         canonical_name:
           description: "The tenant canonical name. Max size = 128.        \n"
           type: string
@@ -2191,6 +2316,11 @@ components:
           type: boolean
         is_pa_iot_security_license:
           description: 'True or False for PA IoT security license.
+
+            '
+          type: boolean
+        is_sase_edge:
+          description: 'True or False for SASE edge.
 
             '
           type: boolean
@@ -2265,9 +2395,7 @@ components:
             '
           type: string
         tsg_instances:
-          description: 'The details of the TSG instances.
-
-            '
+          description: "The details of the TSG instances. \n"
           items:
             $ref: '#/components/schemas/TsgInstance'
           type: array
@@ -3833,6 +3961,27 @@ paths:
       summary: Get Session for Tenant ID (v2.0)
       tags:
       - System Administration
+  /sdwan/v2.0/api/pasdwan_integration_status:
+    get:
+      description: Get the native Prisma Access SD-WAN integration tenant provision
+        status.
+      operationId: get-sdwan-v2.0-api-pasdwan_integration_status
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PASdwanTenantProvisionStatus'
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Get Native PA SD-WAN Integration Tenant Provision Status (v2.0)
+      tags:
+      - System Administration
   /sdwan/v2.0/api/permissions:
     get:
       description: Get a list of permitted APIs that the current operator can invoke.
@@ -4153,7 +4302,7 @@ paths:
       - System Administration
   /sdwan/v2.0/api/saml_idp:
     post:
-      description: Process SAMLRequest from SP
+      description: Process SAML request from SP.
       operationId: post-sdwan-v2.0-api-saml_idp
       requestBody:
         content:
@@ -4178,7 +4327,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Process SAMLRequest from SP (v2.0)
+      summary: Process SAML Request (v2.0)
       tags:
       - System Administration
   /sdwan/v2.0/api/signup:
@@ -4221,7 +4370,7 @@ paths:
       description: Sign out API for MSP client and reverts back to MSP session.
       operationId: post-sdwan-v2.0-api-tenants-client_id-logout
       parameters:
-      - description: Client Id
+      - description: The client ID.
         in: path
         name: client_id
         required: true
@@ -5512,6 +5661,96 @@ paths:
       summary: Update Custom Role (v2.1)
       tags:
       - System Administration
+  /sdwan/v2.10/api/:
+    get:
+      description: Get all the tenant information for a tenant ID.
+      operationId: get-sdwan-v2.10-api-
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Tenant Information (v2.10)
+      tags:
+      - System Administration
+    patch:
+      description: Patch all the tenant information for a tenant ID.
+      operationId: patch-sdwan-v2.10-api-
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantV2N10'
+        description: Tenant details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: OPERATOR_INVALID_ETAG
+                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Patch Tenant Information (v2.10)
+      tags:
+      - System Administration
+    put:
+      description: Update all the tenant information for a tenant ID.
+      operationId: put-sdwan-v2.10-api-
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantV2N10'
+        description: Tenant details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: OPERATOR_INVALID_ETAG
+                  - code: TENANT_INVALID_CANONICAL_NAME_CHANGE
+                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Tenant Information (v2.10)
+      tags:
+      - System Administration
   /sdwan/v2.2/api/operators:
     get:
       description: Get a list of tenant operators.
@@ -5714,96 +5953,6 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update Tenant Operator (v2.2)
-      tags:
-      - System Administration
-  /sdwan/v2.8/api/:
-    get:
-      description: Get all the tenant information for a tenant ID.
-      operationId: get-sdwan-v2.8-api-
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Tenant Information (v2.8)
-      tags:
-      - System Administration
-    patch:
-      description: Patch all the tenant information for a tenant ID.
-      operationId: patch-sdwan-v2.8-api-
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TenantV2N7'
-        description: Tenant details
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: OPERATOR_INVALID_ETAG
-                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Patch Tenant Information (v2.8)
-      tags:
-      - System Administration
-    put:
-      description: Update all the tenant information for a tenant ID.
-      operationId: put-sdwan-v2.8-api-
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TenantV2N7'
-        description: Tenant details
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: OPERATOR_INVALID_ETAG
-                  - code: TENANT_INVALID_CANONICAL_NAME_CHANGE
-                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update Tenant Information (v2.8)
       tags:
       - System Administration
   /sdwan/v2.9/api/:
