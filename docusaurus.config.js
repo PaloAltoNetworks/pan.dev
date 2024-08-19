@@ -428,6 +428,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/application-monitor",
+                      label: "Application Monitoring",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sase/api/mt-notifications",
                       label: "Multitenant Notifications",
                       icon: "api-doc",
@@ -684,6 +689,11 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          applicationmonitor: {
+            specPath: "openapi-specs/sase/application-monitor",
+            outputDir: "products/sase/api/application-monitor",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           mtnotifications: {

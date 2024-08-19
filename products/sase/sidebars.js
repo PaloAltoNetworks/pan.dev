@@ -94,6 +94,12 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Application Monitoring",
+      collapsed: true,
+      items: ["sase/docs/application-monitor/application-monitor"],
+    },
+    {
+      type: "category",
       label: "Autonomous DEM",
       collapsed: true,
       items: [
