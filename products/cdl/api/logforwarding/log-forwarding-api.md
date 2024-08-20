@@ -4,6 +4,7 @@ title: Log Forwarding APIs
 sidebar_label: Log Forwarding API
 slug: /cdl/api/log-forwarding
 keywords:
+  - Strata Logging Service
   - Cortex Data Lake
   - Reference
   - Log Forwarding
@@ -11,12 +12,10 @@ keywords:
   - API
 ---
 
-Welcome to the Cortex Data Lake Log Forwarding APIs. To use these APIs, you must be a new Managed Security Service Provider (MSSP) customer as of March 2022 and must have configured your multitenant hierarchy for a new deployment of Prisma Access.
-After you have configured your tenants, these APIs can be used to add, modify, and delete syslog, HTTPS, and email log forwarding profiles.
+The Strata Logging Service supports the forwarding of log data to external destinations. For example, you can forward logs using syslog to a SIEM for long term storage, forward using HTTP to REST APIs, and forward email notifications of critical events to an email recipient.  
 
-For more in-depth information regarding these APIs, please see the
-[Log Forwarding Developer Docs](/cdl/docs/log-forwarding/).
+The [Log Forwarding APIs](/cdl/docs/log-forwarding/) can be used to define and manage Strata Logging Service log forwarding profiles for syslog, HTTPS, and email log destinations.
 
-The functionality exposed by these APIs can also be performed using the [Cortex Data Lake user interface](https://docs.paloaltonetworks.com/cortex/cortex-data-lake/cortex-data-lake-getting-started/get-started-with-log-forwarding-app).
+For more details on log forwarding from the Strata Logging Service, as well as the supported SIEM platform and log formats, please refer to the [Strata Logging Service documentation](https://docs.paloaltonetworks.com/strata-logging-service/administration/forward-logs).
 
 These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.

@@ -1,15 +1,16 @@
 ---
 id: changelog
 title: Changelog
-description: Cortex Data Lake Log Forwarding API Changelog
+description: Strata Logging Service Log Forwarding API Changelog
 hide_title: true
 hide_table_of_contents: true
 keywords:
   - log forwarding
   - cortex data lake
+  - strata logging service
 ---
 
-# Cortex Data Lake Log Forwarding API Changelog
+# Strata Logging Service Log Forwarding API Changelog
 
 | Date               | Description                                                                            |
 | ------------------ | -------------------------------------------------------------------------------------- |

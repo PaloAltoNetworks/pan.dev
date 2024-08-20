@@ -65,9 +65,140 @@ components:
 
             '
           type: string
-        type:
-          description: "The type. \n"
+    Certificate:
+      properties:
+        certificate:
+          description: 'The details of the certificate.
+
+            '
           type: string
+        entity_id:
+          description: 'The entity ID.
+
+            '
+          type: string
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        issuer:
+          description: 'Details of the certificate issuer.
+
+            '
+          type: string
+        issuer_id:
+          description: 'The ID of the issuer.
+
+            '
+          type: string
+        not_after:
+          description: 'The certificate time frame.
+
+            '
+          format: int64
+          type: integer
+        not_before:
+          description: "The certificate time frame.        \n"
+          format: int64
+          type: integer
+        public_key:
+          description: 'The public key.
+
+            '
+          type: string
+        revocation_date:
+          description: 'The certificate revocation date.
+
+            '
+          format: int64
+          type: integer
+        revocation_reason:
+          description: 'The certificate revocation reason.
+
+            '
+          type: string
+        revoked:
+          description: 'If certificate is revoked. True or False.
+
+            '
+          type: boolean
+        serial_no:
+          description: 'Serial No: NotNull(message = INVALID_SERIAL_NO) '
+          type: string
+        subj_descr:
+          description: 'The subject description.
+
+            '
+          type: string
+        subj_serial_no:
+          description: "The subject serial number.          \n"
+          type: string
+        subj_uid:
+          description: 'The subject UID.
+
+            '
+          type: string
+        subject:
+          description: 'The subject.
+
+            '
+          type: string
+        title:
+          description: 'The title of the certificate.
+
+            '
+          type: string
+      required:
+      - issuer_id
+      - issuer
+      - subject
+      - entity_id
+      - serial_no
+    CertificateAuthorityConfig:
+      properties:
+        ca_sign_timeout:
+          description: 'The certificate authority signature time out range.
+
+            '
+          format: int32
+          type: integer
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+        manual_renew_trigger_threshold:
+          description: 'The threshold for manual trigger when renewing the certificate
+            authority.
+
+            '
+          format: int32
+          type: integer
+        renewal_window_from_expiry:
+          description: 'The renewal time range from expiry.
+
+            '
+          format: int32
+          type: integer
+        scep_config:
+          $ref: '#/components/schemas/ScepConfig'
+          description: 'The configuration details.
+
+            '
+        type:
+          description: 'The certificate authority configuration type.
+
+            '
+          enum:
+          - LOCAL
+          - SCEP
+          type: string
+      required:
+      - ca_sign_timeout
+      - manual_renew_trigger_threshold
+      - renewal_window_from_expiry
+      - type
     ElementImageV2N2:
       properties:
         fips_certification_valid:
@@ -429,6 +560,46 @@ components:
 
             '
           type: string
+    ScepConfig:
+      properties:
+        challenge_uri:
+          description: 'The challenge URI.
+
+            '
+          type: string
+        enrollment_uri:
+          description: 'The enrollment URI.
+
+            '
+          type: string
+        https:
+          description: 'The HTTPS value; True or False.
+
+            '
+          type: boolean
+        num_challenge_passwords:
+          description: 'The numbers challenge password.
+
+            '
+          type: integer
+        server_certificate:
+          description: 'The server certificate.
+
+            '
+          type: string
+        server_password:
+          description: "The server password. \n"
+          type: string
+        server_primary_address:
+          description: 'The server primary address.
+
+            '
+          type: string
+        server_username:
+          description: 'The server user name.
+
+            '
+          type: string
     SoftwareDownloadHistoryQuery:
       properties:
         aggregate:
@@ -507,6 +678,182 @@ info:
   version: Latest
 openapi: 3.0.0
 paths:
+  /sdwan/v2.0/api/certificates/revoked:
+    get:
+      description: Retrieve all revoked CICs for a tenant.
+      operationId: get-sdwan-v2.0-api-certificates-revoked
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+          description: Successful Operation
+      summary: Get Revoked CICs for a Tenant (v2.0)
+      tags:
+      - Software Management
+  /sdwan/v2.0/api/entities/{element_id}/certificates:
+    get:
+      description: Retrieve all CICs for a particular element.
+      operationId: get-sdwan-v2.0-api-entities-element_id-certificates
+      parameters:
+      - description: ID of the element.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+          description: Successful Operation
+      summary: Get CICs for Specific Element (v2.0)
+      tags:
+      - Software Management
+  /sdwan/v2.0/api/externalcaconfigs:
+    get:
+      description: Retrieve an existing certificate authority configuration using
+        tenant ID.
+      operationId: get-sdwan-v2.0-api-externalcaconfigs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateAuthorityConfig'
+          description: Successful Operation
+      summary: Get Certificate Authority Configuration (v2.0)
+      tags:
+      - Software Management
+    post:
+      description: Create a new certificate authority configuration.
+      operationId: post-sdwan-v2.0-api-externalcaconfigs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CertificateAuthorityConfig'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateAuthorityConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: NO_SCEP_CONFIG_SUBMITTED
+                  - code: NO_SERVER_CERTIFICATE_SUBMITTED
+                  - code: REDUNDANT_SCEP_CONFIG_SUBMITTED
+                  - code: INVALID_REQUEST_DUPLICATE_KEY
+                  - code: CANNOT_PARSE_SERVER_CERTIFICATE
+                  - code: CANNOT_ADD_SERVER_CERTIFICATE_TO_KEYSTORE
+                  - code: ERROR_SAVING_CERTIFICATE_AUTHORITY
+                  - code: ERROR_SAVING_CERTIFICATE_AUTHORITY_CONFIG
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create Certificate Authority Configuration (v2.0)
+      tags:
+      - Software Management
+  /sdwan/v2.0/api/externalcaconfigs/{id}:
+    delete:
+      description: Delete an existing certificate authority configuration using tenant
+        ID.
+      operationId: delete-sdwan-v2.0-api-externalcaconfigs-id
+      parameters:
+      - description: The certificate authority configuration ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateAuthorityConfig'
+          description: Successful Operation
+      summary: Delete Certificate Authority Configuration (v2.0)
+      tags:
+      - Software Management
+    get:
+      description: Get an existing certificate authority configuration using tenant
+        ID.
+      operationId: get-sdwan-v2.0-api-externalcaconfigs-id
+      parameters:
+      - description: The certificate authority configuration ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateAuthorityConfig'
+          description: Successful Operation
+      summary: Get Certificate Authority Configuration (v2.0)
+      tags:
+      - Software Management
+    put:
+      description: Update an existing certificate authority configuration using tenant
+        ID.
+      operationId: put-sdwan-v2.0-api-externalcaconfigs-id
+      parameters:
+      - description: The certificate authority configuration ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CertificateAuthorityConfig'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CertificateAuthorityConfig'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: NO_SCEP_CONFIG_SUBMITTED
+                  - code: NO_SERVER_CERTIFICATE_SUBMITTED
+                  - code: REDUNDANT_SCEP_CONFIG_SUBMITTED
+                  - code: CERTIFICATE_AUTHORITY_CONFIG_NOT_FOUND
+                  - code: INVALID_ETAG
+                  - code: CANNOT_PARSE_SERVER_CERTIFICATE
+                  - code: CANNOT_ADD_SERVER_CERTIFICATE_TO_KEYSTORE
+                  - code: ERROR_SAVING_CERTIFICATE_AUTHORITY
+                  - code: ERROR_SAVING_CERTIFICATE_AUTHORITY_CONFIG
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Certificate Authority Configuration (v2.0)
+      tags:
+      - Software Management
   /sdwan/v2.0/api/machine_upgrade/query:
     post:
       description: Query the configuration of the machine upgrade.
