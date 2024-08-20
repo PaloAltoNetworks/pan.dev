@@ -184,6 +184,7 @@ module.exports = {
       collapsed: true,
       items: [
         "access/docs/insights/insights",
+        "access/docs/insights/getting_started-30",
         "access/docs/insights/getting_started-20",
         "access/docs/insights/getting_started-10",
         {
@@ -296,6 +297,10 @@ module.exports = {
   sasemtnotify: [
     "sase/api/mt-notifications/notifications-api",
     require("./api/mt-notifications/sidebar"),
+  ],
+  sasemtinterconnect: [
+    "sase/api/mt-interconnect/mt-interconnect",
+    require("./api/mt-interconnect/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
