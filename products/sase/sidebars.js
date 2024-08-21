@@ -300,6 +300,10 @@ module.exports = {
     "sase/api/mt-monitor/msp-api",
     require("./api/mt-monitor/sidebar"),
   ],
+  saseapplicationmonitor: [
+    "sase/api/application-monitor/application-monitor",
+    require("./api/application-monitor/sidebar"),
+  ],
   sasemtnotify: [
     "sase/api/mt-notifications/notifications-api",
     require("./api/mt-notifications/sidebar"),
