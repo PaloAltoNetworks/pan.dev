@@ -38,6 +38,19 @@
               "type": "string"
             },
             "description": "Token for pagination"
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asset",
+                "cve"
+              ]
+            },
+            "description": "Filter the vulnerabilities based on CVE or Asset view. **cve** returns details of all the CVEs associated with the vulnerability and **asset** returns details of all the assets associated with the vulnerability."
           }
         ],
         "responses": {
@@ -46,7 +59,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VulnerabilitySearchResponse"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/VulnerabilitySearchResponse",
+                      "description": "Response when view is cve"
+                    },
+                    {
+                      "$ref": "#/components/schemas/VulnerabilitySearchResponseAsset",
+                      "description": "Response when view is asset"
+                    }
+                  ]
                 }
               }
             }
@@ -360,6 +382,129 @@
           },
           "data": {
             "$ref": "#/components/schemas/VulnerabilitySearchResultData"
+          }
+        }
+      },
+      "VulnerabilitySearchResponseAsset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Saved search ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Vulnerability name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Vulnerability description"
+          },
+          "searchType": {
+            "type": "string",
+            "description": "Search type"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether it's saved or not"
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/ToNowTimeRange"
+          },
+          "query": {
+            "type": "string",
+            "description": "Query details"
+          },
+          "assetSearchResultData": {
+            "$ref": "#/components/schemas/AssetSearchResultData"
+          }
+        }
+      },
+      "AssetSearchResultData": {
+        "type": "object",
+        "properties": {
+          "totalAssets": {
+            "type": "integer",
+            "description": "Total number of Assets"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetDetails"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token for next page"
+          }
+        }
+      },
+      "AssetDetails": {
+        "type": "object",
+        "properties": {
+          "unifiedAssetId": {
+            "type": "string",
+            "description": "Unified Asset Id"
+          },
+          "assetType": {
+            "type": "string",
+            "description": "Asset Type"
+          },
+          "assetName": {
+            "type": "string",
+            "description": "Asset Name"
+          },
+          "cloudAccount": {
+            "type": "string",
+            "description": "Cloud Account"
+          },
+          "registryName": {
+            "type": "string",
+            "description": "Registry Name"
+          },
+          "internetExposed": {
+            "type": "boolean",
+            "description": "Internet Exposed"
+          },
+          "packageInUse": {
+            "type": "boolean",
+            "description": "Package In Use"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Owner"
+          },
+          "spId": {
+            "type": "string",
+            "description": "Service Provider"
+          },
+          "severityCount": {
+            "$ref": "#/components/schemas/SeverityCount"
+          }
+        }
+      },
+      "SeverityCount": {
+        "type": "object",
+        "properties": {
+          "lowSeverityCount": {
+            "type": "integer",
+            "description": "Vulnerabilities with low severity"
+          },
+          "mediumSeverityCount": {
+            "type": "integer",
+            "description": "Vulnerabilities with medium severity"
+          },
+          "highSeverityCount": {
+            "type": "integer",
+            "description": "Vulnerabilities with high severity"
+          },
+          "criticalSeverityCount": {
+            "type": "integer",
+            "description": "Vulnerabilities with critical severity"
           }
         }
       },
