@@ -80,9 +80,6 @@ components:
 
             '
           type: string
-        type:
-          description: "The type. \n"
-          type: string
     DHCPRelay:
       properties:
         enabled:
@@ -231,15 +228,6 @@ components:
       - subnet
     ESPGroup:
       properties:
-        force_encapsulation:
-          description: 'The type of encapsulation is force UDP. The type of encapsulation
-            has to match the encapsulation configured at the standard VPN endpoint.
-
-            '
-          type: boolean
-        lifesize:
-          $ref: '#/components/schemas/Lifesize'
-          description: Lifesize
         lifetime:
           description: 'The life time for the ESP Group. The default lifetime of an
             ESP Group is 24 hours.
@@ -247,17 +235,6 @@ components:
             '
           format: int32
           type: integer
-        lifetime_units:
-          description: Lifetime Units
-          type: string
-        mode:
-          description: 'The IPsec config ESP tunnel mode.
-
-            '
-          enum:
-          - TUNNEL
-          - TRANSPORT
-          type: string
         proposals:
           description: "Information on the IPsec proposals. Proposals is a list of\
             \ crypto parameters to be used to secure the ESP sessions between the\
@@ -265,11 +242,8 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
-        responder_sase_proposals:
-          $ref: '#/components/schemas/ResponderSaseProposals'
-          description: Responder Sase Proposals
       required:
-      - mode
+      - proposals
     Error:
       properties:
         _error:
@@ -290,37 +264,9 @@ components:
           type: string
     IKEGroup:
       properties:
-        aggressive:
-          description: 'If aggressive mode is selecetd, the source interface or endpoint
-            is behind NAT or there are multiple tunnels to the same remote endpoint.
-
-            '
-          type: boolean
-        authentication_multiple:
-          description: Authentication Multiple
-          type: integer
-        key_exchange:
-          description: 'The key exchange for the IKE group = IKEv1 or IKEv2.
-
-            '
-          enum:
-          - IKEV1
-          - IKEV2
-          type: string
         lifetime:
           description: 'The life time for the IKE Group. The default lifetime of an
             IKE Group is 72 hours.
-
-            '
-          format: int32
-          type: integer
-        lifetime_units:
-          description: Lifetime Units
-          type: string
-        port:
-          description: 'The port number of the communication port. The default port
-            is 500. The port number configured in the IKE group has to be the same
-            as the port number configured in the standard VPN endpoint IKE group.
 
             '
           format: int32
@@ -334,14 +280,8 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
-        reauth:
-          description: 'The mode for IKEv2. If selected, then a new tunnel has to
-            be re-negotiated when the lifetime is reached.
-
-            '
-          type: boolean
       required:
-      - key_exchange
+      - proposals
     IKEV1Params:
       properties:
         xauth_id:
@@ -1207,15 +1147,6 @@ components:
             description: Prefixes
             type: string
           type: array
-    Lifesize:
-      properties:
-        units:
-          description: Units
-          type: string
-        value:
-          description: Value
-          format: int32
-          type: integer
     ListQueryResponse:
       properties:
         count:
@@ -1421,110 +1352,6 @@ components:
       - hash
       - encryption
       - dh_groups
-    ResponderSaseProposals:
-      properties:
-        dh_group:
-          description: Dh Group
-          items:
-            description: Dh Group
-            enum:
-            - NONE
-            - MODP768
-            - MODP1024
-            - MODP1536
-            - MODP2048
-            - MODP3072
-            - MODP4096
-            - MODP6144
-            - MODP8192
-            - MODP1024S160
-            - MODP2048S224
-            - MODP2048S256
-            - ECP192
-            - ECP224
-            - ECP256
-            - ECP384
-            - ECP521
-            - ECP224BP
-            - ECP256BP
-            - ECP384BP
-            - ECP512BP
-            - CURVE25519
-            type: string
-          type: array
-        encryption:
-          description: 'The encryption values.
-
-            '
-          items:
-            description: Encryption
-            enum:
-            - NONE
-            - AES128
-            - AES192
-            - AES256
-            - AES128CTR
-            - AES192CTR
-            - AES256CTR
-            - AES128CCM16
-            - AES128CCM64
-            - AES192CCM64
-            - AES256CCM64
-            - AES128CCM96
-            - AES192CCM96
-            - AES256CCM96
-            - AES128CCM128
-            - AES192CCM128
-            - AES256CCM128
-            - AES128GCM16
-            - AES128GCM64
-            - AES192GCM64
-            - AES256GCM16
-            - AES256GCM64
-            - AES128GCM96
-            - AES192GCM96
-            - AES256GCM96
-            - AES128GCM128
-            - AES192GCM128
-            - AES256GCM128
-            - AES128GMAC
-            - AES192GMAC
-            - AES256GMAC
-            - TRIPLEDES
-            - BLOWFISH128
-            - BLOWFISH192
-            - BLOWFISH256
-            - CAMELLIA128
-            - CAMELLIA192
-            - CAMELLIA256
-            - SERPENT128
-            - SERPENT192
-            - SERPENT256
-            - TWOFISH128
-            - TWOFISH192
-            - TWOFISH256
-            type: string
-          type: array
-        hash:
-          description: 'The hash values.
-
-            '
-          items:
-            description: Hash
-            enum:
-            - MD5
-            - SHA1
-            - SHA256
-            - SHA384
-            - SHA512
-            - SHA256_96
-            - AESXCBC
-            - AES128GMAC
-            - AES192GMAC
-            - AES256GMAC
-            - NONE
-            type: string
-          type: array
     SiteIPFixPrefixAssociation:
       properties:
         id:
@@ -3472,6 +3299,7 @@ paths:
                   - code: VPNLINK_CONFIG_REQUIRED
                   - code: WAN_INTERFACE_LABEL_MISMATCH
                   - code: WANINTERFACE_LABEL_USE_FOR_NON_HUB_PATHS_INVALID
+                  - code: INVALID_LQM_CONFIG_SASE_EDGE
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
