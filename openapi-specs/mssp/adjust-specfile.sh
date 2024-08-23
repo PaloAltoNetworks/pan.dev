@@ -46,17 +46,17 @@ for file in *.json; do
     jq '.paths |= del(.[][].parameters[]? | select(.name!=null ) | select (.name | contains("x-redlock-auth")))' | \
 
     # add securityScheme to every spec file
-    jq '.components.securitySchemes |= { "x-redlock-auth": {
-        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
-        "in": "header",
-        "name": "x-redlock-auth",
-        "type": "apiKey"
-      }}' | \
+    # jq '.components.securitySchemes |= { "x-redlock-auth": {
+    #     "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+    #     "in": "header",
+    #     "name": "x-redlock-auth",
+    #     "type": "apiKey"
+    #   }}' | \
 
     # add security field to every endpoint
     # jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" $file
     # do not replace the temp file for my own learning
-    jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" "jdevore-temp-mssp.json"
+    # jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" "jdevore-temp-mssp.json"
 
 done
 
