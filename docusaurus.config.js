@@ -882,11 +882,23 @@ const config = {
   trailingSlash: true,
   webpack: {
     jsLoader: (isServer) => ({
-      loader: require.resolve("esbuild-loader"),
+      loader: require.resolve("swc-loader"),
       options: {
-        loader: "tsx",
-        format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017",
+        jsc: {
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+          },
+          target: "es2019",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+        module: {
+          type: isServer ? "commonjs" : "es6",
+        },
       },
     }),
   },
