@@ -25,21 +25,21 @@ for file in *.json; do
 
     # add server urls
     jq '.servers |= [
-        {"url":"https://api.prismacloud.io"},
-        {"url":"https://api2.prismacloud.io"},
-        {"url":"https://api3.prismacloud.io"},
-        {"url":"https://api4.prismacloud.io"},
-        {"url":"https://api.anz.prismacloud.io"},
-        {"url":"https://api.eu.prismacloud.io"},
-        {"url":"https://api2.eu.prismacloud.io"},
-        {"url":"https://api.gov.prismacloud.io"},
-        {"url":"https://api.prismacloud.cn"},
-        {"url":"https://api.ca.prismacloud.io"},
-        {"url":"https://api.sg.prismacloud.io"},
-        {"url":"https://api.uk.prismacloud.io"},
-        {"url":"https://api.ind.prismacloud.io"},
-        {"url":"https://api.jp.prismacloud.io"},
-        {"url":"https://api.fr.prismacloud.io"}]' | \
+        {"url":"https://mssp-api.prismacloud.io"},
+        {"url":"https://mssp-api2.prismacloud.io"},
+        {"url":"https://mssp-api3.prismacloud.io"},
+        {"url":"https://mssp-api4.prismacloud.io"},
+        {"url":"https://mssp-api.anz.prismacloud.io"},
+        {"url":"https://mssp-api.eu.prismacloud.io"},
+        {"url":"https://mssp-api2.eu.prismacloud.io"},
+        {"url":"https://mssp-api.gov.prismacloud.io"},
+        {"url":"https://mssp-api.prismacloud.cn"},
+        {"url":"https://mssp-api.ca.prismacloud.io"},
+        {"url":"https://mssp-api.sg.prismacloud.io"},
+        {"url":"https://mssp-api.uk.prismacloud.io"},
+        {"url":"https://mssp-api.ind.prismacloud.io"},
+        {"url":"https://mssp-api.jp.prismacloud.io"},
+        {"url":"https://mssp-api.fr.prismacloud.io"}]' | \
 
     # Remove all x-redlock-auth from each endpoint parameters object if they exist
     # securitySchemes requires the x-redlock-auth should only appear in the security fields
