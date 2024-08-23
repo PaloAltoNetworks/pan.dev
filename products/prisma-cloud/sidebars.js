@@ -42,7 +42,7 @@ module.exports = {
       type: "category",
       label: "Managed Security Service Provider (MSSP)",
       collapsed: true,
-      items: ["prisma-cloud/api/mssp/mssp-api", require("./api/mssp/sidebar")],
+      items: [require("./api/mssp/sidebar")],
     },
   ],
   clouddocs: [
