@@ -28,6 +28,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
+  markdown: { format: "detect" },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
