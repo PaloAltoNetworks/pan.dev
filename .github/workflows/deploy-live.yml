@@ -21,13 +21,25 @@ jobs:
             node-version: '20'
             cache: 'yarn'
 
-        - name: Cache Docusaurus build
+        - name: Get yarn cache
+          id: yarn-cache
+          run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
+
+        - name: Cache dependencies
+          uses: actions/cache@v4
+          with:
+            path: ${{ steps.yarn-cache.outputs.YARN_CACHE_DIR }}
+            key: ${{ runner.os }}-pandev-${{ hashFiles('**/yarn.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-pandev-
+
+        - name: Cache docusaurus build
           uses: actions/cache@v4
           with:
             path: node_modules/.cache/webpack
-            key: pan-dev-build-live-${{ github.run_id }}
+            key: pandev-live-${{ github.run_id }}
             restore-keys: |
-              pan-dev-build-live-
+              pandev-live
 
         - name: Install dependencies
           run: yarn --prefer-offline
