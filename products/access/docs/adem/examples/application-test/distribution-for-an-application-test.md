@@ -7,7 +7,7 @@ sidebar_label: Get the Distribution for an Application Test (Summary)
 
 This API retrieves the distribution for a particular application test.  
 
-In the Response section, the lines that are followed by a comment (\<\<\<\<\<\<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -16,16 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_day&filter=testUuid==3100bb11-dde4-4ab9-8503-d0c6ad5f9698&endpoint-type=muAgent&response-type=distribution
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
 
 
 ## Response
 
-```
     {
         "startTime": 1691010000,
         "endTime": 1693602000,
@@ -57,5 +54,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             },
     ….    ]
     }
-```
 

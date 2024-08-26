@@ -9,7 +9,6 @@ Every Prisma Access Insights query must contain at least one property, and each 
 represents a data field that you want included in your query results. You provide
 your properties as an array of objects. For example:
 
-```
     "properties": [
         {
           "property": "edge_location_display_name"
@@ -24,7 +23,6 @@ your properties as an array of objects. For example:
           }
         }
       ],
-```
 
 The data field identified in each property must be available in the resource you are querying.
 
@@ -35,23 +33,19 @@ Each property can include an alias for the property, a function to apply to the 
 You can give a property an alias, which is used as a replacement name in the query's output. For
 example:
 
-```
     {
         "property":"state_instance",
         "alias":"mu_state_instance"
     }
-```
 
 ## Properties Functions
 
 Functions can be applied to specified properties. For example:
 
-```
     {
       "property": "login_user_name",
       "function": "distinct_count"
     }
-```
 
 The following functions can be used with the properties portion of the query:
 
@@ -93,7 +87,6 @@ The following functions can be used with the properties portion of the query:
 You can order the results of a function in either descending (`desc`) or ascending (`asc`) order.
 For example:
 
-```
     {
 
       "property": "login_user_name",
@@ -103,4 +96,3 @@ For example:
         "sequence": 1
       }
     }
-```

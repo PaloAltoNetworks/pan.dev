@@ -7,9 +7,9 @@ sidebar_label: Get Global Distribution of Application Experience Scores for Mobi
 
 The API retrieves the Global Distribution of application experience scores for all monitored Mobile User devices.  
 
-In the Response section, the lines that are followed by a comment (\<\<\<\<\<\<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The US Southeast location displays a green circle indicating that it has a good score (85.4), whereas the US Central displays an orange circle indicating a fair score (61.2).  
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. The US Southeast location displays a green circle indicating that it has a good score (85.4), whereas the US Central displays an orange circle indicating a fair score (61.2).  
 
-The attached screen is located in Monitor -\> Applications -\> Application details page in the Strata Cloud Manager UI.
+The attached screen is located in Monitor -> Applications -> Application details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -18,15 +18,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/application/score/ ?timerange=last_30_days&include=ec.test,ec.endpoint-type&endpoint-type=muAgent&response-type=grouped-summary&group=en.location
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1689627600,
         "endTime": 1692219600,
@@ -159,4 +157,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             }
         ]
     }
-```
+

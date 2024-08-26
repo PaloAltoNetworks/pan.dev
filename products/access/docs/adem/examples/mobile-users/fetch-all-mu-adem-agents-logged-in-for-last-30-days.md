@@ -7,7 +7,7 @@ sidebar_label: Get all the Mobile Users ADEM agents logged in for the last 30 da
 
 This API retrieves all the Mobile Users ADEM agents logged in for the last 30 days.  
 
-In the Response section, the lines that are followed by a comment (\<\<\<\<\<\<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -16,15 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com/agent/v2/measure/agent/score?timerange=last_30_days&group=en.endpoint,en.user&endpoint-type=muAgent&response-type=grouped-summary
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1687262400,
         "endTime": 1689854400,
@@ -56,5 +54,4 @@ The following shows the portions of the UI widget where the data is displayed fo
                 "agentProperties": {}
             },
         ]
-```
 

@@ -16,15 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com//adem/telemetry/v2/measure/internet/metric? timerange=last_30_day&filter=testUuid==3100bb11-dde4-4ab9-8503-d0c6ad5f9698&endpoint-type=muAgent&response-type=timeseries
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1691010000,
         "endTime": 1693602000,
@@ -59,5 +57,4 @@ The following shows the portions of the UI widget where the data is displayed fo
     …….
     ]
     }
-```
 

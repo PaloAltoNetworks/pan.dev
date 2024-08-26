@@ -7,7 +7,7 @@ sidebar_label: Get Timeseries Data of Application Performance for all Applicatio
 
 This API retrieves the timeseries data of application performance for all applications.  
 
-In the Response section, the values shown for each field that is followed by a comment (\<\<\<\<\<\<), for example dnsLookupTime, are the average values for that field in the timeseries. The availability is always 100% which is indicated by 1.
+In the Response section, the values shown for each field that is followed by a comment (<<<<<<), for example dnsLookupTime, are the average values for that field in the timeseries. The availability is always 100% which is indicated by 1.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -16,15 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com//adem/telemetry/v2/measure/application/metric? timerange=last_30_day&endpoint-type=muAgent&response-type=timeseries
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1691334000,
         "endTime": 1693926000,
@@ -58,5 +56,4 @@ The following shows the portions of the UI widget where the data is displayed fo
     …..
     ]
     }
-```
 

@@ -22,7 +22,7 @@ is required, which verifies tenant access described by the following header form
 | Prisma-Tenant         | Prisma-SubTenant   |
 | ---------------       | ------------------ |
 | tenant_service_group  | Mobile User Agent  |
-| \<tenant\>:\<subtenant\>  | Mobile User Probe  |
+| <tenant\>:<subtenant\>  | Mobile User Probe  |
 
 
 ## What are the response types that the ADEM endpoint supports?
@@ -54,21 +54,12 @@ results by user and endpoint. `en` is an alias for Entity so `en.user, en.endpoi
 
 A parameter of the form `<field><operator><value>`  is used to filter the ADEM query. The following operators are supported:  
 
-```
->=
-<=
-==
-!=
->
-< 
-```
+`>=`<br/>`<=`<br/>`==`<br/>`!=`<br/>`>`<br/>`<` 
 
 Multiple filters are supported. They can be logically combined with semi-colon to describe AND and a
 comma for OR. For example,
 
-```
     agent_uuid==1234,agent_uuid==5678;application==Gmail,application==Zoom
-```
 
 would select records when the agent uuid is either 1234 OR 5678 AND the application is Gmail OR Zoom. 
 
@@ -116,7 +107,7 @@ requiring specified scores to be in a range defined by the score classification:
 
 | Name          | Format                         | Type     | Description                     | Examples                                                                       |
 | -----         | ------                         | ----     | -----------                     | --------                                                                       |
-| result-filter | Score.\<field1\>==\<category\>,..; | string   | Limit score results by category | Score.endpointScore==fair,good    Score.application==good;Score.lan==fair,good |
+| result-filter | Score.<field1\>==<category\>,..; | string   | Limit score results by category | Score.endpointScore==fair,good    Score.application==good;Score.lan==fair,good |
 
 For more information, see [ADEM Result Filter Parameter](/access/docs/adem/result-filter-parameter/).
 
@@ -129,7 +120,7 @@ For more information, see [ADEM Result Filter Parameter](/access/docs/adem/resul
   | Format        | Description                                                              | Example                                     |
   | ------        | -----------                                                              | --------                                    |
   | start,end     | timestamps in Unix timestamp format (seconds)                            | start=1686814360&end=1686900760             |
-  | timerange     | human readable format: last_\<N\>_minutes | hours | days | weeks | months   | last_30_days last_30_minutes last_2_weeks |
+  | timerange     | human readable format: <p>last_<N\>\_minutes \| hours \| days \| weeks \| months</p>   | last_30\_days<br/> last_30\_minutes<br/> last_2\_weeks |
 
 For timeseries responses, records are aggregated over a sample period which is a function of the
 time interval requested, such that the granularity decreases with increasing interval. This keeps
@@ -138,12 +129,12 @@ small intervals.
 
   | interval (days)   | sample period (minutes)   |
   | ---------------   | -----------------------   |
-  | \<= 1              | 5                         |
-  | \<= 3              | 15                        |
-  | \<= 7              | 30                        |
-  | \<= 14             | 60                        |
-  | \<= 21             | 120                       |
-  | \> 21              | 180                       |
+  | <= 1              | 5                         |
+  | <= 3              | 15                        |
+  | <= 7              | 30                        |
+  | <= 14             | 60                        |
+  | <= 21             | 120                       |
+  | > 21              | 180                       |
 
 
 ## Is pagination supported?
@@ -153,7 +144,7 @@ A parameter used to limit the number of results in the response, used when the r
 
 | Name         | Format                                                                 | Type   | Examples                                                                          |
 | ----         | ------                                                                 | -----  | --------                                                                          |
-| pagination   | page==\<page\>;limit==\<limit\>[;sortBy==\field\>;sortOrder==asc] | none    | string | page==0;limit==10;sortBy==application;sortOrder==ascpage==0;limit==20none   |
+| pagination   | page==<page\>;limit==<limit\><br/>[;sortBy==<field\>;sortOrder==asc] <br/>\| none    | string | <p>page==0;limit==10;sortBy==application;<br/>sortOrder==asc</p><p>page==0;limit==20</p>none   |
 
 where page and limit are required and are the page number and number of results per page. sortBy / sortOrder are optional
 If no pagination is specified, the default is page==0;limit=50. To disable paging, use pagination=none.

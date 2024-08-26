@@ -7,7 +7,7 @@ sidebar_label: Get Experience Score for Top Monitored Mobile User Devices
 
 This API retrieves the experience score for top monitored Mobile User devices.  
 
-In the Response section, the lines that are followed by a comment (\<\<\<\<\<\<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. "endpoint" represents the device that the user is using.
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box. "endpoint" represents the device that the user is using.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -16,15 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_days&endpoint-type=muAgent&response-type=grouped-summary&group=en.endpoint&include=ap.username
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1689692400,
         "endTime": 1692284400,
@@ -78,4 +76,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             },……
         ]
     }
-```
+

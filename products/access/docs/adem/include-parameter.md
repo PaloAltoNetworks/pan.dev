@@ -10,9 +10,7 @@ Autonomous DEM APIs provide an `include` query parameter that you can use to inc
 properties in the API's response. You can include multiple parameters by providing them as a 
 comma-separated list. You supply each element in the list in the format:
 
-```
     <Include>.<property>[,..]
-```
 
 where `Include` is an alias for an operation or property. 
 

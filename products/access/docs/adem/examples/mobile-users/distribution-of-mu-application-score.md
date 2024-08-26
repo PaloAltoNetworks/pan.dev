@@ -7,9 +7,9 @@ sidebar_label: Get Distribution of Mobile User Application Score
 
 This API retrieves the experience score distribution (Good, Fair, Poor) across all monitored Mobile User devices.  
 
-In the Response section, the lines that are followed by a comment (\<\<\<\<\<\<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.  
+In the Response section, the lines that are followed by a comment (<<<<<<) correspond to the location in the UI (see attached screenshot) that is enclosed in a red box.  
 
-The attached screen is located in Monitor -\> Users -\> User details page in the Strata Cloud Manager UI.
+The attached screen is located in Monitor -> Users -> User details page in the Strata Cloud Manager UI.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -18,15 +18,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com/adem/telemetry/v2/measure/agent/score?timerange=last_30_days&endpoint-type=muAgent&response-type=summary
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1689627600,
         "endTime": 1692219600,
@@ -44,4 +42,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             "good": 8    <<<<<< Distribution of Mobile User Application Score
          }
     }
-```
+

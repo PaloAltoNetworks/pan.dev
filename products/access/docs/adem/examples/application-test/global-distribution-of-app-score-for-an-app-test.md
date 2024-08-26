@@ -7,7 +7,7 @@ sidebar_label: Get Global Distribution of App Score for an Application Test
 
 This API retrieves the global distribution of application scores for a given application test.  
 
-In the Response code, the lines that are marked with (\<\<\<\<\<\<) correspond to the area in the UI (see attached screenshot) that are marked with red arrows.
+In the Response code, the lines that are marked with (<<<<<<) correspond to the area in the UI (see attached screenshot) that are marked with red arrows.
 
 The following shows the portions of the UI widget where the data is displayed for this example:
 
@@ -16,15 +16,13 @@ The following shows the portions of the UI widget where the data is displayed fo
 
 ## Request
 
-```
     GET https://api.sase.paloaltonetworks.com//adem/telemetry/v2/measure/application/score?timerange=last_30_day&filter=testUuid==3100bb11-dde4-4ab9-8503-d0c6ad5f9698&include=ec.test,ec.endpoint&endpoint-type=muAgent&response-type=grouped-summary&group=en.location
      
     header = { "prisma-tenant": "<tenant-id>" }
-```
+
 
 ## Response
 
-```
     {
         "startTime": 1691010000,
         "endTime": 1693602000,
@@ -84,4 +82,4 @@ The following shows the portions of the UI widget where the data is displayed fo
             }
         ]
     }
-```
+
