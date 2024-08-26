@@ -17,13 +17,11 @@ The `agg_by` query value is `tenant`. Using the query parameter returns all the 
 
 For example, using curl:
 
-```
     curl -X POST "https://api.sase.paloaltonetworks.com/mt/monitor/v1/agg/alerts/list?agg_by=tenant" \
     -H 'accept: application/json' \
     -H "Authorization: Bearer <ACCESS_TOKEN>" \
     -H "Content-Type: application/json" \
     -H "X-PANW-Region: de" \
     -d '{"properties":[{"property":"sub_tenant_id"},{"property":"total_count"}],"filter":{"operator":"AND","rules":[{"property":"domain","operator":"in","values":["External","external"]},{"property":"event_time","operator":"last_n_days","values":[7]}]}}'
-```
 
 See [Query Filters and Properties](/sase/docs/filters) for more information about the request body.

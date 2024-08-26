@@ -43,14 +43,12 @@ Send all API requests to the base URL plus the path and parameter of
 
 For example, using curl:
 
-```
     curl -X POST "https://api.sase.paloaltonetworks.com/mt/monitor/v1/agg/alerts/list?agg_by=tenant" \
     -H 'accept: application/json' \
     -H "Authorization: Bearer <ACCESS_TOKEN>" \
     -H "Content-Type: application/json" \
     -H "X-PANW-Region: de" \
     -d '{"properties":[{"property":"sub_tenant_id"},{"property":"total_count"}],"filter":{"operator":"AND","rules":[{"property":"domain","operator":"in","values":["External","external"]},{"property":"event_time","operator":"last_n_days","values":[7]}]}}'
-```
 
 Depending on the query and the [query parameter](/sase/docs/parameters), there are also [query
 filters and properties](/sase/docs/filters) that you need to use in the request body.

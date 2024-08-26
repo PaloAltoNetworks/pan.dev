@@ -26,7 +26,6 @@ contains a filter with rules of
 [TimeFilter](#timefilter), and properties of
 [ThreatSummaryProperty](#threatsummaryproperty):
 
-```
     {
       "filter": {
         "operator": "AND",
@@ -54,7 +53,6 @@ contains a filter with rules of
         }
       ]
     }
-```
 
 The filter, operator, rules, and properties in the example are combined to request a list of the total threats and unblocked count properties where the severity is critical, high, or medium, and unblocked.
 
@@ -88,7 +86,6 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
         {
@@ -100,7 +97,6 @@ For example:
           ]
         }
       ]...
-```
 
 ### ApplicationRule
 
@@ -112,13 +108,11 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
       {
         "rule": "app_risky"
       }...
-```
 
 ### AppSrcRule
 
@@ -130,13 +124,11 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
       {
         "rule": "app_risky"
       }...
-```
 
 ### AppSummaryRule
 
@@ -148,13 +140,11 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
       {
         "rule": "app_risky"
       }...
-```
 
 ### CDLStatusRule
 
@@ -168,7 +158,6 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -179,7 +168,6 @@ For example:
           "Down"
         ]
       }...
-```
 
 ### IncidentRule
 
@@ -193,8 +181,6 @@ Object with the following properties:
 
 For example:
 
-
-```
     ...
     "rules": [
       {
@@ -205,7 +191,6 @@ For example:
           Cleared
         ]
       }...
-```
 
 ### OutlierRule
 
@@ -219,8 +204,6 @@ Object with the following properties:
 
 For example:
 
-
-```
     ...
     "rules": [
       {
@@ -231,7 +214,6 @@ For example:
           49
         ]
       }...
-```
 
 ### ThreatRule
 
@@ -245,7 +227,6 @@ Object with the following properties:
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -255,7 +236,6 @@ For example:
           "critical"
         ]
       }...
-```
 
 ### ThreatSrcRule
 
@@ -265,11 +245,10 @@ Object with the following properties:
 | -------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | property | string           | Property field name. Must be `threat_severity`.                                                                                                                                                                             |
 | operator | string           | Operator to run on the `property` field. Must be `in`.                                                                                                                                                                      |
-| values   | array of strings | Property values. Can be one or more of the following when used with `threat_severity` and `in`: `Critical` - critical severity`High` - high severity\<`Medium` - medium severity |
+| values   | array of strings | Property values. Can be one or more of the following when used with `threat_severity` and `in`: <ul><li>`Critical` - critical severity</li><li>`High` - high severity</li></ul><ul><li>`Medium` - medium severity</li></ul> |
 
 For example:
 
-```
     ...
     "rules": [
         {
@@ -282,7 +261,6 @@ For example:
           ]
         }
     }...
-```
 
 ### ThreatSummaryRule
 
@@ -292,11 +270,10 @@ Object with the following properties:
 | -------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | property | string           | Property field name. Must be `severity`.                                                                                                                                                                   |
 | operator | string           | Operator to run on the `property` field. Must be `in`.                                                                                                                                                     |
-| values   | array of strings | Property value. Can be one or more of the following when used with `severity` and `in`: `Critical` - critical severity`High` - high severity`Medium` - medium severity |
+| values   | array of strings | Property value. Can be one or more of the following when used with `severity` and `in`: <ul><li>`Critical` - critical severity</li><li>`High` - high severity</li><li>`Medium` - medium severity</li></ul> |
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -308,7 +285,6 @@ For example:
           "Medium"
         ]
       }...
-```
 
 ### UrlLogsRule
 
@@ -318,11 +294,10 @@ Object with the following properties:
 | -------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | property | string           | Property field name. Must be `url_category_value`.                                                                                                 |
 | operator | string           | Operator to run on the `property` field. Must be `in`.                                                                                             |
-| values   | array of strings | Property value. Can be one or more of the following when used with `url_category_value` and `in`: `high-risk` `malware` |
+| values   | array of strings | Property value. Can be one or more of the following when used with `url_category_value` and `in`: <ul><li>`high-risk` </li><li>`malware`</li></ul> |
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -333,7 +308,6 @@ For example:
           "malware"
         ]
       }...
-```
 
 ### TimeFilter
 
@@ -341,13 +315,12 @@ Object with the following properties:
 
 | Property | Type             | Description                                                                                                                                                                                                                                                                                |
 | -------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| operator | string           | Operator to run on the `property` field. Can be one of the following: `gt` - greater than comparison`lt` - less than comparison`last_n_minutes` - minutes comparison`last_n_hours` - hours comparison`last_n_days` - days comparison |
-| property | string           | Property field name. Can be one or more of the following: `event_time``update_time``updated_time`.                                                                                                                                                     |
+| operator | string           | Operator to run on the `property` field. Can be one of the following: <ul><li>`gt` - greater than comparison</li><li>`lt` - less than comparison</li><li>`last_n_minutes` - minutes comparison</li><li>`last_n_hours` - hours comparison</li><li>`last_n_days` - days comparison</li></ul> |
+| property | string           | Property field name. Can be one or more of the following: <ul><li>`event_time`</li><li>`update_time`</li><li>`updated_time`</li></ul>.                                                                                                                                                     |
 | values   | array of strings | Property value. Can be any number that represents minute, hour, or day counts when `property` is `event_time`.                                                                                                                                                                             |
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -357,7 +330,6 @@ For example:
           7
         ]
       }...
-```
 
 ### UrlSummaryRule
 
@@ -365,11 +337,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                |
 | -------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
-| rule     | string | Rule name. Can be one or more the following: `url_high_risk` - risky URL`blocked` - blocked URL |
+| rule     | string | Rule name. Can be one or more the following: <ul><li>`url_high_risk` - risky URL</li><li>`blocked` - blocked URL</li></ul> |
 
 For example:
 
-```
     ...
     "rules": [
       {
@@ -378,7 +349,6 @@ For example:
       {
         "rule": "blocked"
       }...
-```
 
 ## Properties
 
@@ -392,11 +362,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                                                                                                                             |
 | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id` - tenant service group ID`total_count` - total count of alerts`mu_count` - count of mobile user alerts`rn_count` - count of remote network alerts`sc_count` - count of service connection alerts |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_count` - total count of alerts</li><li>`mu_count` - count of mobile user alerts</li><li>`rn_count` - count of remote network alerts</li><li>`sc_count` - count of service connection alerts</li></ul> |
 
 For example:
 
-```
       "properties": [
         {
           "property": "sub_tenant_id"
@@ -414,7 +383,6 @@ For example:
           "property": "sc_count"
         }
       ]
-```
 
 ### ApplicationProperty
 
@@ -422,14 +390,13 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                    |
 | -------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `tenant_id``tenant_name``app``unique_app_count``app_count`                                              |
-| function | string | Operations to run on the property field. Operations can be run only on number properties. Can be one or more of the following: `count` - number of values`sum` - sum of the data values `avg` - average of the data values |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`tenant_id`</li><li>`tenant_name`</li><li>`app`</li><li>`unique_app_count`</li><li>`app_count`</li></ul>                                              |
+| function | string | Operations to run on the property field. Operations can be run only on number properties. Can be one or more of the following: <ul><li>`count` - number of values</li><li>`sum` - sum of the data values </li><li>`avg` - average of the data values</li></ul> |
 | sort     | object | Sort order for the property                                                                                                                                                                                                                                    |
-| order    | string | Can be one of the following: `desc` - descending`asc` - ascending                                                                                                                                                                   |
+| order    | string | Can be one of the following: <ul><li>`desc` - descending</li><li>`asc` - ascending</li></ul>                                                                                                                                                                   |
 
 For example:
 
-```
     {
       "properties": [
         {
@@ -454,7 +421,6 @@ For example:
         }
       ]
     }
-```
 
 ### AppSrcProperty
 
@@ -462,11 +428,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                      |
 | -------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id` - tenant service group`total_app_count` - total app count`total_app_remote_network` - total app count by remote network`total_app_mobile_users` - total app count by mobile users`total_app_proxy_nodes` - total app count by proxy nodes |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group</li><li>`total_app_count` - total app count</li><li>`total_app_remote_network` - total app count by remote network</li><li>`total_app_mobile_users` - total app count by mobile users</li><li>`total_app_proxy_nodes` - total app count by proxy nodes</li></ul> |
 
 For example:
 
-```
     "properties": [
         {
           "property": "sub_tenant_id"
@@ -478,7 +443,6 @@ For example:
           "property": "risk_of_app_count"
         }
       ]
-```
 
 ### AppSummaryProperty
 
@@ -486,11 +450,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                      |
 | -------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id``total_app_count``total_app_remote_network``total_app_mobile_users``total_app_proxy_nodes` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`total_app_count`</li><li>`total_app_remote_network`</li><li>`total_app_mobile_users`</li><li>`total_app_proxy_nodes`</li></ul> |
 
 For example:
 
-```
     "properties": [
           {
           "property": "sub_tenant_id"
@@ -502,7 +465,6 @@ For example:
           "property": "risk_of_app_count"
           }
         ]
-```
 
 ### CDLStatusProperty
 
@@ -511,12 +473,10 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                 |
 | -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id``state``location_count` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`state`</li><li>`location_count`</li></ul> |
 
 For example:
 
-
-```
     "properties": [
         {
           "property": "status"
@@ -528,7 +488,6 @@ For example:
           "property": "sub_tenant_id"
         }
       ]
-```
 
 ### GatewayStatusProperty
 
@@ -537,12 +496,10 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                 |
 | -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id``status``gateway_count` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`status`</li><li>`gateway_count`</li></ul> |
 
 For example:
 
-
-```
     "properties": [
         {
         "property": "status"
@@ -554,7 +511,6 @@ For example:
         "property": "sub_tenant_id"
         }
       ]
-```
 
 ### IncidentProperty
 
@@ -563,12 +519,10 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                 |
 | -------- | ------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                            |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id``total_count``warning_count``critical_count``created_time``updated_time``category``status``raised_time``cleared_time` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id`</li><li>`total_count`</li><li>`warning_count`</li><li>`critical_count`</li><li>`created_time`</li><li>`updated_time`</li><li>`category`</li><li>`status`</li><li>`raised_time`</li><li>`cleared_time`</li></ul> |
 
 For example:
 
-
-```
     "properties": [
         {
         "property": "critical_count"
@@ -580,7 +534,6 @@ For example:
         "property": "warning_count"
         }
       ]
-```
 
 ### OutliersProperty
 
@@ -589,11 +542,10 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                |
 | -------- | ------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                           |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `site_name``bandwidth_consumed``unit` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`site_name`</li><li>`bandwidth_consumed`</li><li>`unit`</li></ul> |
 
 For example:
 
-```
     "properties": [
         {
           "property": "site_name"
@@ -605,7 +557,6 @@ For example:
           "property": "unit"
         }
       ]
-```
 
 ### ResourceProperty
 
@@ -613,11 +564,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                               |
 | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `severity``alert_id``node_type``node_count` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`severity`</li><li>`alert_id`</li><li>`node_type`</li><li>`node_count`</li></ul> |
 
 For example:
 
-```
     "properties": [
         {
           "property": "alert_id"
@@ -628,7 +578,6 @@ For example:
           "property": "node_count"
         }
       ]
-```
 
 ### ThreatSrcProperty
 
@@ -636,11 +585,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                         |
 | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id` - tenant service group ID`total_app_count` - total app count`total_app_remote_network` - total app count by remote network`total_app_mobile_users` - total app count by mobile users`total_app_proxy_nodes` - total app count by proxy nodes |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_app_count` - total app count</li><li>`total_app_remote_network` - total app count by remote network</li><li>`total_app_mobile_users` - total app count by mobile users</li><li>`total_app_proxy_nodes` - total app count by proxy nodes</li></ul> |
 
 For example:
 
-```
     "properties": [
         {
           "property": "sub_tenant_id"
@@ -658,7 +606,6 @@ For example:
           "property": "total_app_proxy_nodes"
         }
       ]
-```
 
 ### ThreatProperty
 
@@ -667,14 +614,13 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                                                                                                                   |
 | -------- | ------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                                                                                                                              |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `tenant_id``tenant_name``threat_severity``threat_severity_count``url_count``threat_id``threat_count` |
-| function | string | Operations to run on the property field. Operations can be run only on number properties. Can be one of the following: `distinct_count` - used with `threat_id` property`avg` - used with `threat_count` property                                  |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`tenant_id`</li><li>`tenant_name`</li><li>`threat_severity`</li><li>`threat_severity_count`</li><li>`url_count`</li><li>`threat_id`</li><li>`threat_count`</li></ul> |
+| function | string | Operations to run on the property field. Operations can be run only on number properties. Can be one of the following: <ul><li>`distinct_count` - used with `threat_id` property</li><li>`avg` - used with `threat_count` property</li></ul>                                  |
 | sort     | object | Sort order for the property                                                                                                                                                                                                                                                   |
-| order    | string | Can be one of the following: `desc` - descending`asc` - ascending                                                                                                                                                                                  |
+| order    | string | Can be one of the following: <ul><li>`desc` - descending</li><li>`asc` - ascending</li></ul>                                                                                                                                                                                  |
 
 For example:
 
-```
     "properties": [
         {
           "property": "tenant_id"
@@ -704,7 +650,6 @@ For example:
           "property": "threat_count"
         }
       ]
-```
 
 ### ThreatSummaryProperty
 
@@ -712,11 +657,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                      |
 | -------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id` - tenant service group ID`total_threats``blocked_count``unblocked_count``malicious_count` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` - tenant service group ID</li><li>`total_threats`</li><li>`blocked_count`</li><li>`unblocked_count`</li><li>`malicious_count`</li></ul> |
 
 For example:
 
-```
     "properties": [
         {
           "property": "total_threats"
@@ -725,7 +669,6 @@ For example:
           "property": "unblocked_count"
         }
       ]
-```
 
 ### UniqueUserProperty
 
@@ -737,13 +680,11 @@ Object with the following properties:
 
 For example:
 
-```
     "properties": [
         {
           "property": "user_count"
         }
       ]
-```
 
 ### UrlSummaryProperty
 
@@ -752,14 +693,13 @@ Object with the following properties:
 | Property | Type   | Description                                                                                                                                                                    |
 | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | alias    | string | Change a property field name to a different name of your choice.                                                                                                               |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `sub_tenant_id` tenant service group ID`uri_count` |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`sub_tenant_id` tenant service group ID</li><li>`uri_count`</li></ul> |
 | function | string | Operations to run on the property field. Operations can be run only on number properties. Can be one of the following: `sum`                                                   |
 | sort     | object | Sort order for the property                                                                                                                                                    |
-| order    | string | Can be one of the following: `desc` - descending`asc` - ascending                                                                                   |
+| order    | string | Can be one of the following: <ul><li>`desc` - descending</li><li>`asc` - ascending</li></ul>                                                                                   |
 
 For example:
 
-```
     "properties": [
         {
           "property": "sub_tenant_id"
@@ -773,7 +713,6 @@ For example:
           }
         }
       ]
-```
 
 ### UpgradeListProperty
 
@@ -781,11 +720,10 @@ Object with the following properties:
 
 | Property | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| property | string | Property field names that are returned in the API response. Can be one or more of the following: `tenant_id` - Tenant service group ID`sub_tenant_id` - Child or sub tenant service group ID`current_version` - Prisma Access versions, such as: PANOS-10.0.8-c1188.saas`candidate_release_list` - The release list, such as: Preferred-10.0.8, latest `customer_onboarded_locations` - The locations of the upgrade, such as: US East, Singapore, Ireland`upgrade_ts` - The epoc time series such as epocTs from 1647241200000 to 1647414000000`time_window` - The upgrade time window, such as: 10:00 AM to 11:00 PM`compute_timezone` - The compute timezone, such as: NULL,HKT,GMT,CET,PDT,EDT,CDT,SGT,CST,EST`upgrade_type` - The upgrade type, such as: full-upgrade, canary-upgrade`upgrade_version` - The version of the next Prisma Access upgrade, such as: PANOS-10.2.4-ch39.saas`status` - The last upgrade status, such as: scheduled, completed, failed |
+| property | string | Property field names that are returned in the API response. Can be one or more of the following: <ul><li>`tenant_id` - Tenant service group ID</li><li>`sub_tenant_id` - Child or sub tenant service group ID</li><li>`current_version` - Prisma Access versions, such as: PANOS-10.0.8-c1188.saas</li><li>`candidate_release_list` - The release list, such as: Preferred-10.0.8, latest </li><li>`customer_onboarded_locations` - The locations of the upgrade, such as: US East, Singapore, Ireland</li><li>`upgrade_ts` - The epoc time series such as epocTs from 1647241200000 to 1647414000000</li><li>`time_window` - The upgrade time window, such as: 10:00 AM to 11:00 PM</li><li>`compute_timezone` - The compute timezone, such as: NULL,HKT,GMT,CET,PDT,EDT,CDT,SGT,CST,EST</li><li>`upgrade_type` - The upgrade type, such as: full-upgrade, canary-upgrade</li><li>`upgrade_version` - The version of the next Prisma Access upgrade, such as: PANOS-10.2.4-ch39.saas</li><li>`status` - The last upgrade status, such as: scheduled, completed, failed</li></ul> |
 
 For example:
 
-```
     {
       "properties": [
         {
@@ -820,5 +758,4 @@ For example:
         }
       ]
     }
-```
 
