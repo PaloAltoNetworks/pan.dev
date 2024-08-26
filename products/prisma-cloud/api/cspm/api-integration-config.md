@@ -711,7 +711,7 @@ To add a webhook integration, make your request as described in
 | url       | Webhook URL                                      | string     | _required_                |
 | authToken | The authentication token for the event collector | string     | _required_                |
 | isCustomPayloadEnabled | Set to true to accept custom alert payload. | boolean     | Default is **false**.                |
-| customPayloads | Contains detailed information about an alert, such as the cloud account, resource, compliance standard, and policy.<br/>Currently, it is supported only for Config Scanner(CS) policy type. Therefore, specify the value for customPayloads in the following format and the value for CS must be a string: _"customPayloads": \{ "CS": "[\{custom payload \}]" \}_ **Example:** _"customPayloads": \{ "CS": "[\{\"resourceId\":\"$\{ResourceId}\"\}]"\}_ | JSON array     | Required if **isCustomPayloadEnabled** is set to **true**.                |
+| customPayloads | Contains detailed information about an alert, such as the cloud account, resource, compliance standard, and policy.<br/>Currently, it is supported only for Config Scanner(CS) policy type. Therefore, specify the value for customPayloads in the following format and the value for CS must be a string:<br/> _"customPayloads": { "CS": "[{custom payload }]" }_ <br/>**Example:** _"customPayloads": { "CS": "[{\"resourceId\":\"${ResourceId}\"}]"}_ | JSON array     | Required if **isCustomPayloadEnabled** is set to **true**.                |
 
 To update a webhook integration, make your request as described in
 [Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.

@@ -19,4 +19,4 @@ Use the [CSPM Policy API](/prisma-cloud/api/cspm/policy) to create and manage Ap
 
 For more information, see [Prisma Cloud Administrator’s Guide—Application Security](https://docs.prismacloud.io/en/classic/appsec-admin-guide). If you are upgraded to Darwin, see [Prisma Cloud Application Security](https://docs.prismacloud.io/en/enterprise-edition/content-collections/application-security/application-security).
 
-Check the status notifications at \<https:\/\/status.paloaltonetworks.com\/\> for the Prisma Cloud release schedule to know when new functionality is available.
+Check the status notifications at <https://status.paloaltonetworks.com/> for the Prisma Cloud release schedule to know when new functionality is available.

@@ -37,7 +37,6 @@ cURL is a command line tool for transferring data with URLS and has been in deve
 
 The first step is to generate access keys which are a secure way for enabling programmatic access to the Prisma Cloud REST API. Access keys have two components; Access Key ID and Secret Key which should be copied and saved in a secure location for later reuse as they’re not stored in Prisma Cloud. Refer to the Prisma Cloud documentation for instructions on [how to create an access key](https://docs.prismacloud.io/en/classic/cspm-admin-guide/manage-prisma-cloud-administrators/create-access-keys). If you are upgraded to Darwin, see [how to create an access key](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/create-access-keys). You can then use cURL to generate your x-redlock-auth JWT token with the following command:
 
-```
     curl -X POST \
 
     https://api.prismacloud.io/login \
@@ -45,11 +44,9 @@ The first step is to generate access keys which are a secure way for enabling pr
     -H 'Content-Type: application/json' \
 
     -d '{"username":"<Access Key ID>","password":"<Secret Key>"}'
-```
 
 Replace `https://api.prismacloud.io`, `username`, and `password` with your [api url](https://prisma.pan.dev/api/cloud/api-urls), access key id, and secret key credentials. For example, if your api url is `https://api2.prismacloud.io`, access key id is `q158e014-bc9b-2345-7a46-52b13da28b31`, and your secret key is `xJQI0Bf0DoAIthmK05xBxvx9IbG=`, then the curl command will be configured as follows:
 
-```
     curl -X POST \
 
     https://api2.prismacloud.io/login \
@@ -57,19 +54,14 @@ Replace `https://api.prismacloud.io`, `username`, and `password` with your [api 
     -H 'Content-Type: application/json' \
 
     -d '{"username":"q158e014-bc9b-2345-7a46-52b13da28b31","password":"xJQI0Bf0DoAIthmK05xBxvx9IbG="}'
-```
 
 To generate the JWT token open Git Bash by typing "Git Bash" in Windows search and enter the following command: (replace [https://api2.prismacloud.io](https://api2.prismacloud.io) and username/password with your credentials):
 
-```
-curl -X POST https://api2.prismacloud.io/login -H 'Content-Type: application/json' -d '{"username":"q158e014-bc9b-2345-7a46-52b13da28b31","password":"xJQI0Bf0DoAIthmK05xBxvx9IbG="}'
-```
+` $ curl -X POST https://api2.prismacloud.io/login -H 'Content-Type: application/json' -d '{"username":"q158e014-bc9b-2345-7a46-52b13da28b31","password":"xJQI0Bf0DoAIthmK05xBxvx9IbG="}'`
 
 **The JWT token output:**
 
-```
     {"token":"shashashjhhhhhhhhhhhhhhhhhhhhhhhjjbjhghgVGGGAGHKBksjjlsksknsjsbhsghsgjhsgshghskgshsjhhjsjhsgsgshsghsghjsjs"]}
-```
 
 A JWT token is returned which will be valid for 10-minutes. You can then use the JWT token when calling the other Prisma Cloud [REST API methods](https://prisma.pan.dev/api/cloud/).
 
@@ -83,23 +75,19 @@ Postman is a popular API testing tool that we can use for making HTTP requests. 
 
 The Prisma Cloud REST API method for url is /login which is appended to the end of the cluster in which your Prisma Cloud tenant is deployed. Therefore, if the url of your Prisma Cloud tenant is https://app2.prismacloud.io, then you will use [https://api2.prismacloud.io/login](https://api2.prismacloud.io/login) for making the POST request. To enter your `access key ID` and `secret key` select the **Body** tab, click **Text**, and scroll down and select **JSON**; this enables you to add the username/password key-value pairs as a JSON object in Postman:
 
-```
     {
-        "username": "q158e014-bc9b-2345-7a46-52b13da28b31",
-        "password": "xJQI0Bf0DoAIthmK05xBxvx9IbG="
+    "username": "q158e014-bc9b-2345-7a46-52b13da28b31",
+    "password": "xJQI0Bf0DoAIthmK05xBxvx9IbG="
     }
-```
 
 ![](https://lh3.googleusercontent.com/6iUNhSAfndLA4akBFTboSkZtce8PC-LWzjJPU9vFhu_J7uJzPRcl-H8fVFHwOZSNQdX93pRoPsqHlCdQOyM5p2VDWxYtUIfag8aePXpa1ZzpD4d6DMrHkwoGSNvSVxxwMpg4nFm8)
 
 Click **SEND** to generate the JWT token:
 
-```
-    {
-        "token": "shshjshjlsjjjjjjjjjjjjjjjjjjjjjjjjjss77sssggsstfsfsgssjhbshbsjhsbhsbsbsjhsbjhsbjhsbjhsbhsbhsvsgfdrsdtrcgjdhbjdbjdbjdbjdj",
-        "message": "login_successful"
+     {
+            "token": "shshjshjlsjjjjjjjjjjjjjjjjjjjjjjjjjss77sssggsstfsfsgssjhbshbsjhsbhsbsbsjhsbjhsbjhsbjhsbhsbhsvsgfdrsdtrcgjdhbjdbjdbjdbjdj",
+            "message": "login_successful"
     }
-```
 
 **Note**: The JWT token is available for 10-minutes. After this time has elapsed, run this POST command again to generate a fresh JWT token.
 **Note**: If your POST call was successful you will get a 200 response status.
