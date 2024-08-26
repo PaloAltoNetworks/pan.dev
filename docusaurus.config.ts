@@ -1,3 +1,5 @@
+import Mermaid from "@theme/Mermaid";
+
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
@@ -28,7 +30,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
-  markdown: { format: "detect" },
+  markdown: { format: "detect", mermaid: true },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
@@ -602,9 +604,6 @@ const config = {
       },
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
-  },
-  markdown: {
-    mermaid: true,
   },
   themes: ["docusaurus-theme-openapi-docs", "@docusaurus/theme-mermaid"],
   presets: [
