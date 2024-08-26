@@ -41,12 +41,12 @@ flowchart TB
     A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Add PAN-OS device<br/> POST https://localhost/api/v1/device]
     B[Add PAN-OS device<br/> POST https://localhost/api/v1/device]  --> C["Create an Expedition Project<br/> POST https://localhost/api/v1/project" ]
     C["Create an Expedition Project<br/> POST https://localhost/api/v1/project" ] --> D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config" ]
-    D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"] --> E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/\{project_id\}/import/device"]
-    E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/\{project_id\}/import/device"] --> F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/\{project_id\}/source"]
-    F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/\{project_id\}/source"]--> G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/\{project_id\}/tools/filter"]
-    G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/\{project_id\}/tools/filter"] --> H["Execute the filter<br/> POST https://localhost/api/v1/project/\{project_id\}/tools/filter/{filter_id}/execute"]
-    H["Execute the filter<br/> POST https://localhost/api/v1/project/\{project_id\}/tools/filter/{filter_id}/execute"] --> I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/\{project_id\}/tools/filter/{filter_id}/success"]
-    I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/\{project_id\}/tools/filter/{filter_id}/success"] --> J["Print the Collection Content<br/> GET https://localhost/api/v1/project/\{project_id\}/collection/{collection_id}/content"]
+    D["Upload PAN-OS config into device<br/> POST https://localhost/api/v1/{device_id}/upload_config"] --> E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"]
+    E["Import the PAN-OS configuration of your device to the project<br/> POST https://localhost/api/v1/project/{project_id}/import/device"] --> F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]
+    F["Get source ID of the config file<br/> GET https://localhost/api/v1/project/{project_id}/source"]--> G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"]
+    G["Create combined filters for filtering security rules contain specific subnets<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter"] --> H["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"]
+    H["Execute the filter<br/> POST https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute"] --> I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success"]
+    I["Print the Filter Execution Result<br/> GET https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success"] --> J["Print the Collection Content<br/> GET https://localhost/api/v1/project/{project_id}/collection/{collection_id}/content"]
 
 ```  
 
@@ -65,8 +65,8 @@ API syntax for creating a new device :
 
 | Method  | Route                                            | Request Body Parameters                                                                                                                                    |
 | ------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/device`</small> | <small>\{**"name"**: devicename, **"serial"**: serialnumber,**"hostname"**: panosip,**"type"**: devicetype,**"description"**: pandescription,<br/>\}</small> |
-| Example | <small>`https://localhost/api/v1/device`</small> | <small>\{**"name"**:"mypanorama", **"serial"**:"123456789",**"hostname"**:"pan1",**"type"**:"vm-panorama"**"description"**:"Project for testing"\}</small>   |
+| POST    | <small>`https://localhost/api/v1/device`</small> | <small>{**"name"**: devicename, **"serial"**: serialnumber,**"hostname"**: panosip,**"type"**: devicetype,**"description"**: pandescription,<br/>}</small> |
+| Example | <small>`https://localhost/api/v1/device`</small> | <small>{**"name"**:"mypanorama", **"serial"**:"123456789",**"hostname"**:"pan1",**"type"**:"vm-panorama"**"description"**:"Project for testing"}</small>   |
 
 :::info
 **The supported device "type" are below:**
@@ -134,8 +134,8 @@ API syntax for creating a new project:
 
 | Method  | Route                                             | Parameters                                                                                        |
 | ------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>\{ **"project"**:"project1", **"description"**:"Project for testing" \}</small> |
-| example | <small>`https://localhost/api/v1/project`</small> | <small>\{"project":"MyLittleProject", "description":"A migration project"\}</small>                 |
+| POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>{ **"project"**:"project1", **"description"**:"Project for testing" }</small> |
+| example | <small>`https://localhost/api/v1/project`</small> | <small>{"project":"MyLittleProject", "description":"A migration project"}</small>                 |
 
 <Tabs defaultValue={null}
 values={[
@@ -176,7 +176,7 @@ API syntax for upload PAN-OS config into device :
 
 | Method  | Route                                                                      | Path Parameters                           |
 | ------- | -------------------------------------------------------------------------- | ----------------------------------------- |
-| POST    | <small>"https://localhost/api/v1/device/\{device_id\}/upload_config"</small> | <small>**"device_id"**: device_Id</small> |
+| POST    | <small>"https://localhost/api/v1/device/{device_id}/upload_config"</small> | <small>**"device_id"**: device_Id</small> |
 | Example | <small>"https://localhost/api/v1/device/23/upload_config"</small>          |                                           |
 
 <Tabs defaultValue={null}
@@ -213,8 +213,8 @@ API syntax for the step:
 
 | Method  | Route                                                                        | Parameters                                                                                             |
 | ------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/import/device`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> \{**"device_id"**:device_Id \}</small> |
-| example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>\{"device_id":"23""\}</small>                                                                     |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/import/device`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"device_id"**:device_Id }</small> |
+| example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>{"device_id":"23""}</small>                                                                     |
 
 <Tabs defaultValue={null}
 values={[
@@ -255,8 +255,8 @@ API syntax for the step:
 
 | Method  | Route                                                                 | Parameters                                                                                             |
 | ------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| GET     | <small>`https://localhost/api/v1/project/\{project_id\}/source`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> \{**"device_id"**:device_Id\} </small> |
-| example | <small>`https://localhost/api/v1/project/22/source`</small>           | <small>\{**"device_id"**: 23\}</small>                                                                   |
+| GET     | <small>`https://localhost/api/v1/project/{project_id}/source`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"device_id"**:device_Id} </small> |
+| example | <small>`https://localhost/api/v1/project/22/source`</small>           | <small>{**"device_id"**: 23}</small>                                                                   |
 
 <Tabs defaultValue={null}
 values={[
@@ -329,8 +329,8 @@ API syntax for the step:
 
 | Method  | Route                                                                       | Parameters                                                                                                              |
 | ------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> \{**"name"**:filter_name,**"filter"**:filter, **"reference"**:filter_reference,**"source"**:sourceId\}</small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>\{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\"",**"reference"**: "all allowed rules", **"source"** :4486\} </small>               |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>_in url_<br/> **"project_id"**:project_Id<br/>in_body<br/> {**"name"**:filter_name,**"filter"**:filter, **"reference"**:filter_reference,**"source"**:sourceId}</small> |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter`</small>           | <small>{**"name"**: "all allowed rules", **"filter"** : "[address] ipaddress contains \"10.1\"",**"reference"**: "all allowed rules", **"source"** :4486} </small>               |
 
 <Tabs defaultValue={null}
 values={[
@@ -601,8 +601,8 @@ API syntax for the step:
 
 | Method  | Route                                                                                           | Parameters                                                                                                                                                   |
 | ------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}/execute`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id<br/>in_body<br/> \{**"source_id"**: source_id of the PAN-OS config file\} </small> |
-| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/execute`</small>                     | <small>\{**"source_id"**: "23564"\} </small>                                                                                                                   |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id<br/>in_body<br/> {**"source_id"**: source_id of the PAN-OS config file} </small> |
+| example | <small>`https://localhost/api/v1/project/22/tools/filter/6/execute`</small>                     | <small>{**"source_id"**: "23564"} </small>                                                                                                                   |
 
 <Tabs defaultValue={null}
 values={[
@@ -641,7 +641,7 @@ API syntax for the step:
 
 | Method  | Route                                                                                          | Parameters                                                                          |
 | ------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| GET     | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/{filter_id}/success`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
+| GET     | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"filter_id"**:filter_Id</small> |
 | example | <small>`https://localhost/api/v1/project/22/tools/filter/6/success`</small>                     |                                                                                     |
 
 <Tabs defaultValue={null}
@@ -673,7 +673,7 @@ API syntax for the step:
 
 | Method  | Route                                                                                             | Parameters                                                                                  |
 | ------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| GET     | <small>`https://localhost/api/v1/project/\{project_id\}/collection/{Collection_Id}/content`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"collection_id"**:collection_Id</small> |
+| GET     | <small>`https://localhost/api/v1/project/{project_id}/collection/{Collection_Id}/content`</small> | <small>_in url_<br/> **"project_id"**:project_Id, **"collection_id"**:collection_Id</small> |
 | example | <small>`https://localhost/api/v1/project/22/collection/20793/content`</small>                     |                                                                                             |
 
 <Tabs defaultValue={null}

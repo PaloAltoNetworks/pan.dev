@@ -220,7 +220,7 @@ For operations content the **`not`** operator is not available.
 
 | Method | API Route                                                                   | Request Body Parameters     | Example Value                                                                                                   |
 | ------ | --------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| POST   | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter`</small> | <small>name, filter</small> | <small>\{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""\}**</small> |
+| POST   | <small>`https://localhost/api/v1/project/{project_id}/tools/filter`</small> | <small>name, filter</small> | <small>{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""}**</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -293,7 +293,7 @@ Updates the parameters of a specific filter
 
 | Method | API Route                                                                               | Request Body Parameters     | Example Value                                                                                                   |
 | ------ | --------------------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| PUT    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}`</small> | <small>name, filter</small> | <small>\{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""\}**</small> |
+| PUT    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>name, filter</small> | <small>{**"name"**:"filter_name", **"filter"**:**"[address, address_group] name contains \"office\""}**</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -362,7 +362,7 @@ Everytime a filter is modified, it will be marked as potentially_invalid, since 
 
 | Method | API Route                                                                               | Path Parameters                          | Example Path                                                         |
 | ------ | --------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| DELETE | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}`</small> | <small>\{project_id\}, \{filter_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/22`</small> |
+| DELETE | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/22`</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -422,7 +422,7 @@ The successful Json response will be similar to the following:
 
 | Method | API Route                                                                               | Path Parameters                          | Example Path                                                         |
 | ------ | --------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}`</small> | <small>\{project_id\}, \{filter_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/success`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/success`</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -483,7 +483,7 @@ The successful Json response will be similar to the following:
 
 | Method | API Route                                                                    | Path Parameters             | Example Path                                                      |
 | ------ | ---------------------------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/`</small> | <small>\{project_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/`</small> | <small>{project_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter`</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -548,7 +548,7 @@ The successful Json response will be similar to the following:
 
 | Method | API Route                                                                                       | Path Parameters                          | Example Path                                                                 |
 | ------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
-| POST   | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}/execute`</small> | <small>\{project_id\}, \{filter_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/execute`</small> |
+| POST   | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/execute`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/execute`</small> |
 
 <Tabs defaultValue={null}
 values={[
@@ -593,7 +593,7 @@ The successful Json response will return a job id:
 
 | Method | API Route                                                                                      | Path Parameters                          | Example Path                                                               |
 | ------ | ---------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}/success`</small> | <small>\{project_id\}, \{filter_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/8/success`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/success`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/8/success`</small> |
 
 <Tabs defaultValue={typeof window !== 'undefined' && localStorage.getItem('defaultLanguage') ? localStorage.getItem('defaultLanguage') : 'python'}
 values={[
@@ -657,7 +657,7 @@ The successful Json response will be similar to the following:
 
 | Method | API Route                                                                                       | Path Parameters                          | Example Path                                                                 |
 | ------ | ----------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
-| GET    | <small>`https://localhost/api/v1/project/\{project_id\}/tools/filter/\{filter_id\}/history`</small> | <small>\{project_id\}, \{filter_id\}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/history`</small> |
+| GET    | <small>`https://localhost/api/v1/project/{project_id}/tools/filter/{filter_id}/history`</small> | <small>{project_id}, {filter_id}</small> | <small>`https://localhost/api/v1/project/48/tools/filter/23/history`</small> |
 
 <Tabs defaultValue={null}
 values={[

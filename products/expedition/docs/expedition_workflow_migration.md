@@ -37,12 +37,12 @@ Below flowchart demo the workflow and the related API calls in each of the steps
 ```mermaid
 flowchart TB
     A[Obtain the API Keys<br/> POST https://localhost/api/v1/generate_api_key ] --> B[Create an Expedition Project<br/> POST https://localhost/api/v1/project]
-    B[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> C["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/\{project_id\}/migration"]
-    C["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/\{project_id\}/migration"] --> D["Upload the 3rd party vendor config to migration<br/>  POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/upload/{vendorname}"]
-    D["Upload the 3rd party vendor config to migration<br/>  POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/upload/{vendorname}"] --> E["Discover the config when there are multiple policies in the vendor config(optional)<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/source/{resource_Id}/discover"]
-    E["Discover the config when there are multiple policies in the vendor config(optional)<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/source/{resource_Id}/discover"]--> F["Config Mapping to map policy and route<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/resource/{resource_id}/map"]
-    F["Config Mapping to map policy and route<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/resource/{resource_id}/map"]--> G["Convert the 3rd party vendor config to a PAN-OS config<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/convert"]
-    G["Convert the 3rd party vendor config to a PAN-OS config<br/>POST https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/convert"] --> H["Import the Converted Configuration into project<br/>POST https://localhost/api/v1/project/\{project_id\}/import/device"]
+    B[Create an Expedition Project<br/> POST https://localhost/api/v1/project] --> C["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/{project_id}/migration"]
+    C["Create a new migration in the project<br/>  POST https://localhost/api/v1/project/{project_id}/migration"] --> D["Upload the 3rd party vendor config to migration<br/>  POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/upload/{vendorname}"]
+    D["Upload the 3rd party vendor config to migration<br/>  POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/upload/{vendorname}"] --> E["Discover the config when there are multiple policies in the vendor config(optional)<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/source/{resource_Id}/discover"]
+    E["Discover the config when there are multiple policies in the vendor config(optional)<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/source/{resource_Id}/discover"]--> F["Config Mapping to map policy and route<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/resource/{resource_id}/map"]
+    F["Config Mapping to map policy and route<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/resource/{resource_id}/map"]--> G["Convert the 3rd party vendor config to a PAN-OS config<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/convert"]
+    G["Convert the 3rd party vendor config to a PAN-OS config<br/>POST https://localhost/api/v1/project/{project_id}/migration/{migration_id}/convert"] --> H["Import the Converted Configuration into project<br/>POST https://localhost/api/v1/project/{project_id}/import/device"]
 
 ```  
 
@@ -64,8 +64,8 @@ API syntax for creating a new project:
 
 | Method  | EndPoint                                          | Parameters                                                                                                      |
 | ------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>\{ **"project"**:Name of the project, **"description"**:Description of the project \}</small> |
-| example | <small>`https://localhost/api/v1/project`</small> | <small>\{"project":"MyLittleProject", "description":"A migration project"\}</small>                               |
+| POST    | <small>`https://localhost/api/v1/project`</small> | <small>_in url_<br/>{ **"project"**:Name of the project, **"description"**:Description of the project }</small> |
+| example | <small>`https://localhost/api/v1/project`</small> | <small>{"project":"MyLittleProject", "description":"A migration project"}</small>                               |
 
 <Tabs defaultValue={null}
 values={[
@@ -135,8 +135,8 @@ API syntax for the step:
 
 | Method  | EndPoint                                                                 | Parameters                                                                                                             |
 | ------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/migration`</small> | <small>_in url_<br/> **"project_id"**:"ProjectId"<br/>in_body<br/> \{**"device_type"**:"panorama or firewall" \}</small> |
-| example | <small>`https://localhost/api/v1/project/22/migration`</small>           | <small>\{"device_type":"panorama"\}</small>                                                                              |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/migration`</small> | <small>_in url_<br/> **"project_id"**:"ProjectId"<br/>in_body<br/> {**"device_type"**:"panorama or firewall" }</small> |
+| example | <small>`https://localhost/api/v1/project/22/migration`</small>           | <small>{"device_type":"panorama"}</small>                                                                              |
 
 <Tabs defaultValue={null}
 values={[
@@ -168,8 +168,8 @@ API syntax for the step:
 
 | Method  | EndPoint                                                                                                    | Parameters                                                                                                                                                                                               |
 | ------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/migration/{migration_id}/upload/{vendorname}`</small> | <small>_in url_<br/> **"project_id"**:"projectId"<br/> **"migration_id"**:"migrationId"<br/> **"vendorname"**:"vendorname"<br/>in_body<br/> \{**"name"**:"configname",**"config"**:"configfile" \}</small> |
-| example | <small>`https://localhost/api/v1/project/22/migration/25/cisco_asa`</small>                                 | <small>\{**"name"**:"cisco",**"config"**:cisco_config\}</small>                                                                                                                                            |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_id}/upload/{vendorname}`</small> | <small>_in url_<br/> **"project_id"**:"projectId"<br/> **"migration_id"**:"migrationId"<br/> **"vendorname"**:"vendorname"<br/>in_body<br/> {**"name"**:"configname",**"config"**:"configfile" }</small> |
+| example | <small>`https://localhost/api/v1/project/22/migration/25/cisco_asa`</small>                                 | <small>{**"name"**:"cisco",**"config"**:cisco_config}</small>                                                                                                                                            |
 
 :::info
 Available vendorname parameter can be used in the path are below:
@@ -216,7 +216,7 @@ API syntax for discovery 3rd party vendors' configurations:
 
 | Method  | URL                                                                                             | Parameters                                                                                  |
 | ------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/migration/{migration_Id}/resource/{resource_Id}/discover`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId<br/>**"resource_id"**:resourceId<br/></small> |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_Id}/resource/{resource_Id}/discover`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId<br/>**"resource_id"**:resourceId<br/></small> |
 | example | <small>`https://localhost/api/v1/project/22/migration/25/resource/35/discovery`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25, <br/> **"resource_id"**: 35</small>              |
 
 <Tabs defaultValue={null}
@@ -269,7 +269,7 @@ API syntax for mapping 3rd party vendors' configurations:
 
 | Method  | URL                                                                                             | Parameters                                                                                  |
 | ------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/migration/{migration_Id}/resource/{resource_Id}/map`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId<br/>**"resource_id"**:resourceId<br/></small> |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_Id}/resource/{resource_Id}/map`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId<br/>**"resource_id"**:resourceId<br/></small> |
 | example | <small>`https://localhost/api/v1/project/22/migration/25/resource/35/map`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25, <br/> **"resource_id"**: 35</small>              |  
 
 
@@ -316,7 +316,7 @@ API syntax for Converting 3rd party vendors' configurations:
 
 | Method  | URL                                                                                             | Parameters                                                                                  |
 | ------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/migration/{migration_Id}/convert`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId</small> |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/migration/{migration_Id}/convert`</small> | <small>_in url_<br/> **"project_id"**:projectId<br/> **"migration_id"**:migrationId</small> |
 | example | <small>`https://localhost/api/v1/project/22/migration/25/convert`</small>                       | <small>_in url_<br/>**"project_Id"**: 22,<br/> **"migration_id"**: 25 </small>              |
 
 <Tabs defaultValue={null}
@@ -348,8 +348,8 @@ The API syntax for Importing the converted PAN-OS Configuration into the project
 
 | Method  | EndPoint                                                                     | Parameters                                                                                                    |
 | ------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| POST    | <small>`https://localhost/api/v1/project/\{project_id\}/import/device`</small> | <small>_in url_<br/>**"project"**: "projectID"<br/><br/>_in body_<br/>\{ **"device_id"**: "deviceId" \}</small> |
-| example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>_in url_<br/>project=22<br/><br/>_in body_<br/>\{ "device_id": "23" \}</small>                           |
+| POST    | <small>`https://localhost/api/v1/project/{project_id}/import/device`</small> | <small>_in url_<br/>**"project"**: "projectID"<br/><br/>_in body_<br/>{ **"device_id"**: "deviceId" }</small> |
+| example | <small>`https://localhost/api/v1/project/22/import/device`</small>           | <small>_in url_<br/>project=22<br/><br/>_in body_<br/>{ "device_id": "23" }</small>                           |
 
 <Tabs defaultValue={null}
 values={[
