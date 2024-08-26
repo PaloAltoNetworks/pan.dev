@@ -10,10 +10,10 @@ Added in App version 5.0. For previous versions, refer to the [panupdate](/splun
 
 **Syntax**:
 
-    panuserupdate device=\<hostname\>
-                  [serial=\<serial-of-device-in-panorama\>] [vsys=\<vsys1\>]
-                  [action=\<login\>] [ip_field=\<field-containing-IPs\>]
-                  user_field=\<field-containing-usernames\>
+    panuserupdate device=<hostname>|panorama=<hostname>
+                  [serial=<serial-of-device-in-panorama>] [vsys=<vsys#>]
+                  [action=<login|logout>] [ip_field=<field-containing-IPs>]
+                  user_field=<field-containing-usernames>
 
 | Parameter   | Default | Usage                                                    |
 |-------------|---------|----------------------------------------------------------|
@@ -61,10 +61,10 @@ Command added in App version 4.1. New parameters added in App version 5.0.
 
 **Syntax**:
 
-    pantag device=\<hostname\>|panorama=\<hostname\>
-           [serial=\<serial-of-device-in-panorama\>] [vsys=\<vsys1\>]
-           [action=\<add\>] [ip_field=\<field-containing-IPs\>]
-           tag=\<tag\>|tag_field=\<field-containing-tags\>
+    pantag device=<hostname>|panorama=<hostname>
+           [serial=<serial-of-device-in-panorama>] [vsys=<vsys#>]
+           [action=<add|remove>] [ip_field=<field-containing-IPs>]
+           tag=<tag>|tag_field=<field-containing-tags>
 
 | Parameter  | Default | Added in | Usage                                                          |
 |------------|---------|----------|----------------------------------------------------------------|

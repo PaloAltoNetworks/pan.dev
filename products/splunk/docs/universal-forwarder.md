@@ -22,21 +22,21 @@ Add the following lines to the `/etc/syslog-ng/syslog-ng.conf` file. This exampl
 
 Under "Sources" add a source in syslog-ng to listen for logs on a port. This example uses port UDP 514:
 
-    source s_udp514 \{ 
+    source s_udp514 { 
         network(
             transport("udp")
             port(514)
             flags(no-parse)
         );
-    \};
+    };
 
 Under "Destinations" specify a .log file destination:
 
-    destination d_udp514 \{ file("/YOURPATH/udp514.log" template("$\{MSG\}\n")); \};
+    destination d_udp514 { file("/YOURPATH/udp514.log" template("${MSG}\n")); };
 
 Under "Log paths" specify the path of the log:
 
-    log \{ source(s_udp514); destination(d_udp514); \};
+    log { source(s_udp514); destination(d_udp514); };
 
 Save `syslog-ng.conf` and restart syslog-ng:
 
