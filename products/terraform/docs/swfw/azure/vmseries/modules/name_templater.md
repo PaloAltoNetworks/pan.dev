@@ -34,28 +34,23 @@ This module generates a string template that can be used with Terraform's `forma
 A simple module invocation might look like the following:
 
 ```hcl
-<<<<<<< HEAD
 module "name_templates" {
   source = "PaloAltoNetworks/swfw-modules/azurerm//modules/name_templater"
-=======
-module "name_templates" \{
-  source = "../../modules/name_templater"
->>>>>>> 940c9e38 (first pass at fixing all mdx compilation/syntax errors)
 
   resource_type = "vnet"
-  name_template = \{
+  name_template = {
     delimiter = "-"
     parts = [
-      \{ prefix = null \},
-      \{ bu = "rnd" \},
-      \{ randomize = "__random__" \},
-      \{ env = "prd" \},
-      \{ name = "%s" \},
-      \{ abbreviation = "__default__" \},
+      { prefix = null },
+      { bu = "rnd" },
+      { randomize = "__random__" },
+      { env = "prd" },
+      { name = "%s" },
+      { abbreviation = "__default__" },
     ]
-  \}
+  }
   name_prefix   = "a_prefix"
-\}
+}
 ```
 
 The value the module will output for such invocation would be `"a_prefix-rnd-crediblefrog-prd-%s-vnet"`.
@@ -96,7 +91,6 @@ Following the values above the actual resource name would be `"a_prefix-rnd-cred
 
 ### Required Inputs
 
-<<<<<<< HEAD
 Name | Type | Description
 --- | --- | ---
 [`resource_type`](#resource_type) | `string` | A type of resource for which the name template will be created.
@@ -108,14 +102,6 @@ Name | Type | Description
 Name | Type | Description
 --- | --- | ---
 [`abbreviations`](#abbreviations) | `map` | Map of abbreviations used for resources (placed in place of "__default__").
-=======
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_resource_type"></a> [resource\_type](#input\_resource\_type) | A type of resource for which the name template will be created. This should follow the abbreviations resource naming standard. | `string` | n/a | yes |
-| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix used in names for the resources. | `string` | n/a | yes |
-| <a name="input_name_template"></a> [name\_template](#input\_name\_template) | A name template definition.<br /><br />Consist of two elements:<br /><br />- `parts` - a list of elements that will form the template name<br />- `delimiter` - a string that will be used to separate the elements.<br /><br />There are couple of rules to be followed:<br /><br />- the order **DOES** matter<br />- `parts` is a list of single element maps<br />- keys in `parts` elements will be dropped, they are only informational, only values will be used<br />- value for the `prefix` key will be replaced with the `var.name_prefix` value<br />- a value of `__default__` will be replaced with an abbreviation defined in the `var.abbrevations` and matching `var.resource_type`.<br />- since this module generates template name do **REMEMBER** to include a part with `%s` value <br /><br />Example:<pre>default = \{<br />  default = \{<br />    delimiter = "-"<br />    parts = [<br />      \{ prefix = null \},<br />      \{ bu = "rnd" \},<br />      \{ env = "prd" \},<br />      \{ name = "%s" \},<br />      \{ abbreviation = "\_\_default\_\_" \},<br />    ]<br />  \}<br />  storage = \{<br />    delimiter = ""<br />    parts = [<br />      \{ prefix = null \},<br />      \{ org = "palo" \},<br />      \{ env = "prd" \},<br />      \{ name = "%s" \},<br />    ]<br />  \}<br />\}</pre> | <pre>object(\{<br />    delimiter = string<br />    parts     = list(map(string))<br />  \})</pre> | n/a | yes |
-| <a name="input_abbreviations"></a> [abbreviations](#input\_abbreviations) | Map of abbreviations used for resources (placed in place of "\_\_default\_\_").<br /><br />These abbreviations are based on [Microsoft suggestions](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations). | `map(string)` | <pre>\{<br />  "application\_gw": "agw",<br />  "application\_insights": "appi",<br />  "availability\_set": "avail",<br />  "bastion": "bas",<br />  "data\_disk": "disk",<br />  "file\_share": "share",<br />  "load\_balancer": "lb",<br />  "log\_analytics\_workspace": "log",<br />  "managed\_identity": "id",<br />  "nat\_gw": "ng",<br />  "network\_interface": "nic",<br />  "nsg": "nsg",<br />  "nsg\_rule": "nsgsr",<br />  "os\_disk": "osdisk",<br />  "public\_ip": "pip",<br />  "public\_ip\_prefix": "ippre",<br />  "resource\_group": "rg",<br />  "route\_table": "rt",<br />  "service\_endpoint": "se",<br />  "storage\_account": "st",<br />  "subnet": "snet",<br />  "udr": "udr",<br />  "virtual\_machine": "vm",<br />  "virtual\_machine\_scale\_set": "vmss",<br />  "virtual\_network\_gateway": "vgw",<br />  "vnet": "vnet",<br />  "vnet\_peering": "peer"<br />\}</pre> | no |
->>>>>>> 940c9e38 (first pass at fixing all mdx compilation/syntax errors)
 
 ### Outputs
 

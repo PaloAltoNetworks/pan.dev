@@ -53,11 +53,11 @@ files
 # main.tf
 #
 
-provider "aws" \{
+provider "aws" {
   region      = var.bootstrap_region
-\}
+}
 
-module "panos-bootstrap" \{
+module "panos-bootstrap" {
   source = "../../modules/bootstrap"
 
   hostname           = "my-firewall"
@@ -67,7 +67,7 @@ module "panos-bootstrap" \{
   dgname             = "My Firewalls"
   vm-auth-key        = "supersecretauthkey"
   plugin-op-commands = "aws-gwlb-inspect:enable"
-\}
+}
 ```
 
 ## Instructions
@@ -134,12 +134,12 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_bootstrap_directories"></a> [bootstrap\_directories](#input\_bootstrap\_directories) | List of subdirectories to be created inside the bucket (whether or not they exist locally inside the `source_root_directory`). A hardcoded pan-os requirement. | `list(string)` | <pre>[<br />  "config/",<br />  "content/",<br />  "software/",<br />  "license/",<br />  "plugins/"<br />]</pre> | no |
-| <a name="input_bootstrap_options"></a> [bootstrap\_options](#input\_bootstrap\_options) | Object define bootstrap options used in the init-cfg.txt file.<br /><br />There are available bootstrap parameters:<br />- `hostname`                    - (`string`, optional) The hostname of the VM-series instance.<br />- `panorama-server`             - (`string`, optional) The FQDN or IP address of the primary Panorama server.<br />- `panorama-server-2`           - (`string`, optional) The FQDN or IP address of the secondary Panorama server.<br />- `tplname`                     - (`string`, optional) The Panorama template stack name.<br />- `dgname`                      - (`string`, optional) The Panorama device group name.<br />- `cgname`                      - (`string`, optional) The Panorama collector group name.<br />- `dns-primary`                 - (`string`, optional) The IP address of the primary DNS server.<br />- `dns-secondary`               - (`string`, optional) The IP address of the secondary DNS server.<br />- `auth-key`                    - (`string`, optional) VM-Series authentication key generated via plugin sw\_fw\_license.<br />- `vm-auth-key`                 - (`string`, optional) VM-Series authentication key generated on Panorama.<br />- `op-command-modes`            - (`string`, optional) Set jumbo-frame and/or mgmt-interface-swap.<br />- `plugin-op-commands`          - (`string`, optional) Set plugin-op-commands.<br />- `dhcp-send-hostname`          - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its hostname to the DHCP server.<br />- `dhcp-send-client-id`         - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its client ID to the DHCP server.<br />- `dhcp-accept-server-hostname` - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its hostname from the DHCP server.<br />- `dhcp-accept-server-domain`   - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its DNS server from the DHCP server. | `any` | <pre>\{<br />  "dhcp-accept-server-domain": "yes",<br />  "dhcp-accept-server-hostname": "yes",<br />  "dhcp-send-client-id": "yes",<br />  "dhcp-send-hostname": "yes"<br />\}</pre> | no |
+| <a name="input_bootstrap_options"></a> [bootstrap\_options](#input\_bootstrap\_options) | Object define bootstrap options used in the init-cfg.txt file.<br /><br />There are available bootstrap parameters:<br />- `hostname`                    - (`string`, optional) The hostname of the VM-series instance.<br />- `panorama-server`             - (`string`, optional) The FQDN or IP address of the primary Panorama server.<br />- `panorama-server-2`           - (`string`, optional) The FQDN or IP address of the secondary Panorama server.<br />- `tplname`                     - (`string`, optional) The Panorama template stack name.<br />- `dgname`                      - (`string`, optional) The Panorama device group name.<br />- `cgname`                      - (`string`, optional) The Panorama collector group name.<br />- `dns-primary`                 - (`string`, optional) The IP address of the primary DNS server.<br />- `dns-secondary`               - (`string`, optional) The IP address of the secondary DNS server.<br />- `auth-key`                    - (`string`, optional) VM-Series authentication key generated via plugin sw\_fw\_license.<br />- `vm-auth-key`                 - (`string`, optional) VM-Series authentication key generated on Panorama.<br />- `op-command-modes`            - (`string`, optional) Set jumbo-frame and/or mgmt-interface-swap.<br />- `plugin-op-commands`          - (`string`, optional) Set plugin-op-commands.<br />- `dhcp-send-hostname`          - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its hostname to the DHCP server.<br />- `dhcp-send-client-id`         - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall sends its client ID to the DHCP server.<br />- `dhcp-accept-server-hostname` - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its hostname from the DHCP server.<br />- `dhcp-accept-server-domain`   - (`string`, optional) The DHCP server determines a value of yes or no. If yes, the firewall accepts its DNS server from the DHCP server. | `any` | <pre>{<br />  "dhcp-accept-server-domain": "yes",<br />  "dhcp-accept-server-hostname": "yes",<br />  "dhcp-send-client-id": "yes",<br />  "dhcp-send-hostname": "yes"<br />}</pre> | no |
 | <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | Name of a bucket to reuse or create (depending on `create_bucket` value). In the latter case - if empty, the name will be auto-generated. | `string` | `""` | no |
 | <a name="input_create_bucket"></a> [create\_bucket](#input\_create\_bucket) | If true, a new bucket will be created. When false, name of existing bucket to use has to be provided in `bucket_name` variable. | `bool` | `true` | no |
 | <a name="input_create_iam_role_policy"></a> [create\_iam\_role\_policy](#input\_create\_iam\_role\_policy) | If true, a new IAM role with policy will be created. When false, name of existing IAM role to use has to be provided in `iam_role_name` variable. | `bool` | `true` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Set to false to prevent Terraform from destroying a bucket with unknown objects or locked objects. | `bool` | `true` | no |
-| <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | Map of arbitrary tags to apply to all resources. | `map(any)` | `\{\}` | no |
+| <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | Map of arbitrary tags to apply to all resources. | `map(any)` | `{}` | no |
 | <a name="input_iam_instance_profile_name"></a> [iam\_instance\_profile\_name](#input\_iam\_instance\_profile\_name) | Name of the instance profile to create. If empty, name will be auto-generated. | `string` | `""` | no |
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Name of a IAM role to reuse or create (depending on `create_iam_role_policy` value). | `string` | `null` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | The prefix to use for bucket name, IAM role name, and IAM role policy name. It is allowed to use dash "-" as the last character. | `string` | `"bootstrap-"` | no |

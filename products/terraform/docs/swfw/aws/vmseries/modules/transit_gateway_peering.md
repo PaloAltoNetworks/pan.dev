@@ -31,26 +31,26 @@ The local side requires the provider entry named `aws`, the remote remote side r
 is owned by the local side, and the attachment acceptor is owned by the remote side.
 
 ```hcl2
-module transit_gateway_peering \{
+module transit_gateway_peering {
   source = "../../modules/transit_gateway_peering"
-  providers = \{
+  providers = {
     aws      = aws.east
     aws.remote = aws.west
-  \}
+  }
 
   local_tgw_route_table   = module.transit_gateway_east.route_tables["traffic_from_west"]
   remote_tgw_route_table  = module.transit_gateway_west.route_tables["traffic_from_east"]
-\}
+}
 
-provider "aws" \{
+provider "aws" {
   alias  = "east"
   region = "us-east-2"
-\}
+}
 
-provider "aws" \{
+provider "aws" {
   alias  = "west"
   region = "us-west-2"
-\}
+}
 ```
 
 The static routes are currently not handled by this module.
@@ -90,10 +90,10 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_local_attachment_tags"></a> [local\_attachment\_tags](#input\_local\_attachment\_tags) | AWS tags to assign to the Attachment object. The tags are only visible in the UI when logged on the local account, but not when logged on the remote peer account. Example: `\{ Name = "my-name" \}` | `map(string)` | `\{\}` | no |
-| <a name="input_local_tgw_route_table"></a> [local\_tgw\_route\_table](#input\_local\_tgw\_route\_table) | Local TGW's pre-existing route table which should handle the traffic coming from the remote TGW. In other words a route table associated to the peering in the local region. An object with two attributes, the `id` of the local route table and the `transit_gateway_id` of the local TGW:<pre>transit\_gateway\_route\_table = \{<br />  id                 = "tgw-rtb-1234"<br />  transit\_gateway\_id = "tgw-1234"<br />\}</pre> | <pre>object(\{<br />    id                 = string<br />    transit\_gateway\_id = string<br />  \})</pre> | n/a | yes |
-| <a name="input_remote_tgw_route_table"></a> [remote\_tgw\_route\_table](#input\_remote\_tgw\_route\_table) | Analog to the `local_tgw_route_table` but on the remote end of the peering. | <pre>object(\{<br />    id                 = string<br />    transit\_gateway\_id = string<br />  \})</pre> | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | AWS tags to assign to all the created objects. Example: `\{ Team = "my-team" \}` | `map(string)` | `\{\}` | no |
+| <a name="input_local_attachment_tags"></a> [local\_attachment\_tags](#input\_local\_attachment\_tags) | AWS tags to assign to the Attachment object. The tags are only visible in the UI when logged on the local account, but not when logged on the remote peer account. Example: `{ Name = "my-name" }` | `map(string)` | `{}` | no |
+| <a name="input_local_tgw_route_table"></a> [local\_tgw\_route\_table](#input\_local\_tgw\_route\_table) | Local TGW's pre-existing route table which should handle the traffic coming from the remote TGW. In other words a route table associated to the peering in the local region. An object with two attributes, the `id` of the local route table and the `transit_gateway_id` of the local TGW:<pre>transit\_gateway\_route\_table = {<br />  id                 = "tgw-rtb-1234"<br />  transit\_gateway\_id = "tgw-1234"<br />}</pre> | <pre>object({<br />    id                 = string<br />    transit\_gateway\_id = string<br />  })</pre> | n/a | yes |
+| <a name="input_remote_tgw_route_table"></a> [remote\_tgw\_route\_table](#input\_remote\_tgw\_route\_table) | Analog to the `local_tgw_route_table` but on the remote end of the peering. | <pre>object({<br />    id                 = string<br />    transit\_gateway\_id = string<br />  })</pre> | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | AWS tags to assign to all the created objects. Example: `{ Team = "my-team" }` | `map(string)` | `{}` | no |
 
 ### Outputs
 
