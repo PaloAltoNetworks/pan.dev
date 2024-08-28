@@ -38,6 +38,18 @@ module.exports = {
         require("./api/code/sidebar"),
       ],
     },
+    {
+      type: "category",
+      label: "Data Security Posture Management",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/dspm/dspm-api",
+        "prisma-cloud/api/dspm/api-urls",
+        "prisma-cloud/api/dspm/get-api-key",
+        "prisma-cloud/api/dspm/getting-started",
+         require("./api/cspm/sidebar"),
+      ],
+    },
   ],
   clouddocs: [
     "prisma-cloud/docs/home",
