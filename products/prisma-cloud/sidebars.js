@@ -47,7 +47,7 @@ module.exports = {
         "prisma-cloud/api/dspm/api-urls",
         "prisma-cloud/api/dspm/get-api-key",
         "prisma-cloud/api/dspm/getting-started",
-         require("./api/cspm/sidebar"),
+         require("./api/dspm/sidebar"),
       ],
     },
   ],
