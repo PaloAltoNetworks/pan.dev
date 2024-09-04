@@ -1,7 +1,7 @@
 ---
 id: remote-networks
-title: Prisma Access Remote Networks API
-sidebar_label: Remote Networks API
+title: Prisma Access Configuration Orchestration API
+sidebar_label: Configuration Orchestration API
 slug: /sase/api/remote-networks
 keywords:
   - SASE
