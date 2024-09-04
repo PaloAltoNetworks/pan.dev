@@ -94,12 +94,6 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Application Monitoring",
-      collapsed: true,
-      items: ["sase/docs/application-monitor/application-monitor"],
-    },
-    {
-      type: "category",
       label: "Autonomous DEM",
       collapsed: true,
       items: [
@@ -299,10 +293,6 @@ module.exports = {
   sasemonitor: [
     "sase/api/mt-monitor/msp-api",
     require("./api/mt-monitor/sidebar"),
-  ],
-  saseapplicationmonitor: [
-    "sase/api/application-monitor/application-monitor",
-    require("./api/application-monitor/sidebar"),
   ],
   sasemtnotify: [
     "sase/api/mt-notifications/notifications-api",
