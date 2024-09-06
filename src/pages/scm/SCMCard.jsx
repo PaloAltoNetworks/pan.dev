@@ -30,7 +30,7 @@ function SCMCard({ label, description, docs, colorclass }) {
   }
 
   return (
-    <div className={clsx("featured-card-container", colorclass)}>
+    <div className={clsx("featured-card-container scm", colorclass)}>
       <div className="featured-card-content">
         <h2 className="featured-card-content__label">{label}</h2>
         <div className="featured-card-content__section-divider" />

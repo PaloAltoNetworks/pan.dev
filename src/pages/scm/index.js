@@ -1,12 +1,12 @@
 import React from "react";
 // components
-import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
 import Layout from "@theme/Layout";
 import SCMCard from "./SCMCard";
 import "./scm.scss";
 export default function SCMLandingPage() {
   const heroHeader = "Strata Cloud Manager";
-  const heroDescription = "Strata Cloud Manager description";
+  const heroDescription =
+    "Strata Cloud Manager offers a suite of cloud-delivered products that provide network configuration and network security services. This suite of software offers network security for an enterprise's users, no matter where they might be physically located, be it in the office or from a remote location.";
   const scmCards = [
     {
       label: "Developer's Guide",
@@ -138,17 +138,20 @@ export default function SCMLandingPage() {
         <h1>{heroHeader}</h1>
         <p>{heroDescription}</p>
       </section>
-      <div className="scm-cards-container container">
-        {scmCards.map((card, i) => (
-          <SCMCard
-            key={i}
-            description={card.description}
-            label={card.label}
-            docs={card.docs}
-            colorclass="scm"
-          />
-        ))}
-      </div>
+      <div className="spacer" />
+      <section className="scm-bg">
+        <div className="scm-cards-container container">
+          {scmCards.map((card, i) => (
+            <SCMCard
+              key={i}
+              description={card.description}
+              label={card.label}
+              docs={card.docs}
+              colorclass="scm"
+            />
+          ))}
+        </div>
+      </section>
       {/* <UseCases
         header={TERRAFORM_USE_CASES_CONTENT.header}
         subheader={TERRAFORM_USE_CASES_CONTENT.subheader}
