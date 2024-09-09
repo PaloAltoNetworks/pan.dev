@@ -28,7 +28,7 @@ perform aggregated monitoring queries for the following resources:
   Prisma Access tenants for license quotas, setup status, and utilization.
 - [Tenant Resources API](/sase/api/mt-monitor/tenant-resources-api/): list all Prisma Access tenants in
   the hierarchy.
-- [Application Monitoring Resource API] (/sase/api/mt-monitor/application-monitoring-api/): As part of Application Monitoring support for MSP , we are providing public APIs which can be integrated with MSP UI as well as use by end users. 
+- [Application Monitoring Resource API](/sase/api/mt-monitor/): Application Monitoring support for MSP includes public APIs that seamlessly integrate with the MSP UI and are available for use by end users.
 
 
 The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's
