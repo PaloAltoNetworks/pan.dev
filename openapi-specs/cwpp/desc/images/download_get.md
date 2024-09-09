@@ -10,6 +10,7 @@ Consider the following available options to retrieve when you use the `fields` q
 - hosts
 - repoTag.tag
 
+
 ### cURL Request
 
 Refer to the following cURL command that generates a CSV file containing the scan reports:

@@ -1,8 +1,8 @@
 Gets the Cloud Controller Addresses of scanned Tanzu Application Service (TAS) droplets.\n 
 
-> _**Note:**_ The API rate limit for this endpoint is 30 requests per 30 seconds. 
-You get an HTTP error response 429 if the limit exceeds.
-
+> _**Note:**_ 
+    * The API rate limit for this endpoint is 30 requests per 30 seconds. You get an HTTP error response 429 if the limit exceeds.
+    * The query parameters `issueType` is not supported for this API endpoint.
 
 ### cURL Request
 

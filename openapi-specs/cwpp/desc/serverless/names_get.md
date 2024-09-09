@@ -1,3 +1,7 @@
+Retrieves a list of names of all Serverless resources monitored by Prisma Cloud Compute.
+
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
+
 The following curl command uses basic auth to retrieve a list of names of all Serverless resources monitored by Prisma Cloud Compute:
 
 ```bash
