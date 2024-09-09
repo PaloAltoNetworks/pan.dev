@@ -1,5 +1,7 @@
 Returns an array of strings containing image names.
 
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
+
 ### cURL Request
 
 Refer to the following example cURL command:
