@@ -15,13 +15,31 @@ module.exports = {
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`32-07`),
+      value: versionCrumb(`33-00`),
     },
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
     "compute/api/set-up-console",
     "compute/api/stable-endpoints",
     require("./api/sidebar"),
+  ],
+  compute_3207: [
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionSelector(computeVersions),
+      className: "version-button",
+    },
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionCrumb(`32-07`),
+    },
+    "compute/api/32-07/compute-api-reference-home",
+    "compute/api/32-07/access-api-self-hosted",
+    "compute/api/32-07/set-up-console",
+    "compute/api/32-07/stable-endpoints",
+    require("./api/32-07/sidebar"),
   ],
   compute_3102: [
     {
@@ -40,24 +58,6 @@ module.exports = {
     "compute/api/31-02/set-up-console",
     "compute/api/31-02/stable-endpoints",
     require("./api/31-02/sidebar"),
-  ],
-  compute_3003: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(computeVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`30-03`),
-    },
-    "compute/api/30-03/compute-api-reference-home",
-    "compute/api/30-03/access-api-self-hosted",
-    "compute/api/30-03/set-up-console",
-    "compute/api/30-03/stable-endpoints",
-    require("./api/30-03/sidebar"),
   ],
   compute_3203: [
     {

@@ -1,0 +1,1 @@
+Adds vulnerability data for the given host.

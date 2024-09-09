@@ -13,7 +13,8 @@ $ curl -k \
  '{
    "orchestration": "container",
    "consoleAddr": "servo-vmware71",
-   "namespace": "twistlock"
+   "namespace": "twistlock",
+   "containerRuntime": "docker"
   }' \
   "https://<CONSOLE>/api/v<VERSION>/defenders/daemonset.yaml"
 ```
