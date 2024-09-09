@@ -1,5 +1,6 @@
 Returns an array of strings containing VM image names.
 
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
 
 ### cURL Request
 

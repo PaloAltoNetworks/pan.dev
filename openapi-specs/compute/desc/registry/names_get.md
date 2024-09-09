@@ -1,5 +1,7 @@
 Retrieves a list of image names from current scanned registry images. The base `/api/v1/registry` endpoint takes repositories listed in this response as the `names` query.
 
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
+
 ## cURL Request
 
 Refer to the following example cURL command that retrieves a list of image names from your scanned registry images:
