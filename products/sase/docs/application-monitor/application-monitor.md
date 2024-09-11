@@ -1,23 +1,21 @@
 ---
-id: mt-monitor
-title: Aggregate Monitoring APIs
-description: Aggregate Monitoring APIs
-hide_title: true
-slug: /sase/docs/mt-monitor
-hide_table_of_contents: false
+id: application-monitor
+title: Application Monitoring APIs
+description: Application Monitoring APIs
+slug: /sase/docs/application-monitor
 keywords:
   - sase
 ---
 
-# Welcome to the Aggregate Monitoring APIs
+# Welcome to the Application Monitoring APIs
 
-Welcome to the Aggregate Monitoring APIs. These APIs are available to customers that utilize Cloud
+Welcome to the Application Monitoring APIs. These APIs are available to customers that utilize Cloud
 Management for service onboarding, configuration, and operations.
 
 After you [create a tenant service group](/sase/docs/tenant-service-groups),
 [create a service account](/sase/docs/service-accounts),
 and [obtain an access token](/sase/docs/access-tokens),
-you can use the [Aggregate Monitoring API Reference](/sase/api/mt-monitor) to discover how to
+you can use the [Application Monitoring API Reference](/sase/api/mt-monitor) to discover how to
 perform aggregated monitoring queries for the following resources:
 
 - [Data Resource API](/sase/api/mt-monitor/data-resource-api/): retrieve aggregated summaries and counts
@@ -28,8 +26,6 @@ perform aggregated monitoring queries for the following resources:
   Prisma Access tenants for license quotas, setup status, and utilization.
 - [Tenant Resources API](/sase/api/mt-monitor/tenant-resources-api/): list all Prisma Access tenants in
   the hierarchy.
-- [Application Monitoring Resource API](/sase/api/mt-monitor/): Application Monitoring support for MSP includes public APIs that seamlessly integrate with the MSP UI and are available for use by end users.
-
 
 The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's
 [Multitentant Portal user interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platform/monitor-tenants).
