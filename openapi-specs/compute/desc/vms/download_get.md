@@ -1,6 +1,8 @@
 Returns all VM image scan reports in CSV format.
 
-**Note**: This endpoint maps to the table in **Monitor > Vulnerabilities > Hosts > VM images > CSV** in the Prisma Cloud Compute.
+**Note**: 
+  * This endpoint maps to the table in **Monitor > Vulnerabilities > Hosts > VM images > CSV** in the Prisma Cloud Compute.
+  * The query parameters `issueType` is not supported for this API endpoint.
 
 ### cURL Request
 

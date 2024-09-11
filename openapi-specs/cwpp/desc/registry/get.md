@@ -1,11 +1,6 @@
 Retrieves registry image scan reports.
 
-> _**Note:**_ The API rate limit for this endpoint is 30 requests per 30 seconds.
-You get an HTTP error response 429 if the limit exceeds.
-
 This endpoint maps to **Monitor > Compliance > Images > Registries** in the Console UI.
-
-> _**Note:**_ In the Console UI, the images can be found in **Monitor > Vulnerabilities > Images > Registries**.
 
 Consider the following available options to retrieve when you use the `fields` query parameter:
 - labels
@@ -14,6 +9,12 @@ Consider the following available options to retrieve when you use the `fields` q
 - clusters
 - hosts
 - repoTag.tag
+
+> **Note:** 
+  * In the Console UI, the images can be found in **Monitor > Vulnerabilities > Images > Registries**.
+  * The API rate limit for this endpoint is 30 requests per 30 seconds. You get an HTTP error response 429 if the limit exceeds.
+  * The query parameters `issueType` is not supported for this API endpoint.
+
 
 ### cURL Request
 
