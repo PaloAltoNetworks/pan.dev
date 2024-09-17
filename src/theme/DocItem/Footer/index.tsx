@@ -1,10 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import {
-  useDoc,
-  type DocContextValue,
-} from "@docusaurus/theme-common/internal";
+import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import EditThisPage from "@theme/EditThisPage";
 import TagsListInline, {
   type Props as TagsListInlineProps,

@@ -1,10 +1,12 @@
+import Mermaid from "@theme/Mermaid";
+
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+let baseUrl
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
     baseUrl = "/";
@@ -28,7 +30,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
-  markdown: { format: "detect" },
+  markdown: { format: "detect", mermaid: true },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
@@ -603,9 +605,6 @@ const config = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  markdown: {
-    mermaid: true,
-  },
   themes: ["docusaurus-theme-openapi-docs", "@docusaurus/theme-mermaid"],
   presets: [
     [
@@ -872,7 +871,7 @@ const config = {
         id: "default",
         routeBasePath: "/",
         path: "products",
-        sidebarPath: "./sidebars.js",
+        sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
@@ -929,7 +928,7 @@ const config = {
 Takes in list of products to filter based on directory, outputs list of globby include for the doc plugin
 */
 function docsPluginInclude(filters) {
-  include = [];
+  let include = [] as any;
   filters.forEach((product) => {
     let product_include = product + "/**/*.{md,mdx}";
     include.push(product_include);
@@ -941,7 +940,7 @@ async function createConfig() {
   let filters =
     process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
   if (filters) {
-    config.plugins[4][1].include = docsPluginInclude(filters);
+    config.plugins[4][1]["include"] = docsPluginInclude(filters);
   }
   return config;
 }
