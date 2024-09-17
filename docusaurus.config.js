@@ -28,6 +28,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
+  markdown: { format: "detect" },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
@@ -261,7 +262,7 @@ const config = {
                   ],
                 },
                 {
-                  label: "Cortex Data Lake",
+                  label: "Strata Logging Service",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -433,13 +434,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/adem/autonomous-dem-api",
-                      label: "Autonomous DEM",
+                      to: "sase/api/mt-interconnect",
+                      label: "Multitenant Interconnect",
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
-                      label: "Prisma Access Insights",
+                      to: "access/api/adem/autonomous-dem-api",
+                      label: "Autonomous DEM",
                       icon: "api-doc",
                     },
                     {
@@ -484,6 +485,11 @@ const config = {
                       icon: "doc",
                     },
                     {
+                      label: "Get Started 3.0",
+                      to: "access/docs/insights/getting_started-30",
+                      icon: "doc",
+                    },
+                    {
                       label: "API FAQs",
                       to: "access/docs/insights/pai-faqs",
                       icon: "doc",
@@ -496,8 +502,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights",
+                      to: "access/api/insights/2.0",
                       label: "Prisma Access Insights 2.0",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights 3.0",
                       icon: "api-doc",
                     },
                   ],
@@ -650,13 +661,19 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           insights: {
-            specPath: "openapi-specs/access/insights/2.0",
+            specPath: "openapi-specs/access/insights/3.0",
             outputDir: "products/access/api/insights",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "2.0",
-            label: "v2.0",
+            version: "3.0",
+            label: "v3.0",
             baseUrl: "/access/api/insights/",
             versions: {
+              "2.0": {
+                specPath: "openapi-specs/access/insights/2.0",
+                outputDir: "products/access/api/insights/2.0",
+                label: "v2.0",
+                baseUrl: "/access/api/insights/2.0",
+              },
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
@@ -674,6 +691,11 @@ const config = {
             specPath: "openapi-specs/sase/mt-notifications",
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          mtinterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect",
+            outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
@@ -754,6 +776,14 @@ const config = {
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          mssp: {
+            specPath: "openapi-specs/mssp",
+            outputDir: "products/prisma-cloud/api/mssp",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
+          },
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
@@ -778,32 +808,25 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.06",
-            label: "v32.06",
+            version: "33.00",
+            label: "v33.00",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
+              32.07: {
+                specPath: "openapi-specs/compute/32-07",
+                outputDir: "products/compute/api/32-07",
+                label: "v32.07",
+                baseUrl: "/compute/api/32-07/",
+              },
               31.02: {
                 specPath: "openapi-specs/compute/31-02",
                 outputDir: "products/compute/api/31-02",
                 label: "v31.02",
                 baseUrl: "/compute/api/31-02/",
               },
-              30.03: {
-                specPath: "openapi-specs/compute/30-03",
-                outputDir: "products/compute/api/30-03",
-                label: "v30.03",
-                baseUrl: "/compute/api/30-03/",
-              },
             },
-          },
-          compute_3202: {
-            specPath: "openapi-specs/compute/32-02",
-            outputDir: "products/compute/api/32-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-02/",
           },
           compute_3203: {
             specPath: "openapi-specs/compute/32-03",
@@ -825,6 +848,20 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-05/",
+          },
+          compute_3206: {
+            specPath: "openapi-specs/compute/32-06",
+            outputDir: "products/compute/api/32-06",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-06/",
+          },
+          compute_3207: {
+            specPath: "openapi-specs/compute/32-07",
+            outputDir: "products/compute/api/32-07",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-07/",
           },
         },
       },
@@ -861,11 +898,23 @@ const config = {
   trailingSlash: true,
   webpack: {
     jsLoader: (isServer) => ({
-      loader: require.resolve("esbuild-loader"),
+      loader: require.resolve("swc-loader"),
       options: {
-        loader: "tsx",
-        format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017",
+        jsc: {
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+          },
+          target: "es2019",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+        module: {
+          type: isServer ? "commonjs" : "es6",
+        },
       },
     }),
   },

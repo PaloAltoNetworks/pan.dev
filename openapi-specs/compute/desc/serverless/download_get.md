@@ -2,6 +2,8 @@ Downloads all serverless scan reports in CSV format.
 
 This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > Functions > Scanned functions** in the Console UI.
 
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
+
 ### cURL Request
 
 The following cURL command retrieves a list of all serverless resources monitored by Prisma Cloud Compute and saves the results in a CSV file called `serverless.csv`:
