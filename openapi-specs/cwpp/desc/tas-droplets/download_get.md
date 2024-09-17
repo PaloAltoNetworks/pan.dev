@@ -2,6 +2,8 @@ Downloads scan reports for Tanzu Application Service (TAS) droplets in CSV forma
 
 This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > VMware Tanzu blobstore** in the Console UI.
 
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
+
 ### cURL Request
 
 The following cURL command downloads all TAS droplets to a CSV file called `tas_droplets.csv`:
