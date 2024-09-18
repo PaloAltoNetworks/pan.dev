@@ -262,6 +262,18 @@ const config = {
                   ],
                 },
                 {
+                  label: "AI Runtime Security",
+                  to: "#",
+                  logoClass: "panos",
+                  apiDocs: [
+                    {
+                      to: "ai-runtime-security/scan/api/",
+                      label: "AI Runtime Security API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
                   label: "Strata Logging Service",
                   to: "#",
                   logoClass: "panos",
@@ -814,6 +826,11 @@ const config = {
           cloudngfw: {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          airuntimesecurity: {
+            specPath: "openapi-specs/ai-runtime-security/scan",
+            outputDir: "products/ai-runtime-security/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           iot: {
