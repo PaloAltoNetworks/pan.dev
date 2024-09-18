@@ -10,6 +10,10 @@
   },
   "tags": [
     {
+      "name": "AWS Logging Accounts",
+      "description": "To ingest the VPC flow logs from Amazon S3 buckets to Prisma Cloud, you need an AWS logging account. If you need flow logs ingestion, after onboarding your AWS account, you must onboard the logging account which has the S3 bucket storing VPC flow logs for the monitored account. The APIs in this category can be used to configure and manage these logging accounts."
+    },
+    {
       "name": "Cloud Accounts (AWS)",
       "description": "To monitor the resources on your AWS cloud infrastructure, you must first add your AWS accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between AWS and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (AWS) APIs enable you to add and manage AWS accounts on Prisma Cloud. For end to end workflow to onboarding an AWS account using APIs, see [Automate AWS Cloud Account Onboarding](/prisma-cloud/docs/cspm/aws-cloud-account-onboarding/).\n For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
     },
@@ -2262,6 +2266,53 @@
         "x-public": "true"
       }
     },
+    "/v1/cloudAccounts/awsLoggingAccounts/{accountId}": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account By ID",
+        "description": "Get details of a logging account by ID.",
+        "operationId": "getLoggingArchiveAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved account",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoggingArchiveAccountModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
     "/v1/cloudAccounts/awsLoggingAccounts/{accountId}/buckets/{bucketName}": {
       "delete": {
         "tags": [
@@ -2358,6 +2409,45 @@
           }
         ],
         "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Regenerate CFT for New RoleName",
+        "description": "Regenerate a new CFT for an existing logging account if roleName changes.",
+        "operationId": "generate-log-account-cft-role",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingAccountCFTRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "404": {
+            "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
       }
     },
     "/v1/cloudAccounts/awsLoggingAccounts/{accountId}/role/{roleName}/externalId": {
@@ -2433,6 +2523,41 @@
         "requestBody": {
           "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
         },
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "delete": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Delete a Logging Account by ID",
+        "description": "Delete an AWS logging account based on account ID.",
+        "operationId": "deleteLoggingAccount",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "No content"
@@ -2652,6 +2777,104 @@
           },
           "404": {
             "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{loggingAccountId}/permissionsStatus": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account Status - GET",
+        "description": "Get status of a logging account based on ID.",
+        "operationId": "getLoggingAccountStatus",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of logging account statuses",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter"
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account Status - POST",
+        "description": "Get detailed status of a logging account based on ID, name, roleRN or bucket name. ",
+        "operationId": "checkLoggingAccountStatusForProvidedAccount",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully completed status check for existing logging account",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudAccountStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter"
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Logging Account doesn't exist"
           }
         },
         "security": [
@@ -3853,57 +4076,9 @@
               "type": "string"
             }
           },
-          "features": {
-            "type": "array",
-            "description": "Features",
-            "uniqueItems": true,
-            "items": {
-              "$ref": "#/components/schemas/Feature"
-            }
-          },
-          "name": {
-            "type": "string",
-            "description": "Name"
-          },
-          "enabled": {
-            "type": "boolean",
-            "description": "Enabled"
-          },
-          "associatedAccountGroupsCount": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Associated Account Groups Count with this cloud account"
-          },
           "storageScanEnabled": {
             "type": "boolean",
             "description": "Storage Scan Enabled"
-          },
-          "autoConsent": {
-            "type": "string"
-          },
-          "storageUUID": {
-            "type": "string",
-            "description": "Storage UUID"
-          },
-          "cloudAccountOwner": {
-            "type": "string",
-            "description": "Cloud account owner"
-          },
-          "accountGroupInfos": {
-            "type": "array",
-            "description": "Account group details of groups associated with this account",
-            "items": {
-              "$ref": "#/components/schemas/AccountGroupInfo"
-            }
-          },
-          "cloudAccountOwnerCount": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Cloud account owner count",
-            "readOnly": true
-          },
-          "parentAccountId": {
-            "type": "string"
           },
           "deploymentType": {
             "type": "string",
@@ -3926,6 +4101,54 @@
               "ALIBABA_CLOUD_CHINA",
               "ALIBABA_CLOUD_FINANCE"
             ]
+          },
+          "accountGroupInfos": {
+            "type": "array",
+            "description": "Account group details of groups associated with this account",
+            "items": {
+              "$ref": "#/components/schemas/AccountGroupInfo"
+            }
+          },
+          "autoConsent": {
+            "type": "string"
+          },
+          "cloudAccountOwner": {
+            "type": "string",
+            "description": "Cloud account owner"
+          },
+          "cloudAccountOwnerCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Cloud account owner count",
+            "readOnly": true
+          },
+          "storageUUID": {
+            "type": "string",
+            "description": "Storage UUID"
+          },
+          "features": {
+            "type": "array",
+            "description": "Features",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enabled"
+          },
+          "associatedAccountGroupsCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Associated Account Groups Count with this cloud account"
+          },
+          "parentAccountId": {
+            "type": "string"
           },
           "accountId": {
             "type": "string",
@@ -4286,14 +4509,14 @@
             "type": "string",
             "readOnly": true
           },
+          "authenticationType": {
+            "type": "string",
+            "readOnly": true
+          },
           "cloudAccount": {
             "$ref": "#/components/schemas/GcpAccountViewModel"
           },
           "clientEmail": {
-            "type": "string",
-            "readOnly": true
-          },
-          "authenticationType": {
             "type": "string",
             "readOnly": true
           }
