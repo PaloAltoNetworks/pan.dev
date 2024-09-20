@@ -50,6 +50,10 @@ module.exports = {
     "access/api/insights/insights-api",
     require("./api/insights/sidebar"),
   ],
+  sasebrowsermgmt: [
+    "access/api/browser-mgmt/config-api",
+    require("./api/browser-mgmt/sidebar"),
+  ],
   saseprismaaccess: [
     "access/api/prisma-access-config/config-api",
     require("./api/prisma-access-config/sidebar"),
