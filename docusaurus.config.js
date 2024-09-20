@@ -438,8 +438,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/remote-networks",
-                      label: "Remote Networks",
+                      to: "sase/api/config-orch",
+                      label: "Configuration Orchestration",
                       icon: "api-doc",
                     },
                     {
@@ -690,9 +690,9 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          remotenetworks: {
-            specPath: "openapi-specs/sase/remote-networks",
-            outputDir: "products/sase/api/remote-networks",
+          configorch: {
+            specPath: "openapi-specs/sase/config-orch",
+            outputDir: "products/sase/api/config-orch",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
