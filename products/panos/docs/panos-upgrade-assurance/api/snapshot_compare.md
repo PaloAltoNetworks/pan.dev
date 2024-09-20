@@ -92,7 +92,8 @@ __Parameters__
     For the elements specified as
 
     * `str` - the element value is the name of the report (state area),
-    * `dict` - the element contains the report name (state area) as the key and report configuration as the element value.
+    * `dict` - the element contains the report name (state area) and the key value and report configuration as the
+        element value.
 
 __Raises__
 
@@ -193,15 +194,15 @@ def calculate_diff_on_dicts(
 
 The static method to calculate a difference between two dictionaries.
 
-By default dictionaries are compared by going down all nested levels. It is possible to configure which keys on each
-level should be compared (by default we compare all available keys). This is done using the `properties` parameter.
-It's a list of keys that can be compared or skipped on each level. For example, when comparing route tables snapshots are
-formatted like:
+By default dictionaries are compared by going down all nested levels, to the point where key-value pairs are just strings
+or numbers. It is possible to configure which keys from these pairs should be compared (by default we compare all
+available keys). This is done using the `properties` parameter. It's a list of the bottom most level keys. For example,
+when comparing route tables snapshots are formatted like:
 
 ```python showLineNumbers
 {
     "routes": {
-        "default_0.0.0.0/0_ethernet1/3_10.26.129.129": {
+        "default_0.0.0.0/0_ethernet1/3": {
             "virtual-router": "default",
             "destination": "0.0.0.0/0",
             "nexthop": "10.26.129.129",
@@ -216,9 +217,8 @@ formatted like:
 }
 ```
 
-The keys to process here can be:
+The bottom most level keys are:
 
-- `default_0.0.0.0/0_ethernet1/3_10.26.129.129`,
 - `virtual-router`,
 - `destination`,
 - `nexthop`,
@@ -241,22 +241,11 @@ the `added` key in the results.
 represented under the `changed` key in the results.
 
 This is a **recursive** method. When calculating changed values, if a value for the key is `dict`, we run the method
-again on that dictionary - we go down one level in the nested structure. We do that to a point where the value is one of
-`str`, `int` type or None. Therefore, when the final comparison results are presented, the `changed` key usually contains
-a nested results structure. This means it contains a dictionary with the `missing`, `added`, and `changed` keys.
+again on that dictionary - we go down one level in the nested structure. We do that to a point where the value is of the
+`str` type. Therefore, when the final comparison results are presented, the `changed` key usually contains a nested
+results structure. This means it contains a dictionary with the `missing`, `added`, and `changed` keys.
 Each comparison perspective contains the `passed` property that immediately informs if this comparison gave any results
 (`False`) or not (`True`).
-
-`properties` can be defined for any level of nested dictionaries which implies:
-
-- Allow comparison of specific parent dictionaries.
-- Skip specific parent dictionaries.
-- Allow comparison/exclusion of specific sub-dictionaries or keys only.
-- If given keys have parent-child relationship then all keys for a matching parent are compared.
-Meaning it doesn’t do an "AND" operation on the given properities for nested dictionaries.
-
-Also note that missing/added keys in parent dictionaries are not reported for comparison when specific keys
-are requested to be compared with the `properties` parameter.
 
 **Example**
 
@@ -387,7 +376,7 @@ To illustrate that, the `passed` flag added by this method is highlighted:
     },
     'missing': {
         'missing_keys': [
-            'default_0.0.0.0/0_ethernet1/3_10.26.129.129'
+            'default_0.0.0.0/0_ethernet1/3'
         ],
         'passed': False
     },
@@ -438,21 +427,21 @@ An example for the route tables, crafted in a way that almost each level fails:
 {
     "added": {
         "added_keys": [
-            "default_10.26.129.0/25_ethernet1/2_10.26.129.1",
-            "default_168.63.129.16/32_ethernet1/3_10.26.129.129"
+            "default_10.26.129.0/25_ethernet1/2",
+            "default_168.63.129.16/32_ethernet1/3"
         ],
         "passed": "False"
     },
     "missing": {
         "missing_keys": [
-            "default_0.0.0.0/0_ethernet1/3_10.26.129.129"
+            "default_0.0.0.0/0_ethernet1/3"
         ],
         "passed": "False"
     },
     "changed": {
         # highlight-start
         "changed_raw": {
-            "default_10.26.130.0/25_ethernet1/2_10.26.129.1": {
+            "default_10.26.130.0/25_ethernet1/2": {
                 "added": {
                     "added_keys": [],
                     "passed": "True"
