@@ -544,7 +544,7 @@ const config = {
                   docs: [
                     {
                       label: "Prisma SASE Service Status API",
-                      to: "sase/saseservicestatusapi",
+                      to: "sase/docs/saseservicestatusapi",
                       icon: "doc",
                     },
                   ],
@@ -604,7 +604,7 @@ const config = {
                   docs: [
                     {
                       label: "Service Status API",
-                      to: "cross-platform/servicestatusapi",
+                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
