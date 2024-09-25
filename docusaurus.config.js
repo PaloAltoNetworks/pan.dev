@@ -537,6 +537,18 @@ const config = {
                     },
                   ],
                 },
+                {
+                  label: "Prisma SASE Service Status",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SASE Service Status API",
+                      to: "sase/docs/saseservicestatusapi",
+                      icon: "doc",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -573,6 +585,26 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Cross-Platform",
+              to: "#",
+              colorclass: "cross-platform",
+              description:
+                "Learn about opportunities across Palo Alto Networks platforms.",
+              products: [
+                {
+                  label: "Service Status",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Service Status API",
+                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
