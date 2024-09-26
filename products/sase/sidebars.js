@@ -73,6 +73,12 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Prisma Access Browser",
+      collapsed: true,
+      items: ["access/docs/browser-mgmt/browser-mgmt"],
+    },
+    {
+      type: "category",
       label: "Prisma SD-WAN",
       collapsed: true,
       items: [

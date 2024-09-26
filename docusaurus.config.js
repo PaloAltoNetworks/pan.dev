@@ -414,6 +414,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
@@ -465,6 +470,25 @@ const config = {
                     {
                       to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Access Browser",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Browser Developer's Guide",
+                      to: "access/docs/browser-mgmt",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
                       icon: "api-doc",
                     },
                   ],
@@ -732,6 +756,11 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          broswermgmt: {
+            specPath: "openapi-specs/access/browser-mgmt",
+            outputDir: "products/access/api/browser-mgmt",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ztna: {
