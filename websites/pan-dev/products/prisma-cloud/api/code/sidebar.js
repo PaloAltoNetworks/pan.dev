@@ -1,0 +1,662 @@
+module.exports = [
+  {
+    type: "category",
+    label: "CI-CD Risks",
+    link: { type: "doc", id: "prisma-cloud/api/code/ci-cd-risks" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/pipeline-risks-get-all",
+        label: "Get All CI/CD Risks Summary",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/pipeline-risks-get-alerts-by-policy",
+        label: "Get CI/CD Risk Events",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/pipeline-risks-get-details-by-policy-get",
+        label: "Get CI/CD Risk Details",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/pipeline-risks-suppress-events",
+        label: "Suppress CI/CD Risk Events",
+        className: "api-method put",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/pipeline-risks-unsuppress-events",
+        label: "Unsuppress CI/CD Risk Events",
+        className: "api-method put",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "CheckovVersion",
+    link: { type: "doc", id: "prisma-cloud/api/code/checkov-version" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-checkov-version",
+        label: "Get Current Checkov Version",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "CodeFixes",
+    link: { type: "doc", id: "prisma-cloud/api/code/code-fixes" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/fix-checkov-errors",
+        label: "Fix Infrastructure as Code Configuration Errors",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Dashboard",
+    link: { type: "doc", id: "prisma-cloud/api/code/dashboard" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-common-errors-by-policy-data",
+        label: "Common Errors By Policy",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-errors-by-severity-data",
+        label: "Code Issues by Severity",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-iac-errors-by-category-data",
+        label: "IaC Errors by Category",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-data",
+        label: "Top Non-compliant Package Licenses",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-pr-issues-over-time-data",
+        label: "Pull Requests over Time",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-top-cvss-vulnerabilities-data",
+        label: "Top CVSS Score Vulnerabilities",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-dashboard-top-vulnerable-repositories-data",
+        label: "Top Repositories by Critical Error Count",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-vcs-scan-issues-over-time-data",
+        label: "Code issues over time",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Development Pipeline",
+    link: { type: "doc", id: "prisma-cloud/api/code/development-pipeline" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-code-review-data",
+        label: "Get Code Review Runs Data",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-projects-data",
+        label: "Get Integrated VCS Repositories Metadata",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Errors",
+    link: { type: "doc", id: "prisma-cloud/api/code/errors" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-errors-in-file",
+        label: "Lists All Errors in File Path",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-errors-files",
+        label: "Lists Files with Errors",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-errors-in-files",
+        label: "Get File Metadata by UUID",
+        className: "menu__list-item--deprecated api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-fixed-code",
+        label: "Get Fixed Resource Code using the selectedFix",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-git-blame-authors",
+        label: "List Git Authors of a Repository",
+        className: "menu__list-item--deprecated api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/submit-actions",
+        label: "Submit Remediation and Suppression Actions",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/supply-chain-fix",
+        label: "Submit Remediation Operations from Supply Chain Screen",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-periodic-findings",
+        label: "Get Code Issues from Periodic Scans",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-cicd-findings",
+        label: "Get Code Issues from Pull Requests Scans and CICD Runs",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-blame-authors",
+        label: "Get Repositories Blame Authors",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Packages",
+    link: { type: "doc", id: "prisma-cloud/api/code/packages" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-packages-by-file",
+        label: "Get Packages Related to a File",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-direct-sub-dependencies-by-uuid",
+        label: "Get Direct Sub-dependency Packages by Source Package",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-package-by-uuid",
+        label: "Get Package",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/search-packages",
+        label: "Search Packages",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-cves-by-package-uuid",
+        label: "Get CVEs by Package UUID",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "PackagesAlerts",
+    link: { type: "doc", id: "prisma-cloud/api/code/packages-alerts" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-affected-resources-by-licenses",
+        label: "Alert Items List for Licenses",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-affected-resources-by-packages",
+        label: "Alert Items List for Packages",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-affected-resources-by-policy",
+        label: "Alert Items List for Policies",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Policies",
+    link: { type: "doc", id: "prisma-cloud/api/code/policies" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/validate-custom-policy",
+        label: "Validate Policies - Code-based",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/save-policy",
+        label: "Save New Policy",
+        className: "menu__list-item--deprecated api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-custom-policies-table",
+        label: "Get Custom Policies Table Data",
+        className: "menu__list-item--deprecated api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/update-policy",
+        label: "Update Policy",
+        className: "menu__list-item--deprecated api-method put",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/remove-policy",
+        label: "Delete Policy",
+        className: "menu__list-item--deprecated api-method delete",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/policy-preview",
+        label: "Policy Preview",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/clone-policy",
+        label: "Policy Clone",
+        className: "menu__list-item--deprecated api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Remediations",
+    link: { type: "doc", id: "prisma-cloud/api/code/remediations" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/post-remediations-build-time",
+        label: "Remediation for Build time",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-remediation-fix-code",
+        label: "Get Remediation Fix Code",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-remediation-base-file",
+        label: "Get File for Remediation",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Repositories",
+    link: { type: "doc", id: "prisma-cloud/api/code/repositories" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-repositories",
+        label: "List Repository List",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/update-repositories",
+        label: "Integrate Multiple Repositories",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-branches",
+        label: "Get Repository Branches with CICD Runs",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-query-repositories",
+        label: "Get Repository Name to UUID Mapping of Requested UUIDs",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/search-repositories",
+        label: "Search Repositories",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-vcs-repository-page",
+        label: "Get Repositories Page",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-vcs-repository",
+        label: "Get repositories (repositories page)",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-vcs-repository-page",
+        label: "get repositories page",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Repository",
+    link: { type: "doc", id: "prisma-cloud/api/code/repository" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-repository",
+        label: "Single Repository List",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Repository Importance Score",
+    link: {
+      type: "doc",
+      id: "prisma-cloud/api/code/repository-importance-score",
+    },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-repositories-importance-score",
+        label: "Get repositories importance score",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/set-repository-importance-score",
+        label: "Set repository importance score",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Rules",
+    link: { type: "doc", id: "prisma-cloud/api/code/rules" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-scheme-for-account",
+        label: "Get Scheme for Specific Account",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-scheme-for-customer",
+        label: "Get All Enforcement Rules",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/add-rule",
+        label: "Create New Exception for Enforcement Rule",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/edit-rule",
+        label: "Update Enforcement Rule",
+        className: "api-method put",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/delete-rule",
+        label: "Delete Exception",
+        className: "api-method delete",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-accounts",
+        label: "Get All Repositories",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "SBOM",
+    link: { type: "doc", id: "prisma-cloud/api/code/sbom" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-bom-report",
+        label: "Get BOM Report",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/sbom-dependencies",
+        label: "Get Dependencies",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Scans",
+    link: { type: "doc", id: "prisma-cloud/api/code/scans" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/scan-integrations",
+        label: "Trigger a Scan",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Supply Chain",
+    link: { type: "doc", id: "prisma-cloud/api/code/supply-chain" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-supply-chain-nodes",
+        label: "Get Nodes",
+        className: "api-method post",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Suppressions",
+    link: { type: "doc", id: "prisma-cloud/api/code/suppressions" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-suppressions",
+        label: "List Suppression Rules",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/create-suppression",
+        label: "Create New Suppression by Policy ID",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/update-suppression",
+        label: "Update Suppression by Policy ID and Suppression ID",
+        className: "api-method put",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/delete-suppression",
+        label: "Delete Suppression by Suppression ID and Violation ID",
+        className: "api-method delete",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-suppressions-justifications",
+        label:
+          "Get Suppressions Justifications by Policy ID and Query Accounts",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Tag Rules",
+    link: { type: "doc", id: "prisma-cloud/api/code/tag-rules" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-tags",
+        label: "Get All Tags",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/save-tag",
+        label: "Create Custom Tag Rule",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-tag",
+        label: "Get Tag Rule by ID",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/update-tag",
+        label: "Update Tag Rule",
+        className: "api-method put",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/delete-tag",
+        label: "Delete Tag Rule",
+        className: "api-method delete",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-affected-resources",
+        label: "Get List of Resources Affected by Tag Rule",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-tag-ootb-rules",
+        label: "Returns The tag rule by OOTB ID",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "Technologies",
+    link: { type: "doc", id: "prisma-cloud/api/code/technologies" },
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-apps",
+        label: "Get VCS 3rd Party Apps",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-webhooks",
+        label: "Get VCS 3rd Party Webhooks",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/assets-inventory-get-all",
+        label: "List Technologies",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-ci-inventory",
+        label: "Get Pipeline Tools",
+        className: "api-method get",
+      },
+    ],
+  },
+  {
+    type: "category",
+    label: "ciderRepository",
+    items: [
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/get-vcs-repository-count",
+        label: "get the requested repositories count",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/in-cider-filter-data",
+        label: "get all the relevant filters fields for repository",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "prisma-cloud/api/code/repos-filter",
+        label: "Get all vcs repositories that exist in the db",
+        className: "api-method get",
+      },
+    ],
+  },
+];

@@ -1,0 +1,367 @@
+components:
+  schemas:
+    ApiError:
+      properties:
+        errorCode: { description: Server error code, type: integer }
+        errorMessage:
+          { description: A message describing the error code, type: string }
+      required: [errorMessage]
+      type: object
+    LogTypes:
+      description: Profile logtype object
+      properties:
+        allColumns:
+          { description: "`True` sends all log fields. `False` sends a subset
+              of log fields.
+
+              ", example: false, type: boolean }
+        excludedColumns:
+          description:
+            "The specific log fields you do not want to send. Does nothing
+            if the same field is present in `includedColumns`.
+
+            "
+          items: { type: string }
+          type: array
+        filter:
+          {
+            description:
+              "The [filter query](https://docs.paloaltonetworks.com/cortex/cortex-data-lake/cortex-data-lake-getting-started/retrieve-log-records/about-queries)
+              used to send a subset of logs.
+
+              ",
+            example: "log_time = '2022-09-04T01:00:01.000Z' AND vsys != ''",
+            type: string,
+          }
+        includedColumns:
+          description:
+            "The specific log fields you want to send. Does nothing if
+            `allColumns` is `True`.
+
+            "
+          example: [log_time, vsys]
+          items: { type: string }
+          type: array
+        logtype:
+          { description: "The [log type](/cdl/logforwarding/docs/syslog_lf)
+              that you want to send.
+
+              ", example: firewall.traffic, type: string }
+      type: object
+    ProfileStatus:
+      description: Profile status
+      enum: [pending, inactive, active]
+      type: string
+    SyslogDestination:
+      description: "Profile name, output, and syslog receiver information.
+
+        "
+      example: {}
+      properties:
+        displayName: { description: "Name of the profile.
+
+              ", type: string }
+        facility:
+          {
+            description:
+              "[Syslog facility value](/cdl/logforwarding/docs/syslog_lf)
+              as per [IETF standards](https://www.rfc-editor.org/rfc/rfc5424.html).
+
+              ",
+            type: string,
+          }
+        notification:
+          { description: "An email address to receive updates about log
+              transmission.
+
+              ", type: string }
+        outputDelimiter:
+          { description: "Character that separates log fields. Based
+              on log format.
+
+              ", type: string }
+        outputFormat:
+          description: "The format in which to send logs.
+
+            "
+          enum: [CSV, LEEF, CEF]
+          type: string
+        port: { description: "The port on which to send logs.
+
+              ", maximum: 65535, minimum: 0, type: integer }
+        profileToken:
+          { description: "A token used to uniquely identify your logs to
+              a cloud-based syslog service.
+
+              ", type: string }
+        server: { description: "IP address or FQDN of your syslog server.
+
+              ", type: string }
+      required:
+        [displayName, facility, outputDelimiter, outputFormat, port, server]
+      type: object
+    SyslogProfile:
+      properties:
+        destination: { $ref: "#/components/schemas/SyslogDestination" }
+        logtypes:
+          items: { $ref: "#/components/schemas/LogTypes" }
+          type: array
+      required: [destination, logtypes]
+      type: object
+    SyslogProfileDetail:
+      properties:
+        destination: { $ref: "#/components/schemas/SyslogDestination" }
+        logtypes:
+          items: { $ref: "#/components/schemas/LogTypes" }
+          type: array
+        profileId:
+          { example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string }
+        status: { $ref: "#/components/schemas/ProfileStatus" }
+      required: [profileId, destination, logtypes, status]
+      type: object
+  securitySchemes:
+    Bearer: { scheme: bearer, type: http }
+info:
+  contact: {}
+  description:
+    "To meet your long-term storage, reporting and monitoring, or legal
+    and compliance needs,
+
+    you can configure Cortex Data Lake to forward all logs or a subset of logs to
+    a syslog
+
+    receiver.
+
+    "
+  title: Syslog Profiles
+  version: "1.0"
+openapi: 3.0.0
+paths:
+  /logging-service/logforwarding/v1/syslog-profiles:
+    get:
+      description:
+        "Retrieve information about all existing syslog profiles, including
+        their profile IDs.
+
+        "
+      operationId: get-logging-service-logforwarding-v1-syslog-profiles
+      parameters:
+        - description: The status of the profiles to be returned.
+          in: query
+          name: status
+          schema:
+            items: { $ref: "#/components/schemas/ProfileStatus" }
+            type: array
+        - description: The maximum number of profiles to be returned.
+          in: query
+          name: resultSize
+          schema: { default: 100, type: integer }
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items: { $ref: "#/components/schemas/SyslogProfileDetail" }
+                type: array
+          description: Request successfully processed
+        "400":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Invalid input
+        "429":
+          content: {}
+          description: Too many request
+        "500":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: LogForwarding Service internal error
+        "503":
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+        - Bearer: []
+      summary: Get all syslog profiles
+      tags: [SyslogProfiles]
+    post:
+      description: Create a syslog profile object to send logs to a syslog server.
+      operationId: post-logging-service-logforwarding-v1-syslog-profiles
+      requestBody:
+        content:
+          "*/*":
+            schema: { $ref: "#/components/schemas/SyslogProfile" }
+        description: null
+        required: true
+      responses:
+        "201":
+          content:
+            "*/*":
+              schema:
+                { example: bd69764a-af85-4a66-8fb0-7df1a4317c65, type: string }
+          description: Returns profile id on successful request processing
+        "400":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Invalid input / failed connectivity check
+        "429":
+          content: {}
+          description: Too many request
+        "500":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: LogForwarding Service internal error
+        "503":
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+        - Bearer: []
+      summary: Create a syslog profile
+      tags: [SyslogProfiles]
+  /logging-service/logforwarding/v1/syslog-profiles/{profileId}:
+    delete:
+      description: Delete the syslog profile with the specified profile ID.
+      operationId: delete-logging-service-logforwarding-v1-syslog-profiles-profileid
+      parameters:
+        - description: "The ID of the profile you want to delete.
+
+            "
+          in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Request successfully processed }
+        "404":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Profile does not exists
+        "429":
+          content: {}
+          description: Too many request
+        "500":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: LogForwarding Service internal error
+        "503":
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+        - Bearer: []
+      summary: Delete syslog profile
+      tags: [SyslogProfiles]
+    get:
+      description:
+        "Retrieve the syslog profile that has the specified profile ID.
+        The response header
+
+        contains the etag that you need to update the syslog profile.
+
+        "
+      operationId: get-logging-service-logforwarding-v1-syslog-profiles-profileid
+      parameters:
+        - description: "The ID of the profile you want to retrieve.
+
+            "
+          in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SyslogProfileDetail" }
+          description: Request successfully processed
+          headers:
+            etag:
+              description: Tag for controlling concurrent updates
+              schema:
+                { example: ddd24f872b8d42f10afdcedc44ae334e, type: string }
+        "404":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Profile ID does not exists
+        "429":
+          content: {}
+          description: Too many request
+        "500":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: LogForwarding Service internal error
+        "503":
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+        - Bearer: []
+      summary: Get syslog profile
+      tags: [SyslogProfiles]
+    put:
+      description:
+        "Update a syslog profile using the etag obtained from retrieving
+        the syslog profile by
+
+        its profile ID. You can change only the destination and logtype fields. You
+        can not
+
+        change the profileType.
+
+        "
+      operationId: put-logging-service-logforwarding-v1-syslog-profiles-profileid
+      parameters:
+        - description: "The ID of the profile you want to update.
+
+            "
+          in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+        - description: "Tag required to update the profile.
+
+            "
+          in: header
+          name: etag
+          schema: { example: ddd24f872b8d42f10afdcedc44ae334e, type: string }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SyslogProfile" }
+        description: New profile value
+        required: true
+      responses:
+        "200": { description: Request successfully processed }
+        "400":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Invalid input
+        "404":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: Profile does not exists
+        "429":
+          content: {}
+          description: Too many request
+        "500":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+          description: LogForwarding Service internal error
+        "503":
+          content: {}
+          description: LogForwarding Service is not available
+      security:
+        - Bearer: []
+      summary: Update syslog profile
+      tags: [SyslogProfiles]
+servers:
+  - { url: "https://api.sase.paloaltonetworks.com" }
+tags:
+  - { name: SyslogProfiles }

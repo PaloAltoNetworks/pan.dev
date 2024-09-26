@@ -1,0 +1,352 @@
+components:
+  schemas:
+    Aggregate:
+      properties:
+        data:
+          description: "The details of the aggregate data.
+
+            "
+          items:
+            $ref: "#/components/schemas/AggregateData"
+          type: array
+        field:
+          description: Field
+          type: string
+        name:
+          description: "The name of the query response.
+
+            "
+          type: string
+        operator:
+          description: Operator
+          enum:
+            - max
+            - count
+            - min
+            - avg
+            - sum
+          type: string
+        statistic:
+          description: "QoS application aggregate statistics.
+
+            "
+          type: string
+        unit:
+          description: "The unit.
+
+            "
+          type: string
+    AggregateData:
+      properties:
+        value:
+          description: "Value of the aggregate data.
+
+            "
+          type: number
+        view:
+          description: "View the aggregate date.
+
+            "
+          type: object
+    BaseQuery:
+      properties:
+        aggregate:
+          $ref: "#/components/schemas/Aggregate"
+          description: "The aggregate number of queried elements.
+
+            "
+        dest_page:
+          description: "The destination page.
+
+            "
+          format: int32
+          type: integer
+        getDeleted:
+          description: "The number of queried elements deleted for a time frame.
+
+            "
+          type: boolean
+        group_by:
+          description: "Group the elements state for the query.
+
+            "
+          items:
+            description: Group By
+            type: string
+          type: array
+        id:
+          description: "List the element by ID.    \n"
+          type: string
+        last_query_ts:
+          description:
+            "Return the ID of a specified query in the current session.
+
+            "
+          format: int64
+          type: integer
+        limit:
+          description: "The query limit.
+
+            "
+          format: int32
+          type: integer
+        next_query:
+          description: "The  limit.
+
+            "
+          type: object
+        query_params:
+          type: object
+        retrieved_fields:
+          description: "Retrieve information from a field.
+
+            "
+          items:
+            description: Retrieved Fields
+            type: string
+          type: array
+        retrieved_fields_mask:
+          description: "List the fields to query.
+
+            "
+          type: boolean
+        sort_params:
+          type: object
+        total_count:
+          description: "The total number of query parameters.
+
+            "
+          format: int64
+          type: integer
+    Error:
+      properties:
+        _error:
+          items:
+            $ref: "#/components/schemas/ErrorResponse"
+          type: array
+    ErrorResponse:
+      properties:
+        code:
+          description: "The error code.
+
+            "
+          type: string
+        message:
+          description: "The error message.
+
+            "
+          type: string
+    SetBulkResponse:
+      properties:
+        count:
+          description: "The actual count.
+
+            "
+          format: int32
+          type: integer
+        id:
+          description: "The ID.
+
+            "
+          type: string
+        items:
+          description: "List items in the query.
+
+            "
+          items:
+            type: object
+          type: array
+        tenant_id:
+          description: "The tenant ID.
+
+            "
+          type: string
+        total_count:
+          description: "Total number.
+
+            "
+          format: int64
+          type: integer
+info:
+  contact: {}
+  description: List of APIs used to manage the bulk configuations query and metrics.
+  title: Bulk Operations
+  version: Latest
+openapi: 3.0.0
+paths:
+  /v2.0/api/tenants/{tenant_id}/elements/bulk_config_state/query:
+    post:
+      description:
+        Get the element configuration/state information for queried elements
+        from NB.
+      operationId: post-v2.0-api-tenants-tenant_id-elements-bulk_config_state-query
+      parameters:
+        - description: The tenant ID.
+          in: path
+          name: tenant_id
+          required: true
+          schema:
+            description: Tenant Id
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseQuery"
+        description: Query Details
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SetBulkResponse"
+                  - properties:
+                      items:
+                        items:
+                          type: object
+                        type: array
+                    type: object
+          description: Successful Operation
+        "400":
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                    - code: INVALID_TENANT_API_VERSION
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Bad Request
+      summary: Get Element State for Queried Elements from NB (v2.0)
+      tags:
+        - Bulk Operations
+  /v2.0/api/tenants/{tenant_id}/networks/bulk_config_state/query:
+    post:
+      description:
+        Get all the configurations/states information for a given network
+        from NB.
+      operationId: post-v2.0-api-tenants-tenant_id-networks-bulk_config_state-query
+      parameters:
+        - description: The tenant ID.
+          in: path
+          name: tenant_id
+          required: true
+          schema:
+            description: Tenant Id
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseQuery"
+        description: Query Details
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Successful Operation
+        "400":
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                    - code: INVALID_TENANT_API_VERSION
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Bad Request
+      summary: Get Config/State for Network from NB (v2.0)
+      tags:
+        - Bulk Operations
+  /v2.0/api/tenants/{tenant_id}/policysets/bulk_config_state/query:
+    post:
+      description: Get all config/state info across all policysets from NB.
+      operationId: post-v2.0-api-tenants-tenant_id-policysets-bulk_config_state-query
+      parameters:
+        - description: The tenant ID.
+          in: path
+          name: tenant_id
+          required: true
+          schema:
+            description: Tenant Id
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseQuery"
+        description: Query Details
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Successful Operation
+        "400":
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                    - code: INVALID_TENANT_API_VERSION
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Bad Request
+      summary: Get Config/State across all Policysets from NB (v2.0)
+      tags:
+        - Bulk Operations
+  /v2.0/api/tenants/{tenant_id}/sites/bulk_config_state/query:
+    post:
+      description:
+        Get all site configuration/state information for a queried site
+        from NB.
+      operationId: post-v2.0-api-tenants-tenant_id-sites-bulk_config_state-query
+      parameters:
+        - description: The tenant ID.
+          in: path
+          name: tenant_id
+          required: true
+          schema:
+            description: Tenant Id
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseQuery"
+        description: Query Details
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SetBulkResponse"
+                  - properties:
+                      items:
+                        items:
+                          type: object
+                        type: array
+                    type: object
+          description: Successful Operation
+        "400":
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                    - code: INVALID_TENANT_API_VERSION
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Bad Request
+      summary: Get Site Config/State for Queried Site from NB (v2.0)
+      tags:
+        - Bulk Operations
+servers:
+  - url: https://api.us.cloudgenix.com
+tags:
+  - name: Bulk Operations

@@ -1,0 +1,27 @@
+module.exports = [
+  { type: "doc", id: "sase/api/auth/authentication-service-api" },
+  {
+    type: "category",
+    label: "AuthService",
+    items: [
+      {
+        type: "doc",
+        id: "sase/api/auth/post-auth-v-1-oauth-2-access-token",
+        label: "Create an access token",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "sase/api/auth/post-auth-v-1-oauth-2-userinfo",
+        label: "Retrieve oAuth oAuth 2.0 claims",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "sase/api/auth/get-auth-v-1-oauth-2-userinfo",
+        label: "Retrieve oAuth 2.0 claims",
+        className: "api-method get",
+      },
+    ],
+  },
+];

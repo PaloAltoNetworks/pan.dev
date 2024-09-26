@@ -1,0 +1,530 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v1.10"
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Vulnerabilities Dashboard",
+      "description": "Vulnerabilities Dashboard(UVE) gives you a holistic graphical view of all the vulnerabilities across your Code to Cloud environment. The APIs in this section helps you to get the details that are displayed in the Vulnerabilities Dashboard widget based on various filters. You can asses the vulnerabilities and create request to remediate or mitigate the vulnerability. For more information about the Vulnerabilities Dashboard, see [Vulnerabilities Dashboard](https://docs.prismacloud.io/en/enterprise-edition/content-collections/dashboards/dashboards-vulnerabilities).\n>**Note:** You need specific access permission to use the endpoints in this category. For details on the required permissions, see the respective endpoint description. "
+    }
+  ],
+  "paths": {
+    "/uve/api/v1/remediation/vuln-remediation-status": {
+      "post": {
+        "summary": "Get Remediation Status",
+        "tags": ["Vulnerabilities Dashboard"],
+        "operationId": "fetch-Remediation-Status",
+        "description": "Get the remediation action status of assets. You can get the remediation status at two levels: \n- **Asset level** - Get the remediation status of an asset by asset ID\n- **Group level** - Get the remediation status of all assets of a specific asset type. To get group level status, specify only the asset type and not the asset ID.\n\n>**Note:** You need 'vulnerabilityRemediation' feature with 'View' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Alerts > Remediate Vulnerabilities** is enabled.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemediationStatusRequest"
+              },
+              "examples": {
+                "assetLevel": {
+                  "value": {
+                    "cveId": "CVE-2022-32207",
+                    "prismaId": "1115545679050296320",
+                    "assetId": ["0230eb1308fcf8dad743549e4092f4af"],
+                    "assetType": "host"
+                  }
+                },
+                "groupLevel": {
+                  "value": {
+                    "cveId": "CVE-2022-32207",
+                    "prismaId": "1115545679050296320",
+                    "assetType": "host"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStatusResponse"
+                },
+                "examples": {
+                  "assetLevel": {
+                    "value": {
+                      "values": [
+                        {
+                          "prismaId": "1115545679050296320",
+                          "unifiedAssetId": "0230eb1308fcf8dad743549e4092f4af",
+                          "assetType": "host",
+                          "assetLifecycle": "code",
+                          "cveId": "CVE-2022-32207",
+                          "source": "COMPUTE",
+                          "remediationAction": [
+                            {
+                              "action": "createTask",
+                              "status": "UNAVAILABLE",
+                              "actionResult": "null",
+                              "message": "Invalid Assets"
+                            }
+                          ],
+                          "lastUpdatedTimestamp": 1701782645308
+                        }
+                      ]
+                    }
+                  },
+                  "groupLevel": {
+                    "value": {
+                      "values": [
+                        {
+                          "prismaId": "1115545679050296320",
+                          "unifiedAssetId": "code",
+                          "assetType": "host",
+                          "assetLifecycle": "code",
+                          "cveId": "CVE-2022-32207",
+                          "source": "COMPUTE",
+                          "remediationAction": [
+                            {
+                              "action": "createTask",
+                              "status": "AVAILABLE",
+                              "actionResult": "null",
+                              "message": "null"
+                            }
+                          ],
+                          "lastUpdatedTimestamp": 1701782708619
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "x-ga": "24.1.1",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    },
+    "/uve/api/v1/remediation/vuln-create-remediation": {
+      "post": {
+        "summary": "Create Remediation Request",
+        "tags": ["Vulnerabilities Dashboard"],
+        "operationId": "create-Remediation-Request",
+        "description": "You create one of the following remediation action request for an asset or a set of assets:\n - Create a task or JIRA ticket \n - Create a merge request \n - Suppress the vulnerability \n\n Remediation action request can be created at the following levels:\n- **Asset level**- Perform remediation action on an asset by asset ID\n - **Group level**- Perform remediation action for all the assets of a particular asset type for a specified CVE ID \n - **Global level**- Perform remediation action on all assets of a specified CVE ID. \n\n>**Note:** You need 'vulnerabilityRemediation' feature with 'Create' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Alerts > Remediate Vulnerabilities** is enabled.",
+        "parameters": [
+          {
+            "name": "template-id",
+            "in": "header",
+            "description": "JIRA ID. Required only for **createTask** remediation action.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignee",
+            "in": "header",
+            "description": "JIRA assignee. Required only for **createTask** remediation action.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemediationItem"
+              },
+              "examples": {
+                "assetLevel": {
+                  "value": {
+                    "cveId": "CVE-2022-0529",
+                    "prismaId": "1115545679050296320",
+                    "source": "COMPUTE",
+                    "remediationAction": "createPr",
+                    "assetDetails": [
+                      {
+                        "assetType": "package",
+                        "assetId": "31ad4d5160bec151ed7c6bf372442df7"
+                      },
+                      {
+                        "assetType": "package",
+                        "assetId": "d5160bec151ed7c6bf372442df7"
+                      }
+                    ]
+                  }
+                },
+                "groupLevel": {
+                  "value": {
+                    "cveId": "CVE-2022-0529",
+                    "prismaId": "1115545679050296320",
+                    "source": "BRIDGECREW",
+                    "remediationAction": "suppress",
+                    "assetType": "package"
+                  }
+                },
+                "globalLevel": {
+                  "value": {
+                    "cveId": "CVE-2022-0529",
+                    "prismaId": "1115545679050296320",
+                    "remediationAction": "createTask"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ACCEPTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "ACCEPTED",
+                      "description": "Response message"
+                    },
+                    "details": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Error details if applicable"
+                    },
+                    "timeStamp": {
+                      "type": "integer",
+                      "example": 1701778720128,
+                      "description": "Timestamp of resppnse"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "example": "b17d66dd-2f8c-46f0-be1a-b3e21ba7990c",
+                      "description": "UUID identifier to indentify the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "PARTIALLY ACCEPTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "PARTIALLY_ACCEPTED",
+                      "description": "Response message"
+                    },
+                    "details": {
+                      "type": "string",
+                      "example": "Assets are suppressed or Jira Ticket already exists",
+                      "description": "Error details if applicable"
+                    },
+                    "timeStamp": {
+                      "type": "integer",
+                      "example": 1701778720128,
+                      "description": "Timestamp of resppnse"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "example": "b17d66dd-2f8c-46f0-be1a-b3e21ba7990c",
+                      "description": "UUID identifier to indentify the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "BAD_REQUEST",
+                      "description": "Response message"
+                    },
+                    "details": {
+                      "type": "string",
+                      "example": "Invalid payload",
+                      "description": "Error details if applicable"
+                    },
+                    "timeStamp": {
+                      "type": "integer",
+                      "example": 1701778720128,
+                      "description": "Timestamp of resppnse"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "example": "b17d66dd-2f8c-46f0-be1a-b3e21ba7990c",
+                      "description": "UUID identifier to indentify the request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-public": "true",
+        "x-ga": "24.1.1",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RemediationStatusRequest": {
+        "type": "object",
+        "required": ["cveId", "prismaId", "assetType"],
+        "properties": {
+          "cveId": {
+            "type": "string",
+            "description": "CVE ID of the vulnerability."
+          },
+          "prismaId": {
+            "type": "string",
+            "description": "Prisma ID allocated to the customer."
+          },
+          "assetType": {
+            "type": "string",
+            "enum": [
+              "iac",
+              "package",
+              "deployedImage",
+              "serverlessFunction",
+              "host",
+              "registryImage",
+              "vmImage"
+            ],
+            "description": "Asset type"
+          },
+          "assetId": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of asset UAI IDs"
+          }
+        }
+      },
+      "RemediationItem": {
+        "type": "object",
+        "required": ["cveId", "prismaId", "remediationAction"],
+        "properties": {
+          "cveId": {
+            "type": "string",
+            "description": "CVE ID of the vulnerability."
+          },
+          "prismaId": {
+            "type": "string",
+            "description": "Prisma ID of the customer."
+          },
+          "remediationAction": {
+            "type": "string",
+            "enum": ["createTask", "createPr", "suppress"],
+            "description": "Remediation action: create a JIRA/task, create a PR, or suppress the vulnerability."
+          },
+          "assetType": {
+            "type": "string",
+            "enum": [
+              "iac",
+              "package",
+              "deployedImage",
+              "serverlessFunction",
+              "host",
+              "registryImage",
+              "vmImage"
+            ],
+            "description": "Asset type. Required only for group level remediation."
+          },
+          "assetId": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "assetType": {
+                  "type": "string",
+                  "enum": [
+                    "iac",
+                    "package",
+                    "deployedImage",
+                    "serverlessFunction",
+                    "host",
+                    "registryImage",
+                    "vmImage"
+                  ],
+                  "description": "Type of asset."
+                },
+                "assetId": {
+                  "type": "string",
+                  "description": "UAI ID of the asset."
+                }
+              }
+            },
+            "description": "Asset IDs. Required only for asset level remediation."
+          }
+        }
+      },
+      "GetStatusResponse": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "prismaId": {
+                  "type": "string",
+                  "description": "prisma ID of the customer"
+                },
+                "unifiedAssetId": {
+                  "type": "string",
+                  "description": "Unified asset ID of the asset"
+                },
+                "assetType": {
+                  "type": "string",
+                  "enum": [
+                    "iac",
+                    "package",
+                    "deployedImage",
+                    "serverlessFunction",
+                    "host",
+                    "registryImage",
+                    "vmImage"
+                  ],
+                  "description": "Asset type of the asset"
+                },
+                "assetLifecycle": {
+                  "type": "string",
+                  "enum": ["code", "build", "deploy", "run"],
+                  "description": "Life cycle of the asset"
+                },
+                "cveId": {
+                  "type": "string",
+                  "description": "CVE ID affecting the asset"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": ["COMPUTE", "BRIDGECREW"],
+                  "description": "If the asset if Bridgecrew/Compute (placeholder, usually empty/null)"
+                },
+                "remediationAction": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "description": "The remediation action",
+                        "enum": ["createTask", "createPr", "suppress"]
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "If the asset is AVAILABLE/ not so because of a certain reason",
+                        "enum": [
+                          "AVAILABLE",
+                          "IN_PROGRESS",
+                          "SUBMITTED",
+                          "DONE",
+                          "UNAVAILABLE",
+                          "SUPPRESSED"
+                        ]
+                      },
+                      "actionResult": {
+                        "type": "string",
+                        "description": "The JIRA link/PR link of the remediated asset if applicable"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Reason for the current 'status' if applicable"
+                      }
+                    }
+                  },
+                  "description": "Remediation actions available for the asset type"
+                },
+                "lastUpdatedTimestamp": {
+                  "type": "integer",
+                  "description": "The timestamp as of which the status was identified"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    }
+  }
+}

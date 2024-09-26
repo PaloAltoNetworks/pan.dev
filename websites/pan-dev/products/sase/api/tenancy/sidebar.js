@@ -1,0 +1,51 @@
+module.exports = [
+  { type: "doc", id: "sase/api/tenancy/tenant-service-group" },
+  {
+    type: "category",
+    label: "TenantServiceGroup",
+    items: [
+      {
+        type: "doc",
+        id: "sase/api/tenancy/get-tenancy-v-1-tenant-service-groups",
+        label: "List all tenant service groups",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/post-tenancy-v-1-tenant-service-groups",
+        label: "Create a tenant service group",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/delete-tenancy-v-1-tenant-service-groups-tsg-id",
+        label: "Delete a tenant service group",
+        className: "api-method delete",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/get-tenancy-v-1-tenant-service-groups-tsg-id",
+        label: "Get a tenant service group",
+        className: "api-method get",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/put-tenancy-v-1-tenant-service-groups-tsg-id",
+        label: "Update a tenant service group",
+        className: "api-method put",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/post-tenancy-v-1-tenant-service-groups-tsg-id-operations-list-ancestors",
+        label: "List tenant service group ancestors",
+        className: "api-method post",
+      },
+      {
+        type: "doc",
+        id: "sase/api/tenancy/post-tenancy-v-1-tenant-service-groups-tsg-id-operations-list-children",
+        label: "List tenant service group children",
+        className: "api-method post",
+      },
+    ],
+  },
+];
