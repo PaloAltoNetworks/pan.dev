@@ -172,7 +172,21 @@ jobs:
           echo "Building the following products: $PRODUCTS_INCLUDE"
 
       - name: Build site
-        run: yarn build-github && zip -r build.zip build
+        run: yarn build-github
+
+      - name: Zip build directory
+        run: |
+          if [ -d "build" ]; then
+            BUILD_DIR="build"
+          elif [ -d "websites/pan-dev/build" ]; then
+            BUILD_DIR="websites/pan-dev/build"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+      
+          echo "Build directory found at: $BUILD_DIR"
+          zip -r build.zip "$BUILD_DIR"
 
       - uses: actions/upload-artifact@v4
         with:
