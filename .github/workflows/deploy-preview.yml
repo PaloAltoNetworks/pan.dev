@@ -186,7 +186,6 @@ jobs:
           fi
       
           echo "Build directory found at: $BUILD_DIR"
-          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
           zip -r build.zip "$BUILD_DIR"
 
       - uses: actions/upload-artifact@v4
@@ -217,6 +216,16 @@ jobs:
       - name: Unzip build artifact
         run: |
           unzip build.zip
+          if [ -d "build" ]; then
+            BUILD_DIR="."
+          elif [ -d "websites/pan-dev/build" ]; then
+            BUILD_DIR="websites/pan-dev"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+          echo "Build directory found at: $BUILD_DIR"
+          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
 
       - name: Deploy to Firebase
         id: deploy_preview
