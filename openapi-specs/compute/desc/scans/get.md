@@ -1,9 +1,10 @@
 Retrieves all scan reports for images scanned by the Jenkins plugin or twistcli.
 
-> _**Note:**_ The API rate limit for this endpoint is 30 requests per 30 seconds.
-You get an HTTP error response 429 if the limit exceeds.
-
 This endpoint maps to **Monitor > Vulnerabilities > Images > CI** in the Console UI.
+
+> _**Note:**_ 
+  * The query parameters `issueType` is not supported for this API endpoint.
+  * The API rate limit for this endpoint is 30 requests per 30 seconds.You get an HTTP error response 429 if the limit exceeds.
 
 ### cURL Request
 

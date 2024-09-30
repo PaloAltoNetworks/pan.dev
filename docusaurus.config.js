@@ -537,6 +537,18 @@ const config = {
                     },
                   ],
                 },
+                {
+                  label: "Prisma SASE Service Status",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SASE Service Status API",
+                      to: "sase/docs/saseservicestatusapi",
+                      icon: "doc",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -573,6 +585,26 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Cross-Platform",
+              to: "#",
+              colorclass: "cross-platform",
+              description:
+                "Learn about opportunities across Palo Alto Networks platforms.",
+              products: [
+                {
+                  label: "Service Status",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Service Status API",
+                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
@@ -776,6 +808,14 @@ const config = {
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          mssp: {
+            specPath: "openapi-specs/mssp",
+            outputDir: "products/prisma-cloud/api/mssp",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
+          },
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
@@ -806,23 +846,23 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.07",
-            label: "v32.07",
+            version: "33.00",
+            label: "v33.00",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
+              32.07: {
+                specPath: "openapi-specs/compute/32-07",
+                outputDir: "products/compute/api/32-07",
+                label: "v32.07",
+                baseUrl: "/compute/api/32-07/",
+              },
               31.02: {
                 specPath: "openapi-specs/compute/31-02",
                 outputDir: "products/compute/api/31-02",
                 label: "v31.02",
                 baseUrl: "/compute/api/31-02/",
-              },
-              30.03: {
-                specPath: "openapi-specs/compute/30-03",
-                outputDir: "products/compute/api/30-03",
-                label: "v30.03",
-                baseUrl: "/compute/api/30-03/",
               },
             },
           },
@@ -853,6 +893,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-06/",
+          },
+          compute_3207: {
+            specPath: "openapi-specs/compute/32-07",
+            outputDir: "products/compute/api/32-07",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-07/",
           },
         },
       },

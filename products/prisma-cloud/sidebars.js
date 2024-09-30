@@ -50,6 +50,12 @@ module.exports = {
          require("./api/dspm/sidebar"),
       ],
     },
+    {
+      type: "category",
+      label: "Managed Security Service Provider (MSSP)",
+      collapsed: true,
+      items: [require("./api/mssp/sidebar")],
+    },
   ],
   clouddocs: [
     "prisma-cloud/docs/home",
