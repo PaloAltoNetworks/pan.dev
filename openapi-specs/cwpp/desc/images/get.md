@@ -18,6 +18,8 @@ Consider the following available options to retrieve when you use the `fields` q
 - clusters
 - hosts
 - repoTag.tag
+
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
   
 ### cURL Request
 
