@@ -776,63 +776,45 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          scmconfig: {
-            specPath: "openapi-specs/scm/config",
-            outputDir: "products/scm/api/config",
+          configsetup: {
+            specPath: "openapi-specs/scm/config/setup",
+            outputDir: "products/scm/api/config/setup",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "top",
-            label: "top",
-            baseUrl: "/scm/api/config/config-api",
-            versions: {
-              Deployment: {
-                specPath: "openapi-specs/scm/config/deployment",
-                outputDir: "products/scm/api/config/deployment",
-                label: "Deployment",
-                baseUrl: "/scm/api/config/deployment/deployment-api",
-              },
-              Setup: {
-                specPath: "openapi-specs/scm/config/setup",
-                outputDir: "products/scm/api/config/setup",
-                label: "Setup",
-                baseUrl: "/scm/api/config/setup/setup-api",
-              },
-              Identity: {
-                specPath: "openapi-specs/scm/config/identity",
-                outputDir: "products/scm/api/config/identity",
-                label: "Identity",
-                baseUrl: "/scm/api/config/identity/identity-api",
-              },
-              MobileAgent: {
-                specPath: "openapi-specs/scm/config/mobileagent",
-                outputDir: "products/scm/api/config/mobileagent",
-                label: "Mobile Agent",
-                baseUrl: "/scm/api/config/mobileagent/mobileagent-api",
-              },
-              Network: {
-                specPath: "openapi-specs/scm/config/network",
-                outputDir: "products/scm/api/config/network",
-                label: "Network",
-                baseUrl: "/scm/api/config/network/network-api",
-              },
-              Objects: {
-                specPath: "openapi-specs/scm/config/objects",
-                outputDir: "products/scm/api/config/objects",
-                label: "Objects",
-                baseUrl: "/scm/api/config/objects/objects-api",
-              },
-              Operations: {
-                specPath: "openapi-specs/scm/config/operations",
-                outputDir: "products/scm/api/config/operations",
-                label: "Operations",
-                baseUrl: "/scm/api/config/operations/operations-api",
-              },
-              Security: {
-                specPath: "openapi-specs/scm/config/security",
-                outputDir: "products/scm/api/config/security",
-                label: "Security",
-                baseUrl: "/scm/api/config/security/security-api",
-              },
-            },
+          },
+          configdeployment: {
+            specPath: "openapi-specs/scm/config/deployment",
+            outputDir: "products/scm/api/config/deployment",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configidentity: {
+            specPath: "openapi-specs/scm/config/identity",
+            outputDir: "products/scm/api/config/identity",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configmobileagent: {
+            specPath: "openapi-specs/scm/config/mobileagent",
+            outputDir: "products/scm/api/config/mobileagent",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          confignetwork: {
+            specPath: "openapi-specs/scm/config/network",
+            outputDir: "products/scm/api/config/network",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configobjects: {
+            specPath: "openapi-specs/scm/config/objects",
+            outputDir: "products/scm/api/config/objects",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configoperations: {
+            specPath: "openapi-specs/scm/config/operations",
+            outputDir: "products/scm/api/config/operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configsecurity: {
+            specPath: "openapi-specs/scm/config/security",
+            outputDir: "products/scm/api/config/security",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           ztna: {
             specPath: "openapi-specs/access/ztna",

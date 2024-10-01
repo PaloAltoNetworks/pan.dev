@@ -75,6 +75,46 @@ export default function SCMLandingPage() {
       description: "",
       docs: [
         {
+          to: "scm/api/config/setup/setup-api",
+          label: "Setup Services",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/deployment/deployment-api",
+          label: "Deployment Services",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/identity/identity-api",
+          label: "Identity Configuration",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/mobileagent/mobileagent-api",
+          label: "Mobile Agent Configuration",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/network/network-api",
+          label: "Network Configuration",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/objects/objects-api",
+          label: "Object Configuration",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/operations/operations-api",
+          label: "Operations Configuration",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/api/config/security/security-api",
+          label: "Security Configuration",
+          icon: "api-doc",
+        },
+        {
           to: "scm/api/security-services/security-services-api",
           label: "Security Services",
           icon: "api-doc",
