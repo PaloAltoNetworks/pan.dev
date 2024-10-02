@@ -841,11 +841,6 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          scmsecurity: {
-            specPath: "openapi-specs/scm/security-services",
-            outputDir: "products/scm/api/security-services",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",

@@ -82,10 +82,6 @@ module.exports = {
     require("./api/subscription/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
-  scmsecurityservices: [
-    "scm/api/security-services/security-services-api",
-    require("./api/security-services/sidebar"),
-  ],
   scmconfigsetup: [
     "scm/api/config/setup/setup-api",
     require("./api/config/setup/sidebar"),

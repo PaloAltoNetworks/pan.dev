@@ -10,6 +10,10 @@ keywords:
   - API
 ---
 
-Introduce the mobile agent config apis here ....
+Welcome to the Mobile Agent configuration APIs. Use these APIs to configure your GlobalProtect
+agents, applications, infrastructure and more. To learn more about configuring GlobalProtect, see
+[Mobile Users: GlobalProtect](https://docs.paloaltonetworks.com/prisma-access/administration/prisma-access-mobile-users/mobile-users-globalprotect)
+in the [Prisma Access Mobile Users](https://docs.paloaltonetworks.com/prisma-access/administration/prisma-access-mobile-users)
+documentation.
 
 These APIs use the [common authentication mechanism](/scm/docs/getstarted) for service access and authorization.
