@@ -1,5 +1,5 @@
 ---
-id: access-dspm-api
+id: access-api
 title: Access the Data Security Posture Management (DSPM) APIs
 sidebar_label: Generate and Authenticate API Key
 keywords:
