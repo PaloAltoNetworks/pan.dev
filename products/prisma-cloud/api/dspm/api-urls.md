@@ -1,6 +1,6 @@
 ---
 id: api-urls
-title: API URLs
+title: DSPM API URLs
 sidebar_label: URLs
 keywords:
   - Developer
