@@ -37,6 +37,7 @@ Once you've generate an API key, you're ready to authenticate and make your firs
 * To authenticate, include your Prisma Cloud DSPM API key in the API headers using the format: `dig-api-key:'YOUR_KEY'`
 
 To test the setup, attempt to call any DSPM endpoint, such as: https://api.dig.security/v1/assets. 
+
 Note: Ensure you use https:// and not http:// for all API calls.
 
 For more information on the Prisma Console and the API URL, refer to [API URLs](./api-urls.md) page.

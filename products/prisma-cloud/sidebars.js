@@ -43,11 +43,10 @@ module.exports = {
       label: "Data Security Posture Management",
       collapsed: true,
       items: [
-        "prisma-cloud/api/dspm/overview",
-        "prisma-cloud/api/dspm/getting-started",
+        "prisma-cloud/api/dspm/get-started",
         "prisma-cloud/api/dspm/access-api",
         "prisma-cloud/api/dspm/api-urls",
-         require("./api/dspm/sidebar"),
+        require("./api/dspm/sidebar"),
       ],
     },
     {
