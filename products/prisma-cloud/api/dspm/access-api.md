@@ -1,8 +1,13 @@
-
 ---
 id: access-dspm-api
 title: Access the Data Security Posture Management (DSPM) APIs
 sidebar_label: Generate and Authenticate API Key
+keywords:
+  - Developer
+  - Prisma
+  - Prisma Cloud
+  - Reference
+  - API
 ---
 
 ### Generate an API key
@@ -11,15 +16,15 @@ To generate a DSPM API key, you must first obtain your DSPM Console address.
 
 1. In the Prisma Cloud `Data Security` dropdown menu, select the `Preferences` tab, then navigate to the `API` tab.
    
-![ DSPM API key tab](api-createkey-1.png)
+![ DSPM API key tab](./img/api-createkey-1.png)
 
 2. In the `Add New API Key` section, enter a meaningful `Name` and `Description` for your API key, and click `Create Key`.
 
-![Create DSPM API key](api-createkey-2.png)
+![Create DSPM API key](./img/api-createkey-2.png)
 
-1. A pop-up will display the generated API key. Click on `Copy API Key` to copy it, and press `Done`.
+3. A pop-up will display the generated API key. Click on `Copy API Key` to copy it, and press `Done`.
    
-![Generated DSPM API key](api-createkey-3.png)
+![Generated DSPM API key](./img/api-createkey-3.png)
 
 4. The `API section` of the page will display the name and other details of the generated key.
 
