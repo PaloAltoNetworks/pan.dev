@@ -66,13 +66,8 @@ module.exports = {
       ],
     },
     {
-      type: "category",
-      label: "Strata Cloud Manager API Release Notes",
-      collapsed: true,
-      items: [
-        "scm/docs/release-notes/changelog",
-        "scm/docs/release-notes/release-notes",
-      ],
+      type: "doc",
+      id: "scm/docs/release-notes/changelog",
     },
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],

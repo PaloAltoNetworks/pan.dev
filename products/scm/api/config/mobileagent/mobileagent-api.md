@@ -17,3 +17,6 @@ in the [Prisma Access Mobile Users](https://docs.paloaltonetworks.com/prisma-acc
 documentation.
 
 These APIs use the [common authentication mechanism](/scm/docs/getstarted) for service access and authorization.
+
+You must use the [Configuration Operations API](/scm/api/config/operations/operations-api) to push
+configurations made using these APIs to your deployments.

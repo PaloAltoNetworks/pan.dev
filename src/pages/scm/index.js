@@ -37,11 +37,6 @@ export default function SCMLandingPage() {
           to: "scm/docs/release-notes/changelog",
           icon: "doc",
         },
-        {
-          label: "Release Notes",
-          to: "scm/docs/release-notes/release-notes",
-          icon: "doc",
-        },
       ],
     },
     {
@@ -75,15 +70,20 @@ export default function SCMLandingPage() {
       description: "",
       type: "hierarchy",
       docs: {
-        category1: [
+        "Platform Configuration": [
+          {
+            to: "scm/api/config/operations/operations-api",
+            label: "Configuration Operations",
+            icon: "api-doc",
+          },
           {
             to: "scm/api/config/setup/setup-api",
-            label: "Setup Services",
+            label: "Configuration Setup",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/deployment/deployment-api",
-            label: "Deployment Services",
+            label: "Deployment Configuration",
             icon: "api-doc",
           },
           {
@@ -96,8 +96,6 @@ export default function SCMLandingPage() {
             label: "Mobile Agent Configuration",
             icon: "api-doc",
           },
-        ],
-        category2: [
           {
             to: "scm/api/config/network/network-api",
             label: "Network Configuration",
@@ -109,22 +107,12 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/operations/operations-api",
-            label: "Operations Configuration",
+            to: "scm/api/config/security/security-api",
+            label: "Security Profiles",
             icon: "api-doc",
           },
         ],
-        category3: [
-          {
-            to: "scm/api/config/security/security-api",
-            label: "Security Configuration",
-            icon: "api-doc",
-          },
-          {
-            to: "scm/api/security-services/security-services-api",
-            label: "Security Services",
-            icon: "api-doc",
-          },
+        "Other Configuration": [
           {
             to: "/access/api/ztna/ztna-connector-apis",
             label: "ZTNA Connector",

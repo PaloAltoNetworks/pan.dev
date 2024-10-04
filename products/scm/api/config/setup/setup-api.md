@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-Welcome to the configuration setup APIs. You use these APIs to create and manage devices, folders,
+Welcome to the Configuration Setup APIs. You use these APIs to create and manage devices, folders,
 labels, snippets, and variables.
 
 
@@ -32,3 +32,6 @@ allow you to standardize (using snippets) your configurations while giving you t
 flexibility to accommodate unique configuration values that are device or deployment specific.
 
 These APIs use the [common authentication mechanism](/scm/docs/getstarted) for service access and authorization.
+
+You must use the [Configuration Operations API](/scm/api/config/operations/operations-api) to push
+configurations made using these APIs to your deployments.
