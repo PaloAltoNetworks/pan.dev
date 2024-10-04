@@ -44,8 +44,6 @@ module.exports = {
       collapsed: true,
       items: [
         "prisma-cloud/api/dspm/get-started",
-        "prisma-cloud/api/dspm/access-api",
-        "prisma-cloud/api/dspm/api-urls",
         require("./api/dspm/sidebar"),
       ],
     },
