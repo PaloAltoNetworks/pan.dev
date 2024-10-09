@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   version: 2.0.0
   title: Network Services
@@ -25,8 +25,6 @@ tags:
     description: Auto VPN Config Push
   - name: Auto VPN Monitor
     description: Auto VPN Monitor
-  # - name: Auto VPN Objects
-  #   description: Auto VPN Objects
   - name: Auto VPN Settings
     description: Auto VPN Settings
   - name: BGP Address Family Profiles
@@ -61,6 +59,8 @@ tags:
     description: Layer 3 Subinterfaces
   - name: Layer 3 Subinterfaces
     description: Layer 3 Subinterfaces
+  - name: Link Tags
+    description: Link Tags
   - name: Logical Routers
     description: Logical Routers
   - name: Loopback Interfaces
@@ -3657,6 +3657,159 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
+  /link-tags:
+    get:
+      tags:
+        - Link Tags
+      summary: List link tags
+      description: |
+        Retrieve a list of link tags.
+      operationId: ListLinkTags
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/link-tags'
+                  limit:
+                    type: number
+                    default: 200
+                  offset:
+                    type: number
+                    default: 0
+                  total:
+                    type: number
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    post:
+      tags:
+        - Link Tags
+      summary: Create a link tag
+      description: |
+        Create a new link tag.
+      operationId: CreateLinkTags
+      requestBody:
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/link-tags'
+      responses:
+        '201':
+          $ref: '#/components/responses/http_created'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  '/link-tags/{id}':
+    get:
+      tags:
+        - Link Tags
+      summary: Get a link tag
+      description: |
+        Get an existing link tag.
+      operationId: GetLinkTagsByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/link-tags'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags:
+        - Link Tags
+      summary: Update a link tag
+      description: |
+        Update an existing link tag.
+      operationId: UpdateLinkTagsByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      requestBody:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/link-tags'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags:
+        - Link Tags
+      summary: Delete a link tag
+      description: |
+        Delete a link tag.
+      operationId: DeleteLinkTagsByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
   /logical-routers:
     get:
       tags:
@@ -5065,7 +5218,7 @@ paths:
   #         $ref: '#/components/responses/conflict_errors'
   #       default:
   #         $ref: '#/components/responses/default_errors'
-  /auto-vpn-push-config:
+  /auto-vpn-push:
     post:
       tags:
         - Auto VPN Config Push
@@ -5081,7 +5234,7 @@ paths:
               $ref: '#/components/schemas/auto-vpn-push-config'
       responses:
         '201':
-          $ref: '#/components/responses/http_created'
+          $ref: '#/components/responses/http_created_job'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic_with_body'
         '401':
@@ -5091,38 +5244,7 @@ paths:
         '409':
           $ref: '#/components/responses/conflict_errors'
         default:
-          $ref: '#/components/responses/default_errors'
-  /auto-vpn-push-response:
-    get:
-      tags:
-        - Auto VPN Config Push
-      summary: Get Auto VPN push response
-      description: |
-        Get Auto VPN push response.
-      operationId: GetAutoVPNPushResponse
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    allOf:
-                      - type: array
-                        items:
-                          $ref: '#/components/schemas/auto-vpn-push-response'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        default:
-          $ref: '#/components/responses/default_errors'  
+          $ref: '#/components/responses/default_errors' 
   /auto-vpn-settings:
     get:
       tags:
@@ -6353,6 +6475,12 @@ components:
       description: OK
     http_created:
       description: Created
+    http_created_job:
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/auto-vpn-push-response'
     auth_errors:
       description: Unauthorized
       content:
@@ -7726,30 +7854,277 @@ components:
     zone-protection-profiles:
       type: object
       properties:
-        name: 
-          type: string
         id:
           type: string
+          description: UUID of the resource
           readOnly: true
-        folder:
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          description: The profile name
           type: string
-          readOnly: true
+          maxLength: 31
         description: 
+          description: The description of the profile
           type: string
+          maxLength: 255
+        flood: 
+          type: object
+          properties: 
+            tcp_syn: 
+              type: object
+              properties: 
+                enable:
+                  description: Enable protection against SYN floods?
+                  type: boolean
+              oneOf:
+                - title: red
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: When the flow exceeds the `alert_rate`` threshold, an alarm is generated.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: When the flow exceeds the `activate_rate`` threshold, the firewall drops individual SYN packets randomly to restrict the flow.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      description: When the flow exceeds the `maximal_rate` threshold, 100% of incoming SYN packets are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 40000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+                - title: syn_cookies
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: When the flow exceeds the `alert_rate`` threshold, an alarm is generated.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: When the flow exceeds the `activate_rate`` threshold, the firewall drops individual SYN packets randomly to restrict the flow.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 0
+                    maximal_rate: 
+                      description: When the flow exceeds the `maximal_rate` threshold, 100% of incoming SYN packets are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 1000000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+            udp: 
+              type: object
+              properties: 
+                enable: 
+                  description: Enable protection against UDP floods?
+                  type: boolean
+                red: 
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: The number of UDP packets (not matching an existing session) that the zone receives per second that triggers an attack alarm.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: The number of UDP packets (not matching an existing session) that the zone receives per second that triggers random dropping of UDP packets.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      description: The maximum number of UDP packets (not matching an existing session) the zone receives per second before packets exceeding the maximum are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 40000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+            sctp_init: 
+              type: object
+              properties: 
+                enable: 
+                  description: Enable protection against floods of Stream Control Transmission Protocol (SCTP) packets that contain an Initiation (INIT) chunk?
+                  type: boolean
+                red: 
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: The number of SCTP INIT packets (not matching an existing session) that the zone receives per second that triggers an attack alarm.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: The number of SCTP INIT packets (not matching an existing session) that the zone receives per second before subsequent SCTP INIT packets are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      description: The maximum number of SCTP INIT packets (not matching an existing session) that the zone receives per second before packets exceeding the maximum are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+            icmp: 
+              type: object
+              properties: 
+                enable: 
+                  description: Enable protection against ICMP floods?
+                  type: boolean
+                red: 
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: The number of ICMP echo requests (pings not matching an existing session) that the zone receives per second that triggers an attack alarm.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: The number of ICMP packets (not matching an existing session) that the zone receives per second before subsequent ICMP packets are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      description: The maximum number of ICMP packets (not matching an existing session) that the zone receives per second before packets exceeding the maximum are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 40000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+            icmpv6: 
+              type: object
+              properties: 
+                enable: 
+                  description: Enable protection against ICMPv6 floods?
+                  type: boolean
+                red: 
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      description: The number of ICMPv6 echo requests (pings not matching an existing session) that the zone receives per second that triggers an attack alarm.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      description: The number of ICMPv6 packets (not matching an existing session) that the zone receives per second before subsequent ICMPv6 packets are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      description: The maximum number of ICMPv6 packets (not matching an existing session) that the zone receives per second before packets exceeding the maximum are dropped.
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 40000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
+            other_ip: 
+              type: object
+              properties: 
+                enable: 
+                  description: Enable protection against other IP (non-TCP, non-ICMP, non-ICMPv6, non-SCTP, and non-UDP) floods?
+                  type: boolean
+                red: 
+                  type: object
+                  properties: 
+                    alarm_rate: 
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    activate_rate: 
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 10000
+                    maximal_rate: 
+                      type: integer
+                      format: int32
+                      minimum: 0
+                      maximum: 2000000
+                      example: 40000
+                  required:
+                    - alarm_rate
+                    - activate_rate
+                    - maximal_rate
         scan: 
           type: array
           items: 
             type: object
             properties: 
               name: 
+                description: |
+                  The threat ID number.  These can be found in [Palo Alto Networks ThreatVault](https://threatvault.paloaltonetworks.com).
+                  * "8001" - TCP Port Scan
+                  * "8002" - Host Sweep
+                  * "8003" - UDP Port Scan
+                  * "8006" - Port Scan
                 type: string
+                enum:
+                - "8001"
+                - "8002"
+                - "8003"
+                - "8006"
               action: 
                 type: object
                 oneOf:
                   - title: allow
-                    type: object  
+                    type: object
                   - title: alert 
-                    type: object  
+                    type: object
                   - title: block 
                     type: object 
                   - title: block_ip 
@@ -7763,15 +8138,23 @@ components:
                       duration: 
                         type: integer
                         format: int32
+                        minimum: 1
+                        maximum: 3600
                     required:
                       - track_by
                       - duration
               interval: 
                 type: integer
                 format: int32
+                minimum: 2
+                maximum: 65535
+                example: 2
               threshold: 
                 type: integer
                 format: int32
+                minimum: 2
+                maximum: 65535
+                example: 100
             required:
               - name
         scan_white_list: 
@@ -7780,295 +8163,246 @@ components:
             type: object
             properties: 
               name: 
+                description: A descriptive name for the address to exclude.
                 type: string
             oneOf:
               - title: ipv4 
                 type: string
+                format: ipv4
               - title: ipv6 
                 type: string
+                format: ipv6
             required:
               - name
-        flood: 
-          type: object
-          properties: 
-            tcp_syn: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-              oneOf:
-                - title: red
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-                - title: syn_cookies
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-            udp: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-                red: 
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-            icmp: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-                red: 
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-            icmpv6: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-                red: 
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-            other_ip: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-                red: 
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
-            sctp_init: 
-              type: object
-              properties: 
-                enable: 
-                  type: boolean
-                red: 
-                  type: object
-                  properties: 
-                    alarm_rate: 
-                      type: integer
-                      format: int32
-                    activate_rate: 
-                      type: integer
-                      format: int32
-                    maximal_rate: 
-                      type: integer
-                      format: int32
-                  required:
-                    - alarm_rate
-                    - activate_rate
-                    - maximal_rate
+        spoofed_ip_discard:
+          description: |
+            Check that the source IP address of the ingress packet is routable and the routing interface is in the same zone as the ingress interface. If either condition is not true, discard the packet.
+          type: boolean
+        strict_ip_check:
+          description: |
+            Check that both conditions are true:
+            * The source IP address is not the subnet broadcast IP address of the ingress interface.
+            * The source IP address is routable over the exact ingress interface.
+            If either condition is not true, discard the packet.
+          type: boolean
+        fragmented_traffic_discard:
+          description: |
+            Discard fragmented IP packets.
+          type: boolean
+        strict_source_routing_discard:
+          description: |
+            Discard packets with the Strict Source Routing IP option set. Strict Source Routing is an option whereby a source of a datagram provides routing information through which a gateway or host must send the datagram.
+          type: boolean
+        loose_source_routing_discard:
+          description: |
+            Discard packets with the Loose Source Routing IP option set. Loose Source Routing is an option whereby a source of a datagram provides routing information and a gateway or host is allowed to choose any route of a number of intermediate gateways to get the datagram to the next address in the route.
+          type: boolean
+        timestamp_discard:
+          description: |
+            Discard packets with the Timestamp IP option set.
+          type: boolean
+        record_route_discard:
+          description: |
+            Discard packets with the Record Route IP option set. When a datagram has this option, each router that routes the datagram adds its own IP address to the header, thus providing the path to the recipient.
+          type: boolean
+        security_discard:
+          description: |
+            Discard packets if the security option is defined.
+          type: boolean
+        stream_id_discard:
+          description: |
+            Discard packets if the Stream ID option is defined.
+          type: boolean
+        unknown_option_discard:
+          description: |
+            Discard packets if the class and number are unknown.
+          type: boolean
+        malformed_option_discard:
+          description: | 
+            Discard packets if they have incorrect combinations of class, number, and length based on RFCs 791, 1108, 1393, and 2113.
+          type: boolean
+        mismatched_overlapping_tcp_segment_discard:
+          description: |
+            Drop packets with mismatched overlapping TCP segments.
+          type: boolean
+        tcp_handshake_discard:
+          description: |
+            Drop packets with split handshakes.
+          type: boolean
+        tcp_syn_with_data_discard:
+          description: |
+            Prevent a TCP session from being established if the TCP SYN packet contains data during a three-way handshake.
+          type: boolean
+          default: true
+        tcp_synack_with_data_discard:
+          description: |
+            Prevent a TCP session from being established if the TCP SYN-ACK packet contains data during a three-way handshake.
+          type: boolean
+          default: true
+        reject_non_syn_tcp:
+          description: |
+            Determine whether to reject the packet if the first packet for the TCP session setup is not a SYN packet:
+            * `global` — Use system-wide setting that is assigned through the CLI.
+            * `yes` — Reject non-SYN TCP.
+            * `no` — Accept non-SYN TCP.
+          type: string
+          enum:
+          - global
+          - yes
+          - no
+        asymmetric_path:
+          description: |
+            Determine whether to drop or bypass packets that contain out-of-sync ACKs or out-of-window sequence numbers:
+            * `global` — Use system-wide setting that is assigned through TCP Settings or the CLI.
+            * `drop` — Drop packets that contain an asymmetric path.
+            * `bypass` — Bypass scanning on packets that contain an asymmetric path.
+          type: string
+          enum:
+          - global
+          - drop
+          - bypass
+        tcp_timestamp_strip:
+          description: | 
+            Determine whether the packet has a TCP timestamp in the header and, if it does, strip the timestamp from the header.
+          type: boolean
+        tcp_fast_open_and_data_strip:
+          description: |
+            Strip the TCP Fast Open option (and data payload, if any) from the TCP SYN or SYN-ACK packet during a TCP three-way handshake.
+          type: boolean
+        mptcp_option_strip:
+          description: |
+            MPTCP is an extension of TCP that allows a client to maintain a connection by simultaneously using multiple paths to connect to the destination host. By default, MPTCP support is disabled, based on the global MPTCP setting.  Review or adjust the MPTCP settings for the security zones associated with this profile:
+            * `no` — Enable MPTCP support (do not strip the MPTCP option).
+            * `yes` — Disable MPTCP support (strip the MPTCP option). With this configured, MPTCP connections are converted to standard TCP connections, as MPTCP is backwards compatible with TCP.
+            * `global` — Support MPTCP based on the global MPTCP setting. By default, the global MPTCP setting is set to yes so that MPTCP is disabled (the MPTCP option is stripped from the packet).
+          type: string
+          enum:
+          - no
+          - yes
+          - global
+          default: global
+        icmp_ping_zero_id_discard:
+          description: |
+            Discard packets if the ICMP ping packet has an identifier value of 0.
+          type: boolean
+        icmp_frag_discard:
+          description: Discard packets that consist of ICMP fragments.
+          type: boolean
+        icmp_large_packet_discard:
+          description: Discard ICMP packets that are larger than 1024 bytes.
+          type: boolean
+        discard_icmp_embedded_error:
+          description: Discard ICMP packets that are embedded with an error message.
+          type: boolean
+        suppress_icmp_timeexceeded:
+          description: Stop sending ICMP TTL expired messages.
+          type: boolean
+        suppress_icmp_needfrag:
+          description: |
+            Stop sending ICMP fragmentation needed messages in response to packets that exceed the interface MTU and have the do not fragment (DF) bit set. This setting will interfere with the PMTUD process performed by hosts behind the firewall.
+          type: boolean
         ipv6: 
           type: object
           properties: 
             routing_header_0: 
+              description: Drop packets with type 0 routing header.
               type: boolean
             routing_header_1: 
+              description: Drop packets with type 1 routing header.
               type: boolean
             routing_header_3: 
+              description: Drop packets with type 3 routing header.
               type: boolean
             routing_header_4_252: 
+              description: Drop packets with type 4 to type 252 routing header.
               type: boolean
             routing_header_253: 
+              description: Drop packets with type 253 routing header.
               type: boolean
             routing_header_254: 
+              description: Drop packets with type 254 routing header.
               type: boolean
             routing_header_255: 
+              description: Drop packets with type 255 routing header.
               type: boolean
             ipv4_compatible_address: 
-              type: boolean
-            multicast_source: 
-              type: boolean
-            anycast_source: 
+              description: Discard IPv6 packets that are defined as an RFC 4291 IPv4-Compatible IPv6 address.
               type: boolean
             filter_ext_hdr: 
               type: object
               properties: 
                 hop_by_hop_hdr: 
+                  description: Discard IPv6 packets that contain the Hop-by-Hop Options extension header.
                   type: boolean
                 routing_hdr: 
+                  description: Discard IPv6 packets that contain the Routing extension header, which directs packets to one or more intermediate nodes on its way to its destination.
                   type: boolean
                 dest_option_hdr: 
+                  description: Discard IPv6 packets that contain the Destination Options extension, which contains options intended only for the destination of the packet.
                   type: boolean
+            options_invalid_ipv6_discard: 
+              description: Discard IPv6 packets that contain invalid IPv6 options in an extension header.
+              type: boolean
+            reserved_field_set_discard:
+              description: Discard IPv6 packets that have a header with a reserved field not set to zero.
+              type: boolean
+            anycast_source: 
+              description: Discard IPv6 packets that contain an anycast source address.
+              type: boolean
+            needless_fragment_hdr: 
+              description: Discard IPv6 packets with the last fragment flag (M=0) and offset of zero.
+              type: boolean
+            icmpv6_too_big_small_mtu_discard: 
+              description: Discard IPv6 packets that contain a Packet Too Big ICMPv6 message when the maximum transmission unit (MTU) is less than 1,280 bytes.
+              type: boolean
             ignore_inv_pkt: 
               type: object
               properties: 
                 dest_unreach: 
+                  description: Require an explicit Security policy match for Destination Unreachable ICMPv6 messages, even when the message is associated with an existing session.
                   type: boolean
                 pkt_too_big: 
+                  description: Require an explicit Security policy match for Packet Too Big ICMPv6 messages, even when the message is associated with an existing session.
                   type: boolean
                 time_exceeded: 
+                  description: Require an explicit Security policy match for Time Exceeded ICMPv6 messages, even when the message is associated with an existing session.
                   type: boolean
                 param_problem: 
+                  description: Require an explicit Security policy match for Parameter Problem ICMPv6 messages, even when the message is associated with an existing session.
                   type: boolean
                 redirect: 
+                  description: Require an explicit Security policy match for Redirect Message ICMPv6 messages, even when the message is associated with an existing session.
                   type: boolean
-            options_invalid_ipv6_discard: 
-              type: boolean
-            icmpv6_too_big_small_mtu_discard: 
-              type: boolean
-            needless_fragment_hdr: 
-              type: boolean
-            reserved_field_set_discard: 
-              type: boolean
-        tcp_reject_non_syn: 
-          type: string
-          enum:
-            - global
-            - "yes"
-            - "no"
-        strip_mptcp_option: 
-          type: string
-          enum:
-            - global
-            - "yes"
-            - "no"
-        asymmetric_path: 
-          type: string
-          enum:
-            - "global"
-            - "drop"
-            - "bypass"
-        discard_ip_spoof: 
-          type: boolean
-        discard_ip_frag: 
-          type: boolean
-        discard_icmp_ping_zero_id: 
-          type: boolean
-        discard_icmp_frag: 
-          type: boolean
-        discard_icmp_large_packet: 
-          type: boolean
-        discard_icmp_error: 
-          type: boolean
-        suppress_icmp_timeexceeded: 
-          type: boolean
-        suppress_icmp_needfrag: 
-          type: boolean
-        discard_strict_source_routing: 
-          type: boolean
-        discard_loose_source_routing: 
-          type: boolean
-        discard_timestamp: 
-          type: boolean
-        discard_record_route: 
-          type: boolean
-        discard_security: 
-          type: boolean
-        discard_stream_id: 
-          type: boolean
-        discard_unknown_option: 
-          type: boolean
-        discard_malformed_option: 
-          type: boolean
-        discard_overlapping_tcp_segment_mismatch: 
-          type: boolean
-        strict_ip_check: 
-          type: boolean
-        remove_tcp_timestamp: 
-          type: boolean
-        discard_tcp_split_handshake: 
-          type: boolean
-        discard_tcp_syn_with_data: 
-          type: boolean
-        discard_tcp_synack_with_data: 
-          type: boolean
-        strip_tcp_fast_open_and_data: 
-          type: boolean
         non_ip_protocol: 
           type: object
           properties: 
             list_type: 
+              description: |
+                Specify the type of list you are creating for protocol protection:
+                * Include List—Only the protocols on the list are allowed—in addition to IPv4 (0x0800), IPv6 (0x86DD), ARP (0x0806), and VLAN tagged frames (0x8100). All other protocols are implicitly denied (blocked).
+                * Exclude List—Only the protocols on the list are denied; all other protocols are implicitly allowed. You cannot exclude IPv4 (0x0800), IPv6 (0x86DD), ARP (0x0806), or VLAN tagged frames (0x8100).
               type: string
               enum:
-                - exclude
-                - include
+              - exclude
+              - include
             protocol: 
               type: array
               items: 
                 type: object
                 properties: 
                   name: 
+                    description: |
+                      Enter the protocol name that corresponds to the Ethertype code you are adding to the list. The firewall does not verify that the protocol name matches the Ethertype code but the Ethertype code does determine the protocol filter.
                     type: string
                   ether_type: 
+                    description: |
+                      Enter an Ethertype code (protocol) preceded by 0x to indicate hexadecimal (range is 0x0000 to 0xFFFF). A list can have a maximum of 64 Ethertypes. Some sources of Ethertype codes are:
+                      * [IEEE hexadecimal Ethertype](http://www.iana.org/assignments/ieee-802-numbers/ieee-802-numbers.xhtml)
+                      * [standards.ieee.org/develop/regauth/ethertype/eth.txt](http://standards-oui.ieee.org/ethertype/eth.txt)
+                      * [http://www.cavebear.com/archive/cavebear/Ethernet/type.html](http://www.cavebear.com/archive/cavebear/Ethernet/type.html)
                     type: string
                   enable: 
+                    description: Enable the Ethertype code on the list.
                     type: boolean
                 required:
                   - name
@@ -8082,10 +8416,13 @@ components:
                 type: object
                 properties: 
                   name: 
+                    description: Name for the list of Security Group Tags (SGTs).
                     type: string
                   tag: 
+                    description: The Layer 2 SGTs in headers of packets that you want to exclude (drop) when the SGT matches this list in the Zone Protection profile applied to a zone (range is 0 to 65,535).
                     type: string
                   enable: 
+                    description: Enable this exclude list for Ethernet SGT protection. 
                     type: boolean
                 required:
                   - name
@@ -10826,6 +11163,104 @@ components:
         required: 
           -  device
 
+    link-tags:
+      type: object
+      required:
+      - name
+      properties:
+        id:
+          type: string
+          description: UUID of the link tag
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          description: The name of the link tag
+          type: string
+          maxLength: 63
+        color:
+          description: The color of the link tag
+          type: string
+          enum:
+            - Red
+            - Green
+            - Blue
+            - Yellow
+            - Copper
+            - Orange
+            - Purple
+            - Gray
+            - Light Green
+            - Cyan
+            - Light Gray
+            - Blue Gray
+            - Lime
+            - Black
+            - Gold
+            - Brown
+            - Olive
+            - Maroon
+            - Red-Orange
+            - Yellow-Orange
+            - Forest Green
+            - Turquoise Blue
+            - Azure Blue
+            - Cerulean Blue
+            - Midnight Blue
+            - Medium Blue
+            - Cobalt Blue
+            - Violet Blue
+            - Blue Violet
+            - Medium Violet
+            - Medium Rose
+            - Lavender
+            - Orchid
+            - Thistle
+            - Peach
+            - Salmon
+            - Magenta
+            - Red Violet
+            - Mahogany
+            - Burnt Sienna
+            - Chestnut
+        comments:
+          description: Description of the link tag
+          type: string
+          maxLength: 0
+      oneOf:
+      - type: object
+        title: folder
+        properties:
+          folder:
+            type: string
+            pattern: ^[a-zA-Z\d-_\. ]+$
+            maxLength: 64
+            description: The folder in which the resource is defined
+            example: My Folder
+        required: 
+          -  folder
+      - type: object
+        title: snippet
+        properties:
+          snippet:
+            type: string
+            pattern: ^[a-zA-Z\d-_\. ]+$
+            maxLength: 64
+            description: The snippet in which the resource is defined
+            example: My Snippet
+        required: 
+          -  snippet
+      - type: object
+        title: device
+        properties:
+          device:
+            type: string
+            pattern: ^[a-zA-Z\d-_\. ]+$
+            maxLength: 64
+            description: The device in which the resource is defined
+            example: My Device
+        required: 
+          -  device
+
     logical-routers:
       type: object
       required:
@@ -10840,679 +11275,682 @@ components:
           description: Logical router name
           type: string
           maxLength: 63
-        ecmp:
+        vrf:
           type: object
           properties:
-            enable:
-              description: Enable ECMP routing?
-              type: boolean
-            max_path:
-              description: Max paths
-              type: integer
-              minimum: 2
-              maximum: 4
-              default: 2
-            symmetric_return:
-              description: Symmetric return?
-              type: boolean
-            strict_source_path:
-              description: Strict source path?
-              type: boolean
-            algorithm:
-              type: object
-              properties:
-                ip_modulo:
-                  type: object
-                ip_hash:
-                  type: object
-                  properties:
-                    src_only:
-                      description: Use source address only?
-                      type: boolean
-                    use_port:
-                      description: Use source/destination port for hash?
-                      type: boolean
-                    hash_seed:
-                      description: Hash seed
-                      type: integer
-                      minimum: 0
-                      maximum: 4294967295
-                weighted_round_robin:
-                  type: object
-                  properties:
-                    interface:
-                      description: Interfaces
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            description: Interface name
-                            type: string
-                            example: ethernet1/1
-                          weight:
-                            description: Weight
-                            type: integer
-                            minimum: 1
-                            maximum: 255
-                balanced_round_robin:
-                  type: object
-        interface:
-          description: Interfaces
-          type: array
-          items:
-            description: Interface name
-            type: string
-            example: ethernet1/1
-        admin_dists:
-          type: object
-          properties:
-            static:
-              description: Static routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 10
-            ospf_intra:
-              description: OSPF intra area routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 110
-            ospf_inter:
-              description: OSPF inter area routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 110
-            ospf_ext:
-              description: OSPF external routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 110
-            bgp_internal:
-              description: BGP AS internal routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 200
-            bgp_external:
-              description: BGP AS external routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 20
-            bgp_local:
-              description: BGP local routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 20
-            rip:
-              description: RIP routes
-              type: integer
-              minimum: 1
-              maximum: 255
-              default: 120
-        bgp:
-          type: object
-          properties:
-            enable:
-              description: Enable BGP routing?
-              type: boolean
-            router_id:
-              description: Router ID
-              type: string
-            local_as:
-              type: number
-              example: 1
-            global_bfd:
-              type: object
-              properties:
-                profile:
-                  description: BFD profile
-                  type: string
-                  enum:
-                  - aggressive
-                  - default
-                  - passive-default
-                  - None
-            peer_group:
-              description: Peer groups
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: Peer group name
-                    type: string
-                  enable:
-                    description: Enable peer group?
-                    type: boolean
-                  'type':
-                    type: object
-                    properties:
-                      ibgp:
-                        type: object
-                      ebgp:
-                        type: object
-                  address_family:
-                    type: object
-                    properties:
-                      ipv4:
-                        description: IPv4 address family
-                        type: string
-                  filtering_profile:
-                    type: object
-                    properties:
-                      ipv4:
-                        description: IPv4 filtering profile
-                        type: string
-                  peer:
-                    description: BGP peers
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          description: Peer name
-                          type: string
-                        enable:
-                          description: Enable BGP peer?
-                          type: boolean
-                        peer_as:
-                          description: Peer AS
-                          type: integer
-                          minimum: 1
-                          maximum: 65535
-                        inherit:
-                          description: Inherit addressing?
-                          type: boolean
-                        local_address:
-                          type: object
-                          properties:
-                            interface:
-                              description: Local interface
-                              type: string
-                            ip:
-                              description: Local IP address
-                              type: string
-                        peer_address:
-                          type: object
-                          properties:
-                            ip:
-                              description: Peer IP address
-                              type: string
-                        connection_options:
-                          type: object
-                          properties:
-                            authentication:
-                              description: Authentication profile
-                              type: string
-                              default: inherit
-                            timers:
-                              description: Timer profile
-                              type: string
-                              default: inherit
-                            multihop:
-                              description: Multi-hop
-                              type: string
-                              default: inherit
-                            dampening:
-                              description: Dampening profile
-                              type: string
-                              default: inherit
-                        enable_sender_side_loop_detection:
-                          description: Enable sender side loop detection?
-                          type: boolean
-                        bfd:
-                          type: object
-                          properties:
-                            profile:
-                              description: BFD profile
-                              type: string
-                              enum:
-                              - aggressive
-                              - Inherit-lh-global-setting
-                              - default
-                              - None
-                              - passive-default
-            install_route:
-              description: Install route?
-              type: boolean
-            fast_external_failover:
-              description: Fast failover?
-              type: boolean
-            enforce_first_as:
-              description: Enforce first AS?
-              type: boolean
-            ecmp_multi_as:
-              description: ECMP multiple AS support?
-              type: boolean
-            graceful_shutdown:
-              description: Graceful shutdown?
-              type: boolean
-            default_local_preference:
-              description: Default local preference
-              type: integer
-              minimum: 0
-              maximum: 4294967295
-            graceful_restart:
+            ecmp:
               type: object
               properties:
                 enable:
-                  description: Enable graceful restart?
+                  description: Enable ECMP routing?
                   type: boolean
-                stale_route_time:
-                  description: Stale route time (seconds)
+                max_path:
+                  description: Max paths
                   type: integer
-                  minimum: 1
-                  maximum: 3600
-                max_peer_restart_time:
-                  description: Maximum peer restart time (seconds)
-                  type: integer
-                  minimum: 1
-                  maximum: 3600
-                local_restart_time:
-                  description: Local restart time (seconds)
-                  type: integer
-                  minimum: 1
-                  maximum: 3600
-            med:
-              type: object
-              properties:
-                always_compare_med:
-                  description: Always compare MED?
+                  minimum: 2
+                  maximum: 4
+                  default: 2
+                symmetric_return:
+                  description: Symmetric return?
                   type: boolean
-                deterministic_med_comparison:
-                  description: Deterministic MED comparison?
+                strict_source_path:
+                  description: Strict source path?
                   type: boolean
-            always_advertise_network_route:
-              description: Always advertise network route?
-              type: boolean
-            advertise_network:
-              type: object
-              properties:
-                ipv4:
+                algorithm:
                   type: object
                   properties:
-                    network:
-                      description: IPv4 networks
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name: 
-                            description: IPv4 network
-                            type: string
-                          unicast:
-                            description: Unicast?
-                            type: boolean
-                          multicast:
-                            description: Multicast?
-                            type: boolean
-                          backdoor:
-                            description: Backdoor?
-                            type: boolean
-            redistribution_profile:
-              type: object
-              properties:
-                ipv4:
-                  type: object
-                  properties:
-                    unicast:
-                      description: Redistribution profile name
-                      type: string
-            aggregate_routes:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: Aggregate route name
-                    type: string
-                  description:
-                    description: Description
-                    type: string
-                  enable:
-                    description: Enable aggregate route?
-                    type: boolean
-                  summary_only:
-                    description: Summary only?
-                    type: boolean
-                  as_set:
-                    description: AS set?
-                    type: boolean
-                  same_med:
-                    description: Same MED?
-                    type: boolean
-                  type:
-                    type: object
-                    properties:
-                      ipv4:
-                        type: object
-                        properties:
-                          summary_prefix:
-                            description: Summary prefix
-                            type: string
-                          suppress_map:
-                            description: Suppress map
-                            type: string
-                          attribute_map:
-                            description: Attribute map
-                            type: string
-        ospf:
-          type: object
-          properties:
-            enable:
-              description: Enable OSPF routing?
-              type: boolean
-            router_id:
-              description: Router ID
-              type: string
-            global_bfd:
-              type: object
-              properties:
-                profile:
-                  description: BFD profile
-                  type: string
-                  enum:
-                  - aggressive
-                  - passive-default
-                  - default
-                  - None
-            area:
-              description: OSPF areas
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: Area ID
-                    type: string
-                  authentication:
-                    description: Authentication profile
-                    type: string
-                  type:
-                    type: object
-                    oneOf:
-                    - title: normal
-                      required:
-                      - normal
-                      properties:
-                        normal:
-                          type: object
-                          properties:
-                            abr:
-                              type: object
-                              properties:
-                                import_list:
-                                  description: Import list
-                                  type: string
-                                export_list:
-                                  description: Export list
-                                  type: string
-                                inbound_filter_list:
-                                  description: Inbound filter list
-                                  type: string
-                                outbound_filter_list:
-                                  description: Outbound filter list
-                                  type: string
-                    - title: stub
-                      required:
-                      - stub
-                      properties:
-                        stub:
-                          type: object
-                          properties:
-                            no_summary:
-                              description: No summary?
-                              type: boolean
-                            abr:
-                              type: object
-                              properties:
-                                import_list:
-                                  description: Import list
-                                  type: string
-                                export_list:
-                                  description: Export list
-                                  type: string
-                                inbound_filter_list:
-                                  description: Inbound filter list
-                                  type: string
-                                outbound_filter_list:
-                                  description: Outbound filter list
-                                  type: string
-                    - title: nssa
-                      required:
-                      - nssa
-                      properties:
-                        nssa:
-                          type: object
-                          properties:
-                            no_summary:
-                              description: No summary?
-                              type: boolean
-                            default_information_originate:
-                              type: object
-                              properties:
-                                metric:
-                                  description: Metric
-                                  type: integer
-                                  minimum: 1
-                                  maximum: 16677214
-                                  default: 10
-                                metric_type:
-                                  type: string
-                                  enum:
-                                  - type-1
-                                  - type-2
-                            abr:
-                              type: object
-                              properties:
-                                import_list:
-                                  description: Import list
-                                  type: string
-                                export_list:
-                                  description: Export list
-                                  type: string
-                                inbound_filter_list:
-                                  description: Inbound filter list
-                                  type: string
-                                outbound_filter_list:
-                                  description: Outbound filter list
-                                  type: string
-                                nssa_ext_range:
-                                  description: Address range for external summary routes
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      name:
-                                        description: IPv4 prefix
-                                        type: string
-                                      advertise:
-                                        description: Advertise?
-                                        type: boolean
-                  range:
-                    description: Ranges
-                    type: array
-                    items:
+                    ip_modulo:
+                      type: object
+                    ip_hash:
                       type: object
                       properties:
-                        name:
-                          description: IPv4 address/netmask
-                          type: string
-                        substitute:
-                          description: Substitute
-                          type: string
-                        advertise:
-                          description: Advertise?
+                        src_only:
+                          description: Use source address only?
                           type: boolean
-                  interface:
-                    description: Interfaces
-                    type: array
-                    items:
+                        use_port:
+                          description: Use source/destination port for hash?
+                          type: boolean
+                        hash_seed:
+                          description: Hash seed
+                          type: integer
+                          minimum: 0
+                          maximum: 4294967295
+                    weighted_round_robin:
                       type: object
                       properties:
-                        name:
-                          description: Interface name
-                          type: string
-                        # autogenerated:
-                        #   type: string
-                        enable:
-                          description: Enable?
-                          type: boolean
-                        mtu_ignore:
-                          description: MTU ignore?
-                          type: boolean
-                        passive:
-                          description: Passive?
-                          type: boolean
-                        priority:
-                          description: Priority
-                          type: integer
-                          minimum: 1
-                          maximum: 255
-                          default: 1
-                        timing:
-                          description: Timer profile
-                          type: string
-                        authentication:
-                          description: Authentication profile
-                          type: string
-                        bfd:
-                          type: object
-                          properties:
-                            profile:
-                              type: string
-                              enum:
-                              - aggressive
-                        metric:
-                          description: Cost
-                          type: integer
-                          minimum: 1
-                          maximum: 65535
-                          default: 10
-                        link_type:
-                          type: object
-                          properties:
-                            broadcast:
-                              type: object
-                            p2p:
-                              type: object
-                            p2mp:
-                              type: object
-                              properties:
-                                neighbor:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      name:
-                                        description: Neighbor IPv4 address
-                                        type: string
-                                      priority:
-                                        description: Priority
-                                        type: integer
-                                        minimum: 1
-                                        maximum: 255
-                                        default: 1
-            graceful_restart:
+                        interface:
+                          description: Interfaces
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                description: Interface name
+                                type: string
+                                example: ethernet1/1
+                              weight:
+                                description: Weight
+                                type: integer
+                                minimum: 1
+                                maximum: 255
+                    balanced_round_robin:
+                      type: object
+            interface:
+              description: Interfaces
+              type: array
+              items:
+                description: Interface name
+                type: string
+                example: ethernet1/1
+            admin_dists:
               type: object
               properties:
-                enable:
-                  description: Enable graceful restart?
-                  type: boolean
-                helper_enable:
-                  description: Enable helper mode?
-                  type: boolean
-                strict_LSA_checking:
-                  description: Enable strict LSA checking?
-                  type: boolean
-                grace_period:
-                  description: Grace period (seconds)
+                static:
+                  description: Static routes
                   type: integer
-                  minimum: 5
-                  maximum: 1800
+                  minimum: 1
+                  maximum: 255
+                  default: 10
+                ospf_intra:
+                  description: OSPF intra area routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 110
+                ospf_inter:
+                  description: OSPF inter area routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 110
+                ospf_ext:
+                  description: OSPF external routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 110
+                bgp_internal:
+                  description: BGP AS internal routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 200
+                bgp_external:
+                  description: BGP AS external routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 20
+                bgp_local:
+                  description: BGP local routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
+                  default: 20
+                rip:
+                  description: RIP routes
+                  type: integer
+                  minimum: 1
+                  maximum: 255
                   default: 120
-                max_neighbor_restart_time:
-                  description: Maximum neighbor restart time (seconds)
-                  type: integer
-                  minimum: 5
-                  maximum: 1800
-                  default: 140
-            rfc1583:
-              description: RFC1583 compatibility?
-              type: boolean
-            spf_timer:
-              description: Global general timer
-              type: string
-              enum:
-              - default
-            global_if_timer:
-              description: Global interface timer
-              type: string
-              enum:
-              - aggressive
-              - default
-        routing_table:
-          type: object
-          properties:
-            ip:
+            bgp:
               type: object
               properties:
-                static_route:
-                  description: IPv4 static routes
+                enable:
+                  description: Enable BGP routing?
+                  type: boolean
+                router_id:
+                  description: Router ID
+                  type: string
+                local_as:
+                  type: number
+                  example: 1
+                global_bfd:
+                  type: object
+                  properties:
+                    profile:
+                      description: BFD profile
+                      type: string
+                      enum:
+                      - aggressive
+                      - default
+                      - passive-default
+                      - None
+                peer_group:
+                  description: Peer groups
                   type: array
                   items:
                     type: object
                     properties:
                       name:
-                        description: Static route name
+                        description: Peer group name
                         type: string
-                      destination:
+                      enable:
+                        description: Enable peer group?
+                        type: boolean
+                      'type':
+                        type: object
+                        properties:
+                          ibgp:
+                            type: object
+                          ebgp:
+                            type: object
+                      address_family:
+                        type: object
+                        properties:
+                          ipv4:
+                            description: IPv4 address family
+                            type: string
+                      filtering_profile:
+                        type: object
+                        properties:
+                          ipv4:
+                            description: IPv4 filtering profile
+                            type: string
+                      peer:
+                        description: BGP peers
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              description: Peer name
+                              type: string
+                            enable:
+                              description: Enable BGP peer?
+                              type: boolean
+                            peer_as:
+                              description: Peer AS
+                              type: integer
+                              minimum: 1
+                              maximum: 65535
+                            inherit:
+                              description: Inherit addressing?
+                              type: boolean
+                            local_address:
+                              type: object
+                              properties:
+                                interface:
+                                  description: Local interface
+                                  type: string
+                                ip:
+                                  description: Local IP address
+                                  type: string
+                            peer_address:
+                              type: object
+                              properties:
+                                ip:
+                                  description: Peer IP address
+                                  type: string
+                            connection_options:
+                              type: object
+                              properties:
+                                authentication:
+                                  description: Authentication profile
+                                  type: string
+                                  default: inherit
+                                timers:
+                                  description: Timer profile
+                                  type: string
+                                  default: inherit
+                                multihop:
+                                  description: Multi-hop
+                                  type: string
+                                  default: inherit
+                                dampening:
+                                  description: Dampening profile
+                                  type: string
+                                  default: inherit
+                            enable_sender_side_loop_detection:
+                              description: Enable sender side loop detection?
+                              type: boolean
+                            bfd:
+                              type: object
+                              properties:
+                                profile:
+                                  description: BFD profile
+                                  type: string
+                                  enum:
+                                  - aggressive
+                                  - Inherit-lh-global-setting
+                                  - default
+                                  - None
+                                  - passive-default
+                install_route:
+                  description: Install route?
+                  type: boolean
+                fast_external_failover:
+                  description: Fast failover?
+                  type: boolean
+                enforce_first_as:
+                  description: Enforce first AS?
+                  type: boolean
+                ecmp_multi_as:
+                  description: ECMP multiple AS support?
+                  type: boolean
+                graceful_shutdown:
+                  description: Graceful shutdown?
+                  type: boolean
+                default_local_preference:
+                  description: Default local preference
+                  type: integer
+                  minimum: 0
+                  maximum: 4294967295
+                graceful_restart:
+                  type: object
+                  properties:
+                    enable:
+                      description: Enable graceful restart?
+                      type: boolean
+                    stale_route_time:
+                      description: Stale route time (seconds)
+                      type: integer
+                      minimum: 1
+                      maximum: 3600
+                    max_peer_restart_time:
+                      description: Maximum peer restart time (seconds)
+                      type: integer
+                      minimum: 1
+                      maximum: 3600
+                    local_restart_time:
+                      description: Local restart time (seconds)
+                      type: integer
+                      minimum: 1
+                      maximum: 3600
+                med:
+                  type: object
+                  properties:
+                    always_compare_med:
+                      description: Always compare MED?
+                      type: boolean
+                    deterministic_med_comparison:
+                      description: Deterministic MED comparison?
+                      type: boolean
+                always_advertise_network_route:
+                  description: Always advertise network route?
+                  type: boolean
+                advertise_network:
+                  type: object
+                  properties:
+                    ipv4:
+                      type: object
+                      properties:
+                        network:
+                          description: IPv4 networks
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name: 
+                                description: IPv4 network
+                                type: string
+                              unicast:
+                                description: Unicast?
+                                type: boolean
+                              multicast:
+                                description: Multicast?
+                                type: boolean
+                              backdoor:
+                                description: Backdoor?
+                                type: boolean
+                redistribution_profile:
+                  type: object
+                  properties:
+                    ipv4:
+                      type: object
+                      properties:
+                        unicast:
+                          description: Redistribution profile name
+                          type: string
+                aggregate_routes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Aggregate route name
+                        type: string
+                      description:
                         description: Description
                         type: string
-                      interface:
-                        description: Interface
-                        type: string
-                      nexthop:
+                      enable:
+                        description: Enable aggregate route?
+                        type: boolean
+                      summary_only:
+                        description: Summary only?
+                        type: boolean
+                      as_set:
+                        description: AS set?
+                        type: boolean
+                      same_med:
+                        description: Same MED?
+                        type: boolean
+                      type:
                         type: object
                         properties:
-                          discard:
+                          ipv4:
                             type: object
-                          ip_address:
-                            description: IPv4 address
-                            type: string
-                      admin_dist:
-                        description: Administrative distance
-                        type: integer
-                        minimum: 10
-                        maximum: 240
-                      metric:
-                        type: integer
-                        minimum: 1
-                        maximum: 65535
-                      bfd:
+                            properties:
+                              summary_prefix:
+                                description: Summary prefix
+                                type: string
+                              suppress_map:
+                                description: Suppress map
+                                type: string
+                              attribute_map:
+                                description: Attribute map
+                                type: string
+            ospf:
+              type: object
+              properties:
+                enable:
+                  description: Enable OSPF routing?
+                  type: boolean
+                router_id:
+                  description: Router ID
+                  type: string
+                global_bfd:
+                  type: object
+                  properties:
+                    profile:
+                      description: BFD profile
+                      type: string
+                      enum:
+                      - aggressive
+                      - passive-default
+                      - default
+                      - None
+                area:
+                  description: OSPF areas
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Area ID
+                        type: string
+                      authentication:
+                        description: Authentication profile
+                        type: string
+                      type:
+                        type: object
+                        oneOf:
+                        - title: normal
+                          required:
+                          - normal
+                          properties:
+                            normal:
+                              type: object
+                              properties:
+                                abr:
+                                  type: object
+                                  properties:
+                                    import_list:
+                                      description: Import list
+                                      type: string
+                                    export_list:
+                                      description: Export list
+                                      type: string
+                                    inbound_filter_list:
+                                      description: Inbound filter list
+                                      type: string
+                                    outbound_filter_list:
+                                      description: Outbound filter list
+                                      type: string
+                        - title: stub
+                          required:
+                          - stub
+                          properties:
+                            stub:
+                              type: object
+                              properties:
+                                no_summary:
+                                  description: No summary?
+                                  type: boolean
+                                abr:
+                                  type: object
+                                  properties:
+                                    import_list:
+                                      description: Import list
+                                      type: string
+                                    export_list:
+                                      description: Export list
+                                      type: string
+                                    inbound_filter_list:
+                                      description: Inbound filter list
+                                      type: string
+                                    outbound_filter_list:
+                                      description: Outbound filter list
+                                      type: string
+                        - title: nssa
+                          required:
+                          - nssa
+                          properties:
+                            nssa:
+                              type: object
+                              properties:
+                                no_summary:
+                                  description: No summary?
+                                  type: boolean
+                                default_information_originate:
+                                  type: object
+                                  properties:
+                                    metric:
+                                      description: Metric
+                                      type: integer
+                                      minimum: 1
+                                      maximum: 16677214
+                                      default: 10
+                                    metric_type:
+                                      type: string
+                                      enum:
+                                      - type-1
+                                      - type-2
+                                abr:
+                                  type: object
+                                  properties:
+                                    import_list:
+                                      description: Import list
+                                      type: string
+                                    export_list:
+                                      description: Export list
+                                      type: string
+                                    inbound_filter_list:
+                                      description: Inbound filter list
+                                      type: string
+                                    outbound_filter_list:
+                                      description: Outbound filter list
+                                      type: string
+                                    nssa_ext_range:
+                                      description: Address range for external summary routes
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          name:
+                                            description: IPv4 prefix
+                                            type: string
+                                          advertise:
+                                            description: Advertise?
+                                            type: boolean
+                      range:
+                        description: Ranges
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              description: IPv4 address/netmask
+                              type: string
+                            substitute:
+                              description: Substitute
+                              type: string
+                            advertise:
+                              description: Advertise?
+                              type: boolean
+                      interface:
+                        description: Interfaces
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              description: Interface name
+                              type: string
+                            # autogenerated:
+                            #   type: string
+                            enable:
+                              description: Enable?
+                              type: boolean
+                            mtu_ignore:
+                              description: MTU ignore?
+                              type: boolean
+                            passive:
+                              description: Passive?
+                              type: boolean
+                            priority:
+                              description: Priority
+                              type: integer
+                              minimum: 1
+                              maximum: 255
+                              default: 1
+                            timing:
+                              description: Timer profile
+                              type: string
+                            authentication:
+                              description: Authentication profile
+                              type: string
+                            bfd:
+                              type: object
+                              properties:
+                                profile:
+                                  type: string
+                                  enum:
+                                  - aggressive
+                            metric:
+                              description: Cost
+                              type: integer
+                              minimum: 1
+                              maximum: 65535
+                              default: 10
+                            link_type:
+                              type: object
+                              properties:
+                                broadcast:
+                                  type: object
+                                p2p:
+                                  type: object
+                                p2mp:
+                                  type: object
+                                  properties:
+                                    neighbor:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          name:
+                                            description: Neighbor IPv4 address
+                                            type: string
+                                          priority:
+                                            description: Priority
+                                            type: integer
+                                            minimum: 1
+                                            maximum: 255
+                                            default: 1
+                graceful_restart:
+                  type: object
+                  properties:
+                    enable:
+                      description: Enable graceful restart?
+                      type: boolean
+                    helper_enable:
+                      description: Enable helper mode?
+                      type: boolean
+                    strict_LSA_checking:
+                      description: Enable strict LSA checking?
+                      type: boolean
+                    grace_period:
+                      description: Grace period (seconds)
+                      type: integer
+                      minimum: 5
+                      maximum: 1800
+                      default: 120
+                    max_neighbor_restart_time:
+                      description: Maximum neighbor restart time (seconds)
+                      type: integer
+                      minimum: 5
+                      maximum: 1800
+                      default: 140
+                rfc1583:
+                  description: RFC1583 compatibility?
+                  type: boolean
+                spf_timer:
+                  description: Global general timer
+                  type: string
+                  enum:
+                  - default
+                global_if_timer:
+                  description: Global interface timer
+                  type: string
+                  enum:
+                  - aggressive
+                  - default
+            routing_table:
+              type: object
+              properties:
+                ip:
+                  type: object
+                  properties:
+                    static_route:
+                      description: IPv4 static routes
+                      type: array
+                      items:
                         type: object
                         properties:
-                          profile:
-                            description: BFD profile
+                          name:
+                            description: Static route name
                             type: string
-                            enum:
-                            - aggressive
-                            - default
-                            - passive-default
-                            - None
-                      path_monitor:
-                        type: object
-                        properties:
-                          enable:
-                            description: Enable path monitoring?
-                            type: boolean
-                            default: false
+                          destination:
+                            description: Description
+                            type: string
+                          interface:
+                            description: Interface
+                            type: string
+                          nexthop:
+                            type: object
+                            properties:
+                              discard:
+                                type: object
+                              ip_address:
+                                description: IPv4 address
+                                type: string
+                          admin_dist:
+                            description: Administrative distance
+                            type: integer
+                            minimum: 10
+                            maximum: 240
+                          metric:
+                            type: integer
+                            minimum: 1
+                            maximum: 65535
+                          bfd:
+                            type: object
+                            properties:
+                              profile:
+                                description: BFD profile
+                                type: string
+                                enum:
+                                - aggressive
+                                - default
+                                - passive-default
+                                - None
+                          path_monitor:
+                            type: object
+                            properties:
+                              enable:
+                                description: Enable path monitoring?
+                                type: boolean
+                                default: false
       oneOf:
       - type: object
         title: folder
