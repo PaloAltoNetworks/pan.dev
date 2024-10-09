@@ -109,7 +109,7 @@ export default function SCMLandingPage() {
         ],
         "NGFW Configuration": [
           {
-            to: "scm/api/config/operations/operations-api",
+            to: "scm/api/config/operations/operations-api-cloud-ngfw",
             label: "Configuration Operations",
             icon: "api-doc",
           },
@@ -141,7 +141,7 @@ export default function SCMLandingPage() {
         ],
         "Cloud NGFW Configuration": [
           {
-            to: "scm/api/config/operations/operations-api",
+            to: "scm/api/config/operations/operations-api-cloud-ngfw",
             label: "Configuration Operations",
             icon: "api-doc",
           },
