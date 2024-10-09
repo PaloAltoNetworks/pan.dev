@@ -70,7 +70,7 @@ export default function SCMLandingPage() {
       description: "",
       type: "hierarchy",
       docs: {
-        "Platform Configuration": [
+        "SASE Configuration": [
           {
             to: "scm/api/config/operations/operations-api",
             label: "Configuration Operations",
@@ -97,8 +97,62 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
+            to: "scm/api/config/objects/objects-api",
+            label: "Object Configuration",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/security/security-api",
+            label: "Security Profiles",
+            icon: "api-doc",
+          },
+        ],
+        "NGFW Configuration": [
+          {
+            to: "scm/api/config/operations/operations-api",
+            label: "Configuration Operations",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/setup/setup-api",
+            label: "Configuration Setup",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/identity/identity-api",
+            label: "Identity Configuration",
+            icon: "api-doc",
+          },
+          {
             to: "scm/api/config/network/network-api",
             label: "Network Configuration",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/objects/objects-api",
+            label: "Object Configuration",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/security/security-api",
+            label: "Security Profiles",
+            icon: "api-doc",
+          },
+        ],
+        "Cloud NGFW Configuration": [
+          {
+            to: "scm/api/config/operations/operations-api",
+            label: "Configuration Operations",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/setup/setup-api",
+            label: "Configuration Setup",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/identity/identity-api",
+            label: "Identity Configuration",
             icon: "api-doc",
           },
           {
