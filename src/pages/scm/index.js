@@ -114,12 +114,12 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/setup/setup-api",
+            to: "scm/api/config/setup/setup-api-ngfw",
             label: "Configuration Setup",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/identity/identity-api",
+            to: "scm/api/config/identity/identity-api-ngfw",
             label: "Identity Configuration",
             icon: "api-doc",
           },
@@ -129,12 +129,12 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/objects/objects-api",
+            to: "scm/api/config/objects/objects-api-ngfw",
             label: "Object Configuration",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/security/security-api",
+            to: "scm/api/config/security/security-api-ngfw",
             label: "Security Profiles",
             icon: "api-doc",
           },
@@ -146,22 +146,22 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/setup/setup-api",
+            to: "scm/api/config/setup/setup-api-cloud-ngfw",
             label: "Configuration Setup",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/identity/identity-api",
+            to: "scm/api/config/identity/identity-api-cloud-ngfw",
             label: "Identity Configuration",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/objects/objects-api",
+            to: "scm/api/config/objects/objects-api-cloud-ngfw",
             label: "Object Configuration",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/security/security-api",
+            to: "scm/api/config/security/security-api-cloud-ngfw",
             label: "Security Profiles",
             icon: "api-doc",
           },

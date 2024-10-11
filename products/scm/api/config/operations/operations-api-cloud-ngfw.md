@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-The Operations APIs are used to manage cloud-hosted Next Generation Firewall (NGFW) deployments that
+The Operations APIs are used to manage Cloud-hosted Next Generation Firewall (Cloud NGFW) deployments that
 are managed by Strata Cloud Manager. Use these APIs to create candidate configurations, load
 configuration versions, push configurations, and manage configuration jobs.
 

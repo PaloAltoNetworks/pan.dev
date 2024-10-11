@@ -187,7 +187,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/setup/setup-api",
+                  id: "scm/api/config/setup/setup-api-ngfw",
                 },
                 require("./api/config/setup/sidebar"),
               ],
@@ -198,7 +198,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/identity/identity-api",
+                  id: "scm/api/config/identity/identity-api-ngfw",
                 },
                 require("./api/config/identity/sidebar"),
               ],
@@ -220,7 +220,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/objects/objects-api",
+                  id: "scm/api/config/objects/objects-api-ngfw",
                 },
                 require("./api/config/objects/sidebar"),
               ],
@@ -231,7 +231,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/security/security-api",
+                  id: "scm/api/config/security/security-api-ngfw",
                 },
                 require("./api/config/security/sidebar"),
               ],
@@ -260,7 +260,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/setup/setup-api",
+                  id: "scm/api/config/setup/setup-api-cloud-ngfw",
                 },
                 require("./api/config/setup/sidebar"),
               ],
@@ -271,7 +271,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/identity/identity-api",
+                  id: "scm/api/config/identity/identity-api-cloud-ngfw",
                 },
                 require("./api/config/identity/sidebar"),
               ],
@@ -282,7 +282,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/objects/objects-api",
+                  id: "scm/api/config/objects/objects-api-cloud-ngfw",
                 },
                 require("./api/config/objects/sidebar"),
               ],
@@ -293,7 +293,7 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/security/security-api",
+                  id: "scm/api/config/security/security-api-cloud-ngfw",
                 },
                 require("./api/config/security/sidebar"),
               ],
@@ -310,8 +310,4 @@ module.exports = {
     require("./api/subscription/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
-  scmconfignetwork: [
-    "scm/api/config/network/network-api",
-    require("./api/config/network/sidebar"),
-  ],
 };
