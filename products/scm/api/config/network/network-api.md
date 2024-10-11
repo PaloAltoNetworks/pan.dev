@@ -1,7 +1,7 @@
 ---
 id: network-api
-title: Configuration Network APIs
-sidebar_label: Configuration Network APIs
+title: Network Services APIs
+sidebar_label: Network Services APIs
 keywords:
   - Strata Cloud Manager
   - Configuration

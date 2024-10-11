@@ -1,7 +1,7 @@
 ---
 id: deployment-api
-title: Configuration Deployment APIs
-sidebar_label: Configuration Deployment APIs
+title: Network Deployment APIs
+sidebar_label: Network Deployment
 keywords:
   - Strata Cloud Manager
   - Configuration

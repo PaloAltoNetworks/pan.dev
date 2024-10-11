@@ -1,7 +1,7 @@
 ---
 id: identity-api
-title: Configuration Identity APIs
-sidebar_label: Configuration Identity APIs
+title: Identity Services APIs
+sidebar_label: Identity Services APIs
 keywords:
   - Strata Cloud Manager
   - Configuration

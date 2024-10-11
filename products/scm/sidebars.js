@@ -110,7 +110,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Deployment Configuration",
+              label: "Network Deployment",
               items: [
                 {
                   type: "doc",
@@ -121,7 +121,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Identity Configuration",
+              label: "Identity Services",
               items: [
                 {
                   type: "doc",
@@ -132,7 +132,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Mobile Agent Configuration",
+              label: "GlobalProtect",
               items: [
                 {
                   type: "doc",
@@ -143,7 +143,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Object Configuration",
+              label: "Objects",
               items: [
                 {
                   type: "doc",
@@ -154,7 +154,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Security Profiles",
+              label: "Security Services",
               items: [
                 {
                   type: "doc",
@@ -194,7 +194,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Identity Configuration",
+              label: "Identity Services",
               items: [
                 {
                   type: "doc",
@@ -216,7 +216,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Object Configuration",
+              label: "Objects",
               items: [
                 {
                   type: "doc",
@@ -227,7 +227,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Security Profiles",
+              label: "Security Services",
               items: [
                 {
                   type: "doc",
@@ -267,7 +267,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Identity Configuration",
+              label: "Identity Services",
               items: [
                 {
                   type: "doc",
@@ -278,7 +278,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Object Configuration",
+              label: "Objects",
               items: [
                 {
                   type: "doc",
@@ -289,7 +289,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Security Profiles",
+              label: "Security Services",
               items: [
                 {
                   type: "doc",

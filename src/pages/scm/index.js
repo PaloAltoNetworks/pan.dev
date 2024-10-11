@@ -83,27 +83,27 @@ export default function SCMLandingPage() {
           },
           {
             to: "scm/api/config/deployment/deployment-api",
-            label: "Deployment Configuration",
+            label: "Network Deployment",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/identity/identity-api",
-            label: "Identity Configuration",
+            label: "Identity Services",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/mobileagent/mobileagent-api",
-            label: "Mobile Agent Configuration",
+            label: "GlobalProtect",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/objects/objects-api",
-            label: "Object Configuration",
+            label: "Objects",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/security/security-api",
-            label: "Security Profiles",
+            label: "Security Services",
             icon: "api-doc",
           },
         ],
@@ -120,7 +120,7 @@ export default function SCMLandingPage() {
           },
           {
             to: "scm/api/config/identity/identity-api-ngfw",
-            label: "Identity Configuration",
+            label: "Identity Services",
             icon: "api-doc",
           },
           {
@@ -130,12 +130,12 @@ export default function SCMLandingPage() {
           },
           {
             to: "scm/api/config/objects/objects-api-ngfw",
-            label: "Object Configuration",
+            label: "Objects",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/security/security-api-ngfw",
-            label: "Security Profiles",
+            label: "Security Services",
             icon: "api-doc",
           },
         ],
@@ -152,17 +152,17 @@ export default function SCMLandingPage() {
           },
           {
             to: "scm/api/config/identity/identity-api-cloud-ngfw",
-            label: "Identity Configuration",
+            label: "Identity Services",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/objects/objects-api-cloud-ngfw",
-            label: "Object Configuration",
+            label: "Objects",
             icon: "api-doc",
           },
           {
             to: "scm/api/config/security/security-api-cloud-ngfw",
-            label: "Security Profiles",
+            label: "Security Services",
             icon: "api-doc",
           },
         ],

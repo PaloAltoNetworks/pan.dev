@@ -1,7 +1,7 @@
 ---
 id: mobileagent-api
-title: Configuration Mobile Agent APIs
-sidebar_label: Configuration Mobile Agent APIs
+title: GlobalProtect APIs
+sidebar_label: GlobalProtect APIs
 keywords:
   - Strata Cloud Manager
   - Configuration

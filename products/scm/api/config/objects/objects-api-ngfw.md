@@ -1,7 +1,7 @@
 ---
 id: objects-api-ngfw
-title: Configuration Objects APIs
-sidebar_label: Configuration Objects APIs
+title: Objects APIs
+sidebar_label: Objects APIs
 keywords:
   - Strata Cloud Manager
   - Configuration
@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-Welcome to the Configuration Objects APIs for Next Generation Firewalls (NGFW). Objects are policy
+Welcome to the Objects configuration APIs for Next Generation Firewalls (NGFW). Objects are policy
 building blocks that group discrete identities such as IP addresses, URLs, applications, or users.
 You can use these APIs to create and manage these objects.
 
