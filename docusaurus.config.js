@@ -370,51 +370,19 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
+                      to: "scm",
+                      label: "Home Page",
+                      icon: "doc",
+                    },
+                    {
                       to: "scm/docs/home",
-                      label: "Strata Cloud Manager Developer's Guide",
+                      label: "Developer's Guide",
                       icon: "doc",
                     },
                     {
                       to: "scm/docs/release-notes/changelog",
-                      label: "Strata Cloud Manager Changelog",
+                      label: "Changelog",
                       icon: "doc",
-                    },
-                    {
-                      to: "scm/docs/release-notes/release-notes",
-                      label: "Strata Cloud Manager Release Notes",
-                      icon: "doc",
-                    },
-                  ],
-                  apiDocs: [
-                    {
-                      to: "scm/api/tenancy/tenancy-api",
-                      label: "Tenancy Service",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "scm/api/iam/iam-api",
-                      label: "Identity and Access Management",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "scm/api/auth/auth-api",
-                      label: "Authentication Service",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "scm/api/subscription/subscription-api",
-                      label: "Subscription Service",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "scm/api/security-services/security-services-api",
-                      label: "Security Services",
-                      icon: "api-doc",
-                    },
-                    {
-                      to: "/scm/api/config/config-api",
-                      label: "Strata Cloud Manager Configuration",
-                      icon: "api-doc",
                     },
                   ],
                 },
