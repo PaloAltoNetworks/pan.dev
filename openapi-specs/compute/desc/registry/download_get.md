@@ -2,8 +2,6 @@ Downloads registry image scan reports in CSV format.
 
 This endpoint maps to the CSV hyperlink in **Monitor > Compliance > Images > Registries** in the Console UI.
 
-_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
-
 ### cURL Request
 
 Refer to the following cURL command that generates a CSV file containing the scan reports:
