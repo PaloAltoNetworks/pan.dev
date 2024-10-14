@@ -1,0 +1,1806 @@
+components:
+  parameters:
+    LocationInfoType:
+      description: Information type.
+      in: query
+      name: info_type
+      required: false
+      schema:
+        type: string
+    Region:
+      description: Aggregated bandwidth region.
+      in: query
+      name: region
+      required: true
+      schema:
+        type: string
+    RemoteNetworksNames:
+      explode: true
+      in: query
+      name: Name
+      required: false
+      schema:
+        items:
+          type: string
+        type: array
+      style: deepObject
+    SpnName:
+      description: Aggregated bandwidth region.
+      in: query
+      name: SpnName
+      required: true
+      schema:
+        type: string
+    SubTenantName:
+      description: Sub-tenant name in a multi-tenancy setup.
+      in: query
+      name: SubTenantName
+      schema:
+        type: string
+    uuid:
+      description: Request ID.
+      in: query
+      name: ID
+      required: true
+      schema:
+        format: UUID
+        type: string
+  responses:
+    access_errors:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: Forbidden
+    auth_errors:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: Unauthorized
+    bad_request_errors_basic:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: Bad Request
+    bad_request_errors_basic_with_body:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: Bad Request
+    default_errors:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: General Errors
+    not_found:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+      description: Not Found
+  schemas:
+    BandwidthAllocation:
+      properties:
+        bandwidth:
+          description: bandwidth to allocate in Mbps
+          example: 100 Mbps
+          type: string
+        compute_location:
+          description: aggregate compute region
+          example: US Northwest
+          type: string
+        edge_location:
+          description: edge location for given lat/long/ip
+          example: US West
+          type: string
+        ipsec_node_list:
+          description: list of ipsec nodes
+          example:
+          - node1
+          - node2
+          - node3
+          items:
+            type: string
+          type: array
+        location:
+          $ref: '#/components/schemas/Location'
+      required:
+      - location
+      - bandwidth
+      type: object
+    BandwidthAllocationSet:
+      properties:
+        bandwidth_allocations:
+          description: Bandwidth allocations.
+          items:
+            $ref: '#/components/schemas/BandwidthAllocation'
+          type: array
+        uuid:
+          $ref: '#/components/schemas/UuidResponse'
+      type: object
+    EcmpLoadBalancing:
+      properties:
+        ecmp_load_balancing_enabled:
+          default: disable
+          enum:
+          - enable
+          - disable
+          example: enable
+          type: string
+        ecmp_tunnels:
+          description: ecmp_tunnels is required when ecmp_load_balancing is enabled.
+          items:
+            properties:
+              do_not_export_routes:
+                description: Do not export routes to peer over this ECMP tunnel.
+                example: true
+                type: boolean
+              ipsec_tunnel:
+                $ref: '#/components/schemas/IpsecTunnel'
+              local_ip_address:
+                description: Local IP Address of the ECMP tunnel.
+                example: 1.2.3.4
+                type: string
+              name:
+                description: Name of the ECMP tunnel.
+                example: ecmp_tunnel_1
+                type: string
+              originate_default_route:
+                description: Originate default route to peer over this ECMP tunnel.
+                example: true
+                type: boolean
+              peer_as:
+                description: AS number of the ECMP tunnel peer.
+                example: '65001'
+                type: string
+              peer_ip_address:
+                description: Peer IP Address of the ECMP tunnel.
+                example: 2.3.34.1
+                type: string
+              peering_type:
+                description: 'Exchange Routes: exchange-v4-over-v4 stands for Exchange
+                  IPv4 routes over IPv4 peering. exchange-v4-v6-over-v4 stands for
+                  Exchange both IPv4 and IPv6 routes over IPv4 peering. exchange-v4-over-v4-v6-over-v6
+                  stands for Exchange IPv4 routes over IPv4 peer and IPv6 route over
+                  IPv6 peer. exchange-v6-over-v6 stands for Exchange IPv6 routes over
+                  IPv6 peering.'
+                enum:
+                - exchange-v4-over-v4
+                - exchange-v4-v6-over-v4
+                - exchange-v4-over-v4-v6-over-v6
+                - exchange-v6-over-v6
+                example: exchange-v4-over-v4
+                type: string
+              secret:
+                description: Shared secret for the ECMP tunnel.
+                example: supersecretpassword123
+                type: string
+              summarize_mobile_user_routes:
+                description: Summarize mobile user routes to ECMP tunnel.
+                example: true
+                type: boolean
+            required:
+            - name
+            - ipsec_tunnel
+            type: object
+          maxLength: 4
+          type: array
+      type: object
+    Ike:
+      properties:
+        advanced:
+          $ref: '#/components/schemas/IkeAdvanced'
+        authentication:
+          properties:
+            pre_shared_key_auth:
+              description: user provided key
+              example: my_secret_key
+              type: string
+          type: object
+        crypto:
+          oneOf:
+          - $ref: '#/components/schemas/IkeCryptoProfiles'
+          - $ref: '#/components/schemas/IkeCrypto'
+          type: object
+        local_id:
+          properties:
+            id:
+              description: Local ID string
+              example: localId234
+              maxLength: 1024
+              minLength: 1
+              pattern: ^(.+\@[a-zA-Z0-9.-]+)$|^([$a-zA-Z0-9_:.-]+)$|^(([[:xdigit:]][[:xdigit:]])+)$|^([a-zA-Z0-9.]+=(\\,|[^,])+[,
+                ]+)*([a-zA-Z0-9.]+=(\\,|[^,])+)$
+              type: string
+            type:
+              type: string
+          type: object
+        peer_address:
+          oneOf:
+          - properties:
+              ip:
+                description: peer gateway has static IP address
+                example: 1.2.3.4
+                type: string
+            title: ip
+            type: object
+          - properties:
+              fqdn:
+                description: peer gateway FQDN name
+                example: gateway.example.com
+                maxLength: 255
+                type: string
+            title: fqdn
+            type: object
+          - properties:
+              dynamic:
+                default: {}
+                example: {}
+                type: object
+            title: dynamic
+            type: object
+          type: object
+        peer_id:
+          properties:
+            id:
+              description: Peer ID string
+              example: user@example.com
+              maxLength: 1024
+              minLength: 1
+              pattern: ^(.+\@[\*a-zA-Z0-9.-]+)$|^([\*$a-zA-Z0-9_:.-]+)$|^(([[:xdigit:]][[:xdigit:]])+)$|^([a-zA-Z0-9.]+=(\\,|[^,])+[,
+                ]+)*([a-zA-Z0-9.]+=(\\,|[^,])+)$
+              type: string
+            type:
+              enum:
+              - ipaddr
+              - keyid
+              - fqdn
+              - ufqdn
+              example: fqdn
+              type: string
+          type: object
+      required:
+      - authentication
+      - crypto
+      - peer_address
+      type: object
+    IkeAdvanced:
+      properties:
+        fragmentation:
+          properties:
+            enable:
+              default: false
+              enum:
+              - false
+              example: false
+              type: boolean
+          type: object
+        nat_traversal:
+          properties:
+            enable:
+              example: false
+              type: boolean
+          type: object
+        passive_mode:
+          example: false
+          type: boolean
+      type: object
+    IkeCrypto:
+      properties:
+        ipsec_crypto_profile:
+          example:
+          - ike_aruba
+          - ike_aryaka
+          - ike_citrix
+          - ike_riverbed
+          type: string
+      type: object
+    IkeCryptoProfiles:
+      properties:
+        authentication_multiple:
+          default: 0
+          description: IKEv2 SA re-authentication interval equals authentication-multiple
+            * rekey-lifetime; 0 means reauthentication disabled
+          example: 3
+          maximum: 50
+          type: integer
+        dh_group:
+          description: Array of Phase-1 DH groups
+          example:
+          - group2
+          - group14
+          items:
+            default: group2
+            description: Phase-1 DH group
+            enum:
+            - group1
+            - group2
+            - group5
+            - group14
+            - group19
+            - group20
+            type: string
+          type: array
+        encryption:
+          description: Encryption algorithm
+          example:
+          - aes-128-cbc
+          - aes-256-cbc
+          items:
+            default: aes-128-cbc
+            enum:
+            - des
+            - 3des
+            - aes-128-cbc
+            - aes-192-cbc
+            - aes-256-cbc
+            - aes-128-gcm
+            - aes-256-gcm
+            type: string
+          type: array
+        hash:
+          items:
+            default: sha1
+            description: Hashing algorithm
+            enum:
+            - md5
+            - sha1
+            - sha256
+            - sha384
+            - sha512
+            example:
+            - sha256
+            - sha512
+            type: string
+          type: array
+        id:
+          description: Resource UUID.
+          example: abcd-1234
+          readOnly: true
+          type: string
+        lifetime:
+          oneOf:
+          - properties:
+              seconds:
+                description: Specify lifetime in seconds
+                example: 10
+                maximum: 65535
+                minimum: 180
+                type: integer
+            title: seconds
+            type: object
+          - properties:
+              minutes:
+                description: Specify lifetime in minutes
+                example: 5
+                maximum: 65535
+                minimum: 3
+                type: integer
+            title: minutes
+            type: object
+          - properties:
+              hours:
+                description: Specify lifetime in hours
+                example: 1
+                maximum: 65535
+                minimum: 1
+                type: integer
+            title: hours
+            type: object
+          - properties:
+              days:
+                description: specify lifetime in days
+                example: 2
+                maximum: 365
+                minimum: 1
+                type: integer
+            title: days
+            type: object
+          type: object
+        name:
+          description: 'Alphanumeric string begin with letter: [0-9a-zA-Z._-]'
+          example: ike_crypto_1
+          maxLength: 31
+          type: string
+      required:
+      - name
+      - encryption
+      - hash
+      - dh_group
+      type: object
+    IkeCryptoProfilesNamesSet:
+      properties:
+        description: IPSEC Crypto Profiles names set
+        example:
+        - phase1-aes256-sha256-dh14
+        - phase2-aes256-sha256-modp1024
+        ike_crypto_profiles_names:
+          items:
+            type: string
+          maxItems: 100
+          minItems: 0
+          type: array
+          uniqueItems: true
+      type: object
+    IkeCryptoProfilesSet:
+      description: set of ike crypto profiles
+      example:
+      - ike_crypto_1
+      - ike_crypto_2
+      properties:
+        IkeCryptoProfiles:
+          description: The IKE Crypto Profile.
+          items:
+            $ref: '#/components/schemas/IkeCryptoProfiles'
+          type: array
+      type: object
+    IpsecCrypto:
+      properties:
+        ipsec_crypto_profile:
+          example:
+          - ipsec_aruba
+          - ipsec_aryaka
+          - ipsec_citrix
+          - ipsec_riverbed
+          type: string
+      type: object
+    IpsecCryptoProfiles:
+      properties:
+        ah:
+          description: Authentication algorithm
+          example:
+          - sha256
+          - sha512
+          properties:
+            authentication:
+              items:
+                enum:
+                - md5
+                - sha1
+                - sha256
+                - sha384
+                - sha512
+                type: string
+              type: array
+          required:
+          - authentication
+          type: object
+        dh_group:
+          default: group2
+          description: phase-2 DH group (PFS DH group)
+          enum:
+          - no-pfs
+          - group1
+          - group2
+          - group5
+          - group14
+          - group19
+          - group20
+          example: group2
+          type: string
+        esp:
+          properties:
+            authentication:
+              description: Authentication algorithm
+              example:
+              - sha256
+              - sha512
+              items:
+                default: sha1
+                type: string
+              type: array
+            encryption:
+              description: Encryption algorithm
+              example:
+              - aes-128-cbc
+              - aes-256-cbc
+              items:
+                default: aes-128-cbc
+                enum:
+                - des
+                - 3des
+                - aes-128-cbc
+                - aes-192-cbc
+                - aes-256-cbc
+                - aes-128-gcm
+                - aes-256-gcm
+                - 'null'
+                type: string
+              type: array
+          required:
+          - encryption
+          - authentication
+          type: object
+        lifesize:
+          $ref: '#/components/schemas/Lifesize'
+        lifetime:
+          $ref: '#/components/schemas/Lifetime'
+        name:
+          description: 'Alphanumeric string begin with letter: [0-9a-zA-Z._-]'
+          example: ipsec_profile_1
+          maxLength: 31
+          type: string
+      required:
+      - name
+      - lifetime
+      type: object
+    IpsecCryptoProfilesNamesSet:
+      description: IPSEC Crypto Profiles names set
+      example:
+      - phase1-aes256-sha256-dh14
+      - phase2-aes256-sha256-modp1024
+      properties:
+        ipsec_crypto_profiles_names:
+          items:
+            type: string
+          maxItems: 100
+          minItems: 0
+          type: array
+          uniqueItems: true
+      type: object
+    IpsecCryptoProfilesSet:
+      description: Set of IPSEC Crypto Profiles.
+      example:
+      - ipsec_crypto_profile_1
+      - ipsec_crypto_profile_2
+      - ipsec_crypto_profile_3
+      properties:
+        IkeCryptoProfiles:
+          description: The IPSEC Crypto Profile.
+          items:
+            $ref: '#/components/schemas/IpsecCryptoProfiles'
+          type: array
+      type: object
+    IpsecTunnel:
+      properties:
+        anti_replay:
+          description: Enable Anti-Replay check on this tunnel.
+          example: true
+          type: boolean
+        copy_tos:
+          default: false
+          description: Copy IP TOS bits from inner packet to IPSec packet (not recommended).
+          example: false
+          type: boolean
+        crypto:
+          oneOf:
+          - $ref: '#/components/schemas/IpsecCryptoProfiles'
+          - $ref: '#/components/schemas/IpsecCrypto'
+          type: object
+        enable_gre_encapsulation:
+          default: false
+          description: Allow GRE over IPSEC.
+          example: false
+          type: boolean
+        ike:
+          $ref: '#/components/schemas/Ike'
+        subnets:
+          items:
+            description: IPSEC tunnel subnets.
+            example: 10.0.0.0/24
+            type: string
+          type: array
+        tunnel_monitor:
+          properties:
+            destination_ip:
+              description: Destination IP to send ICMP probe.
+              example: 1.2.3.4
+              type: string
+            enable:
+              default: true
+              description: Enable tunnel monitoring on this tunnel.
+              example: true
+              type: boolean
+            proxy_id:
+              description: Which proxy-id (or proxy-id-v6) the monitoring traffic
+                will use.
+              example: proxyId1
+              type: string
+          required:
+          - destination_ip
+          type: object
+      required:
+      - ike
+      type: object
+    Lifesize:
+      oneOf:
+      - properties:
+          kb:
+            description: Specify life-size in kilobytes(KB).
+            maximum: 65535
+            minimum: 1
+            type: integer
+        title: kb
+        type: object
+      - properties:
+          mb:
+            description: Specify life-size in megabytes(MB)
+            maximum: 65535
+            minimum: 1
+            type: integer
+        title: mb
+        type: object
+      - properties:
+          gb:
+            description: Specify life-size in gigabytes(GB)
+            maximum: 65535
+            minimum: 1
+            type: integer
+        title: gb
+        type: object
+      - properties:
+          tb:
+            description: Specify life-size in terabytes(TB)
+            maximum: 65535
+            minimum: 1
+            type: integer
+        title: tb
+        type: object
+      type: object
+    Lifetime:
+      oneOf:
+      - properties:
+          seconds:
+            description: Specify lifetime in seconds.
+            example: 10
+            maximum: 65535
+            minimum: 180
+            type: integer
+        title: seconds
+        type: object
+      - properties:
+          minutes:
+            description: Specify lifetime in minutes
+            example: 5
+            maximum: 65535
+            minimum: 3
+            type: integer
+        title: minutes
+        type: object
+      - properties:
+          hours:
+            description: Specify lifetime in hours
+            example: 5
+            maximum: 65535
+            minimum: 1
+            type: integer
+        title: hours
+        type: object
+      - properties:
+          days:
+            description: Specify lifetime in days
+            example: 1
+            maximum: 365
+            minimum: 1
+            type: integer
+        title: days
+        type: object
+      type: object
+    Location:
+      description: Site Public IP or approximate gps coordinates.
+      example: 34.56.9.87
+      properties:
+        public-ip:
+          $ref: '#/components/schemas/PublicIp'
+        region-cordinates:
+          $ref: '#/components/schemas/RegionCordinates'
+      type: object
+    LocationInformationSet:
+      description: Information for a set of locations.
+      properties:
+        bandwidth_allocations:
+          $ref: '#/components/schemas/BandwidthAllocationSet'
+        info_type:
+          type: string
+        location_region_info:
+          $ref: '#/components/schemas/LocationRegionInfoSet'
+      type: object
+    LocationRegionInfo:
+      properties:
+        compute_location:
+          description: Aggregate compute region.
+          example: US Northwest
+          type: string
+        edge_location:
+          description: Edge location for given latitude, longitude, and IP address.
+          example: US West
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+      required:
+      - location
+      - compute_location
+      - edge_location
+      type: object
+    LocationRegionInfoSet:
+      properties:
+        regions_info:
+          description: Regions mapped information.
+          items:
+            $ref: '#/components/schemas/LocationRegionInfo'
+          type: array
+      required:
+      - location
+      type: object
+    LocationSet:
+      description: Set of locations.
+      example:
+      - Us Northwest
+      - Us West
+      - Us East
+      properties:
+        description:
+          description: Optional user description.
+          type: string
+        locations:
+          description: locations
+          items:
+            $ref: '#/components/schemas/Location'
+          type: array
+      type: object
+    PublicIp:
+      description: Public IP to detect region.
+      example: 34.56.9.87
+      properties:
+        PublicIp:
+          description: Public IP to detect region.
+          format: ipv4
+          type: string
+      type: object
+    RegionCordinates:
+      description: Approximate longitude and latitude of the region.
+      properties:
+        latitude:
+          description: Approximate Latitude for the site location.
+          example: '47.6062'
+          type: string
+        longitude:
+          description: Approximate Longitude for the site location.
+          example: '95.6332'
+          type: string
+      type: object
+    RemoteNetworksIpsecTunnel:
+      properties:
+        bgp:
+          properties:
+            bgp_peer:
+              properties:
+                local_ip_address:
+                  description: Local IP Address of the BGP Peer
+                  example: 1.2.3.4
+                  type: string
+                peer_ip_address:
+                  description: Peer IP Address of the BGP Peer
+                  example: 2.3.34.1
+                  type: string
+                secret:
+                  description: Shared secret for the BGP Peer
+                  example: supersecretpassword123
+                  type: string
+              type: object
+            do_not_export_routes:
+              description: Do not export routes to peer over this ECMP tunnel
+              example: true
+              type: boolean
+            enable:
+              description: Enable BGP on this tunnel
+              example: true
+              type: boolean
+            local_ip_address:
+              description: Local IP Address of the ECMP tunnel
+              example: 1.2.3.4
+              type: string
+            originate_default_route:
+              description: Originate default route to peer over this ECMP tunnel
+              example: true
+              type: boolean
+            peer_as:
+              description: AS number of the ECMP tunnel peer
+              example: '65001'
+              type: string
+            peer_ip_address:
+              description: Peer IP Address of the ECMP tunnel
+              example: 2.3.34.1
+              type: string
+            peering_type:
+              description: 'Exchange Routes: exchange-v4-over-v4 stands for Exchange
+                IPv4 routes over IPv4 peering. exchange-v4-v6-over-v4 stands for Exchange
+                both IPv4 and IPv6 routes over IPv4 peering. exchange-v4-over-v4-v6-over-v6
+                stands for Exchange IPv4 routes over IPv4 peer and IPv6 route over
+                IPv6 peer. exchange-v6-over-v6 stands for Exchange IPv6 routes over
+                IPv6 peering.'
+              enum:
+              - exchange-v4-over-v4
+              - exchange-v4-v6-over-v4
+              - exchange-v4-over-v4-v6-over-v6
+              - exchange-v6-over-v6
+              example: exchange-v4-over-v4
+              type: string
+            secret:
+              description: Shared secret for the ECMP tunnel
+              example: supersecretpassword123
+              type: string
+            summarize_mobile_user_routes:
+              description: Summarize mobile user routes to ECMP tunnel
+              example: true
+              type: boolean
+          type: object
+        ecmp-load-balancing:
+          $ref: '#/components/schemas/EcmpLoadBalancing'
+        ipsec-termination-node:
+          description: ipsec termination node
+          example: ipsec-terminator-1
+          type: string
+        name:
+          description: 'Alphanumeric string begin with letter: [0-9a-zA-Z._-]'
+          example: RemoteTunnel01
+          maxLength: 63
+          type: string
+        primary_tunnel:
+          $ref: '#/components/schemas/IpsecTunnel'
+        region:
+          example: us-west-1
+          minLength: 5
+          type: string
+        secondary_tunnel:
+          $ref: '#/components/schemas/IpsecTunnel'
+      required:
+      - name
+      - region
+      type: object
+    RemoteNetworksIpsecTunnelResponse:
+      properties:
+        name:
+          description: Remote Network name
+          example: RemoteTunnel01
+          type: string
+        pre_shared_key:
+          description: Pre-shared key for the IPSEC Tunnel
+          example: supersecretpassword123
+          type: string
+        service_ip:
+          description: Service IP for the provisioned remote network tunnel
+          example: 1.2.3.4
+          format: ipv4
+          type: string
+        tunnel_id:
+          description: Tunnel ID
+          example: 12345678-abcd-12678
+          type: string
+      type: object
+    RemoteNetworksIpsecTunnelResponseSet:
+      properties:
+        remote_networks_ipsec_tunnel_response_set:
+          items:
+            $ref: '#/components/schemas/RemoteNetworksIpsecTunnelResponse'
+          type: array
+      type: object
+    RemoteNetworksIpsecTunnelSet:
+      properties:
+        name:
+          description: Provide a name to use as a suffix for bulk operations
+          example: ipsectunnels-west
+          type: string
+        remote_networks_ipsec_tunnels:
+          items:
+            $ref: '#/components/schemas/RemoteNetworksIpsecTunnel'
+          maxItems: 100
+          minItems: 1
+          type: array
+          uniqueItems: true
+      required:
+      - name
+      type: object
+    RemoteNetworksNamesSet:
+      description: Remote Networks names set
+      example:
+      - remote-network-west
+      - remote-network-east
+      properties:
+        remote_networks_names:
+          items:
+            type: string
+          maxItems: 100
+          minItems: 0
+          type: array
+          uniqueItems: true
+      type: object
+    RequestRecord:
+      properties:
+        JobId:
+          description: The unique identifier for the asynchronous job associated with
+            the request.
+          example: 12345678-abcd-1234-efgh-9876543210
+          type: string
+          writeOnly: true
+        RequestId:
+          description: The unique identifier for the request.
+          example: 12345678-abcd-1234-efgh-9876543210
+          type: string
+        RequestOrder:
+          description: The order of the request within the set. This could be used
+            for sorting or ordering the requests.
+          example: '1'
+          type: string
+        RequestPayload:
+          description: The payload associated with the request. This could be the
+            request body or any other relevant data.
+          example: '{''key1'': ''value1'', ''key2'': ''value2''}'
+          readOnly: true
+          type: string
+        RequestResult:
+          description: The result of the request. This could be the response payload
+            or any other relevant data.
+          example: '{''key1'': ''value1'', ''key2'': ''value2''}'
+          type: string
+        RequestStatus:
+          description: The status of the request. Possible values include 'Pending',
+            'InProgress', 'Completed', 'Failed'.
+          example: Completed
+          type: string
+        RequestTimeStamp:
+          description: The timestamp associated with the request.
+          example: '2023-04-18T12:34:56Z'
+          type: string
+        SubTenantName:
+          description: The sub-tenant name associated with the request.
+          example: '23456789'
+          type: string
+        TenantId:
+          description: The tenant Id associated with the request.
+          example: '3577882345'
+          type: string
+      type: object
+    RequestRecordSet:
+      properties:
+        count:
+          description: Total number of records in the set
+          example: '100'
+          type: string
+        request_record_set:
+          items:
+            $ref: '#/components/schemas/RequestRecord'
+          type: array
+      type: object
+    UuidResponse:
+      description: Unique identifier for the response.
+      example: 123e4567-e89b-12d3-a456-426655440000
+      properties:
+        UUID:
+          format: UUID
+          type: string
+      readOnly: true
+      type: object
+    error_detail_cause_info:
+      properties:
+        code:
+          example: '502'
+          type: string
+        details:
+          type: object
+        help:
+          example: Please contact our support team for more information.
+          type: string
+        message:
+          example: Unexpected error occurred
+          type: string
+      title: Cause Info
+      type: object
+    error_detail_cause_infos:
+      items:
+        $ref: '#/components/schemas/error_detail_cause_info'
+      type: array
+    generic_error:
+      properties:
+        _errors:
+          $ref: '#/components/schemas/error_detail_cause_infos'
+        _request_id:
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact:
+    email: support@paloaltonetworks.com
+  description: "This Open API spec file represents the APIs available for\n[Palo Alto\
+    \ Networks Configuration Orchestration](https://docs.paloaltonetworks.com/NEED-URL)\
+    \ APIs.\n\nTo create Remote Network which is part of Prisma Access, Configuration\
+    \ Orchestration APIs allows you to directly configure Remote Network tunnels.\n\
+    \nThese APIs use the common SASE authentication mechanism and base URL. See the\n\
+    [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted) guide for\
+    \ more information.\n\nThis Open API spec file was created on October 14, 2024.\
+    \ To check for a more recent version of this file, see\n[Configuration Orchestration\
+    \ APIs on pan.dev](https://pan.dev/sase/api/remote-networks/remote-networks.html).\
+    \ \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
+    \ of Palo\nAlto Networks. A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
+    \nAll other marks mentioned herein may be trademarks of their respective companies.\n"
+  title: Configuration Orchestration API
+  version: '1.0'
+  x-api-id: todo12345
+  x-audience: external-public
+openapi: 3.0.2
+paths:
+  /v1/bandwidth-allocations:
+    delete:
+      description: 'Allows you to delete an aggregated bandwidth region.
+
+        '
+      operationId: delete-v1-bandwidth-allocations
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      - $ref: '#/components/parameters/Region'
+      - $ref: '#/components/parameters/SpnName'
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Delete bandwidth region
+      tags:
+      - Bandwidth Allocations
+    get:
+      description: 'Provides the status for the given request ID.
+
+        '
+      operationId: get-v1-bandwidth-allocations
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BandwidthAllocationSet'
+          description: status for the given id
+      security:
+      - Bearer: []
+      summary: Lists the status for the given request ID
+      tags:
+      - Bandwidth Allocations
+    post:
+      description: 'Create aggregated bandwidth regions based on location data.
+
+        '
+      operationId: post-v1-bandwidth-allocations
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BandwidthAllocationSet'
+        description: The aggregated bandwidth region you want to create
+        required: true
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Create aggregated bandwidth regions
+      tags:
+      - Bandwidth Allocations
+    put:
+      description: 'Modify an aggregated bandwidth regions.
+
+        '
+      operationId: put-v1-bandwidth-allocations
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BandwidthAllocationSet'
+        description: The aggregated bandwidth region you want to create
+        required: true
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Edit aggregated bandwidth regions
+      tags:
+      - Bandwidth Allocations
+  /v1/ike-crypto-profiles:
+    delete:
+      description: "Delete an IKE Crypto Profiles. \n"
+      operationId: delete-v1-ike-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      - description: ike crypto profile name
+        in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Delete IKE Crypto Profile
+      tags:
+      - IKE Crypto Profiles
+    get:
+      description: "Provides a list of Internet Key Exchange(IKE) Crypto Profiles.\
+        \ \n"
+      operationId: get-v1-ike-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    allOf:
+                    - items:
+                        $ref: '#/components/schemas/IkeCryptoProfiles'
+                      type: array
+                  limit:
+                    default: 200
+                    type: number
+                  offset:
+                    default: 0
+                    type: number
+                  total:
+                    type: number
+                type: object
+          description: List of ike crypto profiles
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Get IKE crypto profile
+      tags:
+      - IKE Crypto Profiles
+    post:
+      description: "Create an IKE Crypto Profiles. \n"
+      operationId: post-v1-ike-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IkeCryptoProfiles'
+        description: The ike crypto profile you want to create
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Create IKE Crypto Profile
+      tags:
+      - IKE Crypto Profiles
+    put:
+      description: "Edit an IKE Crypto Profiles. \n"
+      operationId: put-v1-ike-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IkeCryptoProfiles'
+        description: The ike crypto profile you want to edit
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Edit IKE Crypto Profile
+      tags:
+      - IKE Crypto Profiles
+  /v1/ike-crypto-profiles-read:
+    get:
+      description: 'Read the list of IKE Crypto Profiles.
+
+        '
+      operationId: get-v1-ike-crypto-profiles-read
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IkeCryptoProfilesSet'
+                  limit:
+                    default: 200
+                    type: number
+                  offset:
+                    default: 0
+                    type: number
+                  total:
+                    type: number
+                type: object
+          description: List of ike crypto profiles
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Read IKE Crypto Profiles list
+      tags:
+      - IKE Crypto Profiles
+    post:
+      description: 'You can read the list of IKE Crypto Profiles.
+
+        '
+      operationId: post-v1-ike-crypto-profiles-read
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IkeCryptoProfilesNamesSet'
+        description: The ike crypto profile you want to read
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Read IKE Crypto Profiles
+      tags:
+      - IKE Crypto Profiles
+  /v1/ipsec-crypto-profiles:
+    delete:
+      description: 'Delete an IPSEC crypto profile.
+
+        '
+      operationId: delete-v1-ipsec-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      - description: ipsec crypto profile name
+        in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Delete IPSEC crypto profile
+      tags:
+      - IPSEC Crypto Profiles
+    get:
+      description: "Provides a list of Internet Protocol Security (IPSEC) crypto profiles\
+        \ that are created. \n"
+      example:
+      - ipsec_crypto1
+      - ipsec_crypto2
+      operationId: get-v1-ipsec-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    allOf:
+                    - items:
+                        $ref: '#/components/schemas/IpsecCryptoProfiles'
+                      type: array
+                  limit:
+                    default: 200
+                    type: number
+                  offset:
+                    default: 0
+                    type: number
+                  total:
+                    type: number
+                type: object
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: IPSEC crypto profiles list
+      tags:
+      - IPSEC Crypto Profiles
+    post:
+      description: 'Create an IPSEC crypto profile.
+
+        '
+      operationId: post-v1-ipsec-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IpsecCryptoProfiles'
+        description: The ipsec crypto profile you want to create
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Create IPSEC crypto profile
+      tags:
+      - IPSEC Crypto Profiles
+    put:
+      description: 'Edit an IPSEC crypto profile.
+
+        '
+      operationId: put-v1-ipsec-crypto-profiles
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IpsecCryptoProfiles'
+        description: The ipsec crypto profile you want to edit
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Modify IPSEC crypto profile
+      tags:
+      - IPSEC Crypto Profiles
+  /v1/ipsec-crypto-profiles-read:
+    get:
+      description: "You can read a list of Internet Protocol Security (IPSEC) crypto\
+        \ profiles that are created. \n"
+      operationId: get-v1-ipsec-crypto-profiles-read
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IpsecCryptoProfilesSet'
+                  limit:
+                    default: 200
+                    type: number
+                  offset:
+                    default: 0
+                    type: number
+                  total:
+                    type: number
+                type: object
+          description: List of ipsec crypto profiles
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Read IPSEC Crypto Profiles list
+      tags:
+      - IPSEC Crypto Profiles
+    post:
+      description: 'Read a list IPSEC Crypto Profile.
+
+        '
+      operationId: post-v1-ipsec-crypto-profiles-read
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IpsecCryptoProfilesNamesSet'
+        description: The ipsec crypto profiles you want to read
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Read IPSEC Crypto Profile
+      tags:
+      - IPSEC Crypto Profiles
+  /v1/location-informations:
+    get:
+      description: 'Get the location information status of the given request ID.
+
+        '
+      operationId: get-v1-location-informations
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationInformationSet'
+          description: status for the given id
+      security:
+      - Bearer: []
+      summary: Get status for the request ID
+      tags:
+      - Location Information
+    post:
+      description: Retrieve location-mapped information or configuration through a
+        POST request and returns the request ID.
+      operationId: post-v1-location-informations
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      - $ref: '#/components/parameters/LocationInfoType'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationSet'
+        description: The location info you want to query for
+        required: true
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: 'Get location-mapped information
+
+        '
+      tags:
+      - Location Information
+  /v1/remote-networks:
+    delete:
+      description: 'Allows you to delete the set of IPSEC tunnels.
+
+        '
+      operationId: delete-v1-remote-networks
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      - description: remote networks prefix for bulk deletion
+        in: query
+        name: remote_networks_prefix
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/RemoteNetworksNames'
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Delete remote network IPSEC tunnels at bulk
+      tags:
+      - Remote Networks
+    get:
+      description: 'Get Remote Networks IPSEC tunnel details by request ID.
+
+        '
+      operationId: get-v1-remote-networks
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoteNetworksIpsecTunnelResponseSet'
+          description: Get the remote networks ipsec tunnel status by uuid.
+      security:
+      - Bearer: []
+      summary: Remote Networks IPSEC tunnel details
+      tags:
+      - Remote Networks
+    post:
+      description: 'Create  a Remote Network IPSEC tunnel.
+
+        '
+      operationId: post-v1-remote-networks
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoteNetworksIpsecTunnelSet'
+        description: The remote networks you want to create
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Create remote network IPSEC tunnel
+      tags:
+      - Remote Networks
+    put:
+      description: 'Allows you to edit a remote network IPSEC tunnel.
+
+        '
+      operationId: put-v1-remote-networks
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoteNetworksIpsecTunnelSet'
+        description: The remote networks you want to create
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Modify remote network IPSEC tunnel
+      tags:
+      - Remote Networks
+  /v1/remote-networks-read:
+    get:
+      description: 'Get the remote networks IPSEC tunnel status by UUID.
+
+        '
+      operationId: get-v1-remote-networks-read
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoteNetworksIpsecTunnelSet'
+          description: Get the remote networks ipsec tunnel status by uuid.
+      security:
+      - Bearer: []
+      summary: Remote Networks IPSEC tunnel details
+      tags:
+      - Remote Networks
+    post:
+      description: 'Create remote network IPSEC tunnels.
+
+        '
+      operationId: post-v1-remote-networks-read
+      parameters:
+      - $ref: '#/components/parameters/SubTenantName'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoteNetworksNamesSet'
+        description: The remote networks you want to create
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+          description: successful operation
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        default:
+          $ref: '#/components/responses/default_errors'
+      security:
+      - Bearer: []
+      summary: Create remote network IPSEC tunnels
+      tags:
+      - Remote Networks
+  /v1/siteConfigRequests:
+    get:
+      description: 'Allows you to get the details regarding the site (if available).
+
+        '
+      operationId: get-v1-siteconfigrequests
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestRecordSet'
+          description: request records for the given tenant
+      security:
+      - Bearer: []
+      summary: 'Poll for new site requests
+
+        '
+      tags:
+      - Site Configuration Requests
+    post:
+      description: 'Allows you to update the site requests.
+
+        '
+      operationId: post-v1-siteconfigrequests
+      parameters:
+      - $ref: '#/components/parameters/uuid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestRecordSet'
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: successful operation
+      security:
+      - Bearer: []
+      summary: 'Update site requests
+
+        '
+      tags:
+      - Site Configuration Requests
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- description: 'IPSEC Crypto Profiles.
+
+    '
+  name: Internet Protocol Security Crypto Profiles
+- description: 'IKE Crypto Profiles.
+
+    '
+  name: Internet Key Exchange Crypto Profiles
+- description: 'Allocation of the bandwidth.
+
+    '
+  name: Bandwidth allocations
+- description: "Information on the location. \n"
+  name: Location Information
+- description: 'Status of the Remote Networks.
+
+    '
+  name: Remote Network Status
+- description: "Request for the site configuration. \n"
+  name: Site Configuration Requests
