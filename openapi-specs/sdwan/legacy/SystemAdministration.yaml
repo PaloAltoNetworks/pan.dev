@@ -1648,6 +1648,45 @@ components:
       - first_name
       - email
       - tenant_id
+    PASdwanTenantProvisionStatus:
+      properties:
+        completedAt:
+          description: 'The integration complete time.
+
+            '
+          format: int64
+          type: integer
+        failureCount:
+          description: "The integration failure count, if any.               \n"
+          format: int32
+          type: integer
+        id:
+          description: "The ID. \n"
+          type: string
+        provisionStatus:
+          description: 'The tenant provision status.
+
+            '
+          enum:
+          - INIT
+          - IN_PROGRESS
+          - SUCCESS
+          - FAILURE
+          - NOT_APPLICABLE
+          type: string
+        startedAt:
+          description: 'The integration start time.
+
+            '
+          format: int64
+          type: integer
+        taskStatus:
+          description: 'The task status details.
+
+            '
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+          type: array
     PasswordChange:
       properties:
         oldPassword:
@@ -1917,37 +1956,55 @@ components:
     SamlRequest:
       properties:
         LoginHint:
-          description: LoginHint
+          description: 'The hint for login credentials.
+
+            '
           type: string
         RelayState:
-          description: RelayState
+          description: 'The relay state.
+
+            '
           type: string
         SAMLRequest:
-          description: SAMLRequest
+          description: 'SAML request.
+
+            '
           type: string
         api_endpoint:
-          description: Api Endpoint
+          description: "The API endpoint.        \n"
           type: string
         id:
-          description: Id
+          description: "The ID. \n"
           type: string
         login_region:
-          description: Login Region
+          description: 'The log in region.
+
+            '
           type: string
         method:
-          description: Method
+          description: 'The API method details.
+
+            '
           type: string
         requestId:
-          description: RequestId
+          description: 'The request ID.
+
+            '
           type: string
         url:
-          description: Url
+          description: 'The URL.
+
+            '
           type: string
         urlpath:
-          description: Urlpath
+          description: 'The URL path.
+
+            '
           type: string
         username:
-          description: Username
+          description: 'The username.
+
+            '
           type: string
     SamlResponse:
       properties:
@@ -2111,6 +2168,62 @@ components:
           type: array
       required:
       - repeatPassword
+    TaskStatus:
+      properties:
+        bgp_peer_id:
+          description: 'The ID of the BGP peer.
+
+            '
+          type: string
+        completedAt:
+          description: "The task completion time.               \n"
+          format: int64
+          type: integer
+        currentStatus:
+          description: "The task current status. \n"
+          enum:
+          - INIT
+          - IN_PROGRESS
+          - SUCCESS
+          - FAILURE
+          - NOT_APPLICABLE
+          type: string
+        element_id:
+          description: 'The element ID.
+
+            '
+          type: string
+        error:
+          description: 'Any error messages.
+
+            '
+          type: string
+        interface_id:
+          description: 'The interface ID.
+
+            '
+          type: string
+        message:
+          description: 'Error/task messages.
+
+            '
+          type: string
+        name:
+          description: "The name of the task.               \n"
+          type: string
+        service_link_id:
+          description: "The service link status. \n"
+          type: string
+        startedAt:
+          description: 'The integration start time.
+
+            '
+          format: int64
+          type: integer
+        updatedAt:
+          description: "The integration update time. \n"
+          format: int64
+          type: integer
     Tenant:
       properties:
         address:
@@ -2247,7 +2360,7 @@ components:
           type: string
       required:
       - tenant_id
-    TenantV2N7:
+    TenantV2N10:
       properties:
         ? ''
         : description: X Panw Region
@@ -2257,6 +2370,16 @@ components:
           description: 'The address of the site.
 
             '
+        adem_enabled:
+          description: 'The site is ADEM enabled. True or False.
+
+            '
+          type: boolean
+        app_acceleration_enabled:
+          description: 'App acceleration enabled. True or False.
+
+            '
+          type: boolean
         canonical_name:
           description: "The tenant canonical name. Max size = 128.        \n"
           type: string
@@ -2315,6 +2438,11 @@ components:
           type: boolean
         is_pa_iot_security_license:
           description: 'True or False for PA IoT security license.
+
+            '
+          type: boolean
+        is_sase_edge:
+          description: 'True or False for SASE edge.
 
             '
           type: boolean
@@ -2384,9 +2512,7 @@ components:
             '
           type: string
         tenant_id:
-          description: 'ID of the tenant.
-
-            '
+          description: 'Tenant Id: NotNull Digits(fraction = 0, integer = 20, TENANT_ID_INVALID_0001) '
           type: string
         tsg_id:
           description: 'The tenant TSG ID.
@@ -2394,9 +2520,7 @@ components:
             '
           type: string
         tsg_instances:
-          description: 'The details of the TSG instances.
-
-            '
+          description: "The details of the TSG instances. \n"
           items:
             $ref: '#/components/schemas/TsgInstance'
           type: array
@@ -4411,6 +4535,35 @@ paths:
       summary: Get Session for Tenant ID (v2.0)
       tags:
       - System Administration
+  /v2.0/api/tenants/{tenant_id}/pasdwan_integration_status:
+    get:
+      description: Get the native Prisma Access SD-WAN integration tenant provision
+        status.
+      operationId: get-v2.0-api-tenants-tenant_id-pasdwan_integration_status
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PASdwanTenantProvisionStatus'
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Get Native PA SD-WAN Integration Tenant Provision Status (v2.0)
+      tags:
+      - System Administration
   /v2.0/api/tenants/{tenant_id}/permissions:
     get:
       description: Get a list of permitted APIs that the current operator can invoke.
@@ -4437,7 +4590,7 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Get List of Current APIs of Operator(v2.0)
+      summary: Get List of Current APIs of Operator (v2.0)
       tags:
       - System Administration
     post:
@@ -5743,17 +5896,17 @@ paths:
       - System Administration
   /v2.1/api/tenants/{tenant_id}/operators/{operator_id}:
     delete:
-      description: Delete a tenant operator
+      description: Delete a tenant operator.
       operationId: delete-v2.1-api-tenants-tenant_id-operators-operator_id
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: Operator Id
+      - description: The operator ID.
         in: path
         name: operator_id
         required: true
@@ -5778,21 +5931,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete a tenant operator (v2.1)
+      summary: Delete Tenant Operator (v2.1)
       tags:
       - System Administration
     get:
-      description: Get a tenant operator
+      description: Get a tenant operator.
       operationId: get-v2.1-api-tenants-tenant_id-operators-operator_id
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: Operator Id
+      - description: The operator ID.
         in: path
         name: operator_id
         required: true
@@ -5806,14 +5959,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/OperatorV2N1'
           description: Successful Operation
-      summary: Get a tenant operator (v2.1)
+      summary: Get Tenant Operator (v2.1)
       tags:
       - System Administration
     patch:
       description: Patch a tenant operator.
       operationId: patch-v2.1-api-tenants-tenant_id-operators-operator_id
       parameters:
-      - description: ID of the tenant.
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
@@ -5863,17 +6016,17 @@ paths:
       tags:
       - System Administration
     put:
-      description: Update a tenant operator
+      description: Update a tenant operator.
       operationId: put-v2.1-api-tenants-tenant_id-operators-operator_id
       parameters:
-      - description: Tenant Id
+      - description: The tenant ID.
         in: path
         name: tenant_id
         required: true
         schema:
           description: Tenant Id
           type: string
-      - description: Operator Id
+      - description: The operator ID.
         in: path
         name: operator_id
         required: true
@@ -5912,7 +6065,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update a tenant operator (v2.1)
+      summary: Update Tenant Operator (v2.1)
       tags:
       - System Administration
   /v2.1/api/tenants/{tenant_id}/operators/{operator_id}/authtokens:
@@ -6432,6 +6585,120 @@ paths:
       summary: Update Custom Role (v2.1)
       tags:
       - System Administration
+  /v2.10/api/tenants/{tenant_id}:
+    get:
+      description: List all tenant details using the tenant ID.
+      operationId: get-v2.10-api-tenants-tenant_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Tenant Details for Tenant ID (v2.1)
+      tags:
+      - System Administration
+    patch:
+      description: Patch a tenant.
+      operationId: patch-v2.10-api-tenants-tenant_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantV2N10'
+        description: Tenant details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: OPERATOR_INVALID_ETAG
+                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Patch Tenant (v2.1)
+      tags:
+      - System Administration
+    put:
+      description: Update a tenant.
+      operationId: put-v2.10-api-tenants-tenant_id
+      parameters:
+      - description: The tenant ID.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantV2N10'
+        description: Tenant details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantV2N10'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: OPERATOR_INVALID_ETAG
+                  - code: TENANT_INVALID_CANONICAL_NAME_CHANGE
+                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
+                  - code: TENANT_INVALID_CLIENT_ID
+                  - code: ESP_INVALID_CLIENT_DATA
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Update Tenant (v2.1)
+      tags:
+      - System Administration
   /v2.2/api/tenants/{tenant_id}/operators:
     get:
       description: Get a list of tenant operators.
@@ -6678,120 +6945,6 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update Tenant Operator (v2.2)
-      tags:
-      - System Administration
-  /v2.8/api/tenants/{tenant_id}:
-    get:
-      description: Get all the tenant information for a tenant ID.
-      operationId: get-v2.8-api-tenants-tenant_id
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Tenant Information (v2.8)
-      tags:
-      - System Administration
-    patch:
-      description: Patch all the tenant information for a tenant ID.
-      operationId: patch-v2.8-api-tenants-tenant_id
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TenantV2N7'
-        description: Tenant details
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: OPERATOR_INVALID_ETAG
-                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Patch Tenant Information (v2.8)
-      tags:
-      - System Administration
-    put:
-      description: Update all the tenant information for a tenant ID.
-      operationId: put-v2.8-api-tenants-tenant_id
-      parameters:
-      - description: ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TenantV2N7'
-        description: Tenant details
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TenantV2N7'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: OPERATOR_INVALID_ETAG
-                  - code: TENANT_INVALID_CANONICAL_NAME_CHANGE
-                  - code: TENANT_PASSWORD_AGING_PREVENT_LOCKOUT
-                  - code: TENANT_INVALID_CLIENT_ID
-                  - code: ESP_INVALID_CLIENT_DATA
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update Tenant Information (v2.8)
       tags:
       - System Administration
   /v2.9/api/tenants/{tenant_id}:
