@@ -717,7 +717,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
