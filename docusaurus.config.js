@@ -194,6 +194,18 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
+                  label: "AI Runtime Security",
+                  to: "#",
+                  logoClass: "panos",
+                  apiDocs: [
+                    {
+                      to: "ai-runtime-security/scan/api/",
+                      label: "AI Runtime Security API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
                   label: "PAN-OS",
                   to: "#",
                   logoClass: "panos",
@@ -257,18 +269,6 @@ const config = {
                     {
                       to: "cloudngfw/aws/api/",
                       label: "Cloud NGFW for AWS API",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
-                  label: "AI Runtime Security",
-                  to: "#",
-                  logoClass: "panos",
-                  apiDocs: [
-                    {
-                      to: "ai-runtime-security/scan/api/",
-                      label: "AI Runtime Security API",
                       icon: "api-doc",
                     },
                   ],
