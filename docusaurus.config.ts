@@ -33,7 +33,7 @@ const config = {
   markdown: { format: "detect", mermaid: true },
   themeConfig: {
     prism: {
-      additionalLanguages: ["csharp", "php", "hcl"],
+      additionalLanguages: ["csharp", "php", "hcl", "json", "bash"],
     },
     languageTabs: [
       {
