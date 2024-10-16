@@ -39,7 +39,7 @@ const config = {
       {
         highlight: "bash",
         language: "curl",
-        logoClass: "bash",
+        logoClass: "curl",
       },
       {
         highlight: "python",
