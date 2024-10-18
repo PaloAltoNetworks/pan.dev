@@ -72,96 +72,69 @@ export default function SCMLandingPage() {
       docs: {
         "SASE Configuration": [
           {
-            to: "scm/api/config/operations/operations-api",
+            to: "scm/api/config/sase/operations/operations-api",
             label: "Configuration Operations",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/setup/setup-api",
+            to: "scm/api/config/sase/setup/setup-api",
             label: "Configuration Setup",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/deployment/deployment-api",
+            to: "scm/api/config/sase/deployment/deployment-api",
             label: "Network Deployment",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/identity/identity-api",
+            to: "scm/api/config/sase/identity/identity-api",
             label: "Identity Services",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/mobileagent/mobileagent-api",
+            to: "scm/api/config/sase/mobileagent/mobileagent-api",
             label: "GlobalProtect",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/objects/objects-api",
+            to: "scm/api/config/sase/objects/objects-api",
             label: "Objects",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/security/security-api",
+            to: "scm/api/config/sase/security/security-api",
             label: "Security Services",
             icon: "api-doc",
           },
         ],
         "NGFW Configuration": [
           {
-            to: "scm/api/config/operations/operations-api-cloud-ngfw",
+            to: "scm/api/config/ngfw/operations/operations-api-ngfw",
             label: "Configuration Operations",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/setup/setup-api-ngfw",
+            to: "scm/api/config/ngfw/setup/setup-api-ngfw",
             label: "Configuration Setup",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/identity/identity-api-ngfw",
+            to: "scm/api/config/ngfw/identity/identity-api-ngfw",
             label: "Identity Services",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/network/network-api",
+            to: "scm/api/config/ngfw/network/network-api",
             label: "Network Configuration",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/objects/objects-api-ngfw",
+            to: "scm/api/config/ngfw/objects/objects-api-ngfw",
             label: "Objects",
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/security/security-api-ngfw",
-            label: "Security Services",
-            icon: "api-doc",
-          },
-        ],
-        "Cloud NGFW Configuration": [
-          {
-            to: "scm/api/config/operations/operations-api-cloud-ngfw",
-            label: "Configuration Operations",
-            icon: "api-doc",
-          },
-          {
-            to: "scm/api/config/setup/setup-api-cloud-ngfw",
-            label: "Configuration Setup",
-            icon: "api-doc",
-          },
-          {
-            to: "scm/api/config/identity/identity-api-cloud-ngfw",
-            label: "Identity Services",
-            icon: "api-doc",
-          },
-          {
-            to: "scm/api/config/objects/objects-api-cloud-ngfw",
-            label: "Objects",
-            icon: "api-doc",
-          },
-          {
-            to: "scm/api/config/security/security-api-cloud-ngfw",
+            to: "scm/api/config/ngfw/security/security-api-ngfw",
             label: "Security Services",
             icon: "api-doc",
           },

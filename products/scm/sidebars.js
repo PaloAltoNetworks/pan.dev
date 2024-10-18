@@ -96,9 +96,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/operations/operations-api",
+                  id: "scm/api/config/sase/operations/operations-api",
                 },
-                require("./api/config/operations/sidebar"),
+                require("./api/config/sase/operations/sidebar"),
               ],
             },
             {
@@ -107,9 +107,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/setup/setup-api",
+                  id: "scm/api/config/sase/setup/setup-api",
                 },
-                require("./api/config/setup/sidebar"),
+                require("./api/config/sase/setup/sidebar"),
               ],
             },
             {
@@ -118,9 +118,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/deployment/deployment-api",
+                  id: "scm/api/config/sase/deployment/deployment-api",
                 },
-                require("./api/config/deployment/sidebar"),
+                require("./api/config/sase/deployment/sidebar"),
               ],
             },
             {
@@ -129,9 +129,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/identity/identity-api",
+                  id: "scm/api/config/sase/identity/identity-api",
                 },
-                require("./api/config/identity/sidebar"),
+                require("./api/config/sase/identity/sidebar"),
               ],
             },
             {
@@ -140,9 +140,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/mobileagent/mobileagent-api",
+                  id: "scm/api/config/sase/mobileagent/mobileagent-api",
                 },
-                require("./api/config/mobileagent/sidebar"),
+                require("./api/config/sase/mobileagent/sidebar"),
               ],
             },
             {
@@ -151,9 +151,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/objects/objects-api",
+                  id: "scm/api/config/sase/objects/objects-api",
                 },
-                require("./api/config/objects/sidebar"),
+                require("./api/config/sase/objects/sidebar"),
               ],
             },
             {
@@ -162,9 +162,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/security/security-api",
+                  id: "scm/api/config/sase/security/security-api",
                 },
-                require("./api/config/security/sidebar"),
+                require("./api/config/sase/security/sidebar"),
               ],
             },
           ],
@@ -180,9 +180,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/operations/operations-api-ngfw",
+                  id: "scm/api/config/ngfw/operations/operations-api-ngfw",
                 },
-                require("./api/config/operations/sidebar"),
+                require("./api/config/ngfw/operations/sidebar"),
               ],
             },
             {
@@ -191,9 +191,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/setup/setup-api-ngfw",
+                  id: "scm/api/config/ngfw/setup/setup-api-ngfw",
                 },
-                require("./api/config/setup/sidebar"),
+                require("./api/config/ngfw/setup/sidebar"),
               ],
             },
             {
@@ -202,9 +202,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/identity/identity-api-ngfw",
+                  id: "scm/api/config/ngfw/identity/identity-api-ngfw",
                 },
-                require("./api/config/identity/sidebar"),
+                require("./api/config/ngfw/identity/sidebar"),
               ],
             },
             {
@@ -213,9 +213,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/network/network-api",
+                  id: "scm/api/config/ngfw/network/network-api",
                 },
-                require("./api/config/network/sidebar"),
+                require("./api/config/ngfw/network/sidebar"),
               ],
             },
             {
@@ -224,9 +224,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/objects/objects-api-ngfw",
+                  id: "scm/api/config/ngfw/objects/objects-api-ngfw",
                 },
-                require("./api/config/objects/sidebar"),
+                require("./api/config/ngfw/objects/sidebar"),
               ],
             },
             {
@@ -235,71 +235,9 @@ module.exports = {
               items: [
                 {
                   type: "doc",
-                  id: "scm/api/config/security/security-api-ngfw",
+                  id: "scm/api/config/ngfw/security/security-api-ngfw",
                 },
-                require("./api/config/security/sidebar"),
-              ],
-            },
-          ],
-        },
-        {
-          type: "category",
-          label: "Cloud NGFW Configuration",
-          collapsed: true,
-          items: [
-            {
-              type: "category",
-              label: "Configuration Operations",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/operations/operations-api-cloud-ngfw",
-                },
-                require("./api/config/operations/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Configuration Setup",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/setup/setup-api-cloud-ngfw",
-                },
-                require("./api/config/setup/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Identity Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/identity/identity-api-cloud-ngfw",
-                },
-                require("./api/config/identity/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Objects",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/objects/objects-api-cloud-ngfw",
-                },
-                require("./api/config/objects/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Security Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/security/security-api-cloud-ngfw",
-                },
-                require("./api/config/security/sidebar"),
+                require("./api/config/ngfw/security/sidebar"),
               ],
             },
           ],

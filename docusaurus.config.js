@@ -697,6 +697,96 @@ const config = {
             outputDir: "products/scm/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          "config-sase-operations": {
+            specPath: "openapi-specs/scm/config/sase/operations",
+            outputDir: "products/scm/api/config/sase/operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-setup": {
+            specPath: "openapi-specs/scm/config/sase/setup",
+            outputDir: "products/scm/api/config/sase/setup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-deployment": {
+            specPath: "openapi-specs/scm/config/sase/deployment",
+            outputDir: "products/scm/api/config/sase/deployment",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-identity": {
+            specPath: "openapi-specs/scm/config/sase/identity",
+            outputDir: "products/scm/api/config/sase/identity",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-mobileagent": {
+            specPath: "openapi-specs/scm/config/sase/mobileagent",
+            outputDir: "products/scm/api/config/sase/mobileagent",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-objects": {
+            specPath: "openapi-specs/scm/config/sase/objects",
+            outputDir: "products/scm/api/config/sase/objects",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-security": {
+            specPath: "openapi-specs/scm/config/sase/security",
+            outputDir: "products/scm/api/config/sase/security",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-operations": {
+            specPath: "openapi-specs/scm/config/ngfw/operations",
+            outputDir: "products/scm/api/config/ngfw/operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-setup": {
+            specPath: "openapi-specs/scm/config/ngfw/setup",
+            outputDir: "products/scm/api/config/ngfw/setup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-identity": {
+            specPath: "openapi-specs/scm/config/ngfw/identity",
+            outputDir: "products/scm/api/config/ngfw/identity",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-network": {
+            specPath: "openapi-specs/scm/config/ngfw/network",
+            outputDir: "products/scm/api/config/ngfw/network",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-objects": {
+            specPath: "openapi-specs/scm/config/ngfw/objects",
+            outputDir: "products/scm/api/config/ngfw/objects",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-security": {
+            specPath: "openapi-specs/scm/config/ngfw/security",
+            outputDir: "products/scm/api/config/ngfw/security",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-operations": {
+            specPath: "openapi-specs/scm/config/cloudngfw/operations",
+            outputDir: "products/scm/api/config/cloudngfw/operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-setup": {
+            specPath: "openapi-specs/scm/config/cloudngfw/setup",
+            outputDir: "products/scm/api/config/cloudngfw/setup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-identity": {
+            specPath: "openapi-specs/scm/config/cloudngfw/identity",
+            outputDir: "products/scm/api/config/cloudngfw/identity",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-objects": {
+            specPath: "openapi-specs/scm/config/cloudngfw/objects",
+            outputDir: "products/scm/api/config/cloudngfw/objects",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-security": {
+            specPath: "openapi-specs/scm/config/cloudngfw/security",
+            outputDir: "products/scm/api/config/cloudngfw/security",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
@@ -742,46 +832,6 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configsetup: {
-            specPath: "openapi-specs/scm/config/setup",
-            outputDir: "products/scm/api/config/setup",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configdeployment: {
-            specPath: "openapi-specs/scm/config/deployment",
-            outputDir: "products/scm/api/config/deployment",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configidentity: {
-            specPath: "openapi-specs/scm/config/identity",
-            outputDir: "products/scm/api/config/identity",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configmobileagent: {
-            specPath: "openapi-specs/scm/config/mobileagent",
-            outputDir: "products/scm/api/config/mobileagent",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          confignetwork: {
-            specPath: "openapi-specs/scm/config/network",
-            outputDir: "products/scm/api/config/network",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configobjects: {
-            specPath: "openapi-specs/scm/config/objects",
-            outputDir: "products/scm/api/config/objects",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configoperations: {
-            specPath: "openapi-specs/scm/config/operations",
-            outputDir: "products/scm/api/config/operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          configsecurity: {
-            specPath: "openapi-specs/scm/config/security",
-            outputDir: "products/scm/api/config/security",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ztna: {
