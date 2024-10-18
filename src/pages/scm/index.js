@@ -6,7 +6,7 @@ import "./scm.scss";
 export default function SCMLandingPage() {
   const heroHeader = "Strata Cloud Manager";
   const heroDescription =
-    "Strata Cloud Manager offers a suite of cloud-delivered products that provide network configuration and network security services. This suite of software offers network security for an enterprise's users, no matter where they might be physically located, be it in the office or from a remote location.";
+    "Strata Cloud Manager™ enables you to easily manage your Palo Alto Networks Network Security infrastructure—including NGFWs and SASE environment—from the cloud, via one unified management interface.";
   const scmCards = [
     {
       label: "Developer's Guide",
