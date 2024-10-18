@@ -370,7 +370,7 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      to: "scm",
+                      to: "strata-cloud-manager",
                       label: "Home Page",
                       icon: "doc",
                     },
