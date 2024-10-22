@@ -200,7 +200,6 @@ export default function SCMLandingPage() {
         <h1>{heroHeader}</h1>
         <p>{heroDescription}</p>
       </section>
-      <div className="spacer" />
       <section className="scm-bg">
         <div className="scm-cards-container container">
           {scmCards.map((card, i) => (
