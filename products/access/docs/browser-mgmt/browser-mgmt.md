@@ -8,8 +8,15 @@ slug: /access/docs/browser-mgmt
 keywords:
   - sase
 ---
+Welcome to the Prisma Access Browser (PAB) APIs. These APIs are available for all PAB tenants to scale and automate their processes related to the browser.  
+To know more, see Prisma Access Browser[https://docs.paloaltonetworks.com/prisma-access-browser]
 
-Welcome to the Prisma Access Browser (PAB) APIs. These APIs are available for all PAB tenants to scale and automate their processes related to the browser.
+**Note:**
+  - The PAB APIs are accessible only in the U.S region. 
+  - PAB's API can only work with the following pre-defined Roles: 
+   - **Super User:** Full read/write access.
+
+   - **View-Only Administrator:** Read-only access.
 
 All of the functionality exposed by these APIs can also be performed using the [Prisma Access Browser user interface](https://docs.paloaltonetworks.com/prisma-access-browser).
 
