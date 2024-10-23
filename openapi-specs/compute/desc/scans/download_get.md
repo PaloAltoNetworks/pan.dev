@@ -2,8 +2,6 @@ Downloads all scan reports from the Jenkins plugin and twistcli in CSV format.
 
 This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > Images > CI** in the Console UI.
 
-_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
-
 ### cURL Request
 
 The following cURL command retrieves and saves your Jenkins and twistcli scan reports to a CSV file called `scans_report.csv`:

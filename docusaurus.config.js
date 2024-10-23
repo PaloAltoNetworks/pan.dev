@@ -561,6 +561,18 @@ const config = {
                     },
                   ],
                 },
+                {
+                  label: "Prisma SASE Service Status",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SASE Service Status API",
+                      to: "sase/docs/saseservicestatusapi",
+                      icon: "doc",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -597,6 +609,26 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Cross-Platform",
+              to: "#",
+              colorclass: "cross-platform",
+              description:
+                "Learn about opportunities across Palo Alto Networks platforms.",
+              products: [
+                {
+                  label: "Service Status",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Service Status API",
+                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
@@ -709,7 +741,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
@@ -837,8 +869,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.00",
-            label: "v33.00",
+            version: "33.01",
+            label: "v33.01",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -856,13 +888,6 @@ const config = {
                 baseUrl: "/compute/api/31-02/",
               },
             },
-          },
-          compute_3203: {
-            specPath: "openapi-specs/compute/32-03",
-            outputDir: "products/compute/api/32-03",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-03/",
           },
           compute_3204: {
             specPath: "openapi-specs/compute/32-04",
@@ -891,6 +916,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-07/",
+          },
+          compute_3300: {
+            specPath: "openapi-specs/compute/33-00",
+            outputDir: "products/compute/api/33-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-00/",
           },
         },
       },
