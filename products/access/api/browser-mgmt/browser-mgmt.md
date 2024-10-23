@@ -15,7 +15,7 @@ For more information, see [Prisma Access Browser](https://docs.paloaltonetworks.
 
 **Note:**
 - The PAB APIs are accessible only in the U.S region.
-- PAB's API can only work with the following pre-defined Roles:
+- PAB APIs can only work with the following pre-defined Roles:
   - **Super User:** Full read/write access.
   - **View-Only Administrator:** Read-only access.
 
