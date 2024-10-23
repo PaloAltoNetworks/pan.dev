@@ -82,10 +82,6 @@ module.exports = {
       collapsed: true,
       items: [
         {
-          type: "doc",
-          id: "scm/docs/configuration/platform-configuration",
-        },
-        {
           type: "category",
           label: "SASE Configuration",
           collapsed: true,
@@ -238,6 +234,68 @@ module.exports = {
                   id: "scm/api/config/ngfw/security/security-api-ngfw",
                 },
                 require("./api/config/ngfw/security/sidebar"),
+              ],
+            },
+          ],
+        },
+        {
+          type: "category",
+          label: "Cloud NGFW Configuration",
+          collapsed: true,
+          items: [
+            {
+              type: "category",
+              label: "Configuration Operations",
+              items: [
+                {
+                  type: "doc",
+                  id: "scm/api/config/cloudngfw/operations/operations-api-cloud-ngfw",
+                },
+                require("./api/config/cloudngfw/operations/sidebar"),
+              ],
+            },
+            {
+              type: "category",
+              label: "Configuration Setup",
+              items: [
+                {
+                  type: "doc",
+                  id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
+                },
+                require("./api/config/cloudngfw/setup/sidebar"),
+              ],
+            },
+            {
+              type: "category",
+              label: "Identity Services",
+              items: [
+                {
+                  type: "doc",
+                  id: "scm/api/config/cloudngfw/identity/identity-api-cloud-ngfw",
+                },
+                require("./api/config/cloudngfw/identity/sidebar"),
+              ],
+            },
+            {
+              type: "category",
+              label: "Objects",
+              items: [
+                {
+                  type: "doc",
+                  id: "scm/api/config/cloudngfw/objects/objects-api-cloud-ngfw",
+                },
+                require("./api/config/cloudngfw/objects/sidebar"),
+              ],
+            },
+            {
+              type: "category",
+              label: "Security Services",
+              items: [
+                {
+                  type: "doc",
+                  id: "scm/api/config/cloudngfw/security/security-api-cloud-ngfw",
+                },
+                require("./api/config/cloudngfw/security/sidebar"),
               ],
             },
           ],

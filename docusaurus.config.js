@@ -367,7 +367,7 @@ const config = {
                 {
                   label: "Strata Cloud Manager",
                   to: "#",
-                  logoClass: "prisma",
+                  logoClass: "scm",
                   docs: [
                     {
                       to: "strata-cloud-manager",
