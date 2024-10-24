@@ -1,0 +1,160 @@
+components:
+  schemas:
+    UserInfoResponse:
+      type: object
+      properties:
+        sub:
+          description: Subject - Identifier for the user at the Issuer
+          type: string
+        name:
+          description: Full name in displayable form including all name parts, possibly
+            including titles and suffixes
+          type: string
+        given_name:
+          description: Given name(s) or first name(s)
+          type: string
+        family_name:
+          description: Surname(s) or last name(s)
+          type: string
+        email:
+          description: e-mail address
+          type: string
+    AccessToken:
+      type: object
+      properties:
+        access_token:
+          description: The access token issued by the authorization server
+          type: string
+        token_type:
+          description: The type of the token issued (default bearer)
+          type: string
+        expires_in:
+          description: The lifetime in seconds of the access token.
+          type: integer
+        scope:
+          description: The scopes contained in the access token.
+          type: string
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+    Bearer:
+      type: http
+      scheme: bearer
+openapi: 3.0.2
+paths:
+  /auth/v1/oauth2/access_token:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - grant_type
+              properties:
+                grant_type:
+                  description: 'Access token grant type. This must always be `client_credentials`.
+
+                    '
+                  enum:
+                  - client_credentials
+                  type: string
+                scope:
+                  description: "The scope of the access request. This must be the\
+                    \ \n[TSG ID](/scm/docs/tenant-service-groups) \nfor which you\
+                    \ want to perform API access, and it\nmust be formatted in the\
+                    \ following way: \n\n  `\"scope\": \"tsg_id:<TSG_ID>\"`\n\nIf\
+                    \ the service account that you use to authenticate this\nrequest\
+                    \ does not have [role access](/scm/docs/roles) to\nthe TSG specified\
+                    \ in this scope, this API call will\nfail.\n"
+                  type: string
+        required: true
+      tags:
+      - AuthService
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+          description: Returns an access token and access token metadata.
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+      security:
+      - Basic: []
+      summary: Create an access token
+      description: "Create an access token using a Client ID and Client Secret.\n\n\
+        Your Client ID is your HTTP basic authentication username, your \nClient Secret\
+        \ is your HTTP basic authentication password.\n\nYour Client ID and Client\
+        \ Secrets are created by Strata Cloud Manager when you \n[create a service account](/scm/docs/service-accounts)\n\
+        or\n[reset your service account](/scm/api/iam/serviceaccounts#operation/resetservice_account).\n\
+        \nAll access tokens created using this API have a lifetime of 15 minutes.\n"
+      operationId: post-auth-v1-oauth2-access_token
+  /auth/v1/oauth2/userinfo:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - access_token
+              properties:
+                access_token:
+                  description: 'Access token for which you want to retrieve claims
+                    about the end-user.
+
+                    '
+                  type: string
+        required: true
+      tags:
+      - AuthService
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+          description: Returns oAuth 2.0 claims about the authenticated end-user.
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Token
+      summary: Retrieve oAuth oAuth 2.0 claims
+      description: "Retrieve the oAuth 2.0  claims for the user who was issued \n\
+        the access token that is presented in this request body.\n"
+      operationId: post-auth-v1-oauth2-userinfo
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+          description: Returns claims about the authenticated end-user.
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Token
+      security:
+      - Bearer: []
+      summary: Retrieve oAuth 2.0 claims
+      description: "Retrieve the oAuth 2.0  claims for the user who was issued \n\
+        the access token that is used to authenticate this request.\n"
+      tags:
+      - AuthService
+      operationId: get-auth-v1-oauth2-userinfo
+info:
+  title: Authentication Service API
+  version: '1.0'
+  description: 'This service is used to obtain access tokens, and inspect user information
+
+    found on the access token.
+
+    '
+  contact: {}
+tags:
+- name: AuthService
+servers:
+- url: https://auth.apps.paloaltonetworks.com

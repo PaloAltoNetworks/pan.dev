@@ -1,0 +1,174 @@
+components:
+  responses:
+    permission_set_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/_pagination'
+            - properties:
+                items:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/permission_set'
+                  type: array
+              type: object
+      description: Successful response.
+  schemas:
+    _pagination:
+      properties:
+        count:
+          default: 1
+          description: Total count of the items
+          type: integer
+      required:
+      - count
+      - items
+      type: object
+    custom_role_id:
+      description: A unique identifier.
+      example: log_viewer:1234567890
+      maxLength: 256
+      minLength: 12
+      readOnly: true
+      title: ID for custom Role
+      type: string
+    permission_set:
+      description: ''
+      example:
+        aggregated_permissions:
+        - iam.role.get
+        - iam.role.list
+        - iam.accessPolicy.get
+        - iam.accessPolicy.list
+        - iam.group.create
+        - iam.group.update
+        - iam.group.delete
+        children:
+        - iam.access_policy
+        description: Grants all Permissions used on the page "Identity and Access
+          Management".
+        display_name: Identity and Access Management
+        name: iam.management
+        parent: common_services
+        permissions:
+        - iam.role.get
+        - iam.role.list
+        - iam.group.create
+        - iam.group.update
+        - iam.group.delete
+      properties:
+        aggregated_permissions:
+          description: 'Identifies all of the permissions in the permission set, as
+            well
+
+            as all the permissions defined for the current TSG''s child TSGs.
+
+            '
+          items: {}
+          type: array
+        children:
+          description: 'All of the child permission sets contained in the parent permission
+            set.
+
+            '
+          items: {}
+          type: array
+        description:
+          description: 'Descriptive text displayed by the UI.
+
+            '
+        display_name:
+          description: 'Label used in the UI to identify the permission set.
+
+            '
+          example: Identity and Access Management Read /  Write
+          type: string
+        name:
+          description: 'Permission set''s unique identifier. Used in API calls to
+            identify this permission
+
+            set.
+
+            '
+          example: iam_read_write
+          type: string
+        parent:
+          description: 'Name of the permission set''s parent.
+
+            '
+          example: iam_all
+          type: string
+        permissions:
+          description: 'All permissions contained by the permission set.
+
+            '
+          items: {}
+          type: array
+      required:
+      - description
+      - display_name
+      - name
+      title: Root Type for permission_set
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Manage permission sets. Permission sets are intended to be used when
+    creating custom roles that grant UI access to
+
+    a user.
+
+    '
+  title: Permission Sets
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /iam/v1/permission_sets:
+    get:
+      description: "List all permission sets. Permission sets are used when defining\
+        \ \n[custom roles](/scm/api/iam/post-iam-v-1-custom-roles/) \nfor user access\
+        \ to the UI.\n"
+      operationId: get-iam-v1-permission_sets
+      responses:
+        '200':
+          $ref: '#/components/responses/permission_set_list'
+      security:
+      - Bearer: []
+      summary: List permission sets
+      tags:
+      - PermissionSets
+  /iam/v1/permission_sets/{name}:
+    get:
+      description: 'Retrieve the details for a specific permission set.
+
+        '
+      operationId: get-iam-v1-permission_sets-name
+      parameters:
+      - content:
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/custom_role_id'
+        description: A unique identifier for a permission_set.
+        in: path
+        name: name
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/permission_set'
+          description: Successful response - returns a single `permission_set`.
+      security:
+      - Bearer: []
+      summary: Get a permission set
+      tags:
+      - PermissionSets
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: PermissionSets
