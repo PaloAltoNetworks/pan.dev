@@ -60,7 +60,7 @@ function SCMCard({ label, description, docs, colorclass, type }) {
             hierarchy: type === "hierarchy",
           })}
         >
-          {renderCardContent()}
+          {docs && renderCardContent()}
         </ul>
       </div>
     );
