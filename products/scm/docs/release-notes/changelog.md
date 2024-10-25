@@ -1,15 +1,13 @@
 ---
 id: changelog
-title: Changelog
-description: Prisma SASE API Changelog
-hide_title: true
+title: Strata Cloud Manager API Changelog
+description: Strata Cloud Manager API Changelog
+hide_title: false
 slug: /scm/docs/release-notes/changelog
 hide_table_of_contents: true
 keywords:
   - sase
 ---
-
-# Prisma SASE API Changelog
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -74,6 +74,10 @@ module.exports = {
           type: "doc",
           id: "scm/docs/release-notes/changelog",
         },
+        {
+          type: "doc",
+          id: "scm/docs/release-notes/release-notes",
+        },
       ],
     },
     {
@@ -81,10 +85,6 @@ module.exports = {
       label: "Platform Configuration",
       collapsed: true,
       items: [
-        {
-          type: "doc",
-          id: "scm/docs/configuration/platform-configuration",
-        },
         {
           type: "category",
           label: "SASE Configuration",
