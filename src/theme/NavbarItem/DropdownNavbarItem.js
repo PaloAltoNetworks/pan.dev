@@ -125,7 +125,7 @@ function DropdownNavbarItemDesktop({
                     isDropdownItem
                     label={productGroupLabel}
                     className={`product-group-list__product-title ${colorclass}`}
-                    to="/scm"
+                    to="/strata-cloud-manager"
                   />
                 </React.Fragment>
               );
