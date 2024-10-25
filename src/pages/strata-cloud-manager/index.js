@@ -139,6 +139,33 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        "Cloud NGFW Configuration": [
+          {
+            to: "scm/api/config/cloudngfw/operations/operations-api-cloud-ngfw",
+            label: "Configuration Operations",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
+            label: "Configuration Setup",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/cloudngfw/identity/identity-api-cloud-ngfw",
+            label: "Identity Services",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/cloudngfw/objects/objects-api-cloud-ngfw",
+            label: "Objects",
+            icon: "api-doc",
+          },
+          {
+            to: "scm/api/config/cloudngfw/security/security-api-cloud-ngfw",
+            label: "Security Services",
+            icon: "api-doc",
+          },
+        ],
         "Other Configuration": [
           {
             to: "/access/api/ztna/ztna-connector-apis",

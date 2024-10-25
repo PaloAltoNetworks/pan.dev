@@ -82,6 +82,10 @@ module.exports = {
       collapsed: true,
       items: [
         {
+          type: "doc",
+          id: "scm/docs/configuration/platform-configuration",
+        },
+        {
           type: "category",
           label: "SASE Configuration",
           collapsed: true,
