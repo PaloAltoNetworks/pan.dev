@@ -1011,6 +1011,14 @@ const config = {
             baseUrl: "/prisma-cloud/api/",
             hideSendButton: true,
           },
+          "action-plan": {
+            specPath: "openapi-specs/action-plan",
+            outputDir: "products/prisma-cloud/api/action-plan",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
+          },
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
