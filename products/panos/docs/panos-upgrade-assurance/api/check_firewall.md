@@ -330,7 +330,9 @@ __Returns__
 
 ```python
 def check_ipsec_tunnel_status(
-        tunnel_name: Optional[str] = None) -> CheckResult
+        tunnel_name: Optional[str] = None,
+        proxy_ids: Optional[List[str]] = None,
+        require_all_active: Optional[bool] = False) -> CheckResult
 ```
 
 Check if a given IPSec tunnel is in active state.
@@ -339,6 +341,9 @@ __Parameters__
 
 
 - __tunnel_name__ (`str, optional`): (defaults to `None`) Name of the searched IPSec tunnel.
+- __proxy_ids__ (`list(str), optional`): (defaults to `None`) ProxyID names to check. All ProxyIDs are checked if None provided.
+- __require_all_active__ (`bool, optional`): (defaults to `False`) If set, all ProxyIDs should be in `active` state. States are
+    checked only within `proxy_ids` if provided.
 
 __Returns__
 
