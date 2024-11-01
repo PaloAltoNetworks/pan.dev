@@ -414,6 +414,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
@@ -465,6 +470,25 @@ const config = {
                     {
                       to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Access Browser",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Browser Developer's Guide",
+                      to: "access/docs/browser-mgmt",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
                       icon: "api-doc",
                     },
                   ],
@@ -717,7 +741,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
@@ -732,6 +756,11 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          broswermgmt: {
+            specPath: "openapi-specs/access/browser-mgmt",
+            outputDir: "products/access/api/browser-mgmt",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ztna: {
@@ -846,8 +875,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.00",
-            label: "v33.00",
+            version: "33.01",
+            label: "v33.01",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -865,13 +894,6 @@ const config = {
                 baseUrl: "/compute/api/31-02/",
               },
             },
-          },
-          compute_3203: {
-            specPath: "openapi-specs/compute/32-03",
-            outputDir: "products/compute/api/32-03",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-03/",
           },
           compute_3204: {
             specPath: "openapi-specs/compute/32-04",
@@ -900,6 +922,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-07/",
+          },
+          compute_3300: {
+            specPath: "openapi-specs/compute/33-00",
+            outputDir: "products/compute/api/33-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-00/",
           },
         },
       },
