@@ -1,0 +1,1 @@
+List through all data types found in the environment and their respective finding aggregations to construct the organizational data map. This call returns a list of all data types and the aggregated locations of where they were found, similar to the Data Type Inventory in the DSPM console.
