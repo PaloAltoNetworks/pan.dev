@@ -1,0 +1,1 @@
+List and filter through fields found on a specific database or analytics asset to investigate data findings. This call returns a list of all fields matching the supplied filters, enabling deeper investigations into data findings.
