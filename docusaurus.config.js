@@ -831,7 +831,7 @@ const config = {
           airuntimesecurity: {
             specPath: "openapi-specs/ai-runtime-security/scan",
             outputDir: "products/ai-runtime-security/api",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
