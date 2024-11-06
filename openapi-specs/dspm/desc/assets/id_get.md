@@ -1,0 +1,1 @@
+Get full asset details on a specific asset to enrich decision making with threat model info and asset statistics. This call returns a comprehensive list of asset details, as is available in the Prisma Cloud DSPM console.
