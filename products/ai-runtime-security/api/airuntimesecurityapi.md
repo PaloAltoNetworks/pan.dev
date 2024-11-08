@@ -16,9 +16,15 @@ You can integrate the AI security detection engine directly into your applicatio
 
 You can use the APIs to send prompts or model responses and receive a threat assessment with recommended actions.
 
-1. Onboard and activate your API account in [Strata Cloud Manager](https://stratacloudmanager.paloaltonetworks.com/).
-2. Get the API key and the sample code template you can embed to discover and detect threats.
-   - You need the API key to authenticate your application to the AI Runtime Security API. Enter this API key as the **x-pan-token** header in your API requests.
-3. Create an AI Runtime Security API profile to enforce security policies.
-4. Trigger some sync and async threat requests against your security profile.
-5. Refer to the following API reference docs.
+## Prerequisites
+
+Before getting started, ensure the following setup is completed as per the [AI Runtime Security Admin Guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/activate-your-ai-runtime-security-license):
+
+1. Activate your AI Runtime Security API Intercept licenses.
+2. Create a Deployment Profile for AI Runtime Security: API Intercept in your CSP.
+3. Onboard AI Runtime Security API Intercept in Strata Cloud Manager.
+
+## Requirements for API Usage
+
+1. **API Key Token**: This token is generated during the onboarding process in Strata Cloud Manager. Include it in all API requests using the `x-pan-token` header.
+2. **AI Security Profile Name**: The security profile created during onboarding. This profile name must be specified in the API request payload.
