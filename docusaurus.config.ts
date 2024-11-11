@@ -20,6 +20,9 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 }
 
 const config = {
+  future: {
+    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+  },
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -895,28 +898,6 @@ const config = {
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
-  webpack: {
-    jsLoader: (isServer) => ({
-      loader: require.resolve("swc-loader"),
-      options: {
-        jsc: {
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-          },
-          target: "es2019",
-          transform: {
-            react: {
-              runtime: "automatic",
-            },
-          },
-        },
-        module: {
-          type: isServer ? "commonjs" : "es6",
-        },
-      },
-    }),
-  },
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
