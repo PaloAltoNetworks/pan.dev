@@ -38,6 +38,21 @@ module.exports = {
         require("./api/code/sidebar"),
       ],
     },
+    {
+      type: "category",
+      label: "Data Security Posture Management",
+      collapsed: true,
+      items: [
+        "prisma-cloud/api/dspm/get-started",
+        require("./api/dspm/sidebar"),
+      ],
+    },
+    {
+      type: "category",
+      label: "Managed Security Service Provider (MSSP)",
+      collapsed: true,
+      items: [require("./api/mssp/sidebar")],
+    },
   ],
   clouddocs: [
     "prisma-cloud/docs/home",

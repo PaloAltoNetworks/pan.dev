@@ -1,0 +1,1 @@
+Update the status for a specific DDR alert to reflect the status of the investigation in Prisma Cloud DSPM. This call updates the status of a specific alert (specified by the alert ID) to one of the available statuses.

@@ -28,6 +28,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
+  markdown: { format: "detect" },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
@@ -443,6 +444,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
@@ -494,6 +500,25 @@ const config = {
                     {
                       to: "access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "Prisma Access Browser",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma Access Browser Developer's Guide",
+                      to: "access/docs/browser-mgmt",
+                      icon: "doc",
+                    },
+                  ],
+                  apiDocs: [
+                    {
+                      to: "access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
                       icon: "api-doc",
                     },
                   ],
@@ -566,6 +591,18 @@ const config = {
                     },
                   ],
                 },
+                {
+                  label: "Prisma SASE Service Status",
+                  to: "#",
+                  logoClass: "prisma",
+                  docs: [
+                    {
+                      label: "Prisma SASE Service Status API",
+                      to: "sase/docs/saseservicestatusapi",
+                      icon: "doc",
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -602,6 +639,26 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              label: "Cross-Platform",
+              to: "#",
+              colorclass: "cross-platform",
+              description:
+                "Learn about opportunities across Palo Alto Networks platforms.",
+              products: [
+                {
+                  label: "Service Status",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Service Status API",
+                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
@@ -817,7 +874,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
@@ -832,6 +889,11 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          broswermgmt: {
+            specPath: "openapi-specs/access/browser-mgmt",
+            outputDir: "products/access/api/browser-mgmt",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ztna: {
@@ -918,6 +980,14 @@ const config = {
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
+          mssp: {
+            specPath: "openapi-specs/mssp",
+            outputDir: "products/prisma-cloud/api/mssp",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
+          },
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
@@ -938,36 +1008,35 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             hideSendButton: true,
           },
+          dspm: {
+            specPath: "openapi-specs/dspm",
+            outputDir: "products/prisma-cloud/api/dspm",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
           compute: {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "32.07",
-            label: "v32.07",
+            version: "33.01",
+            label: "v33.01",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
+              32.07: {
+                specPath: "openapi-specs/compute/32-07",
+                outputDir: "products/compute/api/32-07",
+                label: "v32.07",
+                baseUrl: "/compute/api/32-07/",
+              },
               31.02: {
                 specPath: "openapi-specs/compute/31-02",
                 outputDir: "products/compute/api/31-02",
                 label: "v31.02",
                 baseUrl: "/compute/api/31-02/",
               },
-              30.03: {
-                specPath: "openapi-specs/compute/30-03",
-                outputDir: "products/compute/api/30-03",
-                label: "v30.03",
-                baseUrl: "/compute/api/30-03/",
-              },
             },
-          },
-          compute_3203: {
-            specPath: "openapi-specs/compute/32-03",
-            outputDir: "products/compute/api/32-03",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-03/",
           },
           compute_3204: {
             specPath: "openapi-specs/compute/32-04",
@@ -989,6 +1058,20 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-06/",
+          },
+          compute_3207: {
+            specPath: "openapi-specs/compute/32-07",
+            outputDir: "products/compute/api/32-07",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-07/",
+          },
+          compute_3300: {
+            specPath: "openapi-specs/compute/33-00",
+            outputDir: "products/compute/api/33-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-00/",
           },
         },
       },
@@ -1025,11 +1108,23 @@ const config = {
   trailingSlash: true,
   webpack: {
     jsLoader: (isServer) => ({
-      loader: require.resolve("esbuild-loader"),
+      loader: require.resolve("swc-loader"),
       options: {
-        loader: "tsx",
-        format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017",
+        jsc: {
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+          },
+          target: "es2019",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+        module: {
+          type: isServer ? "commonjs" : "es6",
+        },
       },
     }),
   },

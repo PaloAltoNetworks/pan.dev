@@ -29,6 +29,8 @@ Refer to the following available options for the `fields` query parameters:
 * osDistro
 * distro
 * osDistroRelease
+  
+_**Note:**_ The query parameters `issueType` is not supported for this API endpoint.
 
 ### cURL Request
 
