@@ -82,226 +82,219 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Platform Configuration",
+      label: "SASE Configuration",
       collapsed: true,
       items: [
         {
           type: "category",
-          label: "SASE Configuration",
-          collapsed: true,
+          label: "Configuration Operations",
           items: [
             {
-              type: "category",
-              label: "Configuration Operations",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/operations/operations-api",
-                },
-                require("./api/config/sase/operations/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/operations/operations-api",
             },
-            {
-              type: "category",
-              label: "Configuration Setup",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/setup/setup-api",
-                },
-                require("./api/config/sase/setup/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Network Deployment",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/deployment/deployment-api",
-                },
-                require("./api/config/sase/deployment/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Identity Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/identity/identity-api",
-                },
-                require("./api/config/sase/identity/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "GlobalProtect",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/mobileagent/mobileagent-api",
-                },
-                require("./api/config/sase/mobileagent/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Objects",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/objects/objects-api",
-                },
-                require("./api/config/sase/objects/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Security Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/sase/security/security-api",
-                },
-                require("./api/config/sase/security/sidebar"),
-              ],
-            },
+            require("./api/config/sase/operations/sidebar"),
           ],
         },
         {
           type: "category",
-          label: "NGFW Configuration",
-          collapsed: true,
+          label: "Configuration Setup",
           items: [
             {
-              type: "category",
-              label: "Configuration Operations",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/operations/operations-api-ngfw",
-                },
-                require("./api/config/ngfw/operations/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/setup/setup-api",
             },
-            {
-              type: "category",
-              label: "Configuration Setup",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/setup/setup-api-ngfw",
-                },
-                require("./api/config/ngfw/setup/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Identity Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/identity/identity-api-ngfw",
-                },
-                require("./api/config/ngfw/identity/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Network Configuration",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/network/network-api",
-                },
-                require("./api/config/ngfw/network/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Objects",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/objects/objects-api-ngfw",
-                },
-                require("./api/config/ngfw/objects/sidebar"),
-              ],
-            },
-            {
-              type: "category",
-              label: "Security Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/ngfw/security/security-api-ngfw",
-                },
-                require("./api/config/ngfw/security/sidebar"),
-              ],
-            },
+            require("./api/config/sase/setup/sidebar"),
           ],
         },
         {
           type: "category",
-          label: "Cloud NGFW Configuration",
-          collapsed: true,
+          label: "Network Deployment",
           items: [
             {
-              type: "category",
-              label: "Configuration Operations",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/cloudngfw/operations/operations-api-cloud-ngfw",
-                },
-                require("./api/config/cloudngfw/operations/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/deployment/deployment-api",
             },
+            require("./api/config/sase/deployment/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Identity Services",
+          items: [
             {
-              type: "category",
-              label: "Configuration Setup",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
-                },
-                require("./api/config/cloudngfw/setup/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/identity/identity-api",
             },
+            require("./api/config/sase/identity/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "GlobalProtect",
+          items: [
             {
-              type: "category",
-              label: "Identity Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/cloudngfw/identity/identity-api-cloud-ngfw",
-                },
-                require("./api/config/cloudngfw/identity/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/mobileagent/mobileagent-api",
             },
+            require("./api/config/sase/mobileagent/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Objects",
+          items: [
             {
-              type: "category",
-              label: "Objects",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/cloudngfw/objects/objects-api-cloud-ngfw",
-                },
-                require("./api/config/cloudngfw/objects/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/objects/objects-api",
             },
+            require("./api/config/sase/objects/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Security Services",
+          items: [
             {
-              type: "category",
-              label: "Security Services",
-              items: [
-                {
-                  type: "doc",
-                  id: "scm/api/config/cloudngfw/security/security-api-cloud-ngfw",
-                },
-                require("./api/config/cloudngfw/security/sidebar"),
-              ],
+              type: "doc",
+              id: "scm/api/config/sase/security/security-api",
             },
+            require("./api/config/sase/security/sidebar"),
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "NGFW Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "category",
+          label: "Configuration Operations",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/operations/operations-api-ngfw",
+            },
+            require("./api/config/ngfw/operations/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Configuration Setup",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/setup-api-ngfw",
+            },
+            require("./api/config/ngfw/setup/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Identity Services",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/identity/identity-api-ngfw",
+            },
+            require("./api/config/ngfw/identity/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Network Configuration",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/network/network-api",
+            },
+            require("./api/config/ngfw/network/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Objects",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/objects/objects-api-ngfw",
+            },
+            require("./api/config/ngfw/objects/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Security Services",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/security/security-api-ngfw",
+            },
+            require("./api/config/ngfw/security/sidebar"),
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Cloud NGFW Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "category",
+          label: "Configuration Operations",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/operations/operations-api-cloud-ngfw",
+            },
+            require("./api/config/cloudngfw/operations/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Configuration Setup",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
+            },
+            require("./api/config/cloudngfw/setup/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Identity Services",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/identity/identity-api-cloud-ngfw",
+            },
+            require("./api/config/cloudngfw/identity/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Objects",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/objects/objects-api-cloud-ngfw",
+            },
+            require("./api/config/cloudngfw/objects/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Security Services",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/security/security-api-cloud-ngfw",
+            },
+            require("./api/config/cloudngfw/security/sidebar"),
           ],
         },
       ],
