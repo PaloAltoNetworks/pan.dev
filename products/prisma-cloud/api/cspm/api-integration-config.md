@@ -10,6 +10,7 @@ The request body for some of the endpoints includes an `integrationConfig` param
 
 Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. For more details, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations). If you are upgraded to the Darwin release, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations).
 
+
 ### AWS Security Hub
 
 Prisma Cloud integrates with AWS Security Hub for centralized visibility into security and compliance risks associated with your cloud assets on the AWS Security Hub console.
@@ -29,9 +30,9 @@ To add an AWS Security Hub integration, make your request as described in
 
 | Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
 | -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
-| region         | List of Regions where Prisma Cloud on AWS Security Hub is enabled for your cloud account | Array of Objects<br>{<br>String name;<br>String apiIdentifier;<br>String cloudType;<br>String sdkId;<br>Boolean enabled;<br>}    | Required               |
-| defaultRegion        | The region where you will receive alert notifications for global resources |  Object<br>{<br>String name;<br>String apiIdentifier;<br>String cloudType;<br>String sdkId;<br>Boolean enabled;<br>}    | Required if the user wants to receive global alerts               |
-| accountId     | The Account ID of the AWS account that you have onboarded on Prisma Cloud | string     | Required              |
+| region         | List of Regions where Prisma Cloud on AWS Security Hub is enabled for your cloud account | List of Objects<br/>{<br/>String name;<br/>String apiIdentifier;<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required               |
+| defaultRegion        | The region where you will receive alert notifications for global resources |  Object<br/>{<br/>String name;<br/>String apiIdentifier;<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required if the user wants to receive global alerts               |
+| accountId     | The Account ID of the AWS account that you have onboarded on Prisma Cloud | string     | Required                |
 
 
 To update an AWS Security Hub integration, make your request as described in
