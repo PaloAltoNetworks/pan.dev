@@ -11,6 +11,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nov 15, 2024  | Added Strata Cloud Manager configuration APIs, along with a [Strata Cloud Manager landing page](/strata-cloud-manager/). See the [release notes](/scm/docs/release-notes/#november-2024) for more information. |
 | Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/).                                                                                                  |
 | Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                  |
 | July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                  |
