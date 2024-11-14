@@ -1,8 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Vulnerability Search and Investigate API",
-    "version": "1.0.0"
+    "description": "UVE Search",
+    "version": "1.0",
+    "title": "UVE Doc"
   },
   "tags": [
     {
@@ -11,72 +12,39 @@
     }
   ],
   "paths": {
-    "/uve/api/v1/vulnerabilities/search": {
+    "/uve/api/v1/vulnerabilities/search/download": {
       "post": {
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "operationId": "vulnerabilities-search-api",
-        "summary": "Get Vulnerabilities by RQL",
-        "description": "Get the list of vulnerabilities and their details based on an RQL query. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).\n\n To download all the vulnerabilities by RQL in a CSV format, see [Download All Vulnerabilities by RQL](https://pan.dev/prisma-cloud/api/cspm/download-vulnerability-csv-file-in-investigate-table-view/) \n>**Note:** You need 'investigateVulnerabilityRql' feature with 'View' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "summary": "Download All Vulnerabilities by RQL",
+        "description": "Download the list of vulnerabilities and their details based on an RQL query in a GZIP CSV format. Maximum of 10k records can be downloaded. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).",
+        "operationId": "download-vulnerability-csv-file-in-investigate-table-view",
         "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VulnerabilitySearchRequest"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/VulnerabilitySearchRequest"
         },
-        "parameters": [
-          {
-            "name": "page_token",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Token for pagination"
-          },
-          {
-            "name": "view",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asset",
-                "cve"
-              ]
-            },
-            "description": "Filter vulnerabilities based on the CVE or Asset view as available in the UI. **cve** is used to get details of the CVEs that matches the query and **asset** is used to get the details of the assets that have the CVE which matches the query."
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "successful operation",
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/VulnerabilitySearchResponse",
-                      "description": "Response when view is cve"
-                    },
-                    {
-                      "$ref": "#/components/schemas/VulnerabilitySearchResponseAsset",
-                      "description": "Response when view is asset"
-                    }
-                  ]
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
                 }
               }
             }
           },
+          "202": {
+            "description": "Successfully returned the response for the request"
+          },
           "400": {
-            "description": "Bad Request",
+            "description": "Bad request",
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiErrorResponse"
                 }
@@ -84,9 +52,9 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthorized Access",
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiErrorResponse"
                 }
@@ -94,9 +62,29 @@
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "User Doesn't have role to access",
             "content": {
-              "application/json": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/octet-stream": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiErrorResponse"
                 }
@@ -104,13 +92,284 @@
             }
           }
         },
-        "x-public": "true",
-        "x-ga": "24.1.1",
         "security": [
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/vulnerabilities/download": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get CVE Details by ID",
+        "description": "Get the CVE details and impacted assets by CVE ID in a GZIP CSV format. \n:::info\n **Replacement Endpoint: [Get CVE Details by ID V3](/prisma-cloud/api/cspm/download-vulnerability-file-v-3/)**\n:::\n\n\n>**Note:** You need `investigateVulnerabilityRql` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "operationId": "download-vulnerability-file",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/VulnerabilityDownloadRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully returned the response for the request"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User Doesn't have role to access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v2/vulnerabilities/download": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get CVE Details by ID V2",
+        "description": "Get the CVE details and impacted assets by CVE ID in a GZIP CSV format. \n:::info\n **Replacement Endpoint: [Get CVE Details by ID V3](/prisma-cloud/api/cspm/download-vulnerability-file-v-3/)**\n:::\n\n\n>**Note:** You need `investigateVulnerabilityRql` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "operationId": "download-vulnerability-file-v2",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/VulnerabilityDownloadRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully returned the response for the request"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User Doesn't have role to access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v3/vulnerabilities/download": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get CVE Details by ID V3",
+        "description": "Get the CVE details and impacted assets by CVE ID in a GZIP CSV format.\n>**Note:** You need `investigateVulnerabilityRql` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "operationId": "download-vulnerability-file-v3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VulnerabilityDownloadRequestV3"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully returned the response for the request"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User Doesn't have role to access",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
       }
     },
     "/uve/api/v1/vulnerabilities/search/asset": {
@@ -118,11 +377,20 @@
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "operationId": "list-vulnerable-assets",
         "summary": "Get Vulnerable Assets by RQL",
-        "description": "Get the list of vulnerable Assets and their IDs based on an RQL query. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).\n>**Note:** You need 'investigateVulnerabilityRql' feature with 'View' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "description": "Get the list of vulnerable Assets and their IDs based on an RQL query. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).\n>**Note:** You need `investigateVulnerabilityRql` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "operationId": "list-vulnerable-assets",
+        "parameters": [
+          {
+            "name": "Token for pagination",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -131,99 +399,144 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset_Search_Response"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully returned the response for the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset_Search_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User Doesn't have role to access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/vulnerabilities/search": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerabilities by RQL",
+        "description": "Get the list of vulnerabilities and their details based on an RQL query. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).\n\nTo download all the vulnerabilities by RQL in a CSV format, see [Download All Vulnerabilities by RQL](https://pan.dev/prisma-cloud/api/cspm/download-vulnerability-csv-file-in-investigate-table-view)\n>**Note:** You need `investigateVulnerabilityRql` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
+        "operationId": "vulnerabilities-search-api",
         "parameters": [
           {
             "name": "page_token",
             "in": "query",
+            "description": "Token for pagination",
             "required": false,
             "schema": {
               "type": "string"
-            },
-            "description": "Token for pagination"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AssetsSearchResponse"
-                }
-              }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-public": "true",
-        "security": [
           {
-            "x-redlock-auth": []
+            "name": "view",
+            "in": "query",
+            "description": "Filter vulnerabilities based on the CVE or Asset view as available in the UI. **cve** is used to get details of the CVEs that matches the query and **asset** is used to get the details of the assets that have the CVE which matches the query.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asset",
+                "cve"
+              ]
+            }
           }
-        ]
-      }
-    },
-    "/uve/api/v1/vulnerabilities/download": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
         ],
-        "operationId": "download-vulnerability-file",
-        "summary": "Get CVE Details by ID",
-        "description": "Get the CVE details and impacted assets by CVE ID in a GZIP CSV format.\n>**Note:** You need 'investigateVulnerabilityRql' feature with 'View' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Investigate > Vulnerability** is enabled.",
         "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VulnerabilityDownloadRequest"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/VulnerabilitySearchRequest"
         },
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "successful operation",
             "content": {
-              "application/octet-stream": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "$ref": "#/components/schemas/VulnerabilitySearchResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully returned the response for the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerabilitySearchResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -233,7 +546,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthorized Access",
             "content": {
               "application/json": {
                 "schema": {
@@ -243,7 +556,27 @@
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "User Doesn't have role to access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed with an Exception, Internal Error Occurred",
             "content": {
               "application/json": {
                 "schema": {
@@ -253,170 +586,104 @@
             }
           }
         },
-        "x-public": "true",
         "security": [
           {
             "x-redlock-auth": []
           }
-        ]
-      }
-    },
-    "/uve/api/v1/vulnerabilities/search/download": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
         ],
-        "operationId": "download-vulnerability-csv-file-in-investigate-table-view",
-        "summary": "Download All Vulnerabilities by RQL",
-        "description": "Download the list of vulnerabilities and their details based on an RQL query in a GZIP CSV format. Maximum of 10k records can be downloaded. For vulnerability RQL query attributes, see [Vulnerability Query Attributes](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-attributes). For example queries, see [Vulnerability Query Examples](https://docs.prismacloud.io/en/enterprise-edition/content-collections/search-and-investigate/vulnerability-queries/vulnerability-query-examples).\n>**Note:** You need 'investigateVulnerabilityRql' feature with 'View' permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VulnerabilitySearchRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "x-public": "true",
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ]
+        "x-public": "true"
       }
     }
   },
   "components": {
-    "schemas": {
-      "VulnerabilitySearchRequest": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Search query",
-            "example": "vulnerability where age > 30 days"
-          },
-          "id": {
-            "type": "string",
-            "description": "saved search ID"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "VulnerabilitySearchResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Saved search ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Vulnerability name"
-          },
-          "description": {
-            "type": "string",
-            "description": "Vulnerability description"
-          },
-          "searchType": {
-            "type": "string",
-            "description": "Search type"
-          },
-          "saved": {
-            "type": "boolean",
-            "description": "Whether it's saved or not"
-          },
-          "timeRange": {
-            "$ref": "#/components/schemas/ToNowTimeRange"
-          },
-          "query": {
-            "type": "string",
-            "description": "Query details"
-          },
-          "data": {
-            "$ref": "#/components/schemas/VulnerabilitySearchResultData"
+    "requestBodies": {
+      "VulnerabilityDownloadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VulnerabilityDownloadRequest"
+            }
           }
         }
       },
-      "VulnerabilitySearchResponseAsset": {
+      "VulnerabilitySearchRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/VulnerabilitySearchRequest"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ApiErrorResponse": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Saved search ID"
+          "code": {
+            "type": "string"
           },
-          "name": {
-            "type": "string",
-            "description": "Vulnerability name"
+          "message": {
+            "type": "string"
           },
-          "description": {
-            "type": "string",
-            "description": "Vulnerability description"
+          "target": {
+            "type": "string"
+          }
+        }
+      },
+      "AssetDetails": {
+        "type": "object",
+        "properties": {
+          "unifiedAssetId": {
+            "type": "string"
           },
-          "searchType": {
-            "type": "string",
-            "description": "Search type"
+          "assetType": {
+            "type": "string"
           },
-          "saved": {
-            "type": "boolean",
-            "description": "Whether it's saved or not"
+          "assetName": {
+            "type": "string"
           },
-          "timeRange": {
-            "$ref": "#/components/schemas/ToNowTimeRange"
+          "cloudAccount": {
+            "type": "string"
           },
-          "query": {
-            "type": "string",
-            "description": "Query details"
+          "c2cFixSource": {
+            "type": "string"
           },
-          "assetSearchResultData": {
-            "$ref": "#/components/schemas/AssetSearchResultData"
+          "registryName": {
+            "type": "string"
+          },
+          "internetExposed": {
+            "type": "boolean"
+          },
+          "packageInUse": {
+            "type": "boolean"
+          },
+          "application": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "spId": {
+            "type": "string"
+          },
+          "severityCount": {
+            "$ref": "#/components/schemas/SeverityCount"
+          },
+          "repoName": {
+            "type": "string"
+          },
+          "clusterName": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clusterNamespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -425,11 +692,11 @@
         "properties": {
           "totalAssets": {
             "type": "integer",
-            "description": "Total number of Assets"
+            "format": "int64"
           },
           "totalRows": {
             "type": "integer",
-            "description": "Total number of rows"
+            "format": "int64"
           },
           "items": {
             "type": "array",
@@ -438,100 +705,145 @@
             }
           },
           "nextPageToken": {
-            "type": "string",
-            "description": "Token for next page"
+            "type": "string"
           }
         }
       },
-      "AssetDetails": {
+      "AssetsSearchRequest": {
         "type": "object",
+        "required": [
+          "assetLifecycle",
+          "assetType",
+          "cveId",
+          "query"
+        ],
         "properties": {
-          "unifiedAssetId": {
+          "query": {
             "type": "string",
-            "description": "Unified Asset Id"
+            "description": "Search Query"
+          },
+          "cveId": {
+            "type": "string",
+            "example": "CVE-2021-44228",
+            "description": "CVE ID"
+          },
+          "assetLifecycle": {
+            "type": "string",
+            "example": "code,build,deploy,run",
+            "description": "Asset Lifecycle",
+            "enum": [
+              "code",
+              "build",
+              "deploy",
+              "run"
+            ]
           },
           "assetType": {
             "type": "string",
-            "description": "Asset Type"
-          },
-          "assetName": {
-            "type": "string",
-            "description": "Asset Name"
-          },
-          "cloudAccount": {
-            "type": "string",
-            "description": "Cloud Account"
-          },
-          "registryName": {
-            "type": "string",
-            "description": "Registry Name"
-          },
-          "internetExposed": {
-            "type": "boolean",
-            "description": "Internet Exposed"
-          },
-          "packageInUse": {
-            "type": "boolean",
-            "description": "Package In Use"
-          },
-          "owner": {
-            "type": "string",
-            "description": "Owner"
-          },
-          "spId": {
-            "type": "string",
-            "description": "Service Provider"
-          },
-          "severityCount": {
-            "$ref": "#/components/schemas/SeverityCount"
+            "example": "package,serverlessFunction,iac,deployedImage,vmImage,registryImage,host",
+            "description": "Asset Type",
+            "enum": [
+              "package",
+              "serverlessFunction",
+              "iac",
+              "deployedImage",
+              "vmImage",
+              "registryImage",
+              "host"
+            ]
           }
-        }
+        },
+        "description": "Request Model for Assets Search"
       },
-      "SeverityCount": {
+      "AutoSuggestInfo": {
         "type": "object",
         "properties": {
-          "lowSeverityCount": {
-            "type": "integer",
-            "description": "Vulnerabilities with low severity"
+          "valid": {
+            "type": "boolean"
           },
-          "mediumSeverityCount": {
-            "type": "integer",
-            "description": "Vulnerabilities with medium severity"
-          },
-          "highSeverityCount": {
-            "type": "integer",
-            "description": "Vulnerabilities with high severity"
-          },
-          "criticalSeverityCount": {
-            "type": "integer",
-            "description": "Vulnerabilities with critical severity"
-          }
-        }
-      },
-      "VulnerabilitySearchResultData": {
-        "type": "object",
-        "properties": {
-          "totalRows": {
-            "type": "integer",
-            "description": "Total number of rows"
-          },
-          "totalVulnerabilities": {
-            "type": "integer",
-            "description": "Total number of vulnerabilities"
-          },
-          "totalAssets": {
-            "type": "integer",
-            "description": "Total number of unique assets"
-          },
-          "items": {
+          "suggestions": {
             "type": "array",
+            "uniqueItems": true,
             "items": {
-              "$ref": "#/components/schemas/CveDetails"
+              "type": "object"
             }
           },
-          "nextPageToken": {
+          "translate": {
+            "type": "boolean"
+          },
+          "needsOffsetUpdate": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AutoSuggestInfoObject": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "suggestions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "object"
+            }
+          },
+          "translate": {
+            "type": "boolean"
+          },
+          "needsOffsetUpdate": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AutoSuggestRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
             "type": "string",
-            "description": "Token for next page"
+            "description": "RQL Query"
+          }
+        }
+      },
+      "Build": {
+        "type": "object",
+        "properties": {
+          "assetsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "images": {
+            "$ref": "#/components/schemas/Images"
+          },
+          "functions": {
+            "$ref": "#/components/schemas/PipeLineFunctions"
+          }
+        }
+      },
+      "Code": {
+        "type": "object",
+        "properties": {
+          "assetsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "packages": {
+            "$ref": "#/components/schemas/Packages"
+          },
+          "iacResources": {
+            "$ref": "#/components/schemas/IacResources"
           }
         }
       },
@@ -539,40 +851,37 @@
         "type": "object",
         "properties": {
           "cveId": {
-            "type": "string",
-            "description": "CVE ID"
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "description": "Name"
+            "type": "string"
           },
           "cvssScore": {
             "type": "number",
-            "description": "CVSS Score",
-            "example": 8
+            "format": "double"
           },
           "epssScore": {
             "type": "integer",
-            "description": "EPSS Score"
+            "format": "int32"
           },
           "epssScorePrevious": {
             "type": "integer",
-            "description": "Previous Day EPSS Score"
+            "format": "int32"
           },
           "completeEpssScore": {
             "type": "number",
-            "description": "Complete EPSS Score"
+            "format": "double"
           },
           "totalImpactedAssets": {
             "type": "integer",
-            "description": "Total Impacted Assets"
+            "format": "int64"
           },
           "riskFactors": {
             "type": "array",
+            "uniqueItems": true,
             "items": {
               "type": "string"
-            },
-            "description": "Risk Factors"
+            }
           },
           "code": {
             "$ref": "#/components/schemas/Code"
@@ -588,19 +897,175 @@
           },
           "published": {
             "type": "integer",
-            "description": "Published time"
+            "format": "int64"
           },
           "exploitable": {
-            "type": "boolean",
-            "description": "Exploitable"
+            "type": "boolean"
           },
           "patchable": {
-            "type": "boolean",
-            "description": "Patchable"
+            "type": "boolean"
           },
           "severity": {
-            "type": "string",
-            "description": "Severity"
+            "type": "string"
+          }
+        }
+      },
+      "Deploy": {
+        "type": "object",
+        "properties": {
+          "assetsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "registryImages": {
+            "$ref": "#/components/schemas/RegistryImages"
+          },
+          "hostVmImages": {
+            "$ref": "#/components/schemas/HostVmImages"
+          }
+        }
+      },
+      "DeployedImages": {
+        "type": "object",
+        "properties": {
+          "deployedImagesCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "containerCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "HostVmImages": {
+        "type": "object",
+        "properties": {
+          "hostVmImagesCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Hosts": {
+        "type": "object",
+        "properties": {
+          "hostsCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "IacResources": {
+        "type": "object",
+        "properties": {
+          "iacResourcesCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "repositoryCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Images": {
+        "type": "object",
+        "properties": {
+          "imagesCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pipelineCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Packages": {
+        "type": "object",
+        "properties": {
+          "packageCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "repositoryCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PipeLineFunctions": {
+        "type": "object",
+        "properties": {
+          "functionsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pipelineCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "RegistryImages": {
+        "type": "object",
+        "properties": {
+          "registryImagesCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "repositoryCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "assetsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deployedImages": {
+            "$ref": "#/components/schemas/DeployedImages"
+          },
+          "functions": {
+            "$ref": "#/components/schemas/RunFunctions"
+          },
+          "hosts": {
+            "$ref": "#/components/schemas/Hosts"
+          }
+        }
+      },
+      "RunFunctions": {
+        "type": "object",
+        "properties": {
+          "functionsCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SeverityCount": {
+        "type": "object",
+        "properties": {
+          "lowSeverityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mediumSeverityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "highSeverityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "criticalSeverityCount": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -608,39 +1073,35 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "description": "Type of Time Range"
+            "type": "string"
           },
           "value": {
-            "type": "string",
-            "description": "Value of Time Range"
+            "type": "string"
           }
         }
       },
-      "AssetsSearchRequest": {
+      "VulnerabilityDownloadRequest": {
         "type": "object",
+        "required": [
+          "cveId"
+        ],
         "properties": {
-          "query": {
-            "type": "string",
-            "description": "Search query",
-            "example": "vulnerability where age > 30 days"
-          },
           "cveId": {
             "type": "string",
+            "example": "CVE-2021-44228",
             "description": "CVE ID"
           },
-          "assetLifecycle": {
-            "type": "string",
-            "description": "Asset Lifecycle",
-            "enum": [
-              "code",
-              "build",
-              "deploy",
-              "run"
-            ]
+          "riskFactors": {
+            "type": "array",
+            "example": "Urgent, Patchable, Exploitable",
+            "description": "List of Risk Factors",
+            "items": {
+              "type": "string"
+            }
           },
           "assetType": {
             "type": "string",
+            "example": "package,serverlessFunction,iac,deployedImage,vmImage,registryImage,host",
             "description": "Asset Type",
             "enum": [
               "package",
@@ -651,32 +1112,132 @@
               "registryImage",
               "host"
             ]
+          },
+          "accountGroups": {
+            "type": "array",
+            "description": "List of Cloud Account Groups",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountIds": {
+            "type": "array",
+            "description": "List of Cloud Account IDs",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clusterName": {
+            "type": "array",
+            "description": "List of Clusters",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clusterNamespace": {
+            "type": "array",
+            "description": "List of Namespaces",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unifiedAssetId": {
+            "type": "string",
+            "description": "Unified Asset ID"
           }
         },
-        "required": [
-          "query",
-          "cveId",
-          "assetLifecycle",
-          "assetType"
-        ]
+        "description": "Request Model for Single CSV Download"
       },
-      "AssetsSearchResponse": {
+      "VulnerabilityDownloadRequestV3": {
         "type": "object",
         "properties": {
-          "value": {
+          "downloadRequests": {
             "type": "array",
+            "description": "List of VulnerabilityDownloadRequest",
             "items": {
-              "$ref": "#/components/schemas/AssetInfo"
-            },
-            "description": "List of Asset Information"
-          },
-          "nextPageToken": {
+              "$ref": "#/components/schemas/VulnerabilityDownloadRequest"
+            }
+          }
+        },
+        "description": "Request Model for Single CSV Download V3"
+      },
+      "VulnerabilitySearchRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
             "type": "string",
-            "description": "Token for next page"
+            "example": "vulnerability where asset.type IN ('Package', 'Host') AND severity IN ('high', 'critical')",
+            "description": "Vulnerability Query to Search"
+          },
+          "id": {
+            "type": "string",
+            "description": "saved search ID"
+          }
+        },
+        "description": "Request Model for Bulk CSV Search and Download"
+      },
+      "VulnerabilitySearchResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "searchType": {
+            "type": "string"
+          },
+          "saved": {
+            "type": "boolean"
+          },
+          "timeRange": {
+            "$ref": "#/components/schemas/ToNowTimeRange"
+          },
+          "query": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VulnerabilitySearchResultData"
+          },
+          "assetSearchResultData": {
+            "$ref": "#/components/schemas/AssetSearchResultData"
           }
         }
       },
-      "AssetInfo": {
+      "VulnerabilitySearchResultData": {
+        "type": "object",
+        "properties": {
+          "totalRows": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalAssets": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalVulnerabilities": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CveDetails"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Asset_Information": {
         "type": "object",
         "properties": {
           "id": {
@@ -697,172 +1258,22 @@
           }
         }
       },
-      "AutoSuggestRequest": {
+      "Asset_Search_Response": {
         "type": "object",
         "properties": {
-          "query": {
-            "type": "string",
-            "description": "Suggestion query"
-          }
-        }
-      },
-      "AutoSuggestInfo": {
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "Validity of suggestions"
-          },
-          "suggestions": {
+          "value": {
             "type": "array",
+            "description": "List of Asset Information",
             "items": {
-              "type": "string"
-            },
-            "description": "List of suggestions"
+              "$ref": "#/components/schemas/Asset_Information"
+            }
           },
-          "translate": {
-            "type": "boolean",
-            "description": "Translate flag"
-          },
-          "needsOffsetUpdate": {
-            "type": "boolean",
-            "description": "Offset update flag"
-          },
-          "offset": {
-            "type": "integer",
-            "description": "Offset value"
-          }
-        }
-      },
-      "Code": {
-        "type": "object"
-      },
-      "Build": {
-        "type": "object"
-      },
-      "Deploy": {
-        "type": "object"
-      },
-      "Run": {
-        "type": "object"
-      },
-      "VulnerabilityRQLToJsonResponse": {
-        "type": "object",
-        "properties": {
-          "original": {
+          "nextPageToken": {
             "type": "string",
-            "description": "Original string"
-          },
-          "transformed": {
-            "type": "string",
-            "description": "Transformed string"
-          }
-        }
-      },
-      "VulnerabilityDownloadRequest": {
-        "type": "object",
-        "required": [
-          "cveId"
-        ],
-        "properties": {
-          "cveId": {
-            "type": "string",
-            "description": "CVE ID"
-          },
-          "riskFactors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of risk factors"
-          },
-          "assetType": {
-            "type": "string",
-            "description": "Asset Type",
-            "enum": [
-              "package",
-              "serverlessFunction",
-              "iac",
-              "deployedImage",
-              "vmImage",
-              "registryImage",
-              "host"
-            ]
-          }
-        }
-      },
-      "ApiErrorResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "Error code"
-          },
-          "message": {
-            "type": "string",
-            "description": "Error message"
-          },
-          "target": {
-            "type": "string",
-            "description": "Error target"
+            "description": "Token for next page"
           }
         }
       }
-    },
-    "securitySchemes": {
-      "x-redlock-auth": {
-        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
-        "in": "header",
-        "name": "x-redlock-auth",
-        "type": "apiKey"
-      }
     }
-  },
-  "servers": [
-    {
-      "url": "https://api.prismacloud.io"
-    },
-    {
-      "url": "https://api2.prismacloud.io"
-    },
-    {
-      "url": "https://api3.prismacloud.io"
-    },
-    {
-      "url": "https://api4.prismacloud.io"
-    },
-    {
-      "url": "https://api.anz.prismacloud.io"
-    },
-    {
-      "url": "https://api.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api2.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api.gov.prismacloud.io"
-    },
-    {
-      "url": "https://api.prismacloud.cn"
-    },
-    {
-      "url": "https://api.ca.prismacloud.io"
-    },
-    {
-      "url": "https://api.sg.prismacloud.io"
-    },
-    {
-      "url": "https://api.uk.prismacloud.io"
-    },
-    {
-      "url": "https://api.ind.prismacloud.io"
-    },
-    {
-      "url": "https://api.jp.prismacloud.io"
-    },
-    {
-      "url": "https://api.fr.prismacloud.io"
-    }
-  ]
+  }
 }

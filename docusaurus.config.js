@@ -882,6 +882,12 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             hideSendButton: true,
           },
+          dspm: {
+            specPath: "openapi-specs/dspm",
+            outputDir: "products/prisma-cloud/api/dspm",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            hideSendButton: true,
+          },
           compute: {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
