@@ -14,7 +14,7 @@ info:
     \ Group\n(TSG) identifier.\n\nThese APIs use the common SASE authentication mechanism\
     \ and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
     \ guide for more information.\n\nThis Open API spec file was created on November\
-    \ 06, 2024. To check for a more recent version of this file, see\n[Prisma Insights\
+    \ 15, 2024. To check for a more recent version of this file, see\n[Prisma Insights\
     \ APIs on pan.dev](https://pan.dev//access/api/insights/).\n\n\xA9 2024 Palo Alto\
     \ Networks, Inc. Palo Alto Networks is a registered trademark of Palo\nAlto Networks.\
     \ A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
@@ -414,12 +414,13 @@ paths:
         name: Prisma-Tenant
         required: false
         schema:
+          example: 12345678:12345679
           type: string
       requestBody:
         content:
           application/json:
             examples:
-              Mandatory Filters:
+              Mandatory Filter:
                 value:
                   filter:
                     rules:
@@ -429,7 +430,67 @@ paths:
                       - Raised
                       - ClearPending
                       - Cleared
+              Possible Filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: between
+                      property: updated_time
+                      values:
+                      - 1728416763970
+                      - 1731008762970
+                    - operator: in
+                      property: severity
+                      values:
+                      - Warning
+                      - Critical
+                    - operator: in
+                      property: category
+                      values:
+                      - Application Experience
+                      - Authentication
+                      - Certificates
+                      - DNS
+                      - EP
+                      - GATEWAY
+                      - GP
+                      - MU
+                      - PORTAL
+                      - Prisma Access Infrastructure
+                      - RN
+                      - SC
+                      - Security
+                      - ZTNA
+                    - operator: in
+                      property: code
+                      values:
+                      - INC_GATEWAY_USER_AUTH_ALL_FAILURES_COUNT_EXCEEDED_ABOVE_BASELINE_PER_INSTANCE
+                      - INC_GATEWAY_USER_GROUP_COUNT_MAPPING_DEVIATION_FROM_BASELINE
+                    - operator: in
+                      property: site_name
+                      values:
+                      - sitename-1
+                      - sitename-2
+                    - operator: in
+                      property: tunnel_name
+                      values:
+                      - tunnelname-1-A
+                      - tunnelname-2-A
+                    - operator: in
+                      property: pa_location
+                      values:
+                      - Australia East
+                      - Australia South
             schema:
+              example:
+                filter:
+                  rules:
+                  - operator: in
+                    property: status_computed
+                    values:
+                    - Raised
+                    - ClearPending
+                    - Cleared
               properties:
                 ack_by:
                   description: User who acknowledged the incident
@@ -473,6 +534,11 @@ paths:
                   description: Number of correlated alerts
                   example: 2
                   type: integer
+                detailed_message:
+                  description: Detailed message of the incident
+                  example: Remote Network Site vpn-to-sfo-isp1-rn ECMP Tunnel ipsec-to-sfo-isp2-rn1
+                    is down
+                  type: string
                 incident_id:
                   description: Unique identifier for the incident
                   example: 22096e0a-a02e-489f-ab4f-d94ae9921128
@@ -518,18 +584,63 @@ paths:
                   example: 1720569635383
                   type: integer
               required:
-              - tenant_id
-              - sub_tenant_id
+              - status_computed
               type: object
         required: true
       responses:
         '200':
           content:
             application/json:
+              example:
+                data:
+                - incidents:
+                  - acknowledged: false
+                    category: SC
+                    child_incidents_count: 0
+                    code: INC_SC_SITE_DOWN
+                    correlated_alerts_count: 2
+                    incident_id: 3a0379f6-4d45-4e62-b119-84ca59c041d0
+                    parent_incidents_count: 0
+                    raised_time: 1731051358702
+                    severity: Critical
+                    status: Raised
+                    status_computed: Raised
+                    title: Service Connection Site ipsec-prisma-to-mel-isp1 is down
+                    updated_time: 1731051358702
+                  - acknowledged: false
+                    category: SC
+                    child_incidents_count: 0
+                    code: INC_SC_SITE_DOWN
+                    correlated_alerts_count: 2
+                    incident_id: 513c153b-58df-4c07-9b6c-ca10d2e81021
+                    parent_incidents_count: 0
+                    raised_time: 1731051358609
+                    severity: Critical
+                    status: Raised
+                    status_computed: Raised
+                    title: Service Connection Site ipsec-prisma-to-mel-isp2 is down
+                    updated_time: 1731051358609
               schema:
                 properties:
                   data:
                     items:
+                      example:
+                        data:
+                        - incidents:
+                          - acknowledged: false
+                            category: SC
+                            child_incidents_count: 0
+                            code: INC_SC_SITE_DOWN
+                            correlated_alerts_count: 2
+                            incident_id: 3a0379f6-4d45-4e62-b119-84ca59c041d0
+                            parent_incidents_count: 0
+                            raised_time: 1731051358702
+                            severity: Critical
+                            status: Raised
+                            status_computed: Raised
+                            title: Service Connection Site ipsec-prisma-to-mel-isp1
+                              is down
+                            updated_time: 1731051358702
                       properties:
                         incidents:
                           items:
@@ -586,7 +697,7 @@ paths:
       - Bearer: []
       summary: View incident list
       tags:
-      - Incident List
+      - Incident
   /insights/v3.0/resource/query/locations/location_current_status_count:
     post:
       description: "Retrieves the current location count per node type and location\
@@ -2768,10 +2879,10 @@ paths:
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- description: 'Incident list API
+- description: 'Incident API
 
     '
-  name: Incident list API
+  name: Incident API
 - description: 'Location API
 
     '
