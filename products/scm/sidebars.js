@@ -75,8 +75,19 @@ module.exports = {
           id: "scm/docs/release-notes/changelog",
         },
         {
-          type: "doc",
-          id: "scm/docs/release-notes/release-notes",
+          type: "category",
+          label: "Release Notes",
+          collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "scm/docs/release-notes/release-notes",
+            },
+            {
+              type: "doc",
+              id: "scm/docs/release-notes/november2024",
+            },
+          ],
         },
       ],
     },
