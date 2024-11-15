@@ -27,7 +27,7 @@ identify how these changes may affect your client integrations and refactor them
 
 ## Changes in Behavior
 
-### New API plaform FQDN
+### New API platform FQDN
 The FQDN for all Strata Cloud Manager APIs has been updated to reflect our broader platform capabilities.  The 
 new FQDN is `api.strata.paloaltonetworks.com`.  The original FQDN of `api.sase.paloaltonetworks.com` will continue 
 to work for the time being.  However, all API documentation, tooling, SDKs, and other materials will be updated to 
@@ -126,7 +126,8 @@ The Strata Cloud Manager configuration APIs now include new endpoints for managi
 - /config/network/v1/zone-protection-profiles
 
 ###  NGFW Device Configuration APIs
-The Strata Cloud Manager configuration APIs now include new endpoints for managing NGFW device settings, including:
+The Strata Cloud Manager configuration APIs now include new endpoints for managing 
+[NGFW device settings](/scm/api/config/ngfw/device/device-api/), including:
 - /config/device/v1/authentication-settings
 - /config/device/v1/content-id-settings
 - /config/device/v1/device-redistribution-collector
