@@ -13,10 +13,14 @@ keywords:
 
 ## Prerequisites
 
-- Log in to Strata Cloud Manager ([SCM](http://stratacloudmanager.paloaltonetworks.com/)) and configure the AI security profile for all the below use cases:
+1. Log in to Strata Cloud Manager ([SCM](http://stratacloudmanager.paloaltonetworks.com/)).
+2. Navigate to **Insights > AI Runtime Security**.
+3. Choose **Get Started** under the API section.
+4. Onboard AI Runtime Security API Intercept in SCM. (Admin guide link to be added at GA).
+5. Configure the AI security profile with below settings for all the use cases:
 
-1. **Enable** all the 3 detection types (Prompt Injection Detection, Malicious URL Detection, and AI Data Protection).
-2. Set **Action** to **Block** when the threat is detected.
+- **Enable** all the 3 detection types (Prompt Injection Detection, Malicious URL Detection, and AI Data Protection).
+- Set **Action** to **Block** when the threat is detected.
 
 ![AI Security Profile](/swfw/manage-api-security-profiles.png)
 

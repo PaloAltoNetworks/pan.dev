@@ -27,6 +27,6 @@ The APIs let you scan AI prompts and AI model responses in real-time and to get 
 1. **API Key Token**: This token is generated during the onboarding process (prerequisites step 2) in SCM. Include it in all API requests using the `x-pan-token` header.
     - You can copy, regenerate, and rotate the API token.
       - Log in to SCM.
-      - Navigate to **Insights > Activity Insights > AI Runtime Security API**.
+      - Navigate to **Insights > AI Runtime Security**.
     - At the top right corner, choose **Manage > API Keys**.
 2. **AI Security Profile Name**: This is the security profile created during the onboarding process (prerequisites step 2) in SCM. Specify this profile name in the API request payload in the `ai_profile.profile_name` field.
