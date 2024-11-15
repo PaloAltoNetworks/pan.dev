@@ -30,8 +30,8 @@ To add an AWS Security Hub integration, make your request as described in
 
 | Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
 | -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
-| region         | List of Regions where Prisma Cloud on AWS Security Hub is enabled for your cloud account | List of Objects<br/>{<br/>String name;<br/>String apiIdentifier;<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required               |
-| defaultRegion        | The region where you will receive alert notifications for global resources |  Object<br/>{<br/>String name;<br/>String apiIdentifier;<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required if the user wants to receive global alerts               |
+| region         | List of Regions where Prisma Cloud on AWS Security Hub is enabled for your cloud account | List of Objects<br/>{<br/>String name (Required);<br/>String apiIdentifier(Required);<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required               |
+| defaultRegion        | The region where you will receive alert notifications for global resources |  Object<br/>{<br/>String name (Required);<br/>String apiIdentifier (Required);<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required if the user wants to receive global alerts               |
 | accountId     | The Account ID of the AWS account that you have onboarded on Prisma Cloud | string     | Required                |
 
 
@@ -48,37 +48,37 @@ To test an AWS Security Hub, make your request as described in
 
 ```json
 {
-   "description": "",
+   "description": "string",
    "enabled": true,
    "integrationConfig": {
        "regions": [
            {
-               "name": "",
-               "apiIdentifier": "",
-               "cloudType": "",
+               "name": "AWS Virginia",
+               "apiIdentifier": "us-east-1",
+               "cloudType": "aws",
                "sdkId": "",
                "enabled": true
            },
            {
-               "name": "",
-               "apiIdentifier": "",
-               "cloudType": "",
-               "sdkId": "",
+               "name": "string",
+               "apiIdentifier": "string",
+               "cloudType": "aws",
+               "sdkId": "integer",
                "enabled": true
            }
        ],
        "defaultRegion": {
-           "name": "",
-           "apiIdentifier": "",
-           "cloudType": "",
-           "sdkId": "",
+           "name": "string",
+           "apiIdentifier": "string",
+           "cloudType": "aws",
+           "sdkId": "integer",
            "enabled": true
        },
-       "accountId": ""
+       "accountId": "string"
    },
-   "integrationType": "",
-   "name": "",
-   "id": ""
+   "integrationType": "aws_security_hub",
+   "name": "string",
+   "id": "integer"
 }
 ```
 
