@@ -804,6 +804,11 @@ const config = {
             outputDir: "products/scm/api/config/ngfw/identity",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-ngfw-device": {
+            specPath: "openapi-specs/scm/config/ngfw/device",
+            outputDir: "products/scm/api/config/ngfw/device",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-network": {
             specPath: "openapi-specs/scm/config/ngfw/network",
             outputDir: "products/scm/api/config/ngfw/network",

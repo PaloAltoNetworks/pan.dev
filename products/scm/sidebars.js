@@ -215,6 +215,17 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Device Configuration",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/device/device-api",
+            },
+            require("./api/config/ngfw/device/sidebar"),
+          ],
+        },
+        {
+          type: "category",
           label: "Network Configuration",
           items: [
             {

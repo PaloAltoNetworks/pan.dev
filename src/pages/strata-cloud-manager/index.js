@@ -124,6 +124,11 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
+            to: "scm/api/config/ngfw/device/device-api",
+            label: "Device Configuration",
+            icon: "api-doc",
+          },
+          {
             to: "scm/api/config/ngfw/network/network-api",
             label: "Network Configuration",
             icon: "api-doc",
