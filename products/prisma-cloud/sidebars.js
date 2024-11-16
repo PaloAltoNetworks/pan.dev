@@ -55,7 +55,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Arya Action Plan",
+      label: "Action Plan",
       collapsed: true,
       items: [require("./api/action-plan/sidebar")],
     },
