@@ -6,10 +6,6 @@ sidebar_position: 4
 
 Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Microsoft Entra ID _(previously known as Azure Active Directory)_ on Prisma Cloud connects all your Azure resources to Prisma Cloud including Accounts with Management Groups, Subscriptions, and Microsoft Entra. Prisma Cloud uses Application (Client) ID, Application Client Secret and Enterprise Application Object ID for authentication to ingest Microsoft Entra ID metadata, configurations, and logs.
 
-:::note
- 
-:::
-
 > **Prerequisite**:
 > - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs.
 
