@@ -4,11 +4,14 @@ title: Automate Azure Cloud Account Onboarding
 sidebar_position: 4
 ---
 
-Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Azure Active Directory on Prisma Cloud connects all your Azure resources to Prisma Cloud including Accounts with Management Groups, Subscriptions, and Active Directory. Prisma Cloud uses Application (Client) ID, Application Client Secret and Enterprise Application Object ID for authentication to ingest Azure Active Directory metadata, configurations, and logs.
+Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Microsoft Entra ID _(previously known as Azure Active Directory)_ on Prisma Cloud connects all your Azure resources to Prisma Cloud including Accounts with Management Groups, Subscriptions, and Microsoft Entra. Prisma Cloud uses Application (Client) ID, Application Client Secret and Enterprise Application Object ID for authentication to ingest Microsoft Entra ID metadata, configurations, and logs.
 
+:::note
+ 
+:::
 
-> **Prerequisite**: 
-> - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs. 
+> **Prerequisite**:
+> - Obtain a [Prisma Cloud API authorization token](/prisma-cloud/api/cspm/app-login/) ![alt text](/icons/api-icon-pan-dev.svg), which will be used in all the APIs.
 
 :::info
 
@@ -17,12 +20,12 @@ Onboarding an Azure account, such as Azure Tenant, Azure Subscription, or Azure 
 
 :::
 
-To onboard Azure Accounts, such as Subscription, Tenant, and Active Directory:
+To onboard Azure Accounts, such as Subscription, Tenant, and Microsoft Entra ID:
 
   [1. Fetch the supported features based on the cloud type, account type, and deployment type.](#1-fetch-the-supported-features)
 
   [2. Generate the Terraform template.](#2-generate-the-terraform-template)
-  
+
   [3. Execute the Terraform template in Azure Portal to Register an application and create its roles and permissions.](#3-register-an-application-and-create-corresponding-roles-in-the-azure-portal)
 
   [4. Onboard your Azure Account on Prisma Cloud ](#4-onboard-the-azure-tenant-on-prisma-cloud)
@@ -35,7 +38,7 @@ Get the list of supported features based on the cloud type, account type, and de
 
 > **NOTE:** By default, the supported features list contains **Cloud Visibility Compliance and Governance**. Do not include it as a feature in the supported feature request body parameter of any cloud APIs, such as Add Azure Cloud Account, Update Azure Cloud Account, Azure Template Generation and so on.
 
-**Sample Request and Response for Azure Subscription**  
+**Sample Request and Response for Azure Subscription**
 
 <details>
   <summary>Sample Request</summary>
@@ -72,7 +75,7 @@ Get the list of supported features based on the cloud type, account type, and de
   ```
   </details>
 
-**Sample Request and Response for Azure Tenant**  
+**Sample Request and Response for Azure Tenant**
 
 <details>
   <summary>Sample Request</summary>
@@ -110,7 +113,7 @@ Get the list of supported features based on the cloud type, account type, and de
   ```
   </details>
 
-  **Sample Request and Response for Azure Active Directory Account**  
+  **Sample Request and Response for Microsoft Entra Account**
 
 <details>
   <summary>Sample Request</summary>
@@ -144,18 +147,18 @@ Get the list of supported features based on the cloud type, account type, and de
   ```
   </details>
 
-    
-  
+
+
 ## 2. Generate the Terraform Template
 
 Generate the Azure Terraform Template by using the [Generate and Download the Azure Terraform template API](/prisma-cloud/api/cspm/generate-template-link/) ![alt text](/icons/api-icon-pan-dev.svg). The terraform template will include the necessary roles and custom role actions based on the selected features.
 
-Save the generated json response and name the file as `terraform.tf.json`. You can create a directory for each Terraform template that you have download. This allows you to manage multiple templates if you add a different Azure Tenant to Prisma Cloud and update existing roles. 
+Save the generated json response and name the file as `terraform.tf.json`. You can create a directory for each Terraform template that you have download. This allows you to manage multiple templates if you add a different Azure Tenant to Prisma Cloud and update existing roles.
 
 > **NOTE**: `Azure China` does not support the use of Terraform templates. You can either create a custom role to authorize Prisma Cloud access or manually authorize Prisma Cloud.
 
 
-**Sample Request and Response for Azure Subscription**  
+**Sample Request and Response for Azure Subscription**
 
 <details>
   <summary>Sample Request</summary>
@@ -361,9 +364,9 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
 ```
 
 </details>
- 
 
-**Sample Request and Response for Azure Tenant**  
+
+**Sample Request and Response for Azure Tenant**
 <details>
   <summary>Sample Request</summary>
 
@@ -607,7 +610,7 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
         "Microsoft.Sql/servers/databases/read",
         "Microsoft.Sql/servers/databases/securityAlertPolicies/read",
         "Microsoft.Sql/servers/databases/transparentDataEncryption/read"
-        
+
     ],
       "type": "list"
     },
@@ -633,7 +636,7 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
 
 </details>
 
-**Sample Request and Response for Azure Active Directory**  
+**Sample Request and Response for Microsoft Entra ID**
 <details>
   <summary>Sample Request</summary>
 
@@ -774,8 +777,8 @@ Save the generated json response and name the file as `terraform.tf.json`. You c
 ```
 
 </details>
- 
-      
+
+
 
 ## 3. Register an Application and Create Corresponding Roles in the Azure Portal
 
@@ -788,16 +791,16 @@ Add Azure Account by using [Add Azure Account API](/prisma-cloud/api/cspm/add-az
 
 Provide the details for the Add Azure Account API Parameters according to the following mapping:
 
-Add Azure Account API Parameters | Terraform Template Keys 
--------------------------------- | ----------------------- 
-clientId | b_application_id 
+Add Azure Account API Parameters | Terraform Template Keys
+-------------------------------- | -----------------------
+clientId | b_application_id
 key | c_application_key
 servicePrincipalId | e_service_principal_object_id
 
 > **Note:** By default, the supported features list will contain **Cloud Visibility Compliance and Governance**. Do not include it as a feature in the supported feature request body parameter. An empty features list indicates that the default capabilities under **Cloud Visibility Compliance and Governance** are enabled.
 
 <details>
-<summary>Sample Request for Azure Subscription</summary> 
+<summary>Sample Request for Azure Subscription</summary>
 
 ```bash
 curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
@@ -843,7 +846,7 @@ curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
 </details>
 
 <details>
-<summary>Sample Request for Azure Tenant</summary> 
+<summary>Sample Request for Azure Tenant</summary>
 
 ```bash
 curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
@@ -900,7 +903,7 @@ curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
 </details>
 
 <details>
-<summary>Sample Request for Azure Active Directory</summary> 
+<summary>Sample Request for Microsoft Entra ID</summary>
 
 ```bash
 curl -v --request POST 'https://api.prismacloud.io/cas/v1/azure_account' \
