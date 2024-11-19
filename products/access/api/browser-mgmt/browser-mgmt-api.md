@@ -1,6 +1,12 @@
 ---
-id: browser-mgmt
-slug: /access/docs/browser-mgmt
+id: browser-mgmt-api
+title: Welcome to Prisma Access Browser APIs
+description: Prisma Access Browser APIs
+hide_title: false
+hide_table_of_contents: false
+slug: /access/api/browser-mgmt-api
+keywords:
+  - sase
 ---
 Welcome to the Prisma Access Browser (PAB) APIs. These APIs are available for all PAB tenants to scale and automate their processes related to the browser.  
 To know more, see Prisma Access Browser[https://docs.paloaltonetworks.com/prisma-access-browser]
