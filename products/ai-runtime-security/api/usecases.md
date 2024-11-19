@@ -16,10 +16,10 @@ keywords:
 1. Log in to Strata Cloud Manager ([SCM](http://stratacloudmanager.paloaltonetworks.com/)).
 2. Navigate to **Insights > AI Runtime Security**.
 3. Choose **Get Started** under the API section.
-4. Onboard AI Runtime Security API Intercept in SCM. (Admin guide link to be added at GA).
+4. Onboard AI Runtime Security API Intercept in SCM.
 5. Configure the AI security profile with below settings for all the use cases:
 
-- **Enable** all the 3 detection types (Prompt Injection Detection, Malicious URL Detection, and AI Data Protection).
+- **Enable** all three detection types (Prompt Injection Detection, Malicious URL Detection, and AI Data Protection).
 - Set **Action** to **Block** when the threat is detected.
 
 ![AI Security Profile](/swfw/manage-api-security-profiles.png)
@@ -40,19 +40,19 @@ import requests
 import json
 
 
-url = "https://service.stg.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request"
+url = "https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request"
 
 
 payload = json.dumps({
  "tr_id": "1234",
  "ai_profile": {
-   "profile_id": "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
-   "profile_name": "aisec-profile"
+   "profile_id": "4597dc2b-xxxx-4e5a-a1da-fd0fe0e948df",
+   "profile_name": "dummy-profile"
  },
  "metadata": {
-   "app_name": "Google AI",
+   "app_name": "Secure app AI",
    "app_user": "test-user-2",
-   "ai_model": "gpt-3.5-turbo"
+   "ai_model": "Test AI model"
  },
  "contents": [
    {
@@ -68,31 +68,29 @@ headers = {
 }
 
 response = requests.request("POST", url, headers=headers, data=payload)
-#print(f"Status Code: {response.status_code}")
-# Print only the JSON response
 print(response.text)
 ```
 
-The output confirms prompt injection detection with the field `prompt_detected.injection` as **true**.
-If there is a prompt injection match the category in the response will be set to **malicious**, if not the category is **benign**.
+The output confirms prompt injection detection with the field “prompt_detected.injection” as true.
+If there is a prompt injection match the category in the response will be set to "malicious". If not the category is "benign".
 
 ```json
 {
    "action" : "block",
    "category" : "malicious",
-   "profile_id" : "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
-   "profile_name" : "aisec-profile",
+   "profile_id" : "4597dc2b-xxxx-4e5a-a1da-fd0fe0e948df",
+   "profile_name" : "dummy-profile",
    "prompt_detected" : {
       "dlp" : false,
       "injection" : true,
       "url_cats" : false
    },
-   "report_id" : "R7b8ab596-cfac-4493-aaf7-1fecba5505d3",
+   "report_id" : "R7b8ab596-cfac-0000-aaf7-1fecba5505d3",
    "response_detected" : {
       "dlp" : false,
       "url_cats" : false
    },
-   "scan_id" : "7b8ab596-cfac-4493-aaf7-1fecba5505d3",
+   "scan_id" : "7b8ab596-cfac-0000-aaf7-1fecba5505d3",
    "tr_id" : "1234"
 }
 ```
@@ -102,19 +100,19 @@ If there is a prompt injection match the category in the response will be set to
 The cURL request sends a prompt containing a malicious URL to the AI model.
 
 ```curl
-curl -L 'https://service.stg.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
 --header 'Content-Type: application/json' \
 --header 'x-pan-token: <your-API-token> \
 --header 'Accept: application/json' \
 --data '{
  "tr_id": "1234",
  "ai_profile": {
-   "profile_id": "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
-   "profile_name": "aisec-profile"
+   "profile_id": "4597dc2b-0000-4e5a-a1da-fd0fe0e948df",
+   "profile_name": "dummy-profile"
  },
  "metadata": {
-   "app_name": "Google AI",
-   "app_user": "test-user-1",
+   "app_name": "Secure app AI",
+   "app_user": "test-user-2",
    "ai_model": "Test AI model"
  },
  "contents": [
@@ -126,48 +124,48 @@ curl -L 'https://service.stg.api.aisecurity.paloaltonetworks.com/v1/scan/sync/re
 }'
 ```
 
-The response indicates malicious URL detected with the `response_detected.url_cats` field set to **true** and **category** set to **malicious**.
+The response indicates a malicious URL detected with the `response_detected.url_cats` field set to **true** and **category** set to **malicious**.
 
 ```json
 
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
-  "profile_name": "aisec-profile",
+  "profile_id": "4597dc2b-d34c-0000-a1da-fd0fe0e948df",
+  "profile_name": "dummy-profile",
   "prompt_detected": {
     "dlp": false,
     "injection": false,
     "url_cats": true
   },
-  "report_id": "Rd7c92c2a-02ce-4dd1-8e85-6d0f9eeb5ef8",
+  "report_id": "Rd7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
   "response_detected": {
     "dlp": false,
     "url_cats": false
   },
-  "scan_id": "d7c92c2a-02ce-4dd1-8e85-6d0f9eeb5ef8",
+  "scan_id": "d7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
   "tr_id": "1234"
 }
+
 ```
 
 ## Use Case 3: Detect Sensitive Data Loss (DLP)
 
 The request scans a prompt containing sensitive data such as bank account numbers, credit card numbers, API keys, and other sensitive data, to detect potential data exposure threats.
-For this detection, enable "AI Data Protection" detection type in your AI security profile.
+Enable "AI Data Protection" detection type in your AI security profile for this detection.
 
 ```curl
-curl -L 'http://https://service.stg.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+curl -L 'http://https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
 --header 'Content-Type: application/json' \
 --header 'x-pan-token: <your-API-key>' \
 --header 'Accept: application/json' \
 --data '{
   "tr_id": "1234",
   "ai_profile": {
-    "profile_id": "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
     "profile_name": "aisec-profile"
   },
   "metadata": {
-    "app_name": "Google AI",
+    "app_name": "Secure app AI",
     "app_user": "test-user-1",
     "ai_model": "Test AI model"
   },
@@ -188,19 +186,19 @@ The specific action shown in the response is based on your security profile sett
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "4597dc2b-d34c-4e5a-a1da-fd0fe0e948df",
-  "profile_name": "aisec-profile",
+  "profile_name": "aisec-profile-demo",
   "prompt_detected": {
     "dlp": true,
     "injection": false,
     "url_cats": false
   },
-  "report_id": "Rb1cc82ba-7c4c-4471-ab8d-e052618d99a0",
+  "report_id": "R020e7c31-0000-4e0d-a2a6-215a0d5c56d9",
   "response_detected": {
     "dlp": false,
     "url_cats": false
   },
-  "scan_id": "b1cc82ba-7c4c-4471-ab8d-e052618d99a0",
+  "scan_id": "020e7c31-0000-4e0d-a2a6-215a0d5c56d9",
   "tr_id": "1234"
 }
+
 ```
