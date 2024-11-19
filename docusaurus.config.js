@@ -194,6 +194,18 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
+                  label: "AI Runtime Security",
+                  to: "#",
+                  logoClass: "panos",
+                  apiDocs: [
+                    {
+                      to: "ai-runtime-security/scan/api/",
+                      label: "AI Runtime Security API",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
                   label: "PAN-OS",
                   to: "#",
                   logoClass: "panos",
@@ -815,6 +827,12 @@ const config = {
             specPath: "openapi-specs/cloudngfw/aws",
             outputDir: "products/cloudngfw/api/aws",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          airuntimesecurity: {
+            specPath: "openapi-specs/ai-runtime-security/scan",
+            outputDir: "products/ai-runtime-security/api",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
