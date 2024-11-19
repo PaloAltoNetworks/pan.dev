@@ -831,6 +831,7 @@ const config = {
           airuntimesecurity: {
             specPath: "openapi-specs/ai-runtime-security/scan",
             outputDir: "products/ai-runtime-security/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           iot: {
