@@ -1,11 +1,12 @@
 ---
 id: changelog
-title: Strata Cloud Manager API Changelog
-description: Strata Cloud Manager API Changelog
+title: Changelog
+description: Changelog
 hide_title: false
 slug: /scm/docs/release-notes/changelog
 hide_table_of_contents: true
 keywords:
+  - scm
   - sase
 ---
 

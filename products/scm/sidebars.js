@@ -6,8 +6,8 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Get Started",
-      collapsed: true,
+      label: "Introduction",
+      collapsed: false,
       items: [
         {
           type: "doc",
