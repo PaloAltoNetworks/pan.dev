@@ -10,11 +10,17 @@ keywords:
   - API
 ---
 
-AI Runtime Security: API intercept is a threat detection service. The APIs offer a RESTful API service that protects your AI models, applications, and datasets by programmatically scanning prompts and models for threats, enabling robust protection across public and private models with model-agnostic functionality.
+AI Runtime Security: API Intercept is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into source code.
+
+The scan API service scans prompt and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
+
+These APIs protect your AI models, applications, and datasets by programmatically scanning prompts and models for threats, enabling robust protection across public and private models with model-agnostic functionality.
 
 You can integrate the AI security detection engine directly into your applications, to efficiently scan for various threats, including Prompt injections, Insecure outputs, and Sensitive data loss.
 
-The APIs let you scan AI prompts and AI model responses in real-time and to get threat assessments and recommended actions.
+To use these APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your AI security profile.
+
+For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [AI Runtime Security: API Intercept Overview](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) documentation.
 
 ## Prerequisites
 
