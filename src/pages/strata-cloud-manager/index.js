@@ -37,6 +37,11 @@ export default function SCMLandingPage() {
           to: "scm/docs/release-notes/changelog",
           icon: "doc",
         },
+        {
+          label: "Release Notes",
+          to: "scm/docs/release-notes",
+          icon: "doc",
+        },
       ],
     },
     {
