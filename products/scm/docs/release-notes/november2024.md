@@ -63,14 +63,28 @@ A path parameter containing the UUID of an existing resource may be used in a pa
 operations.
 
 > Example:
-```json
-POST /config/objects/tags
-{
-    "name": "My Tag",
-    "folder": "Datacenter Firewalls",
-    "description": "This is my tag.",
-    "color": "cyan"
-}
+
+    POST /config/objects/tags
+    {
+        "name": "My Tag",
+        "folder": "Datacenter Firewalls",
+        "description": "This is my tag.",
+        "color": "cyan"
+    }
+
+### Introduction of security rule types
+
+The [security-rules](/scm/api/config/sase/security/list-rules/) API endpoint has been expanded to support Web Security rules.  A `type`
+attribute has been added to the `security-rules` object schema to discern between traditional
+security rules and Web Security rules.
+
+This field is being introduced in preparation for a unified rulebase user experience.  Traditional
+security rules will be identified by the type `security` and Web security rules will be identified by
+the type `internet`.  Both will be accessible through the `/config/security/v1/security-rules`
+endpoint, but editing of `internet` rules will be supported in a future release.
+
+The `type` attribute will remain read-only until the unified rulebase feature is fully implemented
+and any new rules created via POST operation will be of type `security` by default.
 
 ## API Specific Changes
 
@@ -147,7 +161,7 @@ The Strata Cloud Manager configuration APIs now include new endpoints for managi
 ### Log Forwarding Configuration APIs
 The Strata Cloud Manager configuration APIs now include support for custom log forwarding profiles.
 - [/config/objects/v1/log-forwarding-profiles](/scm/api/config/sase/objects/list-log-forwarding-profiles/)
-- /config/objects/v1/log-format-fields
+- [/config/objects/v1/log-format-fields](/scm/api/config/sase/objects/list-log-format-fields/)
 - [/config/objects/v1/http-server-profiles](/scm/api/config/sase/objects/list-http-server-profiles/)
 - [/config/objects/v1/syslog-server-profiles](/scm/api/config/sase/objects/list-syslog-server-profiles/)
 
