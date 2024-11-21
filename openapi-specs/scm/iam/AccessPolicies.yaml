@@ -1,0 +1,308 @@
+components:
+  responses:
+    access_policy_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/_pagination'
+            - example:
+                count: 1
+                items:
+                - id: 9d5104a0-1b0e-4f1d-be40-87f7810327e9
+                  inherited_from: '1234567890'
+                  principal: user@paloaltonetworks.com
+                  principal_display_name: firstname lastname
+                  principal_type: user
+                  resource: 'prn:123::::'
+                  role: superuser
+            - properties:
+                items:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/access_policy_list'
+                  type: array
+              type: object
+      description: Successful response.
+  schemas:
+    _pagination:
+      properties:
+        count:
+          default: 1
+          description: Total count of the items
+          type: integer
+      required:
+      - count
+      - items
+      type: object
+    access_policy:
+      properties:
+        principal:
+          description: 'The email address of the user or service account that is granted
+            this
+
+            access policy.
+
+            '
+          example: username@paloaltonetworks.com
+          type: string
+        principal_display_name:
+          description: '_firstname lastname_ OR _firstname_ OR _username_.
+
+            '
+          example: username
+          type: string
+        principal_type:
+          description: 'Whether the principal is a user or a service account.
+
+            '
+          example: user
+          type: string
+        resource:
+          description: "The resource to which this access policy is assigned. It is\
+            \ in the format:\n\n  `prn:<TSG_ID>::::`\n"
+          example: 'prn:123::::'
+          type: string
+        role:
+          description: 'The [role](/scm/docs/all-roles) used for this access policy.
+
+            '
+          example: superuser
+          type: string
+      title: Root Type for access_policy
+      type: object
+    access_policy_create:
+      properties:
+        id:
+          description: 'Access policy''s unique identifier.
+
+            '
+          example: 9d5104a0-1b0e-4f1d-be40-87f7810327e9
+          type: string
+        principal:
+          description: "Email address of the user or service account which is receiving\
+            \ this role. \n"
+          example: user@paloaltonetworks.com
+          type: string
+        resource:
+          description: "Resource to which the principal is gaining access. This is\
+            \ a string in the format:\n\n  `prn:<TSG_ID>::::`\n"
+          example: 'prn:123::::'
+          type: string
+        role:
+          description: '[Role](/scm/docs/all-roles) to assign to the principal.
+
+            '
+          example: superuser
+          type: string
+      title: Root Type for access_policy
+      type: object
+    access_policy_create_required:
+      properties:
+        principal:
+          description: "The email address for the user or \n[service account](/scm/docs/service-accounts)\
+            \ to which you are assigning\nthis access policy. \n"
+          example: user@paloaltonetworks.com
+          type: string
+        resource:
+          description: "The PAN Resource Name that identifies the TSG for which you\
+            \ are assigning\nthis access policy. It follows this format:\n\n  `prn:<TSG_ID>::::`\n"
+          example: 'prn:123::::'
+          type: string
+        role:
+          description: 'The [role](/scm/docs/all-roles) that you are using for this
+            access policy. If you are assigning a custom role, then this must be the
+            custom role''s ID.
+
+            '
+          example: superuser
+          type: string
+      required:
+      - role
+      - principal
+      - resource
+      title: Root Type for access_policy
+      type: object
+    access_policy_list:
+      properties:
+        id:
+          description: 'Access policy unique identifier.
+
+            '
+          example: 9d5104a0-1b0e-4f1d-be40-87f7810327e9
+          type: string
+        inherited_from:
+          description: 'The lowest level TSG to which the access policy belongs.
+
+            '
+          example: '1234567890'
+          type: string
+        principal:
+          description: 'The email address of the user or service account that is granted
+            this
+
+            access policy.
+
+            '
+          example: user@paloaltonetworks.com
+          type: string
+        principal_display_name:
+          description: '_firstname lastname_ OR _firstname_ OR _username_.
+
+            '
+          example: firstname lastname
+          type: string
+        principal_type:
+          description: 'Whether the principal is a user or a service account.
+
+            '
+          example: user
+          type: string
+        resource:
+          description: "The resource to which this access policy is assigned. It is\
+            \ in the format:\n\n  `prn:<TSG_ID>::::`\n"
+          example: 'prn:123::::'
+          type: string
+        role:
+          description: 'The [role](/scm/docs/all-roles) used for this access policy.
+
+            '
+          example: superuser
+          type: string
+      title: List Type for access_policy
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Access policies describe what actions a user or service account can\
+    \ take. These are role-based,\nwhere each [role](/scm/api/iam/roles) is defined\
+    \ by a collection of one or more \n[permissions](/scm/api/iam/permissions).\n"
+  title: Access Policies
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /iam/v1/access_policies:
+    get:
+      description: "List all access policies. If `role` or `principal` is specified,\n\
+        this returns all access policies using the specified role or \nor that is\
+        \ assigned to the identified principal.\n"
+      operationId: get-iam-v1-access_policies
+      parameters:
+      - description: 'The [role](/scm/docs/all-roles) that you want to use for this
+          list operation.
+
+          '
+        in: query
+        name: role
+        schema:
+          type: string
+      - description: 'The email address of the principal that you want to use for
+          this list operation.
+
+          '
+        in: query
+        name: principal
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/access_policy_list'
+      security:
+      - Bearer: []
+      summary: List all access policies
+      tags:
+      - AccessPolicies
+    post:
+      description: "Assign an access policy to a user or a service account. If the\n\
+        email address supplied to the `principal` request body field is not\nknown\
+        \ to the IAM service, a new user account is created to track that\nemail address\
+        \ within the IAM service. However, a corresponding\nSSO user account is not\
+        \ created at that time. Use the \n[create SSO user](/scm/api/iam/useraccounts#operation/post-iam-v1-sso_users)\
+        \ \ncall to create a corresponding SSO user account.\n\nIf the `principal`\
+        \ email address corresponds to a service account, \nthen the specified [role](/scm/docs/roles)\
+        \ is applied\nto that service account. Service account email addresses conform\
+        \ \nto the following format:\n\n  `<service_account_name@<tsg_id>.iam.panServiceAccounts.com`\n"
+      operationId: post-iam-v1-access_policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/access_policy_create_required'
+        description: 'Specifies the role to be assigned to the principal for the specified
+
+          resource.
+
+          '
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_policy_create'
+          description: Successful response.
+      security:
+      - Bearer: []
+      summary: Assign an access policy
+      tags:
+      - AccessPolicies
+  /iam/v1/access_policies/{id}:
+    delete:
+      description: 'Delete an access policy.
+
+        '
+      operationId: delete-iam-v1-access_policies-id
+      parameters:
+      - description: 'Access policy''s unique identifier.
+
+          '
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_policy'
+          description: Successful Response
+      security:
+      - Bearer: []
+      summary: Delete an access policy
+      tags:
+      - AccessPolicies
+    get:
+      description: 'Get an access policy by ID.
+
+        '
+      operationId: get-iam-v1-access_policies-id
+      parameters:
+      - description: 'Access policy''s unique identifier.
+
+          '
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_policy'
+          description: Successful response - returns a single `access_policy`.
+      security:
+      - Bearer: []
+      summary: Get an access policy
+      tags:
+      - AccessPolicies
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: AccessPolicies
