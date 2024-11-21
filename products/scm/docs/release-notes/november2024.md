@@ -64,11 +64,11 @@ operations.
 
 > Example:
 
-    POST /config/objects/tags
+    PUT /config/objects/v1/tags/:aaa-bbb-cccc-dddd
     {
         "name": "My Tag",
         "folder": "Datacenter Firewalls",
-        "description": "This is my tag.",
+        "comments": "This is my datacenter firewalls tag.",
         "color": "cyan"
     }
 
