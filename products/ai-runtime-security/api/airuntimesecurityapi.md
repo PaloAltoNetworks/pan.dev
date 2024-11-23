@@ -48,3 +48,13 @@ You can manage API keys and AI security profiles in SCM.
 
 For complete details, refer to the Manage Applications, API Keys, and Security Profiles Administration guide.
 :::
+
+## Limitation
+
+- One AI security profile per Tenant Service Group (TSG) - Limited to one security profile per group.
+
+- One API key per Deployment Profile - Each deployment profile in the Customer Support Portal (CSP) allows a single API key.
+
+- 2mb maximum payload size per synchronous scan request with a maximum of 100 URLs.
+
+- 5mb max payload size per asynchronous scan request with a maximum of 100 URLs.
