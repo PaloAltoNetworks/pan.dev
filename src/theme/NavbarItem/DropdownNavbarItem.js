@@ -117,6 +117,20 @@ function DropdownNavbarItemDesktop({
             } = childItemProps;
             const firstProduct = products[0];
 
+            // Special case for linking to Strata Cloud Manager landing page
+            if (productGroupLabel === "Strata Cloud Manager") {
+              return (
+                <React.Fragment>
+                  <NavbarItem
+                    isDropdownItem
+                    label={productGroupLabel}
+                    className={`product-group-list__product-title ${colorclass}`}
+                    to="/strata-cloud-manager"
+                  />
+                </React.Fragment>
+              );
+            }
+
             return (
               <React.Fragment key={i}>
                 <NavbarItem
