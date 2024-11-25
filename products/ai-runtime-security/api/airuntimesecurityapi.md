@@ -52,9 +52,6 @@ For complete details, refer to the Manage Applications, API Keys, and Security P
 ## Limitation
 
 - One AI security profile per Tenant Service Group (TSG) - Limited to one security profile per group.
-
-- One API key per Deployment Profile - Each deployment profile in the Customer Support Portal (CSP) allows a single API key.
-
-- 2mb maximum payload size per synchronous scan request with a maximum of 100 URLs.
-
-- 5mb max payload size per asynchronous scan request with a maximum of 100 URLs.
+- One API key per deployment profile - Each deployment profile in the [Customer Support Portal](https://support.paloaltonetworks.com/Support/Index) allows a single API key.
+- 2 MB maximum payload size per synchronous scan request - Limited to a maximum of 100 URLs per request.
+- 5 MB maximum payload size per asynchronous scan request - Limited to a maximum of 100 URLs per request.
