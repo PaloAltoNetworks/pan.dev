@@ -908,7 +908,7 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          broswermgmt: {
+          browsermgmt: {
             specPath: "openapi-specs/access/browser-mgmt",
             outputDir: "products/access/api/browser-mgmt",
             sidebarOptions: { groupPathsBy: "tag" },
