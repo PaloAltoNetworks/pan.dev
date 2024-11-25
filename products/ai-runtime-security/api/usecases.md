@@ -11,6 +11,8 @@ keywords:
   - API
 ---
 
+This document outlines key use cases for AI Runtime Security: API Intercept. It covers detecting prompt injection, malicious URLs, and sensitive data loss (DLP). Each use case includes sample code or API requests, along with expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
+
 ## Prerequisites
 
 1. Log in to Strata Cloud Manager ([SCM](http://stratacloudmanager.paloaltonetworks.com/)).
