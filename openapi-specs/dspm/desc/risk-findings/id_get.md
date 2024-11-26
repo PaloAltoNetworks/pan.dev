@@ -1,0 +1,1 @@
+Get full risk findings details to enable deeper investigation into data security risks. This call returns a comprehensive list of risk findings details, as is available in the Prisma Cloud DSPM console.

@@ -1,0 +1,1 @@
+List and filter through files found on a specific storage asset to investigate data findings. This call returns a list of all files matching the supplied filters, enabling deeper investigations into data findings.
