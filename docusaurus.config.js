@@ -999,7 +999,15 @@ const config = {
           mssp: {
             specPath: "openapi-specs/mssp",
             outputDir: "products/prisma-cloud/api/mssp",
-            showExtensions: true,
+            showExtensions: false,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/prisma-cloud/api/",
+            hideSendButton: true,
+          },
+          "action-plan": {
+            specPath: "openapi-specs/action-plan",
+            outputDir: "products/prisma-cloud/api/action-plan",
+            showExtensions: false,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/prisma-cloud/api/",
             hideSendButton: true,
