@@ -53,6 +53,12 @@ module.exports = {
       collapsed: true,
       items: [require("./api/mssp/sidebar")],
     },
+    {
+      type: "category",
+      label: "Action Plan",
+      collapsed: true,
+      items: [require("./api/action-plan/sidebar")],
+    },
   ],
   clouddocs: [
     "prisma-cloud/docs/home",
