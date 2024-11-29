@@ -520,16 +520,9 @@ const config = {
                   label: "Prisma Access Browser",
                   to: "#",
                   logoClass: "prisma",
-                  docs: [
-                    {
-                      label: "Prisma Access Browser Developer's Guide",
-                      to: "access/docs/browser-mgmt",
-                      icon: "doc",
-                    },
-                  ],
                   apiDocs: [
                     {
-                      to: "access/api/browser-mgmt",
+                      to: "access/api/browser-mgmt/browser-mgmt-api",
                       label: "Prisma Access Browser",
                       icon: "api-doc",
                     },
@@ -908,7 +901,7 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          broswermgmt: {
+          browsermgmt: {
             specPath: "openapi-specs/access/browser-mgmt",
             outputDir: "products/access/api/browser-mgmt",
             sidebarOptions: { groupPathsBy: "tag" },
@@ -1049,8 +1042,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.01",
-            label: "v33.01",
+            version: "33.02",
+            label: "v33.02",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1068,13 +1061,6 @@ const config = {
                 baseUrl: "/compute/api/31-02/",
               },
             },
-          },
-          compute_3204: {
-            specPath: "openapi-specs/compute/32-04",
-            outputDir: "products/compute/api/32-04",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-04/",
           },
           compute_3205: {
             specPath: "openapi-specs/compute/32-05",
@@ -1103,6 +1089,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-00/",
+          },
+          compute_3301: {
+            specPath: "openapi-specs/compute/33-01",
+            outputDir: "products/compute/api/33-01",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-01/",
           },
         },
       },

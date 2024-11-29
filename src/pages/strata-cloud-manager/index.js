@@ -178,7 +178,7 @@ export default function SCMLandingPage() {
         ],
         "Other Configuration": [
           {
-            to: "/access/api/browser-mgmt",
+            to: "/access/api/browser-mgmt/browser-mgmt-api",
             label: "Prisma Access Browser",
             icon: "api-doc",
           },
