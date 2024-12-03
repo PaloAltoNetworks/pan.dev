@@ -1,1 +1,1 @@
-Downloads SBOM file for cli images according to the given options.
+Downloads SBOM file for CI images according to the given options.
