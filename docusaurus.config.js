@@ -113,7 +113,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "/prisma-cloud/api",
-                      label: "Prisma Cloud",
+                      label: "Prisma Cloud API",
                       icon: "api-doc",
                     },
                   ],
