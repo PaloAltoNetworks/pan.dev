@@ -51,7 +51,7 @@ module.exports = {
     require("./api/insights/sidebar"),
   ],
   sasebrowsermgmt: [
-    "access/api/browser-mgmt/browser-mgmt",
+    "access/api/browser-mgmt/browser-mgmt-api",
     require("./api/browser-mgmt/sidebar"),
   ],
   saseprismaaccess: [
