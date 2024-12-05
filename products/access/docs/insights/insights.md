@@ -35,8 +35,6 @@ For more information regarding the 3.0 APIs, see [Getting Started with the 3.0 A
 
 ## 2.0 APIs
 
-**Note:** The Prisma Access Insights 2.0 APIs are deprecated. Please use the [3.0 APIs](/access/api/insights/3.0) instead.
-
 The 2.0 APIs are intended for cloud-managed Prisma Access customers, where the tenants have been
 onboarded by Palo Alto Networks using a Tenant Service Group (TSG) identifier.
 

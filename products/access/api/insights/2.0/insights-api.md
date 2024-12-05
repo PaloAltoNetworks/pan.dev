@@ -9,8 +9,6 @@ keywords:
   - API
 ---
 
-**NOTE:** The Prisma Access Insights 2.0 APIs are deprecated. Please use the [3.0 APIs](/access/api/insights) instead.
-
 The Prisma Access Insights 2.0 APIs allow you to query your Prisma Access tenant for the health of
 your Prisma Access network deployment. The 2.0 APIs are are intended for cloud-managed Prisma Access
 customers, where the tenants have been onboarded by Palo Alto Networks using a Tenant Service Group
