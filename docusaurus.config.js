@@ -486,6 +486,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/config-orch",
+                      label: "Configuration Orchestration",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -894,6 +899,11 @@ const config = {
           mtinterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect",
             outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configorch: {
+            specPath: "openapi-specs/sase/config-orch",
+            outputDir: "products/sase/api/config-orch",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
