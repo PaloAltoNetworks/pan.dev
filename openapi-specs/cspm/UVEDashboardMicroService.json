@@ -7,8 +7,7 @@
   },
   "tags": [
     {
-      "name": "Vulnerabilities Dashboard",
-      "description": "UVE Dashboard Widgets"
+      "name": "Vulnerabilities Dashboard"
     }
   ],
   "paths": {
@@ -20,7 +19,16 @@
         "summary": "Get C2C Trace Asset Graph",
         "description": "Returns the relation between the assets from code to cloud stages\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
         "operationId": "c2c-trace-api",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "x-redlock-auth",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -80,139 +88,9 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v1/cve-overview": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Cve Overview V2",
-        "description": "Get the detailed information for a given cve. This endpoint returns additional information, such as EPSS details, CVSS details, exploit details, and environment factors, compared to the [Get CVE Overview](https://pan.dev/prisma-cloud/api/cspm/cve-overview/) endpoint. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/cve-overview-v-3/)**\n:::\n\n",
-        "operationId": "cve-overview-v-2",
-        "parameters": [
-          {
-            "name": "cve_id",
-            "in": "query",
-            "description": "CVE ID",
-            "required": true,
-            "example": "CVE-2021-44288",
-            "schema": {
-              "type": "string"
-            }
           },
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "package",
-                  "iac",
-                  "deployedImage",
-                  "vmImage",
-                  "registryImage",
-                  "host",
-                  "serverlessFunction"
-                ]
-              }
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "code",
-                  "build",
-                  "deploy",
-                  "run"
-                ]
-              }
-            }
-          },
-          {
-            "name": "severities",
-            "in": "query",
-            "description": "Severity",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "critical",
-                  "medium",
-                  "high",
-                  "low"
-                ]
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CveOverviewV2"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -227,7 +105,6 @@
             "x-redlock-auth": []
           }
         ],
-        "deprecated": true,
         "x-public": "true"
       }
     },
@@ -294,7 +171,7 @@
           {
             "name": "severities",
             "in": "query",
-            "description": "Severity",
+            "description": "Severities",
             "required": false,
             "explode": true,
             "schema": {
@@ -361,6 +238,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -372,14 +259,246 @@
         "x-public": "true"
       }
     },
-    "/uve/api/v1/dashboard/vulnerabilities/impact-stage": {
+    "/uve/api/v1/cve-overview": {
       "get": {
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "summary": "Get Vulnerability Impact by Stage",
-        "description": "Returns a summary of vulnerability across app stages of your application lifecycle. \n:::info\n **Replacement Endpoint: [Get Vulnerability Impact by Stage - POST](/prisma-cloud/api/cspm/vulnerability-impact-by-stage-v-2/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerability-impact-by-stage",
+        "summary": "Get Cve Overview V2",
+        "description": "Get the detailed information for a given cve. This endpoint returns additional information, such as EPSS details, CVSS details, exploit details, and environment factors, compared to the [Get CVE Overview](https://pan.dev/prisma-cloud/api/cspm/cve-overview/) endpoint. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/cve-overview-v-3/)**\n:::\n\n",
+        "operationId": "cve-overview-v-2",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "query",
+            "description": "CVE ID",
+            "required": true,
+            "example": "CVE-2021-44288",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "package",
+                  "iac",
+                  "deployedImage",
+                  "vmImage",
+                  "registryImage",
+                  "host",
+                  "serverlessFunction"
+                ]
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "code",
+                  "build",
+                  "deploy",
+                  "run"
+                ]
+              }
+            }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "description": "Severities",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "medium",
+                  "high",
+                  "low"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveOverviewV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v2/cve-overview": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get CVE Overview - POST",
+        "description": "Get the detailed information for a given cve. This endpoint returns information, such as EPSS details, CVSS details, exploit details, and environment factors. This API supports the additional filters like accountGroup and accountIds when compared to the [Get CVE Overview V2](https://pan.dev/prisma-cloud/api/cspm/cve-overview-v-2/) endpoint",
+        "operationId": "cve-overview-v-3",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/WidgetRequestSidecar"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveOverviewV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v2/dashboard/vulnerabilities/burndown": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerabilities Burndown",
+        "description": "Returns the total count of vulnerabilities and the count of remediated vulnerabilities over the past 30 days.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "get-burndown",
         "parameters": [
           {
             "name": "asset_type",
@@ -425,7 +544,7 @@
           {
             "name": "severities",
             "in": "query",
-            "description": "Severity",
+            "description": "Severities",
             "required": false,
             "explode": true,
             "schema": {
@@ -448,7 +567,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImpactByStageResponse"
+                  "$ref": "#/components/schemas/BurndownTrend"
                 }
               }
             }
@@ -485,6 +604,97 @@
           },
           "429": {
             "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/vuln-assets": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerable Assets by CVE",
+        "description": "Get the list of all the assets affected by the CVE. \n:::info\n **Replacement Endpoint: [Get Vulnerable Assets by CVE V2](/prisma-cloud/api/cspm/list-vulnerable-assets-cve-v-2/)**\n:::\n\n",
+        "operationId": "list-vulnerable-assets-cve",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AssetsSearchRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnAssetsSidecarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -503,74 +713,24 @@
         "x-public": "true"
       }
     },
-    "/uve/api/v1/dashboard/vulnerabilities/overview": {
-      "get": {
+    "/uve/api/v1/vuln-assets": {
+      "post": {
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "summary": "Get Vulnerability Overview",
-        "description": "Returns a summary of the total vulnerabilities in your environment which is further divided into Vulnerabilities by Asset and Vulnerabilities that have already been remediated. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerability-dashboard-overview",
-        "parameters": [
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "package",
-                  "iac",
-                  "deployedImage",
-                  "vmImage",
-                  "registryImage",
-                  "host",
-                  "serverlessFunction"
-                ]
-              }
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "code",
-                  "build",
-                  "deploy",
-                  "run"
-                ]
-              }
-            }
-          },
-          {
-            "name": "risk_factors",
-            "in": "query",
-            "description": "Risk Factors",
-            "required": false,
-            "example": "Critical severity, Package in use",
-            "schema": {
-              "type": "ref"
-            }
-          }
-        ],
+        "summary": "Get Vulnerable Assets by CVE V2",
+        "description": "Get the list of all the assets affected by the CVE. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerable Assets by CVE](https://pan.dev/prisma-cloud/api/cspm/list-vulnerable-assets-cve/) endpoint.",
+        "operationId": "list-vulnerable-assets-cve-v-2",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AssetsSearchRequest"
+        },
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OverviewWidget"
+                  "$ref": "#/components/schemas/VulnAssetsSidecarResponse"
                 }
               }
             }
@@ -614,6 +774,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -621,7 +791,6 @@
             "x-redlock-auth": []
           }
         ],
-        "deprecated": true,
         "x-public": "true"
       }
     },
@@ -727,705 +896,9 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v1/dashboard/vulnerabilities/prioritised-vuln": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Top Impacting Vulnerabilities",
-        "description": "Returns the CVEs of top critical vulnerabilities in your environment based on the risk score. Each CVE includes risk factors, severity, CVSS, risk factors, and assets impacted.\n:::info\n **Replacement Endpoint: [Get Top Impacting Vulnerabilities - POST](/prisma-cloud/api/cspm/top-prioritised-vulnerability-v-3/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "top-prioritised-vulnerability",
-        "parameters": [
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": true,
-            "example": "code,build,deploy,run",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
           },
-          {
-            "name": "topN",
-            "in": "query",
-            "description": "TopN",
-            "required": false,
-            "example": 5,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 5
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TopPrioritizedVulnerabilities"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v1/dashboard/vulnerabilities/vuln-assets": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerable Assets by CVE",
-        "description": "Get the list of all the assets affected by the CVE. \n:::info\n **Replacement Endpoint: [Get Vulnerable Assets by CVE V2](/prisma-cloud/api/cspm/list-vulnerable-assets-cve-v-2/)**\n:::\n\n",
-        "operationId": "list-vulnerable-assets-cve",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/AssetsSearchRequest"
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VulnAssetsSidecarResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v1/dashboard/vulnerabilities/vulnerableAsset": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerable Assets",
-        "description": "Returns a summary of vulnerable assets and detailed vulnerability statistics, including the total number of vulnerabilities by severity, registry count, package count, repository count, and more, across different stages of your application lifecycle.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerable-assets",
-        "parameters": [
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "package",
-                  "iac",
-                  "deployedImage",
-                  "vmImage",
-                  "registryImage",
-                  "host",
-                  "serverlessFunction"
-                ]
-              }
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "code",
-                  "build",
-                  "deploy",
-                  "run"
-                ]
-              }
-            }
-          },
-          {
-            "name": "severities",
-            "in": "query",
-            "description": "Severity",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "critical",
-                  "medium",
-                  "high",
-                  "low"
-                ]
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VulnerableAsset"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v1/vuln-assets": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerable Assets by CVE V2",
-        "description": "Get the list of all the assets affected by the CVE. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerable Assets by CVE](https://pan.dev/prisma-cloud/api/cspm/list-vulnerable-assets-cve/) endpoint.",
-        "operationId": "list-vulnerable-assets-cve-v-2",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/AssetsSearchRequest"
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VulnAssetsSidecarResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v2/cve-overview": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get CVE Overview - POST",
-        "description": "Get the detailed information for a given cve. This endpoint returns information, such as EPSS details, CVSS details, exploit details, and environment factors. This API supports the additional filters like accountGroup and accountIds when compared to the [Get CVE Overview V2](https://pan.dev/prisma-cloud/api/cspm/cve-overview-v-2/) endpoint",
-        "operationId": "cve-overview-v-3",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WidgetRequestSidecar"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CveOverviewV2"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v2/dashboard/vulnerabilities/burndown": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerabilities Burndown",
-        "description": "Returns the total count of vulnerabilities and the count of remediated vulnerabilities over the past 30 days.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "get-burndown",
-        "parameters": [
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "schema": {
-              "type": "ref",
-              "enum": [
-                "package",
-                "iac",
-                "deployedImage",
-                "vmImage",
-                "registryImage",
-                "host",
-                "serverlessFunction"
-              ]
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "schema": {
-              "type": "ref",
-              "enum": [
-                "code",
-                "build",
-                "deploy",
-                "run"
-              ]
-            }
-          },
-          {
-            "name": "severity",
-            "in": "query",
-            "description": "Severity",
-            "required": false,
-            "schema": {
-              "type": "ref",
-              "enum": [
-                "critical",
-                "medium",
-                "high",
-                "low"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BurndownTrend"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v2/dashboard/vulnerabilities/impact-stage": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerability Impact by Stage - POST",
-        "description": "Returns a summary of vulnerability across app stages of your application lifecycle. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerability Impact by Stage](https://pan.dev/prisma-cloud/api/cspm/vulnerability-impact-by-stage/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerability-impact-by-stage-v-2",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/WidgetRequest"
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImpactByStageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v2/dashboard/vulnerabilities/overview": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerability Overview V2",
-        "description": "Returns a summary of the total runtime vulnerabilities in your environment which is further divided into runtime Vulnerabilities by Asset and Vulnerabilities that have already been remediated. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerability-dashboard-overview-v-2",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OverviewWidgetV2"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1559,6 +1032,448 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v3/dashboard/vulnerabilities/prioritised": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Prioritized Vulnerabilities V3",
+        "description": "Returns the top-priority unique vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, and vulnerable packages in use along with the number of assets they occur in. This endpoint also returns vulnerabilities based on internet exposure, in addition to those from [Get Prioritized Vulnerabilities V2](https://pan.dev/prisma-cloud/api/cspm/prioritised-vulnerability-v-2/). \n:::info\n **Replacement Endpoint: [Get Prioritized Vulnerabilities - POST](/prisma-cloud/api/cspm/prioritised-vulnerability-v-5/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "prioritised-vulnerability-v-3",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "package",
+                  "iac",
+                  "deployedImage",
+                  "vmImage",
+                  "registryImage",
+                  "host",
+                  "serverlessFunction"
+                ]
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "code",
+                  "build",
+                  "deploy",
+                  "run"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v4/dashboard/vulnerabilities/prioritised": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Prioritized Vulnerabilities V4",
+        "description": "Returns the top-priority vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, internet exposed and vulnerable packages in use along with the number of assets they occur in. \n:::info\n **Replacement Endpoint: [Get Prioritized Vulnerabilities - POST](/prisma-cloud/api/cspm/prioritised-vulnerability-v-5/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "prioritised-vulnerability-v-4",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "package",
+                  "iac",
+                  "deployedImage",
+                  "vmImage",
+                  "registryImage",
+                  "host",
+                  "serverlessFunction"
+                ]
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "code",
+                  "build",
+                  "deploy",
+                  "run"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v5/dashboard/vulnerabilities/prioritised": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Prioritized Vulnerabilities - POST",
+        "description": "Returns the top-priority vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, internet exposed and vulnerable packages in use along with the number of assets they occur in. This API supports the account group and account Id filters in addition to the filters we have in the [Get Prioritized Vulnerabilities V4](https://pan.dev/prisma-cloud/api/cspm/prioritised-vulnerability-v-4/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "prioritised-vulnerability-v-5",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/WidgetRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/prioritised-vuln": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Top Impacting Vulnerabilities",
+        "description": "Returns the CVEs of top critical vulnerabilities in your environment based on the risk score. Each CVE includes risk factors, severity, CVSS, risk factors, and assets impacted.\n:::info\n **Replacement Endpoint: [Get Top Impacting Vulnerabilities - POST](/prisma-cloud/api/cspm/top-prioritised-vulnerability-v-3/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "top-prioritised-vulnerability",
+        "parameters": [
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": true,
+            "example": "code,build,deploy,run",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "topN",
+            "in": "query",
+            "description": "TopN",
+            "required": false,
+            "example": 5,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopPrioritizedVulnerabilities"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1682,295 +1597,9 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v2/dashboard/vulnerabilities/vulnerableAsset": {
-      "post": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerable Assets Stats - POST",
-        "description": "Returns overall stats like total vulnerabilities, total assets, vulnerability by severity across the life stage (code, build, deploy and run) per cloud provider. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerable Assets](https://pan.dev/prisma-cloud/api/cspm/vulnerable-assets/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerable-assets-v-2",
-        "requestBody": {
-          "$ref": "#/components/requestBodies/WidgetRequest"
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VulnerableAsset"
-                }
-              }
-            }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v3/dashboard/vulnerabilities/overview": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Vulnerability Overview V3",
-        "description": "Returns a summary of the total unique vulnerabilities, the count of vulnerabilities, and the count of remediated vulnerabilities, including a breakdown by severity for each category. The percentage reflects the change between the current data and the data from seven days prior. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "vulnerability-dashboard-overview-v-3",
-        "parameters": [
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "example": "packages,serverless",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "example": "code,build,deploy,run",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "severities",
-            "in": "query",
-            "description": "Severity",
-            "required": false,
-            "example": "critical,high",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OverviewWidgetV3"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "x-redlock-auth": []
-          }
-        ],
-        "deprecated": true,
-        "x-public": "true"
-      }
-    },
-    "/uve/api/v3/dashboard/vulnerabilities/prioritised": {
-      "get": {
-        "tags": [
-          "Vulnerabilities Dashboard"
-        ],
-        "summary": "Get Prioritized Vulnerabilities V3",
-        "description": "Returns the top-priority unique vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, and vulnerable packages in use along with the number of assets they occur in. This endpoint also returns vulnerabilities based on internet exposure, in addition to those from [Get Prioritized Vulnerabilities V2](https://pan.dev/prisma-cloud/api/cspm/prioritised-vulnerability-v-2/). \n:::info\n **Replacement Endpoint: [Get Prioritized Vulnerabilities - POST](/prisma-cloud/api/cspm/prioritised-vulnerability-v-5/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "prioritised-vulnerability-v-3",
-        "parameters": [
-          {
-            "name": "asset_type",
-            "in": "query",
-            "description": "Asset Type",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "package",
-                  "iac",
-                  "deployedImage",
-                  "vmImage",
-                  "registryImage",
-                  "host",
-                  "serverlessFunction"
-                ]
-              }
-            }
-          },
-          {
-            "name": "life_cycle",
-            "in": "query",
-            "description": "Life Cycle",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "code",
-                  "build",
-                  "deploy",
-                  "run"
-                ]
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "User doesn't have required role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate Limit Exceeded",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -2056,6 +1685,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2063,6 +1702,340 @@
             "x-redlock-auth": []
           }
         ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/overview": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerability Overview",
+        "description": "Returns a summary of the total vulnerabilities in your environment which is further divided into Vulnerabilities by Asset and Vulnerabilities that have already been remediated. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerability-dashboard-overview",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "package",
+                  "iac",
+                  "deployedImage",
+                  "vmImage",
+                  "registryImage",
+                  "host",
+                  "serverlessFunction"
+                ]
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "code",
+                  "build",
+                  "deploy",
+                  "run"
+                ]
+              }
+            }
+          },
+          {
+            "name": "risk_factors",
+            "in": "query",
+            "description": "Risk Factors",
+            "required": false,
+            "example": "Critical severity, Package in use",
+            "schema": {
+              "type": "ref"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewWidget"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v2/dashboard/vulnerabilities/overview": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerability Overview V2",
+        "description": "Returns a summary of the total runtime vulnerabilities in your environment which is further divided into runtime Vulnerabilities by Asset and Vulnerabilities that have already been remediated. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerability-dashboard-overview-v-2",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewWidgetV2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v3/dashboard/vulnerabilities/overview": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerability Overview V3",
+        "description": "Returns a summary of the total unique vulnerabilities, the count of vulnerabilities, and the count of remediated vulnerabilities, including a breakdown by severity for each category. The percentage reflects the change between the current data and the data from seven days prior. \n:::info\n **Replacement Endpoint: [Get CVE Overview - POST](/prisma-cloud/api/cspm/vulnerability-dashboard-overview-v-4/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerability-dashboard-overview-v-3",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "example": "packages,serverless",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "example": "code,build,deploy,run",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "description": "Severities",
+            "required": false,
+            "example": "critical,high",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewWidgetV3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
         "x-public": "true"
       }
     },
@@ -2127,6 +2100,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2137,14 +2120,14 @@
         "x-public": "true"
       }
     },
-    "/uve/api/v4/dashboard/vulnerabilities/prioritised": {
+    "/uve/api/v1/dashboard/vulnerabilities/impact-stage": {
       "get": {
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "summary": "Get Prioritized Vulnerabilities V4",
-        "description": "Returns the top-priority vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, internet exposed and vulnerable packages in use along with the number of assets they occur in. \n:::info\n **Replacement Endpoint: [Get Prioritized Vulnerabilities - POST](/prisma-cloud/api/cspm/prioritised-vulnerability-v-5/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "prioritised-vulnerability-v-4",
+        "summary": "Get Vulnerability Impact by Stage",
+        "description": "Returns a summary of vulnerability across app stages of your application lifecycle. \n:::info\n **Replacement Endpoint: [Get Vulnerability Impact by Stage - POST](/prisma-cloud/api/cspm/vulnerability-impact-by-stage-v-2/)**\n:::\n\n\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerability-impact-by-stage",
         "parameters": [
           {
             "name": "asset_type",
@@ -2186,6 +2169,25 @@
                 ]
               }
             }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "description": "Severities",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "medium",
+                  "high",
+                  "low"
+                ]
+              }
+            }
           }
         ],
         "responses": {
@@ -2194,7 +2196,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                  "$ref": "#/components/schemas/ImpactByStageResponse"
                 }
               }
             }
@@ -2231,6 +2233,16 @@
           },
           "429": {
             "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -2249,14 +2261,14 @@
         "x-public": "true"
       }
     },
-    "/uve/api/v5/dashboard/vulnerabilities/prioritised": {
+    "/uve/api/v2/dashboard/vulnerabilities/impact-stage": {
       "post": {
         "tags": [
           "Vulnerabilities Dashboard"
         ],
-        "summary": "Get Prioritized Vulnerabilities - POST",
-        "description": "Returns the top-priority vulnerabilities which are aggregated based on the most urgent, exploitable, patchable, internet exposed and vulnerable packages in use along with the number of assets they occur in. This API supports the account group and account Id filters in addition to the filters we have in the [Get Prioritized Vulnerabilities V4](https://pan.dev/prisma-cloud/api/cspm/prioritised-vulnerability-v-4/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
-        "operationId": "prioritised-vulnerability-v-5",
+        "summary": "Get Vulnerability Impact by Stage - POST",
+        "description": "Returns a summary of vulnerability across app stages of your application lifecycle. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerability Impact by Stage](https://pan.dev/prisma-cloud/api/cspm/vulnerability-impact-by-stage/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerability-impact-by-stage-v-2",
         "requestBody": {
           "$ref": "#/components/requestBodies/WidgetRequest"
         },
@@ -2266,7 +2278,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PrioritizedVulnerabilitiesV3"
+                  "$ref": "#/components/schemas/ImpactByStageResponse"
                 }
               }
             }
@@ -2303,6 +2315,238 @@
           },
           "429": {
             "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v1/dashboard/vulnerabilities/vulnerableAsset": {
+      "get": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerable Assets",
+        "description": "Returns a summary of vulnerable assets and detailed vulnerability statistics, including the total number of vulnerabilities by severity, registry count, package count, repository count, and more, across different stages of your application lifecycle.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerable-assets",
+        "parameters": [
+          {
+            "name": "asset_type",
+            "in": "query",
+            "description": "Asset Type",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "package",
+                  "iac",
+                  "deployedImage",
+                  "vmImage",
+                  "registryImage",
+                  "host",
+                  "serverlessFunction"
+                ]
+              }
+            }
+          },
+          {
+            "name": "life_cycle",
+            "in": "query",
+            "description": "Life Cycle",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "code",
+                  "build",
+                  "deploy",
+                  "run"
+                ]
+              }
+            }
+          },
+          {
+            "name": "severities",
+            "in": "query",
+            "description": "Severities",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "medium",
+                  "high",
+                  "low"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerableAsset"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "deprecated": true,
+        "x-public": "true"
+      }
+    },
+    "/uve/api/v2/dashboard/vulnerabilities/vulnerableAsset": {
+      "post": {
+        "tags": [
+          "Vulnerabilities Dashboard"
+        ],
+        "summary": "Get Vulnerable Assets Stats - POST",
+        "description": "Returns overall stats like total vulnerabilities, total assets, vulnerability by severity across the life stage (code, build, deploy and run) per cloud provider. This API supports the account group and account Id filters in addition to the filters we have in the [Get Vulnerable Assets](https://pan.dev/prisma-cloud/api/cspm/vulnerable-assets/) endpoint.\n>**Note:** You need `vulnerabilityDashboard` feature with `View` permission to access this endpoint. Verify if your permission group includes this feature using the [Get Permission Group by ID](https://pan.dev/prisma-cloud/api/cspm/get-1/) endpoint. You can also check this in the Prisma Cloud console by ensuring that **Dashboard > Vulnerability** is enabled.",
+        "operationId": "vulnerable-assets-v-2",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/WidgetRequestSidecar"
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VulnerableAsset"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User doesn't have required role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -2323,6 +2567,15 @@
   },
   "components": {
     "requestBodies": {
+      "WidgetRequestSidecar": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WidgetRequestSidecar"
+            }
+          }
+        }
+      },
       "AssetsSearchRequest": {
         "content": {
           "application/json": {
@@ -3649,7 +3902,7 @@
           },
           "accountNames": {
             "type": "array",
-            "description": "List of Account Names",
+            "description": "List of Account Name",
             "items": {
               "type": "string"
             }
@@ -3717,7 +3970,7 @@
           },
           "accountNames": {
             "type": "array",
-            "description": "List of Account Names",
+            "description": "List of Account Name",
             "items": {
               "type": "string"
             }
@@ -3786,7 +4039,7 @@
           },
           "accountNames": {
             "type": "array",
-            "description": "List of Account Names",
+            "description": "List of Account Name",
             "items": {
               "type": "string"
             }
@@ -3800,61 +4053,6 @@
         },
         "description": "Request Model for Dashboard Widgets"
       }
-    },
-    "securitySchemes": {
-      "x-redlock-auth": {
-        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
-        "in": "header",
-        "name": "x-redlock-auth",
-        "type": "apiKey"
-      }
     }
-  },
-  "servers": [
-    {
-      "url": "https://api.prismacloud.io"
-    },
-    {
-      "url": "https://api2.prismacloud.io"
-    },
-    {
-      "url": "https://api3.prismacloud.io"
-    },
-    {
-      "url": "https://api4.prismacloud.io"
-    },
-    {
-      "url": "https://api.anz.prismacloud.io"
-    },
-    {
-      "url": "https://api.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api2.eu.prismacloud.io"
-    },
-    {
-      "url": "https://api.gov.prismacloud.io"
-    },
-    {
-      "url": "https://api.prismacloud.cn"
-    },
-    {
-      "url": "https://api.ca.prismacloud.io"
-    },
-    {
-      "url": "https://api.sg.prismacloud.io"
-    },
-    {
-      "url": "https://api.uk.prismacloud.io"
-    },
-    {
-      "url": "https://api.ind.prismacloud.io"
-    },
-    {
-      "url": "https://api.jp.prismacloud.io"
-    },
-    {
-      "url": "https://api.fr.prismacloud.io"
-    }
-  ]
+  }
 }
