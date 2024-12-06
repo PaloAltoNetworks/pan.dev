@@ -1,10 +1,12 @@
+import Mermaid from "@theme/Mermaid";
+
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+let baseUrl
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
     baseUrl = "/";
@@ -18,6 +20,9 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 }
 
 const config = {
+  future: {
+    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+  },
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
@@ -28,16 +33,16 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
-  markdown: { format: "detect" },
+  markdown: { format: "detect", mermaid: true },
   themeConfig: {
     prism: {
-      additionalLanguages: ["csharp", "php", "hcl"],
+      additionalLanguages: ["csharp", "php", "hcl", "json", "bash"],
     },
     languageTabs: [
       {
         highlight: "bash",
         language: "curl",
-        logoClass: "bash",
+        logoClass: "curl",
       },
       {
         highlight: "python",
@@ -694,9 +699,6 @@ const config = {
       copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
     },
   },
-  markdown: {
-    mermaid: true,
-  },
   themes: ["docusaurus-theme-openapi-docs", "@docusaurus/theme-mermaid"],
   presets: [
     [
@@ -1106,7 +1108,7 @@ const config = {
         id: "default",
         routeBasePath: "/",
         path: "products",
-        sidebarPath: "./sidebars.js",
+        sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
@@ -1130,28 +1132,6 @@ const config = {
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
-  webpack: {
-    jsLoader: (isServer) => ({
-      loader: require.resolve("swc-loader"),
-      options: {
-        jsc: {
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-          },
-          target: "es2019",
-          transform: {
-            react: {
-              runtime: "automatic",
-            },
-          },
-        },
-        module: {
-          type: isServer ? "commonjs" : "es6",
-        },
-      },
-    }),
-  },
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
@@ -1163,7 +1143,7 @@ const config = {
 Takes in list of products to filter based on directory, outputs list of globby include for the doc plugin
 */
 function docsPluginInclude(filters) {
-  include = [];
+  let include = [] as any;
   filters.forEach((product) => {
     let product_include = product + "/**/*.{md,mdx}";
     include.push(product_include);
@@ -1175,7 +1155,7 @@ async function createConfig() {
   let filters =
     process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
   if (filters) {
-    config.plugins[4][1].include = docsPluginInclude(filters);
+    config.plugins[4][1]["include"] = docsPluginInclude(filters);
   }
   return config;
 }

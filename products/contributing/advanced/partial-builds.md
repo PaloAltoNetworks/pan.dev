@@ -11,7 +11,7 @@ description: How to speed up development and production builds.
 When you need to build partial content, use the `PRODUCTS_INCLUDE` environment variable to define which product folders you want to include.
 
 :::warning NOTICE
-Some products have `sidebars.js` that reference docs across product folders. This effectively makes those products "co-dependent" since sidebar definitions require all doc references to exist.
+Some products have `sidebars.ts` that reference docs across product folders. This effectively makes those products "co-dependent" since sidebar definitions require all doc references to exist.
 :::
 
 ### Local Previews

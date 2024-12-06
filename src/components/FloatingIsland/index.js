@@ -3,7 +3,7 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import ApplauseButton from "../Applause";
 import EditThisPageButton from "../EditThisPageButton";
 import { ReportAnIssueIcon } from "../Issue";
-import { useDoc } from "@docusaurus/theme-common/internal";
+import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import "./styles.css";
 
 function isInViewport(ref) {
