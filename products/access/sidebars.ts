@@ -32,7 +32,7 @@ module.exports = {
       defaultStyle: true,
       value: versionCrumb(`v2.0`),
     },
-    "access/api/insights/insights-api",
+    "access/api/insights/2.0/insights-api",
     require("./api/insights/2.0/sidebar"),
   ],
   saseinsightsv3: [
@@ -49,6 +49,10 @@ module.exports = {
     },
     "access/api/insights/insights-api",
     require("./api/insights/sidebar"),
+  ],
+  sasebrowsermgmt: [
+    "access/api/browser-mgmt/browser-mgmt-api",
+    require("./api/browser-mgmt/sidebar"),
   ],
   saseprismaaccess: [
     "access/api/prisma-access-config/config-api",

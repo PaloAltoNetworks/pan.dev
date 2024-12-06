@@ -8,13 +8,15 @@ The version-specific APIs are supported for the subsequent two major releases.
 
 With API versioning, as your Console is upgraded to newer versions, you can continue to use older versioned APIs with stability and migrate to newer version APIs at your convenience within the N-2 support lifecycle.
 
+:memo: **Note:** Starting from release 33.00, Prisma Cloud does not restrict connections and REST API calls from the n-3 release as well. So the current release will allow Defenders and REST API calls from release 30.xx also.
+
 The deployment scripts and Twistcli that you download from Console, uses the APIs associated with the specific version of Console.
 
 ### Previous API Versions of Prisma Cloud Compute Edition
 
 All minor or maintenance versions (xx) of 32.xx release have n-2 support for backward compatibility. The documentation for all the supported releases is available at:
 
-* [Prisma Cloud Compute Edition - 33.00](/compute/api/)
+* [Prisma Cloud Compute Edition - 33.02](/compute/api/)
 * [Prisma Cloud Compute Edition - 32.07](/compute/api/32-07/)
 * [Prisma Cloud Compute Edition - 31.02](/compute/api/31-02/)
 

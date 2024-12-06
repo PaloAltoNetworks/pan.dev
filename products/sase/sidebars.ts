@@ -278,6 +278,7 @@ module.exports = {
         "access/docs/insights/pai-faqs",
       ],
     },
+    "sase/docs/saseservicestatusapi",
     {
       type: "category",
       label: "Prisma SASE API Release Notes",

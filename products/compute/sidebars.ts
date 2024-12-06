@@ -15,7 +15,7 @@ module.exports = {
     {
       type: "html",
       defaultStyle: true,
-      value: versionCrumb(`33-00`),
+      value: versionCrumb(`33-02`),
     },
     "compute/api/compute-api-reference-home",
     "compute/api/access-api-self-hosted",
@@ -59,34 +59,6 @@ module.exports = {
     "compute/api/31-02/stable-endpoints",
     require("./api/31-02/sidebar"),
   ],
-  compute_3203: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 32.03",
-      collapsed: true,
-      items: [
-        "compute/api/32-03/compute-api-reference-home",
-        "compute/api/32-03/access-api-self-hosted",
-        "compute/api/32-03/set-up-console",
-        "compute/api/32-03/stable-endpoints",
-        require("./api/32-03/sidebar"),
-      ],
-    },
-  ],
-  compute_3204: [
-    {
-      type: "category",
-      label: "Prisma Cloud Compute Edition - 32.04",
-      collapsed: true,
-      items: [
-        "compute/api/32-04/compute-api-reference-home",
-        "compute/api/32-04/access-api-self-hosted",
-        "compute/api/32-04/set-up-console",
-        "compute/api/32-04/stable-endpoints",
-        require("./api/32-04/sidebar"),
-      ],
-    },
-  ],
   compute_3205: [
     {
       type: "category",
@@ -112,6 +84,34 @@ module.exports = {
         "compute/api/32-06/set-up-console",
         "compute/api/32-06/stable-endpoints",
         require("./api/32-06/sidebar"),
+      ],
+    },
+  ],
+  compute_3300: [
+    {
+      type: "category",
+      label: "Prisma Cloud Compute Edition - 33.00",
+      collapsed: true,
+      items: [
+        "compute/api/33-00/compute-api-reference-home",
+        "compute/api/33-00/access-api-self-hosted",
+        "compute/api/33-00/set-up-console",
+        "compute/api/33-00/stable-endpoints",
+        require("./api/33-00/sidebar"),
+      ],
+    },
+  ],
+  compute_3301: [
+    {
+      type: "category",
+      label: "Prisma Cloud Compute Edition - 33.00",
+      collapsed: true,
+      items: [
+        "compute/api/33-01/compute-api-reference-home",
+        "compute/api/33-01/access-api-self-hosted",
+        "compute/api/33-01/set-up-console",
+        "compute/api/33-01/stable-endpoints",
+        require("./api/33-01/sidebar"),
       ],
     },
   ],

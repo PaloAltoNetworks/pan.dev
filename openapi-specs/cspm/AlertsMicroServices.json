@@ -58,9 +58,9 @@
         "tags": [
           "Alerts"
         ],
-        "summary": "Get Alert Count of Policies",
-        "description": "Get the list of policies with alert count based on the input filter along with next pagination token.",
-        "operationId": "alert-Policy-List",
+        "summary": "Return policy with alert count",
+        "description": "Return paginated policy with alert count based on the input filter along with next pagination token",
+        "operationId": "alertPolicyList",
         "requestBody": {
           "content": {
             "application/json": {
@@ -116,9 +116,9 @@
         "tags": [
           "Alerts"
         ],
-        "summary": "Get Alert Count by Policy Groups",
-        "description": "Get policy groups with alert count based on the group by policy and input filters. The list is paginated and to fetch the remaining data, provide the nextPageToken.",
-        "operationId": "alert-Aggregation",
+        "summary": "Group by Policy field",
+        "description": "Return paginated groups with alert count based on the group by policy field, input filter along with next pagination token",
+        "operationId": "alertAggregation",
         "requestBody": {
           "content": {
             "application/json": {
@@ -174,18 +174,18 @@
         "tags": [
           "Alerts"
         ],
-        "summary": "Get Alert Evidence Graph",
-        "description": "Get the alert JSON graph format data by alert id.",
-        "operationId": "get-Alert-Evidence-Graph",
+        "summary": "Alert Evidence Graph",
+        "description": "Given an alert-id in the query the API returns the data that can be presented in a graphical format. The returned response matches the JSON Graph Format standard",
+        "operationId": "getAlertEvidenceGraph",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "The alert id of the evidence graph.",
+            "description": "The alert-id for the evidence graph",
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The alert id of the evidence graph."
+              "description": "The alert-id for the evidence graph"
             }
           }
         ],
@@ -521,9 +521,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -533,7 +535,8 @@
               "ALERT_DESCOPE_REQUEST",
               "ALERT_UPDATE_DECORATION_REQUEST",
               "ALERT_DESCOPE_DECORATION_REQUEST",
-              "ALERT_PENDING_RESOLUTION_REQUEST"
+              "ALERT_PENDING_RESOLUTION_REQUEST",
+              "ALERT_SNAPSHOT_BASED_FULL_SCAN"
             ]
           },
           "eventId": {
@@ -773,6 +776,12 @@
             }
           },
           "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchTags"
+            }
+          },
+          "implicitTags": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SearchTags"
@@ -1049,9 +1058,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -1061,7 +1072,8 @@
               "ALERT_DESCOPE_REQUEST",
               "ALERT_UPDATE_DECORATION_REQUEST",
               "ALERT_DESCOPE_DECORATION_REQUEST",
-              "ALERT_PENDING_RESOLUTION_REQUEST"
+              "ALERT_PENDING_RESOLUTION_REQUEST",
+              "ALERT_SNAPSHOT_BASED_FULL_SCAN"
             ]
           },
           "eventId": {
@@ -1098,102 +1110,138 @@
       },
       "AlertModel": {
         "required": [
-          "Account Id.",
-          "Cloud Type.",
-          "Metadata change Time Stamp.",
-          "Policy Type.",
-          "Policy change Time Stamp.",
-          "Resource Id.",
-          "Resource change Time Stamp.",
-          "Stack Name.",
+          "accountId",
           "clientId",
+          "cloudType",
+          "metadataTs",
+          "policyTs",
+          "policyType",
+          "resourceId",
+          "resourceTs",
+          "stackName",
           "verdict"
         ],
         "type": "object",
         "properties": {
-          "Customer Id.": {
+          "customerId": {
             "type": "string",
+            "description": "Customer Id.",
             "example": "'11111'"
           },
-          "Prisma Id.": {
+          "prismaId": {
             "type": "integer",
+            "description": "Prisma Id.",
             "format": "int64",
             "example": 11111123443
           },
-          "Stack Name.": {
+          "stackName": {
             "type": "string",
+            "description": "Stack Name.",
             "example": "'app2'"
           },
-          "Account Id.": {
+          "accountId": {
             "type": "string",
+            "description": "Account Id.",
             "example": "'ACC657432'"
           },
-          "Resource Id.": {
+          "resourceId": {
             "type": "string",
+            "description": "Resource Id.",
             "example": "'1gs010101'"
           },
-          "External Resouce Id.Id Provided by the cloud provider": {
+          "externalResourceId": {
             "type": "string",
+            "description": "External Resouce Id.Id Provided by the cloud provider",
             "example": "'1010101'"
           },
-          "Resource Name.": {
+          "resourceName": {
             "type": "string",
+            "description": "Resource Name.",
             "example": "'web server'"
           },
-          "RRN.": {
+          "rrn": {
             "type": "string",
+            "description": "RRN.",
             "example": "'rrn:aws:storageObject:us-east-2:1234'"
           },
-          "url.": {
+          "url": {
             "type": "string",
+            "description": "url.",
             "example": "'rrn:aws:storageObject:us-east-2:1234:app-qa-logs:/AWSLogs/1234/2020/04/04/1234.log.gz'"
           },
-          "Resource Api Id.": {
+          "resourceApiId": {
             "type": "integer",
+            "description": "Resource Api Id.",
             "format": "int32"
           },
-          "Policy Id.": {
+          "assetId": {
             "type": "string",
+            "description": "Unified Asset Id",
+            "example": "''"
+          },
+          "relatedAssetId": {
+            "type": "string",
+            "description": "Related Asset Id",
+            "example": "''"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "Policy Id.",
             "example": "'222233'"
           },
-          "Policy Type.": {
+          "policyType": {
             "type": "integer",
+            "description": "Policy Type.",
             "format": "int32"
           },
-          "Cloud Type.": {
+          "cloudType": {
             "type": "integer",
+            "description": "Cloud Type.",
             "format": "int32"
           },
-          "Region.": {
+          "region": {
             "type": "string",
+            "description": "Region.",
             "example": "'us-east-2'"
           },
-          "Policy change Time Stamp.": {
+          "policyTs": {
             "type": "integer",
+            "description": "Policy change Time Stamp.",
             "format": "int64"
           },
-          "Resource change Time Stamp.": {
+          "resourceTs": {
             "type": "integer",
+            "description": "Resource change Time Stamp.",
             "format": "int64"
           },
-          "Resource undeleted time Stamp.": {
+          "resourceUndeletedTs": {
             "type": "integer",
+            "description": "Resource undeleted time Stamp.",
             "format": "int64"
           },
-          "Metadata change Time Stamp.": {
+          "metadataTs": {
             "type": "integer",
+            "description": "Metadata change Time Stamp.",
             "format": "int64"
           },
-          "Alert Rule TS.": {
+          "alertRuleTs": {
             "type": "integer",
+            "description": "Alert Rule TS.",
             "format": "int64"
           },
-          "Resource Deleted TS.": {
+          "resourceDeletedTs": {
             "type": "integer",
+            "description": "Resource Deleted TS.",
             "format": "int64"
           },
-          "reason.": {
+          "verdictTs": {
+            "type": "integer",
+            "description": "Resource verdict TS.",
+            "format": "int64"
+          },
+          "reason": {
             "type": "string",
+            "description": "reason.",
             "enum": [
               "RESOURCE_DELETED",
               "RESOURCE_UPDATED",
@@ -1237,37 +1285,45 @@
               "MANUALLY_REMEDIATED"
             ]
           },
-          "Tags.": {
+          "tags": {
             "type": "array",
+            "description": "Tags.",
             "items": {
               "$ref": "#/components/schemas/AlertTags"
             }
           },
-          "Json Metadata.": {
+          "metadata": {
             "$ref": "#/components/schemas/JsonNode"
           },
-          "Resource Data": {
+          "decorationMetadata": {
             "$ref": "#/components/schemas/JsonNode"
           },
-          "Resource Additional Info": {
+          "resourceData": {
             "$ref": "#/components/schemas/JsonNode"
           },
-          "additional Info": {
+          "resourceAdditionalInfo": {
             "$ref": "#/components/schemas/JsonNode"
           },
-          "Time to Alert Info": {
+          "additionalInfo": {
             "$ref": "#/components/schemas/JsonNode"
           },
-          "Alert Rule Ids.": {
+          "ttaInfo": {
+            "$ref": "#/components/schemas/JsonNode"
+          },
+          "alertRuleIds": {
             "type": "array",
+            "description": "Alert Rule Ids.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "description": "Alert Rule Ids."
             }
           },
-          "Resolved Alert Rule Ids.": {
+          "resolvedAlertRuleIds": {
             "type": "array",
+            "description": "Resolved Alert Rule Ids.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "description": "Resolved Alert Rule Ids."
             }
           },
           "verdict": {
@@ -1282,8 +1338,9 @@
             "type": "string",
             "description": "client Id."
           },
-          "Additional Hash.": {
+          "additionalHash": {
             "type": "integer",
+            "description": "Additional Hash.",
             "format": "int64",
             "example": 553195237
           },
@@ -1327,7 +1384,8 @@
           "value": {
             "type": "string"
           }
-        }
+        },
+        "description": "Tags."
       },
       "HistoryModel": {
         "required": [
@@ -1431,6 +1489,9 @@
           "customerId": {
             "type": "string"
           },
+          "searchText": {
+            "type": "string"
+          },
           "prismaId": {
             "type": "integer",
             "format": "int64"
@@ -1481,6 +1542,23 @@
               "type": "string"
             }
           },
+          "accessibleImplicitTags": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accessibleTagBasedResourceList": {
+            "type": "object",
+            "additionalProperties": {
+              "uniqueItems": true,
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SearchTags"
+              }
+            }
+          },
           "accessiblePolicyIds": {
             "type": "array",
             "items": {
@@ -1497,9 +1575,6 @@
             "type": "boolean"
           },
           "timeRange": {
-            "discriminator": {
-              "propertyName": "type"
-            },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/AbsoluteTimeRangeConfig"
@@ -1653,22 +1728,6 @@
           }
         }
       },
-      "CountDetails": {
-        "type": "object",
-        "description": "Total Count of Alerts and Policies returned",
-        "properties": {
-          "totalAlerts": {
-            "type": "integer",
-            "format": "int64",
-            "default": 100
-          },
-          "totalPolicies": {
-            "type": "integer",
-            "format": "int64",
-            "default": 30
-          }
-        }
-      },
       "TimeRangeConfigModel": {
         "required": [
           "type"
@@ -1677,6 +1736,7 @@
         "properties": {
           "Time type": {
             "type": "string",
+            "description": "type for time range",
             "enum": [
               "to_now,absolute,relative,from_now"
             ]
@@ -1690,15 +1750,19 @@
           "Field for range": {
             "type": "string",
             "enum": [
+              "lastOpenStateTs",
               "lastStatusChangeTs",
-              "lastOpenStateTs"
+              "lastUpdatedTs"
             ]
           },
           "type": {
             "type": "string"
           }
         },
-        "description": "Model for TimeRangeConfig"
+        "description": "Model for TimeRangeConfig",
+        "discriminator": {
+          "propertyName": "type"
+        }
       },
       "ToNowTimeRangeConfig": {
         "type": "object",
@@ -1984,19 +2048,7 @@
             "type": "boolean"
           },
           "policyType": {
-            "type": "string",
-            "enum": [
-              "config",
-              "network",
-              "audit_event",
-              "anomaly",
-              "data",
-              "iam",
-              "workload_vulnerability",
-              "workload_incident",
-              "api",
-              "attack_path"
-            ]
+            "type": "string"
           },
           "systemDefault": {
             "type": "boolean"
@@ -2025,6 +2077,9 @@
             "type": "string"
           },
           "isHyperionPolicy": {
+            "type": "boolean"
+          },
+          "hasSearchExecutionSupport": {
             "type": "boolean"
           }
         }
@@ -2178,6 +2233,24 @@
           },
           "resourceDetailsAvailable": {
             "type": "boolean"
+          },
+          "cspResourceId": {
+            "type": "string"
+          }
+        }
+      },
+      "CountDetails": {
+        "type": "object",
+        "properties": {
+          "totalAlerts": {
+            "type": "integer",
+            "description": "alert count",
+            "format": "int64"
+          },
+          "totalPolicies": {
+            "type": "integer",
+            "description": "policy count",
+            "format": "int32"
           }
         }
       },
@@ -2219,6 +2292,10 @@
           "policyType": {
             "type": "string",
             "description": "Policy Type"
+          },
+          "description": {
+            "type": "string",
+            "description": "Policy Description"
           },
           "severity": {
             "type": "string",
@@ -2346,22 +2423,22 @@
         "properties": {
           "filters": {
             "type": "array",
-            "description": "Filter parameters",
+            "description": "Filtering parameters",
             "items": {
               "$ref": "#/components/schemas/UIFilter"
             }
           },
           "sortBy": {
             "type": "array",
-            "description": "Array of sort properties. \n\nAppend **:asc** or  **:desc** to the key to sort by ascending or descending order, respectively. Example: **id:asc**.",
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
             "items": {
               "type": "string",
-              "description": "Array of sort properties. \n\nAppend **:asc** or  **:desc** to the key to sort by ascending or descending order, respectively. Example:**id:asc**."
+              "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**"
             }
           },
           "groupBy": {
             "type": "string",
-            "description": "Group by field.",
+            "description": "group by field",
             "enum": [
               "policy.type",
               "policy.severity",
@@ -2371,12 +2448,12 @@
           },
           "size": {
             "type": "integer",
-            "description": "Maximum number of items to return per page when data is paginated. The value cannot exceed 500 and default value is 50.",
+            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 500. The default is 50",
             "format": "int32"
           },
           "nextPageToken": {
             "type": "string",
-            "description": "The nextPageToken value from the previous response object, which is used to get the next page of data. "
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data "
           },
           "timeRange": {
             "oneOf": [
@@ -3016,19 +3093,7 @@
             "type": "string"
           },
           "policyType": {
-            "type": "string",
-            "enum": [
-              "config",
-              "network",
-              "audit_event",
-              "anomaly",
-              "data",
-              "iam",
-              "workload_vulnerability",
-              "workload_incident",
-              "api",
-              "attack_path"
-            ]
+            "type": "string"
           },
           "policySubTypes": {
             "uniqueItems": true,
@@ -3059,7 +3124,9 @@
                 "virtual_patches",
                 "misconfig",
                 "misconfig_and_event",
-                "event"
+                "event",
+                "host",
+                "container_image"
               ]
             }
           },
@@ -3173,6 +3240,9 @@
           "isRemediable": {
             "type": "boolean",
             "readOnly": true
+          },
+          "hasSearchExecutionSupport": {
+            "type": "boolean"
           }
         }
       },
@@ -3245,6 +3315,10 @@
             "format": "int64"
           },
           "lastSeen": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastUpdated": {
             "type": "integer",
             "format": "int64"
           },
@@ -3344,6 +3418,12 @@
               "additionalProperties": {
                 "type": "string"
               }
+            }
+          },
+          "connectionDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionDetail"
             }
           }
         },
@@ -3574,6 +3654,76 @@
             "type": "string"
           },
           "event_ts": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ConnectionDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "srcIp": {
+            "type": "string"
+          },
+          "destIp": {
+            "type": "string"
+          },
+          "srcIsp": {
+            "type": "string"
+          },
+          "destIsp": {
+            "type": "string"
+          },
+          "feedSource": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "trafficVolume": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "inboundTrafficVolume": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "outboundTrafficVolume": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "packets": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accepted": {
+            "type": "string"
+          },
+          "trafficOverTime": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          },
+          "markedThreatTs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "threatDescription": {
+            "type": "string"
+          },
+          "timestamp": {
             "type": "integer",
             "format": "int64"
           }
@@ -3832,20 +3982,114 @@
               "type": "string"
             }
           }
-        }
+        },
+        "description": "Notification configuration"
       },
       "OnDemandNotificationConfigRequest": {
         "type": "object",
         "properties": {
           "prismaId": {
             "type": "integer",
+            "description": "Internal use to pass query parameters in http calls",
             "format": "int64"
           },
           "alertId": {
-            "type": "string"
+            "type": "string",
+            "description": "Alert Id with prefix"
           },
           "onDemandNotificationConfig": {
             "$ref": "#/components/schemas/OnDemandNotificationConfig"
+          },
+          "translation": {
+            "$ref": "#/components/schemas/Translation"
+          }
+        }
+      },
+      "Translation": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Notification message body"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Additional details like subject and attachments for email , incidentType, findingsKey, evenStatus for service_now"
+            },
+            "description": "Additional details like subject and attachments for email , incidentType, findingsKey, evenStatus for service_now"
+          },
+          "attachments": {
+            "type": "array",
+            "description": "Attachments for email",
+            "items": {
+              "type": "string",
+              "description": "Attachments for email"
+            }
+          }
+        },
+        "description": "Translation details that will be used as the notification payload in Dispatch mode"
+      },
+      "AlertFilter": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "description": "Filtering parameters. Max limit : 65536",
+            "items": {
+              "$ref": "#/components/schemas/UIFilter"
+            }
+          },
+          "timeRange": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AbsoluteTimeRangeConfig"
+              },
+              {
+                "$ref": "#/components/schemas/FromNowTimeRangeConfig"
+              },
+              {
+                "$ref": "#/components/schemas/RelativeTimeRangeConfig"
+              },
+              {
+                "$ref": "#/components/schemas/ToNowTimeRangeConfig"
+              }
+            ]
+          }
+        }
+      },
+      "AlertStatusAggregateResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Count of aggregated alerts",
+            "format": "int64"
+          },
+          "alertStatus": {
+            "type": "string",
+            "description": "Alert status. Possible values: open, resolved, dismissed, snoozed, pending_resolution",
+            "enum": [
+              "open",
+              "dismissed",
+              "snoozed",
+              "pending_resolution",
+              "resolved"
+            ]
+          }
+        },
+        "description": "List of aggregate alert status response"
+      },
+      "AlertsStatusApiResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "description": "List of aggregate alert status response",
+            "items": {
+              "$ref": "#/components/schemas/AlertStatusAggregateResponse"
+            }
           }
         }
       },
@@ -3905,9 +4149,11 @@
               "ALERT_MIGRATION_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST",
               "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL",
+              "ALERT_DELETE_BY_RESOURCE_REQUEST_INTERNAL_V2",
               "ALERT_HISTORY_MIGRATION_REQUEST",
               "ALERT_HARD_DELETE_REQUEST",
               "ALERT_RECONCILE_STATUS_CHANGE_REQUEST",
+              "ALERT_RECONCILE_STATUS_CHANGE_REQUEST_V2",
               "ALERT_SYNC_REQUEST",
               "ALERT_HARD_SYNC_REQUEST",
               "ALERT_CASSANDRA_TO_ES_SYNC_REQUEST",
@@ -3917,7 +4163,8 @@
               "ALERT_DESCOPE_REQUEST",
               "ALERT_UPDATE_DECORATION_REQUEST",
               "ALERT_DESCOPE_DECORATION_REQUEST",
-              "ALERT_PENDING_RESOLUTION_REQUEST"
+              "ALERT_PENDING_RESOLUTION_REQUEST",
+              "ALERT_SNAPSHOT_BASED_FULL_SCAN"
             ]
           }
         }
@@ -3927,37 +4174,30 @@
         "properties": {
           "nodes": {
             "type": "object",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/AssetNode"
-              },
-              {
-                "$ref": "#/components/schemas/FindingNode"
-              },
-              {
-                "$ref": "#/components/schemas/VulnerabilityNode"
-              }
-            ]
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/AssetNode"
+                },
+                {
+                  "$ref": "#/components/schemas/CapabilityNode"
+                },
+                {
+                  "$ref": "#/components/schemas/FindingNode"
+                },
+                {
+                  "$ref": "#/components/schemas/PrimaryAssetNode"
+                },
+                {
+                  "$ref": "#/components/schemas/VulnerabilityNode"
+                }
+              ],
+            "description": "A dictionary of the node identifier and the associated node"
           },
           "edges": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GraphEdge"
             }
-          },
-          "add": {
-            "writeOnly": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/AssetNode"
-              },
-              {
-                "$ref": "#/components/schemas/FindingNode"
-              },
-              {
-                "$ref": "#/components/schemas/VulnerabilityNode"
-              }
-            ]
           }
         },
         "description": "The resource specific graph"
@@ -3970,7 +4210,7 @@
         "properties": {
           "graphs": {
             "type": "array",
-            "description": "The list of graphs representing a primary asset and its associations.",
+            "description": "The list of graphs representing a primary asset and its associations",
             "items": {
               "$ref": "#/components/schemas/GraphAlertEvidenceGraph"
             }
@@ -3982,14 +4222,42 @@
         }
       },
       "AssetNode": {
+        "required": [
+          "label",
+          "type"
+        ],
         "type": "object",
-        "properties": {
-          "metadata": {
-            "$ref": "#/components/schemas/AssetNodeMetadata"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Node"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Label representing the asset name"
+              },
+              "type": {
+                "type": "string",
+                "description": "The node type",
+                "enum": [
+                  "Asset"
+                ]
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/AssetNodeMetadata"
+              }
+            }
           }
-        }
+        ]
       },
       "AssetNodeMetadata": {
+        "required": [
+          "accountId",
+          "assetApiId",
+          "externalAssetId"
+        ],
         "type": "object",
         "properties": {
           "lastModifiedAt": {
@@ -3999,18 +4267,75 @@
           },
           "externalAssetId": {
             "type": "string",
-            "description": "ExternalId for asset"
+            "description": "Cloud Provider Asset Identifier"
           },
           "assetApiId": {
             "type": "integer",
-            "description": "ExternalId for asset",
+            "description": "The unique API Identifier of this asset",
             "format": "int32"
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Cloud Account ID"
+          },
+          "dataSensitivityDatatypeDetails": {
+            "type": "array",
+            "description": "Data Sensitivity datatypes",
+            "items": {
+              "$ref": "#/components/schemas/DataTypes"
+            }
           }
         },
         "description": "Primary Asset Node Metadata"
+      },
+      "CapabilityNode": {
+        "required": [
+          "metadata",
+          "type"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Node"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The node type",
+                "enum": [
+                  "Capability"
+                ]
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/CapabilityNodeMetadata"
+              }
+            }
+          }
+        ]
+      },
+      "CapabilityNodeMetadata": {
+        "required": [
+          "capabilityType"
+        ],
+        "type": "object",
+        "properties": {
+          "capabilityType": {
+            "type": "string",
+            "description": "Returns the capability type",
+            "example": "secret"
+          },
+          "additionalCapabilityAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Returns additional metadata associated with this capability"
+            },
+            "description": "Returns additional metadata associated with this capability"
+          }
+        },
+        "description": "Capability Node Metadata"
       },
       "CloudNetworkGraph": {
         "type": "object",
@@ -4089,10 +4414,10 @@
             "type": "string",
             "description": "Asset sub-type information"
           },
-          "rrn": {
+          "id": {
             "type": "string"
           },
-          "id": {
+          "rrn": {
             "type": "string"
           },
           "APIID": {
@@ -4102,6 +4427,25 @@
           }
         },
         "description": "Represents a network node"
+      },
+      "DataTypes": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the data sensitivity datatype"
+          },
+          "count": {
+            "type": "integer",
+            "description": "The count of occurances for the given data type",
+            "format": "int32"
+          },
+          "label": {
+            "type": "string",
+            "description": "The label for the given data type"
+          }
+        },
+        "description": "Data Sensitivity datatypes"
       },
       "EdgeMetadata": {
         "required": [
@@ -4193,18 +4537,26 @@
           "type"
         ],
         "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "The node type",
-            "enum": [
-              "Finding"
-            ]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Node"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/FindingNodeMetadata"
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The node type",
+                "enum": [
+                  "Finding"
+                ]
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/FindingNodeMetadata"
+              }
+            }
           }
-        }
+        ]
       },
       "FindingNodeMetadata": {
         "required": [
@@ -4292,18 +4644,23 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Edge Id"
+            "description": "Edge Identifier"
           },
           "source": {
             "type": "string",
-            "description": "Source node"
+            "description": "Identifier of the source node"
           },
           "target": {
             "type": "string",
-            "description": "Target node"
+            "description": "Identifier of the target node"
           },
           "metadata": {
             "$ref": "#/components/schemas/EdgeMetadata"
+          },
+          "relationshipTypeId": {
+            "type": "integer",
+            "description": "Relationship Type ID between the edges",
+            "format": "int64"
           }
         }
       },
@@ -4364,6 +4721,13 @@
           "destResourceAssetId": {
             "type": "string",
             "description": "Destination cloud resource asset identifier"
+          },
+          "dataSensitivityDatatypeDetails": {
+            "type": "array",
+            "description": "Data Sensitivity datatypes",
+            "items": {
+              "$ref": "#/components/schemas/DataTypes"
+            }
           }
         },
         "description": "Permission graph items"
@@ -4371,31 +4735,17 @@
       "Node": {
         "type": "object",
         "properties": {
-          "label": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
           "type": {
+            "type": "string"
+          },
+          "label": {
             "type": "string"
           }
         },
         "description": "A dictionary of the node identifier and the associated node",
         "discriminator": {
           "propertyName": "type"
-        },
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/AssetNode"
-          },
-          {
-            "$ref": "#/components/schemas/FindingNode"
-          },
-          {
-            "$ref": "#/components/schemas/VulnerabilityNode"
-          }
-        ]
+        }
       },
       "NodeDataType": {
         "type": "object",
@@ -4419,6 +4769,37 @@
           }
         },
         "description": "The associated paths in the network graph"
+      },
+      "PrimaryAssetNode": {
+        "required": [
+          "label",
+          "type"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Node"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Label representing the primary asset name"
+              },
+              "type": {
+                "type": "string",
+                "description": "The node type",
+                "enum": [
+                  "PrimaryAsset"
+                ]
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/AssetNodeMetadata"
+              }
+            }
+          }
+        ]
       },
       "VulnerabilityMetadata": {
         "required": [
@@ -4460,18 +4841,26 @@
           "type"
         ],
         "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "The node type",
-            "enum": [
-              "Vulnerability"
-            ]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Node"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/VulnerabilityMetadata"
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The node type",
+                "enum": [
+                  "Vulnerability"
+                ]
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/VulnerabilityMetadata"
+              }
+            }
           }
-        }
+        ]
       }
     },
     "headers": {

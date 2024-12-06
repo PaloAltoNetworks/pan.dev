@@ -1,3 +1,13 @@
+:::warning Important
+This TA and App is now deprecated and will no longer receive updates or support. For continued support and future updates, please switch to the new app supported by Splunk.
+
+Please follow the [documentation](https://splunk.github.io/splunk-app-for-palo-alto-networks/Installationoverview/) for a migration path to use the Splunk supported
+[Splunk App for Palo Alto Networks](https://splunkbase.splunk.com/app/7505).
+
+Please follow the [documentation](https://splunk.github.io/splunk-add-on-for-palo-alto-networks/MigrationPaths/) for a migration path to use the Splunk supported [Splunk Add-on for Palo Alto Networks](https://splunkbase.splunk.com/app/7523).
+
+:::
+
 # Dashboard Reference
 
 This reference is intended to help you get the most out of the more complex dashboards. Not all dashboards are shown here.

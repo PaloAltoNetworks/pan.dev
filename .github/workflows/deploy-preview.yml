@@ -108,21 +108,21 @@ jobs:
         id: yarn-cache
         run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.yarn-cache.outputs.YARN_CACHE_DIR }}
-          key: ${{ runner.os }}-pandev-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pandev-
+      # - name: Cache dependencies
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ${{ steps.yarn-cache.outputs.YARN_CACHE_DIR }}
+      #     key: ${{ runner.os }}-pandev-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pandev-
 
-      - name: Cache docusaurus build
-        uses: actions/cache@v4
-        with:
-          path: node_modules/.cache/webpack
-          key: ${{ runner.os }}-pandev-pr-${{ github.event.number }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pandev-pr-${{ github.event.number }}-
+      # - name: Cache docusaurus build
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: node_modules/.cache/webpack
+      #     key: ${{ runner.os }}-pandev-pr-${{ github.event.number }}-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pandev-pr-${{ github.event.number }}-
 
       - name: Install dependencies
         run: yarn --prefer-offline
@@ -152,9 +152,9 @@ jobs:
         run: |
           echo "Including 'sase' in build..."
           if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan" >> $GITHUB_ENV
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan,scm" >> $GITHUB_ENV
           else
-            echo "PRODUCTS_INCLUDE=sase,access,sdwan" >> $GITHUB_ENV
+            echo "PRODUCTS_INCLUDE=sase,access,sdwan,scm" >> $GITHUB_ENV
           fi
       
       - name: Include contributing
@@ -172,7 +172,21 @@ jobs:
           echo "Building the following products: $PRODUCTS_INCLUDE"
 
       - name: Build site
-        run: yarn build-github && zip -r build.zip build
+        run: yarn build-github
+
+      - name: Zip build directory
+        run: |
+          if [ -d "build" ]; then
+            BUILD_DIR="build"
+          elif [ -d "websites/pan-dev/build" ]; then
+            BUILD_DIR="websites/pan-dev/build"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+      
+          echo "Build directory found at: $BUILD_DIR"
+          zip -r build.zip "$BUILD_DIR"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -200,7 +214,18 @@ jobs:
           name: build
 
       - name: Unzip build artifact
-        run: unzip build.zip
+        run: |
+          unzip build.zip
+          if [ -d "build" ]; then
+            DEPLOY_DIR="."
+          elif [ -d "websites/pan-dev/build" ]; then
+            DEPLOY_DIR="websites/pan-dev"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+          echo "Deploy directory found at: $DEPLOY_DIR"
+          echo "DEPLOY_DIR=$DEPLOY_DIR" >> $GITHUB_ENV
 
       - name: Deploy to Firebase
         id: deploy_preview
@@ -211,5 +236,6 @@ jobs:
           projectId: pan-dev-f1b58
           expires: 30d
           channelId: 'pr${{ github.event.number }}'
+          entryPoint: ${{ env.DEPLOY_DIR }}
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
