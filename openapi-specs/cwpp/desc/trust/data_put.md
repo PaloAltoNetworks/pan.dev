@@ -10,7 +10,30 @@ $ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \
-  -d '{"image":"ubuntu/16.04", "_id":"docker-ubuntu-group"}' \
+  -d '{
+    "groups": [
+        {
+            "_id": "test",
+            "images": [
+                "docker.io/skywalke34/struts:*"
+            ]
+        }
+    ],
+    "policy": {
+        "enabled": true,
+        "rules": [
+            {
+                "collections": [
+                    {
+                        "name": "All"
+                    }
+                ],
+                "effect": "alert",
+                "name": "Default - alert all"
+            }
+        ]
+    }
+}' \
   https://<CONSOLE>/api/v<VERSION>/trust/data
 ```
 
