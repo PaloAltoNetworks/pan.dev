@@ -303,6 +303,7 @@ module.exports = {
   ],
   saseconfigorch: [
     "sase/api/config-orch/config-orch",
+    "sase/api/config-orch/api-workflow",
     require("./api/config-orch/sidebar"),
   ],
   sasesubscription: [
