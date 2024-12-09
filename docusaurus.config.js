@@ -28,7 +28,6 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
-  markdown: { format: "detect" },
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl"],
@@ -113,7 +112,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "/prisma-cloud/api",
-                      label: "Prisma Cloud API",
+                      label: "Prisma Cloud",
                       icon: "api-doc",
                     },
                   ],
@@ -194,18 +193,6 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
-                  label: "AI Runtime Security",
-                  to: "#",
-                  logoClass: "panos",
-                  apiDocs: [
-                    {
-                      to: "ai-runtime-security/scan/api/",
-                      label: "AI Runtime Security API",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
                   label: "PAN-OS",
                   to: "#",
                   logoClass: "panos",
@@ -274,7 +261,7 @@ const config = {
                   ],
                 },
                 {
-                  label: "Strata Logging Service",
+                  label: "Cortex Data Lake",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -372,36 +359,6 @@ const config = {
               ],
             },
             {
-              label: "Strata Cloud Manager",
-              to: "#",
-              colorclass: "scm",
-              description: "Discover Strata Cloud Manager APIs.",
-              products: [
-                {
-                  label: "Strata Cloud Manager",
-                  to: "#",
-                  logoClass: "scm",
-                  docs: [
-                    {
-                      to: "strata-cloud-manager",
-                      label: "Home Page",
-                      icon: "doc",
-                    },
-                    {
-                      to: "scm/docs/home",
-                      label: "Developer's Guide",
-                      icon: "doc",
-                    },
-                    {
-                      to: "scm/docs/release-notes/changelog",
-                      label: "Changelog",
-                      icon: "doc",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
               label: "Secure Access Service Edge",
               to: "#",
               colorclass: "sase",
@@ -456,11 +413,6 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "/access/api/browser-mgmt",
-                      label: "Prisma Access Browser",
-                      icon: "api-doc",
-                    },
-                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
@@ -496,6 +448,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "access/api/insights",
+                      label: "Prisma Access Insights",
+                      icon: "api-doc",
+                    },
+                    {
                       label: "Log Forwarding",
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
@@ -522,18 +479,6 @@ const config = {
                   ],
                 },
                 {
-                  label: "Prisma Access Browser",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "access/api/browser-mgmt/browser-mgmt-api",
-                      label: "Prisma Access Browser",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
                   label: "Prisma Access Insights",
                   to: "#",
                   logoClass: "prisma",
@@ -549,11 +494,6 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      label: "Get Started 3.0",
-                      to: "access/docs/insights/getting_started-30",
-                      icon: "doc",
-                    },
-                    {
                       label: "API FAQs",
                       to: "access/docs/insights/pai-faqs",
                       icon: "doc",
@@ -566,13 +506,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/insights/2.0",
-                      label: "Prisma Access Insights 2.0",
-                      icon: "api-doc",
-                    },
-                    {
                       to: "access/api/insights",
-                      label: "Prisma Access Insights 3.0",
+                      label: "Prisma Access Insights 2.0",
                       icon: "api-doc",
                     },
                   ],
@@ -598,18 +533,6 @@ const config = {
                       to: "sdwan/api/legacy",
                       label: "Prisma SD-WAN Legacy",
                       icon: "api-doc",
-                    },
-                  ],
-                },
-                {
-                  label: "Prisma SASE Service Status",
-                  to: "#",
-                  logoClass: "prisma",
-                  docs: [
-                    {
-                      label: "Prisma SASE Service Status API",
-                      to: "sase/docs/saseservicestatusapi",
-                      icon: "doc",
                     },
                   ],
                 },
@@ -649,26 +572,6 @@ const config = {
                     {
                       label: "Splunk App/Add-on",
                       to: "splunk/docs",
-                      icon: "doc",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              label: "Cross-Platform",
-              to: "#",
-              colorclass: "cross-platform",
-              description:
-                "Learn about opportunities across Palo Alto Networks platforms.",
-              products: [
-                {
-                  label: "Service Status",
-                  to: "#",
-                  docs: [
-                    {
-                      label: "Service Status API",
-                      to: "cross-platform/docs/servicestatusapi",
                       icon: "doc",
                     },
                   ],
@@ -746,118 +649,10 @@ const config = {
               groupPathsBy: "tag",
             },
           },
-          scmauth: {
-            specPath: "openapi-specs/scm/auth",
-            outputDir: "products/scm/api/auth",
-            proxy: "https://cors.pan.dev",
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
-          },
           iam: {
             specPath: "openapi-specs/sase/iam",
             outputDir: "products/sase/api/iam",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
-          },
-          scmiam: {
-            specPath: "openapi-specs/scm/iam",
-            outputDir: "products/scm/api/iam",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
-          },
-          "config-sase-operations": {
-            specPath: "openapi-specs/scm/config/sase/operations",
-            outputDir: "products/scm/api/config/sase/operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-setup": {
-            specPath: "openapi-specs/scm/config/sase/setup",
-            outputDir: "products/scm/api/config/sase/setup",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-deployment": {
-            specPath: "openapi-specs/scm/config/sase/deployment",
-            outputDir: "products/scm/api/config/sase/deployment",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-identity": {
-            specPath: "openapi-specs/scm/config/sase/identity",
-            outputDir: "products/scm/api/config/sase/identity",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-mobileagent": {
-            specPath: "openapi-specs/scm/config/sase/mobileagent",
-            outputDir: "products/scm/api/config/sase/mobileagent",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-objects": {
-            specPath: "openapi-specs/scm/config/sase/objects",
-            outputDir: "products/scm/api/config/sase/objects",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-sase-security": {
-            specPath: "openapi-specs/scm/config/sase/security",
-            outputDir: "products/scm/api/config/sase/security",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-operations": {
-            specPath: "openapi-specs/scm/config/ngfw/operations",
-            outputDir: "products/scm/api/config/ngfw/operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-setup": {
-            specPath: "openapi-specs/scm/config/ngfw/setup",
-            outputDir: "products/scm/api/config/ngfw/setup",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-identity": {
-            specPath: "openapi-specs/scm/config/ngfw/identity",
-            outputDir: "products/scm/api/config/ngfw/identity",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-device": {
-            specPath: "openapi-specs/scm/config/ngfw/device",
-            outputDir: "products/scm/api/config/ngfw/device",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network",
-            outputDir: "products/scm/api/config/ngfw/network",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-objects": {
-            specPath: "openapi-specs/scm/config/ngfw/objects",
-            outputDir: "products/scm/api/config/ngfw/objects",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-ngfw-security": {
-            specPath: "openapi-specs/scm/config/ngfw/security",
-            outputDir: "products/scm/api/config/ngfw/security",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-cloudngfw-operations": {
-            specPath: "openapi-specs/scm/config/cloudngfw/operations",
-            outputDir: "products/scm/api/config/cloudngfw/operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-cloudngfw-setup": {
-            specPath: "openapi-specs/scm/config/cloudngfw/setup",
-            outputDir: "products/scm/api/config/cloudngfw/setup",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-cloudngfw-identity": {
-            specPath: "openapi-specs/scm/config/cloudngfw/identity",
-            outputDir: "products/scm/api/config/cloudngfw/identity",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-cloudngfw-objects": {
-            specPath: "openapi-specs/scm/config/cloudngfw/objects",
-            outputDir: "products/scm/api/config/cloudngfw/objects",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "config-cloudngfw-security": {
-            specPath: "openapi-specs/scm/config/cloudngfw/security",
-            outputDir: "products/scm/api/config/cloudngfw/security",
-            sidebarOptions: { groupPathsBy: "tag" },
           },
           adem: {
             specPath: "openapi-specs/access/adem",
@@ -865,19 +660,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           insights: {
-            specPath: "openapi-specs/access/insights/3.0",
+            specPath: "openapi-specs/access/insights/2.0",
             outputDir: "products/access/api/insights",
             sidebarOptions: { groupPathsBy: "tag" },
-            version: "3.0",
-            label: "v3.0",
+            version: "2.0",
+            label: "v2.0",
             baseUrl: "/access/api/insights/",
             versions: {
-              "2.0": {
-                specPath: "openapi-specs/access/insights/2.0",
-                outputDir: "products/access/api/insights/2.0",
-                label: "v2.0",
-                baseUrl: "/access/api/insights/2.0",
-              },
               "1.0": {
                 specPath: "openapi-specs/access/insights/1.0",
                 outputDir: "products/access/api/insights/1.0",
@@ -889,7 +678,7 @@ const config = {
           mtmonitor: {
             specPath: "openapi-specs/sase/mt-monitor",
             outputDir: "products/sase/api/mt-monitor",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
@@ -911,11 +700,6 @@ const config = {
             outputDir: "products/access/api/prisma-access-config",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          browsermgmt: {
-            specPath: "openapi-specs/access/browser-mgmt",
-            outputDir: "products/access/api/browser-mgmt",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           ztna: {
             specPath: "openapi-specs/access/ztna",
             outputDir: "products/access/api/ztna",
@@ -926,19 +710,9 @@ const config = {
             outputDir: "products/sase/api/subscription",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          scmsub: {
-            specPath: "openapi-specs/scm/subscription",
-            outputDir: "products/scm/api/subscription",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           tenancy: {
             specPath: "openapi-specs/sase/tenancy",
             outputDir: "products/sase/api/tenancy",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          scmtenancy: {
-            specPath: "openapi-specs/scm/tenancy",
-            outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {
@@ -979,12 +753,6 @@ const config = {
             outputDir: "products/cloudngfw/api/aws",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          airuntimesecurity: {
-            specPath: "openapi-specs/ai-runtime-security/scan",
-            outputDir: "products/ai-runtime-security/api",
-            proxy: "https://cors.pan.dev",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-          },
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
@@ -1006,22 +774,6 @@ const config = {
             outputDir: "products/cdl/api/logforwarding",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          mssp: {
-            specPath: "openapi-specs/mssp",
-            outputDir: "products/prisma-cloud/api/mssp",
-            showExtensions: false,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/prisma-cloud/api/",
-            hideSendButton: true,
-          },
-          "action-plan": {
-            specPath: "openapi-specs/action-plan",
-            outputDir: "products/prisma-cloud/api/action-plan",
-            showExtensions: false,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/prisma-cloud/api/",
-            hideSendButton: true,
-          },
           cwpp: {
             specPath: "openapi-specs/cwpp",
             outputDir: "products/prisma-cloud/api/cwpp",
@@ -1042,35 +794,43 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             hideSendButton: true,
           },
-          dspm: {
-            specPath: "openapi-specs/dspm",
-            outputDir: "products/prisma-cloud/api/dspm",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            hideSendButton: true,
-          },
           compute: {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.02",
-            label: "v33.02",
+            version: "32.07",
+            label: "v32.07",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
-              32.07: {
-                specPath: "openapi-specs/compute/32-07",
-                outputDir: "products/compute/api/32-07",
-                label: "v32.07",
-                baseUrl: "/compute/api/32-07/",
-              },
               31.02: {
                 specPath: "openapi-specs/compute/31-02",
                 outputDir: "products/compute/api/31-02",
                 label: "v31.02",
                 baseUrl: "/compute/api/31-02/",
               },
+              30.03: {
+                specPath: "openapi-specs/compute/30-03",
+                outputDir: "products/compute/api/30-03",
+                label: "v30.03",
+                baseUrl: "/compute/api/30-03/",
+              },
             },
+          },
+          compute_3203: {
+            specPath: "openapi-specs/compute/32-03",
+            outputDir: "products/compute/api/32-03",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-03/",
+          },
+          compute_3204: {
+            specPath: "openapi-specs/compute/32-04",
+            outputDir: "products/compute/api/32-04",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/32-04/",
           },
           compute_3205: {
             specPath: "openapi-specs/compute/32-05",
@@ -1085,27 +845,6 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/32-06/",
-          },
-          compute_3207: {
-            specPath: "openapi-specs/compute/32-07",
-            outputDir: "products/compute/api/32-07",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-07/",
-          },
-          compute_3300: {
-            specPath: "openapi-specs/compute/33-00",
-            outputDir: "products/compute/api/33-00",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/33-00/",
-          },
-          compute_3301: {
-            specPath: "openapi-specs/compute/33-01",
-            outputDir: "products/compute/api/33-01",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/33-01/",
           },
         },
       },
@@ -1142,23 +881,11 @@ const config = {
   trailingSlash: true,
   webpack: {
     jsLoader: (isServer) => ({
-      loader: require.resolve("swc-loader"),
+      loader: require.resolve("esbuild-loader"),
       options: {
-        jsc: {
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-          },
-          target: "es2019",
-          transform: {
-            react: {
-              runtime: "automatic",
-            },
-          },
-        },
-        module: {
-          type: isServer ? "commonjs" : "es6",
-        },
+        loader: "tsx",
+        format: isServer ? "cjs" : undefined,
+        target: isServer ? "node12" : "es2017",
       },
     }),
   },
