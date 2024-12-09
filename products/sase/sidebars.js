@@ -184,7 +184,6 @@ module.exports = {
       collapsed: true,
       items: [
         "access/docs/insights/insights",
-        "access/docs/insights/getting_started-30",
         "access/docs/insights/getting_started-20",
         "access/docs/insights/getting_started-10",
         {
@@ -278,7 +277,6 @@ module.exports = {
         "access/docs/insights/pai-faqs",
       ],
     },
-    "sase/docs/saseservicestatusapi",
     {
       type: "category",
       label: "Prisma SASE API Release Notes",
