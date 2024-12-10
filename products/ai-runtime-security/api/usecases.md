@@ -157,7 +157,7 @@ The request scans a prompt containing sensitive data such as bank account number
 Enable "AI Data Protection" detection type in your AI security profile for this detection.
 
 ```curl
-curl -L 'http://https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
 --header 'Content-Type: application/json' \
 --header 'x-pan-token: <your-API-key>' \
 --header 'Accept: application/json' \
