@@ -42,7 +42,7 @@ sidebar_label: New Doc
 
 1. Add to sidebar it fits in
 
-```json title="sidebars.js"
+```json title="sidebars.ts"
   cloud: [ // Add your new doc inside an existing sidebar
     {
       type: 'category',
