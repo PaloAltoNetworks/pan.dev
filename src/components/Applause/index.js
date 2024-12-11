@@ -11,10 +11,10 @@ import {
   increment,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-const {
+import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider,
-} = require("firebase/app-check");
+} from "firebase/app-check";
 import { useLocation } from "@docusaurus/router";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
@@ -30,6 +30,8 @@ function ApplauseButton() {
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
+
+  console.log(customFields.recaptchaApiKey);
 
   const firebaseConfig = {
     apiKey: customFields.firebaseApiKey,
@@ -48,10 +50,10 @@ function ApplauseButton() {
 
   if (customFields.recaptchaApiKey && ExecutionEnvironment.canUseDOM) {
     app = initializeApp(firebaseConfig);
-    // appCheck = initializeAppCheck(app, {
-    //   provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
-    //   isTokenAutoRefreshEnabled: true,
-    // });
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
+      isTokenAutoRefreshEnabled: true,
+    });
     db = getFirestore(app);
     docRef = doc(db, COLLECTION_ID, docId);
   }
