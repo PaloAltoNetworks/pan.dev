@@ -31,8 +31,6 @@ function ApplauseButton() {
     siteConfig: { customFields },
   } = useDocusaurusContext();
 
-  console.log(customFields.recaptchaApiKey);
-
   const firebaseConfig = {
     apiKey: customFields.firebaseApiKey,
     projectId: "pan-dev-f1b58",
