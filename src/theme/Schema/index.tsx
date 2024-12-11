@@ -649,7 +649,7 @@ const SchemaEdge: React.FC<SchemaEdgeProps> = ({
 
   const schemaName = getSchemaName(schema);
 
-  if (discriminator && discriminator.propertyName === name) {
+  if (discriminator && discriminator.propertyName === name && discriminator.mapping && Object.keys(discriminator.mapping).length !== 0) {
     return (
       <PropertyDiscriminator
         name={name}
