@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import HandsOutline from "./assets/hands-outline.svg";
 import Hands from "./assets/hands.svg";
@@ -10,11 +10,11 @@ import {
   getDoc,
   increment,
 } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
-const {
+import { initializeApp, getApp, getApps } from "firebase/app";
+import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider,
-} = require("firebase/app-check");
+} from "firebase/app-check";
 import { useLocation } from "@docusaurus/router";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
@@ -47,11 +47,15 @@ function ApplauseButton() {
   let appCheck;
 
   if (customFields.recaptchaApiKey && ExecutionEnvironment.canUseDOM) {
-    app = initializeApp(firebaseConfig);
-    // appCheck = initializeAppCheck(app, {
-    //   provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
-    //   isTokenAutoRefreshEnabled: true,
-    // });
+    if (getApps().length === 0) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApp();
+    }
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(customFields.recaptchaApiKey),
+      isTokenAutoRefreshEnabled: true,
+    });
     db = getFirestore(app);
     docRef = doc(db, COLLECTION_ID, docId);
   }
