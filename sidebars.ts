@@ -1,7 +1,7 @@
 const utils = require("@docusaurus/utils");
 
 async function generateSidebars() {
-  const product_sidebars = await utils.Globby("./products/**/sidebars.js");
+  const product_sidebars = await utils.Globby("./products/**/sidebars.ts");
 
   let sidebar = {};
   const filters = process.env.PRODUCTS_INCLUDE

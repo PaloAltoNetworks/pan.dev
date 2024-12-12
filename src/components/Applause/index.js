@@ -11,10 +11,10 @@ import {
   increment,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-const {
+import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider,
-} = require("firebase/app-check");
+} from "firebase/app-check";
 import { useLocation } from "@docusaurus/router";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
