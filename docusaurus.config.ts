@@ -33,10 +33,7 @@ const config = {
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",
-<<<<<<< HEAD:docusaurus.config.js
-=======
   markdown: { format: "detect", mermaid: true },
->>>>>>> origin/master:docusaurus.config.ts
   themeConfig: {
     prism: {
       additionalLanguages: ["csharp", "php", "hcl", "json", "bash"],
@@ -885,19 +882,6 @@ const config = {
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
-<<<<<<< HEAD:docusaurus.config.js
-  webpack: {
-    jsLoader: (isServer) => ({
-      loader: require.resolve("esbuild-loader"),
-      options: {
-        loader: "tsx",
-        format: isServer ? "cjs" : undefined,
-        target: isServer ? "node12" : "es2017",
-      },
-    }),
-  },
-=======
->>>>>>> origin/master:docusaurus.config.ts
   customFields: {
     firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
     recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
