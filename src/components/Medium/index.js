@@ -7,7 +7,7 @@ import "./Slider.scss";
 import styles from "./styles.module.css";
 
 const blog_json = require("./blogs.json");
-const blogs = blog_json.items.slice(0, 9);
+const blogs = blog_json?.items?.slice(0, 9);
 
 function Medium() {
   const sliderSettings = {
