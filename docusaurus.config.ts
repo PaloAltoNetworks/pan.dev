@@ -80,7 +80,7 @@ const config = {
       },
     },
     algolia: {
-      apiKey: "6869800b232f5f8362e83901d79110ee",
+      apiKey: "<your-algolia-api-key>",
       appId: "XC7919KOX3",
       indexName: "pan",
       externalUrlRegex:
