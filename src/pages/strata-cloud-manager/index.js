@@ -241,17 +241,17 @@ export default function SCMLandingPage() {
       description="Strata Cloud Manager description"
       title="Strata Cloud Manager"
     >
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="scm-hero-video"
+        poster="https://via.placeholder.com/1920x1080"
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
       <section className="scm-hero-container">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="scm-hero-video"
-          poster="https://via.placeholder.com/1920x1080"
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
         <h1 className="hero--header">{heroHeader}</h1>
         <p className="hero--description text--light">{heroDescription}</p>
       </section>
