@@ -491,6 +491,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/sspm",
+                      label: "SaaS Security Posture Management",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -529,6 +534,18 @@ const config = {
                     {
                       to: "access/api/browser-mgmt/browser-mgmt-api",
                       label: "Prisma Access Browser",
+                      icon: "api-doc",
+                    },
+                  ],
+                },
+                {
+                  label: "SaaS Security Posture Management",
+                  to: "#",
+                  logoClass: "prisma",
+                  apiDocs: [
+                    {
+                      to: "access/api/sspm/getting-started",
+                      label: "SaaS Security Management",
                       icon: "api-doc",
                     },
                   ],
@@ -896,6 +913,11 @@ const config = {
           mtinterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect",
             outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          securityposture: {
+            specPath: "openapi-specs/sase/sspm",
+            outputDir: "products/sase/api/sspm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
