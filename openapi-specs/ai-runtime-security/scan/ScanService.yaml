@@ -1,0 +1,674 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: https://www.paloaltonetworks.com/company/contact-support
+  title: AI Runtime Security API Intercept
+  description: "This Open API spec file represents the APIs available for the AI Runtime Security: API Intercept.\n
+    \nThese APIs use the API Key authentication and base URL.\n
+    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for AI Runtime Security: API intercept and then onboard the API intercept in Strata Cloud Manager.\
+    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the AI Runtime Security: API intercept [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
+    This Open API spec file was created on June 04, 2024.\
+    \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
+    A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
+    All other marks mentioned herein may be trademarks of their respective companies.\n"
+  license:
+    name: Palo Alto Networks EULA
+    url: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+  version: 0.0.0
+
+servers:
+  - url: "https://service.api.aisecurity.paloaltonetworks.com"
+    description: AI Runtime Security API Intercept service URL
+
+tags:
+  - name: Scans
+  - name: Scan Results
+  - name: Scan Reports
+
+paths:
+  /v1/scan/sync/request:
+    post:
+      summary: Send a Synchronous Scan Request
+      description: Post a scan request containing prompt/model-response that returns a synchronous scan response
+      security: []
+      operationId: ScanSyncRequest
+      tags:
+        - Scans
+      parameters:
+        - description: API key token genereated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in SCM.
+          required: true
+          in: header
+          name: x-pan-token
+          schema:
+            type: string
+      requestBody:
+        description: Scan request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+      responses:
+        "200":
+          description: successfully scanned request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthenticated'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "405":
+          $ref: '#/components/responses/MethodNotAllowed'
+        "413":
+          $ref: '#/components/responses/RequestTooLarge'
+        "415":
+          $ref: '#/components/responses/UnsupportedMediaType'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+
+  /v1/scan/async/request:
+    post:
+      summary: Send an Asynchronous Scan Request
+      description: Post a scan request that returns asynchronous scan response
+      security: []
+      operationId: ScanAsyncRequest
+      tags:
+        - Scans
+      parameters:
+        - description: API key token genereated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in SCM.
+          required: true
+          in: header
+          name: x-pan-token
+          schema:
+            type: string
+      requestBody:
+        description: A list of scan request objects
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AsyncScanRequest'
+      responses:
+        "200":
+          description: successfully scanned request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncScanResponse'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthenticated'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "405":
+          $ref: '#/components/responses/MethodNotAllowed'
+        "413":
+          $ref: '#/components/responses/RequestTooLarge'
+        "415":
+          $ref: '#/components/responses/UnsupportedMediaType'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/scan/results:
+    get:
+      summary: Retrieve Scan Results by ScanIDs
+      description: Get the Scan results for upto a maximum of 5 Scan IDs
+      security: []
+      operationId: GetScanResultsByScanIDs
+      tags:
+        - Scan Results
+      parameters:
+        - description: API key token genereated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in SCM.
+          required: true
+          in: header
+          name: x-pan-token
+          schema:
+            type: string
+        - name: scan_ids
+          in: query
+          description: Scan Ids for Results
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
+            maximum: 5
+          style: form # Serialize as scan_ids=id1,id2,id3
+          explode: false
+      responses:
+        200:
+          description: Successfully returned records for Scan Results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScanIdResult'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthenticated'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "405":
+          $ref: '#/components/responses/MethodNotAllowed'
+        "413":
+          $ref: '#/components/responses/RequestTooLarge'
+        "415":
+          $ref: '#/components/responses/UnsupportedMediaType'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /v1/scan/reports:
+    get:
+      summary: Retrieve Threat Scan Reports by Report IDs
+      description: Get the Threat Scan Reports for a given list of report_ids
+      security: []
+      tags:
+        - Scan Reports
+      operationId: GetThreatScanReports
+      parameters:
+        - description: API key token genereated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in SCM.
+          required: true
+          in: header
+          name: x-pan-token
+          schema:
+            type: string
+        - name: report_ids
+          in: query
+          description: Report Ids for Results
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
+            maximum: 5
+          style: form # Serialize as report_ids=id1,id2,id3
+          explode: false
+      responses:
+        200:
+          description: Successfully returned Threat Scan Reports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatScanReportObjects'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthenticated'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "405":
+          $ref: '#/components/responses/MethodNotAllowed'
+        "413":
+          $ref: '#/components/responses/RequestTooLarge'
+        "415":
+          $ref: '#/components/responses/UnsupportedMediaType'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    ScanRequest:
+      type: object
+      properties:
+        tr_id:
+          type: string
+          description: Provide any unique identifier string for correlating the prompt and response transactions. This is an optional field. The tr_id value received for scan request is returned in the scan response along with the scan ID.
+        ai_profile:
+          $ref: '#/components/schemas/AiProfile'
+          description: AI profile to use for the scan. You can specify one of the following - profile_id or profile_name  
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+          description: Optionally send the app_name, app_user, and ai_model in the metadata
+        contents:
+          description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
+          type: array
+          items:
+            type: object
+            properties:
+              prompt:
+                type: string
+                description: The prompt content that you want to scan
+              response:
+                type: string
+                description: The response content that you want to scan
+      required:
+        - contents
+        - ai_profile
+
+    AiProfile:
+      type: object
+      properties:
+        profile_id:
+          description: Unique identifier for the profile. If not provided, then profile_name is required.
+          type: string
+        profile_name:
+          description: Name of the profile. If not provided, then profile_id is required.
+          type: string
+
+    Metadata:
+      type: object
+      properties:
+        app_name:
+          type: string
+          description: AI application requesting the content scan
+        app_user:
+          type: string
+          description: End user using the AI application
+        ai_model:
+          type: string
+          description: AI model serving the AI application
+
+    ScanResponse:
+      type: object
+      properties:
+        report_id:
+          type: string
+          description: Unique identifier for the scan report
+          example: R82f1e879-0000-49af-9345-da907431c08f
+        scan_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the scan
+          example: 82f1e879-0000-49af-9345-da907431c08f
+        tr_id:
+          type: string
+          description: Unique identifier for the transaction
+          example: 1234
+        profile_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the AI security profile used for scanning
+          example: 12345678-0000-1234-1234-123456789012
+        profile_name:
+          type: string
+          description: AI security profile name used for scanning
+          example: ai-dummy-profile
+        category:
+          type: string
+          description: Category of the scanned content verdicts such as "malicious" or "benign"
+          example: malicious
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+          example: block
+        prompt_detected:
+          $ref: '#/components/schemas/PromptDetected'
+        response_detected:
+          $ref: '#/components/schemas/ResponseDetected'
+        created_at:
+          type: string
+          format: date-time
+          description: Scan request timestamp
+        completed_at:
+          type: string
+          format: date-time
+          description: Scan completion timestamp
+      required:
+        - report_id
+        - scan_id
+        - category
+        - action
+
+    PromptDetected:
+      type: object
+      properties:
+        url_cats:
+          type: boolean
+          description: Indicates whether prompt contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether prompt contains any sensitive information
+        injection:
+          type: boolean
+          description: Indicates whether prompt contains any injection threats
+
+    ResponseDetected:
+      type: object
+      properties:
+        url_cats:
+          type: boolean
+          description: Indicates whether response contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether response contains any sensitive information
+
+    ScanIdResult:
+      type: object
+      properties:
+        req_id:
+          type: integer
+          description: Unique identifier of an individual element sent in the batch scan request
+        status:
+          type: string
+          description: Scan request processing state such as "complete" or "pending"
+          example: complete
+        scan_id:
+          type: string
+          description: Unique identifier for the scan
+          example: 020e7c31-0000-4e0d-a2a6-215a0d5c56d9
+        result:
+          $ref: '#/components/schemas/ScanResponse'
+
+    AsyncScanRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/AsyncScanObject'
+
+    AsyncScanObject:
+      type: object
+      properties:
+        req_id:
+          type: integer
+          format: uint32
+          description: Unique identifier of an individual element sent in the batch scan request
+        scan_req:
+          $ref: '#/components/schemas/ScanRequest'
+      required:
+        - req_id
+        - scan_req
+
+    AsyncScanResponse:
+      type: object
+      properties:
+        received:
+          type: string
+          format: date-time
+          description: Asynchronous scan received timestamp
+        scan_id:
+          type: string
+          description: Unique identifier for the asynchronous scan request
+          example: 82f1e879-0000-49af-9345-da907431c08f
+        report_id:
+          type: string
+          description: Unique identifier for the asynchronous scan report
+          example: R82f1e879-0000-49af-9345-da907431c08f
+      required:
+        - received
+        - scan_id
+
+    ThreatScanReportObjects:
+      type: array
+      items:
+        $ref: '#/components/schemas/ThreatScanReportObject'
+
+    ThreatScanReportObject:
+      type: object
+      properties:
+        report_id:
+          type: string
+          description: Unique identifier for the scan report
+          example: R82f1e879-0000-49af-9345-da907431c08f
+        scan_id:
+          type: string
+          description: Unique identifier for the scan
+          example: 82f1e879-0000-49af-9345-da907431c08f
+        req_id:
+          type: integer
+          format: uint32
+          description: Unique identifier of an individual element sent in the batch scan request
+        transaction_id:
+          type: string
+          description: Unique identifier for the transaction
+          example: 442116912
+        detection_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetectionServiceResultObject'
+
+    DetectionServiceResultObject:
+      type: object
+      properties:
+        data_type:
+          type: string
+          description: Content type such as "prompt" or "response"
+          example: prompt
+        detection_service:
+          type: string
+          description: Detection service name generating the results such as "urlf", "dlp", and "prompt injection"
+          example: pi
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+          example: malicious
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+          example: block
+        result_detail:
+          $ref: '#/components/schemas/DSDetailResultObject'
+
+    DSDetailResultObject:
+      type: object
+      properties:
+        urlf_report:
+          $ref: '#/components/schemas/UrlFilterReportObject'
+        dlp_report:
+          $ref: '#/components/schemas/DlpReportObject'
+
+    UrlFilterReportObject:
+      type: array
+      items:
+        $ref: '#/components/schemas/UrlfEntryObject'
+
+    UrlfEntryObject:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL in the scan request
+          example: urlfiltering.paloaltonetworks.com/test-malware
+        risk_level:
+          type: string
+          description: Risk level associated with the URL, such as "high", "medium", or "low"
+          example: high
+        categories:
+          type: array
+          description: Categories associated with the URL
+          example: malware
+          items:
+            type: string
+            example: prompt detection
+
+    DlpReportObject:
+      type: object
+      properties:
+        dlp_report_id:
+          type: string
+          description: Unique identifier for the DLP report
+          example: 0000023BD6053DF065925BDB2EB7E21C36ABD93F69AEB48DE8D6EE8E6FED3F91
+        dlp_profile_name:
+          type: string
+          description: DLP profile name used for the scan
+          example: Sensitive Content
+        dlp_profile_id:
+          type: string
+          description: Unique identifier for the DLP profile used for the scan
+          example: 11995043
+        dlp_profile_version:
+          type: integer
+          format: int32
+          description: Version of the DLP profile used for the scan
+        data_pattern_rule1_verdict:
+          type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
+          example: NOT_MATCHED
+        data_pattern_rule2_verdict:
+          type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
+          example: ""
+
+    Error:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          format: int32
+          description: The HTTP status code for the error
+        message:
+          type: string
+          description: The error message
+      required:
+        - status_code
+        - message
+  responses:
+    BadRequest:
+      description: Bad Request - Request data is invalid or malformed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Request data is invalid or malformed"
+    Unauthenticated:
+      description: Unauthenticated - Not Authenticated
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Authenticated"
+    Forbidden:
+      description: Forbidden - Invalid API Key
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid API Key"
+    NotFound:
+      description: Not Found - Resource is not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Resource is not found"
+    MethodNotAllowed:
+      description: Method Not Allowed - The method is not allowed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The method is not allowed"
+    RequestTooLarge:
+      description: Request Too Large - The request body is too large
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The request body is too large"
+    UnsupportedMediaType:
+      description: Unsupported Media Type - The media type is not supported
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The media type is not supported"
+    TooManyRequests:
+      description: Too Many Requests - Request exceeds limit
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Request exceeds limit"
+                  retry_after:
+                    type: object
+                    properties:
+                      interval:
+                        type: integer
+                        example: 5
+                      unit:
+                        type: string
+                        example: "minute"

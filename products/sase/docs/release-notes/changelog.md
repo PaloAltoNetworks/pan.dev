@@ -13,6 +13,8 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/).                                                                                                  |
+| Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                  |
 | July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                  |
 | April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                                                                  |
 | September 28, 2023    | Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/).                     |

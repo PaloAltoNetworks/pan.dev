@@ -1,12 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Prisma Cloud Unified Asset Inventory",
-    "description": "All assets known to Prisma Cloud with a comprehensive Asset Service",
+    "title": "APIs to query unified asset",
+    "description": "APIs to query data from Unified Asset Inventory (UAI)",
     "contact": {
-      "name": "Slack Us",
-      "url": "https://panw-rnd.slack.com/archives/C01DQJBJ7LJ",
-      "email": "pcs-scrum-platform-da-aaaacvlzsrzhfngxbqrn5mqpre@paloaltonetworks.org.slack.com"
+      "name": "Platform-Ironman",
+      "url": ""
     },
     "version": "V1"
   },
@@ -57,14 +56,23 @@
       "url": "https://api.fr.prismacloud.io"
     }
   ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "Asset Lookup",
-      "description": "All assets known to Prisma Cloud with a comprehensive Asset Service"
+      "description": "Asset Loopup APIs to query data from Unified Asset Inventory (UAI)"
     },
     {
       "name": "Id Translations",
-      "description": "All assets known to Prisma Cloud with a comprehensive Asset Service"
+      "description": "Id Translation APIs to query data from Unified Asset Inventory (UAI)"
+    },
+    {
+      "name": "Asset Explorer",
+      "description": "no idea what the description should be"
     }
   ],
   "paths": {
@@ -157,11 +165,7 @@
         "type": "object",
         "properties": {
           "ids": {
-            "maximum": 200,
-            "minimum": 1,
             "type": "array",
-            "format": "IdLookup",
-            "example": "[d49d2177f00f7ce4ab24bb86655efad4]",
             "items": {
               "maximum": 200,
               "minimum": 1,
@@ -174,22 +178,13 @@
         "description": "Request object for id translation"
       },
       "Problem": {
-        "required": [
-          "createdTs",
-          "parameters"
-        ],
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "format": "uri"
-          },
           "title": {
             "type": "string"
           },
           "status": {
-            "type": "integer",
-            "format": "int32"
+            "$ref": "#/components/schemas/StatusType"
           },
           "detail": {
             "type": "string"
@@ -198,9 +193,9 @@
             "type": "string",
             "format": "uri"
           },
-          "createdTs": {
-            "type": "integer",
-            "format": "int64"
+          "type": {
+            "type": "string",
+            "format": "uri"
           },
           "parameters": {
             "type": "object",
@@ -230,12 +225,12 @@
       "StatusType": {
         "type": "object",
         "properties": {
-          "reasonPhrase": {
-            "type": "string"
-          },
           "statusCode": {
             "type": "integer",
             "format": "int32"
+          },
+          "reasonPhrase": {
+            "type": "string"
           }
         }
       },
@@ -321,12 +316,6 @@
             "items": {
               "type": "object"
             }
-          },
-          "ipAddresses": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         }
       },
@@ -337,11 +326,7 @@
         "type": "object",
         "properties": {
           "ids": {
-            "maximum": 200,
-            "minimum": 1,
             "type": "array",
-            "format": "String",
-            "example": "[rrn:xxx:xx:xx-xx-x:xxx:xxx:x-xxxx]",
             "items": {
               "maximum": 200,
               "minimum": 1,
@@ -355,10 +340,7 @@
       },
       "AssetRequest": {
         "required": [
-          "alertIds",
           "assetId",
-          "attackPathIds",
-          "prismaCloudFindingsOnly",
           "type"
         ],
         "type": "object",
@@ -397,7 +379,9 @@
               "vulnerabilities_group_by_type",
               "asset_cwp_vulns",
               "app_contexts",
-              "attributes"
+              "attributes",
+              "data_security",
+              "data_security_summary"
             ]
           },
           "findingType": {
@@ -673,37 +657,10 @@
             "$ref": "#/components/schemas/AssetWrapper"
           },
           "errors": {
-            "required": [
-              "locations",
-              "message",
-              "path",
-              "pathAsString"
-            ],
-            "type": "object",
-            "properties": {
-              "message": {
-                "type": "string"
-              },
-              "path": {
-                "type": "array",
-                "items": {
-                  "type": "object"
-                }
-              },
-              "locations": {
-                "type": "array",
-                "items": {
-                  "type": "object"
-                }
-              },
-              "extensions": {
-                "$ref": "#/components/schemas/GraphQLErrorExtensions"
-              },
-              "pathAsString": {
-                "type": "string"
-              }
-            },
-            "description": "Error Object."
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GraphQLError"
+            }
           }
         },
         "description": "Asset object"
@@ -939,6 +896,39 @@
           }
         }
       },
+      "GraphQLError": {
+        "required": [
+          "locations",
+          "message",
+          "path",
+          "pathAsString"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "extensions": {
+            "$ref": "#/components/schemas/GraphQLErrorExtensions"
+          },
+          "pathAsString": {
+            "type": "string"
+          }
+        },
+        "description": "Error Object."
+      },
       "GraphQLErrorDebugInfo": {
         "required": [
           "subquery",
@@ -1138,12 +1128,6 @@
           "hasExtFindingRiskFactors": {
             "type": "boolean"
           },
-          "assetClassId": {
-            "type": "string"
-          },
-          "assetClass": {
-            "type": "string"
-          },
           "alertsCount": {
             "type": "array",
             "items": {
@@ -1161,6 +1145,9 @@
             "type": "object"
           },
           "assetCategory": {
+            "type": "string"
+          },
+          "dataSecurityServiceProviderId": {
             "type": "string"
           },
           "problem": {
@@ -1448,6 +1435,12 @@
           },
           "trueInternetExposure": {
             "type": "string"
+          },
+          "dataSecurity": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
           }
         },
         "description": "Asset Domain Service Object type."

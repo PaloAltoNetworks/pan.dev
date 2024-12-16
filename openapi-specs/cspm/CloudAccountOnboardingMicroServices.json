@@ -10,8 +10,16 @@
   },
   "tags": [
     {
+      "name": "AWS Logging Accounts",
+      "description": "To ingest the VPC flow logs from Amazon S3 buckets to Prisma Cloud, you need an AWS logging account. If you need flow logs ingestion, after onboarding your AWS account, you must onboard the logging account which has the S3 bucket storing VPC flow logs for the monitored account. The APIs in this category can be used to configure and manage these logging accounts."
+    },
+    {
       "name": "Cloud Accounts (AWS)",
       "description": "To monitor the resources on your AWS cloud infrastructure, you must first add your AWS accounts to Prisma Cloud. When you add your cloud account to Prisma Cloud, the API integration between AWS and Prisma Cloud is established and you can begin monitoring the resources and identify potential security risks.\n\nThe Cloud Account (AWS) APIs enable you to add and manage AWS accounts on Prisma Cloud. For end to end workflow to onboarding an AWS account using APIs, see [Automate AWS Cloud Account Onboarding](/prisma-cloud/docs/cspm/aws-cloud-account-onboarding/).\n For common operations related to cloud accounts, see [Cloud Accounts (All)](/prisma-cloud/api/cspm/cloud-accounts-all/).\n"
+    },
+    {
+      "name": "AWS Logging Accounts",
+      "description": "To ingest the VPC flow logs from Amazon S3 buckets to Prisma Cloud, you need an AWS logging account. If you need flow logs ingestion, after onboarding your AWS account, you must onboard the logging account which has the S3 bucket storing VPC flow logs for the monitored account. The APIs in this category can be used to configure and manage these logging accounts."
     },
     {
       "name": "Cloud Accounts (All)",
@@ -96,7 +104,7 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel"
+          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel2"
         },
         "responses": {
           "200": {
@@ -211,7 +219,7 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel"
+          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel2"
         },
         "responses": {
           "200": {
@@ -428,14 +436,18 @@
         "summary": "Get Cloud Account Status (AWS)",
         "description": "Lists status messages of the specified AWS cloud account.",
         "operationId": "get-aws-cloud-account-status",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
-              }
+        "parameters": [
+          {
+            "name": "automatedFlow",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AwsCloudAccountRequestModel"
         },
         "responses": {
           "200": {
@@ -656,6 +668,14 @@
             "name": "excludeAccountGroupDetails",
             "in": "query",
             "description": "true = Exclude account group details. Default is false.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "includePendingAccounts",
+            "in": "query",
             "required": false,
             "schema": {
               "type": "boolean"
@@ -1027,7 +1047,8 @@
           {
             "x-redlock-auth": []
           }
-        ]
+        ],
+        "x-public": "true"
       }
     },
     "/cloud/name": {
@@ -1212,7 +1233,7 @@
           "Cloud Accounts (OCI and Alibaba)"
         ],
         "summary": "Get Cloud Account Status (OCI and Alibaba)",
-        "description": "Lists status messages of the specified cloud account.  \r\n\r\nThis request performs a cloud account on-boarding trial run. You can use this request to validate your parameters before \n you use [Add Cloud Account](/prisma-cloud/api/cspm/add-cloud-account).\n",
+        "description": "Lists status messages of the specified cloud account.  \\r\\n\\r\\nThis request performs a cloud account on-boarding trial run. You can use this request to validate your parameters before \\n you use [Add Cloud Account](/prisma-cloud/api/cspm/add-cloud-account).\\n",
         "operationId": "get-cloud-account-status",
         "parameters": [
           {
@@ -2100,6 +2121,769 @@
         ],
         "x-public": "true"
       }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get all AWS Logging Accounts",
+        "description": "Get the list of all the AWS Logging accounts and its details.",
+        "operationId": "getLoggingArchiveAccounts",
+        "parameters": [
+          {
+            "name": "awsPartition",
+            "in": "query",
+            "description": "AWS Partition Name (optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of accounts",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoggingArchiveAccountModel"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No logging archive accounts exists for customer"
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Add AWS Logging Account",
+        "description": "Add new AWS logging account.",
+        "operationId": "saveLoggingAccount",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoggingArchiveAccountModel"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Successfully created account"
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/cft": {
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Generate a New CFT Template",
+        "description": "Dynamically generate a CFT for the AWS Logging Account.",
+        "operationId": "generate-log-account-cft",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingAccountCFTRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/permissionsStatus": {
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account Status",
+        "description": "Get the status of the AWS logging account based on filter criteria such as, ID, name, RoleRN, and bucket.",
+        "operationId": "checkLoggingAccountStatus",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully completed status check for logging account",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudAccountStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{accountId}": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account By ID",
+        "description": "Get details of a logging account by ID.",
+        "operationId": "getLoggingArchiveAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved account",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoggingArchiveAccountModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{accountId}/buckets/{bucketName}": {
+      "delete": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Delete an S3 bucket",
+        "description": "Delete an S3 bucket in a logging account.",
+        "operationId": "deleteBucket",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "AWS Logging Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucketName",
+            "in": "path",
+            "description": "AWS S3 Bucket Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/BucketModel"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Successfully deleted bucket"
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{accountId}/cft": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Regenerate CFT for an Existing Account",
+        "description": "Dynamically generate a CFT for an existing Log Account.",
+        "operationId": "generate-log-account-cft-existing",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "404": {
+            "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Regenerate CFT for New RoleName",
+        "description": "Regenerate a new CFT for an existing logging account if roleName changes.",
+        "operationId": "generate-log-account-cft-role",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingAccountCFTRequest"
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "404": {
+            "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{accountId}/role/{roleName}/externalId": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get External ID of an Account",
+        "description": "Get external ID of an AWS Logging Accountby account ID and rolename.",
+        "operationId": "Get External ID ",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "AWS AccountId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleName",
+            "in": "path",
+            "description": "AWS Role Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{loggingAccountId}": {
+      "put": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Update Logging Account",
+        "description": "Update details of the logging account.",
+        "operationId": "updateLoggingAccount",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "description": "AWS Logging Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
+        },
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "delete": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Delete a Logging Account by ID",
+        "description": "Delete an AWS logging account based on account ID.",
+        "operationId": "deleteLoggingAccount",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{loggingAccountId}/buckets": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "List S3 Bucket Names",
+        "description": "Get a list of all the S3 bucket names associated to a logging account.",
+        "operationId": "getBuckets",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "description": "AWS Logging Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved buckets",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Add an S3 bucket",
+        "description": "Add an S3 bucket to the existing logging account.",
+        "operationId": "saveBucket",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "description": "AWS Logging Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BucketModel"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully saved bucket",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/BucketModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{loggingAccountId}/buckets/{bucketName}": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get all S3 Buckets",
+        "description": "Get the list of all S3 bucket and its details associated with a logging account.",
+        "operationId": "getBucketDetails",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucketName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved bucket",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/BucketModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "put": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Update S3 Bucket Details",
+        "description": "Update details of an S3 bucket associated to a specific logging account.",
+        "operationId": "updateBucket",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "description": "AWS Logging Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucketName",
+            "in": "path",
+            "description": "AWS S3 Bucket Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BucketModel"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated bucket",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/BucketModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Data validation failed."
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account or bucket not found."
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
+    },
+    "/v1/cloudAccounts/awsLoggingAccounts/{loggingAccountId}/permissionsStatus": {
+      "get": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account Status - GET",
+        "description": "Get status of a logging account based on ID.",
+        "operationId": "getLoggingAccountStatus",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of logging account statuses",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter"
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      },
+      "post": {
+        "tags": [
+          "AWS Logging Accounts"
+        ],
+        "summary": "Get Logging Account Status - POST",
+        "description": "Get detailed status of a logging account based on ID, name, roleRN or bucket name. ",
+        "operationId": "checkLoggingAccountStatusForProvidedAccount",
+        "parameters": [
+          {
+            "name": "loggingAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/LoggingArchiveAccountModel"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully completed status check for existing logging account",
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudAccountStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter"
+          },
+          "401": {
+            "description": "Unauthorized Access"
+          },
+          "404": {
+            "description": "Logging Account doesn't exist"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "x-public": "true"
+      }
     }
   },
   "servers": [
@@ -2173,6 +2957,15 @@
         "description": "Cloud Account",
         "required": true
       },
+      "AwsCloudAccountRequestModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AwsCloudAccountRequestModel"
+            }
+          }
+        }
+      },
       "AzureCloudAccountRequestModel": {
         "content": {
           "application/json": {
@@ -2193,7 +2986,7 @@
           }
         }
       },
-      "AwsCloudAccountRequestModel": {
+      "AwsCloudAccountRequestModel2": {
         "content": {
           "application/json": {
             "schema": {
@@ -2498,7 +3291,7 @@
             "type": "array",
             "description": "*Applicable only for accountType: **organization**.*\n\n Include/Exclude a list of AWS Organization Units (OU), AWS accounts, and AWS Organizations to onboard under this organization.",
             "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
+              "$ref": "#/components/schemas/AwsHierarchySelectionModel"
             }
           },
           "customMemberRoleNameEnabled": {
@@ -2593,6 +3386,35 @@
             "description": "Model for AWS Cloud Org"
           }
         ]
+      },
+      "AwsHierarchySelectionModel": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "example": "root",
+            "description": "To get the list of resource IDs and its details, Refer [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/) "
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Root",
+            "description": "To get the display name of resource, Refer [List Children of Parent (AWS)](/prisma-cloud/api/cspm/get-list-of-children-under-parent-aws/)"
+          },
+          "nodeType": {
+            "type": "string",
+            "description": "Member account node type. Supported values are ORG, OU or ACCOUNT"
+          },
+          "selectionType": {
+            "type": "string",
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ]
+          }
+        },
+        "description": "Model for HierarchySelection for Aws"
       },
       "AwsListChildrenApiResponseModel": {
         "type": "object",
@@ -2885,7 +3707,7 @@
             "type": "array",
             "description": "*Required only for accountType: **tenant**.*\n\n Include or Exclude a list of Azure Management Groups and Azure Subscriptions to onboard under this Tenant.",
             "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
+              "$ref": "#/components/schemas/AzureHierarchySelectionModel"
             }
           },
           "rootSyncEnabled": {
@@ -2969,6 +3791,35 @@
           }
         },
         "description": "Model for AzureNode in the Tenant Hierarchy"
+      },
+      "AzureHierarchySelectionModel": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "example": "root",
+            "description": "To get the list of resource IDs and its details, Refer [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/) "
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Root",
+            "description": "To get the display name of resource, Refer [List Children of Parent (Azure)](/prisma-cloud/api/cspm/list-children-under-parent/)"
+          },
+          "nodeType": {
+            "type": "string",
+            "description": "Member account node type. Supported values are SUBSCRIPTION, MANAGEMENT_GROUP, or TENANT"
+          },
+          "selectionType": {
+            "type": "string",
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ]
+          }
+        },
+        "description": "Model for HierarchySelection for Azure"
       },
       "AzureListChildrenRequestModel": {
         "type": "object",
@@ -3261,15 +4112,6 @@
           "autoConsent": {
             "type": "string"
           },
-          "associatedAccountGroupsCount": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Associated Account Groups Count with this cloud account"
-          },
-          "storageUUID": {
-            "type": "string",
-            "description": "Storage UUID"
-          },
           "cloudAccountOwner": {
             "type": "string",
             "description": "Cloud account owner"
@@ -3280,8 +4122,9 @@
             "description": "Cloud account owner count",
             "readOnly": true
           },
-          "parentAccountId": {
-            "type": "string"
+          "storageUUID": {
+            "type": "string",
+            "description": "Storage UUID"
           },
           "features": {
             "type": "array",
@@ -3298,6 +4141,14 @@
           "enabled": {
             "type": "boolean",
             "description": "Enabled"
+          },
+          "associatedAccountGroupsCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Associated Account Groups Count with this cloud account"
+          },
+          "parentAccountId": {
+            "type": "string"
           },
           "accountId": {
             "type": "string",
@@ -3558,6 +4409,27 @@
           }
         },
         "description": "The content of the credentials object is the Service Account Key for your Google Cloud service account"
+      },
+      "CustomTimeRangeConfigModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfigModel"
+          },
+          {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "format": "int64",
+                "description": "Time range object"
+              }
+            },
+            "description": "Model for CustomTimeRangeConfig"
+          }
+        ]
       },
       "Feature": {
         "type": "object",
@@ -3848,7 +4720,7 @@
             "type": "array",
             "description": "Applicable only if `accountType` is **organization**. \n\nInclude/Exclude a list of GCP folders, GCP projects under the organization.",
             "items": {
-              "$ref": "#/components/schemas/HierarchySelection"
+              "$ref": "#/components/schemas/GcpHierarchySelectionModel"
             }
           },
           "organizationName": {
@@ -3930,6 +4802,35 @@
             "description": "Model for GCP Cloud Account"
           }
         ]
+      },
+      "GcpHierarchySelectionModel": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "example": "root",
+            "description": "To get the list of resource IDs and its details, Refer [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/) "
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Root",
+            "description": "To get the display name of resource, Refer [List Children of Parent (GCP)](/prisma-cloud/api/cspm/get-list-of-children-under-parent/). Display name is the organization name if `nodeType` is **ORG**"
+          },
+          "nodeType": {
+            "type": "string",
+            "description": "Member account node type. Supported values are ORG, FOLDER, or PROJECT"
+          },
+          "selectionType": {
+            "type": "string",
+            "description": "Organization Member accounts Selection type. \n\n**ALL**: Include the resource and all its children \n\n**INCLUDE**: Include the specified resource\n\n**EXCLUDE**: Exclude the specified resource",
+            "enum": [
+              "ALL",
+              "INCLUDE",
+              "EXCLUDE"
+            ]
+          }
+        },
+        "description": "Model for HierarchySelection for GCP"
       },
       "GcpNodeModel": {
         "type": "object",
