@@ -539,18 +539,6 @@ const config = {
                   ],
                 },
                 {
-                  label: "SaaS Security Posture Management",
-                  to: "#",
-                  logoClass: "prisma",
-                  apiDocs: [
-                    {
-                      to: "access/api/sspm/getting-started",
-                      label: "SaaS Security Management",
-                      icon: "api-doc",
-                    },
-                  ],
-                },
-                {
                   label: "Prisma Access Insights",
                   to: "#",
                   logoClass: "prisma",
@@ -915,7 +903,7 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          securityposture: {
+          sasesspm: {
             specPath: "openapi-specs/sase/sspm",
             outputDir: "products/sase/api/sspm",
             sidebarOptions: { groupPathsBy: "tag" },

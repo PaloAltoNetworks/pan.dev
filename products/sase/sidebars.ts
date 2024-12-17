@@ -306,7 +306,7 @@ module.exports = {
   securityposture: [
     "sase/api/sspm/intro",
     "sase/api/sspm/api-workflow",
-    require("./api/mt-interconnect/sidebar"),
+    require("./api/sspm/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
