@@ -184,7 +184,6 @@ module.exports = {
       collapsed: true,
       items: [
         "access/docs/insights/insights",
-        "access/docs/insights/getting_started-30",
         "access/docs/insights/getting_started-20",
         "access/docs/insights/getting_started-10",
         {
@@ -278,7 +277,6 @@ module.exports = {
         "access/docs/insights/pai-faqs",
       ],
     },
-    "sase/docs/saseservicestatusapi",
     {
       type: "category",
       label: "Prisma SASE API Release Notes",
@@ -302,6 +300,11 @@ module.exports = {
   sasemtinterconnect: [
     "sase/api/mt-interconnect/mt-interconnect",
     require("./api/mt-interconnect/sidebar"),
+  ],
+  saseconfigorch: [
+    "sase/api/config-orch/config-orch",
+    "sase/api/config-orch/api-workflow",
+    require("./api/config-orch/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
