@@ -1,5 +1,5 @@
 ---
-id: intro
+id: sspm-introduction
 title: SaaS Security Posture Management APIs
 sidebar_label: Security Posture Management APIs
 slug: /sase/api/sspm
@@ -8,9 +8,6 @@ keywords:
   - Reference
   - API
 ---
-
-## Introduction to Prisma Access SaaS Security Posture Management APIs
-
 ### What is SaaS Security Posture Management?
 SaaS Security Posture Management (SSPM) APIs provide tools for continuous monitoring, detection of misconfigured SaaS application settings. 
 

@@ -304,8 +304,8 @@ module.exports = {
     require("./api/mt-interconnect/sidebar"),
   ],
   securityposture: [
-    "sase/api/sspm/intro",
-    "sase/api/sspm/api-workflow",
+    "sase/api/sspm/sspm-introduction",
+    "sase/api/sspm/sspm-api-workflow",
     require("./api/sspm/sidebar"),
   ],
   sasesubscription: [
