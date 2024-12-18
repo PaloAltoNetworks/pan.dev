@@ -13,12 +13,10 @@ The purpose of this topic is to guide users on how to interact with the APIs ste
 
 This workflow is designed to ensure clarity and simplicity, making it easier for first-time users and experienced developers to integrate the APIs effectively.
 
-## Title: **Creating a Remote Network**
-
 ### 1. Create Location Information  
 **Step**: Use the `/v1/location-informations` endpoint to submit longitude and latitude. This retrieves the most accurate location data required for the setup.  
 
-**API Reference**: [Location Information](sase/api/config-orch)  
+**API Reference**: [Location Information](/sase/api/config-orch/post-v-1-location-informations/)  
 
 **Code Snippet (Example using cURL)**:  
 ```bash
@@ -51,10 +49,8 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/location-informations' \
 }
 ```
 
----
-
 ### 2. Allocate Bandwidth  
-**Step**: Use the `/v1/bandwidth-allocations` endpoint to define and allocate the necessary bandwidth.  
+**Step**: Use the `[bandwidth allocations](/sase/api/config-orch/post-v-1-bandwidth-allocations/) endpoint to define and allocate the necessary bandwidth.  
 
 **Code Snippet (Example using cURL)**:  
 ```bash
@@ -94,12 +90,10 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/bandwidth-allocations' \
 }
 ```
 
----
-
 ### 3. Set Up Crypto Profiles  
 **Step**: Configure the required cryptographic profiles:  
-- Use `/v1/ike-crypto-profiles` to create an IKE crypto profile.  
-- Use `/v1/ipsec-crypto-profiles` to create an IPSec crypto profile.  
+- Use [IKE Crypto Profiles](/sase/api/config-orch/post-v-1-ike-crypto-profiles/) to create an IKE crypto profile.  
+- Use [IPSec Crypto Profiles](/sase/api/config-orch/post-v-1-ipsec-crypto-profiles/) to create an IPSec crypto profile.  
 
 **Code Snippet (Example using cURL for IKE Crypto Profiles)**:  
 ```bash
@@ -170,10 +164,9 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/ipsec-crypto-profiles' \
   "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
   }
 ```
----
 
 ### 4. Create the Remote Network  
-**Step**: Once the prerequisites are complete, use the `/v1/remote-networks` endpoint to create and deploy the remote network.  
+**Step**: Once the prerequisites are complete, use the [create remote networks](/sase/api/config-orch/post-v-1-remote-networks/) endpoint to create and deploy the remote network.  
 
 **Code Snippet (Example using cURL)**:  
 ```bash
@@ -464,6 +457,5 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/remote-networks' \
   "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 ```
----
 
-For actions such as editing or deleting a remote network, refer to the relevant API References [here](sase/api/config-orch).  
+For actions such as editing or deleting a remote network, refer to the relevant API References [here](/sase/api/config-orch/).  
