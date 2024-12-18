@@ -3,10 +3,13 @@ import React from "react";
 import Layout from "@theme/Layout";
 import SCMCard from "./SCMCard";
 import "./scm.scss";
+
 export default function SCMLandingPage() {
   const heroHeader = "Strata Cloud Manager";
   const heroDescription =
     "Strata Cloud Manager™ enables you to easily manage your Palo Alto Networks Network Security infrastructure—including NGFWs and SASE environment—from the cloud, via one unified management interface.";
+  const videoSrc =
+    "https://www.paloaltonetworks.com/content/dam/pan/en_US/images/cosmos-hardware/optimized/COSMOS-PROMO-MIKE_DEMO_VIDEO_3-Comprehensive_Management_Deployments_V3.mp4";
   const scmCards = [
     {
       label: "Developer's Guide",
@@ -238,9 +241,19 @@ export default function SCMLandingPage() {
       description="Strata Cloud Manager description"
       title="Strata Cloud Manager"
     >
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="scm-hero-video"
+        poster="https://via.placeholder.com/1920x1080"
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
       <section className="scm-hero-container">
-        <h1>{heroHeader}</h1>
-        <p>{heroDescription}</p>
+        <h1 className="hero--header">{heroHeader}</h1>
+        <p className="hero--description text--light">{heroDescription}</p>
       </section>
       <section className="scm-bg">
         <div className="scm-cards-container container">
