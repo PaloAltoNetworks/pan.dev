@@ -18,8 +18,7 @@ Integrate SSPM APIs to:
 
 ### Key Features
 - Misconfiguration detection and prioritization.
-- Automated and manual remediation workflows.
-- Integration support for multiple SaaS applications.
+- Provides real-time monitoring of feature states, operational status, and automated scanning to ensure active and healthy SaaS integrations.
 
 ### How SSPM Works
 1. **Discover SaaS Applications**: Onboard and monitor SaaS apps.
@@ -35,3 +34,4 @@ For more information about SSPM, see
 [SaaS Security Posture Management](https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-sspm/get-started-with-sspm/whats-sspm)
 
 These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
+
