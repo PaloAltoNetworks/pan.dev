@@ -2,7 +2,7 @@
 id: sspm-introduction
 title: SaaS Security Posture Management APIs
 sidebar_label: Security Posture Management APIs
-slug: /sase/api/sspm
+slug: /sase/api/sspm-introduction
 keywords:
   - SASE
   - Reference
@@ -18,10 +18,10 @@ Integrate SSPM APIs to:
 
 ### Key Features
 - Misconfiguration detection and prioritization.
-- Provides real-time monitoring of feature states, operational status, and automated scanning to ensure active and healthy SaaS integrations.
+- **Monitor SSPM Service and SaaS Integrations**: Track the health and status of the SSPM service and integrated SaaS applications, with real-time feature state monitoring and automated scans.
 
 ### How SSPM Works
-1. **Discover SaaS Applications**: Onboard and monitor SaaS apps.
+1. **Discover SaaS Applications**: Onboard and monitor SaaS application.
 2. **Analyze Configurations**: Fetch assessments and detect misconfigurations.
 3. **Remediate Issues**: Resolve misconfigurations programmatically.
 4. **Monitor Continuously**: Keep apps secure through automated monitoring.
