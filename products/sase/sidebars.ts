@@ -303,6 +303,11 @@ module.exports = {
     "sase/api/mt-interconnect/mt-interconnect",
     require("./api/mt-interconnect/sidebar"),
   ],
+  configorch: [
+    "sase/api/config-orch/introduction",
+    "sase/api/config-orch/api-workflow",
+    require("./api/config-orch/sidebar"),
+  ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
