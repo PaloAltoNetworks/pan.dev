@@ -1,0 +1,1 @@
+Stops the specific spec's scan or removes it from the queue
