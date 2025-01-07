@@ -2,12 +2,13 @@ import React from "react";
 // components
 import Layout from "@theme/Layout";
 import SCMCard from "./SCMCard";
+import Slider from "../../components/Slider/Slider";
 import "./scm.scss";
 
 export default function SCMLandingPage() {
   const heroHeader = "Strata Cloud Manager";
   const heroDescription =
-    "Strata Cloud Manager™ enables you to easily manage your Palo Alto Networks Network Security infrastructure—including NGFWs and SASE environment—from the cloud, via one unified management interface.";
+    "Strata Cloud Manager™ makes it easy to manage Palo Alto Networks security infrastructure, including NGFW and SASE environments, from the cloud through a unified management interface. Its APIs further extend this vision by providing a consistent framework for developers to create automated and integrated solutions for the Strata network security platform.";
   const videoSrc =
     "https://www.paloaltonetworks.com/content/dam/pan/en_US/images/cosmos-hardware/optimized/COSMOS-PROMO-MIKE_DEMO_VIDEO_3-Comprehensive_Management_Deployments_V3.mp4";
   const scmCards = [
@@ -236,24 +237,40 @@ export default function SCMLandingPage() {
     },
   ];
 
+  const SCM_SLIDER_IMAGES = [
+    "/img/scm-landing/slider-1.png",
+    "/img/scm-landing/slider-2.png",
+    "/img/scm-landing/slider-3.png",
+  ];
+
   return (
     <Layout
       description="Strata Cloud Manager description"
       title="Strata Cloud Manager"
     >
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="scm-hero-video"
-        poster="https://via.placeholder.com/1920x1080"
-      >
-        <source src={videoSrc} type="video/mp4" />
-      </video>
-      <section className="scm-hero-container">
-        <h1 className="hero--header">{heroHeader}</h1>
-        <p className="hero--description text--light">{heroDescription}</p>
+      <section className="scm-hero-container container">
+        <div className="scm-hero-content-container">
+          <div className="scm-hero__left-section">
+            <h1 className="hero--header">{heroHeader}</h1>
+            <p className="hero--description text--light">{heroDescription}</p>
+          </div>
+          <div className="scm-hero__right-section">
+            <Slider
+              className="product-hero__slider-container"
+              slidesToShow={1}
+              slidesToScroll={1}
+            >
+              {SCM_SLIDER_IMAGES.map((sliderImg, i) => (
+                <img
+                  className="scm-slider-img"
+                  key={i}
+                  alt={sliderImg}
+                  src={sliderImg}
+                />
+              ))}
+            </Slider>
+          </div>
+        </div>
       </section>
       <section className="scm-bg">
         <div className="scm-cards-container container">
@@ -268,6 +285,16 @@ export default function SCMLandingPage() {
             />
           ))}
         </div>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="scm-hero-video"
+          poster="https://via.placeholder.com/1920x1080"
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
       </section>
       {/* <UseCases
         header={TERRAFORM_USE_CASES_CONTENT.header}
