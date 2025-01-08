@@ -21,7 +21,7 @@ Use the [List of Applications](/sase/api/sspm/get-sspm-api-v-1-apps/) API to fet
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/apps' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/apps' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -34,7 +34,7 @@ Use the [Application Details](/sase/api/sspm/get-sspm-api-v-1-apps-app-id/) API 
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/apps/:app_id' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/apps/:app_id' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -44,7 +44,7 @@ Call [Application Configuration](/sase/api/sspm/get-sspm-api-v-1-apps-app-id-con
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/apps/:app_id/configs' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/apps/:app_id/configs' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -54,7 +54,7 @@ Use the [Application Settings](/sase/api/sspm/get-sspm-api-v-1-apps-app-id-setti
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/apps/:app_id/settings' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/apps/:app_id/settings' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -64,7 +64,7 @@ Use the [Supported SSPM Application Catalog](/sase/api/sspm/get-sspm-api-v-1-cat
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/catalog/apps' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/catalog/apps' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -74,7 +74,7 @@ Retrieve detailed information about a specific app using the app name.
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -84,7 +84,7 @@ Call the [Configuration Details](/sase/api/sspm/get-sspm-api-v-1-catalog-apps-ap
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app/configs' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app/configs' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -94,7 +94,7 @@ Use the [Application Catalog Scope](/sase/api/sspm/get-sspm-api-v-1-catalog-apps
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app/scopes' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/catalog/apps/:app/scopes' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -104,7 +104,7 @@ Call [Application Authorization](/sase/api/sspm/get-sspm-api-v-1-auth-app-info/)
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/auth/:app/info' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/auth/:app/info' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -121,7 +121,7 @@ Call [JIRA Ticket Details](/sase/api/sspm/get-sspm-api-v-1-integration-integrati
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:integration_type/projects' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:JIRA_TICKETING/projects' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -131,7 +131,7 @@ Use [Specific Project Details](/sase/api/sspm/get-sspm-api-v-1-integration-integ
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:integration_type/project/:key' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:JIRA_TICKETING/project/:key' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
 ```
@@ -141,6 +141,6 @@ Call [Specific Issue Details](/sase/api/sspm/get-sspm-api-v-1-integration-integr
 
 #### Request Example
 ```bash
-curl -L 'https://api.sase.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:integration_type/issue/:key' \
+curl -L  'https://api.strata.paloaltonetworks.com/sspm/api/v1/integration/integrations/:integration_id/:JIRA_TICKETING/issue/:key' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer <TOKEN>'
