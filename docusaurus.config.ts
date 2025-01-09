@@ -491,6 +491,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/sspm",
+                      label: "SaaS Security Posture Management",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -898,6 +903,11 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          sasesspm: {
+            specPath: "openapi-specs/sase/sspm",
+            outputDir: "products/sase/api/sspm",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
@@ -1044,8 +1054,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.02",
-            label: "v33.02",
+            version: "33.03",
+            label: "v33.03",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1098,6 +1108,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-01/",
+          },
+          compute_3302: {
+            specPath: "openapi-specs/compute/33-02",
+            outputDir: "products/compute/api/33-02",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-02/",
           },
         },
       },
