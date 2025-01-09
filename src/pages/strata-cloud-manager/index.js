@@ -248,59 +248,58 @@ export default function SCMLandingPage() {
       description="Strata Cloud Manager description"
       title="Strata Cloud Manager"
     >
-      <section className="scm-hero-container container">
-        <div className="scm-hero-content-container">
-          <div className="scm-hero__left-section">
-            <h1 className="hero--header">{heroHeader}</h1>
-            <p className="hero--description text--light">{heroDescription}</p>
-          </div>
-          <div className="scm-hero__right-section">
-            <Slider
-              className="product-hero__slider-container"
-              slidesToShow={1}
-              slidesToScroll={1}
-            >
-              {SCM_SLIDER_IMAGES.map((sliderImg, i) => (
-                <img
-                  className="scm-slider-img"
-                  key={i}
-                  alt={sliderImg}
-                  src={sliderImg}
-                />
-              ))}
-            </Slider>
-          </div>
-        </div>
-      </section>
-      <section className="scm-bg">
-        <div className="scm-cards-container container">
-          {scmCards.map((card, i) => (
-            <SCMCard
-              key={i}
-              description={card.description}
-              label={card.label}
-              docs={card.docs}
-              type={card.type}
-              colorclass="scm"
-            />
-          ))}
-        </div>
+      <div className="scm-video-bg">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="scm-hero-video"
+          className="scm-video"
           poster="https://via.placeholder.com/1920x1080"
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
-      </section>
-      {/* <UseCases
-        header={TERRAFORM_USE_CASES_CONTENT.header}
-        subheader={TERRAFORM_USE_CASES_CONTENT.subheader}
-        useCaseCards={TERRAFORM_USE_CASES_CONTENT.useCaseCards}
-      /> */}
+        <section className="scm-main-body">
+          <div className="scm-hero-container container">
+            <div className="scm-hero-content-container">
+              <div className="scm-hero__left-section">
+                <h1 className="hero--header">{heroHeader}</h1>
+                <p className="hero--description text--light">
+                  {heroDescription}
+                </p>
+              </div>
+              <div className="scm-hero__right-section">
+                <Slider
+                  className="product-hero__slider-container"
+                  slidesToShow={1}
+                  slidesToScroll={1}
+                >
+                  {SCM_SLIDER_IMAGES.map((sliderImg, i) => (
+                    <img
+                      className="scm-slider-img"
+                      key={i}
+                      alt={sliderImg}
+                      src={sliderImg}
+                    />
+                  ))}
+                </Slider>
+              </div>
+            </div>
+          </div>
+          <div className="scm-cards-container container">
+            {scmCards.map((card, i) => (
+              <SCMCard
+                key={i}
+                description={card.description}
+                label={card.label}
+                docs={card.docs}
+                type={card.type}
+                colorclass="scm"
+              />
+            ))}
+          </div>
+        </section>
+      </div>
     </Layout>
   );
 }
