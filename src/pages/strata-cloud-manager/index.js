@@ -187,6 +187,11 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
+            to: "/sase/api/sspm/",
+            label: "SaaS Security Posture Management",
+            icon: "api-doc",
+          },
+          {
             to: "/access/api/ztna/ztna-connector-apis",
             label: "ZTNA Connector",
             icon: "api-doc",
