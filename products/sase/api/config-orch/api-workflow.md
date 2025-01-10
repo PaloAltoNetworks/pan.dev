@@ -458,4 +458,43 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/remote-networks' \
 }
 ```
 
+### 4. Get Service IP and network details 
+**Step**: Once remote network is created, use the [get IPSec details](/sase/api/config-orch/get-v-1-remote-networks/) endpoint to get Service IP and network details to form tunnels.
+
+**Code Snippet (Example using cURL)**:  
+```bash
+curl -L 'https://api.sase.paloaltonetworks.com/v1/remote-networks' \
+-H 'Accept: application/json' \
+-H 'Authorization: Bearer <token>'
+
+**Response**:  
+- **Status Code**: `200 (Success)`  
+- **Body**:  
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "details": {},
+      "help": "string",
+      "message": "string"
+    }
+  ],
+  "result": {
+    "remote_networks_ipsec_tunnel_response_set": [
+      {
+        "name": "string",
+        "pre_shared_key": "string",
+        "service_ip": "198.51.100.42",
+        "tunnel_id": "string"
+      }
+    ]
+  },
+  "status": "string"
+}
+```
+
+
+
+
 For actions such as editing or deleting a remote network, refer to the relevant API References [here](/sase/api/config-orch/).  
