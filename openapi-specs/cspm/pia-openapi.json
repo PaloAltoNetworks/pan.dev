@@ -1,0 +1,811 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "https://api.prismacloud.io"
+    },
+    {
+      "url": "https://api2.prismacloud.io"
+    },
+    {
+      "url": "https://api3.prismacloud.io"
+    },
+    {
+      "url": "https://api4.prismacloud.io"
+    },
+    {
+      "url": "https://api.anz.prismacloud.io"
+    },
+    {
+      "url": "https://api.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api2.eu.prismacloud.io"
+    },
+    {
+      "url": "https://api.gov.prismacloud.io"
+    },
+    {
+      "url": "https://api.prismacloud.cn"
+    },
+    {
+      "url": "https://api.ca.prismacloud.io"
+    },
+    {
+      "url": "https://api.sg.prismacloud.io"
+    },
+    {
+      "url": "https://api.uk.prismacloud.io"
+    },
+    {
+      "url": "https://api.ind.prismacloud.io"
+    },
+    {
+      "url": "https://api.jp.prismacloud.io"
+    },
+    {
+      "url": "https://api.fr.prismacloud.io"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Alerts",
+      "description": "..."
+    }
+  ],
+  "paths": {
+    "/policy/api/v1/fetch/remediation/{policyId}": {
+      "get": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Get Policy Remediation",
+        "description": "Fetch AI Assisted Remediation and Recommendation content for a given policy. If AI Assisted Remediation is not available, fetch the recommendation content instead. The remediation typically includes actionable steps to mitigate or remediate the identified alert on the asset.",
+        "operationId": "getRemediationForPolicy",
+        "parameters": [
+          {
+            "name": "policyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unifiedAssetId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alertId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyWithRemediationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "401": {
+            "description": "unauthorized_access"
+          },
+          "403": {
+            "description": "permission_error"
+          },
+          "429": {
+            "description": "too_many_requests"
+          }
+        },
+        "x-public": "true",
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AbsoluteTimeRangeConfig": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfig"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "$ref": "#/components/schemas/Time"
+              }
+            }
+          }
+        ]
+      },
+      "FromNowTimeRangeConfig": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfig"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "enum": [
+                  "minute",
+                  "hour",
+                  "day",
+                  "week",
+                  "month",
+                  "year",
+                  "epoch",
+                  "login"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RelativeTimeDuration": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "minute",
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year",
+              "epoch",
+              "login"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RelativeTimeRangeConfig": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfig"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "$ref": "#/components/schemas/RelativeTimeDuration"
+              },
+              "relativeTimeType": {
+                "type": "string",
+                "enum": [
+                  "BACKWARD",
+                  "FORWARD"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Time": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "endTime": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TimeRangeConfig": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "ToNowTimeRangeConfig": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TimeRangeConfig"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "enum": [
+                  "minute",
+                  "hour",
+                  "day",
+                  "week",
+                  "month",
+                  "year",
+                  "epoch",
+                  "login"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Filter_DARWIN_VIEW": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "cloudAccount": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "apiName": {
+            "type": "string"
+          },
+          "resourceIdPath": {
+            "type": "string"
+          },
+          "criteria": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "JSONPath"
+            ]
+          },
+          "condition": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "notEquals",
+              "contains",
+              "startsWith",
+              "endsWith",
+              "greaterThan",
+              "lessThan"
+            ]
+          },
+          "expectedValue": {
+            "type": "object"
+          }
+        }
+      },
+      "JsonNode_DARWIN_VIEW": {
+        "type": "object"
+      },
+      "RuleCriteria_DARWIN_VIEW": {
+        "type": "object",
+        "properties": {
+          "classificationResult": {
+            "type": "string"
+          },
+          "exposure": {
+            "type": "string"
+          },
+          "extension": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Rule_DARWIN_VIEW": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "cloudAccount": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "apiName": {
+            "type": "string"
+          },
+          "resourceIdPath": {
+            "type": "string"
+          },
+          "criteria": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "JSONSchema",
+              "Network",
+              "AuditEvent",
+              "Anomaly",
+              "Config",
+              "DLP",
+              "MALWARE",
+              "tf",
+              "cft",
+              "k8s",
+              "build",
+              "IAM",
+              "NetworkConfig",
+              "workload_vulnerability",
+              "workload_incident",
+              "api",
+              "attack_path",
+              "drift",
+              "wildfire_malware",
+              "wildfire_grayware"
+            ]
+          },
+          "dataCriteria": {
+            "$ref": "#/components/schemas/RuleCriteria_DARWIN_VIEW"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR",
+              "NOT"
+            ]
+          },
+          "filter": {
+            "$ref": "#/components/schemas/Filter_DARWIN_VIEW"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rule_DARWIN_VIEW"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/JsonNode_DARWIN_VIEW"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "cloudAccount": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "apiName": {
+            "type": "string"
+          },
+          "resourceIdPath": {
+            "type": "string"
+          },
+          "criteria": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "JSONPath"
+            ]
+          },
+          "condition": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "notEquals",
+              "contains",
+              "startsWith",
+              "endsWith",
+              "greaterThan",
+              "lessThan"
+            ]
+          },
+          "expectedValue": {
+            "type": "object"
+          }
+        }
+      },
+      "JsonNode": {
+        "type": "object"
+      },
+      "Rule": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string"
+          },
+          "cloudAccount": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "apiName": {
+            "type": "string"
+          },
+          "resourceIdPath": {
+            "type": "string"
+          },
+          "criteria": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "JSONSchema",
+              "Network",
+              "AuditEvent",
+              "Anomaly",
+              "Config",
+              "DLP",
+              "MALWARE",
+              "tf",
+              "cft",
+              "k8s",
+              "build",
+              "IAM",
+              "NetworkConfig",
+              "workload_vulnerability",
+              "workload_incident",
+              "api",
+              "attack_path",
+              "drift",
+              "wildfire_malware",
+              "wildfire_grayware"
+            ]
+          },
+          "dataCriteria": {
+            "$ref": "#/components/schemas/RuleCriteria"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR",
+              "NOT"
+            ]
+          },
+          "filter": {
+            "$ref": "#/components/schemas/Filter"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/JsonNode"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      },
+      "RuleCriteria": {
+        "type": "object",
+        "properties": {
+          "classificationResult": {
+            "type": "string"
+          },
+          "exposure": {
+            "type": "string"
+          },
+          "extension": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ComputeAccessGroupMeta": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceListMeta"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "hosts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "containers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "functions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "appIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "codeRepos": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "namespaces": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "clusters": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ResourceListMeta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "TAG",
+              "RESOURCE_ID",
+              "STRING",
+              "IP_ADDRESS",
+              "NUMBER",
+              "RESOURCE_GROUP",
+              "COMPUTE_ACCESS_GROUP"
+            ]
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "AiRemediation": {
+        "type": "object",
+        "properties": {
+          "manualRemediation": {
+            "$ref": "#/components/schemas/ManualRemediation"
+          },
+          "cli": {
+            "type": "array",
+            "description": "The suggested CLI-based remediation steps",
+            "items": {
+              "$ref": "#/components/schemas/ScriptRemediation"
+            }
+          },
+          "tf": {
+            "type": "array",
+            "description": "The suggested Terraform-based remediation steps",
+            "items": {
+              "$ref": "#/components/schemas/ScriptRemediation"
+            }
+          }
+        }
+      },
+      "ManualRemediation": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "A title for the manual remediation steps"
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the remediation content"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "Detailed instructions to manually remediate the issue"
+          },
+          "impact": {
+            "type": "string",
+            "description": "The potential impact of applying the remediation"
+          }
+        },
+        "description": "The manual remediation steps to be taken"
+      },
+      "PolicyWithRemediation": {
+        "type": "object",
+        "properties": {
+          "policyId": {
+            "type": "string"
+          },
+          "policyName": {
+            "type": "string"
+          },
+          "policyType": {
+            "type": "string"
+          },
+          "cloudType": {
+            "type": "string",
+            "enum": [
+              "all",
+              "aws",
+              "azure",
+              "gcp",
+              "alibaba_cloud",
+              "oci",
+              "other",
+              "ibm"
+            ]
+          },
+          "findingTypes": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aiRemediation": {
+            "$ref": "#/components/schemas/AiRemediation"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "hasSearchExecutionSupport": {
+            "type": "boolean"
+          },
+          "savedSearchId": {
+            "type": "string"
+          }
+        }
+      },
+      "PolicyWithRemediationResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyWithRemediation"
+            }
+          }
+        }
+      },
+      "ScriptRemediation": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "A title for the remediation script to be executed"
+          },
+          "description": {
+            "type": "string",
+            "description": "A description of the remediation content"
+          },
+          "codeBlock": {
+            "type": "string",
+            "description": "The suggested code block to be executed for remediation"
+          },
+          "impact": {
+            "type": "string",
+            "description": "The potential impact of applying the remediation"
+          },
+          "automated": {
+            "type": "boolean",
+            "description": "can be executed automatically without manual intervention"
+          }
+        },
+        "description": "The suggested Terraform-based remediation steps"
+      }
+    },
+    "securitySchemes": {
+      "x-redlock-auth": {
+        "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
+        "in": "header",
+        "name": "x-redlock-auth",
+        "type": "apiKey"
+      }
+    }
+  }
+}
