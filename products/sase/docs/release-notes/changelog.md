@@ -13,7 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/).                                                                                                  |
+| Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/browser-mgmt-api/).                                                                                                  |
 | Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                  |
 | July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                  |
 | April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                                                                  |
