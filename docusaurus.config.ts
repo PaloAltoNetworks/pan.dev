@@ -461,11 +461,6 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "/access/api/browser-mgmt",
-                      label: "Prisma Access Browser",
-                      icon: "api-doc",
-                    },
-                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
