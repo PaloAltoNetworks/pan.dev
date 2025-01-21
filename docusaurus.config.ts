@@ -461,6 +461,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/access/api/browser-mgmt",
+                      label: "Prisma Access Browser",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/access/api/ztna/ztna-connector-apis",
                       label: "ZTNA Connector",
                       icon: "api-doc",
@@ -486,8 +491,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/sspm",
-                      label: "SaaS Security Posture Management",
+                      to: "/sase/api/introduction",
+                      label: "Configuration Orchestration",
                       icon: "api-doc",
                     },
                     {
@@ -898,9 +903,9 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          sasesspm: {
-            specPath: "openapi-specs/sase/sspm",
-            outputDir: "products/sase/api/sspm",
+          configorch: {
+            specPath: "openapi-specs/sase/config-orch",
+            outputDir: "products/sase/api/config-orch",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
@@ -1049,8 +1054,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.03",
-            label: "v33.03",
+            version: "33.02",
+            label: "v33.02",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1103,13 +1108,6 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-01/",
-          },
-          compute_3302: {
-            specPath: "openapi-specs/compute/33-02",
-            outputDir: "products/compute/api/33-02",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/33-02/",
           },
         },
       },
