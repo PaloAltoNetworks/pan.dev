@@ -483,10 +483,10 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/remote-networks' \
   "result": {
     "remote_networks_ipsec_tunnel_response_set": [
       {
-        "name": "string",
-        "pre_shared_key": "string",
+        "name": "branch-office-2",
+        "pre_shared_key": "anotherSecureKey456!",
         "service_ip": "198.51.100.42",
-        "tunnel_id": "string"
+        "tunnel_id": "tn-0987654321fedcba"
       }
     ]
   },
