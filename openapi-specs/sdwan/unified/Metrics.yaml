@@ -234,6 +234,152 @@ components:
           items:
             $ref: '#/components/schemas/Aggregate'
           type: array
+    AppAccelerationData:
+      properties:
+        accl_ctxt:
+          description: Accl Ctxt
+          type: integer
+        app:
+          description: App
+          type: string
+        app_accelerated:
+          description: App Accelerated
+          type: boolean
+        app_id:
+          description: App Id
+          type: integer
+        avg_rtt_ms:
+          description: Avg Rtt Ms
+          type: integer
+        bytes_acked:
+          description: Bytes Acked
+          type: integer
+        bytes_in:
+          description: Bytes In
+          type: integer
+        bytes_out:
+          description: Bytes Out
+          type: integer
+        bytes_retransmitted:
+          description: Bytes Retransmitted
+          type: integer
+        client_ip:
+          description: Client Ip
+          type: string
+        client_port:
+          description: Client Port
+          type: integer
+        compute_region:
+          description: Compute Region
+          type: string
+        conn_id:
+          description: Conn Id
+          type: integer
+        conn_stability_index:
+          description: Conn Stability Index
+          type: integer
+        duration_millis:
+          description: Duration Millis
+          type: integer
+        log_version:
+          description: Log Version
+          type: integer
+        remote_mu_ip:
+          description: Remote Mu Ip
+          type: string
+        subtenant:
+          description: Subtenant
+          type: string
+        tcp_beg_cwnd:
+          description: Tcp Beg Cwnd
+          type: integer
+        tcp_beg_rtt_millis:
+          description: Tcp Beg Rtt Millis
+          type: integer
+        tcp_beg_rtt_var_millis:
+          description: Tcp Beg Rtt Var Millis
+          type: integer
+        tcp_beg_sst:
+          description: Tcp Beg Sst
+          type: integer
+        tcp_end_cwnd:
+          description: Tcp End Cwnd
+          type: integer
+        tcp_end_rtt_millis:
+          description: Tcp End Rtt Millis
+          type: integer
+        tcp_end_rtt_var_millis:
+          description: Tcp End Rtt Var Millis
+          type: integer
+        tcp_end_sst:
+          description: Tcp End Sst
+          type: integer
+        tcp_retrans:
+          description: Tcp Retrans
+          type: integer
+        tenant:
+          description: Tenant
+          type: string
+        time:
+          description: Time
+          type: string
+        tsg:
+          description: Tsg
+          type: string
+        tsg_id:
+          description: Tsg Id
+          type: string
+        user:
+          description: User
+          type: string
+        user_id:
+          description: User Id
+          type: integer
+        vni_id:
+          description: Vni Id
+          type: integer
+    AppAccelerationQuery:
+      properties:
+        end_time:
+          description: "Query end date.          \n"
+          format: date
+          type: string
+        flow_id:
+          description: "Flow ID.          \n"
+          type: integer
+        name:
+          description: 'Name of the query.
+
+            '
+          type: string
+        start_time:
+          description: 'Query start date.
+
+            '
+          format: date
+          type: string
+      required:
+      - end_time
+      - start_time
+      - flow_id
+    AppAccelerationQueryResponse:
+      properties:
+        data:
+          description: "App acceleration data details.          \n"
+          items:
+            $ref: '#/components/schemas/AppAccelerationData'
+          type: array
+        end_time:
+          description: "Query end date.          \n"
+          type: string
+        flow_id:
+          description: "Flow ID.          \n"
+          type: integer
+        start_time:
+          description: 'Query start date.
+
+            '
+          type: string
     AppObjectStatsResponse:
       properties:
         data:
@@ -265,6 +411,7 @@ components:
           - PoEStatistics
           - AppSummaryStats
           - OSPFStatistics
+          - IntfLACPStatistics
           type: string
         start_time:
           format: date
@@ -1325,11 +1472,25 @@ components:
             description: Wn Path
             type: string
           type: array
+    FlowStartTimeRange:
+      properties:
+        end:
+          format: date
+          type: string
+        start:
+          format: date
+          type: string
     FlowSummary:
       properties:
         app_id:
           description: App Id
           type: string
+        assurance:
+          description: Assurance
+          items:
+            description: Assurance
+            type: string
+          type: array
         bytes_c2s:
           description: Bytes C2s
           format: int64
@@ -1338,6 +1499,12 @@ components:
           description: Bytes S2c
           format: int64
           type: integer
+        dest_device_id:
+          description: Dest Device Id
+          type: string
+        dest_device_mapping_id:
+          description: Dest Device Mapping Id
+          type: string
         destination_ip:
           description: Destination Ip
           type: string
@@ -1357,12 +1524,18 @@ components:
           description: Flow End Time Ms
           format: int64
           type: integer
+        flow_id:
+          description: Flow Id
+          type: string
         flow_start_time_ms:
           description: Flow Start Time Ms
           format: int64
           type: integer
         is_local_traffic:
           description: Is Local Traffic
+          type: boolean
+        is_move_flow:
+          description: Is Move Flow
           type: boolean
         is_v6:
           description: Is V6
@@ -1417,12 +1590,21 @@ components:
         service_endpoint_id:
           description: Service Endpoint Id
           type: string
+        sgi:
+          description: Sgi
+          type: integer
         source_ip:
           description: Source Ip
           type: string
         source_port:
           description: Source Port
           type: integer
+        src_device_id:
+          description: Src Device Id
+          type: string
+        src_device_mapping_id:
+          description: Src Device Mapping Id
+          type: string
         unknown_domain:
           description: Unknown Domain
           type: string
@@ -1450,6 +1632,9 @@ components:
             description: Destination Port
             type: integer
           type: array
+        flow_start_time_range:
+          $ref: '#/components/schemas/FlowStartTimeRange'
+          description: Flow Start Time Range
         protocol:
           description: 'Filter by protocol.
 
@@ -1591,7 +1776,20 @@ components:
             description: Waninterface
             type: string
           type: array
-    FlowsQuery:
+    FlowsQueryResponse:
+      properties:
+        dest_page:
+          description: Dest Page
+          type: integer
+        flows:
+          $ref: '#/components/schemas/Flows'
+          description: "The flows information.        \n"
+        page_size:
+          description: 'The query page size.
+
+            '
+          type: integer
+    FlowsQueryV3N10:
       properties:
         debug_level:
           description: "The values of the debug levels.        \n"
@@ -1601,6 +1799,9 @@ components:
           - traffic
           - all
           type: string
+        dest_page:
+          description: Dest Page
+          type: integer
         end_time:
           description: "The end time to get the flows information. \n"
           format: date
@@ -1620,21 +1821,22 @@ components:
 
             '
           type: string
+        page_size:
+          description: 'The query page size.
+
+            '
+          type: integer
         start_time:
-          description: "The start time to get the flow information. \n"
+          description: 'The start time to get the flow information.
+
+            '
           format: date
           type: string
-    FlowsQueryResponse:
-      properties:
-        dest_page:
-          description: Dest Page
-          type: integer
-        flows:
-          $ref: '#/components/schemas/Flows'
-          description: Flows
-        page_size:
-          description: Page Size
-          type: integer
+        view:
+          $ref: '#/components/schemas/FlowsView'
+          description: 'The summary of the flow views.
+
+            '
     FlowsQueryV3N9:
       properties:
         debug_level:
@@ -1678,9 +1880,7 @@ components:
           type: string
         view:
           $ref: '#/components/schemas/FlowsView'
-          description: 'The summary of the flow views.
-
-            '
+          description: "The summary of the flow views.      \n"
     FlowsView:
       properties:
         summary:
@@ -2896,6 +3096,7 @@ components:
           - PoEStatistics
           - AppSummaryStats
           - OSPFStatistics
+          - IntfLACPStatistics
           type: string
         start_time:
           description: 'The start time of the object stats query.
@@ -4501,6 +4702,39 @@ paths:
       summary: Get TopN Data with Metrics Output (v2.0)
       tags:
       - Metrics
+  /sdwan/v2.0/api/monitor/app_acceleration:
+    post:
+      description: List all app acceleration details for given flow ID.
+      operationId: post-sdwan-v2.0-api-monitor-app_acceleration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppAccelerationQuery'
+        description: Filters for app acceleration details
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppAccelerationQueryResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: SERVICE_UNAVAILABLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query App Acceleration Details (v2.0)
+      tags:
+      - Metrics
   /sdwan/v2.0/api/monitor/application/qos_metrics:
     post:
       description: Query the time series application QoS metrics.
@@ -5569,97 +5803,6 @@ paths:
       summary: Get System Metrics Schema (v2.3)
       tags:
       - Metrics
-  /sdwan/v2.4/api/monitor/metrics:
-    post:
-      description: Query all the monitor metrics.
-      operationId: post-sdwan-v2.4-api-monitor-metrics
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MonitorMetricsQuery'
-        description: Details of monitor metrics query
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorMetricsResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_REQUEST_ERROR_0001
-                  - code: EMPTY_REQ_BODY
-                  - code: SCHEMA_MISMATCH
-                  - code: METRIC_NOT_SUPPORTED
-                  - code: METRIC_UNIT_NOT_SUPPORTED
-                  - code: UNSUPPORTED_FILTER_FOR_VERSION
-                  - code: UNSUPPORTED_INDIVIDUAL_DIMENSION
-                  - code: VIEW_DIRECTION_AND_FILTER_DIRECTION_NOT_SUPPORTED
-                  - code: UNSUPPORTED_DIRECTION_FILTER
-                  - code: METRIC_AND_VIEW_NOT_SUPPORTED
-                  - code: MISSING_DIRECTION
-                  - code: MAX_DATAPOINTS_END_TIME
-                  - code: START_TIME_GREATER_THAN_END_TIME
-                  - code: METRIC_STATISTICS_NOT_SUPPORTED
-                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
-                  - code: SITE_WITH_PATH_MISSING
-                  - code: SITE_WITH_WANINTERFACE_MISSING
-                  - code: WANINTERFACE_WITH_ANYNETLINK_MISSING
-                  - code: SITE_WITH_ELEMENT_MISSING
-                  - code: METRIC_MISSING_SITE
-                  - code: METRIC_MISSING_APP
-                  - code: METRIC_SUPPORTS_SINGLE_SITE
-                  - code: METRIC_SUPPORTS_SINGLE_REMOTE_SITE
-                  - code: METRIC_SUPPORTS_SINGLE_APP
-                  - code: METRIC_NOT_SUPPORTED_WITH_PATH_FILTER
-                  - code: METRIC_NOT_SUPPORTED_WITH_WAN_INTERFACE
-                  - code: METRIC_MISSING_PATH_ID
-                  - code: METRIC_SUPPORTS_SINGLE_PATH_ID
-                  - code: METRIC_SUPPORTS_SINGLE_FILTER_WITH_LIST
-                  - code: FILTER_NOT_SUPPORTED_FOR_METRIC
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query Monitor Metrics (v2.4)
-      tags:
-      - Metrics
-  /sdwan/v2.4/api/monitor/metrics/{mtype}:
-    get:
-      description: List all the details of the monitor metrics.
-      operationId: get-sdwan-v2.4-api-monitor-metrics-mtype
-      parameters:
-      - description: The metric type.
-        in: path
-        name: mtype
-        required: true
-        schema:
-          description: Mtype
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MetricSchemaResponse'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: METRIC_NOT_SUPPORTED
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Get Monitor Metrics (v2.4)
-      tags:
-      - Metrics
   /sdwan/v2.5/api/monitor/metrics:
     post:
       description: Query all the monitor metrics.
@@ -5748,38 +5891,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Monitor Metrics (v2.5)
+      summary: Get Monitor Metrics (v2.6)
       tags:
       - Metrics
-  /sdwan/v2.5/api/monitor/object_stats:
-    get:
-      description: List details of the object statistics.
-      operationId: get-sdwan-v2.5-api-monitor-object_stats
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ObjectStatsTypeResponse'
-          description: Successful Operation
-      summary: Get Object Stats (v2.5)
-      tags:
-      - Metrics
+  /sdwan/v2.6/api/monitor/metrics:
     post:
-      description: Query details of the object statistics.
-      operationId: post-sdwan-v2.5-api-monitor-object_stats
+      description: Query all the monitor metrics.
+      operationId: post-sdwan-v2.6-api-monitor-metrics
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ObjectStatsQuery'
-        description: Details of object stats query
+              $ref: '#/components/schemas/MonitorMetricsQuery'
+        description: Details of monitor metrics query
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectStatsResponse'
+                $ref: '#/components/schemas/MonitorMetricsResponse'
           description: Successful Operation
         '400':
           content:
@@ -5788,23 +5918,71 @@ paths:
                 value:
                   _error:
                   - code: INVALID_REQUEST_ERROR_0001
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
-                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
-                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
-                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
-                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
-                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
-                  - code: INVALID_STATS_REQUEST_BODY
-                  - code: FUTURE_TIME_ERROR
+                  - code: EMPTY_REQ_BODY
+                  - code: SCHEMA_MISMATCH
+                  - code: METRIC_NOT_SUPPORTED
+                  - code: METRIC_UNIT_NOT_SUPPORTED
+                  - code: UNSUPPORTED_FILTER_FOR_VERSION
+                  - code: UNSUPPORTED_INDIVIDUAL_DIMENSION
+                  - code: VIEW_DIRECTION_AND_FILTER_DIRECTION_NOT_SUPPORTED
+                  - code: UNSUPPORTED_DIRECTION_FILTER
+                  - code: METRIC_AND_VIEW_NOT_SUPPORTED
+                  - code: MISSING_DIRECTION
+                  - code: MAX_DATAPOINTS_END_TIME
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: METRIC_STATISTICS_NOT_SUPPORTED
+                  - code: PATH_AND_PATH_TYPE_NOT_SUPPORTED
+                  - code: SITE_WITH_PATH_MISSING
+                  - code: SITE_WITH_WANINTERFACE_MISSING
+                  - code: WANINTERFACE_WITH_ANYNETLINK_MISSING
+                  - code: SITE_WITH_ELEMENT_MISSING
+                  - code: METRIC_MISSING_SITE
+                  - code: METRIC_MISSING_APP
+                  - code: METRIC_SUPPORTS_SINGLE_SITE
+                  - code: METRIC_SUPPORTS_SINGLE_REMOTE_SITE
+                  - code: METRIC_SUPPORTS_SINGLE_APP
+                  - code: METRIC_NOT_SUPPORTED_WITH_PATH_FILTER
+                  - code: METRIC_NOT_SUPPORTED_WITH_WAN_INTERFACE
+                  - code: METRIC_MISSING_PATH_ID
+                  - code: METRIC_SUPPORTS_SINGLE_PATH_ID
+                  - code: METRIC_SUPPORTS_SINGLE_FILTER_WITH_LIST
+                  - code: FILTER_NOT_SUPPORTED_FOR_METRIC
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Query Object Stats (v2.5)
+      summary: Query Monitor Metrics (v2.6)
+      tags:
+      - Metrics
+  /sdwan/v2.6/api/monitor/metrics/{mtype}:
+    get:
+      description: Get details of monitor metrics API v2.6
+      operationId: get-sdwan-v2.6-api-monitor-metrics-mtype
+      parameters:
+      - description: Metric Type
+        in: path
+        name: mtype
+        required: true
+        schema:
+          description: Mtype
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricSchemaResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: METRIC_NOT_SUPPORTED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get details of monitor metrics (v2.6)
       tags:
       - Metrics
   /sdwan/v2.6/api/monitor/object_stats:
@@ -5861,6 +6039,62 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Query Object Stats (v2.6)
+      tags:
+      - Metrics
+  /sdwan/v2.7/api/monitor/object_stats:
+    get:
+      description: List details of the object statistics.
+      operationId: get-sdwan-v2.7-api-monitor-object_stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectStatsTypeResponse'
+          description: Successful Operation
+      summary: Get Object Stats (v2.7)
+      tags:
+      - Metrics
+    post:
+      description: Query details of the object statistics.
+      operationId: post-sdwan-v2.7-api-monitor-object_stats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectStatsQuery'
+        description: Details of object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: FUTURE_TIME_ERROR
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query Object Stats (v2.7)
       tags:
       - Metrics
   /sdwan/v3.0/api/monitor/aggregates:
@@ -5999,15 +6233,15 @@ paths:
       summary: Get Top N Data (v3.1)
       tags:
       - Metrics
-  /sdwan/v3.8/api/monitor/flows:
+  /sdwan/v3.10/api/monitor/flows:
     post:
       description: List all the flows information.
-      operationId: post-sdwan-v3.8-api-monitor-flows
+      operationId: post-sdwan-v3.10-api-monitor-flows
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FlowsQuery'
+              $ref: '#/components/schemas/FlowsQueryV3N10'
         description: Filter for flows
       responses:
         '200':
@@ -6037,13 +6271,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Internal Server Error
-      summary: Get Flows Information (v3.8)
+      summary: Get Flows Information (v3.10)
       tags:
       - Metrics
   /sdwan/v3.9/api/monitor/flows:
