@@ -12,7 +12,10 @@ keywords:
 To create Remote Network firewall which is part of Prisma Access, Configuration Orchestration APIs allows you to directly configure Remote Network tunnels. 
 
 For example, 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f50abe3414b16907232b92e2a063ca0e66648ce7
 SD-WAN OEM vendor is looking to integrate their SD-WAN solution with our cloud security services to simplify the onboarding process for their customers' SD-WAN branches. However, they encounter the following challenges:
 
 **Different APIs for Panorama and Strata Cloud Manager:** An organization has to work with different APIs for our various management platforms. This not only doubles their integration efforts but also introduces additional complexity for their end customers.

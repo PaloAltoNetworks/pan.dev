@@ -14,10 +14,15 @@ The purpose of this topic is to guide users on how to interact with the APIs ste
 This workflow is designed to ensure clarity and simplicity, making it easier for first-time users and experienced developers to integrate the APIs effectively.
 
 ### 1. Create Location Information  
+<<<<<<< HEAD
 **Step**: Use the `/v1/location-informations` endpoint to submit longitude and latitude. This retrieves the most accurate location data required for the setup.  
 
 **API Reference**: [Location Information](/sase/api/config-orch/post-v-1-location-informations/)  
 
+=======
+**Step**: Use the [`/v1/location-informations`](/sase/api/config-orch/post-v-1-location-informations/)) endpoint to submit longitude and latitude. This retrieves the most accurate location data required for the setup.  
+ 
+>>>>>>> f50abe3414b16907232b92e2a063ca0e66648ce7
 **Code Snippet (Example using cURL)**:  
 ```bash
 curl -L 'https://api.sase.paloaltonetworks.com/v1/location-informations' \

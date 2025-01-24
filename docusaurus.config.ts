@@ -492,7 +492,16 @@ const config = {
                     },
                     {
                       to: "/sase/api/introduction",
+<<<<<<< HEAD
                       label: "Configuration Orchestration",
+=======
+                      label: "Prisma Access Configuration Orchestration",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/sspm",
+                      label: "SaaS Security Posture Management",
+>>>>>>> f50abe3414b16907232b92e2a063ca0e66648ce7
                       icon: "api-doc",
                     },
                     {
@@ -906,6 +915,14 @@ const config = {
           configorch: {
             specPath: "openapi-specs/sase/config-orch",
             outputDir: "products/sase/api/config-orch",
+<<<<<<< HEAD
+=======
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          sasesspm: {
+            specPath: "openapi-specs/sase/sspm",
+            outputDir: "products/sase/api/sspm",
+>>>>>>> f50abe3414b16907232b92e2a063ca0e66648ce7
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {

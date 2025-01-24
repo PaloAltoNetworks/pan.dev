@@ -307,6 +307,14 @@ module.exports = {
     "sase/api/config-orch/introduction",
     "sase/api/config-orch/api-workflow",
     require("./api/config-orch/sidebar"),
+<<<<<<< HEAD
+=======
+  ],
+  securityposture: [
+    "sase/api/sspm/sspm-introduction",
+    "sase/api/sspm/sspm-api-workflow",
+    require("./api/sspm/sidebar"),
+>>>>>>> f50abe3414b16907232b92e2a063ca0e66648ce7
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
