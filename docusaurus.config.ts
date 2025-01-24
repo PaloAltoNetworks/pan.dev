@@ -486,7 +486,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/config-orch",
+                      to: "/sase/api/introduction",
                       label: "Prisma Access Configuration Orchestration",
                       icon: "api-doc",
                     },
