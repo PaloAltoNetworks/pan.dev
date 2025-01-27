@@ -1,0 +1,1 @@
+List through all labels discovered in the environment. This call returns a list of all labels found in the environment, allowing for input validation for investigation concerning a specific label.
