@@ -14,6 +14,8 @@ keywords:
 [Enterprise Data Loss Prevention (E-DLP)](https://www.paloaltonetworks.com/network-security/enterprise-data-loss-prevention) is a set of tools and processes that allow you to protect sensitive information against unauthorized access, misuse, extraction, or sharing.
 Enterprise DLP is a cloud-based service that uses supervised machine learning algorithms to sort sensitive documents into Financial, Legal, Healthcare, and other categories for document classification to guard against exposures, data loss, and data exfiltration. These patterns can identify the sensitive information in traffic flowing through your network and protect them from exposure. 
 
+For [Email DLP](/email-dlp/api/), visit the the Email DLP documentation page.
+
 
 ### Using the API
 
@@ -22,7 +24,6 @@ If you have not already enabled DLP, [setup prerequisites for Enterprise DLP](ht
 The [Enterprise DLP API](https://docs.paloaltonetworks.com/enterprise-dlp/enterprise-dlp-api/enterprise-dlp-api-overview/get-started-with-enterprise-dlp-api) enables you to programtically review DLP incidents captured by the patterns you define, view those incidents in a report, [assign members of your team](/dlp/api/put-v-1-api-incidents-incidentid-assignee/) to review incidents, and [update the incident notes](dlp/api/put-v-1-api-incidents-incidentid-notes/). 
 
 You can start by [retrieving all the incidents in your tenant](/dlp/api/get-v-2-api-incidents/) to get an overall view of incidents or [retrieve a specific report](/dlp/api/put-v-1-api-incidents-incidentid-notes/).
-
 
 
 ### Authentication
