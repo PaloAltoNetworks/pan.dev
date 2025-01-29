@@ -149,6 +149,51 @@ components:
           type: string
       required:
       - tenant_id
+    ElementNTPV2N1:
+      properties:
+        description:
+          description: 'The description of the Network Time Protocol (NTP) configuration.
+            Max characters = 256.
+
+            '
+        id:
+          description: 'The ID of the NTP configuration.
+
+            '
+          type: string
+        name:
+          description: 'The name of the NTP configuration. Max characters = 128.
+
+            '
+          type: string
+        ntp_servers:
+          description: 'The configured NTP servers. A minimum of 1 and a maximum of
+            10 NTP servers can be configured.
+
+            '
+          items:
+            $ref: '#/components/schemas/NTPServer'
+          type: array
+        source_interface_ids:
+          description: 'The interface used for sending a request to an NTP server.
+            A source interface can include PPPoE or sub-interfaces with IP addresses.
+            Up to 10 source interfaces are supported.
+
+            '
+          items:
+            description: Source Interface Ids
+            type: string
+          type: array
+        tags:
+          description: "A information field that can be added to identify the NTP\
+            \ configuration.  \n"
+          items:
+            description: Tags
+            type: string
+          type: array
+      required:
+      - ntp_servers
+      - name
     Error:
       properties:
         _error:
@@ -169,6 +214,24 @@ components:
           type: string
     NTPServer:
       properties:
+        algorithm:
+          description: 'The algorithm.
+
+            '
+          enum:
+          - SHA256
+          - SHA1
+          type: string
+        authentication_key:
+          description: 'The NTP authentication configuration key.
+
+            '
+          type: string
+        authentication_key_id:
+          description: 'The NTP authentication configuration key ID.
+
+            '
+          type: integer
         host:
           description: 'The host IP address or domain name.
 
@@ -668,6 +731,150 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update NTP Template (v2.0)
+      tags:
+      - NTP
+  /v2.1/api/tenants/{tenant_id}/elements/{element_id}/ntp:
+    get:
+      description: List all the elements with NTP configured.
+      operationId: get-v2.1-api-tenants-tenant_id-elements-element_id-ntp
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the element.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/BulkResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ElementNTPV2N1'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+      summary: Get Element NTP (v2.1)
+      tags:
+      - NTP
+  /v2.1/api/tenants/{tenant_id}/elements/{element_id}/ntp/{ntp_id}:
+    get:
+      description: List a specific element with NTP configured.
+      operationId: get-v2.1-api-tenants-tenant_id-elements-element_id-ntp-ntp_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the element.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      - description: The NTP configuration ID.
+        in: path
+        name: ntp_id
+        required: true
+        schema:
+          description: Ntp Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElementNTPV2N1'
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+      summary: Get Specific Element NTP (v2.1)
+      tags:
+      - NTP
+    put:
+      description: Update an existing element NTP.
+      operationId: put-v2.1-api-tenants-tenant_id-elements-element_id-ntp-ntp_id
+      parameters:
+      - description: ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: ID of the element.
+        in: path
+        name: element_id
+        required: true
+        schema:
+          description: Element Id
+          type: string
+      - description: The NTP configuration ID.
+        in: path
+        name: ntp_id
+        required: true
+        schema:
+          description: Ntp Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementNTPV2N1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElementNTPV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: NTP_CONFIG_UNSUPPORTED_SWVERSION
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: INVALID_JSON_COMMON_ATTR_MISMATCH
+                  - code: NTP_CONFIG_INVALID_INTERFACE_IDS
+                  - code: NTP_CONFIG_INVALID_SERVER_LIST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+      summary: Update Element NTP (v2.1)
       tags:
       - NTP
 servers:
