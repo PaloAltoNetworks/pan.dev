@@ -224,6 +224,15 @@ components:
       - subnet
     ESPGroup:
       properties:
+        force_encapsulation:
+          description: 'The type of encapsulation is force UDP. The type of encapsulation
+            has to match the encapsulation configured at the standard VPN endpoint.
+
+            '
+          type: boolean
+        lifesize:
+          $ref: '#/components/schemas/Lifesize'
+          description: Lifesize
         lifetime:
           description: 'The life time for the ESP Group. The default lifetime of an
             ESP Group is 24 hours.
@@ -231,6 +240,17 @@ components:
             '
           format: int32
           type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
+        mode:
+          description: 'The IPsec config ESP tunnel mode.
+
+            '
+          enum:
+          - TUNNEL
+          - TRANSPORT
+          type: string
         proposals:
           description: "Information on the IPsec proposals. Proposals is a list of\
             \ crypto parameters to be used to secure the ESP sessions between the\
@@ -238,7 +258,11 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
+        responder_sase_proposals:
+          $ref: '#/components/schemas/ResponderSaseProposals'
+          description: Responder Sase Proposals
       required:
+      - mode
       - proposals
     Error:
       properties:
@@ -260,9 +284,37 @@ components:
           type: string
     IKEGroup:
       properties:
+        aggressive:
+          description: 'If aggressive mode is selecetd, the source interface or endpoint
+            is behind NAT or there are multiple tunnels to the same remote endpoint.
+
+            '
+          type: boolean
+        authentication_multiple:
+          description: Authentication Multiple
+          type: integer
+        key_exchange:
+          description: 'The key exchange for the IKE group = IKEv1 or IKEv2.
+
+            '
+          enum:
+          - IKEV1
+          - IKEV2
+          type: string
         lifetime:
           description: 'The life time for the IKE Group. The default lifetime of an
             IKE Group is 72 hours.
+
+            '
+          format: int32
+          type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
+        port:
+          description: 'The port number of the communication port. The default port
+            is 500. The port number configured in the IKE group has to be the same
+            as the port number configured in the standard VPN endpoint IKE group.
 
             '
           format: int32
@@ -276,7 +328,14 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
+        reauth:
+          description: 'The mode for IKEv2. If selected, then a new tunnel has to
+            be re-negotiated when the lifetime is reached.
+
+            '
+          type: boolean
       required:
+      - key_exchange
       - proposals
     IKEV1Params:
       properties:
@@ -473,76 +532,6 @@ components:
       - ike_group
       - esp_group
       - name
-    IPSECProfileQuery:
-      properties:
-        aggregate:
-          $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of IPsec profiles that match the query
-            parameters.
-
-            '
-        dest_page:
-          description: 'The destination page.
-
-            '
-          format: int32
-          type: integer
-        getDeleted:
-          description: 'The number of IPsec profiles deleted for a time frame.
-
-            '
-          type: boolean
-        group_by:
-          description: 'Group the IPsec profiles for the query.
-
-            '
-          items:
-            description: Group By
-            type: string
-          type: array
-        id:
-          description: "Lists the IPsec profiles by ID.    \n"
-          type: string
-        last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
-          format: int64
-          type: integer
-        limit:
-          description: 'The query limit.
-
-            '
-          format: int32
-          type: integer
-        next_query:
-          description: 'The  limit.
-
-            '
-          type: object
-        query_params:
-          type: object
-        retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
-          items:
-            description: Retrieved Fields
-            type: string
-          type: array
-        retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
-          type: boolean
-        sort_params:
-          type: object
-        total_count:
-          description: 'The total number of query parameters.
-
-            '
-          format: int64
-          type: integer
     IPSECProfileQueryFilter:
       properties:
         authentication:
@@ -597,6 +586,64 @@ components:
       - ike_group
       - esp_group
       - name
+    IPSECProfileQueryFilterV2N2:
+      properties:
+        authentication:
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
+          description: 'The details of the authentication mode for the IPsec Profile.
+
+            '
+        description:
+          description: 'The description of the IPsec profile. Max size = 256.
+
+            '
+        dpd_delay:
+          description: "The DPD delay time in seconds (should be between 1-60 seconds)\
+            \ for IKEv1.               \n"
+          format: int32
+          type: integer
+        dpd_enable:
+          description: "If DPD is enabled for the IPsec profile. \n"
+          type: boolean
+        dpd_timeout:
+          description: 'The configured DPD timeout period.
+
+            '
+          format: int32
+          type: integer
+        esp_group:
+          $ref: '#/components/schemas/ESPGroup'
+          description: 'The ESP group defined for the IPsec profile.
+
+            '
+        id:
+          description: "The ID of the IPsec profile.             \n"
+          type: string
+        ike_group:
+          $ref: '#/components/schemas/IKEGroup'
+          description: "The IKE group defined on the IPsec profile. \n"
+        name:
+          description: 'The name of the IPsec profile. Max size = 128.
+
+            '
+          type: string
+        tags:
+          description: "An information field that can be added to identify the IPsec\
+            \ profile. Maximum 10 unique tags of length 1024 each are allowed. \n"
+          items:
+            description: Tags
+            type: string
+          type: array
+        used_for:
+          description: "IPSec profile used for values.              \n"
+          enum:
+          - fabric_vpn
+          type: string
+      required:
+      - authentication
+      - ike_group
+      - esp_group
+      - name
     IPSECProfileScreen:
       properties:
         authentication:
@@ -645,6 +692,126 @@ components:
             description: Tags
             type: string
           type: array
+      required:
+      - authentication
+      - ike_group
+      - esp_group
+      - name
+    IPSECProfileScreenV2N2:
+      properties:
+        authentication:
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
+          description: 'The details of the authentication mode for the IPsec Profile.
+
+            '
+        description:
+          description: 'The description of the IPsec profile. Max size = 256.
+
+            '
+        dpd_delay:
+          description: "The DPD delay time in seconds (should be between 1-60 seconds)\
+            \ for IKEv1.               \n"
+          format: int32
+          type: integer
+        dpd_enable:
+          description: "If DPD is enabled for the IPsec profile. \n"
+          type: boolean
+        dpd_timeout:
+          description: 'The configured DPD timeout period.
+
+            '
+          format: int32
+          type: integer
+        esp_group:
+          $ref: '#/components/schemas/ESPGroup'
+          description: 'The ESP group defined for the IPsec profile.
+
+            '
+        id:
+          description: "The ID of the IPsec profile.             \n"
+          type: string
+        ike_group:
+          $ref: '#/components/schemas/IKEGroup'
+          description: "The IKE group defined on the IPsec profile. \n"
+        name:
+          description: 'The name of the IPsec profile. Max size = 128.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the IPsec
+            profile. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        used_for:
+          description: "IPSec profile used for values.               \n"
+          enum:
+          - fabric_vpn
+          type: string
+      required:
+      - authentication
+      - ike_group
+      - esp_group
+      - name
+    IPSECProfileV2N2:
+      properties:
+        authentication:
+          $ref: '#/components/schemas/IPSECAuthenticationV1'
+          description: 'The details of the authentication mode for the IPsec Profile.
+
+            '
+        description:
+          description: 'The description of the IPsec profile. Max size = 256.
+
+            '
+        dpd_delay:
+          description: "The DPD delay time in seconds (should be between 1-60 seconds)\
+            \ for IKEv1.               \n"
+          format: int32
+          type: integer
+        dpd_enable:
+          description: "If DPD is enabled for the IPsec profile. \n"
+          type: boolean
+        dpd_timeout:
+          description: 'The configured DPD timeout period.
+
+            '
+          format: int32
+          type: integer
+        esp_group:
+          $ref: '#/components/schemas/ESPGroup'
+          description: 'The ESP group defined for the IPsec profile.
+
+            '
+        id:
+          description: "The ID of the IPsec profile.             \n"
+          type: string
+        ike_group:
+          $ref: '#/components/schemas/IKEGroup'
+          description: "The IKE group defined on the IPsec profile. \n"
+        name:
+          description: 'The name of the IPsec profile. Max size = 128.
+
+            '
+          type: string
+        tags:
+          description: 'An information field that can be added to identify the IPsec
+            profile. Maximum 10 unique tags of length 1024 each are allowed.
+
+            '
+          items:
+            description: Tags
+            type: string
+          type: array
+        used_for:
+          description: "IPSec profile used for values.               \n"
+          enum:
+          - fabric_vpn
+          type: string
       required:
       - authentication
       - ike_group
@@ -1143,6 +1310,15 @@ components:
             description: Prefixes
             type: string
           type: array
+    Lifesize:
+      properties:
+        units:
+          description: Units
+          type: string
+        value:
+          description: Value
+          format: int32
+          type: integer
     ListQueryResponse:
       properties:
         count:
@@ -1264,83 +1440,100 @@ components:
 
             '
           enum:
+          - ECP224BP
+          - ECP256
           - NONE
-          - MODP768
-          - MODP1024
-          - MODP1536
-          - MODP2048
-          - MODP3072
-          - MODP4096
-          - MODP6144
           - MODP8192
           - MODP1024S160
-          - MODP2048S224
-          - MODP2048S256
-          - ECP192
-          - ECP224
-          - ECP256
+          - MODP3072
           - ECP384
+          - MODP1024
+          - MODP4096
+          - MODP2048
+          - ECP224
+          - ECP192
           - ECP521
-          - ECP224BP
           - ECP256BP
           - ECP384BP
+          - MODP2048S224
           - ECP512BP
+          - MODP768
           - CURVE25519
+          - MODP2048S256
+          - MODP6144
+          - MODP1536
           type: string
         encryption:
           description: 'The encryption values.
 
             '
           enum:
+          - AES256CCM64
           - NONE
-          - AES128
-          - AES192
-          - AES256
-          - AES128CTR
+          - AES192GMAC
+          - TWOFISH192
+          - AES256GCM16
           - AES192CTR
           - AES256CTR
-          - AES128CCM16
-          - AES128CCM64
-          - AES192CCM64
-          - AES256CCM64
-          - AES128CCM96
-          - AES192CCM96
-          - AES256CCM96
-          - AES128CCM128
-          - AES192CCM128
-          - AES256CCM128
-          - AES128GCM16
-          - AES128GCM64
-          - AES192GCM64
-          - AES256GCM16
-          - AES256GCM64
-          - AES128GCM96
-          - AES192GCM96
-          - AES256GCM96
-          - AES128GCM128
-          - AES192GCM128
-          - AES256GCM128
-          - AES128GMAC
-          - AES192GMAC
-          - AES256GMAC
-          - TRIPLEDES
-          - BLOWFISH128
-          - BLOWFISH192
           - BLOWFISH256
-          - CAMELLIA128
+          - AES128CCM128
+          - AES256CCM128
+          - AES256GCM128
+          - AES192GCM128
+          - AES256CCM96
+          - AES192CCM64
           - CAMELLIA192
-          - CAMELLIA256
-          - SERPENT128
-          - SERPENT192
-          - SERPENT256
-          - TWOFISH128
-          - TWOFISH192
+          - AES128GCM64
+          - AES256
+          - AES128GCM96
           - TWOFISH256
+          - AES192GCM64
+          - AES256GMAC
+          - SERPENT192
+          - AES128CCM64
+          - BLOWFISH192
+          - AES192CCM128
+          - TRIPLEDES
+          - AES192
+          - AES256GCM64
+          - SERPENT128
+          - AES256GCM96
+          - CAMELLIA128
+          - AES128GCM128
+          - AES128CCM16
+          - AES128
+          - AES128CTR
+          - AES192CCM96
+          - AES192GCM96
+          - CAMELLIA256
+          - AES128GMAC
+          - AES128CCM96
+          - SERPENT256
+          - BLOWFISH128
+          - AES128GCM16
+          - TWOFISH128
           type: string
         hash:
           description: 'The hash values.
 
             '
+          enum:
+          - NONE
+          - AES192GMAC
+          - SHA1
+          - AES256GMAC
+          - SHA512
+          - AESXCBC
+          - MD5
+          - SHA256_96
+          - AES128GMAC
+          - SHA384
+          - SHA256
+          type: string
+        prf:
+          description: 'Prf: ValidateEnum(enumClass = classOf[IPSECHash], error =
+            IPSECCONFIG_INVALID_HASH: Invalid hashing algorithm specified., nullAllowed
+            = true) '
           enum:
           - MD5
           - SHA1
@@ -1358,29 +1551,108 @@ components:
       - hash
       - encryption
       - dh_groups
-    SiteIPFixPrefixAssociation:
+    ResponderSaseProposals:
       properties:
-        id:
-          description: 'The ID of the IPFIX prefix.
-
-            '
-          type: string
-        ipv4_prefixes:
-          description: 'The individual IP address.
-
-            '
+        dh_group:
+          description: Dh Group
           items:
-            description: Ipv4 Prefixes
+            description: Dh Group
+            enum:
+            - NONE
+            - MODP768
+            - MODP1024
+            - MODP1536
+            - MODP2048
+            - MODP3072
+            - MODP4096
+            - MODP6144
+            - MODP8192
+            - MODP1024S160
+            - MODP2048S224
+            - MODP2048S256
+            - ECP192
+            - ECP224
+            - ECP256
+            - ECP384
+            - ECP521
+            - ECP224BP
+            - ECP256BP
+            - ECP384BP
+            - ECP512BP
+            - CURVE25519
             type: string
           type: array
-        prefix_id:
-          description: "The prefix ID that associates with a site.   \n"
-          type: string
-        tags:
-          description: "A information field that can be added to identify the prefix.\
-            \ Maximum 10 unique tags of length 1024 each are allowed.      \n"
+        encryption:
+          description: 'The encryption values.
+
+            '
           items:
-            description: Tags
+            description: Encryption
+            enum:
+            - NONE
+            - AES128
+            - AES192
+            - AES256
+            - AES128CTR
+            - AES192CTR
+            - AES256CTR
+            - AES128CCM16
+            - AES128CCM64
+            - AES192CCM64
+            - AES256CCM64
+            - AES128CCM96
+            - AES192CCM96
+            - AES256CCM96
+            - AES128CCM128
+            - AES192CCM128
+            - AES256CCM128
+            - AES128GCM16
+            - AES128GCM64
+            - AES192GCM64
+            - AES256GCM16
+            - AES256GCM64
+            - AES128GCM96
+            - AES192GCM96
+            - AES256GCM96
+            - AES128GCM128
+            - AES192GCM128
+            - AES256GCM128
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - TRIPLEDES
+            - BLOWFISH128
+            - BLOWFISH192
+            - BLOWFISH256
+            - CAMELLIA128
+            - CAMELLIA192
+            - CAMELLIA256
+            - SERPENT128
+            - SERPENT192
+            - SERPENT256
+            - TWOFISH128
+            - TWOFISH192
+            - TWOFISH256
+            type: string
+          type: array
+        hash:
+          description: 'The hash values.
+
+            '
+          items:
+            description: Hash
+            enum:
+            - MD5
+            - SHA1
+            - SHA256
+            - SHA384
+            - SHA512
+            - SHA256_96
+            - AESXCBC
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - NONE
             type: string
           type: array
     StaticMapping:
@@ -2216,6 +2488,12 @@ components:
         passphrase:
           description: Passphrase
           type: string
+        pkcs12_certificate:
+          description: Pkcs12 Certificate
+          type: string
+        privateKey:
+          description: PrivateKey
+          type: java.security.privatekey
         private_key:
           description: Private Key
           type: string
@@ -2236,247 +2514,6 @@ info:
   version: Latest
 openapi: 3.0.0
 paths:
-  /v2.0/api/tenants/{tenant_id}/ipsecprofiles:
-    get:
-      description: Get the IPsec profile list.
-      operationId: get-v2.0-api-tenants-tenant_id-ipsecprofiles
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          allOf:
-          - $ref: '#/components/schemas/ListQueryResponse'
-          - properties:
-              items:
-                items:
-                  $ref: '#/components/schemas/IPSECProfile'
-                type: array
-            type: object
-          description: Tenant Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPSECProfile'
-          description: Successful Operation
-      summary: Get IPSEC Profile List (v2.0)
-      tags:
-      - Network Constructs
-    post:
-      description: Create a new IPsec profile.
-      operationId: post-v2.0-api-tenants-tenant_id-ipsecprofiles
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPSECProfileScreen'
-        description: Details of the IPSEC profile to be created
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPSECProfile'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_VALUE
-                  - code: IPSECCONFIG_IKEGROUP_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_DELAY
-                  - code: IPSECCONFIG_ESPGROUP_REQUIRED
-                  - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create IPSEC Profile (v2.0)
-      tags:
-      - Network Constructs
-  /v2.0/api/tenants/{tenant_id}/ipsecprofiles/query:
-    post:
-      description: Query the DB for limit number of tenant level IPsec profiles that
-        match the query parameters.
-      operationId: post-v2.0-api-tenants-tenant_id-ipsecprofiles-query
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPSECProfileQuery'
-        description: Query Details for IPSECProfile
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/ListQueryResponse'
-                - properties:
-                    items:
-                      items:
-                        $ref: '#/components/schemas/SiteIPFixPrefixAssociation'
-                      type: array
-                  type: object
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: BAD_QUERY_REQUEST
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Query DB for IPSEC Profiles (v2.0)
-      tags:
-      - Network Constructs
-  /v2.0/api/tenants/{tenant_id}/ipsecprofiles/{profile_id}:
-    delete:
-      description: Delete an IPsec Profile.
-      operationId: delete-v2.0-api-tenants-tenant_id-ipsecprofiles-profile_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the IPsec profile.
-        in: path
-        name: profile_id
-        required: true
-        schema:
-          description: Profile Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPSECProfile'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_VALUE
-                  - code: IPSECCONFIG_IKEGROUP_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_DELAY
-                  - code: IPSECCONFIG_ESPGROUP_REQUIRED
-                  - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
-                  - code: IPSECCONFIG_AUTO_CREATED
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Delete IPSEC Profile (v2.0)
-      tags:
-      - Network Constructs
-    get:
-      description: List a specific IPsec Profile.
-      operationId: get-v2.0-api-tenants-tenant_id-ipsecprofiles-profile_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the IPsec profile.
-        in: path
-        name: profile_id
-        required: true
-        schema:
-          description: Profile Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPSECProfile'
-          description: Successful Operation
-      summary: Get IPSEC Profile (v2.0)
-      tags:
-      - Network Constructs
-    put:
-      description: Update an IPsec Profile.
-      operationId: put-v2.0-api-tenants-tenant_id-ipsecprofiles-profile_id
-      parameters:
-      - description: The ID of the tenant.
-        in: path
-        name: tenant_id
-        required: true
-        schema:
-          description: Tenant Id
-          type: string
-      - description: The ID of the IPsec profile.
-        in: path
-        name: profile_id
-        required: true
-        schema:
-          description: Profile Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPSECProfileScreen'
-        description: Details of the IPSEC profile to be created
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPSECProfile'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_VALUE
-                  - code: IPSECCONFIG_IKEGROUP_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_DELAY
-                  - code: IPSECCONFIG_ESPGROUP_REQUIRED
-                  - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
-                  - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
-                  - code: IPSECCONFIG_AUTO_CREATED
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Update IPSEC Profile (v2.0)
-      tags:
-      - Network Constructs
   /v2.0/api/tenants/{tenant_id}/networkcontexts:
     get:
       description: List all the LAN segments.
@@ -3400,6 +3437,283 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Update WAN Network (v2.1)
+      tags:
+      - Network Constructs
+  /v2.2/api/tenants/{tenant_id}/ipsecprofiles:
+    get:
+      description: Get the IPsec profile list.
+      operationId: get-v2.2-api-tenants-tenant_id-ipsecprofiles
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/IPSECProfileV2N2'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get IPSEC Profile List (v2.2)
+      tags:
+      - Network Constructs
+    post:
+      description: Create a new IPsec profile.
+      operationId: post-v2.2-api-tenants-tenant_id-ipsecprofiles
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPSECProfileScreenV2N2'
+        description: Details of the IPSEC profile to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSECProfileV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_VALUE
+                  - code: IPSECCONFIG_INVALID_ENCODED_AUTH_SECRET
+                  - code: IPSECCONFIG_IKEGROUP_REQUIRED
+                  - code: IPSECCONFIG_INVALID_DPD_DELAY
+                  - code: IPSECCONFIG_ESPGROUP_REQUIRED
+                  - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
+                  - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
+                  - code: IPSECCONFIG_CANNOT_SET_USED_FOR
+                  - code: VPN_CIPHER_NOT_SUPPORTED_ON_DEVICE
+                  - code: FIPS_MODE_IPSEC_CONFIG_NOT_SUPPORTED
+                  - code: GCM_IKE_PROPOSAL_HASH_NOT_NONE
+                  - code: GCM_IKE_PROPOSAL_PRF_INVALID
+                  - code: GCM_ESP_PROPOSAL_HASH_NOT_NONE
+                  - code: GCM_ESP_PROPOSAL_PRF_INVALID
+                  - code: CBC_IKE_PROPOSAL_PRF_NOT_NONE
+                  - code: CBC_IKE_PROPOSAL_HASH_INVALID
+                  - code: CBC_ESP_PROPOSAL_PRF_NOT_NONE
+                  - code: CBC_ESP_PROPOSAL_HASH_INVALID
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create IPSEC Profile (v2.2)
+      tags:
+      - Network Constructs
+  /v2.2/api/tenants/{tenant_id}/ipsecprofiles/query:
+    post:
+      description: Query the DB for limit number of tenant level IPsec profiles that
+        match the query parameters.
+      operationId: post-v2.2-api-tenants-tenant_id-ipsecprofiles-query
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPSECProfileQueryFilterV2N2'
+        description: Query Details for IPSECProfile
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/IPSECProfileQueryFilterV2N2'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_QUERY_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query DB for IPSEC Profiles (v2.2)
+      tags:
+      - Network Constructs
+  /v2.2/api/tenants/{tenant_id}/ipsecprofiles/{profile_id}:
+    delete:
+      description: Delete an IPsec Profile.
+      operationId: delete-v2.2-api-tenants-tenant_id-ipsecprofiles-profile_id
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the IPsec profile.
+        in: path
+        name: profile_id
+        required: true
+        schema:
+          description: Profile Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSECProfileV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_VALUE
+                  - code: SYSTEM_RESOURCE_MODIFICATION_NOT_ALLOWED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Delete IPSEC Profile (v2.2)
+      tags:
+      - Network Constructs
+    get:
+      description: List a specific IPsec Profile.
+      operationId: get-v2.2-api-tenants-tenant_id-ipsecprofiles-profile_id
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the IPsec profile.
+        in: path
+        name: profile_id
+        required: true
+        schema:
+          description: Profile Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSECProfileV2N2'
+          description: Successful Operation
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Get IPSEC Profile (v2.2)
+      tags:
+      - Network Constructs
+    put:
+      description: Update an IPsec Profile.
+      operationId: put-v2.2-api-tenants-tenant_id-ipsecprofiles-profile_id
+      parameters:
+      - description: The ID of the tenant.
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      - description: The ID of the IPsec profile.
+        in: path
+        name: profile_id
+        required: true
+        schema:
+          description: Profile Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPSECProfileScreenV2N2'
+        description: Details of the IPSEC profile to be created
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSECProfileV2N2'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_VALUE
+                  - code: IPSECCONFIG_INVALID_ENCODED_AUTH_SECRET
+                  - code: IPSECCONFIG_IKEGROUP_REQUIRED
+                  - code: IPSECCONFIG_INVALID_DPD_DELAY
+                  - code: IPSECCONFIG_ESPGROUP_REQUIRED
+                  - code: IPSECCONFIG_AUTHENTICATION_REQUIRED
+                  - code: IPSECCONFIG_INVALID_DPD_TIMEOUT
+                  - code: SYSTEM_RESOURCE_MODIFICATION_NOT_ALLOWED
+                  - code: IPSECCONFIG_AUTO_CREATED
+                  - code: VPN_CIPHER_NOT_SUPPORTED_ON_DEVICE
+                  - code: FIPS_MODE_IPSEC_CONFIG_NOT_SUPPORTED
+                  - code: GCM_IKE_PROPOSAL_HASH_NOT_NONE
+                  - code: GCM_IKE_PROPOSAL_PRF_INVALID
+                  - code: GCM_ESP_PROPOSAL_HASH_NOT_NONE
+                  - code: GCM_ESP_PROPOSAL_PRF_INVALID
+                  - code: CBC_IKE_PROPOSAL_PRF_NOT_NONE
+                  - code: CBC_IKE_PROPOSAL_HASH_INVALID
+                  - code: CBC_ESP_PROPOSAL_PRF_NOT_NONE
+                  - code: CBC_ESP_PROPOSAL_HASH_INVALID
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Update IPSEC Profile (v2.2)
       tags:
       - Network Constructs
   /v2.4/api/tenants/{tenant_id}/waninterfacelabels:
