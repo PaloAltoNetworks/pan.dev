@@ -13,9 +13,9 @@ The purpose of this topic is to guide users on how to interact with the APIs ste
 
 This workflow is designed to ensure clarity and simplicity, making it easier for first-time users and experienced developers to integrate the APIs effectively.
 
-### 1. Create Location Information  
+### 1 a. Get Location-mapped Information  
 **Step**: Use the [`/v1/location-informations`](/sase/api/config-orch/post-v-1-location-informations/)) endpoint to submit longitude and latitude. This retrieves the most accurate location data required for the setup.  
- 
+
 **Code Snippet (Example using cURL)**:  
 ```bash
 curl -L 'https://api.sase.paloaltonetworks.com/v1/location-informations' \
@@ -44,6 +44,77 @@ curl -L 'https://api.sase.paloaltonetworks.com/v1/location-informations' \
 ```json
 {
   "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
+
+### 1 b. Get status for the request ID
+**Step**: Use the [`/v1/location-informations`](/sase/api/config-orch/post-v-1-location-informations/) endpoint to get the location information status for the request ID (UUID). This retrieves the location information status of the given request ID.
+ 
+**Code Snippet (Example using cURL)**:  
+```bash
+curl -L 'https://api.sase.paloaltonetworks.com/v1/location-informations' \
+-H 'Accept: application/json' \
+-H 'Authorization: Bearer <token>'
+```
+
+**Response**:  
+- **Status Code**: `200 (Success)`  
+- **Body**:  
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "details": {},
+      "help": "string",
+      "message": "string"
+    }
+  ],
+  "result": {
+    "bandwidth_allocations": {
+      "bandwidth_allocations": [
+        {
+          "bandwidth": "string",
+          "compute_location": "string",
+          "edge_location": "string",
+          "ipsec_node_list": [
+            "string"
+          ],
+          "location": {
+            "public-ip": {
+              "PublicIp": "198.51.100.42"
+            },
+            "region-cordinates": {
+              "latitude": "string",
+              "longitude": "string"
+            }
+          }
+        }
+      ],
+      "uuid": {
+        "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      }
+    },
+    "info_type": "string",
+    "location_region_info": {
+      "regions_info": [
+        {
+          "compute_location": "string",
+          "edge_location": "string",
+          "location": {
+            "public-ip": {
+              "PublicIp": "198.51.100.42"
+            },
+            "region-cordinates": {
+              "latitude": "string",
+              "longitude": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "status": "string"
 }
 ```
 
