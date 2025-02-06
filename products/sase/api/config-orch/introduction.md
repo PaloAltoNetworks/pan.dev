@@ -18,6 +18,6 @@ SD-WAN OEM vendor is looking to integrate their SD-WAN solution with our cloud s
 
 **Security and Accessibility Concerns:** For on-premises deployments, customers are required to configure their edge firewalls to allow traffic to Panorama. This is perceived as a security risk and is also a cumbersome requirement for their customers.
 
-To solve these problems, Configuration Orchestration APIs allow you to configure Remote Network Tunnel across Panorama managed and Strata Cloud Manager managed Prisma Access, streamlining the integration process and enhancing security and accessibility.
+To solve these problems, Configuration Orchestration API enables our customers and partners to integrate third party SD-WAN products with Prisma Access to offer Cloud security services over their SD-WAN solution. This API is supported across both Panorama or Strata Cloud Management managed Prisma Access and makes it easier to automate onboarding of third party SD-WAN branches to Prisma Access Remote Networks.
 
 These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
