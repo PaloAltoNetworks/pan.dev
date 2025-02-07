@@ -3,6 +3,7 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import TurndownService from "turndown";
 import Tooltip from "../Tooltip";
+import Sparkles from "./assets/sparkles.svg";
 import "./styles.css";
 
 function CopyButton({ isVisible }) {
@@ -54,7 +55,7 @@ function CopyButton({ isVisible }) {
         type="button"
       >
         <span className="icon-container">
-          <i className="fa-regular fa-copy" style={{ fontSize: "16px" }}></i>
+          <Sparkles className="sparkles" />
           <i className="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
         </span>
         {isVisible && (
