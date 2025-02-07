@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import TurndownService from "turndown";
+import Tooltip from "../Tooltip";
 import "./styles.css";
 
 function CopyButton({ isVisible }) {
@@ -35,6 +36,9 @@ function CopyButton({ isVisible }) {
       .writeText(markdownContent)
       .then(() => {
         setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1500);
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
@@ -43,22 +47,24 @@ function CopyButton({ isVisible }) {
   };
 
   return (
-    <button
-      onClick={handleCopyMarkdown}
-      className="copy-markdown-btn"
-      type="button"
-    >
-      {copied ? (
-        <i class="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
-      ) : (
-        <i class="fa-regular fa-copy" style={{ fontSize: "16px" }}></i>
-      )}
-      {isVisible && (
-        <span className="copy-markdown-btn__text">
-          {copied ? "Copied" : "Copy as Markdown"}
-        </span>
-      )}
-    </button>
+    <Tooltip text="Copy contents of documentation as Markdown format for AI usage">
+      <button
+        onClick={handleCopyMarkdown}
+        className="copy-markdown-btn"
+        type="button"
+      >
+        {copied ? (
+          <i className="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
+        ) : (
+          <i className="fa-regular fa-copy" style={{ fontSize: "16px" }}></i>
+        )}
+        {isVisible && (
+          <span className="copy-markdown-btn__text">
+            {copied ? "Copied" : "Copy for AI"}
+          </span>
+        )}
+      </button>
+    </Tooltip>
   );
 }
 
