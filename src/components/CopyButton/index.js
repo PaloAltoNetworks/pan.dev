@@ -50,14 +50,13 @@ function CopyButton({ isVisible }) {
     <Tooltip text="Copy contents of documentation as Markdown format for AI usage">
       <button
         onClick={handleCopyMarkdown}
-        className="copy-markdown-btn"
+        className={`copy-markdown-btn ${copied ? "copied" : ""}`}
         type="button"
       >
-        {copied ? (
-          <i className="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
-        ) : (
+        <span className="icon-container">
           <i className="fa-regular fa-copy" style={{ fontSize: "16px" }}></i>
-        )}
+          <i className="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
+        </span>
         {isVisible && (
           <span className="copy-markdown-btn__text">
             {copied ? "Copied" : "Copy for AI"}
