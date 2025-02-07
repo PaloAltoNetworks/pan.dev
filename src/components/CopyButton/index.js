@@ -48,7 +48,10 @@ function CopyButton({ isVisible }) {
   };
 
   return (
-    <Tooltip text="Copy contents of documentation as Markdown format for AI usage">
+    <Tooltip
+      isVisible={isVisible}
+      text="Copy contents of documentation as Markdown format for AI usage"
+    >
       <button
         onClick={handleCopyMarkdown}
         className={`copy-markdown-btn ${copied ? "copied" : ""}`}

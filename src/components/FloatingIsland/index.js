@@ -67,6 +67,7 @@ function FloatingIsland() {
           !hide_applause &&
           (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && editUrl && <EditThisPageButton />}
+        {!isVisible && editUrl && <Divider />}
         <CopyButton isVisible={isVisible} />
         {!isVisible && <Divider />}
         {!isVisible &&
