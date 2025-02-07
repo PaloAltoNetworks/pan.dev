@@ -2,7 +2,6 @@ import React from "react";
 import "./styles.css";
 
 const Tooltip = ({ children, text, isVisible }) => {
-  console.log({ isVisible });
   return (
     <div className="tooltip-container">
       {children}
