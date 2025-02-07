@@ -486,6 +486,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/sase/api/introduction",
+                      label: "Prisma Access Configuration Orchestration",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sase/api/sspm",
                       label: "SaaS Security Posture Management",
                       icon: "api-doc",
@@ -896,6 +901,11 @@ const config = {
           mtinterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect",
             outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          configorch: {
+            specPath: "openapi-specs/sase/config-orch",
+            outputDir: "products/sase/api/config-orch",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sasesspm: {

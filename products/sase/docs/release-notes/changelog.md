@@ -13,11 +13,12 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Jan 9th, 2025  | Added [SaaS Security Posture Management](/sase/api/sspm/). 
-| Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/browser-mgmt-api/).                                                                                                  |
-| Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                  |
-| July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                  |
-| April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                                                                  |
+| Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/).                                                                                                        |
+| Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).                                                                                                                        |
+| Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/).                                                                                                                          |
+| Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                                    |
+| July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                                     |
+| April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                                                                                   |
 | September 28, 2023    | Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/).                     |
 | May 16, 2023    | Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.                                   |
 | April 26, 2023  | Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellanous other changes.                                                                       |
