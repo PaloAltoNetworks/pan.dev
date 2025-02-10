@@ -24,6 +24,30 @@ function CopyButton({ isVisible }) {
 
       if (contentToConvert) {
         const turndownService = new TurndownService();
+
+        turndownService.addRule("details-rule", {
+          filter: "details",
+          replacement: function (content, node) {
+            const summary = node.querySelector("summary");
+            const summaryText = summary ? summary.textContent.trim() : "";
+            const detailsContent = content.substring(
+              content.indexOf("</summary>") + 1
+            ); // Extract content after summary
+
+            let markdown = `\n${summaryText}\n`;
+
+            // Indent the details content
+            const indentedContent = detailsContent
+              .split("\n")
+              .map((line) => (line.trim() !== "" ? ` ${line}` : line))
+              .join("\n");
+
+            markdown += indentedContent;
+
+            return markdown + "\n";
+          },
+        });
+
         const convertedContent = turndownService.turndown(contentToConvert);
         setMarkdownContent(convertedContent);
       } else {
