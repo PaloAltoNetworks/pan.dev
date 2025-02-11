@@ -14,45 +14,62 @@ function CopyButton({ isVisible }) {
 
   useEffect(() => {
     if (ExecutionEnvironment.canUseDOM) {
-      const apiDocContent = document.querySelector(
-        ".openapi-left-panel__container"
-      );
-      const nonApiDocContent =
-        !frontMatter.api && document.querySelector(".theme-doc-markdown");
+      const convertToMarkdown = () => {
+        const apiDocContent = document.querySelector(
+          ".openapi-left-panel__container"
+        );
+        const nonApiDocContent =
+          !frontMatter.api && document.querySelector(".theme-doc-markdown");
 
-      const contentToConvert = apiDocContent || nonApiDocContent;
+        const contentToConvert = apiDocContent || nonApiDocContent;
 
-      if (contentToConvert) {
-        const turndownService = new TurndownService();
+        if (contentToConvert) {
+          const turndownService = new TurndownService();
 
-        turndownService.addRule("details-rule", {
-          filter: "details",
-          replacement: function (content, node) {
-            const summary = node.querySelector("summary");
-            const summaryText = summary ? summary.textContent.trim() : "";
-            const detailsContent = content.substring(
-              content.indexOf("</summary>") + 1
-            ); // Extract content after summary
+          turndownService.addRule("details-rule", {
+            filter: "details",
+            replacement: function (content, node) {
+              const summary = node.querySelector("summary");
+              const summaryText = summary ? summary.textContent.trim() : "";
+              const detailsContent = content.substring(
+                content.indexOf("</summary>") + 1
+              ); // Extract content after summary
 
-            let markdown = `\n${summaryText}\n`;
+              let markdown = `\n${summaryText}\n`;
 
-            // Indent the details content
-            const indentedContent = detailsContent
-              .split("\n")
-              .map((line) => (line.trim() !== "" ? ` ${line}` : line))
-              .join("\n");
+              // Indent the details content
+              const indentedContent = detailsContent
+                .split("\n")
+                .map((line) => {
+                  if (line.trim() === "") return line; // Don't indent empty lines
+                  return `    ${line}`; // Use 4 spaces for indentation (common practice)
+                })
+                .join("\n");
 
-            markdown += indentedContent;
+              markdown += indentedContent;
 
-            return markdown + "\n";
-          },
-        });
+              return markdown + "\n";
+            },
+          });
 
-        const convertedContent = turndownService.turndown(contentToConvert);
-        setMarkdownContent(convertedContent);
+          const convertedContent = turndownService.turndown(contentToConvert);
+          setMarkdownContent(convertedContent);
+        } else {
+          console.warn("No content found to convert to markdown");
+        }
+      };
+
+      if (document.readyState === "loading") {
+        // Check if DOM is still loading
+        document.addEventListener("DOMContentLoaded", convertToMarkdown);
       } else {
-        console.warn("No content found to convert to markdown");
+        // DOM is already loaded
+        convertToMarkdown();
       }
+
+      return () => {
+        document.removeEventListener("DOMContentLoaded", convertToMarkdown); // Clean up
+      };
     }
   }, [markdownContent]);
 
