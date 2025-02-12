@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import ApplauseButton from "../Applause";
 import EditThisPageButton from "../EditThisPageButton";
+import CopyButton from "../CopyButton";
 import { ReportAnIssueIcon } from "../Issue";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import "./styles.css";
@@ -66,10 +67,9 @@ function FloatingIsland() {
           !hide_applause &&
           (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && editUrl && <EditThisPageButton />}
-        {!isVisible &&
-          editUrl &&
-          !hide_issue &&
-          (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
+        {!isVisible && editUrl && <Divider />}
+        <CopyButton isVisible={isVisible} />
+        {!isVisible && <Divider />}
         {!isVisible && !hide_issue && <ReportAnIssueIcon />}
       </div>
     </div>
