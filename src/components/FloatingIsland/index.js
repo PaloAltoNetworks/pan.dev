@@ -43,7 +43,6 @@ function FloatingIsland() {
 
   const canDisplayAllButtons = editUrl && !hide_issue;
   const canDisplayTwoButtons = editUrl && !hide_issue;
-  console.log(canDisplayAllButtons, canDisplayTwoButtons);
 
   return (
     <div ref={containerRef}>
