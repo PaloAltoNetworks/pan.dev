@@ -41,12 +41,9 @@ function FloatingIsland() {
     ? isInViewport(containerRef)
     : true;
 
-  const canDisplayAllButtons = !!(editUrl && !hide_applause && !hide_issue);
-  const canDisplayTwoButtons = !!(
-    (editUrl && !hide_applause) ||
-    (editUrl && !hide_issue) ||
-    (!hide_applause && !hide_issue)
-  );
+  const canDisplayAllButtons = editUrl && !hide_issue;
+  const canDisplayTwoButtons = editUrl && !hide_issue;
+  console.log(canDisplayAllButtons, canDisplayTwoButtons);
 
   return (
     <div ref={containerRef}>
@@ -61,10 +58,6 @@ function FloatingIsland() {
             : undefined
         }
       >
-        {!isVisible && !hide_applause && <ApplauseButton />}
-        {!isVisible &&
-          !hide_applause &&
-          (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && editUrl && <EditThisPageButton />}
         {!isVisible &&
           editUrl &&
