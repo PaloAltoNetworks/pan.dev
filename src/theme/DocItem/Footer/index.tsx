@@ -9,7 +9,6 @@ import TagsListInline, {
 
 import styles from "./styles.module.css";
 import FloatingIsland from "../../../components/FloatingIsland";
-import ApplauseButton from "../../../components/Applause";
 import { ReportAnIssue } from "../../../components/Issue";
 
 function TagsRow(props: TagsListInlineProps) {
@@ -49,7 +48,6 @@ function EditMetaRow({
       <hr></hr>
       <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, "row")}>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
-          {!hide_applause && <ApplauseButton />}
         </div>
         <div className={styles.docFooterEditMetaRowItemRight}>
           {editUrl && <EditThisPage editUrl={editUrl} />}
