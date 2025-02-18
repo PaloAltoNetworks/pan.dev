@@ -42,12 +42,8 @@ function FloatingIsland() {
     ? isInViewport(containerRef)
     : true;
 
-  const canDisplayAllButtons = !!(editUrl && !hide_applause && !hide_issue);
-  const canDisplayTwoButtons = !!(
-    (editUrl && !hide_applause) ||
-    (editUrl && !hide_issue) ||
-    (!hide_applause && !hide_issue)
-  );
+  const canDisplayAllButtons = editUrl && !hide_issue;
+  const canDisplayTwoButtons = editUrl && !hide_issue;
 
   return (
     <div ref={containerRef}>
@@ -62,10 +58,6 @@ function FloatingIsland() {
             : undefined
         }
       >
-        {!isVisible && !hide_applause && <ApplauseButton />}
-        {!isVisible &&
-          !hide_applause &&
-          (canDisplayAllButtons || canDisplayTwoButtons) && <Divider />}
         {!isVisible && editUrl && <EditThisPageButton />}
         {!isVisible && editUrl && <Divider />}
         <CopyButton isVisible={isVisible} />
