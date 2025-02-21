@@ -11,17 +11,18 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for AI Runtime Security: API Intercept. It covers detecting prompt injection, malicious URLs, and sensitive data loss (DLP). Each use case includes sample code or API requests, along with expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
+This document outlines key use cases for AI Runtime Security: API Intercept. It covers detecting prompt injection, malicious URLs, and sensitive data loss (DLP) including database security detection.
+Each use case includes sample code or API requests, along with expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
 
 ## Prerequisites
 
-1. Log in to Strata Cloud Manager ([SCM](http://stratacloudmanager.paloaltonetworks.com/)).
+1. Log in to ([Strata Cloud Manager](http://stratacloudmanager.paloaltonetworks.com/)).
 2. Navigate to **Insights > AI Runtime Security**.
 3. Choose **Get Started** under the API section.
-4. Onboard AI Runtime Security API Intercept in SCM.
+4. Onboard AI Runtime Security API Intercept in Strata Cloud Manager.
 5. Configure the AI security profile with below settings for all the use cases:
 
-- **Enable** all three detection types (Prompt Injection Detection, Malicious URL Detection, and AI Data Protection).
+- **Enable** all three detection types (Prompt Injection Detection, Malicious URL Detection (Basic or Advanced), Sensitive Data Detection (Basic or Advanced), and Database Security Detection).
 - Set **Action** to **Block** when the threat is detected.
 
 ![AI Security Profile](/swfw/manage-api-security-profiles.png)
@@ -154,7 +155,7 @@ The response indicates a malicious URL detected with the `response_detected.url_
 ## Use Case 3: Detect Sensitive Data Loss (DLP)
 
 The request scans a prompt containing sensitive data such as bank account numbers, credit card numbers, API keys, and other sensitive data, to detect potential data exposure threats.
-Enable "AI Data Protection" detection type in your AI security profile for this detection.
+Enable "Sensitive Data Detection" in your AI security profile.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -203,4 +204,144 @@ The specific action shown in the response is based on your security profile sett
   "tr_id": "1234"
 }
 
+```
+
+## Use Case 4: Detect Database Security Attack
+
+This detection is for AI applications using genAI to generate database queries and regulate the types of queries generated.
+
+```curl
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+--header 'Content-Type: application/json' \
+--header 'x-pan-token: <your-API-key>' \
+--header 'Accept: application/json' \
+--data '{
+  "tr_id": "1134",
+  "ai_profile": {
+    "profile_name": "ai-sec-db-security"
+  },
+  "metadata": {
+    "app_name": "Secure app AI",
+    "app_user": "test-user-1",
+    "ai_model": "Test AI model"
+  },
+  "contents": [
+    {
+      "prompt": "I need to move the customer John Green to Mars",
+      "response": "This is the query to use <sql>UPDATE Customers SET City='Mars' WHERE CustomerID=15;</sql>"
+    }
+  ]
+}'
+```
+
+Output:
+
+The output response confirms this as a database security threat (`db_security:true`). If there is a prompt or response detected, the category in the response will be set to **malicious**. If not the category will be **benign**.
+The specific action shown in the response is based on your security profile settings. To enable this detection, create or update an AI security profile by enabling **Database Security Detection**. Refer to the [administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) for details on creating a security profile.
+
+```json
+{
+  "action": "block",
+  "category": "malicious",
+  "profile_id": "8c8fdf8b-d494-0000-ba54-c16120c4ef0b",
+  "profile_name": "ai-sec-db-security",
+  "prompt_detected": {
+    "dlp": false,
+    "injection": false,
+    "url_cats": false
+  },
+  "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "response_detected": {
+    "db_security": true,
+    "dlp": false,
+    "url_cats": false
+  },
+  "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "tr_id": "1134"
+}
+```
+
+Below is the detailed report response from the `v1/scan/reports` API endpoint for the `report_id` printed in the above output:
+
+```json
+[
+  {
+    "detection_results": [
+      {
+        "action": "allow",
+        "data_type": "prompt",
+        "detection_service": "dlp",
+        "result_detail": {
+          "dlp_report": {
+            "data_pattern_rule1_verdict": "NOT_MATCHED",
+            "data_pattern_rule2_verdict": "",
+            "dlp_profile_id": "00000000",
+            "dlp_profile_name": "PII - Basic",
+            "dlp_report_id": "000008DCF2B2FA0EC57A32BB3483617365F38A6351514898258F98CE4585511F"
+          }
+        },
+        "verdict": "benign"
+      },
+      {
+        "action": "allow",
+        "data_type": "prompt",
+        "detection_service": "pi",
+        "result_detail": {},
+        "verdict": "benign"
+      },
+      {
+        "action": "allow",
+        "data_type": "prompt",
+        "detection_service": "uf",
+        "result_detail": {
+          "urlf_report": []
+        },
+        "verdict": "benign"
+      },
+      {
+        "action": "block",
+        "data_type": "response",
+        "detection_service": "dbs",
+        "result_detail": {
+          "dbs_report": [
+            {
+              "action": "block",
+              "sub_type": "database-security-update",
+              "verdict": "malicious"
+            }
+          ]
+        },
+        "verdict": "malicious"
+      },
+      {
+        "action": "allow",
+        "data_type": "response",
+        "detection_service": "dlp",
+        "result_detail": {
+          "dlp_report": {
+            "data_pattern_rule1_verdict": "NOT_MATCHED",
+            "data_pattern_rule2_verdict": "",
+            "dlp_profile_id": "00000000",
+            "dlp_profile_name": "PII - Basic",
+            "dlp_report_id": "000002C5D89B846B21942943D46D80C973F8959DF0423C5D23E2AC96B2A06575"
+          }
+        },
+        "verdict": "benign"
+      },
+      {
+        "action": "allow",
+        "data_type": "response",
+        "detection_service": "uf",
+        "result_detail": {
+          "urlf_report": []
+        },
+        "verdict": "benign"
+      }
+    ],
+    "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "req_id": 0,
+    "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "transaction_id": "1134"
+  }
+]
 ```
