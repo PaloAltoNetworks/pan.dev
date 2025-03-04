@@ -29,6 +29,7 @@ Depending on your instance location, the endpoint URL can change. The Email DLP 
 | US       | https://api.us-west1.email.dlp.paloaltonetworks.com       |
 | Europe   | https://api.europe-west3.email.dlp.paloaltonetworks.com   |
 | India    | https://api.asia-south1.email.dlp.paloaltonetworks.com    |
+| APAC     | https://api.asia-southeast1.email.dlp.paloaltonetworks.com|
 | UK       | https://api.europe-west2.email.dlp.paloaltonetworks.com   |
 | Japan    | https://api.asia-northeast1.email.dlp.paloaltonetworks.com|
 | Australia| https://api.australia-southeast1.email.dlp.paloaltonetworks.com|
