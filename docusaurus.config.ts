@@ -486,6 +486,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/monitoring_service",
+                      label: "SASE 5G Monitoring Service",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/sase/api/introduction",
                       label: "Prisma Access Configuration Orchestration",
                       icon: "api-doc",
@@ -901,6 +906,11 @@ const config = {
           mtinterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect",
             outputDir: "products/sase/api/mt-interconnect",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          monitoringservice: {
+            specPath: "openapi-specs/sase/monitoring_service",
+            outputDir: "products/sase/api/monitoring_service",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           configorch: {
