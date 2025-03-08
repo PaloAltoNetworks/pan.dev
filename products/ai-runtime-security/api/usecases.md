@@ -26,9 +26,6 @@ Each use case includes the sample code or API requests, API security profile con
 - Set **Action** to **Block** when the threat is detected.
 
 For details on the protections and the features available while creating an API security profile, refer to the administration guide page [here](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/api-intercept-create-configure-security-profile).
-Below is a screenshot of the API security profile with all the protections enabled as an example, refer to each use cases for the type of protections needed.
-
-![AI Security Profile](/swfw/manage-api-security-profiles.png)
 
 :::note
 
