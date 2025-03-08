@@ -12,7 +12,7 @@ keywords:
 ---
 
 This document outlines key use cases for AI Runtime Security: API Intercept detection features.
-Each use case includes sample code or API requests, along with expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
+Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
 
 ## Prerequisites
 
@@ -20,18 +20,19 @@ Each use case includes sample code or API requests, along with expected response
 2. Navigate to **Insights > AI Runtime Security**.
 3. Choose **Get Started** under the API section.
 4. Onboard AI Runtime Security API Intercept in Strata Cloud Manager.
-5. Configure the AI security profile with below settings for all the use cases:
+5. Configure the API security profile with below settings for the respective use cases:
 
-- **Enable** all three detection types (Prompt Injection Detection, Malicious URL Detection (Basic or Advanced), Sensitive Data Detection (Basic or Advanced), and Database Security Detection).
+- **Enable** the detection types (Basic or Advanced) in the API security profile based on the use cases.
 - Set **Action** to **Block** when the threat is detected.
 
-For details on the protections and the features available while creating an AI security profile, refer to the administration guide page [here](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/api-intercept-create-configure-security-profile).
+For details on the protections and the features available while creating an API security profile, refer to the administration guide page [here](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/api-intercept-create-configure-security-profile).
+Below is a screenshot of the API security profile with all the protections enabled as an example, refer to each use cases for the type of protections needed.
 
 ![AI Security Profile](/swfw/manage-api-security-profiles.png)
 
 :::note
 
-- When the response detects any type of threat (prompt injection, malicious URL, or DLP), the **category** field is set to **malicious**.
+- When the response detects any type of threat (such as, prompt injection, malicious URL, DLP, or toxic content), the **category** field is set to **malicious**.
 - When no threat is detected, by default the **category** is set to **benign**.
 
 :::
@@ -42,6 +43,7 @@ For details on the protections and the features available while creating an AI s
   <summary>Use Case 1: Detect Prompt Injection</summary>
 
   The following sample Python code snippet scans a prompt containing a prompt injection and generates the below output.
+  Enable **Prompt Injection Detection** in the API security profile for this detection to be effective.
 
 ```python
 import requests
@@ -106,6 +108,7 @@ If there is a prompt injection match the category in the response will be set to
 <summary>Use Case 2: Detect Malicious URL</summary>
 
 The following cURL request sends a response containing a malicious URL.
+Enable **Malicious URL Detection** with **Basic** or **Advanced** options (with custom URL filtering) in the API security profile for this detection.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -158,7 +161,7 @@ The response indicates a malicious URL detected with the `response_detected.url_
 <summary>Use Case 3: Detect Sensitive Data Loss (DLP)</summary>
 
 The request scans a prompt containing sensitive data such as bank account numbers, credit card numbers, API keys, and other sensitive data, to detect potential data exposure threats.
-Enable "Sensitive Data Detection" in your AI security profile to enable this detection.
+Enable **Sensitive Data Detection** with **Basic** or **Advanced** options in the API security profile for this detection.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -217,6 +220,7 @@ The specific action shown in the response is based on your AI security profile s
 
 This detection is for AI applications using genAI models to generate database queries and regulate the types of queries generated.
 The following sync request sends a prompt containing a potentially malicious database query to the AI Runtime Security: API intercept for analysis.
+Enable **Database Security Detection** and set an **Allow** or **Block** action on the database queries in the API security profile for this detection.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -359,6 +363,7 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
 <summary>Use Case 5: Detect Toxic Content</summary>
 The toxic content detection is for LLM models and securing them from generating or responding to inappropriate content.
 The following sync request sends a prompt containing potentially toxic content to the AI Runtime Security: API intercept for analysis.
+Enable **Toxic Content Detection** in the API security profile for this detection.
 
 ```curl
 curl --location 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
