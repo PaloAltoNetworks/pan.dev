@@ -1,7 +1,7 @@
 ---
 id: introduction_5g
-title: Introduction to SASE 5G Monitoring Service
-sidebar_label: SASE 5G Monitoring Service APIs
+title: Introduction to SASE 5G Manage Service
+sidebar_label: SASE 5G Manage Service APIs
 slug: /sase/api/monitoring_service
 keywords:
   - SASE

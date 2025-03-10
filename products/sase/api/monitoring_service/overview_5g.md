@@ -1,6 +1,6 @@
 ---
 id: overview_5g
-title: Overview of SASE 5G Monitoring Service
+title: Overview of SASE 5G Manage Service
 sidebar_label: Overview
 keywords:
   - SASE

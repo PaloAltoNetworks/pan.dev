@@ -487,7 +487,7 @@ const config = {
                     },
                     {
                       to: "sase/api/monitoring_service",
-                      label: "SASE 5G Monitoring Service",
+                      label: "SASE 5G Manage Service",
                       icon: "api-doc",
                     },
                     {
