@@ -263,6 +263,12 @@ components:
               response:
                 type: string
                 description: The response content that you want to scan
+              code_prompt:
+                type: string
+                description: Code snippet extracted from Prompt content that you want to scan
+              code_response:
+                type: string
+                description: Code snippet extracted from Response content that you want to scan              
       required:
         - contents
         - ai_profile
@@ -353,6 +359,12 @@ components:
         injection:
           type: boolean
           description: Indicates whether prompt contains any injection threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether prompt contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether prompt contains any malicious code
 
     ResponseDetected:
       type: object
@@ -363,6 +375,15 @@ components:
         dlp:
           type: boolean
           description: Indicates whether response contains any sensitive information
+        db_security:
+          type: boolean
+          description: Indicates whether prompt contains any database security threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether prompt contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether prompt contains any malicious code
 
     ScanIdResult:
       type: object
@@ -378,6 +399,16 @@ components:
           type: string
           description: Unique identifier for the scan
           example: 020e7c31-0000-4e0d-a2a6-215a0d5c56d9
+
+    TcReportObject:
+      type: object
+      properties:
+        confidence:
+          type: string
+          description: Confidence level of the threat classification ("high" and "moderate")
+        verdict:
+          type: string
+          description: "Detection service verdict such as 'malicious' or 'benign' example: 020e7c31-0000-4e0d-a2a6-215a0d5c56d9"
         result:
           $ref: '#/components/schemas/ScanResponse'
 
@@ -476,6 +507,51 @@ components:
           $ref: '#/components/schemas/UrlFilterReportObject'
         dlp_report:
           $ref: '#/components/schemas/DlpReportObject'
+        dbs_report:
+          $ref: "#/components/schemas/DbsReportObject"  
+        tc_report:
+          $ref: "#/components/schemas/TcReportObject"
+        mc_report:
+          $ref: "#/components/schemas/McReportObject"
+
+    DbsReportObject:
+      type: array
+      items:
+        $ref: "#/components/schemas/DbsEntryObject"
+
+    DbsEntryObject:
+      type: object
+      properties:
+        sub_type:
+          type: string
+          description: Database security sql query sub-type, such as "create", "read", "update", or "delete"
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+
+    McReportObject:
+      type: object
+      properties:
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        code_info:
+          type: array
+          items:
+            $ref: "#/components/schemas/McEntryObject"
+
+    McEntryObject:
+      type: object
+      properties:
+        file_type:
+          type: string
+          description: code file type, such as "javascript", "Python", "VBScript" and others
+        code_sha256:
+          type: string
+          description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
 
     UrlFilterReportObject:
       type: array
@@ -493,6 +569,9 @@ components:
           type: string
           description: Risk level associated with the URL, such as "high", "medium", or "low"
           example: high
+        action:
+          type: string
+          description: Action associated with the URL Category, such as "allow", "block", or "unknown"
         categories:
           type: array
           description: Categories associated with the URL
