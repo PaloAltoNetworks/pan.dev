@@ -41,24 +41,6 @@ module.exports = {
     "compute/api/32-07/stable-endpoints",
     require("./api/32-07/sidebar"),
   ],
-  compute_3102: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(computeVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`31-02`),
-    },
-    "compute/api/31-02/compute-api-reference-home",
-    "compute/api/31-02/access-api-self-hosted",
-    "compute/api/31-02/set-up-console",
-    "compute/api/31-02/stable-endpoints",
-    require("./api/31-02/sidebar"),
-  ],
   compute_3206: [
     {
       type: "category",
