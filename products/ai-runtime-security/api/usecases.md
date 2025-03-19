@@ -11,7 +11,7 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for AI Runtime Security: API Intercept detection features.
+This document outlines key use cases for AI Runtime Security: API intercept detection features.
 Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
 
 ## Prerequisites
@@ -19,7 +19,7 @@ Each use case includes the sample code or API requests, API security profile con
 1. Log in to [Strata Cloud Manager](http://stratacloudmanager.paloaltonetworks.com/).
 2. Navigate to **Insights > AI Runtime Security**.
 3. Choose **Get Started** under the API section.
-4. Onboard AI Runtime Security API Intercept in Strata Cloud Manager.
+4. Onboard AI Runtime Security API intercept in Strata Cloud Manager.
 5. Configure the API security profile with below settings for the respective use cases:
 
 - **Enable** the detection types (Basic or Advanced) in the API security profile based on the use cases.
@@ -441,7 +441,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
  },
  "contents": [
    {
-     "code_response": "def create_eicar_file(filename):\n    eicar_string = \"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\"\n    \n    with open(filename, '\''w'\'') as f:\n      f.write(eicar_string)\n      \n    print(f\"EICAR test file created: {filename}\")\n    \nif __name__ == \"__main__\":\n    create_eicar_file(\"eicar_test.txt\")\n\n"   }
+     "code_response": "def create_eicar_file(filename):\n    eicar_string = \"X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*\"\n    \n    with open(filename, 'w') as f:\n      f.write(eicar_string)\n      \n    print(f\"EICAR test file created: {filename}\")\n    \nif __name__ == \"__main__\":\n    create_eicar_file(\"eicar_test.txt\")\n\n"   }
  ]
 }'
 ```
