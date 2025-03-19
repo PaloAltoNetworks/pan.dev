@@ -12,8 +12,7 @@ The Enterprise 5G Security Solution offers a revolutionary approach to securing 
 
 Our goal is to make Enterprise 5G networks secure and easy to manage. We provide Service Providers with powerful tools to protect data, support many devices, and offer top-notch security services to their business customers.
 
-## Key Features & Advantages
-
+### Key Features & Advantages
 1. **Scalability Beyond 5G Core**
    - Security enforcement is decoupled from the 5G core network, eliminating the need for embedded security solutions.
    - Reduces operational complexity for Service Providers.
@@ -44,10 +43,9 @@ Our goal is to make Enterprise 5G networks secure and easy to manage. We provide
    - Eliminates security gaps caused by fragmented authentication mechanisms in OTT solutions.
    - Use case: An enterprise can apply the same data loss prevention policies to employees working from home, in the office, or on business trips.
 
-## Integration Capabilities
+### Integration Capabilities
 The Enterprise 5G Security Solution seamlessly integrates with existing security information and event management (SIEM) systems, identity providers, and threat intelligence platforms, enabling a holistic security approach.
 
-## Conclusion
+### Conclusion
 The Enterprise 5G Security Solution offers a scalable, multi-tenant, agentless, and network-aware security approach. It integrates directly with 5G network authentication frameworks, eliminating the need for complex in-line security appliances or OTT-based solutions.
-
 By leveraging this solution, Service Providers can provide enterprise-wide 5G security as a managed service, ensuring a zero-trust security model without compromising scalability, flexibility, or ease of management. This positions SPs at the forefront of secure 5G enterprise services, opening new revenue streams and enhancing their value proposition in the rapidly evolving 5G landscape.
