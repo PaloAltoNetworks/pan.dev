@@ -41,7 +41,7 @@ module.exports = {
     "compute/api/32-07/stable-endpoints",
     require("./api/32-07/sidebar"),
   ],
-compute_3303: [
+  compute_3303: [
     {
       type: "html",
       defaultStyle: true,
