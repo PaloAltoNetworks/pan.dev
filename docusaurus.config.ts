@@ -486,6 +486,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "/sase/api/introduction",
+                      label: "Prisma Access Configuration Orchestration",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sase/api/sspm",
                       label: "SaaS Security Posture Management",
                       icon: "api-doc",
@@ -898,6 +903,11 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          configorch: {
+            specPath: "openapi-specs/sase/config-orch",
+            outputDir: "products/sase/api/config-orch",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sasesspm: {
             specPath: "openapi-specs/sase/sspm",
             outputDir: "products/sase/api/sspm",
@@ -1049,32 +1059,25 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "33.03",
-            label: "v33.03",
+            version: "34.00",
+            label: "v34.00",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
             versions: {
+              33.03: {
+                specPath: "openapi-specs/compute/33-03",
+                outputDir: "products/compute/api/33-03",
+                label: "v33.03",
+                baseUrl: "/compute/api/33-03/",
+              },
               32.07: {
                 specPath: "openapi-specs/compute/32-07",
                 outputDir: "products/compute/api/32-07",
                 label: "v32.07",
                 baseUrl: "/compute/api/32-07/",
               },
-              31.02: {
-                specPath: "openapi-specs/compute/31-02",
-                outputDir: "products/compute/api/31-02",
-                label: "v31.02",
-                baseUrl: "/compute/api/31-02/",
-              },
             },
-          },
-          compute_3205: {
-            specPath: "openapi-specs/compute/32-05",
-            outputDir: "products/compute/api/32-05",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-05/",
           },
           compute_3206: {
             specPath: "openapi-specs/compute/32-06",
@@ -1111,6 +1114,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-02/",
           },
+          compute_3303: {
+            specPath: "openapi-specs/compute/33-03",
+            outputDir: "products/compute/api/33-03",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/33-03/",
+          },   
         },
       },
     ],
