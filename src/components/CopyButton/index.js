@@ -95,7 +95,7 @@ function CopyButton({ isVisible }) {
     >
       <button
         onClick={handleCopyMarkdown}
-        className={`copy-markdown-btn ${copied ? "copied" : ""}`}
+        className={`copy-markdown-btn${copied ? " copied" : ""}`}
         type="button"
       >
         <span className="icon-container">
