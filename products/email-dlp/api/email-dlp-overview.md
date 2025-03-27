@@ -25,10 +25,14 @@ Once you have captured Email DLP incidents, you can use the Email DLP API to [up
 Depending on your instance location, the endpoint URL can change. The Email DLP endpoint is region specific.
 
 | Region   | Endpoint                                                  |
-| --------| ------------------    |
+| ---------| ------------------    |
 | US       | https://api.us-west1.email.dlp.paloaltonetworks.com       |
 | Europe   | https://api.europe-west3.email.dlp.paloaltonetworks.com   |
-| Asia   | https://api.asia-southeast1.email.dlp.paloaltonetworks.com  |
+| India    | https://api.asia-south1.email.dlp.paloaltonetworks.com    |
+| APAC     | https://api.asia-southeast1.email.dlp.paloaltonetworks.com|
+| UK       | https://api.europe-west2.email.dlp.paloaltonetworks.com   |
+| Japan    | https://api.asia-northeast1.email.dlp.paloaltonetworks.com|
+| Australia| https://api.australia-southeast1.email.dlp.paloaltonetworks.com|
 
 ### Authentication
 
@@ -39,4 +43,4 @@ When you create a service account, you get a Client ID and Client Secret, which 
 [get an access token](/sase/api/auth/post-auth-v-1-oauth-2-access-token).
 You must also use your TSG's ID when you create an access token.
 
-To use the Email DLP API, the service account must have a **role** assigned as either Superuser, SOC_Admin, or DATA_SECURITY_ADMIN and the **Apps and Services** must have access to Next-Generation CASB.
+To use the Email DLP API, the service account must have a **role** assigned as either Superuser, SOC_Admin, or Data Security Administrator and the **Apps and Services** must have access to Data Security.
