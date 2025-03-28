@@ -44,11 +44,11 @@ The acceptance applies to the entirety of your Azure Subscription.
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 ### Providers
 
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 
 
@@ -270,10 +270,12 @@ Following configuration options are available:
 - `public_ip_name`                - (`string`, optional, defaults to `null`) name of the public IP to associate with the
                                     interface. When `create_public_ip` is set to `true` this will become a name of a newly
                                     created Public IP interface. Otherwise this is a name of an existing interfaces that will
-                                    be sourced and attached to the interface.
+                                    be sourced and attached to the interface. Not used when using `public_ip` module.
 - `public_ip_resource_group_name` - (`string`, optional, defaults to `var.resource_group_name`) name of a Resource Group that
                                     contains public IP that that will be associated with the interface. Used only when 
                                     `create_public_ip` is `false`.
+- `public_ip_id`                  - (`string`, optional, defaults to `null`) ID of the public IP to associate with the
+                                    interface. Property is used when public IP is not created or sourced within this module.
 
 Example:
 
@@ -307,6 +309,7 @@ list(object({
     create_public_ip              = optional(bool, false)
     public_ip_name                = optional(string)
     public_ip_resource_group_name = optional(string)
+    public_ip_id                  = optional(string)
   }))
 ```
 

@@ -33,6 +33,7 @@ This module is designed to work in several *modes* depending on which variables 
   name                = "transit"
   resource_group_name = "existing-rg"
   address_space       = ["10.0.0.0/25"]
+  region              = "North Europe"
   network_security_groups = {
     inbound = {
       name = "inbound-nsg"
@@ -56,42 +57,53 @@ This module is designed to work in several *modes* depending on which variables 
       name = "default-rt"
       routes = {
         "default" = {
-          name                   = "default-udr"
-          address_prefix         = "0.0.0.0/0"
-          next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = "5.6.7.8"
+          name                = "default-udr"
+          address_prefix      = "0.0.0.0/0"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "5.6.7.8"
         }
       }
     }
   }
   subnets = {
     "subnet" = {
-      name                   = "snet"
-      address_prefixes       = ["10.0.0.0/28"]
-      network_security_group = "inbound"
-      route_table            = "default"
+      name                       = "snet"
+      address_prefixes           = ["10.0.0.0/28"]
+      network_security_group_key = "inbound"
+      route_table_key            = "default"
     }
   }
   ```
 
-- source a VNET but create Subnets, NSGs and Route Tables. This is a similar example to the above one, NSG and Route Table are empty this time:
+- source a VNET but create Subnets, NSGs and Route Tables. This is a similar example to the above one, NSG is empty this time:
 
   ```hcl
   create_virtual_network = false
   name                   = "existing-vnet"
   resource_group_name    = "existing-rg"
+  region                 = "North Europe"
   network_security_groups = {
     inbound = { name = "inbound-nsg" }
   }
   route_tables = {
-    default = { name = "default-rt" }
+    default = {
+      name = "default-rt"
+      routes = {
+        "default" = {
+          name           = "default-udr"
+          address_prefix = "0.0.0.0/0"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "5.6.7.8"
+        }
+      }
+    }
   }
   subnets = {
     "subnet" = {
-      name                   = "snet"
-      address_prefixes       = ["10.0.0.0/28"]
-      network_security_group = "inbound"
-      route_table            = "default"
+      name                       = "snet"
+      address_prefixes           = ["10.0.0.0/28"]
+      network_security_group_key = "inbound"
+      route_table_key            = "default"
     }
   }
   ```
@@ -102,6 +114,7 @@ This module is designed to work in several *modes* depending on which variables 
   create_virtual_network = false
   name                   = "existing-vnet"
   resource_group_name    = "existing-rg"
+  region                 = "North Europe"
   network_security_groups = {
     inbound = {
       name = "inbound-nsg"
@@ -125,20 +138,20 @@ This module is designed to work in several *modes* depending on which variables 
       name = "default-rt"
       routes = {
         "default" = {
-          name                   = "default-udr"
-          address_prefix         = "0.0.0.0/0"
-          next_hop_type          = "VirtualAppliance"
-          next_hop_in_ip_address = "5.6.7.8"
+          name                = "default-udr"
+          address_prefix      = "0.0.0.0/0"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "5.6.7.8"
         }
       }
     }
   }
-  create_subnets = false
   subnets = {
     "subnet" = {
-      name                   = "snet"
-      network_security_group = "inbound"
-      route_table            = "default"
+      create                     = false
+      name                       = "snet"
+      network_security_group_key = "inbound"
+      route_table_key            = "default"
     }
   }
   ```
@@ -148,11 +161,11 @@ This module is designed to work in several *modes* depending on which variables 
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 ### Providers
 
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 
 
@@ -184,10 +197,11 @@ Name | Type | Description
 [`tags`](#tags) | `map` | The map of tags to assign to all created resources.
 [`create_virtual_network`](#create_virtual_network) | `bool` | Controls Virtual Network creation.
 [`address_space`](#address_space) | `list` | The address space used by the virtual network.
+[`dns_servers`](#dns_servers) | `list` | List of IP addresses of custom DNS servers (by default Azure DNS is used).
 [`vnet_encryption`](#vnet_encryption) | `string` | Enables Azure Virtual Network encryption feature (in `AllowUnencrypted` mode by default).
+[`ddos_protection_plan_id`](#ddos_protection_plan_id) | `string` | ID of an existing Azure Network DDOS Protection Plan to be associated with the VNET.
 [`network_security_groups`](#network_security_groups) | `map` | Map of objects describing Network Security Groups.
 [`route_tables`](#route_tables) | `map` | Map of objects describing a Route Tables.
-[`create_subnets`](#create_subnets) | `bool` | Controls subnet creation.
 [`subnets`](#subnets) | `map` | Map of objects describing subnets to manage.
 
 ### Outputs
@@ -265,6 +279,16 @@ Default value: `&{}`
 
 <sup>[back to list](#modules-optional-inputs)</sup>
 
+#### dns_servers
+
+List of IP addresses of custom DNS servers (by default Azure DNS is used).
+
+Type: list(string)
+
+Default value: `&{}`
+
+<sup>[back to list](#modules-optional-inputs)</sup>
+
 #### vnet_encryption
 
 Enables Azure Virtual Network encryption feature (in `AllowUnencrypted` mode by default).
@@ -274,6 +298,16 @@ When set to `null` VNET encryption is disabled.
 Type: string
 
 Default value: `AllowUnencrypted`
+
+<sup>[back to list](#modules-optional-inputs)</sup>
+
+#### ddos_protection_plan_id
+
+ID of an existing Azure Network DDOS Protection Plan to be associated with the VNET.
+
+Type: string
+
+Default value: `&{}`
 
 <sup>[back to list](#modules-optional-inputs)</sup>
 
@@ -406,7 +440,7 @@ Map of objects describing a Route Tables.
 List of available properties:
 
 - `name`                          - (`string`, required) name of a Route Table.
-- `disable_bgp_route_propagation` - (`bool`, optional, defaults to `false`) controls propagation of routes learned by BGP.
+- `bgp_route_propagation_enabled` - (`bool`, optional, defaults to `true`) controls propagation of routes learned by BGP.
 - `routes`                        - (`map`, required) a map of Route Table entries (UDRs):
   - `name`                - (`string`, required) a name of a UDR.
   - `address_prefix`      - (`string`, required) the destination CIDR to which the route applies, such as `10.1.0.0/16`.
@@ -453,7 +487,7 @@ Type:
 ```hcl
 map(object({
     name                          = string
-    disable_bgp_route_propagation = optional(bool, false)
+    bgp_route_propagation_enabled = optional(bool, true)
     routes = map(object({
       name                = string
       address_prefix      = string
@@ -468,37 +502,17 @@ Default value: `map[]`
 
 <sup>[back to list](#modules-optional-inputs)</sup>
 
-#### create_subnets
-
-Controls subnet creation.
-  
-Possible variants:
-
-- `true`  - create subnets described in `var.subnets`.
-- `false` - source subnets described in `var.subnets`.
-  
-**Note!** \
-When this variable is `false` and `var.subnets` variable is empty, subnets management is skipped.
-
-
-Type: bool
-
-Default value: `true`
-
-<sup>[back to list](#modules-optional-inputs)</sup>
-
 #### subnets
 
 Map of objects describing subnets to manage.
   
-By the default the described subnets will be created. If however `create_subnets` is set to `false` this is just a mapping
-between the existing subnets and UDRs and NSGs that should be assigned to them.
-  
 List of available attributes of each subnet entry:
 
+- `create`                          - (`bool`, optional, defaults to `true`) controls subnet creation, subnets are created when
+                                      set to `true` or sourced when set to `false`.
 - `name`                            - (`string`, required) name of a subnet.
-- `address_prefixes`                - (`list(string)`, required when `create_subnets = true`) a list of address prefixes within
-                                      VNET's address space to assign to a created subnet.
+- `address_prefixes`                - (`list(string)`, required when `create` = true`) a list of address prefixes within VNET's
+                                      address space to assign to a created subnet.
 - `network_security_group_key`      - (`string`, optional, defaults to `null`) a key identifying an NSG defined in
                                       `network_security_groups` that should be assigned to this subnet.
 - `route_table_key`                 - (`string`, optional, defaults to `null`) a key identifying a Route Table defined in
@@ -506,6 +520,9 @@ List of available attributes of each subnet entry:
 - `enable_storage_service_endpoint` - (`bool`, optional, defaults to `false`) a flag that enables `Microsoft.Storage` service
                                       endpoint on a subnet. This is a suggested setting for the management interface when full
                                       bootstrapping using an Azure Storage Account is used.
+- `enable_cloudngfw_delegation`     - (`bool`, optional, defaults to `false`) a flag that enables subnet delegation to
+                                      `PaloAltoNetworks.Cloudngfw/firewalls` service. This is required for Cloud NGFW to work
+                                      in a VNET-based deployment.
 
 Example:
 ```hcl
@@ -533,11 +550,13 @@ Type:
 
 ```hcl
 map(object({
+    create                          = optional(bool, true)
     name                            = string
     address_prefixes                = optional(list(string), [])
     network_security_group_key      = optional(string)
     route_table_key                 = optional(string)
     enable_storage_service_endpoint = optional(bool, false)
+    enable_cloudngfw_delegation     = optional(bool, false)
   }))
 ```
 

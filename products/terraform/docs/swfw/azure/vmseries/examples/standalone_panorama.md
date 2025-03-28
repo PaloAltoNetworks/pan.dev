@@ -64,7 +64,10 @@ A list of requirements might vary depending on the platform used to deploy the i
 - checkout the code locally (if you haven't done so yet)
 - copy the [`example.tfvars`](./example.tfvars) file, rename it to `terraform.tfvars` and adjust it to your needs (take a closer
   look at the `TODO` markers)
-- _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice if necessary
+- _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice
+- provide `subscription_id` either by creating an environment variable named `ARM_SUBSCRIPTION_ID` with Subscription ID as value
+  in your shell (recommended option) or by setting the value of `subscription_id` variable within your `tfvars` file (discouraged
+  option, we don't recommend putting the Subscription ID in clear text inside the code).
 - initialize the Terraform module:
 
   ```bash
@@ -151,6 +154,7 @@ terraform destroy
 Name | Version | Source | Description
 --- | --- | --- | ---
 `vnet` | - | ../../modules/vnet | 
+`public_ip` | - | ../../modules/public_ip | 
 `panorama` | - | ../../modules/panorama | 
 
 ### Resources
@@ -164,6 +168,7 @@ Name | Version | Source | Description
 
 Name | Type | Description
 --- | --- | ---
+[`subscription_id`](#subscription_id) | `string` | Azure Subscription ID is a required argument since AzureRM provider v4.
 [`resource_group_name`](#resource_group_name) | `string` | Name of the Resource Group.
 [`region`](#region) | `string` | The Azure region to use.
 [`vnets`](#vnets) | `map` | A map defining VNETs.
@@ -175,6 +180,7 @@ Name | Type | Description
 [`name_prefix`](#name_prefix) | `string` | A prefix that will be added to all created resources.
 [`create_resource_group`](#create_resource_group) | `bool` | When set to `true` it will cause a Resource Group creation.
 [`tags`](#tags) | `map` | Map of tags to assign to the created resources.
+[`public_ips`](#public_ips) | `object` | A map defining Public IP Addresses and Prefixes.
 [`availability_sets`](#availability_sets) | `map` | A map defining availability sets.
 [`panoramas`](#panoramas) | `map` | A map defining Azure Virtual Machine based on Palo Alto Networks Panorama image.
 
@@ -182,11 +188,24 @@ Name | Type | Description
 
 Name |  Description
 --- | ---
-`username` | Initial administrative username to use for VM-Series.
-`password` | Initial administrative password to use for VM-Series.
-`panorama_mgmt_ips` | 
+`username` | Initial administrative username to use for Panorama.
+`password` | Initial administrative password to use for Panorama.
+`panorama_mgmt_ips` | IP addresses for the Panorama management interface.
 
 ### Required Inputs details
+
+#### subscription_id
+
+Azure Subscription ID is a required argument since AzureRM provider v4.
+
+**Note!** \
+Instead of putting the Subscription ID directly in the code, it's recommended to use an environment variable. Create an
+environment variable named `ARM_SUBSCRIPTION_ID` with your Subscription ID as value and leave this variable set to `null`.
+
+
+Type: string
+
+<sup>[back to list](#modules-required-inputs)</sup>
 
 #### resource_group_name
 
@@ -207,38 +226,42 @@ Type: string
 #### vnets
 
 A map defining VNETs.
-  
+
 For detailed documentation on each property refer to [module documentation](../../modules/vnet)
 
 - `create_virtual_network`  - (`bool`, optional, defaults to `true`) when set to `true` will create a VNET, `false` will source
                               an existing VNET.
 - `name`                    - (`string`, required) a name of a VNET. In case `create_virtual_network = false` this should be a
                               full resource name, including prefixes.
-- `address_space`           - (`list`, required when `create_virtual_network = false`) a list of CIDRs for a newly created VNET.
-- `vnet_encryption`         - (`string`, optional, defaults to module default) enables Azure Virtual Network Encryption when
-                              set, only possible value at the moment is `AllowUnencrypted`. When set to `null`, the feature is 
-                              disabled.
 - `resource_group_name`     - (`string`, optional, defaults to current RG) a name of an existing Resource Group in which the
                               VNET will reside or is sourced from.
-- `create_subnets`          - (`bool`, optional, defaults to `true`) if `true`, create Subnets inside the Virtual Network,
-                              otherwise use source existing subnets.
-- `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
-                              [VNET module documentation](../../modules/vnet#subnets).
+- `address_space`           - (`list`, required when `create_virtual_network = false`) a list of CIDRs for a newly created VNET.
+- `dns_servers`             - (`list`, optional, defaults to module defaults) a list of IP addresses of custom DNS servers
+                              (by default Azure DNS is used).
+- `vnet_encryption`         - (`string`, optional, defaults to module default) enables Azure Virtual Network Encryption when
+                              set, only possible value at the moment is `AllowUnencrypted`. When set to `null`, the feature is
+                              disabled.
+- `ddos_protection_plan_id` - (`string`, optional, defaults to `null`) ID of an existing Azure Network DDOS Protection Plan to
+                              be associated with the VNET.
 - `network_security_groups` - (`map`, optional) map of Network Security Groups to create, for details see
                               [VNET module documentation](../../modules/vnet#network_security_groups).
 - `route_tables`            - (`map`, optional) map of Route Tables to create, for details see
                               [VNET module documentation](../../modules/vnet#route_tables).
+- `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
+                              [VNET module documentation](../../modules/vnet#subnets).
 
 
 Type: 
 
 ```hcl
 map(object({
-    name                   = string
-    resource_group_name    = optional(string)
-    create_virtual_network = optional(bool, true)
-    address_space          = optional(list(string))
-    vnet_encryption        = optional(string)
+    create_virtual_network  = optional(bool, true)
+    name                    = string
+    resource_group_name     = optional(string)
+    address_space           = optional(list(string))
+    dns_servers             = optional(list(string))
+    vnet_encryption         = optional(string)
+    ddos_protection_plan_id = optional(string)
     network_security_groups = optional(map(object({
       name = string
       rules = optional(map(object({
@@ -259,7 +282,7 @@ map(object({
     })), {})
     route_tables = optional(map(object({
       name                          = string
-      disable_bgp_route_propagation = optional(bool)
+      bgp_route_propagation_enabled = optional(bool)
       routes = map(object({
         name                = string
         address_prefix      = string
@@ -267,13 +290,14 @@ map(object({
         next_hop_ip_address = optional(string)
       }))
     })), {})
-    create_subnets = optional(bool, true)
     subnets = optional(map(object({
+      create                          = optional(bool, true)
       name                            = string
       address_prefixes                = optional(list(string), [])
       network_security_group_key      = optional(string)
       route_table_key                 = optional(string)
-      enable_storage_service_endpoint = optional(bool, false)
+      enable_storage_service_endpoint = optional(bool)
+      enable_cloudngfw_delegation     = optional(bool)
     })), {})
   }))
 ```
@@ -324,6 +348,49 @@ Default value: `true`
 Map of tags to assign to the created resources.
 
 Type: map(string)
+
+Default value: `map[]`
+
+<sup>[back to list](#modules-optional-inputs)</sup>
+
+#### public_ips
+
+A map defining Public IP Addresses and Prefixes.
+
+Following properties are available:
+
+- `public_ip_addresses` - (`map`, optional) map of objects describing Public IP Addresses, please refer to
+                          [module documentation](../../modules/public_ip#public_ip_addresses)
+                          for available properties.
+- `public_ip_prefixes`  - (`map`, optional) map of objects describing Public IP Prefixes, please refer to
+                          [module documentation](../../modules/public_ip#public_ip_prefixes)
+                          for available properties.
+
+
+Type: 
+
+```hcl
+object({
+    public_ip_addresses = optional(map(object({
+      create                     = bool
+      name                       = string
+      resource_group_name        = optional(string)
+      zones                      = optional(list(string))
+      domain_name_label          = optional(string)
+      idle_timeout_in_minutes    = optional(number)
+      prefix_name                = optional(string)
+      prefix_resource_group_name = optional(string)
+    })), {})
+    public_ip_prefixes = optional(map(object({
+      create              = bool
+      name                = string
+      resource_group_name = optional(string)
+      zones               = optional(list(string))
+      length              = optional(number)
+    })), {})
+  })
+```
+
 
 Default value: `map[]`
 
@@ -458,10 +525,11 @@ map(object({
     interfaces = list(object({
       name                          = string
       subnet_key                    = string
-      private_ip_address            = optional(string)
       create_public_ip              = optional(bool, false)
       public_ip_name                = optional(string)
       public_ip_resource_group_name = optional(string)
+      public_ip_key                 = optional(string)
+      private_ip_address            = optional(string)
     }))
     logging_disks = optional(map(object({
       name      = string
