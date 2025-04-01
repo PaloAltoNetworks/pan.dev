@@ -38,4 +38,6 @@ where an example `{id}` is `sha256:abd4f451ddb707c8e68a36d695456a515cdd6f9581b7a
 
 It takes an image ID as the input parameter, and generates a CSV file that lists all vulnerable packages in a given image, organized by layer, with both the affected and fixed versions.
 
+Note: The `complianceIDs` query parameter filters the results by the compliance IDs. The generated CSV file will contain all compliance and vulnerability information for images that include the requested compliance ID.
+
 A successful response displays the status of the download.
