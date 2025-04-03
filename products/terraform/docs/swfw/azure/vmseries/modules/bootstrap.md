@@ -154,11 +154,11 @@ details refer to the [var.file_shares](#file_shares) variable documentation.
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.9
 
 ### Providers
 
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.9
 
 
 

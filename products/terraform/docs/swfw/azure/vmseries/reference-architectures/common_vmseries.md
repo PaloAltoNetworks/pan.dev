@@ -57,7 +57,7 @@ and may present scale limitations with all traffic flowing through a single set 
 that occurs when traffic crosses virtual routers. This option is suitable for proof-of-concepts and smaller scale deployments
 because the number of firewalls low. However, the technical integration complexity is high.
 
-![Detailed Topology Diagram](9e330a37-3679-419a-8aa3-aa963cb4faf2.png)
+![Detailed Topology Diagram](798c4559-f218-4351-b0ee-c0dfb864ad3b.png)
 
 This reference architecture consists of:
 
@@ -108,7 +108,10 @@ A list of requirements might vary depending on the platform used to deploy the i
 - checkout the code locally (if you haven't done so yet)
 - copy the [`example.tfvars`](./example.tfvars) file, rename it to `terraform.tfvars` and adjust it to your needs
   (take a closer look at the `TODO` markers)
-- _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice if necessary
+- _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice
+- provide `subscription_id` either by creating an environment variable named `ARM_SUBSCRIPTION_ID` with Subscription ID as value
+  in your shell (recommended option) or by setting the value of `subscription_id` variable within your `tfvars` file (discouraged
+  option, we don't recommend putting the Subscription ID in clear text inside the code).
 - initialize the Terraform module:
 
   ```bash
@@ -209,6 +212,7 @@ Name | Version | Source | Description
 --- | --- | --- | ---
 `vnet` | - | ../../modules/vnet | 
 `vnet_peering` | - | ../../modules/vnet_peering | 
+`public_ip` | - | ../../modules/public_ip | 
 `natgw` | - | ../../modules/natgw | 
 `load_balancer` | - | ../../modules/loadbalancer | 
 `appgw` | - | ../../modules/appgw | 
@@ -229,6 +233,7 @@ Name | Version | Source | Description
 
 Name | Type | Description
 --- | --- | ---
+[`subscription_id`](#subscription_id) | `string` | Azure Subscription ID is a required argument since AzureRM provider v4.
 [`resource_group_name`](#resource_group_name) | `string` | Name of the Resource Group.
 [`region`](#region) | `string` | The Azure region to use.
 [`vnets`](#vnets) | `map` | A map defining VNETs.
@@ -241,6 +246,7 @@ Name | Type | Description
 [`create_resource_group`](#create_resource_group) | `bool` | When set to `true` it will cause a Resource Group creation.
 [`tags`](#tags) | `map` | Map of tags to assign to the created resources.
 [`vnet_peerings`](#vnet_peerings) | `map` | A map defining VNET peerings.
+[`public_ips`](#public_ips) | `object` | A map defining Public IP Addresses and Prefixes.
 [`natgws`](#natgws) | `map` | A map defining NAT Gateways.
 [`load_balancers`](#load_balancers) | `map` | A map containing configuration for all (both private and public) Load Balancers.
 [`appgws`](#appgws) | `map` | A map defining all Application Gateways in the current deployment.
@@ -265,9 +271,22 @@ Name |  Description
 `test_vms_usernames` | Initial administrative username to use for test VMs.
 `test_vms_passwords` | Initial administrative password to use for test VMs.
 `test_vms_ips` | IP Addresses of the test VMs.
-`app_lb_frontend_ips` | IP Addresses of the load balancers.
+`test_lb_frontend_ips` | IP Addresses of the test load balancers.
 
 ### Required Inputs details
+
+#### subscription_id
+
+Azure Subscription ID is a required argument since AzureRM provider v4.
+
+**Note!** \
+Instead of putting the Subscription ID directly in the code, it's recommended to use an environment variable. Create an
+environment variable named `ARM_SUBSCRIPTION_ID` with your Subscription ID as value and leave this variable set to `null`.
+
+
+Type: string
+
+<sup>[back to list](#modules-required-inputs)</sup>
 
 #### resource_group_name
 
@@ -295,31 +314,35 @@ For detailed documentation on each property refer to [module documentation](../.
                               an existing VNET.
 - `name`                    - (`string`, required) a name of a VNET. In case `create_virtual_network = false` this should be a
                               full resource name, including prefixes.
-- `address_space`           - (`list`, required when `create_virtual_network = false`) a list of CIDRs for a newly created VNET.
-- `vnet_encryption`         - (`string`, optional, defaults to module default) enables Azure Virtual Network Encryption when
-                              set, only possible value at the moment is `AllowUnencrypted`. When set to `null`, the feature is 
-                              disabled.
 - `resource_group_name`     - (`string`, optional, defaults to current RG) a name of an existing Resource Group in which the
                               VNET will reside or is sourced from.
-- `create_subnets`          - (`bool`, optional, defaults to `true`) if `true`, create Subnets inside the Virtual Network,
-                              otherwise use source existing subnets.
-- `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
-                              [VNET module documentation](../../modules/vnet#subnets).
+- `address_space`           - (`list`, required when `create_virtual_network = false`) a list of CIDRs for a newly created VNET.
+- `dns_servers`             - (`list`, optional, defaults to module defaults) a list of IP addresses of custom DNS servers
+                              (by default Azure DNS is used).
+- `vnet_encryption`         - (`string`, optional, defaults to module default) enables Azure Virtual Network Encryption when
+                              set, only possible value at the moment is `AllowUnencrypted`. When set to `null`, the feature is
+                              disabled.
+- `ddos_protection_plan_id` - (`string`, optional, defaults to `null`) ID of an existing Azure Network DDOS Protection Plan to
+                              be associated with the VNET.
 - `network_security_groups` - (`map`, optional) map of Network Security Groups to create, for details see
                               [VNET module documentation](../../modules/vnet#network_security_groups).
 - `route_tables`            - (`map`, optional) map of Route Tables to create, for details see
                               [VNET module documentation](../../modules/vnet#route_tables).
+- `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
+                              [VNET module documentation](../../modules/vnet#subnets).
 
 
 Type: 
 
 ```hcl
 map(object({
-    name                   = string
-    resource_group_name    = optional(string)
-    create_virtual_network = optional(bool, true)
-    address_space          = optional(list(string))
-    vnet_encryption        = optional(string)
+    create_virtual_network  = optional(bool, true)
+    name                    = string
+    resource_group_name     = optional(string)
+    address_space           = optional(list(string))
+    dns_servers             = optional(list(string))
+    vnet_encryption         = optional(string)
+    ddos_protection_plan_id = optional(string)
     network_security_groups = optional(map(object({
       name = string
       rules = optional(map(object({
@@ -340,7 +363,7 @@ map(object({
     })), {})
     route_tables = optional(map(object({
       name                          = string
-      disable_bgp_route_propagation = optional(bool)
+      bgp_route_propagation_enabled = optional(bool)
       routes = map(object({
         name                = string
         address_prefix      = string
@@ -348,13 +371,14 @@ map(object({
         next_hop_ip_address = optional(string)
       }))
     })), {})
-    create_subnets = optional(bool, true)
     subnets = optional(map(object({
+      create                          = optional(bool, true)
       name                            = string
       address_prefixes                = optional(list(string), [])
       network_security_group_key      = optional(string)
       route_table_key                 = optional(string)
-      enable_storage_service_endpoint = optional(bool, false)
+      enable_storage_service_endpoint = optional(bool)
+      enable_cloudngfw_delegation     = optional(bool)
     })), {})
   }))
 ```
@@ -437,6 +461,49 @@ Default value: `map[]`
 
 <sup>[back to list](#modules-optional-inputs)</sup>
 
+#### public_ips
+
+A map defining Public IP Addresses and Prefixes.
+
+Following properties are available:
+
+- `public_ip_addresses` - (`map`, optional) map of objects describing Public IP Addresses, please refer to
+                          [module documentation](../../modules/public_ip#public_ip_addresses)
+                          for available properties.
+- `public_ip_prefixes`  - (`map`, optional) map of objects describing Public IP Prefixes, please refer to
+                          [module documentation](../../modules/public_ip#public_ip_prefixes)
+                          for available properties.
+
+
+Type: 
+
+```hcl
+object({
+    public_ip_addresses = optional(map(object({
+      create                     = bool
+      name                       = string
+      resource_group_name        = optional(string)
+      zones                      = optional(list(string))
+      domain_name_label          = optional(string)
+      idle_timeout_in_minutes    = optional(number)
+      prefix_name                = optional(string)
+      prefix_resource_group_name = optional(string)
+    })), {})
+    public_ip_prefixes = optional(map(object({
+      create              = bool
+      name                = string
+      resource_group_name = optional(string)
+      zones               = optional(list(string))
+      length              = optional(number)
+    })), {})
+  })
+```
+
+
+Default value: `map[]`
+
+<sup>[back to list](#modules-optional-inputs)</sup>
+
 #### natgws
 
 A map defining NAT Gateways.
@@ -491,14 +558,16 @@ map(object({
     idle_timeout        = optional(number, 4)
     public_ip = optional(object({
       create              = bool
-      name                = string
+      name                = optional(string)
       resource_group_name = optional(string)
+      key                 = optional(string)
     }))
     public_ip_prefix = optional(object({
       create              = bool
-      name                = string
+      name                = optional(string)
       resource_group_name = optional(string)
       length              = optional(number)
+      key                 = optional(string)
     }))
   }))
 ```
@@ -520,7 +589,7 @@ Following properties are available:
 - `name`                    - (`string`, required) a name of the Load Balancer.
 - `vnet_key`                - (`string`, optional, defaults to `null`) a key pointing to a VNET definition in the `var.vnets`
                               map that stores the Subnet described by `subnet_key`.
-- `zones`                   - (`list`, optional, defaults to module default) a list of zones for Load Balancer's frontend IP
+- `zones`                   - (`list`, optional, defaults to ["1", "2", "3"]) a list of zones for Load Balancer's frontend IP
                               configurations.
 - `backend_name`            - (`string`, optional, defaults to "vmseries_backend") a name of the backend pool to create.
 - `health_probes`           - (`map`, optional, defaults to `null`) a map defining health probes that will be used by load
@@ -556,7 +625,7 @@ Type:
 map(object({
     name         = string
     vnet_key     = optional(string)
-    zones        = optional(list(string))
+    zones        = optional(list(string), ["1", "2", "3"])
     backend_name = optional(string, "vmseries_backend")
     health_probes = optional(map(object({
       name                = string
@@ -577,9 +646,11 @@ map(object({
     frontend_ips = optional(map(object({
       name                          = string
       subnet_key                    = optional(string)
-      public_ip_name                = optional(string)
       create_public_ip              = optional(bool, false)
+      public_ip_name                = optional(string)
       public_ip_resource_group_name = optional(string)
+      public_ip_key                 = optional(string)
+      public_ip_prefix_key          = optional(string)
       private_ip_address            = optional(string)
       gwlb_key                      = optional(string)
       in_rules = optional(map(object({
@@ -658,9 +729,10 @@ map(object({
     subnet_key = string
     zones      = optional(list(string))
     public_ip = object({
-      name                = string
       create              = optional(bool, true)
+      name                = optional(string)
       resource_group_name = optional(string)
+      key                 = optional(string)
     })
     domain_name_label = optional(string)
     capacity = optional(object({
@@ -962,7 +1034,7 @@ Following properties are supported:
 - `version`           - (`string`, optional) describes the PAN-OS image version from Azure Marketplace.
 - `size`              - (`string`, optional, defaults to module default) Azure VM size (type). Consult the *VM-Series
                         Deployment Guide* as only a few selected sizes are supported.
-- `bootstrap_options` - (`string`, optional, mutually exclusive with `bootstrap_package`) bootstrap options passed to PAN-OS
+- `bootstrap_options` - (`map`, optional, mutually exclusive with `bootstrap_package`) bootstrap options passed to PAN-OS
                         when launched for the 1st time, for details see module documentation.
 - `bootstrap_package` - (`map`, optional, mutually exclusive with `bootstrap_options`) a map defining content of the bootstrap
                         package. For details and available properties refer to `vmseries` variable.
@@ -972,9 +1044,36 @@ Type:
 
 ```hcl
 object({
-    version           = optional(string)
-    size              = optional(string)
-    bootstrap_options = optional(string)
+    version = optional(string)
+    size    = optional(string)
+    bootstrap_options = optional(object({
+      type                                  = optional(string)
+      ip-address                            = optional(string)
+      default-gateway                       = optional(string)
+      netmask                               = optional(string)
+      ipv6-address                          = optional(string)
+      ipv6-default-gateway                  = optional(string)
+      hostname                              = optional(string)
+      panorama-server                       = optional(string)
+      panorama-server-2                     = optional(string)
+      tplname                               = optional(string)
+      dgname                                = optional(string)
+      cgname                                = optional(string)
+      dns-primary                           = optional(string)
+      dns-secondary                         = optional(string)
+      vm-auth-key                           = optional(string)
+      op-command-modes                      = optional(string)
+      op-cmd-dpdk-pkt-io                    = optional(string)
+      plugin-op-commands                    = optional(string)
+      dhcp-send-hostname                    = optional(string)
+      dhcp-send-client-id                   = optional(string)
+      dhcp-accept-server-hostname           = optional(string)
+      dhcp-accept-server-domain             = optional(string)
+      vm-series-auto-registration-pin-id    = optional(string)
+      vm-series-auto-registration-pin-value = optional(string)
+      auth-key                              = optional(string)
+      authcodes                             = optional(string)
+    }))
     bootstrap_package = optional(object({
       bootstrap_storage_key  = string
       static_files           = optional(map(string), {})
@@ -1035,7 +1134,7 @@ The most basic properties are as follows:
   - `disk_type`         - (`string`, optional, defaults to module default) type of a Managed Disk which should be created,
                           possible values are `Standard_LRS`, `StandardSSD_LRS` or `Premium_LRS` (works only for selected
                           `size` values).
-  - `bootstrap_options` - (`string`, optional, mutually exclusive with `bootstrap_package`) bootstrap options passed to PAN-OS
+  - `bootstrap_options` - (`map`, optional, mutually exclusive with `bootstrap_package`) bootstrap options passed to PAN-OS
                           when launched for the 1st time, for details see module documentation.
   - `bootstrap_package` - (`map`, optional, mutually exclusive with `bootstrap_options`) a map defining content of the
                           bootstrap package.
@@ -1086,7 +1185,7 @@ The most basic properties are as follows:
                                  private networks. When set it will override the private Subnet CIDR for inbound traffic
                                  static routes.
 
-    For details on all properties refer to [module's documentation](../../modules/panorama#virtual_machine).
+    For details on all properties refer to [module's documentation](../../modules/vmseries#virtual_machine).
 
 - `interfaces`      - (`list`, required) configuration of all network interfaces. Order of the interfaces does matter - the
                       1<sup>st</sup> interface is the management one. Most common properties are:
@@ -1100,7 +1199,9 @@ The most basic properties are as follows:
                                 backend pool.
   - `application_gateway_key` - (`string`, optional, defaults to `null`) key of an Application Gateway defined in `var.appgws`
                                 variable, network interface that has this property defined will be added to the Application
-                                Gateway's backend pool.
+                                Gateway's backend pool. Mutually exclusive with `appgw_backend_pool_id`.
+  - `appgw_backend_pool_id`   - (`string`, optional, defaults to `null`) ID of the Application Gateway backend pool to which
+                                the network interface will be added. Mutually exclusive with `application_gateway_key`.
 
   For details on all properties refer to [module's documentation](../../modules/panorama#interfaces).
 
@@ -1126,8 +1227,35 @@ map(object({
       custom_id               = optional(string)
     }))
     virtual_machine = object({
-      size              = optional(string)
-      bootstrap_options = optional(string)
+      size = optional(string)
+      bootstrap_options = optional(object({
+        type                                  = optional(string)
+        ip-address                            = optional(string)
+        default-gateway                       = optional(string)
+        netmask                               = optional(string)
+        ipv6-address                          = optional(string)
+        ipv6-default-gateway                  = optional(string)
+        hostname                              = optional(string)
+        panorama-server                       = optional(string)
+        panorama-server-2                     = optional(string)
+        tplname                               = optional(string)
+        dgname                                = optional(string)
+        cgname                                = optional(string)
+        dns-primary                           = optional(string)
+        dns-secondary                         = optional(string)
+        vm-auth-key                           = optional(string)
+        op-command-modes                      = optional(string)
+        op-cmd-dpdk-pkt-io                    = optional(string)
+        plugin-op-commands                    = optional(string)
+        dhcp-send-hostname                    = optional(string)
+        dhcp-send-client-id                   = optional(string)
+        dhcp-accept-server-hostname           = optional(string)
+        dhcp-accept-server-domain             = optional(string)
+        vm-series-auto-registration-pin-id    = optional(string)
+        vm-series-auto-registration-pin-value = optional(string)
+        auth-key                              = optional(string)
+        authcodes                             = optional(string)
+      }))
       bootstrap_package = optional(object({
         bootstrap_storage_key  = string
         static_files           = optional(map(string), {})
@@ -1155,12 +1283,15 @@ map(object({
     interfaces = list(object({
       name                          = string
       subnet_key                    = string
+      ip_configuration_name         = optional(string)
       create_public_ip              = optional(bool, false)
       public_ip_name                = optional(string)
       public_ip_resource_group_name = optional(string)
+      public_ip_key                 = optional(string)
       private_ip_address            = optional(string)
       load_balancer_key             = optional(string)
       application_gateway_key       = optional(string)
+      appgw_backend_pool_id         = optional(string)
     }))
   }))
 ```
@@ -1191,14 +1322,12 @@ Following properties are supported:
                                 a full resource name, including prefixes.
   - `address_space`           - (`list(string)`, required when `create_virtual_network = `false`) a list of CIDRs for a newly
                                 created VNET.
-  - `create_subnets`          - (`bool`, optional, defaults to `true`) if `true`, create Subnets inside the Virtual Network,
-                                otherwise use source existing subnets.
-  - `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
-                                [VNET module documentation](../../modules/vnet#subnets).
   - `network_security_groups` - (`map`, optional) map of Network Security Groups to create, for details see
                                 [VNET module documentation](../../modules/vnet#network_security_groups).
   - `route_tables`            - (`map`, optional) map of Route Tables to create, for details see
                                 [VNET module documentation](../../modules/vnet#route_tables).
+  - `subnets`                 - (`map`, optional) map of Subnets to create or source, for details see
+                                [VNET module documentation](../../modules/vnet#subnets).
   - `local_peer_config`       - (`map`, optional) a map that contains local peer configuration parameters. This value allows to 
                                 set `allow_virtual_network_access`, `allow_forwarded_traffic`, `allow_gateway_transit` and 
                                 `use_remote_gateways` parameters on the local VNet peering. 
@@ -1214,7 +1343,7 @@ Following properties are supported:
   - `name`                    - (`string`, required) a name of the Load Balancer.
   - `vnet_key`                - (`string`, optional, defaults to `null`) a key pointing to a VNET definition in the `var.vnets`
                                 map that stores the Subnet described by `subnet_key`.
-  - `zones`                   - (`list`, optional, defaults to module default) a list of zones for Load Balancer's frontend IP
+  - `zones`                   - (`list`, optional, defaults to ["1", "2", "3"]) a list of zones for Load Balancer's frontend IP
                                 configurations.
   - `backend_name`            - (`string`, optional) a name of the backend pool to create.
   - `health_probes`           - (`map`, optional, defaults to `null`) a map defining health probes that will be used by load
@@ -1276,9 +1405,12 @@ map(object({
     create_resource_group = optional(bool, true)
     resource_group_name   = optional(string)
     vnets = map(object({
-      name                    = string
       create_virtual_network  = optional(bool, true)
+      name                    = string
       address_space           = optional(list(string))
+      dns_servers             = optional(list(string))
+      vnet_encryption         = optional(string)
+      ddos_protection_plan_id = optional(string)
       hub_resource_group_name = optional(string)
       hub_vnet_name           = string
       network_security_groups = optional(map(object({
@@ -1301,7 +1433,7 @@ map(object({
       })), {})
       route_tables = optional(map(object({
         name                          = string
-        disable_bgp_route_propagation = optional(bool)
+        bgp_route_propagation_enabled = optional(bool)
         routes = map(object({
           name                = string
           address_prefix      = string
@@ -1309,13 +1441,14 @@ map(object({
           next_hop_ip_address = optional(string)
         }))
       })), {})
-      create_subnets = optional(bool, true)
       subnets = optional(map(object({
+        create                          = optional(bool, true)
         name                            = string
         address_prefixes                = optional(list(string), [])
         network_security_group_key      = optional(string)
         route_table_key                 = optional(string)
-        enable_storage_service_endpoint = optional(bool, false)
+        enable_storage_service_endpoint = optional(bool)
+        enable_cloudngfw_delegation     = optional(bool)
       })), {})
       local_peer_config = optional(object({
         allow_virtual_network_access = optional(bool, true)
@@ -1333,7 +1466,7 @@ map(object({
     load_balancers = optional(map(object({
       name         = string
       vnet_key     = optional(string)
-      zones        = optional(list(string))
+      zones        = optional(list(string), ["1", "2", "3"])
       backend_name = optional(string)
       health_probes = optional(map(object({
         name                = string
@@ -1354,9 +1487,11 @@ map(object({
       frontend_ips = optional(map(object({
         name                          = string
         subnet_key                    = optional(string)
-        public_ip_name                = optional(string)
         create_public_ip              = optional(bool, false)
+        public_ip_name                = optional(string)
         public_ip_resource_group_name = optional(string)
+        public_ip_key                 = optional(string)
+        public_ip_prefix_key          = optional(string)
         private_ip_address            = optional(string)
         gwlb_key                      = optional(string)
         in_rules = optional(map(object({
@@ -1401,10 +1536,13 @@ map(object({
       custom_data = optional(string)
     }))
     bastions = map(object({
-      name           = string
-      public_ip_name = optional(string)
-      vnet_key       = string
-      subnet_key     = string
+      name                          = string
+      create_public_ip              = optional(bool, true)
+      public_ip_name                = optional(string)
+      public_ip_resource_group_name = optional(string)
+      public_ip_key                 = optional(string)
+      vnet_key                      = string
+      subnet_key                    = string
     }))
   }))
 ```
