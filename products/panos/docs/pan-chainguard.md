@@ -19,7 +19,7 @@ and allows PAN-OS SSL decryption administrators to:
    Authorities in PAN-OS so they can be [preloaded](
    https://wiki.mozilla.org/Security/CryptoEngineering/Intermediate_Preloading) as device certificates.
 
-This doc walks through the most popular uses of pan-chainguard, but you can visit the [admin guide](https://github.com/PaloAltoNetworks/pan-chainguard/blob/main/doc/admin-guide.rst#install-pan-chainguard) for more details.
+This document walks through the most popular uses of pan-chainguard, but you can visit the [admin guide](https://github.com/PaloAltoNetworks/pan-chainguard/blob/main/doc/admin-guide.rst#install-pan-chainguard) for more details.
 
 
 ## Use Cases
