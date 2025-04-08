@@ -58,11 +58,11 @@ If your Region doesn't, use an alternative mechanism of Availability Set, which 
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 ### Providers
 
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 
 
@@ -70,6 +70,7 @@ If your Region doesn't, use an alternative mechanism of Availability Set, which 
 
 - `linux_virtual_machine` (managed)
 - `network_interface` (managed)
+- `network_interface_application_gateway_backend_address_pool_association` (managed)
 - `network_interface_backend_address_pool_association` (managed)
 - `public_ip` (managed)
 - `public_ip` (data)
@@ -291,6 +292,7 @@ Following configuration options are available:
 
 - `name`                          - (`string`, required) the interface name.
 - `subnet_id`                     - (`string`, required) ID of an existing subnet to create the interface in.
+- `ip_configuration_name`         - (`string`, optional, defaults to `primary`) the name of the interface IP configuration.
 - `private_ip_address`            - (`string`, optional, defaults to `null`) static private IP to assign to the interface. When
                                     skipped Azure will assign one dynamically. Keep in mind that a dynamic IP is guarantied not
                                     to change as long as the VM is running. Any stop/deallocate/restart operation might cause
@@ -299,14 +301,20 @@ Following configuration options are available:
 - `public_ip_name`                - (`string`, optional, defaults to `null`) name of the public IP to associate with the
                                     interface. When `create_public_ip` is set to `true` this will become a name of a newly
                                     created Public IP interface. Otherwise this is a name of an existing interfaces that will
-                                    be sourced and attached to the interface.
+                                    be sourced and attached to the interface. Not used when using `public_ip` module.
 - `public_ip_resource_group_name` - (`string`, optional, defaults to `var.resource_group_name`) name of a Resource Group that
                                     contains public IP that that will be associated with the interface. Used only when 
                                     `create_public_ip` is `false`.
+- `public_ip_id`                  - (`string`, optional, defaults to `null`) ID of the public IP to associate with the
+                                    interface. Property is used when public IP is not created or sourced within this module.
 - `attach_to_lb_backend_pool`     - (`bool`, optional, defaults to `false`) set to `true` if you would like to associate this
                                     interface with a Load Balancer backend pool.
 - `lb_backend_pool_id`            - (`string`, optional, defaults to `null`) ID of an existing backend pool to associate the
                                     interface with.
+- `appgw_backend_pool_id`         - (`string`, optional, defaults to `null`) ID of an existing Application Gateway backend pool
+                                    to associate the interface with.
+- `attach_to_appgw_backend_pool`  - (`bool`, optional, defaults to `false`) set to `true` if you would like to associate this
+                                    interface with an Application Gateway backend pool.
 
 Example:
 
@@ -338,12 +346,16 @@ Type:
 list(object({
     name                          = string
     subnet_id                     = string
+    ip_configuration_name         = optional(string, "primary")
     create_public_ip              = optional(bool, false)
     public_ip_name                = optional(string)
     public_ip_resource_group_name = optional(string)
+    public_ip_id                  = optional(string)
     private_ip_address            = optional(string)
     lb_backend_pool_id            = optional(string)
     attach_to_lb_backend_pool     = optional(bool, false)
+    appgw_backend_pool_id         = optional(string)
+    attach_to_appgw_backend_pool  = optional(bool, false)
   }))
 ```
 

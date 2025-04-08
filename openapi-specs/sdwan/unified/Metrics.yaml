@@ -1,5 +1,75 @@
 components:
   schemas:
+    AggBandwidthUsage:
+      properties:
+        duration:
+          description: "The duration of the aggregate bandwidth usage information.\
+            \ \n"
+          format: date
+          type: string
+        max_agg_bw:
+          description: 'The maximum aggregate bandwidth usage.
+
+            '
+          format: double
+          type: number
+        max_agg_bw_time:
+          description: 'The usage time of the maximim aggregate bandwidth.
+
+            '
+          format: date
+          type: string
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
+    AggBwStatsQuery:
+      properties:
+        end_time:
+          description: 'The end time to get the aggregate bandwidth stats.
+
+            '
+          format: date
+          type: string
+        interval:
+          description: 'The interval time of the aggregate bandwidth response.
+
+            '
+          enum:
+          - 1month
+          type: string
+        metrics:
+          description: "The details of the aggregate bandwidth metrics information.\
+            \ \n"
+          items:
+            description: Metrics
+            enum:
+            - AggBandwidthUsage
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          description: 'The start time to get the aggregate bandwidth stats.
+
+            '
+          format: date
+          type: string
+        view:
+          description: 'View the aggregate bandwidth data.
+
+            '
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
     Aggregate:
       properties:
         data:
@@ -338,15 +408,46 @@ components:
         vni_id:
           description: Vni Id
           type: integer
+    AppAccelerationFilter:
+      properties:
+        destination_ip:
+          description: 'Destination Ip: Valid Required(error = REQUIRED_PROPERTY:
+            Schema check failed - {} is a required property) IPv4(message = Invalid
+            IP address, regexp = [/0-9.]*) '
+          type: string
+        destination_port:
+          description: 'Destination Port: Valid Required(error = REQUIRED_PROPERTY:
+            Schema check failed - {} is a required property) '
+          type: integer
+        flow_id:
+          description: 'Flow Id: Valid Required(error = REQUIRED_PROPERTY: Schema
+            check failed - {} is a required property) '
+          type: integer
+        source_ip:
+          description: 'Source Ip: Valid Required(error = REQUIRED_PROPERTY: Schema
+            check failed - {} is a required property) IPv4(message = Invalid IP address,
+            regexp = [/0-9.]*) '
+          type: string
+        source_port:
+          description: 'Source Port: Valid Required(error = REQUIRED_PROPERTY: Schema
+            check failed - {} is a required property) '
+          type: integer
+      required:
+      - destination_port
+      - destination_ip
+      - source_port
+      - source_ip
+      - flow_id
     AppAccelerationQuery:
       properties:
         end_time:
           description: "Query end date.          \n"
           format: date
           type: string
-        flow_id:
-          description: "Flow ID.          \n"
-          type: integer
+        filter:
+          $ref: '#/components/schemas/AppAccelerationFilter'
+          description: 'Filter: Valid Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
         name:
           description: 'Name of the query.
 
@@ -359,9 +460,9 @@ components:
           format: date
           type: string
       required:
+      - filter
       - end_time
       - start_time
-      - flow_id
     AppAccelerationQueryResponse:
       properties:
         data:
@@ -369,11 +470,23 @@ components:
           items:
             $ref: '#/components/schemas/AppAccelerationData'
           type: array
+        destination_ip:
+          description: Destination Ip
+          type: string
+        destination_port:
+          description: Destination Port
+          type: integer
         end_time:
           description: "Query end date.          \n"
           type: string
         flow_id:
           description: "Flow ID.          \n"
+          type: integer
+        source_ip:
+          description: Source Ip
+          type: string
+        source_port:
+          description: Source Port
           type: integer
         start_time:
           description: 'Query start date.
@@ -556,10 +669,124 @@ components:
           type: string
       required:
       - aggregates
+    AppStatsCombinedMetrics:
+      properties:
+        app_failed_to_establish_sum:
+          description: App Failed To Establish Sum
+          format: double
+          type: number
+        app_id:
+          description: App Id
+          type: string
+        app_successful_connections_sum:
+          description: App Successful Connections Sum
+          format: double
+          type: number
+        app_successful_transactions_sum:
+          description: App Successful Transactions Sum
+          format: double
+          type: number
+        app_transaction_failures_sum:
+          description: App Transaction Failures Sum
+          format: double
+          type: number
+        bandwidth_usage_avg:
+          description: Bandwidth Usage Avg
+          format: double
+          type: number
+        bandwidth_usage_egress_avg:
+          description: Bandwidth Usage Egress Avg
+          format: double
+          type: number
+        bandwidth_usage_ingress_avg:
+          description: Bandwidth Usage Ingress Avg
+          format: double
+          type: number
+        duration:
+          format: date
+          type: string
+        path_type:
+          description: Path Type
+          type: string
+        sum_value_egress:
+          description: Sum Value Egress
+          format: double
+          type: number
+        sum_value_ingress:
+          description: Sum Value Ingress
+          format: double
+          type: number
+        tcp_flow_count_sum:
+          description: Tcp Flow Count Sum
+          format: double
+          type: number
+        udp_flow_count_sum:
+          description: Udp Flow Count Sum
+          format: double
+          type: number
+        wan_path_label:
+          description: Wan Path Label
+          type: string
     AppStatsFilter:
       properties:
         health_score:
           type: object
+    AppStatsQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AppStatsFilter'
+          description: Filter
+        interval:
+          description: 'Interval: NotNull(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        metrics:
+          description: 'Metrics: NotEmpty(error = METRICS_EMPTY: Metrics list is required
+            and must contain at least one metric) '
+          items:
+            description: Metrics
+            enum:
+            - TrafficVolume
+            - TrafficVolume_Ingress
+            - TrafficVolume_Egress
+            - AppSuccessfulConnections
+            - AppSuccessfulTransactions
+            - AppFailedToEstablish
+            - AppTransactionFailures
+            - BandwidthUsage
+            - BandwidthUsage_Ingress
+            - BandwidthUsage_Egress
+            - TCPFlowCount
+            - UDPFlowCount
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
     AppStatsSupportedAggregate:
       properties:
         description:
@@ -772,6 +999,99 @@ components:
           type: string
       required:
       - type
+    AppSummaryStatsFilter:
+      properties:
+        app:
+          description: "Filter by app. \n"
+          items:
+            description: App
+            type: string
+          type: array
+        site:
+          description: 'Filter by site.
+
+            '
+          items:
+            description: Site
+            type: string
+          type: array
+    AppSummaryStatsQuery:
+      properties:
+        end_time:
+          description: 'The end time to get the app summary stats query.
+
+            '
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AppSummaryStatsFilter'
+          description: "The app summary stats filter details. \n"
+        interval:
+          description: 'The interval time of the app summary stats response.
+
+            '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        metrics:
+          description: 'The details of the app summary stats information.
+
+            '
+          items:
+            description: Metrics
+            enum:
+            - ApplicationHealthscore
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          description: 'The start time to get the app summary stats.
+
+            '
+          format: date
+          type: string
+        view:
+          description: 'View the app summary stats.
+
+            '
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
+    ApplicationHealthScore:
+      properties:
+        app_id:
+          description: 'The app ID.
+
+            '
+          type: string
+        application_healthscore_avg:
+          description: 'The application healthscore average.
+
+            '
+          format: double
+          type: number
+        duration:
+          description: "The duration of the app summary stats information. \n"
+          format: date
+          type: string
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
     ApplicationQosAggregatesQuery:
       properties:
         aggregates:
@@ -3992,6 +4312,63 @@ components:
             '
       required:
       - top_n
+    TopNQuery:
+      properties:
+        end_time:
+          description: 'The end time to get the Topn N reports. The time period for
+            the Topn N reports is usually for a week.
+
+            '
+          format: date
+          type: string
+        interval:
+          description: 'The interval time of the Top n query response.
+
+            '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        limit:
+          description: 'The details of the limit of the Top N reports.
+
+            '
+          type: integer
+        start_time:
+          description: 'The start time to get the Topn N reports. The time period
+            for the Topn N reports is usually for week.
+
+            '
+          format: date
+          type: string
+        traffic_vol_end_time:
+          description: 'The Topn N reports traffic volume end time.
+
+            '
+          format: date
+          type: string
+        traffic_vol_start_time:
+          description: "The Topn N reports traffic volume start time. \n\n\n\n\n\n\
+            \n\n\n\n\n\n\n\n\n\n \n    \n    \n\n\n\n  \n  \n          \n        \n\
+            \n\n\n\n\n\n\n\n\n\n\n\n\n          \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
+            \n\n\n\n\n\n\n\n\n\n        \n\n\n\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
+            \           \n\n\n\n\n\n\n       \n          \n        \n\n\n\n\n\n\n\n\
+            \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n          \n\n\n\n\n\n          \n\n\n\n\
+            \n\n\n\n      \n\n\n     \n\n\n     \n\n\n          \n\n\n\n\n\n\n\n\n\
+            \n\n    \n    "
+          format: date
+          type: string
+      required:
+      - limit
+      - interval
+      - traffic_vol_end_time
+      - traffic_vol_start_time
+      - end_time
+      - start_time
     View:
       properties:
         individual:
@@ -4245,6 +4622,44 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Internal Server Error
       summary: Create Interface Stats (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/monitor/aggregatebandwidth/query:
+    post:
+      description: Fetches aggregate bandwidth statistics based on specified metrics
+        and grouping
+      operationId: post-sdwan-v2.0-api-monitor-aggregatebandwidth-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggBwStatsQuery'
+        description: Filter and metrics for aggregate bandwidth stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggBandwidthUsage'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get aggregate bandwidth statistics (v2.0)
       tags:
       - Metrics
   /sdwan/v2.0/api/monitor/aggregates/application/qos:
@@ -4845,6 +5260,83 @@ paths:
       summary: Query Application Users (v2.0)
       tags:
       - Metrics
+  /sdwan/v2.0/api/monitor/applicationstats/query:
+    post:
+      description: Lists the various application statistics based on specified metrics
+        and filters.
+      operationId: post-sdwan-v2.0-api-monitor-applicationstats-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppStatsQuery'
+        description: Filter and metrics for application stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppStatsCombinedMetrics'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_PATH
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Application Statistics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/monitor/applicationsummary/query:
+    post:
+      description: Lists the application summary statistics based on specified metrics
+        and filters.
+      operationId: post-sdwan-v2.0-api-monitor-applicationsummary-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppSummaryStatsQuery'
+        description: Filter and metrics for application summary stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationHealthScore'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Application Summary Statistics (v2.0)
+      tags:
+      - Metrics
   /sdwan/v2.0/api/monitor/cellular_metrics:
     get:
       description: List all the cellular metrics schema.
@@ -5376,6 +5868,42 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Query System Point Metrics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/monitor/topn_traffic_vol/query:
+    post:
+      description: Lists the top N traffic volume statistics for application stats
+        dashboard.
+      operationId: post-sdwan-v2.0-api-monitor-topn_traffic_vol-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopNQuery'
+        description: Filter for top N traffic volume stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppStatsCombinedMetrics'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: TRAFFIC_VOLUME_START_TIME_AFTER_END_TIME
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Top N Traffic Volume Stats (v2.0)
       tags:
       - Metrics
   /sdwan/v2.0/api/tenants/{esp_tenant_id}/monitor/aggregates/healthscore:
