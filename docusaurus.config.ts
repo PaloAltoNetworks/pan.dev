@@ -174,17 +174,10 @@ const config = {
                   label: "Cortex",
                   to: "#",
                   logoClass: "cortex",
-                  apiDocs: [
-                    {
-                      label: "Expander API",
-                      to: "https://cortex.pan.dev/api/expander/annotations-api",
-                      icon: "api-doc",
-                    },
-                  ],
                   docs: [
                     {
-                      label: "Xpanse Python SDK",
-                      to: "https://cortex-xpanse-python-sdk.readthedocs.io/en/latest/",
+                      label: "Cortex Developer Docs",
+                      to: "https://docs-cortex.paloaltonetworks.com/",
                       icon: "doc",
                     },
                   ],
