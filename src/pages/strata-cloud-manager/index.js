@@ -211,6 +211,11 @@ export default function SCMLandingPage() {
             to: "cdl/api/log-forwarding",
             icon: "api-doc",
           },
+          {
+            label: "Snippet Sharing",
+            to: "scm/api/config/snippet-sharing",
+            icon: "api-doc",
+          },
         ],
       },
     },
