@@ -187,6 +187,11 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
+            to: "/sase/api/introduction/",
+            label: "Prisma Access Configuration Orchestration",
+            icon: "api-doc",
+          },
+          {
             to: "/sase/api/sspm/",
             label: "SaaS Security Posture Management",
             icon: "api-doc",

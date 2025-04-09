@@ -22,9 +22,9 @@ For licensing, onboarding, activation, and to obtain the API authentication key 
 
 ## Prerequisites
 
-1. Create and associate a [deployment profile for AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) in your Customer Support Poral.
+1. Create and associate a [deployment profile for AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) in your Customer Support Portal.
 2. [Onboard AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
-3. [Manage applications, API keys, and security profiles](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/airs-apirs-manage-api-keys-profile-apps) in Strata Cloud Manager.
+3. [Manage applications, API keys, and security profiles](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/airs-apirs-manage-api-keys-profile-apps) in Strata Cloud Manager.
 
 ## Requirements for API Usage
 
@@ -47,7 +47,7 @@ You can manage API keys and AI security profiles in Strata Cloud Manager.
 For complete details, refer to the Manage Applications, API Keys, and Security Profiles Administration guide.
 :::
 
-## Limitation
+## Limitations
 
 - One AI security profile per Tenant Service Group (TSG) - Limited to one security profile per group.
 - One API key per deployment profile - Each deployment profile in the [Customer Support Portal](https://support.paloaltonetworks.com/Support/Index) allows a single API key.

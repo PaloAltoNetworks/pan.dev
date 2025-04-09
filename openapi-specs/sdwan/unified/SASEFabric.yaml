@@ -54,6 +54,15 @@ components:
           type: object
     ESPGroup:
       properties:
+        force_encapsulation:
+          description: 'The type of encapsulation is force UDP. The type of encapsulation
+            has to match the encapsulation configured at the standard VPN endpoint.
+
+            '
+          type: boolean
+        lifesize:
+          $ref: '#/components/schemas/Lifesize'
+          description: Lifesize
         lifetime:
           description: 'The life time for the ESP Group. The default lifetime of an
             ESP Group is 24 hours.
@@ -61,6 +70,17 @@ components:
             '
           format: int32
           type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
+        mode:
+          description: 'The IPsec config ESP tunnel mode.
+
+            '
+          enum:
+          - TUNNEL
+          - TRANSPORT
+          type: string
         proposals:
           description: "Information on the IPsec proposals. Proposals is a list of\
             \ crypto parameters to be used to secure the ESP sessions between the\
@@ -68,7 +88,11 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
+        responder_sase_proposals:
+          $ref: '#/components/schemas/ResponderSaseProposals'
+          description: Responder Sase Proposals
       required:
+      - mode
       - proposals
     Error:
       properties:
@@ -88,11 +112,53 @@ components:
 
             '
           type: string
+    ExtendedTunnelCidr:
+      properties:
+        extended_tunnel_cidr:
+          description: 'Extended Tunnel Cidr: IPAddress(allowEmpty = true, allowLinkLocal
+            = false, allowNull = true, bcast = DENY, defaultRoute = false, dnsCheck
+            = false, error = SERVICE_LINK_INNER_IP_POOL_INVALID: Service link inner
+            ip pool invalid, type = SERVICE_LINK_TUNNEL_IP) '
+          type: string
+        priority:
+          description: 'The priority..
+
+            '
+          format: int32
+          type: integer
     IKEGroup:
       properties:
+        aggressive:
+          description: 'If aggressive mode is selecetd, the source interface or endpoint
+            is behind NAT or there are multiple tunnels to the same remote endpoint.
+
+            '
+          type: boolean
+        authentication_multiple:
+          description: Authentication Multiple
+          type: integer
+        key_exchange:
+          description: 'The key exchange for the IKE group = IKEv1 or IKEv2.
+
+            '
+          enum:
+          - IKEV1
+          - IKEV2
+          type: string
         lifetime:
           description: 'The life time for the IKE Group. The default lifetime of an
             IKE Group is 72 hours.
+
+            '
+          format: int32
+          type: integer
+        lifetime_units:
+          description: Lifetime Units
+          type: string
+        port:
+          description: 'The port number of the communication port. The default port
+            is 500. The port number configured in the IKE group has to be the same
+            as the port number configured in the standard VPN endpoint IKE group.
 
             '
           format: int32
@@ -106,7 +172,14 @@ components:
           items:
             $ref: '#/components/schemas/Proposals'
           type: array
+        reauth:
+          description: 'The mode for IKEv2. If selected, then a new tunnel has to
+            be re-negotiated when the lifetime is reached.
+
+            '
+          type: boolean
       required:
+      - key_exchange
       - proposals
     IPSecProfile:
       properties:
@@ -127,6 +200,71 @@ components:
           description: 'The IKE group defined on the IPsec profile.
 
             '
+    IPSecTunnel:
+      properties:
+        authentication:
+          $ref: '#/components/schemas/IPSecTunnelAuthentication'
+          description: 'IPSec tunnel authentication information.
+
+            '
+        name:
+          description: "The IPSec tunnel name.                   \n"
+          type: string
+        routing:
+          $ref: '#/components/schemas/Routing'
+          description: "The IPSec tunnel routing information. \n"
+        routing_configs:
+          $ref: '#/components/schemas/RoutingConfigs'
+          description: 'The IPSec tunnel routing configuration information.
+
+            '
+        wan_interface_id:
+          description: 'The WAN interface ID.
+
+            '
+          type: string
+    IPSecTunnelAuthentication:
+      properties:
+        branch_ike_identification:
+          description: 'Branch IKE identification.
+
+            '
+          type: string
+        prismaaccess_ike_identification:
+          description: "Prisma Access IKE identification.                   \n"
+          type: string
+        psk:
+          description: 'The PSK value.
+
+            '
+          type: string
+    IPSecTunnelConfigs:
+      properties:
+        anti_replay:
+          description: Anti Replay
+          type: boolean
+        copy_tos:
+          description: Copy Tos
+          type: boolean
+        enable_gre_encapsulation:
+          description: 'The GRE encapsulation enabled. True or False.
+
+            '
+          type: boolean
+        ike_key_exchange:
+          description: "The IKE key exchange.                   \n"
+          type: string
+        prismaaccess_ike_crypto_profile_id:
+          description: 'Prisma access IKE crypto profile ID.
+
+            '
+          type: string
+        prismaaccess_ipsec_profile_id:
+          description: "Prisma access IPSec profile ID.             \n"
+          type: string
+        tunnel_monitoring:
+          description: "The tunnel monitoring. True or False. \n"
+          type: boolean
     IPSecTunnelStatus:
       properties:
         attempts:
@@ -195,6 +333,15 @@ components:
             description: Uncompleted Steps
             type: string
           type: array
+    Lifesize:
+      properties:
+        units:
+          description: Units
+          type: string
+        value:
+          description: Value
+          format: int32
+          type: integer
     PrismaConnectionStatus:
       properties:
         value:
@@ -207,83 +354,100 @@ components:
 
             '
           enum:
+          - ECP224BP
+          - ECP256
           - NONE
-          - MODP768
-          - MODP1024
-          - MODP1536
-          - MODP2048
-          - MODP3072
-          - MODP4096
-          - MODP6144
           - MODP8192
           - MODP1024S160
-          - MODP2048S224
-          - MODP2048S256
-          - ECP192
-          - ECP224
-          - ECP256
+          - MODP3072
           - ECP384
+          - MODP1024
+          - MODP4096
+          - MODP2048
+          - ECP224
+          - ECP192
           - ECP521
-          - ECP224BP
           - ECP256BP
           - ECP384BP
+          - MODP2048S224
           - ECP512BP
+          - MODP768
           - CURVE25519
+          - MODP2048S256
+          - MODP6144
+          - MODP1536
           type: string
         encryption:
           description: 'The encryption values.
 
             '
           enum:
+          - AES256CCM64
           - NONE
-          - AES128
-          - AES192
-          - AES256
-          - AES128CTR
+          - AES192GMAC
+          - TWOFISH192
+          - AES256GCM16
           - AES192CTR
           - AES256CTR
-          - AES128CCM16
-          - AES128CCM64
-          - AES192CCM64
-          - AES256CCM64
-          - AES128CCM96
-          - AES192CCM96
-          - AES256CCM96
-          - AES128CCM128
-          - AES192CCM128
-          - AES256CCM128
-          - AES128GCM16
-          - AES128GCM64
-          - AES192GCM64
-          - AES256GCM16
-          - AES256GCM64
-          - AES128GCM96
-          - AES192GCM96
-          - AES256GCM96
-          - AES128GCM128
-          - AES192GCM128
-          - AES256GCM128
-          - AES128GMAC
-          - AES192GMAC
-          - AES256GMAC
-          - TRIPLEDES
-          - BLOWFISH128
-          - BLOWFISH192
           - BLOWFISH256
-          - CAMELLIA128
+          - AES128CCM128
+          - AES256CCM128
+          - AES256GCM128
+          - AES192GCM128
+          - AES256CCM96
+          - AES192CCM64
           - CAMELLIA192
-          - CAMELLIA256
-          - SERPENT128
-          - SERPENT192
-          - SERPENT256
-          - TWOFISH128
-          - TWOFISH192
+          - AES128GCM64
+          - AES256
+          - AES128GCM96
           - TWOFISH256
+          - AES192GCM64
+          - AES256GMAC
+          - SERPENT192
+          - AES128CCM64
+          - BLOWFISH192
+          - AES192CCM128
+          - TRIPLEDES
+          - AES192
+          - AES256GCM64
+          - SERPENT128
+          - AES256GCM96
+          - CAMELLIA128
+          - AES128GCM128
+          - AES128CCM16
+          - AES128
+          - AES128CTR
+          - AES192CCM96
+          - AES192GCM96
+          - CAMELLIA256
+          - AES128GMAC
+          - AES128CCM96
+          - SERPENT256
+          - BLOWFISH128
+          - AES128GCM16
+          - TWOFISH128
           type: string
         hash:
           description: 'The hash values.
 
             '
+          enum:
+          - NONE
+          - AES192GMAC
+          - SHA1
+          - AES256GMAC
+          - SHA512
+          - AESXCBC
+          - MD5
+          - SHA256_96
+          - AES128GMAC
+          - SHA384
+          - SHA256
+          type: string
+        prf:
+          description: 'Prf: ValidateEnum(enumClass = classOf[IPSECHash], error =
+            IPSECCONFIG_INVALID_HASH: Invalid hashing algorithm specified., nullAllowed
+            = true) '
           enum:
           - MD5
           - SHA1
@@ -301,6 +465,214 @@ components:
       - hash
       - encryption
       - dh_groups
+    RemoteNetworkGroup:
+      properties:
+        ipsec_tunnels:
+          description: 'The IPSec tunnels information.
+
+            '
+          items:
+            $ref: '#/components/schemas/IPSecTunnel'
+          type: array
+        name:
+          description: "The name of the remote networks.                   \n"
+          type: string
+        spn_name:
+          description: 'The SPN (Security Processing Name) of the prisma access config.
+
+            '
+          items:
+            description: Spn Name
+            type: string
+          type: array
+    ResponderSaseProposals:
+      properties:
+        dh_group:
+          description: Dh Group
+          items:
+            description: Dh Group
+            enum:
+            - NONE
+            - MODP768
+            - MODP1024
+            - MODP1536
+            - MODP2048
+            - MODP3072
+            - MODP4096
+            - MODP6144
+            - MODP8192
+            - MODP1024S160
+            - MODP2048S224
+            - MODP2048S256
+            - ECP192
+            - ECP224
+            - ECP256
+            - ECP384
+            - ECP521
+            - ECP224BP
+            - ECP256BP
+            - ECP384BP
+            - ECP512BP
+            - CURVE25519
+            type: string
+          type: array
+        encryption:
+          description: 'The encryption values.
+
+            '
+          items:
+            description: Encryption
+            enum:
+            - NONE
+            - AES128
+            - AES192
+            - AES256
+            - AES128CTR
+            - AES192CTR
+            - AES256CTR
+            - AES128CCM16
+            - AES128CCM64
+            - AES192CCM64
+            - AES256CCM64
+            - AES128CCM96
+            - AES192CCM96
+            - AES256CCM96
+            - AES128CCM128
+            - AES192CCM128
+            - AES256CCM128
+            - AES128GCM16
+            - AES128GCM64
+            - AES192GCM64
+            - AES256GCM16
+            - AES256GCM64
+            - AES128GCM96
+            - AES192GCM96
+            - AES256GCM96
+            - AES128GCM128
+            - AES192GCM128
+            - AES256GCM128
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - TRIPLEDES
+            - BLOWFISH128
+            - BLOWFISH192
+            - BLOWFISH256
+            - CAMELLIA128
+            - CAMELLIA192
+            - CAMELLIA256
+            - SERPENT128
+            - SERPENT192
+            - SERPENT256
+            - TWOFISH128
+            - TWOFISH192
+            - TWOFISH256
+            type: string
+          type: array
+        hash:
+          description: 'The hash values.
+
+            '
+          items:
+            description: Hash
+            enum:
+            - MD5
+            - SHA1
+            - SHA256
+            - SHA384
+            - SHA512
+            - SHA256_96
+            - AESXCBC
+            - AES128GMAC
+            - AES192GMAC
+            - AES256GMAC
+            - NONE
+            type: string
+          type: array
+    Routing:
+      properties:
+        branch_as_number:
+          description: 'Branch AS number.
+
+            '
+          type: string
+        branch_ip_address:
+          description: "Branch IP address.                   \n"
+          type: string
+        prismaaccess_ip_address:
+          description: 'The Prisma Access IP address.
+
+            '
+          type: string
+    RoutingConfigs:
+      properties:
+        advertise_default_route:
+          description: 'Advertised default route. True or False.
+
+            '
+          type: boolean
+        bgp_secret:
+          description: "The BGP password.                   \n"
+          type: string
+        export_routes:
+          description: "The export routes. True or False. \n"
+          type: boolean
+        summarize_mobile_routes_before_advertise:
+          description: "The mobile routes before advertising summary. True or False.\
+            \ \n"
+          type: boolean
+    SaseConnection:
+      properties:
+        enabled_wan_interface_ids:
+          description: 'The WAN enabled interface IDs.
+
+            '
+          items:
+            description: Enabled Wan Interface Ids
+            type: string
+          type: array
+        id:
+          description: "The ID.                   \n"
+          type: string
+        ipsec_tunnel_configs:
+          $ref: '#/components/schemas/IPSecTunnelConfigs'
+          description: 'The IPSec tunnel configuration details.
+
+            '
+        is_active:
+          description: "The active RP for the sase connection.             \n"
+          type: boolean
+        prismaaccess_edge_location:
+          description: "The prisma access edge location.       \n"
+          items:
+            description: Prismaaccess Edge Location
+            type: string
+          type: array
+        prismaaccess_qos_cir_mbps:
+          description: 'The prisma access QoS CIR MBPS.
+
+            '
+          type: integer
+        prismaaccess_qos_profile_id:
+          description: 'The prisma access QoS profile ID.
+
+            '
+          type: string
+        remote_network_groups:
+          description: "The remote network groups information.             \n"
+          items:
+            $ref: '#/components/schemas/RemoteNetworkGroup'
+          type: array
+        routing_configs:
+          $ref: '#/components/schemas/RoutingConfigs'
+          description: "The routing congiguration information.       \n"
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
+      required:
+      - site_id
     SaseConnectionGlobalConfigScreenV2N1:
       properties:
         id:
@@ -318,7 +690,6 @@ components:
             '
           type: string
       required:
-      - tunnel_cidr
       - prisma_sdwan_bgp_as_number
     SaseConnectionGlobalConfigScreenV3:
       properties:
@@ -346,21 +717,34 @@ components:
       - ipsec_profile
       - deployment_mode
       - prisma_sdwan_bgp_as_number
-      - tunnel_cidr
-    SaseConnectionGlobalConfigV2N1:
+    SaseConnectionGlobalConfigScreenV3N1:
       properties:
+        deployment_mode:
+          description: 'The BGP route map deployment mode.
+
+            '
+          type: string
+        extended_tunnel_cidrs:
+          description: "The extended tunnel CIDRs.              \n"
+          items:
+            $ref: '#/components/schemas/ExtendedTunnelCidr'
+          type: array
         id:
-          description: "The SASE connection global configuration ID. \n"
+          description: 'The SASE connection global configuration ID.
+
+            '
+          type: string
+        ipsec_profile:
+          $ref: '#/components/schemas/IPSecProfile'
+          description: "The details of the IPSec profile. \n"
+        panorama_sub_tenant_name:
+          description: "The Panorama sub tenant name.              \n"
           type: string
         prisma_sdwan_bgp_as_number:
-          description: 'The Prisma SD-WAN BGP AS number.
-
-            '
-          type: integer
+          description: "The Prisma SD-WAN BGP AS number. \n"
+          type: string
         security_zone_id:
-          description: 'The security zone ID.
-
-            '
+          description: "The security zone ID.              \n"
           type: string
         tunnel_cidr:
           description: 'The service link inner IP pool.
@@ -368,7 +752,8 @@ components:
             '
           type: string
       required:
-      - tunnel_cidr
+      - ipsec_profile
+      - deployment_mode
       - prisma_sdwan_bgp_as_number
     SaseConnectionGlobalConfigV3:
       properties:
@@ -402,7 +787,149 @@ components:
       - ipsec_profile
       - deployment_mode
       - prisma_sdwan_bgp_as_number
-      - tunnel_cidr
+    SaseConnectionGlobalConfigV3N1:
+      properties:
+        deployment_mode:
+          description: 'The BGP route map deployment mode.
+
+            '
+          type: string
+        extended_tunnel_cidrs:
+          description: "The extended tunnel CIDRs.              \n"
+          items:
+            $ref: '#/components/schemas/ExtendedTunnelCidr'
+          type: array
+        id:
+          description: 'The SASE connection global configuration ID.
+
+            '
+          type: string
+        ipsec_profile:
+          $ref: '#/components/schemas/IPSecProfile'
+          description: "The details of the IPSec profile. \n"
+        panorama_sub_tenant_name:
+          description: "The Panorama sub tenant name.              \n"
+          type: string
+        prisma_sdwan_bgp_as_number:
+          description: "The Prisma SD-WAN BGP AS number. \n"
+          type: string
+        security_zone_id:
+          description: "The security zone ID.              \n"
+          type: string
+        tunnel_cidr:
+          description: "The service link inner IP pool. \n"
+          type: string
+      required:
+      - ipsec_profile
+      - deployment_mode
+      - prisma_sdwan_bgp_as_number
+    SaseConnectionScreen:
+      properties:
+        enabled_wan_interface_ids:
+          description: 'The WAN enabled interface IDs.
+
+            '
+          items:
+            description: Enabled Wan Interface Ids
+            type: string
+          type: array
+        id:
+          description: "The ID.                   \n"
+          type: string
+        ipsec_tunnel_configs:
+          $ref: '#/components/schemas/IPSecTunnelConfigs'
+          description: 'The IPSec tunnel configuration details.
+
+            '
+        is_active:
+          description: "The active RP for the sase connection.             \n"
+          type: boolean
+        prismaaccess_edge_location:
+          description: "The prisma access edge location.       \n"
+          items:
+            description: Prismaaccess Edge Location
+            type: string
+          type: array
+        prismaaccess_qos_cir_mbps:
+          description: 'The prisma access QoS CIR MBPS.
+
+            '
+          type: integer
+        prismaaccess_qos_profile_id:
+          description: 'The prisma access QoS profile ID.
+
+            '
+          type: string
+        remote_network_groups:
+          description: "The remote network groups information.             \n"
+          items:
+            $ref: '#/components/schemas/RemoteNetworkGroup'
+          type: array
+        routing_configs:
+          $ref: '#/components/schemas/RoutingConfigs'
+          description: "The routing congiguration information.       \n"
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
+      required:
+      - site_id
+    SaseConnectionScreenV2N1:
+      properties:
+        enabled_wan_interface_ids:
+          description: 'The WAN enabled interface IDs.
+
+            '
+          items:
+            description: Enabled Wan Interface Ids
+            type: string
+          type: array
+        id:
+          description: "The ID.                   \n"
+          type: string
+        ipsec_tunnel_configs:
+          $ref: '#/components/schemas/IPSecTunnelConfigs'
+          description: 'The IPSec tunnel configuration details.
+
+            '
+        is_active:
+          description: "The active RP for the sase connection.             \n"
+          type: boolean
+        is_enabled:
+          description: Is Enabled
+          type: boolean
+        prismaaccess_edge_location:
+          description: "The prisma access edge location.       \n"
+          items:
+            description: Prismaaccess Edge Location
+            type: string
+          type: array
+        prismaaccess_qos_cir_mbps:
+          description: 'The prisma access QoS CIR MBPS.
+
+            '
+          type: integer
+        prismaaccess_qos_profile_id:
+          description: 'The prisma access QoS profile ID.
+
+            '
+          type: string
+        remote_network_groups:
+          description: "The remote network groups information.             \n"
+          items:
+            $ref: '#/components/schemas/RemoteNetworkGroup'
+          type: array
+        routing_configs:
+          $ref: '#/components/schemas/RoutingConfigs'
+          description: "The routing congiguration information.       \n"
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
+      required:
+      - site_id
     SaseConnectionStatus:
       properties:
         common_messages:
@@ -470,6 +997,9 @@ components:
         id:
           description: "List the sase connections by ID.    \n"
           type: string
+        isReadPreferenceSecondary:
+          description: 'IsReadPreferenceSecondary: JsonIgnore(value = true) '
+          type: boolean
         last_query_ts:
           description: 'Return the ID of a specified query in the current session.
 
@@ -519,6 +1049,61 @@ components:
           type: integer
       required:
       - limit
+    SaseConnectionV2N1:
+      properties:
+        enabled_wan_interface_ids:
+          description: 'The WAN enabled interface IDs.
+
+            '
+          items:
+            description: Enabled Wan Interface Ids
+            type: string
+          type: array
+        id:
+          description: "The ID.                   \n"
+          type: string
+        ipsec_tunnel_configs:
+          $ref: '#/components/schemas/IPSecTunnelConfigs'
+          description: 'The IPSec tunnel configuration details.
+
+            '
+        is_active:
+          description: "The active RP for the sase connection.             \n"
+          type: boolean
+        is_enabled:
+          description: Is Enabled
+          type: boolean
+        prismaaccess_edge_location:
+          description: "The prisma access edge location.       \n"
+          items:
+            description: Prismaaccess Edge Location
+            type: string
+          type: array
+        prismaaccess_qos_cir_mbps:
+          description: 'The prisma access QoS CIR MBPS.
+
+            '
+          type: integer
+        prismaaccess_qos_profile_id:
+          description: 'The prisma access QoS profile ID.
+
+            '
+          type: string
+        remote_network_groups:
+          description: "The remote network groups information.             \n"
+          items:
+            $ref: '#/components/schemas/RemoteNetworkGroup'
+          type: array
+        routing_configs:
+          $ref: '#/components/schemas/RoutingConfigs'
+          description: "The routing congiguration information.       \n"
+        site_id:
+          description: 'The site ID.
+
+            '
+          type: string
+      required:
+      - site_id
 info:
   contact: {}
   description: List of APIs used manage the SASE configurations.
@@ -528,7 +1113,7 @@ openapi: 3.0.0
 paths:
   /sdwan/v2.0/api/prismasase_connections/status/query:
     post:
-      description: Get a list of SASE connection statuses.
+      description: Query a list of SASE connection statuses.
       operationId: post-sdwan-v2.0-api-prismasase_connections-status-query
       requestBody:
         content:
@@ -562,7 +1147,212 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Resource Not Found
-      summary: Get SASE Connection Statuses (v2.0)
+      summary: Query SASE Connection Statuses (v2.0)
+      tags:
+      - SASE Fabric
+  /sdwan/v2.0/api/sites/{site_id}/prismasase_connections:
+    get:
+      description: List all the SASE connections for sites.
+      operationId: get-sdwan-v2.0-api-sites-site_id-prismasase_connections
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnection'
+          description: Successful Operation
+      summary: Get SASE Connections for Sites (v2.0)
+      tags:
+      - SASE Fabric
+    post:
+      description: Create a new SASE connection.
+      operationId: post-sdwan-v2.0-api-sites-site_id-prismasase_connections
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionScreen'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnection'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: PASDWAN_INTEGRATION_DISABLED
+                  - code: PASDWAN_INTEGRATION_DURING_RMA_DISABLED
+                  - code: EDGE_LOCATION_VALUE_MISSING
+                  - code: INVALID_EDGE_LOCATION_VALUE
+                  - code: SPN_NAME_MISSING
+                  - code: QOS_PROFILE_EXCEEDS_LIMIT
+                  - code: INVALID_QOS_CIR_MBPS
+                  - code: INVALID_WAN_INTERFACE_IDS
+                  - code: IP_SEC_TUNNEL_SETTINGS_MISSING
+                  - code: ROUTING_SETTINGS_MISSING
+                  - code: GLOBAL_SETTINGS_NOT_EXIST
+                  - code: NUMBER_OF_WAN_INTERFACE_IDS_NOT_MATCH
+                  - code: IP_POOL_NOT_EXISTS
+                  - code: RECYCLE_IP_UPDATE_FAILURE
+                  - code: IP_POOL_USAGE_REACH_LIMITATION
+                  - code: INCONSISTENT_BGP_ROUTING_CONFIGS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create SASE Connection (v2.0)
+      tags:
+      - SASE Fabric
+  /sdwan/v2.0/api/sites/{site_id}/prismasase_connections/{prismasase_connection_id}:
+    delete:
+      description: Delete existing SASE connection.
+      operationId: delete-sdwan-v2.0-api-sites-site_id-prismasase_connections-prismasase_connection_id
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Prisma SASE connection ID.
+        in: path
+        name: prismasase_connection_id
+        required: true
+        schema:
+          description: Prismasase Connection Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnection'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: SASE_CONNECTION_NOT_EXIST
+                  - code: ENABLED_CIRCUITS_NOT_REMOVED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete SASE Connection (v2.0)
+      tags:
+      - SASE Fabric
+    get:
+      description: List a SASE connection.
+      operationId: get-sdwan-v2.0-api-sites-site_id-prismasase_connections-prismasase_connection_id
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Prisma SASE connection ID.
+        in: path
+        name: prismasase_connection_id
+        required: true
+        schema:
+          description: Prismasase Connection Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnection'
+          description: Successful Operation
+      summary: Get SASE Connection (v2.0)
+      tags:
+      - SASE Fabric
+    put:
+      description: Update an existing SASE connection.
+      operationId: put-sdwan-v2.0-api-sites-site_id-prismasase_connections-prismasase_connection_id
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Prisma SASE connection ID.
+        in: path
+        name: prismasase_connection_id
+        required: true
+        schema:
+          description: Prismasase Connection Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionScreen'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnection'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: PASDWAN_INTEGRATION_DURING_RMA_DISABLED
+                  - code: EDGE_LOCATION_VALUE_MISSING
+                  - code: INVALID_EDGE_LOCATION_VALUE
+                  - code: QOS_PROFILE_EXCEEDS_LIMIT
+                  - code: INVALID_QOS_CIR_MBPS
+                  - code: INVALID_WAN_INTERFACE_IDS
+                  - code: IP_SEC_TUNNEL_SETTINGS_MISSING
+                  - code: ROUTING_SETTINGS_MISSING
+                  - code: NUMBER_OF_WAN_INTERFACE_IDS_NOT_MATCH
+                  - code: IP_POOL_NOT_EXISTS
+                  - code: RECYCLE_IP_UPDATE_FAILURE
+                  - code: IP_POOL_USAGE_REACH_LIMITATION
+                  - code: IS_ACTIVE_INVALID_UPDATE
+                  - code: INCONSISTENT_BGP_ROUTING_CONFIGS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Update SASE Connection (v2.0)
       tags:
       - SASE Fabric
   /sdwan/v2.0/api/sites/{site_id}/prismasase_connections/{prismasase_connection_id}/status:
@@ -600,16 +1390,180 @@ paths:
       summary: Get SASE Connection Status (v2.0)
       tags:
       - SASE Fabric
-  /sdwan/v2.1/api/prismasase_connections/configs:
-    delete:
-      description: Delete an existing SASE connection config.
-      operationId: delete-sdwan-v2.1-api-prismasase_connections-configs
+  /sdwan/v2.1/api/sites/{site_id}/prismasase_connections:
+    get:
+      description: List all the SASE connections for sites.
+      operationId: get-sdwan-v2.1-api-sites-site_id-prismasase_connections
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SaseConnectionGlobalConfigV2N1'
+                $ref: '#/components/schemas/SaseConnectionV2N1'
+          description: Successful Operation
+      summary: Get SASE Connections for Sites (v2.1)
+      tags:
+      - SASE Fabric
+    post:
+      description: Create a new SASE connection.
+      operationId: post-sdwan-v2.1-api-sites-site_id-prismasase_connections
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionScreenV2N1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: PASDWAN_INTEGRATION_DISABLED
+                  - code: EDGE_LOCATION_VALUE_MISSING
+                  - code: INVALID_EDGE_LOCATION_VALUE
+                  - code: SPN_NAME_MISSING
+                  - code: QOS_PROFILE_EXCEEDS_LIMIT
+                  - code: INVALID_QOS_CIR_MBPS
+                  - code: INVALID_WAN_INTERFACE_IDS
+                  - code: IP_SEC_TUNNEL_SETTINGS_MISSING
+                  - code: ROUTING_SETTINGS_MISSING
+                  - code: GLOBAL_SETTINGS_NOT_EXIST
+                  - code: NUMBER_OF_WAN_INTERFACE_IDS_NOT_MATCH
+                  - code: IP_POOL_NOT_EXISTS
+                  - code: RECYCLE_IP_UPDATE_FAILURE
+                  - code: IP_POOL_USAGE_REACH_LIMITATION
+                  - code: INCONSISTENT_BGP_ROUTING_CONFIGS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create SASE Connection (v2.1)
+      tags:
+      - SASE Fabric
+  /sdwan/v2.1/api/sites/{site_id}/prismasase_connections/{prismasase_connection_id}:
+    get:
+      description: List a SASE connection.
+      operationId: get-sdwan-v2.1-api-sites-site_id-prismasase_connections-prismasase_connection_id
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Prisma SASE connection ID.
+        in: path
+        name: prismasase_connection_id
+        required: true
+        schema:
+          description: Prismasase Connection Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionV2N1'
+          description: Successful Operation
+      summary: Get SASE Connection (v2.1)
+      tags:
+      - SASE Fabric
+    put:
+      description: Update an existing SASE connection.
+      operationId: put-sdwan-v2.1-api-sites-site_id-prismasase_connections-prismasase_connection_id
+      parameters:
+      - description: ID of the site.
+        in: path
+        name: site_id
+        required: true
+        schema:
+          description: Site Id
+          type: string
+      - description: Prisma SASE connection ID.
+        in: path
+        name: prismasase_connection_id
+        required: true
+        schema:
+          description: Prismasase Connection Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionScreenV2N1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionV2N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: EDGE_LOCATION_VALUE_MISSING
+                  - code: INVALID_EDGE_LOCATION_VALUE
+                  - code: QOS_PROFILE_EXCEEDS_LIMIT
+                  - code: INVALID_QOS_CIR_MBPS
+                  - code: INVALID_WAN_INTERFACE_IDS
+                  - code: IP_SEC_TUNNEL_SETTINGS_MISSING
+                  - code: ROUTING_SETTINGS_MISSING
+                  - code: NUMBER_OF_WAN_INTERFACE_IDS_NOT_MATCH
+                  - code: IP_POOL_NOT_EXISTS
+                  - code: RECYCLE_IP_UPDATE_FAILURE
+                  - code: IP_POOL_USAGE_REACH_LIMITATION
+                  - code: IS_ACTIVE_INVALID_UPDATE
+                  - code: INCONSISTENT_BGP_ROUTING_CONFIGS
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Update SASE Connection (v2.1)
+      tags:
+      - SASE Fabric
+  /sdwan/v3.0/api/prismasase_connections/configs:
+    delete:
+      description: Delete a SASE connection config.
+      operationId: delete-sdwan-v3.0-api-prismasase_connections-configs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionGlobalConfigV3'
           description: Successful Operation
         '400':
           content:
@@ -621,104 +1575,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete SASE Config (v2.1)
+      summary: Delete SASE Config (v3.0)
       tags:
       - SASE Fabric
-    get:
-      description: Get a specific SASE connection config.
-      operationId: get-sdwan-v2.1-api-prismasase_connections-configs
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SaseConnectionGlobalConfigV2N1'
-          description: Successful Operation
-      summary: Get SASE Config (v2.1)
-      tags:
-      - SASE Fabric
-    post:
-      description: Create a new SASE connection config.
-      operationId: post-sdwan-v2.1-api-prismasase_connections-configs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SaseConnectionGlobalConfigScreenV2N1'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SaseConnectionGlobalConfigV2N1'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: PRISMA_ACCESS_BGP_NUMBER_MISSING
-                  - code: PRISMA_ACCESS_BGP_NUMBER_INVALID
-                  - code: SERVICE_LINK_INNER_IP_POOL_MISSING
-                  - code: SERVICE_LINK_INNER_IP_POOL_INVALID
-                  - code: IPSECCONFIG_INVALID_DPD_DELAY
-                  - code: IPSECCONFIG_INVALID_IKE_LIFETIME
-                  - code: IPSECCONFIG_INVALID_DHGROUPS
-                  - code: IPSECCONFIG_INVALID_ENCRYPTION
-                  - code: IPSECCONFIG_INVALID_HASH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-      summary: Create SASE Config (v2.1)
-      tags:
-      - SASE Fabric
-    put:
-      description: Update a existing SASE connection config.
-      operationId: put-sdwan-v2.1-api-prismasase_connections-configs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SaseConnectionGlobalConfigScreenV2N1'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SaseConnectionGlobalConfigV2N1'
-          description: Successful Operation
-        '400':
-          content:
-            application/json:
-              example:
-                value:
-                  _error:
-                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
-                  - code: PRISMA_ACCESS_BGP_NUMBER_MISSING
-                  - code: PRISMA_ACCESS_BGP_NUMBER_INVALID
-                  - code: SERVICE_LINK_INNER_IP_POOL_MISSING
-                  - code: SERVICE_LINK_INNER_IP_POOL_INVALID
-                  - code: CIDR_UPDATE_INVALID
-                  - code: IPSECCONFIG_INVALID_DPD_DELAY
-                  - code: IPSECCONFIG_INVALID_IKE_LIFETIME
-                  - code: IPSECCONFIG_INVALID_DHGROUPS
-                  - code: IPSECCONFIG_INVALID_ENCRYPTION
-                  - code: IPSECCONFIG_INVALID_HASH
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Bad Request
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Resource Not Found
-      summary: Update SASE Config (v2.1)
-      tags:
-      - SASE Fabric
-  /sdwan/v3.0/api/prismasase_connections/configs:
     get:
       description: Get a specific SASE connection config.
       operationId: get-sdwan-v3.0-api-prismasase_connections-configs
@@ -829,6 +1688,150 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Resource Not Found
       summary: Update SASE Config (v3.0)
+      tags:
+      - SASE Fabric
+  /sdwan/v3.1/api/prismasase_connections/configs:
+    delete:
+      description: Delete a SASE connection config.
+      operationId: delete-sdwan-v3.1-api-prismasase_connections-configs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionGlobalConfigV3N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: CONFIG_NOT_EXIST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Delete SASE Config (v3.1)
+      tags:
+      - SASE Fabric
+    get:
+      description: Get a specific SASE connection config.
+      operationId: get-sdwan-v3.1-api-prismasase_connections-configs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionGlobalConfigV3N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: API_NOT_COMPATIBLE
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get SASE Config (v3.1)
+      tags:
+      - SASE Fabric
+    post:
+      description: Create a new SASE connection config.
+      operationId: post-sdwan-v3.1-api-prismasase_connections-configs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionGlobalConfigScreenV3N1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionGlobalConfigV3N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: PRISMA_ACCESS_BGP_NUMBER_MISSING
+                  - code: PRISMA_ACCESS_BGP_NUMBER_INVALID
+                  - code: SERVICE_LINK_INNER_IP_POOL_MISSING
+                  - code: SERVICE_LINK_INNER_IP_POOL_INVALID
+                  - code: IPSECCONFIG_INVALID_DPD_DELAY
+                  - code: IPSECCONFIG_INVALID_IKE_LIFETIME
+                  - code: IPSECCONFIG_INVALID_DHGROUPS
+                  - code: IPSECCONFIG_INVALID_ENCRYPTION
+                  - code: IPSECCONFIG_INVALID_HASH
+                  - code: LOCAL_AS_NUM_EXCEEDS_LIMIT
+                  - code: IPSEC_PROFILE_MISSING
+                  - code: BGP_DEPLOYMENT_MODE_MISSING
+                  - code: INVALID_DEPLOYMENT_MODE
+                  - code: OVERLAPPING_EXTENDED_CIDR
+                  - code: OVERLAPPING_CIDR
+                  - code: NON_UNIQUE_CIDR
+                  - code: CIDR_NOT_MATCHED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Create SASE Config (v3.1)
+      tags:
+      - SASE Fabric
+    put:
+      description: Update a existing SASE connection config.
+      operationId: put-sdwan-v3.1-api-prismasase_connections-configs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaseConnectionGlobalConfigScreenV3N1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaseConnectionGlobalConfigV3N1'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_JSON_EXTRA_ATTRIBUTE
+                  - code: PRISMA_ACCESS_BGP_NUMBER_MISSING
+                  - code: PRISMA_ACCESS_BGP_NUMBER_INVALID
+                  - code: SERVICE_LINK_INNER_IP_POOL_MISSING
+                  - code: SERVICE_LINK_INNER_IP_POOL_INVALID
+                  - code: CIDR_UPDATE_INVALID
+                  - code: IPSECCONFIG_INVALID_DPD_DELAY
+                  - code: IPSECCONFIG_INVALID_IKE_LIFETIME
+                  - code: IPSECCONFIG_INVALID_DHGROUPS
+                  - code: IPSECCONFIG_INVALID_ENCRYPTION
+                  - code: IPSECCONFIG_INVALID_HASH
+                  - code: IPSEC_PROFILE_MISSING
+                  - code: BGP_DEPLOYMENT_MODE_MISSING
+                  - code: API_NOT_COMPATIBLE
+                  - code: INVALID_DEPLOYMENT_MODE
+                  - code: OVERLAPPING_EXTENDED_CIDR
+                  - code: OVERLAPPING_CIDR
+                  - code: NON_UNIQUE_CIDR
+                  - code: CIDR_NOT_MATCHED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Resource Not Found
+      summary: Update SASE Config (v3.1)
       tags:
       - SASE Fabric
 servers:

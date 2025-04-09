@@ -52,8 +52,8 @@ module "natgw" {
   name                = "NATGW_name"
   resource_group_name = "resource_group_name"
   location            = "region_name"
-  subnet_ids          = { "a_subnet_name" =
-module.vnet.subnet_ids["a_subnet_name"] }
+  subnet_ids          = { "subnet_name" = "/subscription/xxxx/......." }
+  idle_timeout        = 120
 }
 ```
 
@@ -65,11 +65,11 @@ by Azure.
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 ### Providers
 
-- `azurerm`, version: ~> 3.98
+- `azurerm`, version: ~> 4.0
 
 
 
@@ -211,9 +211,12 @@ A map defining a Public IP resource.
 List of available properties:
 
 - `create`              - (`bool`, required) controls whether a Public IP is created, sourced, or not used at all.
-- `name`                - (`string`, required) name of a created or sourced Public IP.
+- `name`                - (`string`, optional) name of a created or sourced Public IP, required unless `public_ip` module and 
+                          `id` property are used.
 - `resource_group_name` - (`string`, optional) name of a resource group hosting the sourced Public IP resource, ignored when
                           `create = true`.
+- `id`                  - (`string`, optional, defaults to `null`) ID of the Public IP to associate with the NAT Gateway. 
+                          Property is used when Public IP Address is not created or sourced within this module.
 
 The module operates in 3 modes, depending on combination of `create` and `name` properties:
 
@@ -247,8 +250,9 @@ Type:
 ```hcl
 object({
     create              = bool
-    name                = string
+    name                = optional(string)
     resource_group_name = optional(string)
+    id                  = optional(string)
   })
 ```
 
@@ -264,11 +268,14 @@ A map defining a Public IP Prefix resource.
 List of available properties:
 
 - `create`              - (`bool`, required) controls whether a Public IP Prefix is created, sourced, or not used at all.
-- `name`                - (`string`, required) name of a created or sourced Public IP Prefix.
+- `name`                - (`string`, optional) name of a created or sourced Public IP Prefix, required unless `public_ip`
+                          module and `id` property are used.
 - `resource_group_name` - (`string`, optional) name of a resource group hosting the sourced Public IP Prefix resource, ignored
                           when `create = true`.
 - `length`              - (`number`, optional, defaults to `28`) number of bits of the Public IP Prefix, this value can be
                           between `0` and `31` but can be limited on subscription level (Azure default is `/28`).
+- `id`                  - (`string`, optional, defaults to `null`) ID of the Public IP Prefix to associate with the NAT Gateway.
+                          Property is used when Public IP Prefix is not created or sourced within this module.
 
 The module operates in 3 modes, depending on combination of `create` and `name` properties:
 
@@ -302,9 +309,10 @@ Type:
 ```hcl
 object({
     create              = bool
-    name                = string
+    name                = optional(string)
     resource_group_name = optional(string)
     length              = optional(number, 28)
+    id                  = optional(string)
   })
 ```
 
