@@ -55,6 +55,7 @@ module.exports = {
         "panos/docs/tutorials/working-with-address-groups",
         "panos/docs/tutorials/rulebase-to-csv",
         "panos/docs/tutorials/redundant-internet",
+        "panos/docs/pan-chainguard"
       ],
     },
   ],
