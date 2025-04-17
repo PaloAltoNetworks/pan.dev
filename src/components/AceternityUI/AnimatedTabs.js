@@ -8,7 +8,7 @@ export function TabsDemo() {
       title: "API Reference Docs",
       value: "api-reference",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-gray-900">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-[#AE3B1C]">
           <p>API Reference Docs</p>
           <TabsImage src="img/homepage-tabs/APIReferenceExample.png" />
         </div>
@@ -18,7 +18,7 @@ export function TabsDemo() {
       title: "Developer Docs",
       value: "developer-docs",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-gray-900">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-[#AE3B1C]">
           <p>Developer Docs</p>
           <TabsImage src="img/homepage-tabs/DeveloperDocsExample.png" />
         </div>
@@ -28,7 +28,7 @@ export function TabsDemo() {
       title: "Getting Started Guides",
       value: "getting-started-guides",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-gray-900">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#FA582D] to-[#AE3B1C]">
           <p>Getting Started Guides</p>
           <TabsImage src="img/homepage-tabs/GettingStartedExample.png" />
         </div>
