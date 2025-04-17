@@ -2,6 +2,7 @@
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const blog_json = require("../../components/Medium/blogs.json");
 const blogs = blog_json?.items?.slice(0, 9);
@@ -131,32 +132,36 @@ export const AnimatedTestimonials = ({ testimonials, autoplay = false }) => {
               {blogs[active].author?.name}
             </p>
             <motion.p className="mt-8 text-lg text-gray-500 dark:text-neutral-300">
-              {getFirstParagraph(blogs[active].content_html)
-                .substring(0, 300)
-                .split(" ")
-                .map((word, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{
-                      filter: "blur(10px)",
-                      opacity: 0,
-                      y: 5,
-                    }}
-                    animate={{
-                      filter: "blur(0px)",
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                      ease: "easeInOut",
-                      delay: 0.02 * index,
-                    }}
-                    className="inline-block"
-                  >
-                    {word}&nbsp;
-                  </motion.span>
-                ))}
+              <BrowserOnly>
+                {() =>
+                  getFirstParagraph(blogs[active].content_html)
+                    .substring(0, 300)
+                    .split(" ")
+                    .map((word, index) => (
+                      <motion.span
+                        key={index}
+                        initial={{
+                          filter: "blur(10px)",
+                          opacity: 0,
+                          y: 5,
+                        }}
+                        animate={{
+                          filter: "blur(0px)",
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        transition={{
+                          duration: 0.2,
+                          ease: "easeInOut",
+                          delay: 0.02 * index,
+                        }}
+                        className="inline-block"
+                      >
+                        {word}&nbsp;
+                      </motion.span>
+                    ))
+                }
+              </BrowserOnly>
               <motion.span
                 transition={{
                   duration: 0.2,
