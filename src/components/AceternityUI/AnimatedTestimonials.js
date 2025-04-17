@@ -3,7 +3,7 @@ import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 
-const blog_json = require("./blogs.json");
+const blog_json = require("../../components/Medium/blogs.json");
 const blogs = blog_json?.items?.slice(0, 9);
 
 export const AnimatedTestimonials = ({ testimonials, autoplay = false }) => {
