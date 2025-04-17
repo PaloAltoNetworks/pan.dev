@@ -14,7 +14,7 @@ info:
     \ Group\n(TSG) identifier.\n\nThese APIs use the common SASE authentication mechanism\
     \ and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
     \ guide for more information.\n\nThis Open API spec file was created on April\
-    \ 10, 2025. To check for a more recent version of this file, see\n[Prisma Insights\
+    \ 17, 2025. To check for a more recent version of this file, see\n[Prisma Insights\
     \ APIs on pan.dev](https://pan.dev//access/api/insights/).\n\n\xA9 2025 Palo Alto\
     \ Networks, Inc. Palo Alto Networks is a registered trademark of Palo\nAlto Networks.\
     \ A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
@@ -2132,6 +2132,160 @@ paths:
       summary: Mobile users list
       tags:
       - Mobile Users
+  /insights/v3.0/resource/query/sites/bandwidth_consumption_compute_region_list:
+    post:
+      description: 'Bandwidth Consumption by Compute Region.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-bandwidth_consumption_compute_region_list
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: geoip_destination
+                      values:
+                      - US
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - US West
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          compute_location:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Locations
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event
+                            example: 5
+                            type: number
+                          geoip_destination:
+                            description: Geo IP Destination
+                            example: US
+                            type: string
+                          instance_state:
+                            description: State of Instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  compute_location:
+                    description: Compute Location
+                    example: US West
+                    type: string
+                  peak_throughput:
+                    description: Peak Throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get bandwidth consumption by compute region
+      tags:
+      - Sites
   /insights/v3.0/resource/query/sites/bandwidth_consumption_histogram:
     post:
       description: "Retrieves histogram details on the Bandwidth Consumption. \n"
@@ -2319,21 +2473,25 @@ paths:
       summary: Bandwidth Consumption Histogram
       tags:
       - Sites
-  /insights/v3.0/resource/query/sites/rn_list:
+  /insights/v3.0/resource/query/sites/bandwidth_consumption_histogram_compute_region:
     post:
-      description: 'Retrieves a list of all branch sites along with their details.
+      description: 'Bandwidth Consumption Histogram for Compute Region.
 
         '
-      operationId: post-insights-v3.0-resource-query-sites-rn_list
+      operationId: post-insights-v3.0-resource-query-sites-bandwidth_consumption_histogram_compute_region
       parameters:
-      - description: "Region mapping for the tenant. \n"
+      - description: Region mapping for the tenant.
         in: header
         name: X-PANW-Region
         required: true
         schema:
           example: americas
           type: string
-      - description: TSG ID
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
         in: header
         name: Prisma-Tenant
         required: false
@@ -2344,7 +2502,20 @@ paths:
         content:
           application/json:
             examples:
-              List of Sites with status down:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
                 value:
                   filter:
                     rules:
@@ -2354,296 +2525,1467 @@ paths:
                       - 5
                     - operator: in
                       property: site_state
-                      subQuery:
-                        name: topology_current_status_site_state
-                      values:
-                      - 0
-              Monitor > Branch Sites > Site List:
-                value:
-                  filter:
-                    rules:
-                    - operator: last_n_hours
-                      property: event_time
-                      values:
-                      - 5
-              Remote networks list with possible filters:
-                value:
-                  filter:
-                    rules:
-                    - operator: last_n_hours
-                      property: event_time
-                      values:
-                      - 5
-                    - operator: in
-                      property: site_state
-                      subQuery:
-                        name: topology_current_status_site_state
-                      values:
-                      - 0
-                    - operator: in
-                      property: instance_state
-                      subQuery:
-                        name: topology_current_status_instance_state
                       values:
                       - 1
-                    - operator: in
-                      property: geoip_destination
-                      subQuery:
-                        name: topology_current_status_geo_location
-                      values:
-                      - Denver, United States
-                    - operator: in
-                      property: site_name
-                      values:
-                      - RN1
+                      - 2
+                      - 3
+                      - 4
                     - operator: in
                       property: edge_location_display_name
                       values:
                       - US West
                     - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
                       property: compute_location
                       values:
-                      - US East
-            schema:
-              example:
-                filter:
-                  rules:
-                  - operator: last_n_hours
+                      - US West
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                  histogram:
+                    enableEmptyInterval: true
                     property: event_time
-                    values:
-                    - 5
+                    range: minute
+                    value: 30
+            schema:
               properties:
-                compute_location:
-                  description: Compute Location
-                  example: US East
-                  type: string
-                edge_location_display_name:
-                  description: Name of PA location
-                  example: US West
-                  type: string
-                geoip_destination:
-                  description: Geo IP of the destination
-                  example: Denver, United States
-                  type: string
-                instance_state:
-                  description: Instance state
-                  enum:
-                  - 0
-                  - 1
-                  - 2
-                  example: 1
-                  type: number
-                site_name:
-                  description: Name of the site
-                  example: Remote-Conn1
-                  type: string
-                site_state:
-                  description: State of the site
-                  enum:
-                  - 0
-                  - 1
-                  - 2
-                  example: 0
-                  type: number
-              required:
-              - event_time
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          compute_location:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Locations
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          instance_state:
+                            description: State of Instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                          transport_type:
+                            description: Type of tunnel
+                            example: IPSEC
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
               type: object
         required: true
       responses:
         '200':
           content:
             application/json:
-              example:
-                data:
-                - avg_throughput: 100.5
-                  bgp_all_tunnels: 3
-                  bgp_site_state: 1
-                  bgp_site_state_name: Up
-                  bgp_up_tunnels: 2
-                  compute_location: US East
-                  destination_ip: 192.168.1.2
-                  destination_ip_string: 192.168.1.2
-                  edge_location_display_name: US West
-                  instance_state: 1
-                  instance_state_name: Up
-                  median_throughput: 95.5
-                  node_type: 48
-                  peak_throughput: 150.5
-                  site_aggregate_capacity: 2000
-                  site_all_tunnels: 3
-                  site_capacity: 1000
-                  site_city: Denver
-                  site_connection_duration: 120
-                  site_country: USA
-                  site_disconnection: 0
-                  site_location: Denver, CO
-                  site_location_string: Denver, CO
-                  site_name: Remote-Conn1
-                  site_state: 1
-                  site_state_name: Up
-                  site_type: Third-Party
-                  site_up_tunnels: 2
-                  source_ip: 192.168.1.1
-                  source_ip_string: 192.168.1.1
               schema:
-                example:
-                  data:
-                  - avg_throughput: 85.2
-                    bgp_all_tunnels: 4
-                    bgp_site_state: 1
-                    bgp_site_state_name: Up
-                    bgp_up_tunnels: 3
-                    compute_location: US East
-                    destination_ip: 203.0.113.2
-                    destination_ip_string: 203.0.113.2
-                    edge_location_display_name: US West
-                    instance_state: 1
-                    instance_state_name: Up
-                    median_throughput: 80.3
-                    node_type: 48
-                    peak_throughput: 160.4
-                    site_aggregate_capacity: 2500
-                    site_all_tunnels: 4
-                    site_capacity: 1500
-                    site_city: San Francisco
-                    site_connection_duration: 150
-                    site_country: USA
-                    site_disconnection: 0
-                    site_location: San Francisco, CA
-                    site_location_string: San Francisco, CA
-                    site_name: Remote-Conn2
-                    site_state: 1
-                    site_state_name: Up
-                    site_type: Remote Network
-                    site_up_tunnels: 3
-                    source_ip: 203.0.113.1
-                    source_ip_string: 203.0.113.1
                 properties:
-                  avg_throughput:
-                    description: Average throughput
-                    example: 100.5
+                  allocated_bw:
+                    description: Allocated bandwidth
+                    example: 1000000.0
+                    format: float
                     type: number
-                  bgp_all_tunnels:
-                    description: Count of BGP tunnels
-                    example: 3
+                  avg_cumulative:
+                    description: Average cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  bgp_site_state:
-                    description: BGP Site State
-                    example: 1
+                  avg_egress:
+                    description: Average egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  bgp_site_state_name:
-                    description: BGP Site State Name
-                    example: Up
-                    type: string
-                  bgp_up_tunnels:
-                    description: Count of Up Tunnels
-                    example: 2
+                  avg_ingress:
+                    description: Average ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
                   compute_location:
                     description: Compute Location
-                    example: US East
-                    type: string
-                  destination_ip:
-                    description: Destination IP
-                    example: 192.168.1.2
-                    type: string
-                  destination_ip_string:
-                    description: Destination IP
-                    example: 192.168.1.2
-                    type: string
-                  edge_location_display_name:
-                    description: PA Location
                     example: US West
                     type: string
-                  instance_state:
-                    description: Instance State
-                    example: 1
+                  event_time:
+                    description: Event time
+                    example: 1709226000000
                     type: number
-                  instance_state_name:
-                    description: Instance State Name
-                    example: Up
-                    type: string
-                  median_throughput:
-                    description: Median throughput
-                    example: 95.5
+                  histogram_time:
+                    description: Event time
+                    example: 1709226000000
                     type: number
-                  node_type:
-                    description: Node Type
-                    example: 48
-                    type: integer
-                  peak_throughput:
-                    description: Peak throughput
-                    example: 150.5
+                  median_cumulative:
+                    description: Median cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_aggregate_capacity:
-                    description: Site Aggregate Capacity
-                    example: 2000
+                  median_egress:
+                    description: Median egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_all_tunnels:
-                    description: Count of tunnels
-                    example: 3
+                  median_ingress:
+                    description: Median ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_capacity:
-                    description: Site Capacity
-                    example: 1000
+                  peak_cumulative:
+                    description: Peak cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_city:
-                    description: Site City
-                    example: Denver
-                    type: string
-                  site_connection_duration:
-                    description: Site Connection Duration
-                    example: 120
+                  peak_egress:
+                    description: Peak egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_country:
-                    description: Site Country
-                    example: USA
-                    type: string
-                  site_disconnection:
-                    description: Site Disconnection
-                    example: 0
+                  peak_ingress:
+                    description: Peak ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
                     type: number
-                  site_location:
-                    description: Site Location
-                    example: Denver, CO
-                    type: string
-                  site_location_string:
-                    description: Site Location String
-                    example: Denver, CO
-                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Bandwidth Histogram for Compute Region
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/bandwidth_consumption_histogram_site:
+    post:
+      description: 'Bandwidth Consumption Histogram for a Site.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-bandwidth_consumption_histogram_site
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - US West
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          compute_location:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Locations
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          instance_state:
+                            description: State of Instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                          transport_type:
+                            description: Type of tunnel
+                            example: IPSEC
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  avg_cumulative:
+                    description: Average cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  avg_egress:
+                    description: Average egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  avg_ingress:
+                    description: Average ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  event_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  histogram_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  median_cumulative:
+                    description: Median cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  median_egress:
+                    description: Median egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  median_ingress:
+                    description: Median ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  peak_cumulative:
+                    description: Peak cumulative bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  peak_egress:
+                    description: Peak egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  peak_ingress:
+                    description: Peak ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
                   site_name:
-                    description: Site name
+                    description: Name of the site
                     example: Remote-Conn1
-                    type: string
-                  site_state:
-                    description: Site State
-                    example: 1
-                    type: number
-                  site_state_name:
-                    description: Site State Name
-                    example: Up
-                    type: string
-                  site_type:
-                    description: Site type
-                    example: Remote Network
-                    type: string
-                  site_up_tunnels:
-                    description: Count of Up Tunnels
-                    example: 2
-                    type: number
-                  source_ip:
-                    description: Source IP
-                    example: 192.168.1.1
-                    type: string
-                  source_ip_string:
-                    description: Source IP
-                    example: 192.168.1.1
                     type: string
                 type: object
           description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Site bandwidth consumption histogram
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/bandwidth_consumption_site_list:
+    post:
+      description: 'Bandwidth Consumption Site List.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-bandwidth_consumption_site_list
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: geoip_destination
+                      values:
+                      - US
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - US West
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                    - operator: in
+                      property: site_capacity
+                      values:
+                      - very_small
+                      - small
+                      - medium
+                      - large
+                      - extra_large
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          compute_location:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Locations
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          geoip_destination:
+                            description: Destination Geo IP
+                            example: US
+                            type: string
+                          instance_state:
+                            description: State of Instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_capacity:
+                            description: Size of the site
+                            example: small
+                            type: string
+                          site_name:
+                            description: Name of the site
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                          transport_type:
+                            description: Type of tunnel
+                            example: IPSEC
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  peak_throughput:
+                    description: Peak throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  site_name:
+                    description: Name of the site
+                    example: Remote-Conn1
+                    type: string
+                  site_size:
+                    description: Size of the site
+                    example: Large
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get bandwidth consumption site list data
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/rn_list:
+    post:
+      description: 'Retrieves a list of all branch sites along with their details.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-rn_list
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values:
+                      - 7
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values:
+                      - 7
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US East
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - US East
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: site_state_name
+                      values:
+                      - Up
+                      - Down
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: bgp_site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          bgp_site_state:
+                            description: BGP state of the site.
+                            example: 1
+                            type: integer
+                          compute_location:
+                            description: Compute Location.
+                            example: US East
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Location.
+                            example: US East
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 7
+                            type: number
+                          instance_state:
+                            description: State of the instance.
+                            example: 0
+                            type: integer
+                          node_type:
+                            description: Type of node.
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site.
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site.
+                            example: 1
+                            type: integer
+                          site_state_name:
+                            description: Name of the site state.
+                            example: Up
+                            type: string
+                          transport_type:
+                            description: Type of transport.
+                            example: IPSEC
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  bgp_all_tunnels:
+                    description: All BGP tunnels for the site.
+                    example: 5
+                    type: integer
+                  bgp_site_state:
+                    description: BGP state of the site.
+                    example: 2
+                    type: integer
+                  bgp_site_state_name:
+                    description: Name of the BGP site state.
+                    example: Unknown
+                    type: string
+                  compute_location:
+                    description: Compute Location.
+                    example: US East
+                    type: string
+                  edge_location_display_name:
+                    description: Prisma Access Location.
+                    example: US West
+                    type: string
+                  instance_state:
+                    description: State of the instance.
+                    example: 1
+                    type: integer
+                  instance_state_name:
+                    description: Name of the instance state.
+                    example: Up
+                    type: string
+                  node_type:
+                    description: Type of node.
+                    example: 48
+                    type: number
+                  site_aggregate_capacity:
+                    description: Aggregate capacity of the site.
+                    example: 1000000
+                    format: integer
+                    type: number
+                  site_all_tunnels:
+                    description: All tunnels for the site.
+                    example: 10
+                    type: integer
+                  site_capacity:
+                    description: Capacity of the site.
+                    example: 1000000
+                    format: integer
+                    type: number
+                  site_name:
+                    description: Name of the site.
+                    example: Remote-Conn1
+                    type: string
+                  site_state:
+                    description: State of the site.
+                    example: 1
+                    type: integer
+                  site_state_name:
+                    description: Name of the site state.
+                    example: Up
+                    type: string
+                  site_type:
+                    description: Type of the site.
+                    example: Third-Party
+                    type: string
+                  transport_type:
+                    description: Type of transport.
+                    example: IPSEC
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
       security:
       - Bearer: []
       summary: List of branch sites
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/rn_list_relational:
+    post:
+      description: 'Retrieves a list of sites.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-rn_list_relational
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values:
+                      - 7
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_days
+                      property: event_time
+                      values:
+                      - 7
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US East
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - US East
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: site_state_name
+                      values:
+                      - Up
+                      - Down
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: bgp_site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          bgp_site_state:
+                            description: BGP state of the site.
+                            example: 1
+                            type: integer
+                          compute_location:
+                            description: Compute Location.
+                            example: US East
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Location.
+                            example: US East
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 7
+                            type: number
+                          instance_state:
+                            description: State of the instance.
+                            example: 0
+                            type: integer
+                          node_type:
+                            description: Type of node.
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site.
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site.
+                            example: 1
+                            type: integer
+                          site_state_name:
+                            description: Name of the site state.
+                            example: Up
+                            type: string
+                          transport_type:
+                            description: Type of transport.
+                            example: IPSEC
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  bgp_all_tunnels:
+                    description: All BGP tunnels for the site.
+                    example: 5
+                    type: integer
+                  bgp_site_state:
+                    description: BGP state of the site.
+                    example: 2
+                    type: integer
+                  bgp_site_state_name:
+                    description: Name of the BGP site state.
+                    example: Unknown
+                    type: string
+                  compute_location:
+                    description: Compute Location.
+                    example: US East
+                    type: string
+                  edge_location_display_name:
+                    description: Prisma Access Location.
+                    example: US West
+                    type: string
+                  instance_state:
+                    description: State of the instance.
+                    example: 1
+                    type: integer
+                  instance_state_name:
+                    description: Name of the instance state.
+                    example: Up
+                    type: string
+                  node_type:
+                    description: Type of node.
+                    example: 48
+                    type: number
+                  site_aggregate_capacity:
+                    description: Aggregate capacity of the site.
+                    example: 1000000
+                    format: integer
+                    type: number
+                  site_all_tunnels:
+                    description: All tunnels for the site.
+                    example: 10
+                    type: integer
+                  site_capacity:
+                    description: Capacity of the site.
+                    example: 1000000
+                    format: integer
+                    type: number
+                  site_name:
+                    description: Name of the site.
+                    example: Remote-Conn1
+                    type: string
+                  site_state:
+                    description: State of the site.
+                    example: 1
+                    type: integer
+                  site_state_name:
+                    description: Name of the site state.
+                    example: Up
+                    type: string
+                  site_type:
+                    description: Type of the site.
+                    example: Third-Party
+                    type: string
+                  transport_type:
+                    description: Type of transport.
+                    example: IPSEC
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get Sites List
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/rn_spn_node_peak_bw_hour:
+    post:
+      description: 'Remote Network SPN Node Peak Bandwidth Hour Data.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-rn_spn_node_peak_bw_hour
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: spn_name
+                      values:
+                      - us-southwest-cedar
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site
+                            example: Remote-Conn1
+                            type: string
+                          spn_name:
+                            description: Name of the SPN
+                            example: us-southwest-cedar
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  compute_location:
+                    description: Compute Location
+                    example: US West
+                    type: string
+                  event_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  node_capacity:
+                    description: Node capacity
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  site_name:
+                    description: Site Name
+                    example: Remote-Conn1
+                    type: string
+                  spn_name:
+                    description: SPN Name
+                    example: us-southwest-cedar
+                    type: string
+                  tunnel_throughput_avg:
+                    description: Average tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  tunnel_throughput_median:
+                    description: Median tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  tunnel_throughput_peak:
+                    description: Peak tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: SPN node peak bandwidth hour data
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/rn_spn_node_peak_bw_hour_node_agg:
+    post:
+      description: 'RN SPN Node Peak BW Hour Node Agg.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-rn_spn_node_peak_bw_hour_node_agg
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: spn_name
+                      values:
+                      - us-southwest-cedar
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Site Name
+                            example: Remote-Conn1
+                            type: string
+                          spn_name:
+                            description: SPN Name
+                            example: us-southwest-cedar
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  compute_location:
+                    description: Compute Location
+                    example: US West
+                    type: string
+                  event_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  histogram_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  node_capacity:
+                    description: Node capacity
+                    example: 500000.0
+                    format: float
+                    type: number
+                  spn_name:
+                    description: SPN Name
+                    example: us-southwest-cedar
+                    type: string
+                  tunnel_throughput_avg:
+                    description: Average tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  tunnel_throughput_median:
+                    description: Median tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  tunnel_throughput_peak:
+                    description: Peak tunnel throughput
+                    example: 1000000.0
+                    format: float
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: SPN node peak hourly bandwidth aggregate
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/rn_spn_node_site_list:
+    post:
+      description: "Retrieves a list of RN SPN node sites. \n"
+      operationId: post-insights-v3.0-resource-query-sites-rn_spn_node_site_list
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: spn_name
+                      values:
+                      - us-southwest-cedar
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location.
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Location.
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          node_type:
+                            description: Type of node.
+                            example: 48
+                            type: number
+                          spn_name:
+                            description: SPN Name.
+                            example: us-southwest-cedar
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  compute_location:
+                    description: Compute location.
+                    example: US West
+                    type: string
+                  site_name:
+                    description: Site name.
+                    example: BRANCH3SANJOSE_ACT_RNG_1
+                    type: string
+                  spn_name:
+                    description: SPN name.
+                    example: us-southwest-cedar
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get RN SPN Node Site List
       tags:
       - Sites
   /insights/v3.0/resource/query/sites/sc_list:
@@ -3160,177 +4502,12 @@ paths:
       - Sites
   /insights/v3.0/resource/query/sites/site_status:
     post:
-      description: 'Retrieves a status of Sites or Remote Networks, and Service Connections.
-
-        '
+      description: "Get site status filter data. \n"
       operationId: post-insights-v3.0-resource-query-sites-site_status
       parameters:
-      - description: "Region mapping for the tenant. \n"
+      - description: Region mapping for the tenant.
         in: header
         name: X-PANW-Region
-        required: true
-        schema:
-          example: americas
-          type: string
-      - description: TSG ID
-        in: header
-        name: Prisma-Tenant
-        required: false
-        schema:
-          example: 12345678:12345679
-          type: string
-      requestBody:
-        content:
-          application/json:
-            examples:
-              Monitor > Branch Sites > Site Status:
-                value:
-                  filter:
-                    rules:
-                    - operator: in
-                      property: node_type
-                      values:
-                      - 48
-              Monitor > Data Centers > SC Status:
-                value:
-                  filter:
-                    rules:
-                    - operator: in
-                      property: node_type
-                      values:
-                      - 51
-              Possible filters:
-                value:
-                  filter:
-                    rules:
-                    - operator: in
-                      property: node_type
-                      values:
-                      - 48
-                    - operator: in
-                      property: site_state
-                      values:
-                      - 0
-                    - operator: in
-                      property: instance_state
-                      values:
-                      - 1
-                    - operator: in
-                      property: geoip_destination
-                      subQuery:
-                        name: topology_current_status_geo_location
-                      values:
-                      - Denver, United States
-                    - operator: in
-                      property: site_name
-                      values:
-                      - RN1
-                    - operator: in
-                      property: edge_location_display_name
-                      values:
-                      - US West
-                    - operator: in
-                      property: compute_location
-                      values:
-                      - US East
-                    - operator: in
-                      property: transport_type
-                      values:
-                      - IPSec
-            schema:
-              example:
-                filter:
-                  rules:
-                  - operator: in
-                    property: node_type
-                    values:
-                    - 48
-              properties:
-                geoip_destination:
-                  description: Geo IP of the destination
-                  example: Denver, United States
-                  type: string
-                instance_state:
-                  description: Instance state
-                  enum:
-                  - 0
-                  - 1
-                  - 2
-                  example: 1
-                  type: number
-                site_name:
-                  description: Name of the site or data center
-                  example: RN-1
-                  type: string
-                site_state:
-                  description: State of the site
-                  enum:
-                  - 0
-                  - 1
-                  - 2
-                  example: 0
-                  type: number
-                transport_type:
-                  description: Transport Type
-                  enum:
-                  - IPSec
-                  - Colo-Connect
-                  example: IPSec
-                  type: string
-              required: []
-              type: object
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              example:
-                data:
-                - node_type: 48
-                  site_count: 25
-                  site_state: 1
-                  site_state_name: Up
-                - node_type: 48
-                  site_count: 5
-                  site_state: 0
-                  site_state_name: Down
-              schema:
-                example:
-                  data:
-                  - node_type: 48
-                    site_count: 25
-                    site_state: 1
-                    site_state_name: Up
-                properties:
-                  node_type:
-                    description: Node Type
-                    type: integer
-                  site_count:
-                    description: Site Count
-                    type: integer
-                  site_state:
-                    description: Site State
-                    type: integer
-                  site_state_name:
-                    description: Site State Name
-                    type: string
-                type: object
-          description: OK
-      security:
-      - Bearer: []
-      summary: Site status
-      tags:
-      - Sites
-  /insights/v3.0/resource/query/sites/site_traffic:
-    post:
-      description: "Get details on the site traffic. \n"
-      operationId: post-insights-v3.0-resource-query-sites-site_traffic
-      parameters:
-      - description: 'Region mapping for the tenant.
-
-          '
-        in: header
-        name: PANW-Region
         required: true
         schema:
           example: americas
@@ -3350,37 +4527,16 @@ paths:
         content:
           application/json:
             examples:
-              api with all possible filters:
+              With possible filters:
                 value:
                   filter:
                     rules:
-                    - operator: last_n_hours
-                      property: event_time
-                      values:
-                      - 5
-                    - operator: in
-                      property: node_type
-                      values:
-                      - 48
-                    - operator: in
-                      property: edge_location_display_name
-                      values:
-                      - us-west
-                    - operator: in
-                      property: site_name
-                      values:
-                      - Remote-Conn1
                     - operator: in
                       property: site_state
                       values:
+                      - 0
                       - 1
                       - 2
-                      - 3
-                      - 4
-                    - operator: in
-                      property: spn_name
-                      values:
-                      - SPN1
                     - operator: in
                       property: instance_state
                       values:
@@ -3388,22 +4544,22 @@ paths:
                       - 1
                       - 2
                     - operator: in
-                      property: compute_location
+                      property: site_name
                       values:
-                      - us-east
+                      - Remote-Conn1
+                    - operator: in
+                      property: geoip_destination
+                      values:
+                      - US West
                     - operator: in
                       property: transport_type
                       values:
                       - IPSEC
                       - GRE
-              api with required filters:
-                value:
-                  filter:
-                    rules:
-                    - operator: last_n_hours
-                      property: event_time
+                    - operator: in
+                      property: node_type
                       values:
-                      - 5
+                      - 48
             schema:
               properties:
                 filter:
@@ -3411,41 +4567,269 @@ paths:
                     rules:
                       items:
                         properties:
-                          compute_location:
-                            description: Location of the device
-                            example: US East
-                            type: string
-                          edge_location_display_name:
-                            description: Name of PA location
+                          geoip_destination:
+                            description: Destination geo location.
                             example: US West
                             type: string
-                          event_time:
-                            description: Time of the event
-                            example: 5
-                            type: number
                           instance_state:
-                            description: State of the instance
+                            description: State of Instance.
                             example: 0
                             type: number
                           node_type:
-                            description: Type of the node
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site.
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site.
+                            example: 1
+                            type: number
+                          transport_type:
+                            description: Type of tunnel.
+                            example: IPSEC
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  site_count:
+                    description: Site count
+                    example: 10
+                    type: number
+                  site_state:
+                    description: Site state
+                    example: 1
+                    type: number
+                  site_state_name:
+                    description: Site state name
+                    example: Down
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Site Status Filter
+      tags:
+      - Sites
+  /insights/v3.0/resource_query/remotenetworks/rn_compute_location_bw:
+    post:
+      description: 'Retrieves remote network compute location bandwidth data.
+
+        '
+      operationId: post-insights-v3.0-resource_query-remotenetworks-rn_compute_location_bw
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location.
+                            example: US West
+                            type: string
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                        type: object
+                      required:
+                      - aggregate_region_display_name
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  aggregate_region_display_name:
+                    description: Aggregate Region Display Name
+                    example: US West
+                    type: string
+                  allocated_instance_capacity:
+                    description: Allocated instance capacity.
+                    example: 1000
+                    type: number
+                  configured_agg_bw:
+                    description: Configured aggregate bandwidth.
+                    example: 3900
+                    type: number
+                  spn_name:
+                    description: SPN Name
+                    example: us-east-argan
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get Remote Network Compute Location Bandwidth
+      tags:
+      - Sites
+  /insights/v3.0/resource_query/sites/rn_spn_node_peak_bw_minute:
+    post:
+      description: 'RN SPN Node Peak Bandwidth per Minute.
+
+        '
+      operationId: post-insights-v3.0-resource_query-sites-rn_spn_node_peak_bw_minute
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: spn_name
+                      values:
+                      - us-southwest-cedar
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
                             example: 48
                             type: number
                           site_name:
                             description: Name of the site
                             example: Remote-Conn1
                             type: string
-                          site_state:
-                            description: State of the site
-                            example: 1
-                            type: number
                           spn_name:
                             description: Name of the SPN
-                            example: SPN1
-                            type: string
-                          transport_type:
-                            description: Type of transport
-                            example: IPSEC
+                            example: us-southwest-cedar
                             type: string
                         type: object
                       required:
@@ -3459,37 +4843,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  egress_bytes_pa_to_gcp:
-                    description: Total Egress Bandwidth consumed from PA to GCP
-                    example: 1000000.0
-                    format: float
-                    type: number
-                  egress_bytes_pa_to_internet:
-                    description: Total Egress Bandwidth consumed from PA to Internet
-                    example: 1000000.0
-                    format: float
-                    type: number
-                  egress_bytes_transferred:
-                    description: Total Egress Bandwidth consumed
-                    example: 1000000.0
-                    format: float
-                    type: number
-                  ingress_bytes_transferred:
-                    description: Total Ingress Bandwidth consumed
-                    example: 1000000.0
-                    format: float
-                    type: number
-                  pa_to_gcp_distr:
-                    description: Percentage of traffic from PA to GCP
-                    example: 1000000.0
-                    format: float
-                    type: number
-                  pa_to_internet_distr:
-                    description: Percentage of traffic from PA to Internet
-                    example: 1000000.0
-                    format: float
-                    type: number
+                properties: {}
                 type: object
           description: OK
         '400':
@@ -3502,7 +4856,199 @@ paths:
           description: Failed to process request
       security:
       - Bearer: []
-      summary: Site Traffic details
+      summary: SPN node peak bandwidth per minute
+      tags:
+      - Sites
+  /insights/v3.0/resource_query/tunnels/tunnel_list:
+    post:
+      description: "Retrieves a list of tunnels with detailed information. \n"
+      operationId: post-insights-v3.0-resource_query-tunnels-tunnel_list
+      parameters:
+      - description: Region mapping for the tenant.
+        in: header
+        name: X-PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: tunnel_name
+                      values:
+                      - Tunnel-1
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: sub_node_type
+                      values:
+                      - PA-VM
+                    - operator: in
+                      property: tunnel_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                    - operator: in
+                      property: tunnel_monitoring_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          edge_location_display_name:
+                            description: Prisma Access Location.
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          node_type:
+                            description: Type of node.
+                            example: 48
+                            type: number
+                          sub_node_type:
+                            description: Sub Type of node.
+                            example: PA-VM
+                            type: string
+                          tunnel_monitoring_state:
+                            description: Monitoring state of the tunnel.
+                            example: 0
+                            type: number
+                          tunnel_name:
+                            description: Name of the tunnel.
+                            example: Ashburn-MAD-IPSec
+                            type: string
+                          tunnel_state:
+                            description: State of the tunnel.
+                            example: 1
+                            type: number
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  avg_throughput:
+                    description: Average throughput.
+                    example: 1000.0
+                    format: float
+                    type: number
+                  bgp_tunnel_state:
+                    description: BGP tunnel state.
+                    example: 0
+                    type: number
+                  bgp_tunnel_state_name:
+                    description: Name of the BGP tunnel state.
+                    example: Down
+                    type: string
+                  destination_ip:
+                    description: Destination IP address.
+                    example: 192.168.1.2
+                    type: string
+                  edge_location_display_name:
+                    description: Prisma Access Location.
+                    example: US West
+                    type: string
+                  peak_throughput:
+                    description: Peak throughput.
+                    example: 2000.0
+                    format: float
+                    type: number
+                  source_ip:
+                    description: Source IP address.
+                    example: 192.168.1.1
+                    type: string
+                  tunnel_connection_duration:
+                    description: Tunnel connection duration.
+                    example: 3600000
+                    type: number
+                  tunnel_disconnection:
+                    description: Tunnel disconnection count.
+                    example: 1
+                    type: number
+                  tunnel_monitoring_state:
+                    description: Monitoring state of the tunnel.
+                    example: 2
+                    type: number
+                  tunnel_monitoring_state_name:
+                    description: Name of the tunnel monitoring state.
+                    example: Not Configured
+                    type: string
+                  tunnel_name:
+                    description: Name of the tunnel.
+                    example: Ashburn-MAD-IPSec
+                    type: string
+                  tunnel_state:
+                    description: State of the tunnel.
+                    example: 3
+                    type: number
+                  tunnel_state_name:
+                    description: Name of the tunnel state.
+                    example: Down
+                    type: string
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Get Tunnel List
       tags:
       - Sites
 servers:
