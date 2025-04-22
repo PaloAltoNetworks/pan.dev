@@ -33,7 +33,7 @@ function Home() {
       <main style={{ backgroundColor: "#000000" }}>
         <HeroSectionOne />
         <motion.div
-          className="container"
+          className="container hidden md:block"
           style={{ marginTop: "-30rem" }}
           initial={{
             opacity: 0,
@@ -67,7 +67,7 @@ function Home() {
             imgSrc={blogImageSrc}
             text="Read our latest Developer Blogs"
           />
-          <AnimatedTestimonials />
+          <Medium />
         </section>
       </main>
     </Layout>

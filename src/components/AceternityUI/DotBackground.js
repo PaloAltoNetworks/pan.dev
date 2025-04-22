@@ -6,7 +6,7 @@ import { TabsDemo } from "./AnimatedTabs";
 export function DotBackground() {
   return (
     <div>
-      <div className="relative flex h-[50rem] w-full items-center justify-center bg-white dark:bg-black">
+      <div className="relative flex h-20 mt-80 md:h-[50rem] md:mt-0 w-full items-center justify-center bg-white dark:bg-black">
         <div
           className={cn(
             "absolute inset-0",

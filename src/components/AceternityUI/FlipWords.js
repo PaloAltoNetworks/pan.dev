@@ -106,7 +106,7 @@ export default function FlipWordsHero() {
           ease: "easeInOut",
         }}
       >
-        <div className="text-7xl font-extrabold mx-auto text-white">
+        <div className="text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-white">
           <FlipWords words={words} />
           <br />
           for{" "}
