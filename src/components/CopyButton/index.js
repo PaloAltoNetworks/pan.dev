@@ -90,6 +90,7 @@ function CopyButton({ isVisible }) {
 
   return (
     <Tooltip
+      tabIndex="0"
       isVisible={isVisible}
       text="Copy contents of documentation as Markdown format for AI usage"
     >
