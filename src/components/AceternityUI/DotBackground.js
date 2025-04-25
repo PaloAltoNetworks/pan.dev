@@ -1,15 +1,15 @@
 import { cn } from "../../util";
 import React from "react";
 import FlipWordsHero from "./FlipWords";
-import { useColorMode } from "@docusaurus/theme-common";
+import { useHtmlDataTheme } from "../../hooks/useHtmlDataTheme";
 export function DotBackground() {
-  const { colorMode } = useColorMode();
+  const dataTheme = useHtmlDataTheme();
 
   return (
     <div>
       <div
         className={`relative flex h-20 mt-80 md:h-[50rem] md:mt-0 w-full items-center justify-center bg-white ${
-          colorMode === "dark" && "dark:bg-black"
+          dataTheme === "dark" && "dark:bg-black"
         }`}
       >
         <div
@@ -17,13 +17,13 @@ export function DotBackground() {
             "absolute inset-0",
             "[background-size:20px_20px]",
             "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
-            colorMode === "dark" &&
+            dataTheme === "dark" &&
               "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
           )}
         />
         <div
           className={`pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] ${
-            colorMode === "dark" && "dark:bg-black"
+            dataTheme === "dark" && "dark:bg-black"
           }`}
         ></div>
         <FlipWordsHero />

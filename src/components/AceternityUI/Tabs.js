@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "motion/react";
 import { cn } from "../../util";
-import { useColorMode } from "@docusaurus/theme-common";
+import { useHtmlDataTheme } from "../../hooks/useHtmlDataTheme";
 
 export const Tabs = ({
   tabs: propTabs,
@@ -13,7 +13,7 @@ export const Tabs = ({
 }) => {
   const [active, setActive] = useState(propTabs[0]);
   const [tabs, setTabs] = useState(propTabs);
-  const { colorMode } = useColorMode();
+  const dataTheme = useHtmlDataTheme();
 
   const moveSelectedTabToTop = (idx) => {
     const newTabs = [...propTabs];
@@ -53,7 +53,7 @@ export const Tabs = ({
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
                 className={cn(
                   `absolute inset-0 bg-gray-200 ${
-                    colorMode === "dark" && `dark:bg-zinc-800`
+                    dataTheme === "dark" && `dark:bg-zinc-800`
                   } rounded-full`,
                   activeTabClassName
                 )}
@@ -62,7 +62,7 @@ export const Tabs = ({
 
             <span
               className={`relative block text-black ${
-                colorMode === "dark" && `dark:text-white`
+                dataTheme === "dark" && `dark:text-white`
               }`}
             >
               {tab.title}

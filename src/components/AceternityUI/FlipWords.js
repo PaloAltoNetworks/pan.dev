@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "../../util";
-import { useColorMode } from "@docusaurus/theme-common";
+import { useHtmlDataTheme } from "../../hooks/useHtmlDataTheme";
 
 const FlipWords = ({ words, duration = 3000, className }) => {
   const [currentWord, setCurrentWord] = useState(words[0]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { colorMode } = useColorMode();
+  const dataTheme = useHtmlDataTheme();
 
   // thanks for the fix Julian - https://github.com/Julian-AT
   const startAnimation = useCallback(() => {
@@ -53,7 +53,7 @@ const FlipWords = ({ words, duration = 3000, className }) => {
         }}
         className={cn(
           `z-10 inline-block relative text-left text-neutral-900 ${
-            colorMode === "dark" && `dark:text-neutral-100`
+            dataTheme === "dark" && `dark:text-neutral-100`
           } px-2`,
           className
         )}
@@ -93,7 +93,7 @@ const FlipWords = ({ words, duration = 3000, className }) => {
 };
 
 export default function FlipWordsHero() {
-  const { colorMode } = useColorMode();
+  const dataTheme = useHtmlDataTheme();
   const words = ["API References", "Developer Docs", "Getting Started Guides"];
 
   return (
@@ -111,7 +111,7 @@ export default function FlipWordsHero() {
       >
         <div
           className={`text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-neutral-900 ${
-            colorMode === "dark" && `dark:text-neutral-100`
+            dataTheme === "dark" && `dark:text-neutral-100`
           }`}
         >
           <FlipWords words={words} />
@@ -142,8 +142,8 @@ export default function FlipWordsHero() {
         <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 hover:pointer-cursor">
           <a
             style={{
-              color: colorMode === "dark" ? "white" : "black",
-              "&:hover": { color: colorMode === "dark" ? "white" : "black" },
+              color: dataTheme === "dark" ? "white" : "black",
+              "&:hover": { color: dataTheme === "dark" ? "white" : "black" },
             }}
             href="#developer-docs-section"
           >
