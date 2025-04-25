@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "../../util";
+import { useColorMode } from "@docusaurus/theme-common";
 
 export const Tabs = ({
   tabs: propTabs,
@@ -12,6 +13,7 @@ export const Tabs = ({
 }) => {
   const [active, setActive] = useState(propTabs[0]);
   const [tabs, setTabs] = useState(propTabs);
+  const { colorMode } = useColorMode();
 
   const moveSelectedTabToTop = (idx) => {
     const newTabs = [...propTabs];
@@ -42,6 +44,7 @@ export const Tabs = ({
             className={cn("relative px-4 py-2 rounded-full", tabClassName)}
             style={{
               transformStyle: "preserve-3d",
+              "&:hover": { cursor: "pointer" },
             }}
           >
             {active.value === tab.value && (
@@ -49,13 +52,19 @@ export const Tabs = ({
                 layoutId="clickedbutton"
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
                 className={cn(
-                  "absolute inset-0 bg-gray-200 dark:bg-zinc-800 rounded-full ",
+                  `absolute inset-0 bg-gray-200 ${
+                    colorMode === "dark" && `dark:bg-zinc-800`
+                  } rounded-full`,
                   activeTabClassName
                 )}
               />
             )}
 
-            <span className="relative block text-black dark:text-white">
+            <span
+              className={`relative block text-black ${
+                colorMode === "dark" && `dark:text-white`
+              }`}
+            >
               {tab.title}
             </span>
           </button>

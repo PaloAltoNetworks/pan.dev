@@ -15,7 +15,6 @@ import Medium from "../components/Medium";
 import { PartnerTools } from "../components/AceternityUI/PartnerTools";
 import styles from "./styles.module.css";
 import { HeroSectionOne } from "../components/AceternityUI/Hero";
-import { AnimatedTestimonials } from "../components/AceternityUI/AnimatedTestimonials";
 import { TabsDemo } from "../components/AceternityUI/AnimatedTabs";
 import { motion } from "motion/react";
 
@@ -30,7 +29,7 @@ function Home() {
       description="The hub for Palo Alto Networks developer documentation, including API reference docs, quickstarts, tutorials, tools and open-source projects."
       wrapperClassName="homepage"
     >
-      <main style={{ backgroundColor: "#000000" }}>
+      <main className="homepage-main">
         <HeroSectionOne />
         <motion.div
           className="container hidden md:block"

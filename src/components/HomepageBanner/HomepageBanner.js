@@ -3,7 +3,7 @@ import "./HomepageBanner.scss";
 
 function HomepageBanner({ imgSrc, text }) {
   return (
-    <header className="homepage-header text-white">
+    <header className="homepage-header">
       <span id="developer-docs-header">{text}</span>
     </header>
   );

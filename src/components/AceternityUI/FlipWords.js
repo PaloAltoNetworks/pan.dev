@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "../../util";
-import { TabsDemo } from "./AnimatedTabs.js";
-import PaloAltoNetworksHeroText from "./PANText";
+import { useColorMode } from "@docusaurus/theme-common";
 
 const FlipWords = ({ words, duration = 3000, className }) => {
   const [currentWord, setCurrentWord] = useState(words[0]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const { colorMode } = useColorMode();
 
   // thanks for the fix Julian - https://github.com/Julian-AT
   const startAnimation = useCallback(() => {
@@ -52,7 +52,9 @@ const FlipWords = ({ words, duration = 3000, className }) => {
           position: "absolute",
         }}
         className={cn(
-          "z-10 inline-block relative text-left text-neutral-900 dark:text-neutral-100 px-2",
+          `z-10 inline-block relative text-left text-neutral-900 ${
+            colorMode === "dark" && `dark:text-neutral-100`
+          } px-2`,
           className
         )}
         key={currentWord}
@@ -91,6 +93,7 @@ const FlipWords = ({ words, duration = 3000, className }) => {
 };
 
 export default function FlipWordsHero() {
+  const { colorMode } = useColorMode();
   const words = ["API References", "Developer Docs", "Getting Started Guides"];
 
   return (
@@ -106,7 +109,11 @@ export default function FlipWordsHero() {
           ease: "easeInOut",
         }}
       >
-        <div className="text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-white">
+        <div
+          className={`text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-neutral-900 ${
+            colorMode === "dark" && `dark:text-neutral-100`
+          }`}
+        >
           <FlipWords words={words} />
           <br />
           for{" "}
@@ -125,7 +132,7 @@ export default function FlipWordsHero() {
             duration: 0.3,
             delay: 0.8,
           }}
-          className="relative z-10 mx-auto max-w-xl py-4 text-lg text-white font-normal"
+          className="relative z-10 mx-auto max-w-xl py-4 text-lg font-normal"
         >
           Access comprehensive developer documentation, API references, SDKs,
           and guides across the entire Palo Alto Networks product portfolio.
@@ -134,7 +141,10 @@ export default function FlipWordsHero() {
         </motion.p>
         <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 hover:pointer-cursor">
           <a
-            style={{ color: "white", "&:hover": { color: "white" } }}
+            style={{
+              color: colorMode === "dark" ? "white" : "black",
+              "&:hover": { color: colorMode === "dark" ? "white" : "black" },
+            }}
             href="#developer-docs-section"
           >
             Explore Developer Docs
