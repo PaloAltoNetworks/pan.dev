@@ -13,6 +13,17 @@ components:
         tsg_id:
           type: string
       type: object
+    Enable5GRequest:
+      properties:
+        action:
+          type: string
+        compute_region:
+          type: string
+        ipv4_cidr:
+          type: string
+        ipv6_cidr:
+          type: string
+      type: object
     JsonObject:
       items:
         type: string
@@ -31,43 +42,35 @@ components:
         secret:
           type: string
       type: object
-    TenantGroupInfo:
+    RequestBody_TenantUeInfoAddEdit:
       properties:
-        group_name:
-          type: string
-        identity_id:
-          items:
-            type: string
-          type: array
-        tsg_id:
-          type: string
+        mapping:
+          allOf:
+          - $ref: '#/components/schemas/TenantUeInfoMapping'
+          description: Tenant UE Info mapping request body
+          type: object
+      required:
+      - mapping
       type: object
-    TenantGroupInfoListInput:
+    RequestBody_TsgId:
       properties:
-        group_id:
-          type: string
-        tsg_id:
-          type: string
+        mapping:
+          allOf:
+          - $ref: '#/components/schemas/TsgIdInput'
+          description: TSG (Tenant Subscriber Group) Id Input
+          type: object
+      required:
+      - mapping
       type: object
-    TenantUEInfoListInput:
+    RequestBody_UserGroupAddEdit:
       properties:
-        group_id:
-          type: string
-        tsg_id:
-          type: string
-      type: object
-    TenantUEInfoRequest:
-      properties:
-        apn:
-          type: string
-        imei:
-          type: string
-        imsi:
-          type: string
-        root_tsg_id:
-          type: string
-        tsg_id:
-          type: string
+        userGroupInfo:
+          allOf:
+          - $ref: '#/components/schemas/UserGroupInfo'
+          description: User Group mapping request body
+          type: object
+      required:
+      - userGroupInfo
       type: object
     TenantUeInfoBulkDeleteRequest:
       properties:
@@ -75,6 +78,72 @@ components:
           items:
             type: string
           type: array
+      type: object
+    TenantUeInfoMapping:
+      properties:
+        apn:
+          description: APN (Access Point Name) for the Tenant UE
+          example: apn@panw.com
+          type: string
+        imei:
+          description: 15 digit IMEI (International Mobile Equipment Identity) number.
+            Error is returned if number of digits is not exactly 15.Last digit will
+            be replaced by zero.
+          example: '123456789012345'
+          type: string
+        imsi:
+          description: 15 digit IMSI (International Mobile Subscriber Identity) number.
+            Error is returned if number of digits is not exactly 15.
+          example: '123456789012345'
+          type: string
+        root_tsg_id:
+          description: TSG Id of the Root Tenant. No error is returned if invalid
+            TSG Id is provided.
+          example: '1234567891'
+          type: string
+        tsg_id:
+          description: TSG Id of the Child or Enterprise Tenant. Error is returned
+            if invalid TSG Id is provided.
+          example: '1234567890'
+          type: string
+      required:
+      - root_tsg_id
+      - tsg_id
+      - imsi
+      - imei
+      - apn
+      type: object
+    TsgIdInput:
+      properties:
+        tsg_id:
+          description: TSG Id of the Child or Enterprise Tenant. Error is returned
+            if invalid TSG Id is provided.
+          example: '1234567890'
+          type: string
+      required:
+      - tsg_id
+      type: object
+    UserGroupInfo:
+      properties:
+        group_name:
+          description: User Group Name. Must be unique across tenants.
+          example: test_user_group
+          type: string
+        identity_id:
+          description: Array of Tenant UE Info mapping ids
+          example: 1234567890
+          items:
+            type: string
+          type: array
+        tsg_id:
+          description: TSG Id of the Child or Enterprise Tenant. Error is returned
+            if invalid TSG Id is provided.
+          example: '1234567890'
+          type: string
+      required:
+      - group_name
+      - identity_id
+      - tsg_id
       type: object
   securitySchemes:
     Bearer:
@@ -99,7 +168,7 @@ info:
     \ of enterprise connectivity.\n\nThese APIs use the common SASE authentication\
     \ mechanism and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
     \ guide for more information.\n\nThis Open API spec file was created on April\
-    \ 25, 2025. To check for a more recent version of this file, see\n[SASE 5G Monitoring\
+    \ 28, 2025. To check for a more recent version of this file, see\n[SASE 5G Monitoring\
     \ Service APIs on pan.dev](https://pan.dev//sase/api/5G/).\n\n\xA9 2025 Palo Alto\
     \ Networks, Inc. Palo Alto Networks is a registered trademark of Palo\nAlto Networks.\
     \ A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
@@ -343,58 +412,6 @@ paths:
       summary: Add radius server shared secrete for root tsg
       tags:
       - ControlPlane Resource
-  /mt/manage/5g/control/radiusProxy/{proxy_server_id}:
-    delete:
-      description: delete radius server shared secrete for root tsg
-      operationId: delete-mt-manage-5g-control-radiusproxy-proxy_server_id
-      parameters:
-      - in: path
-        name: proxy_server_id
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Data Not Found
-        '500':
-          description: Server Error
-      security:
-      - Bearer: []
-      summary: delete radius server shared secrete for root tsg
-      tags:
-      - ControlPlane Resource
-    put:
-      description: update radius server shared secrete for root tsg
-      operationId: put-mt-manage-5g-control-radiusproxy-proxy_server_id
-      parameters:
-      - in: path
-        name: proxy_server_id
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RadiusProxyRequest'
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Data Not Found
-        '500':
-          description: Server Error
-      security:
-      - Bearer: []
-      summary: update radius server shared secrete for root tsg
-      tags:
-      - ControlPlane Resource
   /mt/manage/5g/control/radiusSecret:
     get:
       description: 'Retrieve the shared secret for the RADIUS server associated with
@@ -460,6 +477,60 @@ paths:
       summary: Get RADIUS server details
       tags:
       - ControlPlane Resource
+  /mt/manage/5g/ipcidr/{compute_region}:
+    get:
+      description: 'Retrieve the IPv4 and IPv6 Classless Inter-Domain Routing (CIDR)
+        blocks for a specified compute region. This is used to define the IP address
+        ranges for the network.
+
+        '
+      operationId: get-mt-manage-5g-ipcidr-compute_region
+      parameters:
+      - in: path
+        name: compute_region
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Get IP CIDR
+      tags:
+      - 5G API
+  /mt/manage/5g/setup:
+    post:
+      description: 'Enable 5G connectivity for a specified region. This involves configuring
+        the necessary settings and infrastructure to support 5G network access.
+
+        '
+      operationId: post-mt-manage-5g-setup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enable5GRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Enable 5G connectivity
+      tags:
+      - 5G API
   /mt/manage/5g/tenantUEInfo:
     post:
       description: 'Create tenant-user equipment (UE) information. This includes mapping
@@ -470,16 +541,94 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              Add Tenant UE Info:
+                value:
+                  apn: apn@panw.com
+                  imei: '111111789012345'
+                  imsi: '123456789012345'
+                  root_tsg_id: '123456891'
+                  tsg_id: '123456890'
+              IMEI Input Size Error:
+                value:
+                  apn: apn@panw.com
+                  imei: '12345678901234'
+                  imsi: '123456789012345'
+                  root_tsg_id: '1204544558'
+                  tsg_id: '1886576124'
+              IMSI Input Size Error:
+                value:
+                  apn: apn@panw.com
+                  imei: '123456789012345'
+                  imsi: '12345678901234'
+                  root_tsg_id: '1204544558'
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantUEInfoRequest'
+              $ref: '#/components/schemas/RequestBody_TenantUeInfoAddEdit'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Add Tenant UE Info:
+                  value:
+                    data:
+                      apn: apn@panw.com
+                      create_time: 1738446903587
+                      id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                      imei: '123456789012340'
+                      imsi: '123456789012345'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1738446903587
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Duplicate Tenant UE Info:
+                  value:
+                    clientRequestId: 9b3655ac-ce40-4e32-a38d-eff42e593d7f
+                    details: Duplicate UE info
+                    errorCode: '60013'
+                    message: Duplicate tenant UE information
+                    requestId: 9b3655ac-ce40-4e32-a38d-eff42e593d7f
+                    service: 5G Management Service
+                IMEI Input Size Error:
+                  value:
+                    clientRequestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    details: IMEI needs to be 15 digits, current length is 27
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    service: 5G Management Service
+                IMSI Input Size Error:
+                  value:
+                    clientRequestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    details: IMSI needs to be 15 digits, current length is 27
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    service: 5G Management Service
+                Invalid TSG Id:
+                  value:
+                    clientRequestId: 814ea495-87e3-4f41-8ceb-7bec3d09fb23
+                    details: tsg_id 123456890 does not exist in TenantDetails
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 814ea495-87e3-4f41-8ceb-7bec3d09fb23
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                ? '{"errorCode": "60000", "message": "Unexpected server error", "details":
+                  "Unknown error occurred", "service": "5G Management Service", "requestId":
+                  null, "clientRequestId": null}'
+                : value: Internal Server Error
           description: Server Error
       security:
       - Bearer: []
@@ -523,6 +672,16 @@ paths:
       operationId: post-mt-manage-5g-tenantueinfo-list
       parameters:
       - in: query
+        name: filter
+        schema:
+          pattern: ^[a-z]+:\w+(?:,[a-z]+:\w+)*$
+          type: string
+      - in: query
+        name: order
+        schema:
+          pattern: ^[a-z]+:(asc|desc)*$
+          type: string
+      - in: query
         name: page
         schema:
           default: 0
@@ -531,17 +690,79 @@ paths:
       - in: query
         name: size
         schema:
-          default: -1
+          default: 50
           format: int32
           type: integer
       requestBody:
         content:
           application/json:
+            examples:
+              List Tenant UE Info:
+                value:
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantUEInfoListInput'
+              $ref: '#/components/schemas/RequestBody_TsgId'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                List Tenant UE Info:
+                  value:
+                    data:
+                    - apn: apn@panw.com
+                      create_time: 1737682646248
+                      group: []
+                      identity_id: a5831ca0-5cf4-46a9-9409-6d55ea5e210a
+                      imei: '100411547312190'
+                      imsi: '264467605337818'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1737682646248
+                    - apn: apn@panw.com
+                      create_time: 1737682657616
+                      group: []
+                      identity_id: 29900486-f87f-475a-803d-12e1ee886e55
+                      imei: '100454707189790'
+                      imsi: '512181509888245'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1737682657616
+                    totalItems: 2
+                List Tenant UE Info with Groups:
+                  value:
+                    data:
+                    - apn: apn@panw.com
+                      create_time: 1737682646248
+                      group:
+                      - group_id: 6e451583-b3ab-4d62-af67-398675ab746f
+                        group_name: testgroup
+                      identity_id: a5831ca0-5cf4-46a9-9409-6d55ea5e210a
+                      imei: '100411547312190'
+                      imsi: '264467605337818'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1737682646248
+                    - apn: apn@panw.com
+                      create_time: 1737682657616
+                      group: []
+                      identity_id: 29900486-f87f-475a-803d-12e1ee886e55
+                      imei: '100454707189790'
+                      imsi: '512181509888245'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1737682657616
+                    totalItems: 2
           description: Success
+        '204':
+          content:
+            application/json:
+              examples:
+                List Tenant UE Info Invalid TSG Id:
+                  value:
+                    data: []
+                    totalItems: 0
+          description: No Content
         '400':
           description: Bad Request
         '404':
@@ -551,49 +772,6 @@ paths:
       security:
       - Bearer: []
       summary: List tenant-UE info
-      tags:
-      - UE Info Resource
-  /mt/manage/5g/tenantUEInfo/priming:
-    get:
-      description: Get priming information with pagination
-      operationId: get-mt-manage-5g-tenantueinfo-priming
-      parameters:
-      - in: query
-        name: computeRegion
-        schema:
-          type: string
-      - in: query
-        name: page
-        schema:
-          default: 0
-          format: int32
-          type: integer
-      - in: query
-        name: rootTsgId
-        schema:
-          type: string
-      - in: query
-        name: size
-        schema:
-          default: 10
-          format: int32
-          type: integer
-      - in: query
-        name: source
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '401':
-          description: Unauthorized
-        '500':
-          description: Internal Server Error
-      security:
-      - Bearer: []
-      summary: Get priming information with pagination
       tags:
       - UE Info Resource
   /mt/manage/5g/tenantUEInfo/upload:
@@ -649,8 +827,26 @@ paths:
           type: string
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Delete Tenant UE Info:
+                  value:
+                    identity_id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Tenant UE information not found:
+                  value:
+                    clientRequestId: 88df052c-b139-4d47-a8e3-1fcf01ede954
+                    details: Provided identityId 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                      does not exits.
+                    errorCode: '60011'
+                    message: Tenant UE information not found
+                    requestId: 88df052c-b139-4d47-a8e3-1fcf01ede954
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
@@ -676,20 +872,170 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              Edit Tenant UE Info:
+                value:
+                  apn: apn@panw.com
+                  imei: '111111789012345'
+                  imsi: '123456789012345'
+                  root_tsg_id: '123456891'
+                  tsg_id: '123456890'
+              IMEI Input Size Error:
+                value:
+                  apn: apn@panw.com
+                  imei: '12345678901234'
+                  imsi: '123456789012345'
+                  root_tsg_id: '1204544558'
+                  tsg_id: '1886576124'
+              IMSI Input Size Error:
+                value:
+                  apn: apn@panw.com
+                  imei: '123456789012345'
+                  imsi: '12345678901234'
+                  root_tsg_id: '1204544558'
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantUEInfoRequest'
+              $ref: '#/components/schemas/RequestBody_TenantUeInfoAddEdit'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Edit Tenant UE Info:
+                  value:
+                    data:
+                      apn: apn@panw.com
+                      create_time: 1738446903587
+                      id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                      imei: '111111789012340'
+                      imsi: '123456789012345'
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      update_time: 1738446903587
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Duplicate Tenant UE Info:
+                  value:
+                    clientRequestId: 9b3655ac-ce40-4e32-a38d-eff42e593d7f
+                    details: Duplicate UE info
+                    errorCode: '60013'
+                    message: Duplicate tenant UE information
+                    requestId: 9b3655ac-ce40-4e32-a38d-eff42e593d7f
+                    service: 5G Management Service
+                IMEI Input Size Error:
+                  value:
+                    clientRequestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    details: IMEI needs to be 15 digits, current length is 27
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    service: 5G Management Service
+                IMSI Input Size Error:
+                  value:
+                    clientRequestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    details: IMSI needs to be 15 digits, current length is 27
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 4934299e-15a1-454e-9f6c-c96c45b6d771
+                    service: 5G Management Service
+                Invalid TSG Id:
+                  value:
+                    clientRequestId: 814ea495-87e3-4f41-8ceb-7bec3d09fb23
+                    details: tsg_id 123456890 does not exist in TenantDetails
+                    errorCode: '60014'
+                    message: Failed to create tenant UE information
+                    requestId: 814ea495-87e3-4f41-8ceb-7bec3d09fb23
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                ? '{"errorCode": "60000", "message": "Unexpected server error", "details":
+                  "Unknown error occurred", "service": "5G Management Service", "requestId":
+                  null, "clientRequestId": null}'
+                : value: Internal Server Error
           description: Server Error
       security:
       - Bearer: []
       summary: Update tenant-UE mapping
+      tags:
+      - UE Info Resource
+  /mt/manage/5g/tenantUEInfo/{ueInfoId}:
+    get:
+      description: 'Retrieve Tenant UE information Mapping, which includes the mapping
+        of Tenant, IMSI, IMEI, and APN for the specified ID.
+
+        '
+      operationId: get-mt-manage-5g-tenantueinfo-ueinfoid
+      parameters:
+      - in: path
+        name: ueInfoId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: unknownUes
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Get Tenant UE Info for a given Identity ID:
+                  value:
+                    data:
+                      apn: new_apn_122
+                      create_time: 1738909540647
+                      id: d8642f4c-e639-4acb-925d-5558a2331035
+                      imei: '000000000000000'
+                      imsi: '222222222222228'
+                      root_tsg_id: '1157492855'
+                      tsg_id: '1157492855'
+                      update_time: 1738909540647
+                    header:
+                      clientRequestId: 70e19fff-0793-45e7-93db-511ffe26288d
+                      createdAt: '2025-02-10T18:47:01.000Z'
+                      dataCount: 1
+                      status:
+                        subCode: 200
+          description: Success
+        '400':
+          content:
+            application/json:
+              examples:
+                Tenant UE information not found:
+                  value:
+                    clientRequestId: 88df052c-b139-4d47-a8e3-1fcf01ede954
+                    details: Provided identityId 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                      does not exits.
+                    errorCode: '60011'
+                    message: Tenant UE information not found
+                    requestId: 88df052c-b139-4d47-a8e3-1fcf01ede954
+                    service: 5G Management Service
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          content:
+            application/json:
+              examples:
+                Invalid TSG Id:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Retrieve UE Mapping
       tags:
       - UE Info Resource
   /mt/manage/5g/userGroup:
@@ -702,16 +1048,65 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              Add User Group:
+                value:
+                  group_name: testgroup
+                  identity_id:
+                  - e20f9c45-6f53-4c2f-96fc-7964532d8b83
+                  - e79bda5e-d2ae-4e1d-b0f2-c9318a2b7fa2
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantGroupInfo'
+              $ref: '#/components/schemas/RequestBody_UserGroupAddEdit'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Add User Group:
+                  value:
+                    data:
+                      cieGroupId: 137b7d3b-25b2-446c-b7c4-e40fbf704125
+                      createTime: 1738448314169
+                      id: 6e451583-b3ab-4d62-af67-398675ab746f
+                      tsgId: '1886576124'
+                      updateTime: 1738448314412
+                      userGroupName: testgroup
+                Add User Group with Incorrect Identity ID:
+                  value:
+                    data:
+                      cieGroupId: 137b7d3b-25b2-446c-b7c4-e40fbf704125
+                      createTime: 1738448314169
+                      id: 6e451583-b3ab-4d62-af67-398675ab746f
+                      tsgId: '1886576124'
+                      updateTime: 1738448314412
+                      userGroupName: testgroup
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Add Duplicate User Group Name:
+                  value:
+                    clientRequestId: 8e414a6e-51ce-4d71-b272-e00b3f17c961
+                    details: Duplicate user group name testgroup
+                    errorCode: '60003'
+                    message: Duplicate user group name
+                    requestId: 8e414a6e-51ce-4d71-b272-e00b3f17c961
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
           description: Server Error
       security:
       - Bearer: []
@@ -728,20 +1123,124 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              List User Group:
+                value:
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantGroupInfoListInput'
+              $ref: '#/components/schemas/RequestBody_UserGroupAddEdit'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                List User Group:
+                  value:
+                    data:
+                    - group_id: 3ff7689a-c7a8-410c-b973-8ccac5e6d20d
+                      group_name: testgroup2
+                      tsg_id: '1886576124'
+                      user_count: 3
+                    - group_id: 6e451583-b3ab-4d62-af67-398675ab746f
+                      group_name: testgroup
+                      tsg_id: '1886576124'
+                      user_count: 2
+                    totalItems: 2
           description: Success
+        '204':
+          content:
+            application/json:
+              examples:
+                List User Group Invalid TSG Id:
+                  value:
+                    data: []
+                    totalItems: 0
+          description: No Content
         '400':
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
           description: Server Error
       security:
       - Bearer: []
       summary: List user groups
+      tags:
+      - Group Resource
+  /mt/manage/5g/userGroup/{groupId}:
+    get:
+      description: 'Retrieve Tenant UE information IDs for the specified groupId.
+
+        '
+      operationId: get-mt-manage-5g-usergroup-groupid
+      parameters:
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                Get User Group:
+                  value:
+                    data:
+                    - group_name: test-group
+                      identity_id:
+                      - ac19eca7-dd5c-40bc-98f3-5b3f7e905d79
+                      - b4453abf-0f71-4e54-b2b9-339cc803b335
+                      - c83de425-8459-4d6d-93d6-3b2515624a19
+                      - d79e02e8-f6aa-4d23-a65c-6f3b804a1dbe
+                      - d8642f4c-e639-4acb-925d-5558a2331035
+                      - e38f8ebf-437f-4ca8-a447-42714eae24d6
+                      tsg_id: '1157492855'
+                    header:
+                      clientRequestId: 237266cc-8f00-45c8-9122-e551fba2a1fa
+                      createdAt: '2025-02-10T18:53:31.000Z'
+                      dataCount: 1
+                      status:
+                        subCode: 200
+          description: Success
+        '400':
+          content:
+            application/json:
+              examples:
+                Invalid User Group:
+                  value:
+                    clientRequestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    details: 'No group found for the provided group ID: e2cbebf8-b6b3-405e-ad00-04ad4'
+                    errorCode: '60007'
+                    message: User group validation failed
+                    requestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    service: 5G Management Service
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Retrieve UE IDs
       tags:
       - Group Resource
   /mt/manage/5g/userGroup/{group_id}:
@@ -760,16 +1259,65 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              Edit User Group:
+                value:
+                  group_name: testgroup
+                  identity_id:
+                  - e20f9c45-6f53-4c2f-96fc-7964532d8b83
+                  - e79bda5e-d2ae-4e1d-b0f2-c9318a2b7fa2
+                  tsg_id: '1886576124'
             schema:
-              $ref: '#/components/schemas/TenantGroupInfo'
+              $ref: '#/components/schemas/RequestBody_UserGroupAddEdit'
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Edit User Group:
+                  value:
+                    data:
+                      cieGroupId: 137b7d3b-25b2-446c-b7c4-e40fbf704125
+                      createTime: 1738448314169
+                      id: 6e451583-b3ab-4d62-af67-398675ab746f
+                      tsgId: '1886576124'
+                      updateTime: 1738448314412
+                      userGroupName: testgroup
+                Edit User Group with Incorrect Identity ID:
+                  value:
+                    data:
+                      cieGroupId: 137b7d3b-25b2-446c-b7c4-e40fbf704125
+                      createTime: 1738448314169
+                      id: 6e451583-b3ab-4d62-af67-398675ab746f
+                      tsgId: '1886576124'
+                      updateTime: 1738448314412
+                      userGroupName: testgroup
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Invalid User Group:
+                  value:
+                    clientRequestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    details: 'No group found for the provided group ID: e2cbebf8-b6b3-405e-ad00-04ad4'
+                    errorCode: '60007'
+                    message: User group validation failed
+                    requestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
           description: Server Error
       security:
       - Bearer: []
@@ -791,12 +1339,41 @@ paths:
           type: string
       responses:
         '200':
+          content:
+            application/json:
+              examples:
+                Delete User Group:
+                  value:
+                    identity_id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                Delete User Group Again:
+                  value:
+                    identity_id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
           description: Success
         '400':
+          content:
+            application/json:
+              examples:
+                Invalid User Group:
+                  value:
+                    clientRequestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    details: 'No group found for the provided group ID: e2cbebf8-b6b3-405e-ad00-04ad4'
+                    errorCode: '60007'
+                    message: User group validation failed
+                    requestId: 7e2309f1-d50e-4ee6-a9cb-cb45eb0930ae
+                    service: 5G Management Service
           description: Bad Request
         '404':
           description: Data Not Found
         '500':
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  value:
+                    details: Unknown error occurred
+                    errorCode: '60000'
+                    message: Unexpected server error
+                    service: 5G Management Service
           description: Server Error
       security:
       - Bearer: []
@@ -825,6 +1402,12 @@ tags:
     \ of the control plane, which orchestrates the overall network management and\
     \ security policies.\n"
   name: Control Plane Resource API
+- description: "The Enable 5G API encompasses a set of endpoints designed to facilitate\
+    \ the setup and management of 5G connectivity within the SASE framework. \nThis\
+    \ includes enabling 5G network access for specified regions, configuring necessary\
+    \ settings, and ensuring that the infrastructure supports seamless 5G communication.\
+    \ \nThis API is vital for deploying and maintaining 5G services.\n"
+  name: Enable 5G API
 - description: 'The User Equipment (UE) Info Resource API manages information related
     to user devices within the 5G SASE system. This includes creating, updating, listing,
     and deleting tenant-user equipment mappings.
