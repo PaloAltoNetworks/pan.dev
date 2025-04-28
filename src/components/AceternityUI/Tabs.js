@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "../../util";
-import { useHtmlDataTheme } from "../../hooks/useHtmlDataTheme";
+import "./Tabs.scss";
 
 export const Tabs = ({
   tabs: propTabs,
@@ -13,7 +13,6 @@ export const Tabs = ({
 }) => {
   const [active, setActive] = useState(propTabs[0]);
   const [tabs, setTabs] = useState(propTabs);
-  const dataTheme = useHtmlDataTheme();
 
   const moveSelectedTabToTop = (idx) => {
     const newTabs = [...propTabs];
@@ -52,19 +51,13 @@ export const Tabs = ({
                 layoutId="clickedbutton"
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
                 className={cn(
-                  `absolute inset-0 bg-gray-200 ${
-                    dataTheme === "dark" && `dark:bg-zinc-800`
-                  } rounded-full`,
+                  `absolute inset-0 bg-gray-200 tabs-background rounded-full`,
                   activeTabClassName
                 )}
               />
             )}
 
-            <span
-              className={`relative block text-black ${
-                dataTheme === "dark" && `dark:text-white`
-              }`}
-            >
+            <span className={`relative block text-black tabs-title`}>
               {tab.title}
             </span>
           </button>

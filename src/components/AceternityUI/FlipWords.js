@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "../../util";
-import { useHtmlDataTheme } from "../../hooks/useHtmlDataTheme";
+import "./FlipWords.scss";
 
 const FlipWords = ({ words, duration = 3000, className }) => {
   const [currentWord, setCurrentWord] = useState(words[0]);
@@ -52,9 +52,7 @@ const FlipWords = ({ words, duration = 3000, className }) => {
           position: "absolute",
         }}
         className={cn(
-          `z-10 inline-block relative text-left text-neutral-900 ${
-            dataTheme === "dark" && `dark:text-neutral-100`
-          } px-2`,
+          `current-word-container z-10 inline-block relative text-left text-neutral-900 px-2`,
           className
         )}
         key={currentWord}
@@ -93,7 +91,6 @@ const FlipWords = ({ words, duration = 3000, className }) => {
 };
 
 export default function FlipWordsHero() {
-  const dataTheme = useHtmlDataTheme();
   const words = ["API References", "Developer Docs", "Getting Started Guides"];
 
   return (
@@ -110,9 +107,7 @@ export default function FlipWordsHero() {
         }}
       >
         <div
-          className={`text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-neutral-900 ${
-            dataTheme === "dark" && `dark:text-neutral-100`
-          }`}
+          className={`flipwords-container text-3xl md:text-5xl lg:text-7xl font-extrabold mx-auto text-neutral-900`}
         >
           <FlipWords words={words} />
           <br />
@@ -140,13 +135,7 @@ export default function FlipWordsHero() {
           workflows.
         </motion.p>
         <button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 hover:pointer-cursor">
-          <a
-            style={{
-              color: dataTheme === "dark" ? "white" : "black",
-              "&:hover": { color: dataTheme === "dark" ? "white" : "black" },
-            }}
-            href="#developer-docs-section"
-          >
+          <a className="explore-dev-docs-btn" href="#developer-docs-section">
             Explore Developer Docs
           </a>
         </button>
