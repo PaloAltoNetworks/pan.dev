@@ -17,7 +17,7 @@ export function useHtmlDataTheme() {
     observer.observe(el, { attributes: true, attributeFilter: ["data-theme"] });
 
     return () => observer.disconnect();
-  }, []);
+  }, [theme]);
 
   return theme; // "light" or "dark"
 }
