@@ -40,7 +40,10 @@ export const Tabs = ({
             }}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
-            className={cn("relative px-4 py-2 rounded-full", tabClassName)}
+            className={cn(
+              "relative px-4 py-2 rounded-full tab-button",
+              tabClassName
+            )}
             style={{
               transformStyle: "preserve-3d",
               "&:hover": { cursor: "pointer" },
