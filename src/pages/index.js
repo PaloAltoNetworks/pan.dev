@@ -71,6 +71,7 @@ function Home() {
           className={styles.featuredContainer}
         >
           <Featured />
+          <span>Test</span>
           <BackToTopButton />
         </section>
         <section className="container">
