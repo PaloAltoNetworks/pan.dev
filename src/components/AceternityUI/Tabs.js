@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "motion/react";
 import { cn } from "../../util";
 import "./Tabs.scss";
@@ -13,6 +13,7 @@ export const Tabs = ({
 }) => {
   const [active, setActive] = useState(propTabs[0]);
   const [tabs, setTabs] = useState(propTabs);
+  const tabContentRef = useRef(null);
 
   const moveSelectedTabToTop = (idx) => {
     const newTabs = [...propTabs];
@@ -20,6 +21,17 @@ export const Tabs = ({
     newTabs.unshift(selectedTab[0]);
     setTabs(newTabs);
     setActive(newTabs[0]);
+  };
+
+  const scrollToElement = () => {
+    if (tabContentRef.current) {
+      const yOffset = -125;
+      const y =
+        tabContentRef.current.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
   };
 
   const [hovering, setHovering] = useState(false);
@@ -37,6 +49,7 @@ export const Tabs = ({
             key={tab.title}
             onClick={() => {
               moveSelectedTabToTop(idx);
+              scrollToElement();
             }}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
@@ -67,6 +80,7 @@ export const Tabs = ({
         ))}
       </div>
       <FadeInDiv
+        ref={tabContentRef}
         tabs={tabs}
         active={active}
         key={active.value}
@@ -77,12 +91,12 @@ export const Tabs = ({
   );
 };
 
-export const FadeInDiv = ({ className, tabs, hovering }) => {
+export const FadeInDiv = ({ className, tabs, hovering, ref }) => {
   const isActive = (tab) => {
     return tab.value === tabs[0].value;
   };
   return (
-    <div className="relative w-full h-full">
+    <div ref={ref} className="relative w-full h-full">
       {tabs.map((tab, idx) => (
         <motion.div
           key={tab.value}
