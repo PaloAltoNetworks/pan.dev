@@ -3,7 +3,14 @@ import Slider from "../Slider/Slider";
 import BlogCard from "./BlogCard.js";
 import "./Slider.scss";
 
-const blog_json = require("./blogs.json");
+let blog_json;
+
+try {
+  blog_json = require("./blogs.json");
+} catch (error) {
+  blog_json = null;
+}
+
 const blogs = blog_json?.items?.slice(0, 9);
 
 function Medium() {
