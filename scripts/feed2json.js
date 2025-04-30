@@ -11,19 +11,21 @@ function fetchXmlFromUrl(feedUrl) {
     const url = new URL(feedUrl);
     const client = url.protocol === "https:" ? https : http;
 
-    client
-      .get(feedUrl, (res) => {
-        if (res.statusCode !== 200) {
-          return reject(
-            new Error(`Request failed with status ${res.statusCode}`)
-          );
-        }
+    const req = client.get(feedUrl, (res) => {
+      if (res.statusCode !== 200) {
+        return reject(
+          new Error(`Request failed with status ${res.statusCode}`)
+        );
+      }
 
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(data));
-      })
-      .on("error", reject);
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => resolve(data));
+    });
+
+    req.on("error", (err) => {
+      reject(err);
+    });
   });
 }
 
@@ -32,7 +34,20 @@ async function parseRSS(source) {
   try {
     let xml;
     if (source.startsWith("http://") || source.startsWith("https://")) {
-      xml = await fetchXmlFromUrl(source);
+      try {
+        xml = await fetchXmlFromUrl(source);
+      } catch (err) {
+        if (err.code === "SELF_SIGNED_CERT_IN_CHAIN") {
+          return {
+            version: "https://jsonfeed.org/version/1",
+            title: "",
+            home_page_url: source,
+            description: "",
+            items: [],
+          };
+        }
+        throw err;
+      }
     } else {
       xml = fs.readFileSync(source, "utf-8");
     }
