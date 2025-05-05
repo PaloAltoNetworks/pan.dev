@@ -6,6 +6,306 @@ components:
       name: X-API-KEY
       type: apiKey
   schemas:
+    CVECoverageAPIKeyErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          description: Error message
+          example: "X-API-KEY: Value is invalid."
+      required:
+        - success
+        - message
+    CVECoverageServerErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          description: Error message
+          example: "Failed to query Threat Vault API"
+      required:
+        - success
+        - message
+    CVECoverageErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          description: Error message
+          example: "cve_id: Value is invalid."
+      required:
+        - success
+        - message
+    CVECoverageInfo:
+      type: object
+      properties:
+        cve_id:
+          type: string
+          description: The CVE identifier
+          example: CVE-2021-1647
+        nvd_link:
+          type: string
+          description: Link to the NVD database entry for this CVE
+          example: https://nvd.nist.gov/vuln/detail/CVE-2021-1647
+        cve_status:
+          type: string
+          description: Status of coverage for this CVE
+          enum:
+            - cve_covered
+            - cve_not_reviewed
+            - cve_being_monitored
+            - cve_assigned
+            - cve_under_testing
+            - cve_pending_release
+            - cve_cannot_cover
+        release_week:
+          type: string
+          format: date
+          nullable: true
+          description: Expected release date for pending coverage
+          example: 2025-04-15
+        not_cover_reason:
+          type: string
+          nullable: true
+          enum:
+            - encrypted_traffic_limitations
+            - risk_of_high_false_positives
+            - threat_detection_limitations
+            - performance_considerations
+          description: Reason why the CVE cannot be covered
+        response_text:
+          type: string
+          description: Human-readable response explaining the status
+          example: We have not looked into this CVE. Contact Customer Support if you want us to consider this CVE.
+      required:
+        - cve_id
+        - nvd_link
+        - cve_status
+        - response_text
+    CoveredCVEResponse:
+      type: object
+      properties:
+        cve_id:
+          type: string
+          description: The CVE identifier
+          example: CVE-2021-1647
+        cve_status:
+          type: string
+          enum:
+            - cve_covered
+          description: Status of coverage for this CVE
+        nvd_link:
+          type: string
+          description: Link to the NVD database entry for this CVE
+          example: https://nvd.nist.gov/vuln/detail/CVE-2021-1647
+        antivirus:
+          type: array
+          items:
+            $ref: '#/components/schemas/AntivirusSignature'
+          description: Antivirus signatures related to this CVE
+        vulnerability:
+          type: array
+          items:
+            $ref: '#/components/schemas/VulnerabilitySignature'
+          description: Vulnerability protection signatures related to this CVE
+      required:
+        - cve_id
+        - cve_status
+        - nvd_link
+    AntivirusSignature:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the antivirus signature
+          example: Virus/Win32.CVE-2021-1647.a
+        severity:
+          type: string
+          description: Severity level of the signature
+          example: medium
+        type:
+          type: string
+          description: Type identifier
+          example: "0"
+        subtype:
+          type: string
+          description: Subtype of the signature
+          example: virus
+        description:
+          type: string
+          description: Human-readable description of the signature
+          example: This signature detected Virus/Win32.CVE-2021-1647.a
+        action:
+          type: string
+          description: Action to take when detected
+          example: ""
+        id:
+          type: string
+          description: Unique identifier for the signature
+          example: "396564186"
+        create_time:
+          type: string
+          format: date-time
+          description: Creation timestamp of the signature
+          example: 2021-01-11T12:00:48-08:00
+        status:
+          type: string
+          description: Current status of the signature
+          example: active
+        related_sha256_hashes:
+          type: array
+          items:
+            type: string
+          description: SHA256 hashes of related files
+          example:
+            - 2084858ba68c50881ce80605202febdcd8bd9d62f652f5ee9f9a0809f4b44956
+        release:
+          type: object
+          properties:
+            antivirus:
+              type: object
+              properties:
+                first_release_version:
+                  type: string
+                  description: First version where this signature was released
+                  example: "3592"
+                first_release_time:
+                  type: string
+                  format: date-time
+                  description: Timestamp of first release
+                  example: 2021-01-11T13:34:50Z
+                last_release_version:
+                  type: string
+                  description: Latest version where this signature was released
+                  example: "5169"
+                last_release_time:
+                  type: string
+                  format: date-time
+                  description: Timestamp of latest release
+                  example: 2025-04-29T11:00:05Z
+                in_current_release:
+                  type: boolean
+                  description: Whether this signature is in the current release
+                  example: true
+            wildfire:
+              type: object
+              properties:
+                first_release_version:
+                  type: string
+                  description: First WildFire version where this signature was released
+                  example: "524540"
+                first_release_time:
+                  type: string
+                  format: date-time
+                  description: Timestamp of first WildFire release
+                  example: 2021-01-15T10:46:18Z
+                last_release_version:
+                  type: string
+                  description: Latest WildFire version where this signature was released
+                  example: "973990"
+                last_release_time:
+                  type: string
+                  format: date-time
+                  description: Timestamp of latest WildFire release
+                  example: 2025-04-29T23:17:11Z
+                in_current_release:
+                  type: boolean
+                  description: Whether this signature is in the current WildFire release
+                  example: false
+    VulnerabilitySignature:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the vulnerability signature
+          example: "90207"
+        name:
+          type: string
+          description: Name of the vulnerability
+          example: Microsoft Windows Defender Remote Code Execution Vulnerability
+        description:
+          type: string
+          description: Detailed description of the vulnerability
+          example: Microsoft Windows Defender is prone to a remote code execution vulnerability while parsing certain crafted PE files.
+        category:
+          type: string
+          description: Category of the vulnerability
+          example: code-execution
+        min_version:
+          type: string
+          description: Minimum version affected
+          example: 8.1.0
+        max_version:
+          type: string
+          description: Maximum version affected, empty if no upper bound
+          example: ""
+        severity:
+          type: string
+          description: Severity level of the vulnerability
+          example: high
+        default_action:
+          type: string
+          description: Default action to take when detected
+          example: reset-both
+        cve:
+          type: array
+          items:
+            type: string
+          description: List of related CVE IDs
+          example:
+            - CVE-2021-1647
+        vendor:
+          type: array
+          items:
+            type: string
+          description: List of vendors affected
+          example: []
+        reference:
+          type: array
+          items:
+            type: string
+          description: List of reference URLs
+          example:
+            - https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2021-1647
+        status:
+          type: string
+          description: Current status of the signature
+          example: released
+        details:
+          type: object
+          properties:
+            change_data:
+              type: string
+              description: Information about changes
+              example: new coverage
+        ori_release_version:
+          type: string
+          description: Original release version
+          example: "8364"
+        latest_release_version:
+          type: string
+          description: Latest release version
+          example: "8364"
+        ori_release_time:
+          type: string
+          format: date-time
+          description: Original release timestamp
+          example: 2021-01-12T10:40:13Z
+        latest_release_time:
+          type: string
+          format: date-time
+          description: Latest release timestamp
+          example: 2021-01-12T10:40:13Z
+
     GetThreatBatchList:
       type: object
       properties:
@@ -542,11 +842,94 @@ info:
     2. Link to [Request Threat Metadata](/threat-vault/api/threats)
     3. Link to [Request Threat Signature Metadata in Batch Mode](/threat-vault/api/threatsbatch)
     4. Link to [Request Threat Signature Release History](/threat-vault/api/threatshistory)
+    5. Link to [Request CVE Coverage Information](/threat-vault/api/get-cve-coverage)
     "
   title: Threat Prevention
   version: "1.0"
 openapi: 3.0.1
 paths:
+  /threats/cve-coverage:
+    get:
+      summary: Request CVE Coverage Information
+      tags: [Threat Prevention]
+      description: Retrieves coverage information for a specified CVE ID
+      operationId: getCVECoverage
+      parameters:
+        - name: cve_id
+          in: query
+          description: The CVE ID to retrieve coverage for
+          required: true
+          schema:
+            type: string
+            pattern: '^CVE-\d{4}-\d{4,}$'
+            example: CVE-2021-1647
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successful response with CVE coverage information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the request was successful
+                    example: true
+                  link:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        nullable: true
+                        description: Link to the next page of results
+                      previous:
+                        type: string
+                        nullable: true
+                        description: Link to the previous page of results
+                  count:
+                    type: integer
+                    description: Number of records returned
+                    example: 2
+                  data:
+                    oneOf:
+                      - $ref: '#/components/schemas/CoveredCVEResponse'
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/CVECoverageInfo'
+                  message:
+                    type: string
+                    description: Message describing the outcome of the request
+                    example: Successful
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVECoverageErrorResponse'
+              examples:
+                invalidCVE:
+                  value:
+                    success: false
+                    message: "cve_id: Value is invalid."
+                nonExistentCVE:
+                  value:
+                    success: false
+                    message: "CVE ID doesn't exist in NVD database"
+        '401':
+          description: Unauthorized - Invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVECoverageAPIKeyErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVECoverageServerErrorResponse'
+
   /release-notes:
     get:
       description:
