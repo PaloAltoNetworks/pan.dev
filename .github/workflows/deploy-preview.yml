@@ -29,7 +29,7 @@ jobs:
     if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
     name: Analyze
     needs: precheck
-    runs-on: pan-dev-runner
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
@@ -57,7 +57,7 @@ jobs:
     if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
     name: Analyze Unsafe
     needs: precheck
-    runs-on: pan-dev-runner
+    runs-on: ubuntu-latest
     environment: default
     permissions:
       contents: read
@@ -85,9 +85,11 @@ jobs:
   build:
     name: Build
     needs: [analyze, analyze_unsafe]
-    if: |
-      !failure() && !cancelled() && 
-      (success('analyze') || success('analyze_unsafe'))
+    # if: |
+    #   !failure() && !cancelled() && 
+    #   (success('analyze') || success('analyze_unsafe'))
+    if: ${{ !cancelled() &&
+        (needs.analyze.result == 'success' || needs.analyze_unsafe.result == 'success') }}
     runs-on: pan-dev-runner-xl
     permissions:
       contents: read
