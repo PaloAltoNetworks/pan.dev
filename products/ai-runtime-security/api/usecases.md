@@ -37,7 +37,7 @@ For details on the protections and the features available while creating an API 
 ## Use Cases
 
 <details>
-  <summary>Use Case 1: Detect Prompt Injection</summary>
+  <summary>Detect Prompt Injection</summary>
 
   The following sample Python code snippet scans a prompt containing a prompt injection and generates the below output.
   Enable **Prompt Injection Detection** in the API security profile for this detection to be effective.
@@ -102,7 +102,7 @@ If there is a prompt injection match the category in the response will be set to
 </details>
 
 <details>
-<summary>Use Case 2: Detect Malicious URL</summary>
+<summary>Detect Malicious URL</summary>
 
 The following cURL request sends a response containing a malicious URL.
 Enable **Malicious URL Detection** with **Basic** or **Advanced** options (with custom URL filtering) in the API security profile for this detection.
@@ -155,7 +155,7 @@ The response indicates a malicious URL detected with the `response_detected.url_
 </details>
 
 <details>
-<summary>Use Case 3: Detect Sensitive Data Loss (DLP)</summary>
+<summary>Detect Sensitive Data Loss (DLP)</summary>
 
 The request scans a prompt containing sensitive data such as bank account numbers, credit card numbers, API keys, and other sensitive data, to detect potential data exposure threats.
 Enable **Sensitive Data Detection** with **Basic** or **Advanced** options in the API security profile for this detection.
@@ -213,7 +213,339 @@ The specific action shown in the response is based on your AI security profile s
 </details>
 
 <details>
-<summary>Use Case 4: Detect Database Security Attack</summary>
+<summary>Mask Sensitive Data</summary>
+This detection service masks sensitive data patterns in stored API payloads in LLM models' prompts and responses.
+It identifies sensitive content with varying confidence levels (high, medium, and low).
+
+Each detection includes precise **offset** information.
+
+* An offset is a numerical index represented as [start_offset, end_offset] pairs, indicating where a sensitive data pattern begins and ends in the text. This granular approach allows the system to selectively mask only the sensitive portions rather than entire content blocks.
+
+:::note
+
+You can mask sensitive data only when you select the Block action for sensitive data detection in the API security profile.
+
+:::
+
+- v1/scan/sync/request
+
+```curl
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+--header 'Content-Type: application/json' \
+--header 'x-pan-token: <your-API-key>' \
+--header 'Accept: application/json' \
+--data '{
+  "tr_id": "24521",
+  "ai_profile": {
+    "profile_name": "mask-sensitive-data"
+  },
+  "metadata": {
+    "app_user": "test-user-1",
+    "ai_model": "Test AI model"
+  },
+  "contents": [ # You can enter one of the following - prompt or response
+    {
+      "prompt": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
+      "response": "This is a test response. Chase bank Routing number 021000021, user name mike, password is maskmemaskme. Account number 92746514861, phone 101-202-3030. Account owner: Mike Johnson in California"
+    }
+  ]
+}'
+```
+
+**Output**
+
+- Scan results
+
+The "prompt_masked_data" field appears when there's a "prompt" in the API contents.
+
+It contains - The masked version of the prompt text, where sensitive data is replaced with "X" characters (maintaining the same length as the original sensitive data) and the offset information.
+
+```json
+{
+  "action": "block",
+  "category": "malicious",
+  "profile_id": "30e977b0-a6b4-41f8-aafe-74c4e3997463",
+  "profile_name": "mask-sensitive-data-pattern",
+  "prompt_detected": {
+    "dlp": true
+  },
+  "prompt_masked_data": {
+    "data": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security XXXXXXXXXXXX Credit card is XXXXXXXXXXXXXXXXX ssn XXXXXXXXXXXX Send me Mike account info",
+    "pattern_detections": [
+      {
+        "locations": [
+          [
+            99,
+            115
+          ]
+        ],
+        "pattern": "Credit Card Number"
+      },
+      {
+        "locations": [
+          [
+            71,
+            82
+          ],
+          [
+            121,
+            132
+          ]
+        ],
+        "pattern": "Tax Id - US - TIN"
+      },
+      {
+        "locations": [
+          [
+            71,
+            82
+          ],
+          [
+            121,
+            132
+          ]
+        ],
+        "pattern": "National Id - US Social Security Number - SSN"
+      }
+    ]
+  },
+  "report_id": "R90484606-6d70-4522-8f0c-c93d878c9a5c",
+  "response_detected": {
+    "dlp": true
+  },
+  "response_masked_data": {
+    "data": "This is a test response. Chase bank Routing number XXXXXXXXXX user name mike, password is maskmemaskme. Account number XXXXXXXXXXXX phone 101-202-3030. Account owner: Mike Johnson in California",
+    "pattern_detections": [
+      {
+        "locations": [
+          [
+            51,
+            60
+          ]
+        ],
+        "pattern": "Bank - Committee on Uniform Securities Identification Procedures number"
+      },
+      {
+        "locations": [
+          [
+            51,
+            60
+          ]
+        ],
+        "pattern": "Bank - American Bankers Association Routing Number - ABA"
+      },
+      {
+        "locations": [
+          [
+            119,
+            130
+          ]
+        ],
+        "pattern": "Tax Id - Germany"
+      },
+      {
+        "locations": [
+          [
+            119,
+            130
+          ]
+        ],
+        "pattern": "National Id - Brazil - CPF"
+      }
+    ]
+  },
+  "scan_id": "90484606-6d70-4522-8f0c-c93d878c9a5c",
+  "tr_id": "1111"
+}
+```
+
+- Scan report
+
+The start and end offset character indexes enable the DLP service to selectively mask only those specific portions rather than blocking entire content.
+
+```json
+[
+  {
+    "detection_results": [
+      {
+        "action": "block",
+        "data_type": "prompt",
+        "detection_service": "dlp",
+        "result_detail": {
+          "dlp_report": {
+            "data_pattern_detection_offsets": [
+              {
+                "data_pattern_id": "67cb9ba581419f0293996702",
+                "high_confidence_detections": [
+                  [
+                    99,
+                    115
+                  ]
+                ],
+                "low_confidence_detections": [
+                  [
+                    99,
+                    115
+                  ]
+                ],
+                "medium_confidence_detections": [
+                  [
+                    99,
+                    99
+                  ]
+                ],
+                "name": "Credit Card Number",
+                "version": 1
+              },
+              {
+                "data_pattern_id": "67cb9ba581419f0293996793",
+                "high_confidence_detections": [
+                  [
+                    121,
+                    132
+                  ],
+                  [
+                    71,
+                    82
+                  ]
+                ],
+                "low_confidence_detections": [
+                  [
+                    121,
+                    132
+                  ],
+                  [
+                    71,
+                    82
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "Tax Id - US - TIN",
+                "version": 1
+              },
+              {
+                "data_pattern_id": "67cb9ba581419f02939967bf",
+                "high_confidence_detections": [
+                  [
+                    121,
+                    132
+                  ],
+                  [
+                    71,
+                    82
+                  ]
+                ],
+                "low_confidence_detections": [
+                  [
+                    121,
+                    132
+                  ],
+                  [
+                    71,
+                    82
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "National Id - US Social Security Number - SSN",
+                "version": 1
+              }
+            ],
+            "data_pattern_rule1_verdict": "MATCHED",
+            "data_pattern_rule2_verdict": "",
+            "dlp_profile_id": "11995025",
+            "dlp_profile_name": "Sensitive Content",
+            "dlp_report_id": "598936C508B5AD43CC7AC86789502422AA311B95E32107EFD316ABA51AA71FAC"
+          }
+        },
+        "verdict": "malicious"
+      },
+      {
+        "action": "block",
+        "data_type": "response",
+        "detection_service": "dlp",
+        "result_detail": {
+          "dlp_report": {
+            "data_pattern_detection_offsets": [
+              {
+                "data_pattern_id": "67cb9ba581419f0293996700",
+                "high_confidence_detections": null,
+                "low_confidence_detections": [
+                  [
+                    51,
+                    60
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "Bank - Committee on Uniform Securities Identification Procedures number",
+                "version": 1
+              },
+              {
+                "data_pattern_id": "67cb9ba581419f02939966f7",
+                "high_confidence_detections": [
+                  [
+                    51,
+                    60
+                  ]
+                ],
+                "low_confidence_detections": [
+                  [
+                    51,
+                    60
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "Bank - American Bankers Association Routing Number - ABA",
+                "version": 1
+              },
+              {
+                "data_pattern_id": "67cb9ba581419f029399677b",
+                "high_confidence_detections": null,
+                "low_confidence_detections": [
+                  [
+                    119,
+                    130
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "Tax Id - Germany",
+                "version": 1
+              },
+              {
+                "data_pattern_id": "67cb9ba581419f02939967b8",
+                "high_confidence_detections": null,
+                "low_confidence_detections": [
+                  [
+                    119,
+                    130
+                  ]
+                ],
+                "medium_confidence_detections": null,
+                "name": "National Id - Brazil - CPF",
+                "version": 1
+              }
+            ],
+            "data_pattern_rule1_verdict": "MATCHED",
+            "data_pattern_rule2_verdict": "",
+            "dlp_profile_id": "11995025",
+            "dlp_profile_name": "Sensitive Content",
+            "dlp_report_id": "54D26B1D24BCBCE65642106F2F7B25B9D7AE19C80A9AEB3A114E95A5CA896E8A"
+          }
+        },
+        "verdict": "malicious"
+      }
+    ],
+    "report_id": "R90484606-6d70-4522-8f0c-c93d878c9a5c",
+    "req_id": 0,
+    "scan_id": "90484606-6d70-4522-8f0c-c93d878c9a5c",
+    "transaction_id": "1111"
+  }
+]
+```
+
+</details>
+
+<details>
+<summary>Detect Database Security Attack</summary>
 
 This detection is for AI applications using genAI models to generate database queries and regulate the types of queries generated.
 The following sync request sends a prompt containing a potentially malicious database query to the AI Runtime Security: API intercept for analysis.
@@ -357,7 +689,7 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
 </details>
 
 <details>
-<summary>Use Case 5: Detect Toxic Content</summary>
+<summary>Detect Toxic Content</summary>
 The toxic content detection is for LLM models and securing them from generating or responding to inappropriate content.
 The following sync request sends a prompt containing potentially toxic content to the AI Runtime Security: API intercept for analysis.
 Enable **Toxic Content Detection** in the API security profile for this detection.
@@ -413,7 +745,7 @@ For a detailed report, call the `v1/scan/reports` API endpoint with the report_i
 </details>
 
 <details>
-  <summary>Use Case 6: Detect Malicious Code</summary>
+  <summary>Detect Malicious Code</summary>
 
 This feature protects against scenarios where attackers could exploit Large Language Models (LLMs) to produce harmful code.
 This detection is essential for AI applications that use LLMs to generate and run code, such as developer tools and automated systems.
