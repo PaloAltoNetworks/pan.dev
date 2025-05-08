@@ -328,5 +328,9 @@ module.exports = {
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
   ],
+  scmsnippetsharing: [
+    "scm/api/config/snippet-sharing/snippet-sharing",
+    require("./api/config/snippet-sharing/sidebar"),
+  ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };
