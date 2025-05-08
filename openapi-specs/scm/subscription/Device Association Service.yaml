@@ -1,0 +1,479 @@
+components:
+  responses:
+    forbidden:
+      content:
+        application/json:
+          examples:
+            Forbidden:
+              value:
+                error: Forbidden
+                message: Forbidden
+                statusCode: 403
+          schema:
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+              statusCode:
+                type: integer
+            type: object
+      description: Forbidden
+    internal_error:
+      content:
+        application/json:
+          examples:
+            Internal Error:
+              value:
+                error: Internal Server Error
+                message: An internal server error occurred
+                statusCode: 500
+          schema:
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+              statusCode:
+                type: integer
+            type: object
+      description: Internal Error
+    jwt_expired:
+      content:
+        application/json:
+          examples:
+            JWT Expired:
+              value:
+                error: Invalid JWT / Expired JWT
+                message: JWT token is invalid or has expired.
+                statusCode: 401
+          schema:
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+              statusCode:
+                type: integer
+            type: object
+      description: JWT Expired
+  schemas:
+    CreateTSGDeviceRequest:
+      properties:
+        asset_type:
+          type: string
+        device_name:
+          type: string
+        device_type:
+          type: string
+        extra:
+          properties:
+            resource_id:
+              type: string
+          required:
+          - resource_id
+          type: object
+        model:
+          type: string
+        serial_number:
+          type: string
+        sku:
+          type: string
+        support_account_id:
+          type: string
+      required:
+      - serial_number
+      - model
+      - sku
+      - asset_type
+      - device_type
+      - support_account_id
+      type: object
+    CreateTSGDevicesResponse:
+      properties:
+        data:
+          properties:
+            devices:
+              items:
+                $ref: '#/components/schemas/PostCallSuccessResponse'
+              type: array
+          type: object
+      type: object
+    Device:
+      properties:
+        asset_type:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        created_by:
+          type: string
+        device_name:
+          type: string
+        device_type:
+          type: string
+        extra:
+          properties:
+            resource_id:
+              type: string
+          required:
+          - resource_id
+          type: object
+        model:
+          type: string
+        reference_id:
+          type: string
+        serial_number:
+          type: string
+        sku:
+          type: string
+        support_account_id:
+          type: string
+        tsg_id:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    DeviceCreationBadRequest:
+      properties:
+        application_code:
+          example: DEVICE_INVENTORY_1010
+          type: string
+        application_error:
+          example: devices_already_exists
+          type: string
+        error:
+          example: Bad Request
+          type: string
+        message:
+          example: 'DEVICE_INVENTORY_1010: devices_already_exists'
+          type: string
+        payload:
+          example:
+          - asset_type: test_asset_type
+            device_name: Device1
+            device_type: test_device_type
+            extra:
+              resource_id: RES-123456
+            model: Model-123
+            serial_number: SNO123456
+            sku: Test-SKU-123
+            support_account_id: '567890'
+          items:
+            $ref: '#/components/schemas/Device'
+          type: array
+        statusCode:
+          example: 400
+          type: integer
+      type: object
+    DeviceCreationInternalError:
+      properties:
+        application_code:
+          example: DEVICE_INVENTORY_1011
+          type: string
+        application_error:
+          example: failed_to_create_devices
+          type: string
+        error:
+          example: Internal Error
+          type: string
+        message:
+          example: 'DEVICE_INVENTORY_1011: failed_to_create_devices'
+          type: string
+        statusCode:
+          example: 500
+          type: integer
+      type: object
+    DeviceDeletionBadRequest:
+      properties:
+        application_code:
+          example: DEVICE_INVENTORY_1012
+          type: string
+        application_error:
+          example: devices_not_found
+          type: string
+        error:
+          example: Not Found
+          type: string
+        message:
+          example: 'DEVICE_INVENTORY_1012: devices_not_found'
+          type: string
+        payload:
+          description: List of serial numbers that were not found
+          example:
+          - SNO123456
+          - SNO456789
+          items:
+            type: string
+          type: array
+        statusCode:
+          example: 404
+          type: integer
+      type: object
+    GetTSGDevicesResponse:
+      properties:
+        data:
+          properties:
+            devices:
+              items:
+                $ref: '#/components/schemas/Device'
+              type: array
+          type: object
+        meta:
+          properties:
+            cursor:
+              properties:
+                next:
+                  nullable: true
+                  type: string
+                previous:
+                  nullable: true
+                  type: string
+              type: object
+            has_more:
+              example: true
+              type: boolean
+            per_page:
+              example: 25
+              type: integer
+            total_count:
+              example: 150
+              type: integer
+          type: object
+      type: object
+    PostCallSuccessResponse:
+      example:
+      - asset_type: test_asset_type
+        created_at: '2025-03-15T10:30:00Z'
+        device_name: Device1
+        device_type: test_device_type
+        extra:
+          resource_id: RES-123456
+        model: Model-123
+        reference_id: '00112233'
+        serial_number: SNO123456
+        sku: TEST-SKU-123
+        support_account_id: '567890'
+        tsg_id: TSG-001
+        updated_at: '2025-03-15T10:30:00Z'
+      - asset_type: test_asset_type
+        created_at: '2025-03-15T10:31:00Z'
+        created_by: user@example.com
+        device_name: Device2
+        device_type: test_device_type
+        extra:
+          resource_id: RES-456789
+        model: Model-456
+        reference_id: '44556677'
+        serial_number: SNO456789
+        sku: TEST-SKU-456
+        support_account_id: '890123'
+        tsg_id: TSG-001
+        updated_at: '2025-03-15T10:31:00Z'
+      items:
+        $ref: '#/components/schemas/Device'
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: 'Device Association Service operations related to TSG Devices.
+
+    '
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Device Association service
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /tenant_devices:
+    delete:
+      description: "This endpoint allows the deletion of TSG (Tenant Security Group)\
+        \ devices by specifying the serial numbers. Users can provide up to 25 serial\
+        \ numbers for deletion. If any serial number in the batch is invalid or does\
+        \ not exist, the entire batch will be rejected. \nIn such instances, error\
+        \ correction is needed, and the complete batch with all serial numbers should\
+        \ be resubmitted.\n"
+      operationId: delete-tenant_devices
+      parameters:
+      - description: API version
+        in: header
+        name: api-version
+        required: true
+        schema:
+          enum:
+          - 2
+          type: integer
+      - description: Comma-separated list of serial numbers to delete (max 25)
+        example: 12345678,45678900,23457890
+        in: query
+        name: serial_numbers
+        required: true
+        schema:
+          pattern: ^[^,]+(?:,[^,]+){0,24}$
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDeletionBadRequest'
+          description: Failed to delete device(s) - Bad Request
+        '401':
+          $ref: '#/components/responses/jwt_expired'
+        '403':
+          $ref: '#/components/responses/forbidden'
+      security:
+      - Bearer: []
+      summary: Delete TSG devices
+      tags:
+      - Device Association Service
+    get:
+      description: 'Provides a comprehensive view of all the devices associated with
+        the TSG.
+
+        '
+      operationId: get-tenant_devices
+      parameters:
+      - description: 'Filter by serial number.
+
+          '
+        in: query
+        name: serial_number
+        required: false
+        schema:
+          type: string
+      - description: 'Filter by device type.
+
+          '
+        in: query
+        name: device_type
+        required: false
+        schema:
+          type: string
+      - description: 'Filter by device model.
+
+          '
+        in: query
+        name: model
+        required: false
+        schema:
+          type: string
+      - description: 'Cursor for pagination.
+
+          '
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - description: API version
+        in: header
+        name: api-version
+        required: true
+        schema:
+          enum:
+          - 2
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTSGDevicesResponse'
+          description: Success
+        '401':
+          $ref: '#/components/responses/jwt_expired'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '500':
+          $ref: '#/components/responses/internal_error'
+      security:
+      - Bearer: []
+      summary: Get TSG devices
+      tags:
+      - Device Association Service
+    post:
+      description: "This endpoint enables the creation of TSG (Tenant Security Group)\
+        \ devices by providing necessary information. It allows the creation of up\
+        \ to 25 devices in a single request. \nIf any serial number within the batch\
+        \ is invalid, the entire batch will be rejected. In such cases, errors should\
+        \ be corrected, and the entire batch can be resubmitted.\n"
+      operationId: post-tenant_devices
+      parameters:
+      - description: API version
+        in: header
+        name: api-version
+        required: true
+        schema:
+          enum:
+          - 2
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+            - asset_type: test_asset_type
+              device_name: Device1
+              device_type: test_device_type
+              extra:
+                resource_id: RES-123456
+              model: Model-123
+              serial_number: SNO123456
+              sku: TEST-SKU-123
+              support_account_id: '567890'
+            - asset_type: string
+              device_name: string
+              device_type: string
+              extra:
+                resource_id: string
+              model: string
+              serial_number: string
+              sku: string
+              support_account_id: string
+            schema:
+              items:
+                $ref: '#/components/schemas/CreateTSGDeviceRequest'
+              maxItems: 25
+              type: array
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTSGDevicesResponse'
+          description: Successfully created new TSG device(s)
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCreationBadRequest'
+          description: Failed to create device(s) - Bad Request
+        '401':
+          $ref: '#/components/responses/jwt_expired'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCreationInternalError'
+          description: Failed to create device(s) - Internal Error
+      security:
+      - Bearer: []
+      summary: Create TSG devices
+      tags:
+      - Device Association Service
+servers:
+- url: https://api.strata.paloaltonetworks.com
+tags:
+- description: 'Device Association Service operations related to TSG Devices.
+
+    '
+  name: Device Association service
