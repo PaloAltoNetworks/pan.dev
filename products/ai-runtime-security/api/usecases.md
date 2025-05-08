@@ -214,16 +214,20 @@ The specific action shown in the response is based on your AI security profile s
 
 <details>
 <summary>Mask Sensitive Data</summary>
-This detection service masks sensitive data patterns in stored API payloads in LLM models' prompts and responses.
-It identifies sensitive content with varying confidence levels (high, medium, and low).
+This detection service masks the data patterns in the API output response, which scans the LLM prompt and r
+esponses.
+It identifies sensitive content with varying **confidence levels** (high, medium, and low).
 
 Each detection includes precise **offset** information.
 
-* An offset is a numerical index represented as [start_offset, end_offset] pairs, indicating where a sensitive data pattern begins and ends in the text. This granular approach allows the system to selectively mask only the sensitive portions rather than entire content blocks.
+- An offset is a numerical index represented as [start_offset, end_offset] pairs, indicating where a sensit
+ive data pattern begins and ends in the text. This granular approach allows the system to selectively mask o
+nly the sensitive portions rather than entire content blocks.
 
 :::note
 
-You can mask sensitive data only when you select the Block action for sensitive data detection in the API security profile.
+Masking the sensitive data feature is only available for a basic DLP profile and when you select the Block 
+action for sensitive data detection in the API security profile.
 
 :::
 
@@ -246,7 +250,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
   "contents": [ # You can enter one of the following - prompt or response
     {
       "prompt": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
-      "response": "This is a test response. Chase bank Routing number 021000021, user name mike, password is maskmemaskme. Account number 92746514861, phone 101-202-3030. Account owner: Mike Johnson in California"
+      "response": "This is a test response. Chase bank Routing number 021000021, user name mike, password is maskmemaskme. Account number 92746514861. Account owner: Mike Johnson in California"
     }
   ]
 }'
@@ -314,7 +318,7 @@ It contains - The masked version of the prompt text, where sensitive data is rep
     "dlp": true
   },
   "response_masked_data": {
-    "data": "This is a test response. Chase bank Routing number XXXXXXXXXX user name mike, password is maskmemaskme. Account number XXXXXXXXXXXX phone 101-202-3030. Account owner: Mike Johnson in California",
+    "data": "This is a test response. Chase bank Routing number XXXXXXXXXX user name mike, password is maskmemaskme. Account number XXXXXXXXXXXX Account owner: Mike Johnson in California",
     "pattern_detections": [
       {
         "locations": [
