@@ -35,7 +35,7 @@ function SliderComponent(props) {
   );
 
   const defaultSettings = {
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 7500,
     dots: true,
     infinite: true,
