@@ -34,12 +34,6 @@ For details on the protections and the features available while creating an API 
 
 :::
 
-The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
-
-- US: https://service.api.aisecurity.paloaltonetworks.com 
-- EU: https://service-de.api.aisecurity.paloaltonetworks.com
-
-
 ## Use Cases
 
 <details>
