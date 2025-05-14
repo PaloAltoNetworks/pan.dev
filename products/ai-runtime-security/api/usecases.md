@@ -34,6 +34,12 @@ For details on the protections and the features available while creating an API 
 
 :::
 
+The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
+
+- US: https://service.api.aisecurity.paloaltonetworks.com 
+- EU: https://service-de.api.aisecurity.paloaltonetworks.com
+
+
 ## Use Cases
 
 <details>
@@ -974,7 +980,7 @@ The maximum supported size of “Context” is 50K characters. The following siz
 :::
 
 ```curl
-curl -L 'https://service.dev.api.aisecurity.paloaltonetworks.com/v1/scan/async/request' \
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/request' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
 -H 'x-pan-token: <your-API-token>' \
@@ -1123,7 +1129,7 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 A sync scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
 
 ```curl
-curl -L 'https://service.dev.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
 --header 'Content-Type: application/json' \
 --header 'x-pan-token: <your-API-token> \
 --header 'Accept: application/json' \
