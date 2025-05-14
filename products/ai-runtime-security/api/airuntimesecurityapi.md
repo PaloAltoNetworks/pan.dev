@@ -20,11 +20,6 @@ To use these APIs, send prompts or model responses from your application and rec
 
 For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [AI Runtime Security: API Intercept Overview](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 
-The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
-
-- US: https://service.api.aisecurity.paloaltonetworks.com 
-- EU: https://service-de.api.aisecurity.paloaltonetworks.com
-
 ## Prerequisites
 
 1. Create and associate a [deployment profile for AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) in your Customer Support Portal.
