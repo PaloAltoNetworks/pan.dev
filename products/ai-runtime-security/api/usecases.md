@@ -1116,3 +1116,80 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 ```
 
 </details>
+
+<details>
+<summary>Custom Topic Guardrails</summary>
+
+A sync scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
+
+```curl
+curl -L 'https://service.dev.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
+--header 'Content-Type: application/json' \
+--header 'x-pan-token: <your-API-token> \
+--header 'Accept: application/json' \
+--data '{
+  "tr_id": "1111",
+  "ai_profile": {
+    "profile_name": "custom-topic-guardrails-profile"
+  },
+  "metadata": {
+    "app_user": "test-user-1",
+    "ai_model": "Test AI model"
+  },
+    "contents": [
+        {
+            "prompt": "The exploration of Mars is driven by a multifaceted scientific curiosity. Primarily, scientists are interested in understanding Mars past habitability, searching for signs of past or present life, investigating the planet s geological evolution, and studying its climate and atmosphere. These studies can provide valuable insights into the formation and evolution of rocky planets in general, including our own Earth.  Furthermore, Mars offers a potential backup location for humanity should Earth become uninhabitable in the distant future. However, numerous technological hurdles impede human missions to Mars. These include the long duration of the journey 6-8 months each way, which exposes astronauts to prolonged radiation and the psychological effects of isolation. Developing reliable life support systems capable of functioning for years in a harsh environment poses a significant challenge. Landing heavy payloads safely on Mars is another obstacle, as is developing technologies for in-situ resource utilization ISRU to create propellant for the return trip, minimize mission mass, and build habitats. The potential health risks to astronauts from Martian dust, radiation, and low gravity also need further investigation and mitigation strategies
+",
+        }
+    ],
+    "tr_id": 1234,
+    "profile_name": "custom-topic-guardrails-profile"
+}'
+```
+
+The scan response indicates "topic_violation".
+
+```curl
+{
+  "action": "block",
+  "category": "malicious",
+  "profile_id": "069c92dd-789e-4cf3-837b-f7a509ae6046",
+  "profile_name": "custom-topic-guardrails-profile",
+  "prompt_detected": {
+    "topic_violation": true
+  },
+  "report_id": "R7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
+  "response_detected": {},
+  "scan_id": "7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
+  "tr_id": "1111"
+}
+```
+
+The scan report shows that the content violated the topic guardrails policy. The content didn't match any of the allowed topics or blocked topics, resulting in a "malicious" verdict and a block action.
+
+```curl
+[
+  {
+    "detection_results": [
+      {
+        "action": "block",
+        "data_type": "prompt",
+        "detection_service": "topic_guardrails",
+        "result_detail": {
+          "topic_guardrails_report": {
+            "allowed_topic_list": "not_matched",
+            "blocked_topic_list": "not_matched"
+          }
+        },
+        "verdict": "malicious"
+      }
+    ],
+    "report_id": "R7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
+    "req_id": 0,
+    "scan_id": "7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
+    "transaction_id": "1111"
+  }
+]
+```
+
+</details>
