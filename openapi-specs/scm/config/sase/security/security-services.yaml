@@ -1971,7 +1971,9 @@ paths:
                     allOf:
                       - type: array
                         items:
-                          $ref: '#/components/schemas/security-rules'
+                          oneOf:
+                            - $ref: '#/components/schemas/security-rules'
+                            - $ref: '#/components/schemas/internet-rules'
                   limit:
                     type: number
                     default: 200
@@ -2004,7 +2006,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/security-rules'
+              oneOf:
+                - $ref: '#/components/schemas/security-rules'
+                - $ref: '#/components/schemas/internet-rules'
       responses:
         '200':
           $ref: '#/components/responses/http_created'
@@ -2059,7 +2063,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/security-rules'
+              oneOf:
+                - $ref: '#/components/schemas/security-rules'
+                - $ref: '#/components/schemas/internet-rules'
       responses:
         '200':
           $ref: '#/components/responses/http_ok'
@@ -5276,6 +5282,11 @@ components:
           items:
             type: string
             description: The name of an HTTP header insertion profile
+        ai_security:
+          type: array
+          items:
+            type: string
+            description: The name of an HTTP header insertion profile
       required:
         - name
       oneOf:
@@ -5324,13 +5335,6 @@ components:
         name:
           type: string
           description: The name of the security rule
-        type:
-          description: The type of security rule within the unified security rulebase (future)
-          type: string
-          enum:
-          - security
-          - internet
-          readOnly: true
         disabled:
           type: boolean
           description: Is the security rule disabled?
@@ -5497,6 +5501,222 @@ components:
               example: My Device
           required: 
             -  device
+    internet-rules:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The UUID of the internet rule
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          type: string
+          description: The name of the internet rule
+        policy_type:
+          type: string
+          default: "Internet"
+        description:
+          type: string
+          description: The description of the internet rule
+        disabled:
+          type: boolean
+          description: Is the internet rule disabled?
+          default: false
+        log_settings:
+          type: object
+          properties:
+            log_sessions:
+              type: boolean
+              default: true
+        tag:
+          type: array
+          items:
+            type: string
+          maxItems: 64
+        from:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        to:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        source:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        source_user:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        destination:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        negate_source:
+          type: boolean
+          default: false
+        negate_user:
+          type: boolean
+          default: false
+        device:
+          type: array
+          items:
+            type: string
+          default: ["any"]
+        service:
+          type: array
+          items:
+            type: string
+        schedule:
+          type: string
+        action:
+          type: string
+          enum: [deny, allow]
+          default: allow
+        security_settings:
+          type: object
+          properties:
+            anti_spyware:
+              type: string
+              enum: [yes, no]
+              default: yes
+            vulnerability:
+              type: string
+              enum: [yes, no]
+              default: yes
+            virus_and_wildfire_analysis:
+              type: string
+              enum: [yes, no]
+              default: yes
+        block_web_application:
+          type: array
+          items:
+            type: string
+        block_url_category:
+          type: array
+          items:
+            type: string
+        allow_web_application:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              file_control:
+                type: object
+                properties:
+                  upload:
+                    type: string
+                    enum: [allow-all-file-types, best-practice, block-all-file-types]
+                  download:
+                    type: string
+                    enum: [allow-all-file-types, best-practice, block-all-file-types]
+              saas_enterprise_control:
+                type: object
+                properties:
+                  consumer_access:
+                    type: object
+                    properties:
+                      enable:
+                        type: string
+                        enum: [yes, no]
+                  enterprise_access:
+                    type: object
+                    properties:
+                      enable:
+                        type: string
+                        enum: [yes, no]
+                      tenant_restrictions:
+                        type: array
+                        items:
+                          type: string
+              application_function:
+                type: array
+                items:
+                  type: string
+              dlp:
+                type: string
+              saas_tenant_list:
+                type: array
+                items:
+                  type: string
+              saas_user_list:
+                type: array
+                items:
+                  type: string
+              tenant_control:
+                type: object
+                properties:
+                  tenants:
+                    type: array
+                    items:
+                      type: string
+                  allowed_activities:
+                    type: array
+                    items:
+                      type: string
+                  blocked_activities:
+                    type: array
+                    items:
+                      type: string
+                  parent_application:
+                    type: string
+        allow_url_category:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              decryption:
+                type: string
+                enum: [enabled, disabled]
+                default: enabled
+              credential_enforcement:
+                type: string
+                enum: [enabled, disabled]
+                default: enabled
+              additional_action:
+                type: string
+                enum: [none, continue, redirect, isolate]
+                default: none
+              isolation_profiles:
+                type: string
+                default: none
+              file_control:
+                type: object
+                properties:
+                  upload:
+                    type: string
+                    enum: [allow-all-file-types, best-practice, block-all-file-types]
+                  download:
+                    type: string
+                    enum: [allow-all-file-types, best-practice, block-all-file-types]
+              dlp:
+                type: string
+        default_profile_settings:
+          type: object
+          properties:
+            file_control:
+              type: object
+              properties:
+                upload:
+                  type: string
+                  enum: [allow-all-file-types, best-practice, block-all-file-types]
+                download:
+                  type: string
+                  enum: [allow-all-file-types, best-practice, block-all-file-types]
+            dlp:
+              type: string
     url-access-profiles:
       type: object
       properties:
