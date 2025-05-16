@@ -34,8 +34,15 @@ For details on the protections and the features available while creating an API 
 
 :::
 
+The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
+
+- US: https://service.api.aisecurity.paloaltonetworks.com
+
+- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
+
 ## Use Cases
 
+### Detect Prompt Injection
 <details>
   <summary>Detect Prompt Injection</summary>
 
@@ -101,6 +108,8 @@ If there is a prompt injection match the category in the response will be set to
 
 </details>
 
+### Detect Malicious URL
+
 <details>
 <summary>Detect Malicious URL</summary>
 
@@ -153,6 +162,8 @@ The response indicates a malicious URL detected with the `response_detected.url_
 ```
 
 </details>
+
+### Detect Sensitive Data Loss
 
 <details>
 <summary>Detect Sensitive Data Loss (DLP)</summary>
@@ -211,6 +222,8 @@ The specific action shown in the response is based on your AI security profile s
 ```
 
 </details>
+
+### Mask Sensitive Data
 
 <details>
 <summary>Mask Sensitive Data</summary>
@@ -546,6 +559,8 @@ The start and end offset character indexes enable the DLP service to selectively
 
 </details>
 
+### Detect Database Security Attack
+
 <details>
 <summary>Detect Database Security Attack</summary>
 
@@ -690,6 +705,8 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
 
 </details>
 
+### Detect Toxic Content
+
 <details>
 <summary>Detect Toxic Content</summary>
 The toxic content detection is for LLM models and securing them from generating or responding to inappropriate content.
@@ -745,6 +762,8 @@ The specific action (`block`) shown in the response is based on your API securit
 For a detailed report, call the `v1/scan/reports` API endpoint with the report_id printed in the above output:
 
 </details>
+
+### Detect Malicious Code
 
 <details>
   <summary>Detect Malicious Code</summary>
@@ -834,6 +853,8 @@ For a detailed report, trigger the v1/scan/reports API endpoint with the report_
 ```
 
 </details>
+
+### Detect AI Agent Threats
 
 <details>
 <summary>Detect AI Agent Threats</summary>
@@ -957,6 +978,8 @@ Both requests were blocked according to the security profile settings.
 ```
 
 </details>
+
+### Detect Contextual Grounding
 
 <details>
 <summary>Detect Contextual Grounding</summary>
@@ -1116,6 +1139,8 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 ```
 
 </details>
+
+### Custom Topic Guardrails
 
 <details>
 <summary>Custom Topic Guardrails</summary>
