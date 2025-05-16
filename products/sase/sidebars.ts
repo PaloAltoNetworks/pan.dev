@@ -304,7 +304,8 @@ module.exports = {
     require("./api/mt-interconnect/sidebar"),
   ],
   manageservices: [
-    "sase/api/manage-services-5g/introduction",
+    "sase/api/manage-services-5g/introduction_5g",
+    "sase/api/manage-services-5g/overview_5g",
     require("./api/manage-services-5g/sidebar"),
   ],
   configorch: [
