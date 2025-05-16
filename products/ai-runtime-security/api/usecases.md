@@ -38,7 +38,7 @@ The following are the API endpoints based on the regions you selected while crea
 
 - US: https://service.api.aisecurity.paloaltonetworks.com
 
-- EU: https://service-de.api.aisecurity.paloaltonetworks.com
+- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
 
 ## Use Cases
 

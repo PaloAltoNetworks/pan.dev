@@ -23,7 +23,7 @@ For licensing, onboarding, activation, and to obtain the API authentication key 
 The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
 
 - US: https://service.api.aisecurity.paloaltonetworks.com 
-- EU: https://service-de.api.aisecurity.paloaltonetworks.com
+- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
 
 ## Prerequisites
 
