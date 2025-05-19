@@ -15,30 +15,30 @@ Our goal is to make 5G networks secure and easy to manage. We provide Service Pr
 ### Key Features & Advantages
 
 1.  **Scalability Beyond 5G Core**
-    * Security enforcement is decoupled from the 5G core network, eliminating the need for embedded security solutions.
-    * Reduces operational complexity for Service Providers.
-    * Example: A large manufacturing company can securely connect thousands of IoT sensors without impacting 5G core performance.
+- Security enforcement is decoupled from the 5G core network, eliminating the need for embedded security solutions.
+- Reduces operational complexity for Service Providers.
+- Example: A large manufacturing company can securely connect thousands of IoT sensors without impacting 5G core performance.
 
 2.  **Seamless Integration with 5G Authentication and Authorization**
-    * Uses 5G network-based authentication and authorization instead of separate OTT security mechanisms.
-    * Enables unified security policy enforcement across all enterprise users and devices.
+* Uses 5G network-based authentication and authorization instead of separate OTT security mechanisms.
+* Enables unified security policy enforcement across all enterprise users and devices.
 
 3.  **Multi-Tenancy Support**
-    * Designed to support multiple enterprises within a single 5G network.
-    * Allows Service Providers to offer security as a managed service for different customers.
-    * Example: A Service Provider can offer tailored security policies for a hospital, a bank, and a retail chain, all within the same 5G infrastructure.
+* Designed to support multiple enterprises within a single 5G network.
+* Allows Service Providers to offer security as a managed service for different customers.
+* Example: A Service Provider can offer tailored security policies for a hospital, a bank, and a retail chain, all within the same 5G infrastructure.
 
 4.  **No Additional Software or Agent Required**
-    * Does not require agent installation, proxies, or enterprise browsers.
-    * Ideal for IoT devices, sensors, and robots where software installation is impractical.
+* Does not require agent installation, proxies, or enterprise browsers.
+* Ideal for IoT devices, sensors, and robots where software installation is impractical.
 
 5.  **Support for 5G Roaming and Out-of-Coverage Use Cases**
-    * Ensures security enforcement even when devices are roaming across different 5G networks.
-    * Provides security policies even when devices are outside 5G network coverage.
+* Ensures security enforcement even when devices are roaming across different 5G networks.
+* Provides security policies even when devices are outside 5G network coverage.
 
 6.  **Unified Security Policy Definition and Enforcement**
-    * Service Providers can define and enforce consistent security policies across all enterprise users and devices.
-    * Eliminates security gaps caused by fragmented authentication mechanisms in OTT solutions.
+* Service Providers can define and enforce consistent security policies across all enterprise users and devices.
+* Eliminates security gaps caused by fragmented authentication mechanisms in OTT solutions.
 
 ### Integration Capabilities
 The SASE 5G Manage Services seamlessly integrates with existing security information and event management (SIEM) systems, identity providers, and threat intelligence platforms, enabling a holistic security approach.
