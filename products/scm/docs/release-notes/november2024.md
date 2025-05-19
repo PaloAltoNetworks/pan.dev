@@ -86,6 +86,8 @@ endpoint, but editing of `internet` rules will be supported in a future release.
 The `type` attribute will remain read-only until the unified rulebase feature is fully implemented
 and any new rules created via POST operation will be of type `security` by default.
 
+Introduced two policies 'Security' and 'Internet' formerly known as 'type'. 
+
 ## API Specific Changes
 
 ### Strata Cloud Manager Setup APIs
