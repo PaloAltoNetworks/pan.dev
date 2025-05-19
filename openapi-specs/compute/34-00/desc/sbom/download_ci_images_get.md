@@ -1,0 +1,1 @@
+Downloads SBOM file for CI images according to the given options.
