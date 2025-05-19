@@ -14,7 +14,7 @@ This guide provides a structured workflow to:
 - Retrieve onboarded and cataloged applications.
 - Access detailed app configurations and settings.
 - Manage common controls for enhanced security.
-- Handle integration projects and resolve issues.
+- Handle integration projects and resolves the issue. 
 
 ### 1. Retrieve the list of onboarded applications
 Use the [List of Applications](/sase/api/sspm/get-sspm-api-v-1-apps/) API to fetch all onboarded SaaS applications. Each application includes an `app_id`, which you will use in subsequent API calls. Refer to the [SaaS Onboarding Guide](https://docs.paloaltonetworks.com/saas-security/saas-security-admin/saas-security-sspm/onboard-saas-apps-supported-by-sspm/onboarding-overview-for-supported-saas-apps) for onboarding details.
