@@ -47,6 +47,17 @@ const useCases = [
       "https://pan.dev/ai-runtime-security/api/usecases#mask-sensitive-data",
     icons: [],
   },
+  {
+    key: "mcp-security",
+    label: "Secure MCP",
+    title: "Secure Model Context Protocol (MCP)",
+    version: null,
+    description:
+      "Guard against 'tool poisoning' and prompt injection in agentic AI workflows. Use API Intercept to scan and validate MCP tool descriptions, inputs, and outputs—building guardrails that keep your agents safe. Learn more in our hands-on blog post.",
+    learnMore:
+      "https://medium.com/palo-alto-networks-developer-blog/these-arent-the-tools-you-re-looking-for-securing-mcp-with-api-intercept-6fb8fb29978d",
+    icons: [],
+  },
 ];
 
 export default function UseCasesTabs() {
