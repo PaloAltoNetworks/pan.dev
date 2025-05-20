@@ -132,13 +132,14 @@ function MainContent() {
               textAlign: "left",
             }}
           >
-            Introducing{" "}
-            <span style={{ color: "#00c0e8" }}>Prisma AIRS API Intercept</span>
+            Secure Your AI Applications and Agents.
+            <br />
+            <span style={{ color: "#00c0e8" }}>Deploy bravely.</span>
           </h1>
           <p
             style={{
               margin: "28px 0 0 0",
-              fontSize: 24,
+              fontSize: 22,
               color: "#fff",
               fontWeight: 400,
               lineHeight: 1.4,
@@ -146,10 +147,10 @@ function MainContent() {
               maxWidth: 600,
             }}
           >
-            Prisma
-            <sup style={{ fontSize: 14, verticalAlign: "super" }}>®</sup> AIRS
-            API Intercept brings real-time API threat detection to your AI
-            applications.
+            Prisma AIRS API Intercept is Palo Alto Networks’ API for securing AI
+            applications and agents. Instantly protect your models from prompt
+            injection, data leaks, and unsafe outputs—so you can build and
+            deploy AI with confidence.
           </p>
           <div style={{ margin: "36px 0 0 0", width: "100%", maxWidth: 650 }}>
             <CodeBlock language="bash">
