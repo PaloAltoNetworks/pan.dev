@@ -122,9 +122,9 @@ The sample output confirms prompt injection detection in the prompt, indicating 
  "scan_id='cb66669d-b45f-4d96-8f42-1d3d4f30fae4' tr_id='1234' "
  "profile_id='8c8fdf8b-d494-4e41-ba54-c16120c4ef0b' "
  "profile_name='ai-sec-db-security' category='malicious' action='block' "
- 'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False) '
- 'response_detected=ResponseDetected(url_cats=False, dlp=False) '
- 'created_at=None completed_at=None\n'
+ "prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False) "
+ "response_detected=ResponseDetected(url_cats=False, dlp=False) "
+ "created_at=None completed_at=None\n"
 ```
 
 ## Asynchronous Inline Scan
@@ -658,8 +658,10 @@ if __name__ == "__main__":
 
 The verdict is malicious when there a threat is detected, and the action is set to allow or block as set by you in the API security profile.
 The verdict is benign when no threat is detected by the Python SDK scan.
+</details>
+
 <details>
-<summary>Expand to see the output:</summary>
+<summary>Sample output:</summary>
 
 ```json
 '=============================================================='
@@ -757,7 +759,5 @@ The verdict is benign when no threat is detected by the Python SDK scan.
  'result_detail=DSDetailResultObject(urlf_report=[], dlp_report=None))])]')
 'AI Security concurrent scanning example completed'
 ```
-
-</details>
 
 </details>

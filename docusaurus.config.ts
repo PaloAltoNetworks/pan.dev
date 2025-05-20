@@ -195,6 +195,13 @@ const config = {
                   label: "AI Runtime Security",
                   to: "#",
                   logoClass: "panos",
+                  docs: [
+                    {
+                      to: "/airs",
+                      label: "Prisma AIRS",
+                      icon: "doc",
+                    },
+                  ],
                   apiDocs: [
                     {
                       to: "ai-runtime-security/scan/api/",
@@ -1123,14 +1130,14 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-03/",
-          }, 
+          },
           compute_3400: {
             specPath: "openapi-specs/compute/34-00",
             outputDir: "products/compute/api/34-00",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-00/",
-          },   
+          },
         },
       },
     ],
