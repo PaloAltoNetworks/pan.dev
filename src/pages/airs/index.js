@@ -289,10 +289,9 @@ print(res)
             threats, unsafe content, and data leaks—directly from your code.
           </div>
           <a
-            href="/ai-runtime-security/api/pythonsdkusage/"
+            href="/ai-runtime-security/api/pythonsdk/"
             className={styles.pythonSdkButton}
-            target="_blank"
-            rel="noopener noreferrer"
+            target="_self"
           >
             View Python SDK Docs
           </a>
