@@ -108,6 +108,14 @@ function MainContent() {
           transition: "background 0.3s",
         }}
       >
+        <div className={styles.heroAnimatedBg}>
+          <div className={`${styles.heroBlob} ${styles.heroBlob1}`} />
+          <div className={`${styles.heroBlob} ${styles.heroBlob2}`} />
+          <div className={`${styles.heroBlob} ${styles.heroBlob3}`} />
+          <div className={`${styles.heroBlob} ${styles.heroBlob4}`} />
+          <div className={`${styles.heroBlob} ${styles.heroBlob5}`} />
+          <div className={`${styles.heroBlob} ${styles.heroBlob6}`} />
+        </div>
         <div
           className="container"
           style={{
