@@ -213,8 +213,8 @@ print(res)
                   color: "#171717",
                   fontWeight: 600,
                   fontSize: 18,
-                  borderRadius: 24,
-                  padding: "12px 32px",
+                  borderRadius: 20,
+                  padding: "10px 22px",
                   textDecoration: "none",
                   boxShadow: "0 2px 12px 0 rgba(0,192,232,0.15)",
                   transition: "background 0.2s",
@@ -236,8 +236,8 @@ print(res)
                   color: "#fff",
                   fontWeight: 600,
                   fontSize: 18,
-                  borderRadius: 24,
-                  padding: "12px 32px",
+                  borderRadius: 20,
+                  padding: "10px 22px",
                   textDecoration: "none",
                   boxShadow: "0 2px 12px 0 rgba(124,58,237,0.15)",
                   transition: "background 0.2s",
@@ -309,6 +309,71 @@ print(res)
             security, generate API keys, and integrate with your app.
           </div>
         </Card>
+      </section>
+      {/* Prisma AIRS Scan API Python SDK Section */}
+      <section
+        className="container"
+        style={{
+          marginTop: 48,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+            border:
+              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
+            borderRadius: 20,
+            boxShadow:
+              colorMode === "dark"
+                ? "0 2px 12px 0 rgba(124,58,237,0.10)"
+                : "0 2px 12px 0 rgba(124,58,237,0.04)",
+            padding: 36,
+            maxWidth: 600,
+            width: "100%",
+            textAlign: "left",
+            color: colorMode === "dark" ? "#fff" : "#232237",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: 12,
+              fontWeight: 700,
+              fontSize: 26,
+              color: colorMode === "dark" ? "#fff" : "#7c3aed",
+            }}
+          >
+            Prisma AIRS Scan API Python SDK
+          </h2>
+          <p style={{ margin: 0, marginBottom: 16, fontSize: 18 }}>
+            Quickly integrate advanced AI runtime security into your Python apps
+            with our official SDK. Effortlessly scan prompts and responses for
+            threats, unsafe content, and data leaks—directly from your code.
+          </p>
+          <a
+            href="/ai-runtime-security/api/pythonsdkusage/"
+            style={{
+              display: "inline-block",
+              background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: 17,
+              borderRadius: 20,
+              padding: "10px 28px",
+              textDecoration: "none",
+              boxShadow: "0 2px 12px 0 rgba(124,58,237,0.10)",
+              transition: "background 0.2s",
+              marginTop: 8,
+            }}
+          >
+            Python SDK Docs &rarr;
+          </a>
+        </div>
       </section>
     </main>
   );
