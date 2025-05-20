@@ -207,18 +207,7 @@ print(res)
                 href="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  display: "inline-block",
-                  background: "#00c0e8",
-                  color: "#171717",
-                  fontWeight: 600,
-                  fontSize: 18,
-                  borderRadius: 20,
-                  padding: "10px 22px",
-                  textDecoration: "none",
-                  boxShadow: "0 2px 12px 0 rgba(0,192,232,0.15)",
-                  transition: "background 0.2s",
-                }}
+                className={styles.gettingStartedButton}
               >
                 Getting Started &rarr;
               </a>
@@ -230,20 +219,7 @@ print(res)
                     el.scrollIntoView({ behavior: "smooth", block: "start" });
                   }
                 }}
-                style={{
-                  display: "inline-block",
-                  background: "#7c3aed",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: 18,
-                  borderRadius: 20,
-                  padding: "10px 22px",
-                  textDecoration: "none",
-                  boxShadow: "0 2px 12px 0 rgba(124,58,237,0.15)",
-                  transition: "background 0.2s",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                className={styles.exploreDocsButton}
               >
                 Explore Docs &rarr;
               </button>
@@ -277,15 +253,49 @@ print(res)
         style={{ marginTop: 24, display: "flex", gap: 24, flexWrap: "wrap" }}
       >
         <Card
-          title="Sample Use Cases"
-          link="/ai-runtime-security/api/usecases"
-          linkLabel="Explore Use Cases"
+          title={
+            <span
+              style={{
+                color: colorMode === "dark" ? "#fff" : "#7c3aed",
+                fontWeight: 700,
+              }}
+            >
+              Prisma AIRS Scan API Python SDK
+            </span>
+          }
           colorMode={colorMode}
+          style={{
+            background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+            border:
+              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
+            borderRadius: 20,
+            boxShadow:
+              colorMode === "dark"
+                ? "0 2px 12px 0 rgba(124,58,237,0.10)"
+                : "0 2px 12px 0 rgba(124,58,237,0.04)",
+            padding: 32,
+            color: colorMode === "dark" ? "#fff" : "#232237",
+            fontSize: 18,
+            minHeight: 180,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+          }}
         >
-          <div>
-            Explore practical scenarios showing how to secure AI workflows with
-            API Intercept. Includes sample code and implementation tips.
+          <div style={{ marginBottom: 16 }}>
+            Quickly integrate advanced AI runtime security into your Python apps
+            with our official SDK. Effortlessly scan prompts and responses for
+            threats, unsafe content, and data leaks—directly from your code.
           </div>
+          <a
+            href="/ai-runtime-security/api/pythonsdkusage/"
+            className={styles.pythonSdkButton}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Python SDK Docs
+          </a>
         </Card>
         <Card
           title="API Reference"
@@ -309,71 +319,6 @@ print(res)
             security, generate API keys, and integrate with your app.
           </div>
         </Card>
-      </section>
-      {/* Prisma AIRS Scan API Python SDK Section */}
-      <section
-        className="container"
-        style={{
-          marginTop: 48,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            background: colorMode === "dark" ? "#232237" : "#f7f5ff",
-            border:
-              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
-            borderRadius: 20,
-            boxShadow:
-              colorMode === "dark"
-                ? "0 2px 12px 0 rgba(124,58,237,0.10)"
-                : "0 2px 12px 0 rgba(124,58,237,0.04)",
-            padding: 36,
-            maxWidth: 600,
-            width: "100%",
-            textAlign: "left",
-            color: colorMode === "dark" ? "#fff" : "#232237",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 12,
-              fontWeight: 700,
-              fontSize: 26,
-              color: colorMode === "dark" ? "#fff" : "#7c3aed",
-            }}
-          >
-            Prisma AIRS Scan API Python SDK
-          </h2>
-          <p style={{ margin: 0, marginBottom: 16, fontSize: 18 }}>
-            Quickly integrate advanced AI runtime security into your Python apps
-            with our official SDK. Effortlessly scan prompts and responses for
-            threats, unsafe content, and data leaks—directly from your code.
-          </p>
-          <a
-            href="/ai-runtime-security/api/pythonsdkusage/"
-            style={{
-              display: "inline-block",
-              background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
-              color: "#fff",
-              fontWeight: 600,
-              fontSize: 17,
-              borderRadius: 20,
-              padding: "10px 28px",
-              textDecoration: "none",
-              boxShadow: "0 2px 12px 0 rgba(124,58,237,0.10)",
-              transition: "background 0.2s",
-              marginTop: 8,
-            }}
-          >
-            Python SDK Docs &rarr;
-          </a>
-        </div>
       </section>
     </main>
   );
