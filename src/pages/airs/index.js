@@ -178,32 +178,62 @@ res = Scanner().sync_scan(
 print(res)
 `}
             </CodeBlock>
-            <a
-              href="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-block",
-                background: "#00c0e8",
-                color: "#171717",
-                fontWeight: 600,
-                fontSize: 18,
-                borderRadius: 24,
-                padding: "12px 32px",
-                textDecoration: "none",
-                boxShadow: "0 2px 12px 0 rgba(0,192,232,0.15)",
-                transition: "background 0.2s",
-                marginTop: 24,
-              }}
-            >
-              Getting Started &rarr;
-            </a>
+            <div style={{ display: "flex", gap: 16, marginTop: 24 }}>
+              <a
+                href="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block",
+                  background: "#00c0e8",
+                  color: "#171717",
+                  fontWeight: 600,
+                  fontSize: 18,
+                  borderRadius: 24,
+                  padding: "12px 32px",
+                  textDecoration: "none",
+                  boxShadow: "0 2px 12px 0 rgba(0,192,232,0.15)",
+                  transition: "background 0.2s",
+                }}
+              >
+                Getting Started &rarr;
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("use-cases-section");
+                  if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+                style={{
+                  display: "inline-block",
+                  background: "#7c3aed",
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: 18,
+                  borderRadius: 24,
+                  padding: "12px 32px",
+                  textDecoration: "none",
+                  boxShadow: "0 2px 12px 0 rgba(124,58,237,0.15)",
+                  transition: "background 0.2s",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Explore Docs
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Use Cases Section */}
-      <section className="container" style={{ marginTop: 36, marginBottom: 0 }}>
+      <section
+        id="use-cases-section"
+        className="container"
+        style={{ marginTop: 36, marginBottom: 0 }}
+      >
         <h2
           style={{
             fontWeight: 700,
