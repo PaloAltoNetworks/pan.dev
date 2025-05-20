@@ -221,7 +221,7 @@ print(res)
                   cursor: "pointer",
                 }}
               >
-                Explore Docs
+                Explore Docs &rarr;
               </button>
             </div>
           </div>
