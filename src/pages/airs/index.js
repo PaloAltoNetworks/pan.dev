@@ -79,7 +79,7 @@ export default function AIRSApiIntercept() {
   return (
     <Layout
       title="Prisma AIRS API Intercept"
-      description="OpenAPI-based threat detection for AI applications. Secure your AI models and data with real-time API scanning."
+      description="The Prisma AIRS API empowers you to secure AI applications and agents with real-time protection against prompt injection, data leaks, and unsafe outputs. Effortlessly integrate advanced AI security into your workflows."
       wrapperClassName="airs-api-intercept-landing"
     >
       <MainContent />
