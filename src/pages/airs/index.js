@@ -142,9 +142,33 @@ function MainContent() {
               textAlign: "left",
             }}
           >
-            Secure Your AI Applications and Agents.
-            <br />
-            <span style={{ color: "#00c0e8" }}>Deploy bravely.</span>
+            Secure your{" "}
+            <span
+              style={{
+                background: "linear-gradient(90deg, #00c0e8 0%, #0070f3 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+                fontWeight: 700,
+              }}
+            >
+              AI Runtime
+            </span>{" "}
+            so you can{" "}
+            <span
+              style={{
+                background: "linear-gradient(90deg, #7c3aed 0%, #ffb300 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+                fontWeight: 700,
+              }}
+            >
+              Deploy Bravely
+            </span>
+            .
           </h1>
           <p
             style={{
