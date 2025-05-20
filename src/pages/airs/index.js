@@ -263,7 +263,7 @@ print(res)
             fontWeight: 700,
             fontSize: 28,
             marginBottom: 8,
-            color: "#171717",
+            color: colorMode === "dark" ? "#fff" : "#171717",
           }}
         >
           Use Cases

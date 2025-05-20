@@ -27,13 +27,13 @@ const useCases = [
   },
   {
     key: "dlp",
-    label: "Sensitive Data Loss (DLP)",
-    title: "Detect Sensitive Data Loss (DLP)",
+    label: "Sensitive Data Loss",
+    title: "Detect Sensitive Data Loss",
     version: null,
     description:
       "Detect and prevent exposure of sensitive data such as API keys, credit card numbers, and PII in prompts and responses.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases/#detect-sensitive-data-loss",
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-sensitive-data-loss",
     icons: [],
   },
   {
@@ -45,6 +45,72 @@ const useCases = [
       "Automatically mask sensitive data patterns in prompts and responses, with precise offset information for granular redaction.",
     learnMore:
       "https://pan.dev/ai-runtime-security/api/usecases#mask-sensitive-data",
+    icons: [],
+  },
+  {
+    key: "db-security",
+    label: "Database Security Attack",
+    title: "Detect Database Security Attack",
+    version: null,
+    description:
+      "Detect and block attempts to exploit database vulnerabilities or extract sensitive data via AI prompts and responses.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-database-security-attack",
+    icons: [],
+  },
+  {
+    key: "toxic-content",
+    label: "Toxic Content",
+    title: "Detect Toxic Content",
+    version: null,
+    description:
+      "Detect and block toxic, offensive, or unsafe content in prompts and responses using advanced content moderation models.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-toxic-content",
+    icons: [],
+  },
+  {
+    key: "malicious-code",
+    label: "Malicious Code",
+    title: "Detect Malicious Code",
+    version: null,
+    description:
+      "Scan and block AI-generated code that may be harmful, contain exploits, or introduce vulnerabilities.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-malicious-code",
+    icons: [],
+  },
+  {
+    key: "agent-threats",
+    label: "AI Agent Threats",
+    title: "Detect AI Agent Threats",
+    version: null,
+    description:
+      "Identify and block threats targeting agentic AI workflows, including tool misuse, agent manipulation, and unsafe outputs.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-ai-agent-threats",
+    icons: [],
+  },
+  {
+    key: "contextual-grounding",
+    label: "Contextual Grounding",
+    title: "Detect Contextual Grounding",
+    version: null,
+    description:
+      "Ensure AI outputs are grounded in the intended context and prevent hallucinations or context drift.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-contextual-grounding",
+    icons: [],
+  },
+  {
+    key: "custom-topic-guardrails",
+    label: "Custom Topic Guardrails",
+    title: "Custom Topic Guardrails",
+    version: null,
+    description:
+      "Define and enforce custom rules to block or allow topics based on your organization's needs.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#custom-topic-guardrails",
     icons: [],
   },
   {
@@ -100,6 +166,11 @@ export default function UseCasesTabs() {
           display: "flex",
           flexDirection: "column",
           gap: 12,
+          maxHeight: "calc(4 * 44px + 3 * 12px + 16px)",
+          overflowY: "auto",
+          paddingBottom: 16,
+          boxSizing: "border-box",
+          position: "relative",
         }}
       >
         {useCases.map((uc, idx) => (
@@ -154,6 +225,22 @@ export default function UseCasesTabs() {
             {uc.label}
           </button>
         ))}
+        {/* Scroll indicator gradient */}
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 28,
+            pointerEvents: "none",
+            background: isDark
+              ? "linear-gradient(to bottom, rgba(34,37,42,0) 0%, #22252a 100%)"
+              : "linear-gradient(to bottom, rgba(250,251,252,0) 0%, #fafbfc 100%)",
+            borderBottomLeftRadius: 16,
+            borderBottomRightRadius: 16,
+          }}
+        />
       </div>
       {/* Content */}
       <div
