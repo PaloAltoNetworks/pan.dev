@@ -214,12 +214,10 @@ function MainContent() {
           linkLabel="Explore Use Cases"
           colorMode={colorMode}
         >
-          <ul style={{ paddingLeft: 20 }}>
-            <li>Detect prompt injection and malicious input</li>
-            <li>Prevent sensitive data loss (DLP)</li>
-            <li>Scan for toxic or unsafe model output</li>
-            <li>Enable model-agnostic API protection</li>
-          </ul>
+          <div>
+            Explore practical scenarios showing how to secure AI workflows with
+            API Intercept. Includes sample code and implementation tips.
+          </div>
         </Card>
         <Card
           title="API Reference"
@@ -227,12 +225,10 @@ function MainContent() {
           linkLabel="Full API Reference"
           colorMode={colorMode}
         >
-          <ul style={{ paddingLeft: 20 }}>
-            <li>OpenAPI spec & endpoints</li>
-            <li>Request/response schema</li>
-            <li>Authentication & error codes</li>
-            <li>Sample payloads</li>
-          </ul>
+          <div>
+            Full API documentation with endpoint details, request/response
+            formats, authentication, error codes, and code samples.
+          </div>
         </Card>
         <Card
           title="Getting Started"
@@ -240,12 +236,10 @@ function MainContent() {
           linkLabel="Read the Guide"
           colorMode={colorMode}
         >
-          <ol style={{ paddingLeft: 18 }}>
-            <li>Activate your deployment profile</li>
-            <li>Onboard API Intercept in Strata Cloud Manager</li>
-            <li>Generate API key & security profile</li>
-            <li>Integrate with your app</li>
-          </ol>
+          <div>
+            Guided setup for developers: activate your profile, configure
+            security, generate API keys, and integrate with your app.
+          </div>
         </Card>
       </section>
     </main>
