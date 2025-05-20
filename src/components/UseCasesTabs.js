@@ -225,22 +225,6 @@ export default function UseCasesTabs() {
             {uc.label}
           </button>
         ))}
-        {/* Scroll indicator gradient */}
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 28,
-            pointerEvents: "none",
-            background: isDark
-              ? "linear-gradient(to bottom, rgba(34,37,42,0) 0%, #22252a 100%)"
-              : "linear-gradient(to bottom, rgba(250,251,252,0) 0%, #fafbfc 100%)",
-            borderBottomLeftRadius: 16,
-            borderBottomRightRadius: 16,
-          }}
-        />
       </div>
       {/* Content */}
       <div
