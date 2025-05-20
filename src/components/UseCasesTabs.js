@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "../pages/styles.module.css";
+import { useColorMode } from "@docusaurus/theme-common";
 
 const useCases = [
   {
@@ -9,37 +10,41 @@ const useCases = [
     version: null,
     description:
       "Identify and block malicious prompt manipulation attempts in real time. Protect your AI endpoints from prompt injection attacks that try to subvert model intent or leak sensitive information.",
-    learnMore: "/ai-runtime-security/api/usecases#prompt-injection",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-prompt-injection",
+    icons: [],
+  },
+  {
+    key: "malicious-url",
+    label: "Malicious URL",
+    title: "Detect Malicious URL",
+    version: null,
+    description:
+      "Scan for and block malicious URLs in AI model outputs and responses, preventing phishing or malware delivery.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#detect-malicious-url",
     icons: [],
   },
   {
     key: "dlp",
     label: "Sensitive Data Loss (DLP)",
-    title: "Sensitive Data Loss Prevention (DLP)",
+    title: "Detect Sensitive Data Loss (DLP)",
     version: null,
     description:
       "Detect and prevent exposure of sensitive data such as API keys, credit card numbers, and PII in prompts and responses.",
-    learnMore: "/ai-runtime-security/api/usecases#dlp",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases/#detect-sensitive-data-loss",
     icons: [],
   },
   {
-    key: "malicious-output",
-    label: "Malicious Output",
-    title: "Malicious Output Detection",
+    key: "mask-sensitive-data",
+    label: "Mask Sensitive Data",
+    title: "Mask Sensitive Data",
     version: null,
     description:
-      "Scan AI model outputs for toxic, unsafe, or policy-violating content before it reaches your users.",
-    learnMore: "/ai-runtime-security/api/usecases#malicious-output",
-    icons: [],
-  },
-  {
-    key: "model-agnostic",
-    label: "Model-Agnostic",
-    title: "Model-Agnostic Security",
-    version: null,
-    description:
-      "Protect public and private AI models and applications via REST APIs. Works with any model, any stack.",
-    learnMore: "/ai-runtime-security/api/usecases#model-agnostic",
+      "Automatically mask sensitive data patterns in prompts and responses, with precise offset information for granular redaction.",
+    learnMore:
+      "https://pan.dev/ai-runtime-security/api/usecases#mask-sensitive-data",
     icons: [],
   },
 ];
@@ -47,15 +52,30 @@ const useCases = [
 export default function UseCasesTabs() {
   const [selected, setSelected] = useState(0);
   const selectedCase = useCases[selected];
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === "dark";
+
+  // Color palette
+  const bg = isDark ? "#22252a" : "#fafbfc";
+  const cardShadow = isDark
+    ? "0 2px 12px 0 rgba(0,0,0,0.32)"
+    : "0 2px 12px 0 rgba(0,0,0,0.04)";
+  const tabBg = isDark ? "#23272e" : "#f3f5f7";
+  const tabActive = "#ff6133";
+  const tabHover = isDark ? "#d94e24" : "#d94e24";
+  const tabText = isDark ? "#fff" : "#222";
+  const tabInactiveText = isDark ? "#c9ccd1" : "#222";
+  const contentTitle = isDark ? "#fff" : "#222";
+  const contentDesc = isDark ? "#c9ccd1" : "#444";
 
   return (
     <div
       className={styles.useCasesTabs}
       style={{
         display: "flex",
-        background: "#fafbfc",
+        background: bg,
         borderRadius: 16,
-        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.04)",
+        boxShadow: cardShadow,
         padding: 32,
         gap: 32,
         alignItems: "stretch",
@@ -76,16 +96,46 @@ export default function UseCasesTabs() {
             key={uc.key}
             onClick={() => setSelected(idx)}
             style={{
-              background: selected === idx ? "#ff6133" : "#f3f5f7",
-              color: selected === idx ? "#fff" : "#222",
+              background: selected === idx ? tabActive : tabBg,
+              color: selected === idx ? "#fff" : tabInactiveText,
               border: "none",
               borderRadius: 12,
-              padding: "14px 0",
+              padding: "10px 18px",
               fontWeight: 700,
               fontSize: 16,
               cursor: "pointer",
-              outline: selected === idx ? "2px solid #ff6133" : "none",
-              transition: "background 0.2s, color 0.2s",
+              outline: selected === idx ? `2px solid ${tabActive}` : "none",
+              transition: "background 0.2s, color 0.2s, box-shadow 0.2s",
+              boxShadow:
+                selected === idx
+                  ? isDark
+                    ? "0 2px 8px 0 rgba(255,97,51,0.16)"
+                    : "0 2px 8px 0 rgba(255,97,51,0.08)"
+                  : undefined,
+            }}
+            onMouseEnter={(e) => {
+              if (selected !== idx) {
+                e.currentTarget.style.background = tabHover;
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.boxShadow = isDark
+                  ? "0 2px 8px 0 rgba(217,78,36,0.18)"
+                  : "0 2px 8px 0 rgba(217,78,36,0.10)";
+              } else {
+                e.currentTarget.style.background = tabActive;
+                e.currentTarget.style.color = "#fff";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background =
+                selected === idx ? tabActive : tabBg;
+              e.currentTarget.style.color =
+                selected === idx ? "#fff" : tabInactiveText;
+              e.currentTarget.style.boxShadow =
+                selected === idx
+                  ? isDark
+                    ? "0 2px 8px 0 rgba(255,97,51,0.16)"
+                    : "0 2px 8px 0 rgba(255,97,51,0.08)"
+                  : "none";
             }}
             aria-selected={selected === idx}
             aria-controls={`usecase-panel-${uc.key}`}
@@ -105,12 +155,17 @@ export default function UseCasesTabs() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <h3
-            style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#222" }}
+            style={{
+              margin: 0,
+              fontSize: 22,
+              fontWeight: 700,
+              color: contentTitle,
+            }}
           >
             {selectedCase.title}
           </h3>
           {selectedCase.version && (
-            <span style={{ color: "#ff6133", fontWeight: 600, fontSize: 16 }}>
+            <span style={{ color: tabActive, fontWeight: 600, fontSize: 16 }}>
               {selectedCase.version}
             </span>
           )}
@@ -118,7 +173,7 @@ export default function UseCasesTabs() {
         <p
           style={{
             margin: "16px 0 24px 0",
-            color: "#444",
+            color: contentDesc,
             fontSize: 17,
             lineHeight: 1.6,
           }}
