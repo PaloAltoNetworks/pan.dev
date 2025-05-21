@@ -5,15 +5,6 @@ import { useColorMode } from "@docusaurus/theme-common";
 import CodeBlock from "@theme/CodeBlock";
 import UseCasesTabs from "../../components/UseCasesTabs";
 
-// If you have a logo component for the API, import it here
-// import ApiLogo from "@theme/ApiLogo";
-
-const VersionBadge = () => (
-  <span className="badge badge--secondary" style={{ marginLeft: 8 }}>
-    Version: 0.0.0
-  </span>
-);
-
 const Card = ({ title, children, link, linkLabel, colorMode }) => {
   const isDark = colorMode === "dark";
   const bg = isDark ? "#22252a" : "#fff";
