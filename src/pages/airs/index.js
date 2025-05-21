@@ -214,12 +214,9 @@ print(res)
 `}
             </CodeBlock>
             <div
+              className={styles.ctaButtonsRow}
               style={{
-                display: "flex",
-                gap: 16,
                 marginTop: 20,
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
               }}
             >
               <a
