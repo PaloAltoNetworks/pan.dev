@@ -255,8 +255,8 @@ print(res)
         style={{
           display: "flex",
           gap: 28,
-          marginTop: 44,
-          marginBottom: 20,
+          marginTop: 24,
+          marginBottom: 24,
           paddingLeft: 16,
           paddingRight: 16,
           maxWidth: 1220,
