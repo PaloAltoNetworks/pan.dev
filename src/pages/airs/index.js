@@ -318,6 +318,10 @@ print(res)
           flexWrap: "wrap",
           paddingLeft: 16,
           paddingRight: 16,
+          maxWidth: 1220,
+          width: "100%",
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       >
         <Card
