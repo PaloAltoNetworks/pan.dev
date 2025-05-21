@@ -158,120 +158,119 @@ export default function UseCasesTabs() {
           alignItems: "stretch",
         }}
       >
-        {/* Tabs */}
-        <div
-          style={{
-            minWidth: 160,
-            display: "flex",
-            flexDirection: "column",
-            gap: 6,
-            maxHeight: "calc(4 * 44px + 3 * 12px + 16px)",
-            overflowY: "auto",
-            paddingBottom: 16,
-            boxSizing: "border-box",
-            position: "relative",
-          }}
-        >
-          {useCases.map((uc, idx) => {
-            const [hovered, setHovered] = React.useState(false);
-            const isActive = selected === idx;
-            // Hover background
-            const hoverBg = isDark ? "#282d36" : "#eceff1";
-            // Hover text color
-            const hoverText = isDark ? "#fff" : "#222";
-            return (
-              <button
-                key={uc.key}
-                onClick={() => setSelected(idx)}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-                style={{
-                  background: isActive ? tabGradient : hovered ? hoverBg : bg,
-                  color: isActive
-                    ? "#fff"
-                    : hovered
-                    ? hoverText
-                    : tabInactiveText,
-                  border: isActive ? `2px solid ${bg}` : "none",
-                  borderRadius: 18,
-                  padding: "10px 22px",
-                  fontWeight: 700,
-                  fontSize: 16,
-                  minWidth: 180,
-                  cursor: "pointer",
-                  outline: "none",
-                  transition: "background 0.2s, color 0.2s, box-shadow 0.2s",
-                  boxShadow: "none",
-                }}
-                aria-selected={isActive}
-                aria-controls={`usecase-panel-${uc.key}`}
-              >
-                {uc.label}
-              </button>
-            );
-          })}
-        </div>
-        {/* Content */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <h3
+      {/* Tabs */}
+      <div
+        style={{
+          minWidth: 160,
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          maxHeight: "calc(4 * 44px + 3 * 12px + 16px)",
+          overflowY: "auto",
+          paddingBottom: 16,
+          boxSizing: "border-box",
+          position: "relative",
+        }}
+      >
+        {useCases.map((uc, idx) => {
+          const [hovered, setHovered] = React.useState(false);
+          const isActive = selected === idx;
+          // Hover background
+          const hoverBg = isDark ? "#282d36" : "#eceff1";
+          // Hover text color
+          const hoverText = isDark ? "#fff" : "#222";
+          return (
+            <button
+              key={uc.key}
+              onClick={() => setSelected(idx)}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
               style={{
-                margin: 0,
-                fontSize: 22,
+                background: isActive ? tabGradient : hovered ? hoverBg : bg,
+                color: isActive
+                  ? "#fff"
+                  : hovered
+                  ? hoverText
+                  : tabInactiveText,
+                border: isActive ? `2px solid ${bg}` : "none",
+                borderRadius: 18,
+                padding: "10px 22px",
                 fontWeight: 700,
-                color: contentTitle,
+                fontSize: 16,
+                minWidth: 180,
+                cursor: "pointer",
+                outline: "none",
+                transition: "background 0.2s, color 0.2s, box-shadow 0.2s",
+                boxShadow: "none",
               }}
+              aria-selected={isActive}
+              aria-controls={`usecase-panel-${uc.key}`}
             >
-              {selectedCase.title}
-            </h3>
-            {selectedCase.version && (
-              <span style={{ color: tabActive, fontWeight: 600, fontSize: 16 }}>
-                {selectedCase.version}
-              </span>
-            )}
-          </div>
-          <p
+              {uc.label}
+            </button>
+          );
+        })}
+      </div>
+      {/* Content */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <h3
             style={{
-              margin: "16px 0 24px 0",
-              color: contentDesc,
-              fontSize: 17,
-              lineHeight: 1.6,
+              margin: 0,
+              fontSize: 22,
+              fontWeight: 700,
+              color: contentTitle,
             }}
           >
-            {selectedCase.description}
-          </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            {/* Placeholder for icons if needed */}
-            {selectedCase.icons.map((icon, idx) => (
-              <img
-                key={idx}
-                src={icon}
-                alt="icon"
-                style={{ height: 32, width: "auto" }}
-              />
-            ))}
-          </div>
-          <div style={{ marginTop: 18 }}>
-            <a
-              href={selectedCase.learnMore}
-              style={{
-                color: "#ff6133",
-                fontWeight: 600,
-                fontSize: 16,
-                textDecoration: "none",
-              }}
-              target="_self"
-            >
-              Learn More &rarr;
-            </a>
-          </div>
+            {selectedCase.title}
+          </h3>
+          {selectedCase.version && (
+            <span style={{ color: tabActive, fontWeight: 600, fontSize: 16 }}>
+              {selectedCase.version}
+            </span>
+          )}
+        </div>
+        <p
+          style={{
+            margin: "16px 0 24px 0",
+            color: contentDesc,
+            fontSize: 17,
+            lineHeight: 1.6,
+          }}
+        >
+          {selectedCase.description}
+        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          {/* Placeholder for icons if needed */}
+          {selectedCase.icons.map((icon, idx) => (
+            <img
+              key={idx}
+              src={icon}
+              alt="icon"
+              style={{ height: 32, width: "auto" }}
+            />
+          ))}
+        </div>
+        <div style={{ marginTop: 18 }}>
+          <a
+            href={selectedCase.learnMore}
+            style={{
+              color: "#ff6133",
+              fontWeight: 600,
+              fontSize: 16,
+              textDecoration: "none",
+            }}
+            target="_self"
+          >
+            Learn More &rarr;
+          </a>
         </div>
       </div>
     </div>
