@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import styles from "../styles.module.css";
+import styles from "./styles.module.css";
 import { useColorMode } from "@docusaurus/theme-common";
 import CodeBlock from "@theme/CodeBlock";
 import UseCasesTabs from "../../components/UseCasesTabs";
