@@ -189,7 +189,7 @@ function MainContent() {
                   fontWeight: 400,
                   lineHeight: 1.4,
                   textAlign: "left",
-                  maxWidth: 600,
+                  maxWidth: 820,
                 }}
               >
                 Prisma AIRS API Intercept is Palo Alto Networks’ API for
