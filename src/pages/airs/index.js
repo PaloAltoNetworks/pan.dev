@@ -259,25 +259,26 @@ print(res)
           marginBottom: 20,
           paddingLeft: 16,
           paddingRight: 16,
+          maxWidth: 1220,
+          width: "100%",
+          marginLeft: "auto",
+          marginRight: "auto",
+          background: colorMode === "dark" ? "#23272e" : "#fff",
+          borderRadius: 20,
+          boxShadow:
+            colorMode === "dark"
+              ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+              : "0 2px 12px 0 rgba(0,0,0,0.04)",
+          border:
+            colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
+          position: "relative",
         }}
       >
         <div
           style={{
-            background: colorMode === "dark" ? "#23272e" : "#fff",
-            borderRadius: 20,
-            boxShadow:
-              colorMode === "dark"
-                ? "0 2px 12px 0 rgba(0,0,0,0.18)"
-                : "0 2px 12px 0 rgba(0,0,0,0.04)",
-            padding: "24px 16px 28px 16px",
+            padding: "24px 0 28px 0",
             marginBottom: 0,
-            border:
-              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
-            position: "relative",
-            maxWidth: 1220,
-            width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
+            flex: 1,
             display: "flex",
             flexDirection: "column",
             alignItems: "stretch",
