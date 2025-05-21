@@ -322,6 +322,8 @@ print(res)
           width: "100%",
           marginLeft: "auto",
           marginRight: "auto",
+          alignItems: "stretch",
+          alignSelf: "stretch",
         }}
       >
         <Card
