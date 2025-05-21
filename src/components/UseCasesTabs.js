@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../pages/styles.module.css";
+import styles from "../pages/airs/styles.module.css";
 import { useColorMode } from "@docusaurus/theme-common";
 
 const useCases = [
