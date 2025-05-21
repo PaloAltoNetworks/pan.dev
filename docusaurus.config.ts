@@ -195,6 +195,13 @@ const config = {
                   label: "AI Runtime Security",
                   to: "#",
                   logoClass: "panos",
+                  docs: [
+                    {
+                      to: "/airs",
+                      label: "Prisma AIRS",
+                      icon: "doc",
+                    },
+                  ],
                   apiDocs: [
                     {
                       to: "ai-runtime-security/scan/api/",
@@ -476,6 +483,11 @@ const config = {
                     {
                       to: "sase/api/mt-interconnect",
                       label: "Multitenant Interconnect",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/manage-services-5g",
+                      label: "SASE 5G Manage Services",
                       icon: "api-doc",
                     },
                     {
@@ -896,6 +908,11 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          manageservices: {
+            specPath: "openapi-specs/sase/manage-services-5g",
+            outputDir: "products/sase/api/manage-services-5g",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           configorch: {
             specPath: "openapi-specs/sase/config-orch",
             outputDir: "products/sase/api/config-orch",
@@ -1052,8 +1069,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "34.00",
-            label: "v34.00",
+            version: "34.01",
+            label: "v34.01",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1113,7 +1130,14 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/33-03/",
-          },   
+          },
+          compute_3400: {
+            specPath: "openapi-specs/compute/34-00",
+            outputDir: "products/compute/api/34-00",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/34-00/",
+          },
         },
       },
     ],
