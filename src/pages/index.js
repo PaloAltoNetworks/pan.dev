@@ -13,7 +13,7 @@ import HomepageBanner from "../components/HomepageBanner/HomepageBanner";
 import Layout from "@theme/Layout";
 import Medium from "../components/Medium";
 import { PartnerTools } from "../components/AceternityUI/PartnerTools";
-import styles from "./styles.module.css";
+import styles from "./airs/styles.module.css";
 import { HeroSectionOne } from "../components/AceternityUI/Hero";
 import { TabsDemo } from "../components/AceternityUI/AnimatedTabs";
 import { motion } from "motion/react";
