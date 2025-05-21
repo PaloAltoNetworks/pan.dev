@@ -244,7 +244,12 @@ print(res)
                 onClick={() => {
                   const el = document.getElementById("use-cases-section");
                   if (el) {
-                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    const yOffset = -57; // navbar height
+                    const y =
+                      el.getBoundingClientRect().top +
+                      window.pageYOffset +
+                      yOffset;
+                    window.scrollTo({ top: y, behavior: "smooth" });
                   }
                 }}
                 className={styles.exploreDocsButton}
