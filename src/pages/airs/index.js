@@ -256,7 +256,7 @@ print(res)
           display: "flex",
           gap: 28,
           marginTop: 44,
-          marginBottom: 44,
+          marginBottom: 20,
           paddingLeft: 16,
           paddingRight: 16,
         }}
@@ -312,7 +312,7 @@ print(res)
       <section
         className="container"
         style={{
-          marginTop: 24,
+          marginTop: 20,
           display: "flex",
           gap: 24,
           flexWrap: "wrap",
