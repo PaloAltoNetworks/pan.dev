@@ -101,7 +101,7 @@ function MainContent() {
       <section
         className={styles.heroSection}
         style={{
-          padding: "72px 0 56px 0",
+          padding: "36px 0 24px 0",
           background: "#171717", // Brand dark
           borderBottom: "1px solid #222",
           color: "#fff",
@@ -131,62 +131,82 @@ function MainContent() {
         >
           {/* Optional: Add logo/icon for extra polish */}
           {/* <ApiLogo style={{ height: 56, marginBottom: 24 }} /> */}
-          <h1
+          <div
             style={{
-              margin: 0,
-              fontSize: 40,
-              fontWeight: 700,
-              letterSpacing: -1,
-              lineHeight: 1.1,
-              color: "#fff",
+              background: "rgba(20, 20, 20, 0.68)",
+              borderRadius: 18,
+              padding:
+                "clamp(24px, 6vw, 40px) clamp(12px, 4vw, 40px) 16px clamp(12px, 4vw, 40px)",
+              boxShadow: "0 4px 32px 0 rgba(0,0,0,0.22)",
+              zIndex: 2,
+              position: "relative",
+              backdropFilter: "blur(2px)",
+              WebkitBackdropFilter: "blur(2px)",
+              maxWidth: "min(100%, 1100px)",
+              width: "100%",
+              marginBottom: 8,
               textAlign: "left",
             }}
           >
-            Secure your{" "}
-            <span
+            <h1
               style={{
-                background: "linear-gradient(90deg, #00c0e8 0%, #0070f3 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                color: "transparent",
+                margin: 0,
+                fontSize: 40,
                 fontWeight: 700,
+                letterSpacing: -1,
+                lineHeight: 1.1,
+                color: "#fff",
+                textAlign: "left",
               }}
             >
-              AI Runtime
-            </span>{" "}
-            so you can{" "}
-            <span
-              style={{
-                background: "linear-gradient(90deg, #7c3aed 0%, #ffb300 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                color: "transparent",
-                fontWeight: 700,
-              }}
-            >
-              Deploy Bravely
-            </span>
-            .
-          </h1>
-          <p
-            style={{
-              margin: "28px 0 0 0",
-              fontSize: 22,
-              color: "#fff",
-              fontWeight: 400,
-              lineHeight: 1.4,
-              textAlign: "left",
-              maxWidth: 600,
-            }}
-          >
-            Prisma AIRS API Intercept is Palo Alto Networks’ API for securing AI
-            applications and agents. Instantly protect your models from prompt
-            injection, data leaks, and unsafe outputs—so you can build and
-            deploy AI with confidence.
-          </p>
-          <div style={{ margin: "36px 0 0 0", width: "100%", maxWidth: 900 }}>
+              Secure your{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, #00c0e8 0%, #0070f3 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  fontWeight: 700,
+                }}
+              >
+                AI Runtime
+              </span>{" "}
+              so you can{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, #7c3aed 0%, #ffb300 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  fontWeight: 700,
+                }}
+              >
+                Deploy Bravely
+              </span>
+              .
+            </h1>
+            <div style={{ marginBottom: 28 }}>
+              <p
+                style={{
+                  margin: "28px 0 0 0",
+                  fontSize: 22,
+                  color: "#fff",
+                  fontWeight: 400,
+                  lineHeight: 1.4,
+                  textAlign: "left",
+                  maxWidth: 600,
+                }}
+              >
+                Prisma AIRS API Intercept is Palo Alto Networks’ API for
+                securing AI applications and agents. Instantly protect your
+                models from prompt injection, data leaks, and unsafe outputs—so
+                you can build and deploy AI with confidence.
+              </p>
+            </div>
             <CodeBlock language="python">
               {`import os
 import aisecurity
@@ -202,7 +222,15 @@ res = Scanner().sync_scan(
 print(res)
 `}
             </CodeBlock>
-            <div style={{ display: "flex", gap: 16, marginTop: 24 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                marginTop: 20,
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
               <a
                 href="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
                 target="_blank"
