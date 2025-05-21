@@ -269,7 +269,7 @@ print(res)
               colorMode === "dark"
                 ? "0 2px 12px 0 rgba(0,0,0,0.18)"
                 : "0 2px 12px 0 rgba(0,0,0,0.04)",
-            padding: "24px 32px 28px 32px",
+            padding: "24px 16px 28px 16px",
             marginBottom: 0,
             border:
               colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
