@@ -264,8 +264,8 @@ print(res)
           gap: 28,
           marginTop: 44,
           marginBottom: 44,
-          paddingLeft: 32,
-          paddingRight: 32,
+          paddingLeft: 16,
+          paddingRight: 16,
         }}
       >
         <div
