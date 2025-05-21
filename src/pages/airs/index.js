@@ -260,7 +260,12 @@ print(res)
       <section
         id="use-cases-section"
         className="container"
-        style={{ marginTop: 36, marginBottom: 0 }}
+        style={{
+          marginTop: 36,
+          marginBottom: 0,
+          paddingLeft: 36,
+          paddingRight: 36,
+        }}
       >
         <h2
           style={{
@@ -278,7 +283,14 @@ print(res)
       {/* Three Column: Use Cases / API Reference / Getting Started */}
       <section
         className="container"
-        style={{ marginTop: 24, display: "flex", gap: 24, flexWrap: "wrap" }}
+        style={{
+          marginTop: 24,
+          display: "flex",
+          gap: 24,
+          flexWrap: "wrap",
+          paddingLeft: 36,
+          paddingRight: 36,
+        }}
       >
         <Card
           title={
