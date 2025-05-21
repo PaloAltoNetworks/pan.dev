@@ -259,25 +259,60 @@ print(res)
       {/* Use Cases Section */}
       <section
         id="use-cases-section"
-        className="container"
         style={{
-          marginTop: 36,
-          marginBottom: 0,
-          paddingLeft: 36,
-          paddingRight: 36,
+          display: "flex",
+          gap: 28,
+          marginTop: 44,
+          marginBottom: 44,
+          paddingLeft: 32,
+          paddingRight: 32,
         }}
       >
-        <h2
+        <div
           style={{
-            fontWeight: 700,
-            fontSize: 28,
-            marginBottom: 8,
-            color: colorMode === "dark" ? "#fff" : "#171717",
+            background: colorMode === "dark" ? "#23272e" : "#fff",
+            borderRadius: 20,
+            boxShadow:
+              colorMode === "dark"
+                ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+                : "0 2px 12px 0 rgba(0,0,0,0.04)",
+            padding: "24px 32px 28px 32px",
+            marginBottom: 0,
+            border:
+              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
+            position: "relative",
+            maxWidth: 1220,
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
           }}
         >
-          Use Cases
-        </h2>
-        <UseCasesTabs />
+          <div style={{ marginBottom: 0 }}>
+            <h2
+              style={{
+                fontWeight: 800,
+                fontSize: 28,
+                marginBottom: 0,
+                color: colorMode === "dark" ? "#fff" : "#171717",
+              }}
+            >
+              Use Cases
+            </h2>
+            <div
+              style={{
+                width: 48,
+                height: 4,
+                borderRadius: 2,
+                background: "linear-gradient(90deg, #ff6133 0%, #ffb300 100%)",
+                margin: "12px 0 8px 0",
+              }}
+            />
+          </div>
+          <UseCasesTabs />
+        </div>
       </section>
 
       {/* Three Column: Use Cases / API Reference / Getting Started */}

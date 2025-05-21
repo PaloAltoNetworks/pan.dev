@@ -151,13 +151,11 @@ export default function UseCasesTabs() {
       className={styles.useCasesTabs}
       style={{
         display: "flex",
-        background: bg,
+        background: "transparent",
         borderRadius: 16,
-        boxShadow: cardShadow,
-        padding: 32,
+        padding: "32px 32px 2px 0",
         gap: 32,
         alignItems: "stretch",
-        margin: "40px 0",
       }}
     >
       {/* Tabs */}
