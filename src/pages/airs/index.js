@@ -250,150 +250,127 @@ print(res)
       </section>
 
       {/* Use Cases Section */}
-      <section
-        id="use-cases-section"
-        style={{
-          display: "flex",
-          gap: 28,
-          marginTop: 24,
-          marginBottom: 24,
-          paddingLeft: 16,
-          paddingRight: 16,
-          maxWidth: 1220,
-          width: "100%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          background: colorMode === "dark" ? "#23272e" : "#fff",
-          borderRadius: 20,
-          boxShadow:
-            colorMode === "dark"
-              ? "0 2px 12px 0 rgba(0,0,0,0.18)"
-              : "0 2px 12px 0 rgba(0,0,0,0.04)",
-          border:
-            colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
-          position: "relative",
-        }}
+      <div
+        className={styles.responsiveSection}
+        style={{ marginTop: 44, marginBottom: 44 }}
       >
-        <div
-          style={{
-            padding: "24px 0 28px 0",
-            marginBottom: 0,
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-          }}
-        >
-          <div style={{ marginBottom: 0 }}>
-            <h2
-              style={{
-                fontWeight: 800,
-                fontSize: 28,
-                marginBottom: 0,
-                color: colorMode === "dark" ? "#fff" : "#171717",
-              }}
-            >
-              Use Cases
-            </h2>
-            <div
-              style={{
-                width: 48,
-                height: 4,
-                borderRadius: 2,
-                background: "linear-gradient(90deg, #ff6133 0%, #ffb300 100%)",
-                margin: "12px 0 8px 0",
-              }}
-            />
-          </div>
-          <UseCasesTabs />
-        </div>
-      </section>
-
-      {/* Three Column: Use Cases / API Reference / Getting Started */}
-      <section
-        className="container"
-        style={{
-          marginTop: 20,
-          display: "flex",
-          gap: 24,
-          flexWrap: "wrap",
-          paddingLeft: 16,
-          paddingRight: 16,
-          maxWidth: 1220,
-          width: "100%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          alignItems: "stretch",
-          alignSelf: "stretch",
-        }}
-      >
-        <Card
-          title={
-            <span
-              style={{
-                color: colorMode === "dark" ? "#fff" : "#7c3aed",
-                fontWeight: 700,
-              }}
-            >
-              Prisma AIRS Scan API Python SDK
-            </span>
-          }
-          colorMode={colorMode}
-          style={{
-            background: colorMode === "dark" ? "#232237" : "#f7f5ff",
-            border:
-              colorMode === "dark" ? "1px solid #333a48" : "1px solid #e0e7ef",
-            borderRadius: 20,
-            boxShadow:
-              colorMode === "dark"
-                ? "0 2px 12px 0 rgba(124,58,237,0.10)"
-                : "0 2px 12px 0 rgba(124,58,237,0.04)",
-            padding: 32,
-            color: colorMode === "dark" ? "#fff" : "#232237",
-            fontSize: 18,
-            minHeight: 180,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-          }}
-        >
-          <div style={{ marginBottom: 16 }}>
-            Quickly integrate advanced AI runtime security into your Python apps
-            with our official SDK. Effortlessly scan prompts and responses for
-            threats, unsafe content, and data leaks—directly from your code.
-          </div>
-          <a
-            href="/ai-runtime-security/api/pythonsdk/"
-            className={styles.pythonSdkButton}
-            target="_self"
+        <section id="use-cases-section" className={styles.gridSection}>
+          <div
+            style={{
+              background: colorMode === "dark" ? "#23272e" : "#fff",
+              borderRadius: 20,
+              boxShadow:
+                colorMode === "dark"
+                  ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+                  : "0 2px 12px 0 rgba(0,0,0,0.04)",
+              padding: "24px 32px 28px 32px",
+              marginBottom: 0,
+              border:
+                colorMode === "dark"
+                  ? "1px solid #333a48"
+                  : "1px solid #e0e7ef",
+              position: "relative",
+            }}
           >
-            View Python SDK Docs
-          </a>
-        </Card>
-        <Card
-          title="API Reference"
-          link="/ai-runtime-security/api/ai-runtime-security-api-intercept/"
-          linkLabel="Full API Reference"
-          colorMode={colorMode}
-        >
-          <div>
-            Full API documentation with endpoint details, request/response
-            formats, authentication, error codes, and code samples.
+            <div style={{ marginBottom: 0 }}>
+              <h2
+                style={{
+                  fontWeight: 800,
+                  fontSize: 28,
+                  marginBottom: 0,
+                  color: colorMode === "dark" ? "#fff" : "#171717",
+                }}
+              >
+                Use Cases
+              </h2>
+              <div
+                style={{
+                  width: 48,
+                  height: 4,
+                  borderRadius: 2,
+                  background:
+                    "linear-gradient(90deg, #ff6133 0%, #ffb300 100%)",
+                  margin: "12px 0 8px 0",
+                }}
+              />
+            </div>
+            <UseCasesTabs />
           </div>
-        </Card>
-        <Card
-          title="Getting Started"
-          link="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
-          linkLabel="Read the Guide"
-          colorMode={colorMode}
-        >
-          <div>
-            Guided setup for developers: activate your profile, configure
-            security, generate API keys, and integrate with your app.
-          </div>
-        </Card>
-      </section>
+        </section>
+      </div>
+      <div className={styles.responsiveSection} style={{ marginTop: 24 }}>
+        <section className={styles.gridSection}>
+          <Card
+            title={
+              <span
+                style={{
+                  color: colorMode === "dark" ? "#fff" : "#7c3aed",
+                  fontWeight: 700,
+                }}
+              >
+                Prisma AIRS Scan API Python SDK
+              </span>
+            }
+            colorMode={colorMode}
+            style={{
+              background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+              border:
+                colorMode === "dark"
+                  ? "1px solid #333a48"
+                  : "1px solid #e0e7ef",
+              borderRadius: 20,
+              boxShadow:
+                colorMode === "dark"
+                  ? "0 2px 12px 0 rgba(124,58,237,0.10)"
+                  : "0 2px 12px 0 rgba(124,58,237,0.04)",
+              padding: 32,
+              color: colorMode === "dark" ? "#fff" : "#232237",
+              fontSize: 18,
+              minHeight: 180,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+            }}
+          >
+            <div style={{ marginBottom: 16 }}>
+              Quickly integrate advanced AI runtime security into your Python
+              apps with our official SDK. Effortlessly scan prompts and
+              responses for threats, unsafe content, and data leaks—directly
+              from your code.
+            </div>
+            <a
+              href="/ai-runtime-security/api/pythonsdk/"
+              className={styles.pythonSdkButton}
+              target="_self"
+            >
+              View Python SDK Docs
+            </a>
+          </Card>
+          <Card
+            title="API Reference"
+            link="/ai-runtime-security/api/ai-runtime-security-api-intercept/"
+            linkLabel="Full API Reference"
+            colorMode={colorMode}
+          >
+            <div>
+              Full API documentation with endpoint details, request/response
+              formats, authentication, error codes, and code samples.
+            </div>
+          </Card>
+          <Card
+            title="Getting Started"
+            link="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
+            linkLabel="Read the Guide"
+            colorMode={colorMode}
+          >
+            <div>
+              Guided setup for developers: activate your profile, configure
+              security, generate API keys, and integrate with your app.
+            </div>
+          </Card>
+        </section>
+      </div>
     </main>
   );
 }
