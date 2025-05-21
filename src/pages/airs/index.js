@@ -126,7 +126,7 @@ function MainContent() {
             flexDirection: "column",
             alignItems: "flex-start",
             justifyContent: "center",
-            padding: "0 2vw",
+            // (removed custom horizontal padding, rely on .container class for horizontal padding)
           }}
         >
           {/* Optional: Add logo/icon for extra polish */}
