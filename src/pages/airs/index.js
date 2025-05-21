@@ -316,8 +316,8 @@ print(res)
           display: "flex",
           gap: 24,
           flexWrap: "wrap",
-          paddingLeft: 36,
-          paddingRight: 36,
+          paddingLeft: 16,
+          paddingRight: 16,
         }}
       >
         <Card
