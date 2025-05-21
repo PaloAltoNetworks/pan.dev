@@ -198,7 +198,7 @@ function MainContent() {
                 you can build and deploy AI with confidence.
               </p>
             </div>
-            <CodeBlock language="python" title="Deploy Bravely">
+            <CodeBlock language="python">
               {`import os
 import aisecurity
 from aisecurity.scan.inline.scanner import Scanner
