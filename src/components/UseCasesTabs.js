@@ -141,7 +141,8 @@ export default function UseCasesTabs() {
   const tabActive = "#ff6133";
   const tabHover = isDark ? "#d94e24" : "#d94e24";
   const tabText = isDark ? "#fff" : "#222";
-  const tabInactiveText = isDark ? "#c9ccd1" : "#222";
+  const tabInactiveText = isDark ? "#e0e6ed" : "#22242a";
+  const tabGradient = "linear-gradient(90deg, #ff6133 0%, #ffb300 100%)";
   const contentTitle = isDark ? "#fff" : "#222";
   const contentDesc = isDark ? "#c9ccd1" : "#444";
 
@@ -165,7 +166,7 @@ export default function UseCasesTabs() {
           minWidth: 160,
           display: "flex",
           flexDirection: "column",
-          gap: 12,
+          gap: 6,
           maxHeight: "calc(4 * 44px + 3 * 12px + 16px)",
           overflowY: "auto",
           paddingBottom: 16,
@@ -173,58 +174,44 @@ export default function UseCasesTabs() {
           position: "relative",
         }}
       >
-        {useCases.map((uc, idx) => (
-          <button
-            key={uc.key}
-            onClick={() => setSelected(idx)}
-            style={{
-              background: selected === idx ? tabActive : tabBg,
-              color: selected === idx ? "#fff" : tabInactiveText,
-              border: "none",
-              borderRadius: 12,
-              padding: "10px 18px",
-              fontWeight: 700,
-              fontSize: 16,
-              cursor: "pointer",
-              outline: selected === idx ? `2px solid ${tabActive}` : "none",
-              transition: "background 0.2s, color 0.2s, box-shadow 0.2s",
-              boxShadow:
-                selected === idx
-                  ? isDark
-                    ? "0 2px 8px 0 rgba(255,97,51,0.16)"
-                    : "0 2px 8px 0 rgba(255,97,51,0.08)"
-                  : undefined,
-            }}
-            onMouseEnter={(e) => {
-              if (selected !== idx) {
-                e.currentTarget.style.background = tabHover;
-                e.currentTarget.style.color = "#fff";
-                e.currentTarget.style.boxShadow = isDark
-                  ? "0 2px 8px 0 rgba(217,78,36,0.18)"
-                  : "0 2px 8px 0 rgba(217,78,36,0.10)";
-              } else {
-                e.currentTarget.style.background = tabActive;
-                e.currentTarget.style.color = "#fff";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                selected === idx ? tabActive : tabBg;
-              e.currentTarget.style.color =
-                selected === idx ? "#fff" : tabInactiveText;
-              e.currentTarget.style.boxShadow =
-                selected === idx
-                  ? isDark
-                    ? "0 2px 8px 0 rgba(255,97,51,0.16)"
-                    : "0 2px 8px 0 rgba(255,97,51,0.08)"
-                  : "none";
-            }}
-            aria-selected={selected === idx}
-            aria-controls={`usecase-panel-${uc.key}`}
-          >
-            {uc.label}
-          </button>
-        ))}
+        {useCases.map((uc, idx) => {
+          const [hovered, setHovered] = React.useState(false);
+          const isActive = selected === idx;
+          // Hover background
+          const hoverBg = isDark ? "#282d36" : "#eceff1";
+          // Hover text color
+          const hoverText = isDark ? "#fff" : "#222";
+          return (
+            <button
+              key={uc.key}
+              onClick={() => setSelected(idx)}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              style={{
+                background: isActive ? tabGradient : hovered ? hoverBg : bg,
+                color: isActive
+                  ? "#fff"
+                  : hovered
+                  ? hoverText
+                  : tabInactiveText,
+                border: isActive ? `2px solid ${bg}` : "none",
+                borderRadius: 18,
+                padding: "10px 22px",
+                fontWeight: 700,
+                fontSize: 16,
+                minWidth: 180,
+                cursor: "pointer",
+                outline: "none",
+                transition: "background 0.2s, color 0.2s, box-shadow 0.2s",
+                boxShadow: "none",
+              }}
+              aria-selected={isActive}
+              aria-controls={`usecase-panel-${uc.key}`}
+            >
+              {uc.label}
+            </button>
+          );
+        })}
       </div>
       {/* Content */}
       <div
