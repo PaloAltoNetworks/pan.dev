@@ -10,6 +10,11 @@ keywords:
   - API
 ---
 
+This page covers the key use cases of the AI Runtime Security Python SDK inline and asyncio scan types with synchronous and asynchronous methods.
+It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, sensitive data, or AI agent detection.
+Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
+
+
 ## Synchronous Inline Scan
 
 The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable Prompt Injection Detection in the API security profile for this detection to be effective.
