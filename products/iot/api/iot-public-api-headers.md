@@ -1,8 +1,8 @@
 ---
 id: iot-public-api-headers
-title: IoT Public API Authentication
+title: IoT Public API Authentication [DEPRECATED]
 sidebar_position: 1
-sidebar_label: IoT Public API Authentication
+sidebar_label: DEPRECATED - IoT Public API Authentication
 ---
 
 To ensure that only valid users can access the IoT Cloud database, all remote API calls must include an `access key` and `key ID`. This provides a safe and convenient way to integrate IoT Cloud data with your own automation.
