@@ -48,7 +48,7 @@ create more service accounts using the
 After you create the [service account](https://pan.dev/scm/docs/service-accounts/)
 and have the Client ID and Client Secret, get an
 [access token from Strata Cloud Manager](https://pan.dev/scm/docs/access-tokens/)
-using the following cURL request.
+using the following cURL request, replacing the variables with your respective TSG ID, Client ID, and Client Secret.
 
 ```shell
 curl -d "grant_type=client_credentials&scope=tsg_id:<tsg-id>" \
