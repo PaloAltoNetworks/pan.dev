@@ -312,7 +312,7 @@ const DiscriminatorNode: React.FC<DiscriminatorNodeProps> = ({
 
   // default to empty object if no parent-level properties exist
   const discriminatorProperty = schema.properties
-    ? (schema.properties![discriminator.propertyName] ?? {})
+    ? schema.properties![discriminator.propertyName]
     : {};
 
   if (schema.allOf) {
@@ -334,12 +334,6 @@ const DiscriminatorNode: React.FC<DiscriminatorNodeProps> = ({
     discriminator.mapping = inferredMapping;
   }
 
-  // handle invalid discriminator definition where no discriminated schemas are defined
-  if (Object.keys(discriminator.mapping).length === 0) {
-    delete schema.discriminator;
-    return <SchemaNode schema={schema} schemaType={schemaType} />;
-  }
-
   // Merge sub schema discriminator property with parent
   Object.keys(discriminator.mapping).forEach((key) => {
     const subSchema = discriminator.mapping[key];
@@ -351,7 +345,8 @@ const DiscriminatorNode: React.FC<DiscriminatorNodeProps> = ({
     }
 
     const subProperties = subSchema.properties || mergedSubSchema.properties;
-    if (subProperties[discriminator.propertyName]) {
+    // Add a safeguard check to avoid referencing subProperties if it's undefined
+    if (subProperties && subProperties[discriminator.propertyName]) {
       if (schema.properties) {
         schema.properties![discriminator.propertyName] = {
           ...schema.properties![discriminator.propertyName],
@@ -839,6 +834,25 @@ const SchemaEdge: React.FC<SchemaEdgeProps> = ({
   );
 };
 
+function renderChildren(
+  schema: SchemaObject,
+  schemaType: "request" | "response"
+) {
+  return (
+    <>
+      {schema.oneOf && <AnyOneOf schema={schema} schemaType={schemaType} />}
+      {schema.anyOf && <AnyOneOf schema={schema} schemaType={schemaType} />}
+      {schema.properties && (
+        <Properties schema={schema} schemaType={schemaType} />
+      )}
+      {schema.additionalProperties && (
+        <AdditionalProperties schema={schema} schemaType={schemaType} />
+      )}
+      {schema.items && <Items schema={schema} schemaType={schemaType} />}
+    </>
+  );
+}
+
 const SchemaNode: React.FC<SchemaProps> = ({ schema, schemaType }) => {
   if (
     (schemaType === "request" && schema.readOnly) ||
@@ -887,10 +901,6 @@ const SchemaNode: React.FC<SchemaProps> = ({ schema, schemaType }) => {
     );
   }
 
-  if (schema.oneOf || schema.anyOf) {
-    return <AnyOneOf schema={schema} schemaType={schemaType} />;
-  }
-
   // Handle primitives
   if (
     schema.type &&
@@ -916,19 +926,7 @@ const SchemaNode: React.FC<SchemaProps> = ({ schema, schemaType }) => {
     );
   }
 
-  return (
-    <div>
-      {schema.oneOf && <AnyOneOf schema={schema} schemaType={schemaType} />}
-      {schema.anyOf && <AnyOneOf schema={schema} schemaType={schemaType} />}
-      {schema.properties && (
-        <Properties schema={schema} schemaType={schemaType} />
-      )}
-      {schema.additionalProperties && (
-        <AdditionalProperties schema={schema} schemaType={schemaType} />
-      )}
-      {schema.items && <Items schema={schema} schemaType={schemaType} />}
-    </div>
-  );
+  return renderChildren(schema, schemaType);
 };
 
 export default SchemaNode;

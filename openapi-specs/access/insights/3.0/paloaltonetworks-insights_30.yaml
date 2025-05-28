@@ -13,12 +13,16 @@ info:
     \ the tenants have been onboarded by Palo Alto Networks using a Tenant Service\
     \ Group\n(TSG) identifier.\n\nThese APIs use the common SASE authentication mechanism\
     \ and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
-    \ guide for more information.\n\nThis Open API spec file was created on November\
-    \ 22, 2024. To check for a more recent version of this file, see\n[Prisma Insights\
-    \ APIs on pan.dev](https://pan.dev//access/api/insights/).\n\n\xA9 2024 Palo Alto\
+    \ guide for more information.\n\nThis Open API spec file was created on April\
+    \ 10, 2025. To check for a more recent version of this file, see\n[Prisma Insights\
+    \ APIs on pan.dev](https://pan.dev//access/api/insights/).\n\n\xA9 2025 Palo Alto\
     \ Networks, Inc. Palo Alto Networks is a registered trademark of Palo\nAlto Networks.\
     \ A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
     \nAll other marks mentioned herein may be trademarks of their respective companies.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
   title: Palo Alto Networks 3.0 APIs
   version: '3.0'
 openapi: 3.0.1
@@ -1445,7 +1449,7 @@ paths:
       - Bearer: []
       summary: Total number of connected entities
       tags:
-      - MobileUsers
+      - Mobile Users
   /insights/v3.0/resource/query/mobileusers/gp/noc_current_connected_user_list:
     post:
       description: 'Retrieves a list of all users currently active on the GlobalProtect
@@ -1592,7 +1596,7 @@ paths:
       - Bearer: []
       summary: User connected list
       tags:
-      - MobileUsers
+      - Mobile Users
   /insights/v3.0/resource/query/mobileusers/user_list:
     post:
       description: 'Retrieves a list of all mobile users who connected within the
@@ -2127,7 +2131,194 @@ paths:
       - Bearer: []
       summary: Mobile users list
       tags:
-      - MobileUsers
+      - Mobile Users
+  /insights/v3.0/resource/query/sites/bandwidth_consumption_histogram:
+    post:
+      description: "Retrieves histogram details on the Bandwidth Consumption. \n"
+      operationId: post-insights-v3.0-resource-query-sites-bandwidth_consumption_histogram
+      parameters:
+      - description: 'Region mapping for the tenant.
+
+          '
+        in: header
+        name: PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With mandatory filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                      - 157
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: aggregate_region_display_name
+                      values:
+                      - US West
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+                  histogram:
+                    enableEmptyInterval: true
+                    property: event_time
+                    range: minute
+                    value: 30
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          aggregate_region_display_name:
+                            description: Compute Location
+                            example: US West
+                            type: string
+                          edge_location_display_name:
+                            description: Prisma Access Locations
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event.
+                            example: 5
+                            type: number
+                          instance_state:
+                            description: State of Instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of node to which site is connected
+                            example: 48
+                            type: number
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                          transport_type:
+                            description: Type of tunnel
+                            example: IPSEC
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  avg_egress:
+                    description: Average egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  avg_ingress:
+                    description: Average ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  event_time:
+                    description: Event time
+                    example: 1709226000000
+                    type: number
+                  median_egress:
+                    description: Median egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  median_ingress:
+                    description: Median ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  peak_egress:
+                    description: Peak egress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  peak_ingress:
+                    description: Peak ingress bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Bandwidth Consumption Histogram
+      tags:
+      - Sites
   /insights/v3.0/resource/query/sites/rn_list:
     post:
       description: 'Retrieves a list of all branch sites along with their details.
@@ -2457,7 +2648,7 @@ paths:
       - Sites
   /insights/v3.0/resource/query/sites/sc_list:
     post:
-      description: 'Retrieves the status of Sites and Service Connections.
+      description: 'Retrieves the details of the Service Connections.
 
         '
       operationId: post-insights-v3.0-resource-query-sites-sc_list
@@ -2713,9 +2904,265 @@ paths:
       summary: Status of Branch Site and Data Center
       tags:
       - Sites
+  /insights/v3.0/resource/query/sites/session_count:
+    post:
+      description: "Retrieves the number of sessions. \n"
+      operationId: post-insights-v3.0-resource-query-sites-session_count
+      parameters:
+      - description: 'Region mapping for the tenant.
+
+          '
+        in: header
+        name: PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 51
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          node_type:
+                            description: Type of the node
+                            example: 51
+                            type: number
+                          site_name:
+                            description: Site name
+                            example: Remote-Conn1
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  active_max_sessions:
+                    description: Maximum number of active sessions
+                    example: 10
+                    type: number
+                  active_sessions:
+                    description: Number of active sessions
+                    example: 5
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Session Count API
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/site_count:
+    post:
+      description: 'Retrieves the number of sites.
+
+        '
+      operationId: post-insights-v3.0-resource-query-sites-site_count
+      parameters:
+      - description: 'Region mapping for the tenant.
+
+          '
+        in: header
+        name: PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          node_type:
+                            description: Type of the node
+                            example: 48
+                            type: number
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  node_type:
+                    description: node type
+                    example: 48
+                    type: number
+                  site_count:
+                    description: Site Count
+                    example: 10
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Site Count API
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/site_location_search_contains:
+    post:
+      description: "Retrieves the location search data for the site. \n"
+      operationId: post-insights-v3.0-resource-query-sites-site_location_search_contains
+      parameters:
+      - description: 'Region mapping for the tenant.
+
+          '
+        in: header
+        name: PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              With possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: equals
+                      property: location
+                      values:
+                      - United States, Ashburn
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          location:
+                            description: Location of the site
+                            example: United States, Ashburn
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    location:
+                      description: Site Location
+                      example: United States, Ashburn
+                      type: string
+                  type: object
+                type: array
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Site Location Search API
+      tags:
+      - Sites
   /insights/v3.0/resource/query/sites/site_status:
     post:
-      description: "Retrieves a list of Service Connections and their details. \n"
+      description: 'Retrieves a status of Sites or Remote Networks, and Service Connections.
+
+        '
       operationId: post-insights-v3.0-resource-query-sites-site_status
       parameters:
       - description: "Region mapping for the tenant. \n"
@@ -2871,28 +3318,212 @@ paths:
           description: OK
       security:
       - Bearer: []
-      summary: List of Data Centers
+      summary: Site status
+      tags:
+      - Sites
+  /insights/v3.0/resource/query/sites/site_traffic:
+    post:
+      description: "Get details on the site traffic. \n"
+      operationId: post-insights-v3.0-resource-query-sites-site_traffic
+      parameters:
+      - description: 'Region mapping for the tenant.
+
+          '
+        in: header
+        name: PANW-Region
+        required: true
+        schema:
+          example: americas
+          type: string
+      - description: 'A Prisma-Tenant is a unique identifier for a tenant or a subtenant
+          within a single or multi-tenant architecture, providing precise tenant management
+          and resource allocation.
+
+          '
+        in: header
+        name: Prisma-Tenant
+        required: false
+        schema:
+          example: 12345678:12345679
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              api with all possible filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+                    - operator: in
+                      property: node_type
+                      values:
+                      - 48
+                    - operator: in
+                      property: edge_location_display_name
+                      values:
+                      - us-west
+                    - operator: in
+                      property: site_name
+                      values:
+                      - Remote-Conn1
+                    - operator: in
+                      property: site_state
+                      values:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                    - operator: in
+                      property: spn_name
+                      values:
+                      - SPN1
+                    - operator: in
+                      property: instance_state
+                      values:
+                      - 0
+                      - 1
+                      - 2
+                    - operator: in
+                      property: compute_location
+                      values:
+                      - us-east
+                    - operator: in
+                      property: transport_type
+                      values:
+                      - IPSEC
+                      - GRE
+              api with required filters:
+                value:
+                  filter:
+                    rules:
+                    - operator: last_n_hours
+                      property: event_time
+                      values:
+                      - 5
+            schema:
+              properties:
+                filter:
+                  properties:
+                    rules:
+                      items:
+                        properties:
+                          compute_location:
+                            description: Location of the device
+                            example: US East
+                            type: string
+                          edge_location_display_name:
+                            description: Name of PA location
+                            example: US West
+                            type: string
+                          event_time:
+                            description: Time of the event
+                            example: 5
+                            type: number
+                          instance_state:
+                            description: State of the instance
+                            example: 0
+                            type: number
+                          node_type:
+                            description: Type of the node
+                            example: 48
+                            type: number
+                          site_name:
+                            description: Name of the site
+                            example: Remote-Conn1
+                            type: string
+                          site_state:
+                            description: State of the site
+                            example: 1
+                            type: number
+                          spn_name:
+                            description: Name of the SPN
+                            example: SPN1
+                            type: string
+                          transport_type:
+                            description: Type of transport
+                            example: IPSEC
+                            type: string
+                        type: object
+                      required:
+                      - event_time
+                      type: array
+                  type: object
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  egress_bytes_pa_to_gcp:
+                    description: Total Egress Bandwidth consumed from PA to GCP
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  egress_bytes_pa_to_internet:
+                    description: Total Egress Bandwidth consumed from PA to Internet
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  egress_bytes_transferred:
+                    description: Total Egress Bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  ingress_bytes_transferred:
+                    description: Total Ingress Bandwidth consumed
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  pa_to_gcp_distr:
+                    description: Percentage of traffic from PA to GCP
+                    example: 1000000.0
+                    format: float
+                    type: number
+                  pa_to_internet_distr:
+                    description: Percentage of traffic from PA to Internet
+                    example: 1000000.0
+                    format: float
+                    type: number
+                type: object
+          description: OK
+        '400':
+          description: Resource property is not valid
+        '403':
+          description: Permission Denied
+        '404':
+          description: Resource not found
+        '500':
+          description: Failed to process request
+      security:
+      - Bearer: []
+      summary: Site Traffic details
       tags:
       - Sites
 servers:
 - url: https://api.sase.paloaltonetworks.com
 tags:
-- description: 'Incident API
-
-    '
-  name: Incident API
-- description: 'Location API
-
-    '
-  name: Location API
-- description: 'Mobile users API
-
-    '
-  name: Mobile Users API
 - description: 'Sites API
 
     '
   name: Sites API
+- description: 'Location API
+
+    '
+  name: Location API
+- description: 'Incident API
+
+    '
+  name: Incident API
+- description: 'Mobile users API
+
+    '
+  name: Mobile Users API
 - description: 'Application API
 
     '

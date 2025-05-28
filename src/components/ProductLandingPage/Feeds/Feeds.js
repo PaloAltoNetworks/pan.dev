@@ -2,9 +2,22 @@ import React from "react";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import feedsJson from "./feeds.json";
-import mediumFeedsJson from "../../Medium/blogs.json";
 import "./Feeds.scss";
+
+let mediumFeedsJson;
+let feedsJson;
+
+try {
+  mediumFeedsJson = require("../../Medium/blogs.json");
+} catch (error) {
+  mediumFeedsJson = null;
+}
+
+try {
+  feedsJson = require("./feeds.json");
+} catch (error) {
+  feedsJson = null;
+}
 
 function Feeds() {
   const hashicorpImageFeeds = feedsJson.items.slice(0, 2);

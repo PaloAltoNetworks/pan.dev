@@ -60,7 +60,7 @@ function FloatingIsland() {
       >
         {!isVisible && editUrl && <EditThisPageButton />}
         {!isVisible && editUrl && <Divider />}
-        <CopyButton isVisible={isVisible} />
+        {!isVisible && <CopyButton isVisible={isVisible} />}
         {!isVisible && <Divider />}
         {!isVisible && !hide_issue && <ReportAnIssueIcon />}
       </div>

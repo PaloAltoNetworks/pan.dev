@@ -90,16 +90,17 @@ function CopyButton({ isVisible }) {
 
   return (
     <Tooltip
+      tabIndex="0"
       isVisible={isVisible}
       text="Copy contents of documentation as Markdown format for AI usage"
     >
-      <button
+      <a
         onClick={handleCopyMarkdown}
         className={`copy-markdown-btn${copied ? " copied" : ""}`}
         type="button"
       >
-        <span className="icon-container">
-          <Sparkles className="sparkles" />
+        <span className={`icon-container${!isVisible ? " not-visible" : ""}`}>
+          <Sparkles className={`sparkles${isVisible ? " is-visible" : ""}`} />
           <i className="fa-solid fa-check" style={{ fontSize: "16px" }}></i>
         </span>
         {isVisible && (
@@ -107,7 +108,7 @@ function CopyButton({ isVisible }) {
             {copied ? "Copied" : "Copy for AI"}
           </span>
         )}
-      </button>
+      </a>
     </Tooltip>
   );
 }

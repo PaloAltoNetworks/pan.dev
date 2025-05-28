@@ -1,9 +1,9 @@
 import React from "react";
 import "./styles.css";
 
-const Tooltip = ({ children, text, isVisible }) => {
+const Tooltip = ({ children, text, isVisible, tabIndex }) => {
   return (
-    <div className="tooltip-container">
+    <div className="tooltip-container" tabindex={tabIndex}>
       {children}
       <span
         className={`tooltip-text ${isVisible ? "non-floating-island" : ""}`}
