@@ -19,6 +19,7 @@ Enable the relevant threat detection services in the ​​[API Security Profile
 The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable **Malicious URL Detection** in the API security profile for this detection to be effective.
 
 <details>
+
 <summary>python3 inline_sync_scan_api.py</summary>
 
 ```python
@@ -63,7 +64,9 @@ print(json.dumps(scan_response.to_dict()))
 
 </details>
 
-The sample output confirms URL filtering detection in the prompt, indicating the `url_cats=true` with the `action=block` as you set in the API security profile.
+<details>
+
+<summary>The sample output confirms URL filtering detection in the prompt, indicating the `url_cats=true` with the `action=block` as you set in the API security profile.</summary>
 
 ```json
 {
@@ -85,6 +88,7 @@ The sample output confirms URL filtering detection in the prompt, indicating the
    "tr_id" : ""
 }
 ```
+</details>
 
 ## Inline Asynchronous Scan
 
@@ -218,7 +222,10 @@ scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
 print(scan_by_ids_response)
 ```
 
+</details>
+
 <details>
+
 <summary>Example output: The req_id:1 detected a malicious URL threat and req_id:2 detected prompt injection, URL filtering, and sensitive data threats.</summary>
 
 ```json
@@ -278,14 +285,11 @@ print(scan_by_ids_response)
 
 </details>
 
-</details>
-
 ## Inline Scan Reports
 
 The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/ endpoint for schema details.
 
 <details>
-
 <summary>python3 inline_scan_reports.py</summary>
 
 ```python
@@ -326,6 +330,8 @@ example_report_id = "R" + "YOUR_SCAN_ID"  # YOUR_SCAN_ID will be a UUID
 threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
 print(threat_scan_reports)
 ```
+
+</details>
 
 <details>
 <summary>Output: The detailed scan report for an inline asynchronous scan indicates two different threat detections as enabled in your API security profile.</summary>
@@ -467,7 +473,5 @@ print(threat_scan_reports)
 ]
 
 ```
-
-</details>
 
 </details>

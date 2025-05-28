@@ -1,7 +1,7 @@
 ---
 id: pythonsdk
 title: "AI Runtime Security API Python SDK"
-sidebar_label: "AI Runtime Security API Python SDK"
+sidebar_label: "Python SDK Overview"
 keywords:
   - PythonSDK
   - AIRS

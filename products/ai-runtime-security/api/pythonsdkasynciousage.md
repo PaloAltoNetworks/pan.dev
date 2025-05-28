@@ -63,6 +63,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+</details>
 <details>
 
 <summary>Output: The sample output indicates a prompt injection detection with  “injection” flag set to “true”. The “category” is set to “malicious” and the “action” is “block” as set by you in your API security profile.</summary>
@@ -89,8 +90,6 @@ if __name__ == "__main__":
   "completed_at": null
 }
 ```
-
-</details>
 
 </details>
 
@@ -193,6 +192,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+</details>
+
 <details>
 <summary>The output returns the report_id and scan_id, which you can use to fetch scan reports and results:</summary>
 
@@ -203,8 +204,6 @@ if __name__ == "__main__":
   "scan_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
-
-</details>
 
 </details>
 
@@ -226,14 +225,9 @@ import aisecurity
 # IMPORTANT: For asyncio, import Scanner from aisecurity.scan.asyncio.scanner
 from aisecurity.scan.asyncio.scanner import Scanner
 
-
 aisecurity.init()
 
-
 scanner = Scanner()
-
-
-
 
 async def main():
    # See API documentation for response structure
@@ -242,12 +236,11 @@ async def main():
    scan_results = await scanner.query_by_scan_ids(scan_ids=[example_scan_id])
    pprint(scan_results)
 
-
-
-
 if __name__ == "__main__":
    asyncio.run(main())
 ```
+
+</details>
 
 <details>
 <summary>The output indicates prompt injection detection for “req_id:1” with the malicious prompt, while no threats were detected for “req_id: 2”.</summary>
@@ -309,8 +302,6 @@ if __name__ == "__main__":
 
 </details>
 
-</details>
-
 ## Asyncio scan reports
 
 The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/ endpoint for schema details.
@@ -346,6 +337,8 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
+</details>
 
 <details>
 <summary>The output indicates two different threat detections as enabled in your API security profile.</summary>
@@ -481,7 +474,5 @@ if __name__ == "__main__":
   }
 ]
 ```
-
-</details>
 
 </details>
