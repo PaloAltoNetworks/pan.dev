@@ -33,16 +33,19 @@ To request an access token for use with Strata Cloud Manager API requests, you m
    (https://docs.paloaltonetworks.com/strata-cloud-manager/getting-started/access-control) common service.
 
 4. Make an [access token request](/scm/docs/access-tokens) to the Strata Cloud Manager token service using the 
-   `client_id`, `client_secret`, `scope` and `grant_type` values.
+   `grant_type`, `scope`, `tsg_id`, `client_id`, and `client_secret` values.
+
 ```
-curl -X POST https://auth.apps.paloaltonetworks.com/oauth2/access_token \
--H "Content-Type: application/json" \
--d '{"client_id": "<CLIENT_ID>", "client_secret": "<CLIENT_SECRET>", "scope": "tsg_id:<TSG_ID>", "grant_type": "client_credentials"}' \'
+    curl -d "grant_type=client_credentials&scope=tsg_id:<tsg_id>" \
+    -u <client_id>:<client_secret> \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -X POST https://auth.apps.paloaltonetworks.com/oauth2/access_token
 ```
 
 Once you have successfully retrieved an access token, you can make requests against the tenants that are 
 within the scope of your access token. Provide the access token using the `Authorization` header, with 
 the `Bearer` keyword, on your HTTPS request. For example:
+
 ```
 curl "https://api.strata.paloaltonetworks.com/config/security/v1/security-rules" \
 -H "Authorization: Bearer <ACCESS_TOKEN>" \

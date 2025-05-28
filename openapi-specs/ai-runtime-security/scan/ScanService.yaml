@@ -19,7 +19,9 @@ info:
 
 servers:
   - url: "https://service.api.aisecurity.paloaltonetworks.com"
-    description: AI Runtime Security API Intercept service URL
+    description: AI Runtime Security API Intercept service URL for US regions
+  - url: "https://service-de.api.aisecurity.paloaltonetworks.com"  
+    description: AI Runtime Security API Intercept service URL for EU (Germany) regions
 
 tags:
   - name: Scans
@@ -276,6 +278,9 @@ components:
               code_response:
                 type: string
                 description: Code snippet extracted from Response content that you want to scan
+              context:
+                type: string
+                description: The data context for contextual grounding
       required:
         - contents
         - ai_profile
@@ -340,6 +345,10 @@ components:
           $ref: "#/components/schemas/PromptDetected"
         response_detected:
           $ref: "#/components/schemas/ResponseDetected"
+        prompt_masked_data:
+          $ref: "#/components/schemas/MaskedData"
+        response_masked_data:
+          $ref: "#/components/schemas/MaskedData"
         created_at:
           type: string
           format: date-time
@@ -372,6 +381,12 @@ components:
         malicious_code:
           type: boolean
           description: Indicates whether prompt contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether prompt contains any Agent related threats
+        topic_violation:
+          type: boolean
+          description: Indicates whether prompt contains any content violates topic guardrails
 
     ResponseDetected:
       type: object
@@ -384,13 +399,50 @@ components:
           description: Indicates whether response contains any sensitive information
         db_security:
           type: boolean
-          description: Indicates whether prompt contains any database security threats
+          description: Indicates whether response contains any database security threats
         toxic_content:
           type: boolean
-          description: Indicates whether prompt contains any harmful content
+          description: Indicates whether response contains any harmful content
         malicious_code:
           type: boolean
-          description: Indicates whether prompt contains any malicious code
+          description: Indicates whether response contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether response contains any Agent related threats
+        ungrounded:
+          type: boolean
+          description: Indicates whether response contains any ungrounded content
+        topic_violation:
+          type: boolean
+          description: Indicates whether response contains any content violates topic guardrails
+
+    MaskedData:
+      type: object
+      properties:
+        data:
+          type: string
+          description: Original data with sensitive pattern masked
+        pattern_detections:
+          type: array
+          items:
+            $ref: "#/components/schemas/PatternDetections"
+
+    PatternDetections:
+      type: object
+      properties:
+        pattern:
+          type: string
+          description: Matched pattern
+        locations:
+          $ref: "#/components/schemas/OffsetObject"
+
+    OffsetObject:
+      type: array
+      description: Array of start, end offsets
+      items:
+        type: array
+        items:
+          type: integer
 
     ScanIdResult:
       type: object
@@ -522,6 +574,10 @@ components:
           $ref: "#/components/schemas/TcReportObject"
         mc_report:
           $ref: "#/components/schemas/McReportObject"
+        agent_report:
+          $ref: "#/components/schemas/AgentReportObject"
+        topic_guardrails_report:
+          $ref: "#/components/schemas/TgReportObject"
 
     DbsReportObject:
       type: array
@@ -561,6 +617,31 @@ components:
         code_sha256:
           type: string
           description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
+
+
+    AgentReportObject:
+      type: object
+      properties:
+        model_verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        agent_framework:
+          type: string
+          description: Agent builder framework used to build Agents such as "AWS_Agent_Builder", "Microsoft_copilot_studio" and others
+        agent_patterns:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentEntryObject"
+
+    AgentEntryObject:
+      type: object
+      properties:
+        category_type:
+          type: string
+          description: Agent threat category type, such as "tools misuse", "memory manipulation" and others
+        verdict:
+          type: string
+          description: Verdict associated with the Agent threat Category, such as "malicious" or "benign"
 
     UrlFilterReportObject:
       type: array
@@ -616,6 +697,41 @@ components:
           type: string
           description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
           example: ""
+        data_pattern_detection_offsets:
+          type: array
+          description: Matched patterns and their byte locations
+          items:
+            $ref: "#/components/schemas/DlpPatternDetectionsObject"
+
+    DlpPatternDetectionsObject:
+      type: object
+      properties:
+        data_pattern_id:
+          type: string
+          description: Unique identifier for the data pattern matched
+        version:
+          type: integer
+          description: Version of the data pattern matched
+        name:
+          type: string
+          description: Name of the data pattern matched
+        high_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+        medium_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+        low_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+
+
+    TgReportObject:
+      type: object
+      properties:
+        allowed_topic_list:
+          type: string
+          description: Indicates whether there was a content match for the topic allow list such as "MATCHED" or "NOT MATCHED"
+        blocked_topic_list:
+          type: string
+          description: Indicates whether there was a content match for the topic block list such as "MATCHED" or "NOT MATCHED"
 
     Error:
       type: object

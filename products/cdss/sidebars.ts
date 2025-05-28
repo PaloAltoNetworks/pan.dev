@@ -102,6 +102,10 @@ module.exports = {
               type: "doc",
               id: "threat-vault/docs/examples/get-ip-feed-batch-mode",
             },
+            {
+              type: "doc",
+              id: "threat-vault/docs/examples/get-cve-coverage-information",
+            },
           ],
         },
         {
