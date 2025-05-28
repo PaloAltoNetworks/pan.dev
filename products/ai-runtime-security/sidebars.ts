@@ -16,6 +16,10 @@ module.exports = {
       type: "doc",
       id: "ai-runtime-security/api/pythonsdkusage",
     },
+    {
+      type: "doc",
+      id: "ai-runtime-security/api/pythonsdkasynciousage",
+    },
     require("./api/sidebar"),
   ],
 };

@@ -1,7 +1,7 @@
 ---
 id: pythonsdkusage
-title: "Python SDK Usage"
-sidebar_label: "Python SDK Usage"
+title: "Python SDK Inline Usage"
+sidebar_label: "Python SDK Inline Usage"
 keywords:
   - PythonSDK
   - AIRS
@@ -10,13 +10,13 @@ keywords:
   - API
 ---
 
-This page covers the key use cases of the AI Runtime Security Python SDK inline and asyncio scan types with synchronous and asynchronous methods.
-It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, sensitive data, or AI agent detection.
+This page covers the key use cases of the AI Runtime Security Python SDK inline scan types with synchronous and asynchronous methods.
+It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, and sensitive data.
 Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
 ## Inline Synchronous Scan
 
-The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable **Prompt Injection Detection** in the API security profile for this detection to be effective.
+The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable **Malicious URL Detection** in the API security profile for this detection to be effective.
 
 <details>
 <summary>python3 inline_sync_scan_api.py</summary>
@@ -60,9 +60,10 @@ scan_response = scanner.sync_scan(
 # Convert the scan_response to a dictionary and then to a JSON string
 print(json.dumps(scan_response.to_dict()))
 ```
+
 </details>
 
-The sample output confirms prompt injection detection in the prompt, indicating the `url_cats=true` with the `action=block` as you set in the API security profile.
+The sample output confirms URL filtering detection in the prompt, indicating the `url_cats=true` with the `action=block` as you set in the API security profile.
 
 ```json
 {
@@ -75,12 +76,12 @@ The sample output confirms prompt injection detection in the prompt, indicating 
       "injection" : false,
       "url_cats" : true
    },
-   "report_id" : "00000000-800b-4f43-b2d0-2277b443bede",
+   "report_id" : "R00000000-0000-0000-0000-000000000000",
    "response_detected" : {
       "dlp" : false,
       "url_cats" : false
    },
-   "scan_id" : "00000000-800b-4f43-b2d0-2277b443bede",
+   "scan_id" : "000000000-0000-0000-0000-000000000000",
    "tr_id" : ""
 }
 ```
@@ -183,14 +184,14 @@ pprint({
 </details>
 
 <details>
-<summary>The output of the inline async scan returns the report_id and scan_id:</summary>
+<summary>The output of the inline async scan returns the report_id and scan_id which you can use to fetch scan reports and results:</summary>
 
 ```json
 {
    "received" : "datetime.datetime(2025, 5, 28, 3, 57, 58, 49876, tzinfo=TzInfo(UTC))
 ",
-   "report_id" : "00000000-a57b-4aba-997a-eb3eda1b89f9",
-   "scan_id" : "00000000-a57b-4aba-997a-eb3eda1b89f9"
+   "report_id" : "R00000000-0000-0000-0000-000000000000",
+   "scan_id" : "000000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -218,10 +219,61 @@ print(scan_by_ids_response)
 ```
 
 <details>
-<summary>Example output:</summary>
+<summary>Example output: The req_id:1 detected a malicious URL threat and req_id:2 detected prompt injection, URL filtering, and sensitive data threats.</summary>
 
-```bash
-[ScanIdResult(req_id=1, status='complete', scan_id='000000000-0000-0000-0000-000000000000', result=ScanResponse(report_id='000000000-0000-0000-0000-000000000000', scan_id='000000000-0000-0000-0000-000000000000', tr_id='', profile_id='000000000-0000-0000-0000-000000000000', profile_name='ai-sec-security', category='malicious', action='block', prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), response_detected=ResponseDetected(url_cats=False, dlp=False), created_at=None, completed_at=datetime.datetime(2025, 5, 28, 3, 53, 5, tzinfo=TzInfo(UTC)))), ScanIdResult(req_id=2, status='complete', scan_id='000000000-0000-0000-0000-000000000000', result=ScanResponse(report_id='000000000-0000-0000-0000-000000000000', scan_id='000000000-0000-0000-0000-000000000000', tr_id='', profile_id='000000000-0000-0000-0000-000000000000', profile_name='ai-sec-security', category='malicious', action='block', prompt_detected=PromptDetected(url_cats=True, dlp=True, injection=True), response_detected=ResponseDetected(url_cats=False, dlp=False), created_at=None, completed_at=datetime.datetime(2025, 5, 28, 3, 53, 6, tzinfo=TzInfo(UTC))))]
+```json
+[
+  {
+    "req_id": 1,
+    "status": "complete",
+    "scan_id": "000000000-0000-0000-0000-000000000000",
+    "result": {
+      "report_id": "000000000-0000-0000-0000-000000000000",
+      "scan_id": "000000000-0000-0000-0000-000000000000",
+      "tr_id": "",
+      "profile_id": "000000000-0000-0000-0000-000000000000",
+      "profile_name": "ai-sec-security",
+      "category": "malicious",
+      "action": "block",
+      "prompt_detected": {
+        "url_cats": true,
+        "dlp": false,
+        "injection": false
+      },
+      "response_detected": {
+        "url_cats": false,
+        "dlp": false
+      },
+      "created_at": null,
+      "completed_at": "2025-05-28T03:53:05+00:00"
+    }
+  },
+  {
+    "req_id": 2,
+    "status": "complete",
+    "scan_id": "000000000-0000-0000-0000-000000000000",
+    "result": {
+      "report_id": "000000000-0000-0000-0000-000000000000",
+      "scan_id": "000000000-0000-0000-0000-000000000000",
+      "tr_id": "",
+      "profile_id": "000000000-0000-0000-0000-000000000000",
+      "profile_name": "ai-sec-security",
+      "category": "malicious",
+      "action": "block",
+      "prompt_detected": {
+        "url_cats": true,
+        "dlp": true,
+        "injection": true
+      },
+      "response_detected": {
+        "url_cats": false,
+        "dlp": false
+      },
+      "created_at": null,
+      "completed_at": "2025-05-28T03:53:06+00:00"
+    }
+  }
+]
 ```
 
 </details>
