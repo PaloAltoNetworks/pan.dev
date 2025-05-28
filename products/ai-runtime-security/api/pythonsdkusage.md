@@ -14,755 +14,408 @@ This page covers the key use cases of the AI Runtime Security Python SDK inline 
 It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, sensitive data, or AI agent detection.
 Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
+## Inline Synchronous Scan
 
-## Synchronous Inline Scan
-
-The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable Prompt Injection Detection in the API security profile for this detection to be effective.
+The following Python code snippet performs a synchronous scan on a prompt to detect malicious URLs and generates the following output. Enable **Prompt Injection Detection** in the API security profile for this detection to be effective.
 
 <details>
 <summary>python3 inline_sync_scan_api.py</summary>
 
 ```python
-import aisecurity
-import json
-
-
-from aisecurity.generated_openapi_client import Metadata
-from aisecurity.generated_openapi_client.models.ai_profile import AiProfile
-from aisecurity.scan.models.content import Content
-from aisecurity.scan.inline.scanner import Scanner
+import os
 from pprint import pprint
+import json
+import aisecurity
 
 
-# Either the Profile name or Profile ID is sufficient; both are not mandatory
-#DEMO_AI_PROFILE_ID: str = "YOUR_PROFILE_ID_GOES_HERE"
-DEMO_AI_PROFILE_NAME: str = "ai-sec-security"
-DEMO_API_KEY: str = "<your-API-key>"
+from aisecurity.generated_openapi_client.models.ai_profile import AiProfile
+# IMPORTANT: For traditional (non-asyncio), import Scanner from aisecurity.scan.inline.scanner
+from aisecurity.scan.inline.scanner import Scanner
+from aisecurity.scan.models.content import Content
 
 
-"""
-Sdk setup
+AI_PROFILE_NAME = "ai-sec-security"
+API_KEY = os.getenv("PANW_AI_SEC_API_KEY")
 
 
-The aisecurity.init() function accepts the following parameters:
-   1)api_key : Provide your API key through configuration or an environment variable.
-   2)api_endpoint (optional): Default value is "https://security.api.aisecurity.paloaltonetworks.com".
-   2)num_retries (optional): Default value is 5.
+# Initialize the SDK with your API Key
+aisecurity.init(api_key=API_KEY)
 
 
-Setting up the API Key:
-Choose one of the following API Key Configuration Methods:
-1) Using an environment variable:
-   export PANW_AI_SEC_API_KEY=YOUR_API_KEY_GOES_HERE
-2) Load Dynamically from a secure Secret Store (e.g. Cloud Secrets Manager / Vault)
-   api_key = function_to_get_api_key() # TODO: Load an API Key at runtime
-   aisecurity.init(api_key=api_key)
+# Configure an AI Profile
+ai_profile = AiProfile(profile_name=AI_PROFILE_NAME)
 
 
-
-
-Customizing the API Endpoint
-   aisecurity.init(api_endpoint="https://api.example.com")
-
-
-"""
-
-
-aisecurity.init(api_key=DEMO_API_KEY)
-
-
-pprint("Create a new scanner")
-ai_security_example = Scanner()
-
-
-# Create AI profile and content objects
-ai_profile = AiProfile(profile_name=DEMO_AI_PROFILE_NAME)
-content1 = Content(
-   prompt="This is a tests prompt with 72zf6.rxqfd.com/i8xps1 url",
-   response="This is a tests response",
+# Create a Scanner
+scanner = Scanner()
+scan_response = scanner.sync_scan(
+   ai_profile=ai_profile,
+   content=Content(
+       prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url",
+       response="Questionable Model Response Text",
+   ),
 )
-## Optional parameters for the scan api
-tr_id = "1111"  # Optionally Provide any unique identifier string for correlating the prompt and response transactions.
-metadata = Metadata(
-   app_name="concurrent_sdk", app_user="user", ai_model="sample_model"
-)  # Optionally send the app_name, app_user, and ai_model in the metadata
-
-
-
-
-pprint("==============================================================")
-pprint("Invoke sync scan call")
-scan_response = ai_security_example.sync_scan(
-   ai_profile=ai_profile, content=content1, tr_id=tr_id, metadata=metadata
-)
-pprint("==============================================================")
-"""
-Sync scan example
-   report_id='demo_report_id'
-   scan_id='demo_scan_id'
-   tr_id='demo_transaction_id'
-   profile_id='demo_profile_id'
-   profile_name='demo_profile_name'
-   category='demo_category'
-   action='demo_action'
-   prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False)
-   response_detected=ResponseDetected(url_cats=False, dlp=False)
-   created_at=None
-   completed_at=None
-"""
-pprint(f"sync scan response: {scan_response}\n")
-
-
-
-
-if __name__ == "__main__":
-   pprint("ai_security Example is completed")
+# See API documentation for response structure
+# https://pan.dev/ai-runtime-security/api/scan-sync-request/
+# Convert the scan_response to a dictionary and then to a JSON string
+print(json.dumps(scan_response.to_dict()))
 ```
 </details>
 
 The sample output confirms prompt injection detection in the prompt, indicating the `url_cats=true` with the `action=block` as you set in the API security profile.
 
 ```json
-"sync scan response: report_id='Rcb66669d-b45f-4d96-8f42-1d3d4f30fae4' "
- "scan_id='cb66669d-b45f-4d96-8f42-1d3d4f30fae4' tr_id='1234' "
- "profile_id='8c8fdf8b-d494-4e41-ba54-c16120c4ef0b' "
- "profile_name='ai-sec-db-security' category='malicious' action='block' "
- "prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False) "
- "response_detected=ResponseDetected(url_cats=False, dlp=False) "
- "created_at=None completed_at=None\n"
+{
+   "action" : "block",
+   "category" : "malicious",
+   "profile_id" : "00000000-4ee3-44e9-8f69-9cbfd523fee3",
+   "profile_name" : "ai-sec-security",
+   "prompt_detected" : {
+      "dlp" : false,
+      "injection" : false,
+      "url_cats" : true
+   },
+   "report_id" : "00000000-800b-4f43-b2d0-2277b443bede",
+   "response_detected" : {
+      "dlp" : false,
+      "url_cats" : false
+   },
+   "scan_id" : "00000000-800b-4f43-b2d0-2277b443bede",
+   "tr_id" : ""
+}
 ```
 
-## Asynchronous Inline Scan
+## Inline Asynchronous Scan
 
 The following Python code snippet shows an example of an asynchronous scan, query by scan IDs, and query by report IDs.
-It scans a prompt asynchronously. The scans are queued and may take approximately 10 seconds to complete.
+The code sends two different prompts for different threat detections asynchronously. The scans are queued and may take approximately 10 seconds to complete.
 
 <details>
-<summary>python3 inline_async_scan_api.py</summary>
+<summary>python3 inline_async_scan.py</summary>
 
 ```python
+# Copyright (c) 2025, Palo Alto Networks
+#
+# Licensed under the Polyform Internal Use License 1.0.0 (the "License");
+# you may not use this file except in compliance with the License.
+#
+# You may obtain a copy of the License at:
+#
+# https://polyformproject.org/licenses/internal-use/1.0.0
+# (or)
+# https://github.com/polyformproject/polyform-licenses/blob/76a278c4/PolyForm-Internal-Use-1.0.0.md
+#
+# As far as the law allows, the software comes as is, without any warranty
+# or condition, and the licensor will not be liable to you for any damages
+# arising out of these terms or the use or nature of the software, under
+# any kind of legal claim.
+
+"""
+Traditional Python Batch (Asynchronous/Multiple) Scan Example
+
+API Reference: https://pan.dev/ai-runtime-security/api/scan-async-request/
+"""
+
+import os
+from pprint import pprint
+
 import aisecurity
-
-
+from aisecurity.generated_openapi_client.models.ai_profile import AiProfile
 from aisecurity.generated_openapi_client.models.async_scan_object import AsyncScanObject
 from aisecurity.generated_openapi_client.models.scan_request import ScanRequest
-from aisecurity.generated_openapi_client.models.ai_profile import AiProfile
 from aisecurity.generated_openapi_client.models.scan_request_contents_inner import (
-   ScanRequestContentsInner,
+    ScanRequestContentsInner,
 )
+
+# IMPORTANT: For traditional (non-asyncio), import Scanner from aisecurity.scan.inline.scanner
 from aisecurity.scan.inline.scanner import Scanner
-from aisecurity.scan.models.content import Content
-from pprint import pprint
 
+AI_PROFILE_NAME = "ai-sec-security"
+API_KEY = os.getenv("PANW_AI_SEC_API_KEY")
 
-# Either the Profile name or Profile ID is sufficient; both are not mandatory
-# DEMO_AI_PROFILE_ID: str = "YOUR_PROFILE_ID_GOES_HERE"
-DEMO_AI_PROFILE_NAME: str = "ai-sec-security"
-DEMO_API_KEY: str = "<your-API-key>"
-"""
-Sdk setup
+# Initialize the SDK with your API Key
+aisecurity.init(api_key=API_KEY)
 
+# Configure an AI Profile
+ai_profile = AiProfile(profile_name=AI_PROFILE_NAME)
 
-The aisecurity.init() function accepts the following parameters:
-   1)api_key : Provide your API key through configuration or an environment variable.
-   2)api_endpoint (optional): Default value is "https://security.api.aisecurity.paloaltonetworks.com".
-   2)num_retries (optional): Default value is 5.
+# Create a Scanner
+scanner = Scanner()
 
-
-Setting up the API Key:
-Choose one of the following API Key Configuration Methods:
-
-
-1) Using an environment variable:
-   export PANW_AI_SEC_API_KEY=YOUR_API_KEY_GOES_HERE
-2) Load Dynamically from a secure Secret Store (e.g. Cloud Secrets Manager / Vault)
-   api_key = function_to_get_api_key() # TODO: Load an API Key at runtime
-   aisecurity.init(api_key=api_key)
-
-
-
-
-Customizing the API Endpoint
-   aisecurity.init(api_endpoint="https://api.example.com")
-
-
-"""
-
-
-aisecurity.init(api_key=DEMO_API_KEY)
-
-
-pprint("Create a new scanner")
-ai_security_example = Scanner()
-
-
-# Enter one of the following: profile_id or profile_name, both are not mandatory
-ai_profile = AiProfile(profile_name=DEMO_AI_PROFILE_NAME)
-content1 = Content(
-   # Enter one of the following - prompt or response
-   prompt="This is a tests prompt with 72zf6.rxqfd.com/i8xps1 url",
-   response="This is a tests response",
-)
-
-
-# Prepare async scan objects
+req_ids = 0
+# Batch (Asyncronous) Scan supports up to 5 Scan Request Objects
 async_scan_objects = [
-   AsyncScanObject(
-       req_id=1,
-       scan_req=ScanRequest(
-           tr_id="1234",
-           ai_profile=ai_profile,
-           contents=[
-               ScanRequestContentsInner(
-                   prompt=content1.prompt, response=content1.response
-               )
-           ],
-       ),
-   ),
-   AsyncScanObject(
-       req_id=2,
-       scan_req=ScanRequest(
-           ai_profile=ai_profile,
-           contents=[
-               ScanRequestContentsInner(
-                   prompt=content1.prompt, response=content1.response
-               )
-           ],
-       ),
-   ),
+    AsyncScanObject(
+        req_id=(req_ids := req_ids + 1),
+        scan_req=ScanRequest(
+            ai_profile=ai_profile,
+            contents=[
+                ScanRequestContentsInner(
+                    prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url",
+                )
+            ],
+        ),
+    ),
+    AsyncScanObject(
+        req_id=(req_ids := req_ids + 1),
+        scan_req=ScanRequest(
+            ai_profile=ai_profile,
+            contents=[
+                ScanRequestContentsInner(
+                    prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
+                    response="Second Questionable Model Response Text",
+                )
+            ],
+        ),
+    ),
 ]
 
-
-
-
-pprint("==============================================================")
-"""
-Async scan example
-"""
-pprint("Invoke async scan call")
-# Introduce a 2-second delay
-time.sleep(2)
-scan_async_response = ai_security_example.async_scan(async_scan_objects)
-pprint(f"async scan response: {scan_async_response}\n")
-pprint("==============================================================")
-"""
-Query scan result by scanId example - query newly async request
-[
-   ScanIdResult(
-       req_id=1,
-       status='demo_status',
-       scan_id='demo_scan_id',
-       result=ScanResponse(
-           report_id='demo_report_id',
-           scan_id='demo_scan_id',
-           tr_id='demo_tr_id',
-           profile_id='demo_profile_id',
-           profile_name='demo_profile_name',
-           category='demo_category',
-           action='demo_action',
-           prompt_detected=PromptDetected(
-               url_cats=False,
-               dlp=False,
-               injection=False
-           ),
-           response_detected=ResponseDetected(
-               url_cats=False,
-               dlp=False
-           ),
-           created_at=None,
-           completed_at=datetime.datetime(1, 1, 1, 0, 0, tzinfo=TzInfo(UTC))
-       )
-   )
-   ]
-"""
-
-
-scan_by_ids_response = ai_security_example.query_by_scan_ids(
-   scan_ids=[scan_async_response.scan_id]
-)
-pprint("==============================================================")
-pprint(
-   f"scan by ids response newly async scan id is {scan_async_response.scan_id} and the result is {scan_by_ids_response}\n"
-)
-pprint("==============================================================")
-"""
-Query  Report example - query existing async request
-[
-   ThreatScanReportObject(
-       report_id='demo_report_id',
-       scan_id='demo_scan_id',
-       req_id=1,
-       transaction_id='demo_transaction_id',
-       detection_results=[
-           DetectionServiceResultObject(
-               data_type='demo_data_type',
-               detection_service='demo_detection_service',
-               verdict='demo_verdict',
-               action='demo_action',
-               result_detail=DSDetailResultObject(
-                   urlf_report=[
-                       UrlfEntryObject(
-                           url='demo_url',
-                           risk_level='demo_risk_level',
-                           categories=['demo_category']
-                       )
-                   ],
-                   dlp_report=None
-               )
-           ),
-           DetectionServiceResultObject(
-               data_type='demo_data_type',
-               detection_service='demo_detection_service',
-               verdict='demo_verdict',
-               action='demo_action',
-               result_detail=DSDetailResultObject(
-                   urlf_report=None,
-                   dlp_report=None
-               )
-           )
-       ]
-   )
-]
-
-
-"""
-
-
-scan_by_ids_response = ai_security_example.query_by_report_ids(
-   report_ids=[scan_async_response.report_id]
-)
-
-
-pprint(f"query by report ids response and the result is {scan_by_ids_response}\n")
-pprint("==============================================================")
-
-
-if __name__ == "__main__":
-   pprint("ai_security Example is completed")
+response = scanner.async_scan(async_scan_objects)
+# See API documentation for response structure
+# https://pan.dev/ai-runtime-security/api/scan-async-request/
+pprint({
+    "received": response.received,
+    "scan_id": response.scan_id,
+    "report_id": response.report_id,
+})
 ```
 
 </details>
 
 <details>
-<summary>Sample output:</summary>
+<summary>The output of the inline async scan returns the report_id and scan_id:</summary>
 
 ```json
-'Create a new scanner'
-'=============================================================='
-'Invoke async scan call'
-('async scan response: received=datetime.datetime(2025, 3, 13, 17, 12, 45, '
-"599922, tzinfo=TzInfo(UTC)) scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96' "
-"report_id='R2a706cfa-37b9-42f6-92e6-4edb1af9ba96'\n")
-'=============================================================='
-'=============================================================='
-('scan by ids response newly async scan id is '
-'2a706cfa-37b9-42f6-92e6-4edb1af9ba96 and the result is '
-"[ScanIdResult(req_id=1, status='complete', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"result=ScanResponse(report_id='R2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', tr_id='1234', "
-"profile_id='8c8fdf8b-d494-4e41-ba54-c16120c4ef0b', "
-"profile_name='ai-sec-db-security', category='malicious', action='block', "
-'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), '
-'response_detected=ResponseDetected(url_cats=False, dlp=False), '
-'created_at=None, completed_at=datetime.datetime(2025, 3, 13, 17, 12, 46, '
-"tzinfo=TzInfo(UTC)))), ScanIdResult(req_id=2, status='complete', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"result=ScanResponse(report_id='R2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', tr_id='', "
-"profile_id='8c8fdf8b-d494-4e41-ba54-c16120c4ef0b', "
-"profile_name='ai-sec-db-security', category='malicious', action='block', "
-'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), '
-'response_detected=ResponseDetected(url_cats=False, dlp=False), '
-'created_at=None, completed_at=datetime.datetime(2025, 3, 13, 17, 12, 46, '
-'tzinfo=TzInfo(UTC))))]\n')
-'=============================================================='
-('query by report ids response and the result is '
-"[ThreatScanReportObject(report_id='R2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', req_id=1, "
-"transaction_id='1234', "
-"detection_results=[DetectionServiceResultObject(data_type='prompt', "
-"detection_service='dlp', verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, '
-"dlp_report=DlpReportObject(dlp_report_id='CEB4AD72ECA22B7A16C0EA1EC561EB23607F1330102CB7248C0C1D4F22F4BCB1', "
-"dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
-"dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
-"data_pattern_rule2_verdict=''))), "
-"DetectionServiceResultObject(data_type='prompt', detection_service='pi', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
-"DetectionServiceResultObject(data_type='prompt', detection_service='uf', "
-"verdict='malicious', action='block', "
-"result_detail=DSDetailResultObject(urlf_report=[UrlfEntryObject(url='72zf6.rxqfd.com/i8xps1', "
-"risk_level='Not Given', categories=['malware'])], dlp_report=None)), "
-"DetectionServiceResultObject(data_type='response', detection_service='dbs', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
-"DetectionServiceResultObject(data_type='response', detection_service='dlp', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, '
-"dlp_report=DlpReportObject(dlp_report_id='F878E8868506459A23F6075C7038E8BE0BF32281926CD6253D2AD03BFBA2D5D5', "
-"dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
-"dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
-"data_pattern_rule2_verdict=''))), "
-"DetectionServiceResultObject(data_type='response', detection_service='uf', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=[], dlp_report=None))]), '
-"ThreatScanReportObject(report_id='R2a706cfa-37b9-42f6-92e6-4edb1af9ba96', "
-"scan_id='2a706cfa-37b9-42f6-92e6-4edb1af9ba96', req_id=2, transaction_id='', "
-"detection_results=[DetectionServiceResultObject(data_type='prompt', "
-"detection_service='dlp', verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, '
-"dlp_report=DlpReportObject(dlp_report_id='4564D36396083FB5715A965AD5C1991291E0F5D1D9F449D984F37EB7003BBBEE', "
-"dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
-"dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
-"data_pattern_rule2_verdict=''))), "
-"DetectionServiceResultObject(data_type='prompt', detection_service='pi', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
-"DetectionServiceResultObject(data_type='prompt', detection_service='uf', "
-"verdict='malicious', action='block', "
-"result_detail=DSDetailResultObject(urlf_report=[UrlfEntryObject(url='72zf6.rxqfd.com/i8xps1', "
-"risk_level='Not Given', categories=['malware'])], dlp_report=None)), "
-"DetectionServiceResultObject(data_type='response', detection_service='dbs', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
-"DetectionServiceResultObject(data_type='response', detection_service='dlp', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=None, '
-"dlp_report=DlpReportObject(dlp_report_id='9C7EE1FA7B4B9668D4F80259D6D174530B85884795711D7B916D156767407617', "
-"dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
-"dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
-"data_pattern_rule2_verdict=''))), "
-"DetectionServiceResultObject(data_type='response', detection_service='uf', "
-"verdict='benign', action='allow', "
-'result_detail=DSDetailResultObject(urlf_report=[], dlp_report=None))])]\n')
-'=============================================================='
-'ai_security Example is completed'
+{
+   "received" : "datetime.datetime(2025, 5, 28, 3, 57, 58, 49876, tzinfo=TzInfo(UTC))
+",
+   "report_id" : "00000000-a57b-4aba-997a-eb3eda1b89f9",
+   "scan_id" : "00000000-a57b-4aba-997a-eb3eda1b89f9"
+}
 ```
+
 </details>
 
-## Asyncio Synchronous and Asynchronous Scans
+## Inline Scan Results
 
-The following Python code snippet shows an example of synchronous and asynchronous scans using `asyncio` library.
+The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/ for schema details.
 
 <details>
-<summary>python3 asyncio_sync_scan_api.py</summary>
+<summary>python3 inline_scan_results.py</summary>
 
 ```python
-import asyncio
 import aisecurity
-from aisecurity.generated_openapi_client import AiProfile, Metadata
-from aisecurity.generated_openapi_client import AsyncScanObject
-from aisecurity.generated_openapi_client import ScanRequest
-from aisecurity.generated_openapi_client import ScanRequestContentsInner
-
-
-from aisecurity.scan.models.content import Content
-from aisecurity.scan.asyncio.scanner import Scanner
-from pprint import pprint
-
-
-# Either the Profile name or Profile ID is sufficient; both are not mandatory
-# DEMO_AI_PROFILE_ID: str = "YOUR_PROFILE_ID_GOES_HERE"
-DEMO_AI_PROFILE_NAME: str = "ai-sec-security"
-DEMO_API_KEY: str = "<your-API-key>"
-
-
-"""
-Sdk setup
-
-
-The aisecurity.init() function accepts the following parameters:
-   1)api_key : Provide your API key through configuration or an environment variable.
-   2)api_endpoint (optional): Default value is "https://security.api.aisecurity.paloaltonetworks.com".
-   2)num_retries (optional): Default value is 5.
-
-
-Setting up the API Key:
-Choose one of the following API Key Configuration Methods::
-1) Using an environment variable:
-   export PANW_AI_SEC_API_KEY=YOUR_API_KEY_GOES_HERE
-2) Load Dynamically from a secure Secret Store (e.g. Cloud Secrets Manager / Vault)
-   api_key = function_to_get_api_key() # TODO: Load an API Key at runtime
-   aisecurity.init(api_key=api_key)
-
-
-
-
-Customizing the API Endpoint
-   aisecurity.init(api_endpoint="https://api.example.com")
-
-
-"""
-
-
-
-
-aisecurity.init(api_key=DEMO_API_KEY)
-aisecurity_example = Scanner()
-# Create AI profile and content objects
-ai_profile = AiProfile(profile_name=DEMO_AI_PROFILE_NAME)
-content1 = Content(
-   prompt="This is a tests prompt with 72zf6.rxqfd.com/i8xps1 url",
-   response="This is a tests response",
-)
-tr_id = "1234"  # Optionally Provide any unique identifier string for correlating the prompt and response transactions.
-metadata = Metadata(
-   app_name="concurrent_sdk", app_user="user", ai_model="sample_model"
-)  # Optionally send the app_name, app_user, and ai_model in the metadata
-
-
-# Prepare async scan objects
-async_scan_objects = [
-   AsyncScanObject(
-       req_id=1,
-       scan_req=ScanRequest(
-           ai_profile=ai_profile,
-           contents=[
-               ScanRequestContentsInner(
-                   prompt=content1.prompt, response=content1.response
-               )
-           ],
-       ),
-   ),
-   AsyncScanObject(
-       req_id=2,
-       scan_req=ScanRequest(
-           ai_profile=ai_profile,
-           contents=[
-               ScanRequestContentsInner(
-                   prompt=content1.prompt, response=content1.response
-               )
-           ],
-       ),
-   ),
-]
-
-
-
-
-async def run_concurrent_scans():
-   # Run sync_scan, async_scan, and query_by_report_ids concurrently
-   sync_scan_task = aisecurity_example.sync_scan(
-       ai_profile=ai_profile, content=content1, tr_id=tr_id, metadata=metadata
-   )
-   async_scan_task = aisecurity_example.async_scan(async_scan_objects)
-
-
-   # Wait for all tasks to complete
-   sync_result, async_result = await asyncio.gather(sync_scan_task, async_scan_task)
-
-
-   # Process and pprint results
-   sync_response = sync_result
-   async_response = async_result
-   pprint("==============================================================")
-   pprint(f"Sync scan response : {sync_response}")
-   pprint("==============================================================")
-   pprint(f"Async scan response : {async_response}")
-   pprint("==============================================================")
-
-
-   # Query the async scan result
-   if async_response and async_response.scan_id and async_response.report_id:
-       (scan_by_ids_response) = await aisecurity_example.query_by_scan_ids(
-           scan_ids=[async_response.scan_id]
-       )
-       """
-       Query scan result by scanId example - query newly async request
-       [
-       ScanIdResult(
-       req_id=1,
-       status='demo_status',
-       scan_id='demo_scan_id',
-       result=ScanResponse(
-           report_id='demo_report_id',
-           scan_id='demo_scan_id',
-           tr_id='demo_tr_id',
-           profile_id='demo_profile_id',
-           profile_name='demo_profile_name',
-           category='demo_category',
-           action='demo_action',
-           prompt_detected=PromptDetected(
-               url_cats=False,
-               dlp=False,
-               injection=False
-           ),
-           response_detected=ResponseDetected(
-               url_cats=False,
-               dlp=False
-           ),
-           created_at=None,
-           completed_at=datetime.datetime(1, 1, 1, 0, 0, tzinfo=TzInfo(UTC))
-           )
-           )
-       ]
-       """
-       pprint(
-           f"Async scan ID: {async_response.scan_id}, Result: {scan_by_ids_response}"
-       )
-
-
-       (report_by_ids_response) = await aisecurity_example.query_by_report_ids(
-           report_ids=[async_response.report_id]
-       )
-       """
-       [
-       ThreatScanReportObject(
-       report_id='demo_report_id',
-       scan_id='demo_scan_id',
-       req_id=1,
-       transaction_id='demo_transaction_id',
-       detection_results=[
-           DetectionServiceResultObject(
-               data_type='demo_data_type',
-               detection_service='demo_detection_service',
-               verdict='demo_verdict',
-               action='demo_action',
-               result_detail=DSDetailResultObject(
-                   urlf_report=[
-                       UrlfEntryObject(
-                           url='demo_url',
-                           risk_level='demo_risk_level',
-                           categories=['demo_category']
-                       )
-                   ],
-                   dlp_report=None
-               )
-           ),
-           DetectionServiceResultObject(
-               data_type='demo_data_type',
-               detection_service='demo_detection_service',
-               verdict='demo_verdict',
-               action='demo_action',
-               result_detail=DSDetailResultObject(
-                   urlf_report=None,
-                   dlp_report=None
-               )
-           )
-       ]
-       """
-       pprint("==============================================================")
-       pprint(
-           f"Async report ID: {async_response.report_id}, Result: {report_by_ids_response}"
-       )
-
-
-
-
-if __name__ == "__main__":
-   try:
-       asyncio.run(run_concurrent_scans())
-       pprint("AI Security concurrent scanning example completed")
-   except Exception as e:
-       pprint(f"Error: {e}")
-   finally:
-       asyncio.run(aisecurity_example.close())
+import json
+# IMPORTANT: For traditional (non-asyncio), import Scanner from aisecurity.scan.inline.scanner
+from aisecurity.scan.inline.scanner import Scanner
+aisecurity.init()
+scanner = Scanner()
+# See API documentation for response structure
+# https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/
+example_scan_id = "00000000-0000-0000-0000-000000000000"
+scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
+print(scan_by_ids_response)
 ```
-
-The verdict is malicious when there a threat is detected, and the action is set to allow or block as set by you in the API security profile.
-The verdict is benign when no threat is detected by the Python SDK scan.
-</details>
 
 <details>
-<summary>Sample output:</summary>
+<summary>Example output:</summary>
+
+```bash
+[ScanIdResult(req_id=1, status='complete', scan_id='000000000-0000-0000-0000-000000000000', result=ScanResponse(report_id='000000000-0000-0000-0000-000000000000', scan_id='000000000-0000-0000-0000-000000000000', tr_id='', profile_id='000000000-0000-0000-0000-000000000000', profile_name='ai-sec-security', category='malicious', action='block', prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), response_detected=ResponseDetected(url_cats=False, dlp=False), created_at=None, completed_at=datetime.datetime(2025, 5, 28, 3, 53, 5, tzinfo=TzInfo(UTC)))), ScanIdResult(req_id=2, status='complete', scan_id='000000000-0000-0000-0000-000000000000', result=ScanResponse(report_id='000000000-0000-0000-0000-000000000000', scan_id='000000000-0000-0000-0000-000000000000', tr_id='', profile_id='000000000-0000-0000-0000-000000000000', profile_name='ai-sec-security', category='malicious', action='block', prompt_detected=PromptDetected(url_cats=True, dlp=True, injection=True), response_detected=ResponseDetected(url_cats=False, dlp=False), created_at=None, completed_at=datetime.datetime(2025, 5, 28, 3, 53, 6, tzinfo=TzInfo(UTC))))]
+```
+
+</details>
+
+</details>
+
+## Inline Scan Reports
+
+The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/ endpoint for schema details.
+
+<details>
+
+<summary>python3 inline_scan_reports.py</summary>
+
+```python
+# Copyright (c) 2025, Palo Alto Networks
+#
+# Licensed under the Polyform Internal Use License 1.0.0 (the "License");
+# you may not use this file except in compliance with the License.
+#
+# You may obtain a copy of the License at:
+#
+# https://polyformproject.org/licenses/internal-use/1.0.0
+# (or)
+# https://github.com/polyformproject/polyform-licenses/blob/76a278c4/PolyForm-Internal-Use-1.0.0.md
+#
+# As far as the law allows, the software comes as is, without any warranty
+# or condition, and the licensor will not be liable to you for any damages
+# arising out of these terms or the use or nature of the software, under
+# any kind of legal claim.
+
+"""
+Retrieve Threat Scan Reports by Report IDs
+
+API Reference: https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
+"""
+
+import aisecurity
+
+# IMPORTANT: For traditional (non-asyncio), import Scanner from aisecurity.scan.inline.scanner
+from aisecurity.scan.inline.scanner import Scanner
+
+aisecurity.init()
+
+scanner = Scanner()
+
+# See API documentation for response structure
+# https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
+example_report_id = "R" + "YOUR_SCAN_ID"  # YOUR_SCAN_ID will be a UUID
+threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
+print(threat_scan_reports)
+```
+
+<details>
+<summary>Output: The detailed scan report for an inline asynchronous scan indicates two different threat detections as enabled in your API security profile.</summary>
 
 ```json
-'=============================================================='
-("Sync scan response : report_id='R36ac8984-93d7-42dd-aa91-64ea5e03df6a' "
- "scan_id='36ac8984-93d7-42dd-aa91-64ea5e03df6a' tr_id='1234' "
- "profile_id='068ff227-4ee3-44e9-8f69-9cbfd523fee3' "
- "profile_name='ai-sec-security' category='malicious' action='block' "
- 'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False) '
- 'response_detected=ResponseDetected(url_cats=False, dlp=False) '
- 'created_at=None completed_at=None')
-'=============================================================='
-('Async scan response : received=datetime.datetime(2025, 4, 14, 11, 24, 32, '
- "521057, tzinfo=TzInfo(UTC)) scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557' "
- "report_id='Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557'")
-'=============================================================='
-('Async scan ID: ff0b83d3-b5e2-4cac-871e-abcd1c6f0557, Result: '
- "[ScanIdResult(req_id=1, status='pending', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "result=ScanResponse(report_id='Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', tr_id='', "
- "profile_id='068ff227-4ee3-44e9-8f69-9cbfd523fee3', "
- "profile_name='ai-sec-security', category='malicious', action='block', "
- 'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), '
- 'response_detected=ResponseDetected(url_cats=False, dlp=False), '
- 'created_at=None, completed_at=datetime.datetime(2025, 4, 14, 11, 24, 33, '
- "tzinfo=TzInfo(UTC)))), ScanIdResult(req_id=2, status='complete', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "result=ScanResponse(report_id='Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', tr_id='', "
- "profile_id='068ff227-4ee3-44e9-8f69-9cbfd523fee3', "
- "profile_name='ai-sec-security', category='malicious', action='block', "
- 'prompt_detected=PromptDetected(url_cats=True, dlp=False, injection=False), '
- 'response_detected=ResponseDetected(url_cats=False, dlp=False), '
- 'created_at=None, completed_at=datetime.datetime(2025, 4, 14, 11, 24, 34, '
- 'tzinfo=TzInfo(UTC))))]')
-'=============================================================='
-('Async report ID: Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557, Result: '
- "[ThreatScanReportObject(report_id='Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', req_id=1, transaction_id='', "
- "detection_results=[DetectionServiceResultObject(data_type='prompt', "
- "detection_service='dlp', verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, '
- "dlp_report=DlpReportObject(dlp_report_id='AD5DF9FD1EE2D0DEE8E79780D8AED4580B8D7925FC16F81ABDF35740A2A80649', "
- "dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
- "dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
- "data_pattern_rule2_verdict=''))), "
- "DetectionServiceResultObject(data_type='prompt', detection_service='pi', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
- "DetectionServiceResultObject(data_type='prompt', detection_service='uf', "
- "verdict='malicious', action='block', "
- "result_detail=DSDetailResultObject(urlf_report=[UrlfEntryObject(url='72zf6.rxqfd.com/i8xps1', "
- "risk_level='Not Given', categories=['malware'])], dlp_report=None)), "
- "DetectionServiceResultObject(data_type='response', detection_service='dbs', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
- "DetectionServiceResultObject(data_type='response', detection_service='dlp', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, '
- "dlp_report=DlpReportObject(dlp_report_id='D9A218611B236C8F3A3A9259C777930435F132B772E45B63F397D5896183F15F', "
- "dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
- "dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
- "data_pattern_rule2_verdict=''))), "
- "DetectionServiceResultObject(data_type='response', detection_service='uf', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=[], dlp_report=None))]), '
- "ThreatScanReportObject(report_id='Rff0b83d3-b5e2-4cac-871e-abcd1c6f0557', "
- "scan_id='ff0b83d3-b5e2-4cac-871e-abcd1c6f0557', req_id=2, transaction_id='', "
- "detection_results=[DetectionServiceResultObject(data_type='prompt', "
- "detection_service='dlp', verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, '
- "dlp_report=DlpReportObject(dlp_report_id='E1BBB2FEFA825AEF534C0079B3C3D9D10E60533619690C5E0FFD99428B407A81', "
- "dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
- "dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
- "data_pattern_rule2_verdict=''))), "
- "DetectionServiceResultObject(data_type='prompt', detection_service='pi', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
- "DetectionServiceResultObject(data_type='prompt', detection_service='uf', "
- "verdict='malicious', action='block', "
- "result_detail=DSDetailResultObject(urlf_report=[UrlfEntryObject(url='72zf6.rxqfd.com/i8xps1', "
- "risk_level='Not Given', categories=['malware'])], dlp_report=None)), "
- "DetectionServiceResultObject(data_type='response', detection_service='dbs', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, dlp_report=None)), '
- "DetectionServiceResultObject(data_type='response', detection_service='dlp', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=None, '
- "dlp_report=DlpReportObject(dlp_report_id='E4DC98A03EFAB192F26FA5E8CB0FE2B5CC675EDF7EBDE0DFF70EB5F937C1A7EE', "
- "dlp_profile_name='PII - Basic', dlp_profile_id='11995039', "
- "dlp_profile_version=None, data_pattern_rule1_verdict='NOT_MATCHED', "
- "data_pattern_rule2_verdict=''))), "
- "DetectionServiceResultObject(data_type='response', detection_service='uf', "
- "verdict='benign', action='allow', "
- 'result_detail=DSDetailResultObject(urlf_report=[], dlp_report=None))])]')
-'AI Security concurrent scanning example completed'
+[
+   {
+      "detection_results" : [
+         {
+            "action" : "allow",
+            "data_type" : "prompt",
+            "detection_service" : "dlp",
+            "result_detail" : {
+               "dlp_report" : {
+                  "data_pattern_rule1_verdict" : "NOT_MATCHED",
+                  "data_pattern_rule2_verdict" : "",
+                  "dlp_profile_id" : "11995039",
+                  "dlp_profile_name" : "PII - Basic",
+                  "dlp_report_id" : "0000000000000000000000000000000000000000000000000000000000000000
+"
+               }
+            },
+            "verdict" : "benign"
+         },
+         {
+            "action" : "allow",
+            "data_type" : "prompt",
+            "detection_service" : "pi",
+            "result_detail" : {},
+            "verdict" : "benign"
+         },
+         {
+            "action" : "block",
+            "data_type" : "prompt",
+            "detection_service" : "uf",
+            "result_detail" : {
+               "urlf_report" : [
+                  {
+                     "categories" : [
+                        "malware"
+                     ],
+                     "risk_level" : "Not Given",
+                     "url" : "72zf6.rxqfd.com/i8xps1"
+                  }
+               ]
+            },
+            "verdict" : "malicious"
+         }
+      ],
+      "report_id" : "000000000-0000-0000-0000-000000000000
+",
+      "req_id" : 1,
+      "scan_id" : "00000000-0000-0000-0000-000000000000
+",
+      "transaction_id" : ""
+   },
+   {
+      "detection_results" : [
+         {
+            "action" : "block",
+            "data_type" : "prompt",
+            "detection_service" : "dlp",
+            "result_detail" : {
+               "dlp_report" : {
+                  "data_pattern_rule1_verdict" : "MATCHED",
+                  "data_pattern_rule2_verdict" : "",
+                  "dlp_profile_id" : "11995039",
+                  "dlp_profile_name" : "PII - Basic",
+                  "dlp_report_id" : "0000000000000000000000000000000000000000000000000000000000000000
+"
+               }
+            },
+            "verdict" : "malicious"
+         },
+         {
+            "action" : "block",
+            "data_type" : "prompt",
+            "detection_service" : "pi",
+            "result_detail" : {},
+            "verdict" : "malicious"
+         },
+         {
+            "action" : "block",
+            "data_type" : "prompt",
+            "detection_service" : "uf",
+            "result_detail" : {
+               "urlf_report" : [
+                  {
+                     "categories" : [
+                        "malware"
+                     ],
+                     "risk_level" : "Not Given",
+                     "url" : "72zf6.rxqfd.com/i8xps1"
+                  }
+               ]
+            },
+            "verdict" : "malicious"
+         },
+         {
+            "action" : "allow",
+            "data_type" : "response",
+            "detection_service" : "dbs",
+            "result_detail" : {},
+            "verdict" : "benign"
+         },
+         {
+            "action" : "allow",
+            "data_type" : "response",
+            "detection_service" : "dlp",
+            "result_detail" : {
+               "dlp_report" : {
+                  "data_pattern_rule1_verdict" : "NOT_MATCHED",
+                  "data_pattern_rule2_verdict" : "",
+                  "dlp_profile_id" : "11995039",
+                  "dlp_profile_name" : "PII - Basic",
+                  "dlp_report_id" : "0000000000000000000000000000000000000000000000000000000000000000
+"
+               }
+            },
+            "verdict" : "benign"
+         },
+         {
+            "action" : "allow",
+            "data_type" : "response",
+            "detection_service" : "uf",
+            "result_detail" : {
+               "urlf_report" : []
+            },
+            "verdict" : "benign"
+         }
+      ],
+      "report_id" : "000000000-0000-0000-0000-000000000000
+",
+      "req_id" : 2,
+      "scan_id" : "000000000-0000-0000-0000-000000000000
+",
+      "transaction_id" : ""
+   }
+]
+
 ```
+
+</details>
 
 </details>
