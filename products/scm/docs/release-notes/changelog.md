@@ -12,6 +12,9 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| May 28, 2025     | Added Snippet Sharing API under SASE Configuration Setup [Configuration Setup](/scm/api/config/sase/setup/snippet-sharing/).
+| May 28, 2025     | Added Snippet Sharing API under NGFW Configuration Setup [Configuration Setup](/scm/api/config/ngfw/setup/snippet-sharing/).
+| May 28, 2025     | Added Snippet Sharing API under Cloud NGFW Configuration Setup [Configuration Setup](/scm/api/config/cloudngfw/setup/snippet-sharing/).
 | May 20, 2025     | Introduced two policies Security and Internet for Security Rules under [Security Services APIs](/scm/api/config/sase/security/security-api/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/). |
 | Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).
