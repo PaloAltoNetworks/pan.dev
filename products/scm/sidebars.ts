@@ -115,6 +115,10 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/sase/setup/setup-api",
             },
+            {
+              type: "doc",
+              id: "scm/api/config/sase/setup/snippet-sharing",
+            },
             require("./api/config/sase/setup/sidebar"),
           ],
         },
@@ -198,6 +202,10 @@ module.exports = {
             {
               type: "doc",
               id: "scm/api/config/ngfw/setup/setup-api-ngfw",
+            },
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
             require("./api/config/ngfw/setup/sidebar"),
           ],
@@ -283,6 +291,10 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
             },
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/setup/snippet-sharing",
+            },
             require("./api/config/cloudngfw/setup/sidebar"),
           ],
         },
@@ -327,10 +339,6 @@ module.exports = {
   scmsubscription: [
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
-  ],
-  scmsnippetsharing: [
-    "scm/api/config/snippet-sharing/snippet-sharing",
-    require("./api/config/snippet-sharing/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };

@@ -12,7 +12,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| May 6, 2025     | Added [Snippet Sharing APIs](/scm/api/snippet-sharing/).
+| May 6, 2025     | Added [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/).                                                                                                        |
 | Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).
 | Nov 15, 2024  | Added Strata Cloud Manager configuration APIs, along with a [Strata Cloud Manager landing page](/strata-cloud-manager/). See the [release notes](/scm/docs/release-notes/november2024) for more information. |

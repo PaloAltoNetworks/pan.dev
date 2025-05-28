@@ -936,11 +936,6 @@ const config = {
             outputDir: "products/sase/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          snippetsharing: {
-            specPath: "openapi-specs/scm/config/snippet-sharing",
-            outputDir: "products/scm/api/config/snippet-sharing",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           scmtenancy: {
             specPath: "openapi-specs/scm/tenancy",
             outputDir: "products/scm/api/tenancy",
