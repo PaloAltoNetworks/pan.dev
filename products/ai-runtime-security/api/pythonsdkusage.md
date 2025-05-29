@@ -52,7 +52,7 @@ scanner = Scanner()
 scan_response = scanner.sync_scan(
    ai_profile=ai_profile,
    content=Content(
-       prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url",
+       prompt="This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url",
        response="Questionable Model Response Text",
    ),
 )
@@ -93,7 +93,8 @@ print(json.dumps(scan_response.to_dict()))
 ## Inline Asynchronous Scan
 
 The following Python code snippet shows an example of an asynchronous scan, query by scan IDs, and query by report IDs.
-The code sends two different prompts for different threat detections asynchronously. The scans are queued and may take approximately 10 seconds to complete.
+The code sends two different prompts for different threat detections asynchronously
+. Ensure to enable the relevant detections in the API security profile. The scans are queued and may take approximately 10 seconds to complete.
 
 <details>
 <summary>python3 inline_async_scan.py</summary>
@@ -156,7 +157,7 @@ async_scan_objects = [
             ai_profile=ai_profile,
             contents=[
                 ScanRequestContentsInner(
-                    prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url",
+                    prompt="This is a test prompt with  url",
                 )
             ],
         ),
@@ -167,7 +168,7 @@ async_scan_objects = [
             ai_profile=ai_profile,
             contents=[
                 ScanRequestContentsInner(
-                    prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
+                    prompt="This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
                     response="Second Questionable Model Response Text",
                 )
             ],
@@ -217,7 +218,7 @@ aisecurity.init()
 scanner = Scanner()
 # See API documentation for response structure
 # https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/
-example_scan_id = "00000000-0000-0000-0000-000000000000"
+example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace with actual scan ID from the async_scan output.
 scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
 print(scan_by_ids_response)
 ```
@@ -326,7 +327,7 @@ scanner = Scanner()
 
 # See API documentation for response structure
 # https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
-example_report_id = "R" + "YOUR_SCAN_ID"  # YOUR_SCAN_ID will be a UUID
+example_report_id = "R" + "YOUR_REPORT_ID"  # Replace it with your actual report ID from the scan result. Its a UUID and starts with a letter R.
 threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
 print(threat_scan_reports)
 ```
@@ -374,7 +375,7 @@ print(threat_scan_reports)
                         "malware"
                      ],
                      "risk_level" : "Not Given",
-                     "url" : "72zf6.rxqfd.com/i8xps1"
+                     "url" : "urlfiltering.paloaltonetworks.com/test-malware"
                   }
                ]
             },
@@ -424,7 +425,7 @@ print(threat_scan_reports)
                         "malware"
                      ],
                      "risk_level" : "Not Given",
-                     "url" : "72zf6.rxqfd.com/i8xps1"
+                     "url" : "urlfiltering.paloaltonetworks.com/test-malware"
                   }
                ]
             },

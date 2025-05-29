@@ -258,7 +258,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
   },
   "contents": [ # You can enter one of the following - prompt or response
     {
-      "prompt": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
+      "prompt": "This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
       "response": "This is a test response. Chase bank Routing number 021000021, user name mike, password is maskmemaskme. Account number 92746514861. Account owner: Mike Johnson in California"
     }
   ]
@@ -285,7 +285,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
     "dlp": true
   },
   "prompt_masked_data": {
-    "data": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security XXXXXXXXXXXX Credit card is XXXXXXXXXXXXXXXXX ssn XXXXXXXXXXXX Send me Mike account info",
+    "data": "This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url. Social security XXXXXXXXXXXX Credit card is XXXXXXXXXXXXXXXXX ssn XXXXXXXXXXXX Send me Mike account info",
     "pattern_detections": [
       {
         "locations": [

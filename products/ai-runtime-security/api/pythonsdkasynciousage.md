@@ -50,14 +50,14 @@ async def main():
     scan_response = await scanner.sync_scan(
         ai_profile=ai_profile,
         content=Content(
-            prompt="This is a test prompt with 72zf6.rxqfd.com/i8xps1 url",
+            prompt="This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url",
             response="Questionable Model Response Text",
         ),
     )
     # See API documentation for response structure
     # https://pan.dev/ai-runtime-security/api/scan-sync-request/
     pprint(scan_response)
-
+    await scanner.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 ## Asyncio async scan
 
-The following asyncio Python code snippet runs an asynchronous scan with prompts for different threat detections.
+The following asyncio Python code snippet runs an asynchronous scan with prompts for different threat detections. Ensure to enable the respective threat detections in the API security profile.
 
 <details>
 <summary>python3 asyncio_async_scan.py</summary>
@@ -174,18 +174,16 @@ async_scan_objects = [
 ]
 
 async def main():
-    try:
-        response = await scanner.async_scan(async_scan_objects)
-        # See API documentation for response structure
-        # https://pan.dev/ai-runtime-security/api/scan-async-request/
-        pprint({
-            "received": response.received,
-            "scan_id": response.scan_id,
-            "report_id": response.report_id,
-        })
-    finally:
-        # Important: close the connection pool after use to avoid leaking threads
-        await scanner.close()
+      response = await scanner.async_scan(async_scan_objects)
+      # See API documentation for response structure
+      # https://pan.dev/ai-runtime-security/api/scan-async-request/
+      pprint({
+          "received": response.received,
+          "scan_id": response.scan_id,
+          "report_id": response.report_id,
+      })
+      # Important: close the connection pool after use to avoid leaking threads
+      await scanner.close()
 
 
 if __name__ == "__main__":
@@ -207,7 +205,7 @@ if __name__ == "__main__":
 
 </details>
 
-## Asycio scan results
+## Asycio Scan Results
 
 The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/ for schema details.
 
@@ -232,9 +230,10 @@ scanner = Scanner()
 async def main():
    # See API documentation for response structure
    # https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/
-   example_scan_id = "00000000-0000-0000-0000-000000000000"
+   example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace it with the actual scan_id from async_scan response.
    scan_results = await scanner.query_by_scan_ids(scan_ids=[example_scan_id])
    pprint(scan_results)
+   await scanner.close()
 
 if __name__ == "__main__":
    asyncio.run(main())
@@ -327,12 +326,12 @@ scanner = Scanner()
 async def main():
     # See API documentation for response structur
     # https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
-    example_report_id = "R00000000-0000-0000-0000-000000000000"
+    example_report_id = "R00000000-0000-0000-0000-000000000000" # Replace it with the actual report_id from your async scan output. Report ID starts with the letter "R".
     threat_scan_reports = await scanner.query_by_report_ids(
         report_ids=[example_report_id]
     )
     pprint(threat_scan_reports)
-
+    await scanner.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
