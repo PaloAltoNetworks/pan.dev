@@ -48,7 +48,7 @@ function Medium() {
   };
 
   return (
-    <div className="container">
+    <div className="medium-container container">
       <div className="slider-container container">
         {blogs?.length && (
           <Slider {...sliderSettings}>
