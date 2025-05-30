@@ -1,7 +1,7 @@
 ---
 id: usecases
 title: "Use Cases: AI Runtime Security: API Intercept"
-sidebar_label: "Use Cases"
+sidebar_label: "Scan APIs Use Cases"
 keywords:
   - AIRS
   - APIs
