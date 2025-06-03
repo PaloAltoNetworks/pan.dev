@@ -45,7 +45,6 @@ ai_profile = AiProfile(profile_name=AI_PROFILE_NAME)
 # Create a Scanner
 scanner = Scanner()
 
-
 async def main():
     scan_response = await scanner.sync_scan(
         ai_profile=ai_profile,
@@ -93,7 +92,7 @@ if __name__ == "__main__":
 
 </details>
 
-## Asyncio async scan
+## Asyncio Async Scan
 
 The following asyncio Python code snippet runs an asynchronous scan with prompts for different threat detections. Ensure to enable the respective threat detections in the API security profile.
 
@@ -184,7 +183,6 @@ async def main():
       })
       # Important: close the connection pool after use to avoid leaking threads
       await scanner.close()
-
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -321,7 +319,6 @@ from aisecurity.scan.asyncio.scanner import Scanner
 aisecurity.init()
 
 scanner = Scanner()
-
 
 async def main():
     # See API documentation for response structur

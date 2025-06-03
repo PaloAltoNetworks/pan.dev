@@ -28,24 +28,19 @@ from pprint import pprint
 import json
 import aisecurity
 
-
 from aisecurity.generated_openapi_client.models.ai_profile import AiProfile
 # IMPORTANT: For traditional (non-asyncio), import Scanner from aisecurity.scan.inline.scanner
 from aisecurity.scan.inline.scanner import Scanner
 from aisecurity.scan.models.content import Content
 
-
 AI_PROFILE_NAME = "ai-sec-security"
 API_KEY = os.getenv("PANW_AI_SEC_API_KEY")
-
 
 # Initialize the SDK with your API Key
 aisecurity.init(api_key=API_KEY)
 
-
 # Configure an AI Profile
 ai_profile = AiProfile(profile_name=AI_PROFILE_NAME)
-
 
 # Create a Scanner
 scanner = Scanner()
@@ -60,6 +55,7 @@ scan_response = scanner.sync_scan(
 # https://pan.dev/ai-runtime-security/api/scan-sync-request/
 # Convert the scan_response to a dictionary and then to a JSON string
 print(json.dumps(scan_response.to_dict()))
+await scanner.close()
 ```
 
 </details>
@@ -184,6 +180,7 @@ pprint({
     "scan_id": response.scan_id,
     "report_id": response.report_id,
 })
+await scanner.close()
 ```
 
 </details>
@@ -221,6 +218,7 @@ scanner = Scanner()
 example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace with actual scan ID from the async_scan output.
 scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
 print(scan_by_ids_response)
+await scanner.close()
 ```
 
 </details>
@@ -330,6 +328,7 @@ scanner = Scanner()
 example_report_id = "R" + "YOUR_REPORT_ID"  # Replace it with your actual report ID from the scan result. Its a UUID and starts with a letter R.
 threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
 print(threat_scan_reports)
+await scanner.close()
 ```
 
 </details>
