@@ -234,6 +234,21 @@ __Returns__
 
 `bool`: `True` when connection is up, `False` otherwise.
 
+### `FirewallProxy.is_global_jumbo_frame_set`
+
+```python
+def is_global_jumbo_frame_set() -> bool
+```
+
+Get the global jumbo frame configuration.
+
+The actual API command is `show system setting jumbo-frame`.
+
+__Returns__
+
+
+`bool`: `True` when global jumbo frame configuration is on, `False` otherwise.
+
 ### `FirewallProxy.get_ha_configuration`
 
 ```python

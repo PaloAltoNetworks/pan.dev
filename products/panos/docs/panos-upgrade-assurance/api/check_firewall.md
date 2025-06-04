@@ -554,6 +554,30 @@ __Returns__
 * [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
     device.
 
+### `CheckFirewall.check_global_jumbo_frame`
+
+```python
+def check_global_jumbo_frame(mode: bool = None) -> CheckResult
+```
+
+Check if the global jumbo frame configuration matches the desired mode.
+
+__Parameters__
+
+
+- __mode__ (`bool`): The desired mode of the global jumbo frame configuration.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the global jumbo frame
+    mode matches the desired mode.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the current global jumbo
+    frame and the desired modes differ.
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when `mode` is not provided.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python
@@ -600,6 +624,25 @@ __Returns__
         "owner": "1",
         "id": "1"
     }
+}
+```
+
+### `CheckFirewall.get_global_jumbo_frame`
+
+```python
+def get_global_jumbo_frame() -> Dict[str, bool]
+```
+
+Get whether global jumbo frame configuration is set or not.
+
+__Returns__
+
+
+`dict`: The global jumbo frame configuration.
+
+```python showLineNumbers title="Example"
+{
+    'mode': True
 }
 ```
 
