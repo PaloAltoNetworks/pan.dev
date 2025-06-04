@@ -1,7 +1,7 @@
 ---
 id: pythonsdk
 title: "AI Runtime Security API Python SDK"
-sidebar_label: "AI Runtime Security API Python SDK"
+sidebar_label: "Python SDK Overview"
 keywords:
   - PythonSDK
   - AIRS
@@ -32,3 +32,15 @@ Each usage can use two functions:
 
 * sync_scan()
 * async_scan()
+
+## Error Handling & Exceptions
+
+When the client is unable to fetch the expected response from the API server, a subclass of aisecurity.exceptions.AISecSDKException is raised.
+
+There are five types of Exceptions defined in aisecurity/exceptions.py:
+
+* AISEC_SERVER_SIDE_ERROR: Errors returned by the API server. For example, an invalid API key.
+* AISEC_CLIENT_SIDE_ERROR: Errors that occur on the client side. For example, a network connection issue.
+* AISEC_USER_REQUEST_PAYLOAD_ERROR: Errors related to the user's request payload. For example, an empty scan object.
+* AISEC_MISSING_VARIABLE: Errors related to missing variables. For example, missing API key environment variable.
+* AISEC_SDK_ERROR: Other uncategorized errors that occur in the SDK.
