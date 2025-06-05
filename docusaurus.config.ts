@@ -192,7 +192,7 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
-                  label: "AI Runtime Security",
+                  label: "Prisma AIRS",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -204,7 +204,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "ai-runtime-security/scan/api/",
+                      to: "prisma-airs/scan/api/",
                       label: "AI Runtime Security API",
                       icon: "api-doc",
                     },
@@ -997,8 +997,8 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           airuntimesecurity: {
-            specPath: "openapi-specs/ai-runtime-security/scan",
-            outputDir: "products/ai-runtime-security/api",
+            specPath: "openapi-specs/prisma-airs/scan",
+            outputDir: "products/prisma-airs/api/airuntimesecurity",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
