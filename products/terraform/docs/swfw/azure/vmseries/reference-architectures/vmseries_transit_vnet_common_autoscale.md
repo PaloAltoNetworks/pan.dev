@@ -1,6 +1,6 @@
 ---
 hide_title: true
-id: common_vmseries_and_autoscale
+id: vmseries_transit_vnet_common_autoscale
 keywords:
 - pan-os
 - panos
@@ -14,7 +14,7 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Common Firewall Option with Autoscaling
+sidebar_label: VM-Series Transit VNet Common with Autoscaling
 title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture,
   Common NGFW Option with Autoscaling'
 ---
@@ -36,7 +36,7 @@ utilization). Since firewalls are added or removed automatically, they cannot be
 management and updates a Panorama appliance is suggested. Deployment of a Panorama instance is not covered in this example,
 but a [dedicated one exists](../standalone\_panorama).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/common_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/common_vmseries_and_autoscale)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/vmseries_transit_vnet_common_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/vmseries_transit_vnet_common_autoscale)
 
 ## Reference Architecture Design
 
@@ -814,7 +814,7 @@ map(object({
       timeout                   = optional(number)
       use_cookie_based_affinity = optional(bool)
       affinity_cookie_name      = optional(string)
-      probe                     = optional(string)
+      probe_key                 = optional(string)
       root_certs = optional(map(object({
         name = string
         path = string

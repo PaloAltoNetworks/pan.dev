@@ -209,6 +209,8 @@ Name | Type | Description
 Name |  Description
 --- | ---
 `virtual_network_id` | The identifier of the created or sourced Virtual Network.
+`virtual_network_name` | The name of the created or sourced Virtual Network.
+`virtual_network_resource_group` | The Resource Group name of the created or sourced Virtual Network.
 `vnet_cidr` | VNET address space.
 `subnet_ids` | The identifiers of the created or sourced Subnets.
 `subnet_cidrs` | Subnet CIDRs (sourced or created).
