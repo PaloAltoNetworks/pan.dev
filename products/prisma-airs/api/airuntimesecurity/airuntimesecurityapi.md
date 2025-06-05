@@ -1,7 +1,7 @@
 ---
 id: airuntimesecurityapi
 title: "PRISMA AIRS AI Runtime Security: API Intercept"
-sidebar_label: "AI Runtime Security: API Intercept"
+sidebar_label: "PRISMA AIRS AI Runtime Security: API Intercept"
 slug: /prisma-airs/scan/api
 keywords:
   - AIRS
@@ -10,46 +10,48 @@ keywords:
   - API
 ---
 
-**Prisma AIRS AI Runtime Security: API Intercept** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into source code.
+**Prisma AIRS AI Runtime Security: API Intercept** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code.
 
-The scan API service scans prompt and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
-These APIs protect your AI models, AI applications, and AI datasets by programmatically scanning prompts and models for threats, enabling robust protection across public and private models with model-agnostic functionality.
+The scan API service scans prompts and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
+These APIs protect your AI models, AI applications, and AI datasets by programmatically scanning prompts and models for threats. These detection APIs enable robust protection across public and private models with model-agnostic functionality.
 
-You can integrate the AI Runtime Security: API intercept detection directly into your applications, to efficiently scan for various threats, including prompt injections, insecure outputs, and sensitive data loss.
+The APIs efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss.
 To use these APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your AI security profile.
 
-For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime Security: API Intercept Overview](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
+For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime Security: API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 
-The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
+## Scan API Endpoints
+
+The following are the API endpoints based on the regions you selected while creating Prisma AIRS AI Runtime Security: API intercept deployment profile:
 
 - US: https://service.api.aisecurity.paloaltonetworks.com 
 - EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
 
 ## Prerequisites
 
-1. Create and associate a [deployment profile for AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) in your Customer Support Portal.
-2. [Onboard AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
-3. [Manage applications, API keys, and security profiles](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/airs-apirs-manage-api-keys-profile-apps) in Strata Cloud Manager.
+1. Create and associate a [deployment profile](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) for Prisma AIRS AI Runtime Security: API intercept in your Customer Support Portal.
+2. [Onboard Prisma AIRS AI Runtime Security: API Intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
+3. [Manage applications, API keys, security profiles, and custom topics](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/airs-apirs-manage-api-keys-profile-apps) in Strata Cloud Manager.
 
 ## Requirements for API Usage
 
-1. **API Key Token**: This token is generated during the onboarding process in Strata Cloud Manager (see prerequisite step 2).
+1. **API Key Token**: This token is generated during the onboarding process in Strata Cloud Manager (see the onboarding prerequisite step above).
 Include the API key token in all API requests using the `x-pan-token` header.
-2. **AI Security Profile Name**: This is the security profile created during the onboarding process in Strata Cloud Manager (see prerequisite step 2).
+2. **AI Security Profile Name**: This is the API security profile you created during the onboarding process in Strata Cloud Manager (see the prerequisite step on creating an API security profile above).
 Specify this profile name or the profile ID in the API request payload in the `ai_profile` field.
 
 :::info
 You can manage API keys and AI security profiles in Strata Cloud Manager.
 
-1. Log in to Strata Cloud Manager [SCM](http://stratacloudmanager.paloaltonetworks.com/).
-2. Navigate to **Insights > AI Runtime Security**.
-3. Select API from the AI Runtime Security drop-down list at the top.
-4. At the top right corner, choose:
+1. Log in to [Strata Cloud Manager](http://stratacloudmanager.paloaltonetworks.com/).
+2. Navigate to **Insights > Prisma AIRS > Prisma AIRS AI Runtime Security: API Intercept**.
+3. In the top right corner, click:
 
 - **Manage > API Keys** to copy, regenerate, or rotate the API key token.
 - **Manage > Security Profiles** to fetch details or update AI security profiles.
+- **Manage > Custom Topics** create or update custom topics for custom topic guardrails threat detections.
 
-For complete details, refer to the Manage Applications, API Keys, and Security Profiles Administration guide.
+For complete details, refer to adminstration guide for the section on how to "manage applications, API Keys, security profiles, and custom topics".
 :::
 
 ## Limitations
