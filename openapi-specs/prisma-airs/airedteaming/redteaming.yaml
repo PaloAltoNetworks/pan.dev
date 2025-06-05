@@ -1,0 +1,266 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: https://www.paloaltonetworks.com/company/contact-support
+  title: AI Red Teaming
+  description:
+    "This Open API spec file represents the APIs available for the AI Red Teaming.\n
+    \nThese APIs use the bearer authentication.\n
+    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for AI Red Teaming and then onboard the API Red Teaming in Strata Cloud Manager.\
+    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the AI Red Teaming.\n\n
+    This Open API spec file was created on xxxx xx, 2025.\
+    \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
+    A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
+    All other marks mentioned herein may be trademarks of their respective companies.\n"
+  license:
+    name: Palo Alto Networks EULA
+    url: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+  version: 0.0.0
+
+servers:
+  - url: "https://api.strata.paloaltonetworks.com"
+    description: AI Red Teaming
+
+tags:
+  - name: AI Red Teaming APIs
+
+paths:
+  /airt/simulation/v1/create:
+    post:
+      summary: Create AI Red Teaming Simulation
+      description: Create AI Red Teaming simulations. To authenticate with this API, get the API access token which you create with your client ID and client secret. For details, see https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/.
+      security:
+      - Bearer: []
+      operationId: create_simulation_airt_simulation_v1_create_post
+      tags:
+        - AI Red Teaming APIs
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Body_create_simulation_airt_simulation_v1_create_post"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSimulationResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /airt/simulation/v1/result:
+    get:
+      summary: Get Simulation Result
+      description: Create AI Red Teaming simulations. To authenticate with this API, get the API access token which you create with your client ID and client secret. For details, see https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/.
+      security:
+      - Bearer: []
+      operationId: get_simulation_result_airt_simulation_v1_result_get
+      tags:
+        - AI Red Teaming APIs
+      parameters:
+        - name: simulation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Simulation Id from the create simulation request
+            title: Simulation Id
+        - name: return_all
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+            title: Return All
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSimulationResultResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /airt/simulation/v1/get-all:
+    get:
+      summary: Get All Simulations
+      description: Get all AI Red Teaming simulation results. To authenticate with this API, get the API access token which you create with your client ID and client secret. For details, see https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/.
+      security:
+      - Bearer: []
+      operationId: get_all_simulations_airt_simulation_v1_get_all_get
+      tags:
+        - AI Red Teaming APIs
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+
+components:
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+      description: This is the API access token which you create with your client ID and client secret. For details, see https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/.
+  schemas:
+    AttackResult:
+      properties:
+        attack_id:
+          type: string
+          format: uuid
+          title: Attack Id
+        attack_name:
+          type: string
+          title: Attack Name
+        app_prompt:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: App Prompt
+        app_response:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: App Response
+        evaluation_reason:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Evaluation Reason
+        successful:
+          type: string
+          enum:
+            - Attack Successful
+            - Attack Unsuccessful
+            - Requires Human Verification
+            - Attack Success Confirmed
+            - Attack Failure Confirmed
+          title: Successful
+      type: object
+      required:
+        - attack_id
+        - attack_name
+        - successful
+      title: AttackResult
+    Body_create_simulation_airt_simulation_v1_create_post:
+      properties:
+        simulation_data:
+          type: string
+          description: A Simulation data file schema to create an AI Red Teaming simulation.
+          format: binary
+          title: Simulation data
+          maxLength: 10485760
+        endpoint_schema:
+          type: string
+          description: Upload Endpoint Schema in YAML format for a target endpoint. (See [here](https://docs.paloaltonetworks.com/ai-runtime-security) for details on how to configure this YAML schema.)
+          format: binary
+          title: Endpoint Schema
+          maxLength: 65536
+      type: object
+      required:
+        - simulation_data
+        - endpoint_schema
+      title: Body_create_simulation_airt_simulation_v1_create_post
+    CreateSimulationResponse:
+      properties:
+        simulation_id:
+          anyOf:
+            - type: string
+              format: uuid
+            - type: "null"
+          title: Simulation Id
+        message:
+          type: string
+          title: Message
+        simulation_start_ts_utc:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+          title: Simulation Start Ts Utc
+      type: object
+      required:
+        - message
+      title: CreateSimulationResponse
+    GetSimulationResultResponse:
+      properties:
+        status_code:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          title: Status Code
+        status:
+          type: string
+          enum:
+            - Waiting In Queue
+            - Threat Simulation In Progress
+            - Completed
+            - Error
+            - Unable To Access Endpoint
+          title: Status
+        results:
+          anyOf:
+            - items:
+                $ref: "#/components/schemas/AttackResult"
+              type: array
+            - type: "null"
+          title: Results
+        total_characters_prompt:
+          anyOf:
+            - type: integer
+            - type: "null"
+          title: Total Characters Prompt
+        total_characters_response:
+          anyOf:
+            - type: integer
+            - type: "null"
+          title: Total Characters Response
+      type: object
+      required:
+        - status_code
+        - status
+      title: GetSimulationResultResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
