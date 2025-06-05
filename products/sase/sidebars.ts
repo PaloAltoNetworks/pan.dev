@@ -318,6 +318,10 @@ module.exports = {
     "sase/api/sspm/sspm-api-workflow",
     require("./api/sspm/sidebar"),
   ],
+  incidentsspm: [
+    "sase/api/incident-sspm/introduction",
+    require("./api/incident-sspm/sidebar"),
+  ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
