@@ -318,9 +318,9 @@ module.exports = {
     "sase/api/sspm/sspm-api-workflow",
     require("./api/sspm/sidebar"),
   ],
-  incidentsspm: [
-    "sase/api/incident-sspm/introduction",
-    require("./api/incident-sspm/sidebar"),
+  identitysspm: [
+    "sase/api/identity-sspm/introduction",
+    require("./api/identity-sspm/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",

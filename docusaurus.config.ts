@@ -501,8 +501,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/incident-sspm",
-                      label: "Incident Security Posture Management",
+                      to: "sase/api/identity-sspm",
+                      label: "Identity Security Posture Management",
                       icon: "api-doc",
                     },
                     {
@@ -928,9 +928,9 @@ const config = {
             outputDir: "products/sase/api/sspm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          incidentsspm: {
-            specPath: "openapi-specs/sase/incident-sspm",
-            outputDir: "products/sase/api/incident-sspm",
+          identitysspm: {
+            specPath: "openapi-specs/sase/identity-sspm",
+            outputDir: "products/sase/api/identity-sspm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
