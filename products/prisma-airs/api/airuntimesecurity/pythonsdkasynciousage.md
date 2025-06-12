@@ -12,7 +12,7 @@ keywords:
 
 This page covers the key use cases of the AI Runtime Security Python SDK asyncio scan types with synchronous and asynchronous methods.
 It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, and sensitive data.
-Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
+Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/prisma-airs/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
 ## Asyncio Sync Scan
 
@@ -54,7 +54,7 @@ async def main():
         ),
     )
     # See API documentation for response structure
-    # https://pan.dev/ai-runtime-security/api/scan-sync-request/
+    # https://pan.dev/prisma-airs/api/scan-sync-request/
     pprint(scan_response)
     await scanner.close()
 
@@ -119,7 +119,7 @@ The following asyncio Python code snippet runs an asynchronous scan with prompts
 """
 Asyncio Python Batch (Asynchronous/Multiple) Scan Example
 
-API Reference: https://pan.dev/ai-runtime-security/api/scan-async-request/
+API Reference: https://pan.dev/prisma-airs/api/scan-async-request/
 """
 
 import asyncio
@@ -175,7 +175,7 @@ async_scan_objects = [
 async def main():
       response = await scanner.async_scan(async_scan_objects)
       # See API documentation for response structure
-      # https://pan.dev/ai-runtime-security/api/scan-async-request/
+      # https://pan.dev/prisma-airs/api/scan-async-request/
       pprint({
           "received": response.received,
           "scan_id": response.scan_id,
@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
 ## Asycio Scan Results
 
-The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/ for schema details.
+The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/prisma-airs/api/get-scan-results-by-scan-i-ds/ for schema details.
 
 <details>
 <summary>python3 asyncio_scan_results.py</summary>
@@ -227,7 +227,7 @@ scanner = Scanner()
 
 async def main():
    # See API documentation for response structure
-   # https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/
+   # https://pan.dev/prisma-airs/api/get-scan-results-by-scan-i-ds/
    example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace it with the actual scan_id from async_scan response.
    scan_results = await scanner.query_by_scan_ids(scan_ids=[example_scan_id])
    pprint(scan_results)
@@ -301,7 +301,7 @@ if __name__ == "__main__":
 
 ## Asyncio scan reports
 
-The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/ endpoint for schema details.
+The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/prisma-airs/api/get-threat-scan-reports/ endpoint for schema details.
 
 <details>
 
@@ -322,7 +322,7 @@ scanner = Scanner()
 
 async def main():
     # See API documentation for response structur
-    # https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
+    # https://pan.dev/prisma-airs/api/get-threat-scan-reports/
     example_report_id = "R00000000-0000-0000-0000-000000000000" # Replace it with the actual report_id from your async scan output. Report ID starts with the letter "R".
     threat_scan_reports = await scanner.query_by_report_ids(
         report_ids=[example_report_id]
