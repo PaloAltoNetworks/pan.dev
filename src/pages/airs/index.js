@@ -340,7 +340,7 @@ print(res)
               from your code.
             </div>
             <a
-              href="/prisma-airs/api/pythonsdk/"
+              href="/prisma-airs/api/airuntimesecurity/pythonsdk/"
               className={styles.pythonSdkButton}
               target="_self"
             >
@@ -349,7 +349,7 @@ print(res)
           </Card>
           <Card
             title="API Reference"
-            link="/prisma-airs/api/ai-runtime-security-api-intercept/"
+            link="/prisma-airs/api/airuntimesecurity/ai-runtime-security-api-intercept/"
             linkLabel="Full API Reference"
             colorMode={colorMode}
           >
