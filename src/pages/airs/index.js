@@ -49,7 +49,7 @@ const Card = ({ title, children, link, linkLabel, colorMode }) => {
       {link && (
         <a
           href={link}
-          target={link.startsWith("/ai-runtime-security") ? "_self" : "_blank"}
+          target={link.startsWith("/prisma-airs") ? "_self" : "_blank"}
           rel="noopener noreferrer"
           style={{
             color: linkColor,
@@ -340,7 +340,7 @@ print(res)
               from your code.
             </div>
             <a
-              href="/ai-runtime-security/api/pythonsdk/"
+              href="/prisma-airs/api/pythonsdk/"
               className={styles.pythonSdkButton}
               target="_self"
             >
@@ -349,7 +349,7 @@ print(res)
           </Card>
           <Card
             title="API Reference"
-            link="/ai-runtime-security/api/ai-runtime-security-api-intercept/"
+            link="/prisma-airs/api/ai-runtime-security-api-intercept/"
             linkLabel="Full API Reference"
             colorMode={colorMode}
           >
