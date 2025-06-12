@@ -205,7 +205,7 @@ const config = {
                   apiDocs: [
                     {
                       to: "prisma-airs/scan/api/",
-                      label: "AI Runtime Security API",
+                      label: "Prisma AIRS API",
                       icon: "api-doc",
                     },
                   ],
