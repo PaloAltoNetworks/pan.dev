@@ -1,7 +1,7 @@
 ---
 id: airuntimesecurityapi
-title: "PRISMA AIRS AI Runtime Security: API Intercept"
-sidebar_label: "PRISMA AIRS AI Runtime Security: API Intercept"
+title: "Prisma AIRS AI Runtime Security: API Intercept"
+sidebar_label: "Prisma AIRS AI Runtime Security: API Intercept"
 slug: /prisma-airs/scan/api
 keywords:
   - AIRS
