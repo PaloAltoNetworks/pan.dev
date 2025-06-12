@@ -9,28 +9,37 @@ keywords:
   - API
 ---
 
-The Identity API is a component of the SaaS Security Posture Management (SSPM) framework. It allows developers to access security-related metrics and configurations tied to user and service accounts. Identity builds upon posture security to offer more granular insights into how identities are managed across SaaS environments.
+# Introduction to the Identity API
+
+The Identity API empowers developers within the SaaS Security Posture Management (SSPM) framework to access security-related metrics and configurations for user and service accounts. This API extends posture security capabilities, offering you detailed insights into how your organization manages identities across SaaS environments.
+
+## What is the Identity API?
+
+The Identity API enables security teams to monitor, analyze, and respond to identity-related risks. Your teams can connect users, permissions, activities, and security configurations to maintain a comprehensive view of your identity security posture.
 
 ## Prerequisites
 
-To use the Identity API:
+Before you integrate with the Identity API, you need:
 
-- You must have a valid SaaS Security account.
-- You must have onboarded identity sources such as Okta or Office 365.
-- You need a registered application with a client ID and endpoint URL for authentication.
+- An active SaaS Security account with appropriate access permissions
+- Onboarded identity sources like Okta, Office 365, or other supported IdPs
+- A registered application with your client ID and endpoint URL for authentication
+- API credentials that allow you to access identity data
 
-## Key Features
+## Key Capabilities
 
-The Identity API allows you to:
+With the Identity API, you can:
 
-- Detect MFA misconfigurations across identity providers.
-- Identify users with no MFA or incomplete enforcement.
-- Track account activity and highlight dormant or inactive accounts.
-- Detect credentials that haven't rotated within a defined period.
-- Flag over-privileged accounts that exceed role-based access expectations.
-- Aggregate user posture metrics for reporting and dashboards.
+- **Detect MFA Gaps**: Identify and fix multi-factor authentication misconfigurations across your identity providers
+- **Monitor Authentication Health**: Find users who lack MFA or have incomplete enforcement
+- **Track Account Lifecycle**: Monitor account activity and identify dormant or inactive accounts that create security risks
+- **Enforce Credential Hygiene**: Find credentials your users haven't rotated according to your security policies
+- **Control Privilege Escalation**: Identify accounts that have more privileges than their roles require
+- **Generate Compliance Reports**: Create comprehensive security reports and executive dashboards using aggregated user posture metrics
 
-## Posture vs Identity
+## Understanding Posture vs. Identity
+
+Posture security and identity security serve different yet complementary functions:
 
 | Category | Posture | Identity |
 |----------|---------|----------|
@@ -39,10 +48,18 @@ The Identity API allows you to:
 | Scope | General SaaS application configuration | Specific to user and service identities |
 | Example | Enforcing password complexity | Detecting a dormant admin account |
 
+## Common Use Cases
 
-## Use Cases
+### Dormant Account Identification
+Find and manage user accounts of former employees that still have active status in your systems, eliminating potential security vulnerabilities.
 
-- **Dormant Account Identification**: Detect user accounts that belong to employees who have left the organization but are still active in the system.
-- **Over-Privileged Account Detection**: Highlight accounts with excessive permissions relative to their assigned roles.
-- **MFA Compliance Monitoring**: Audit which users have not enrolled in MFA or are missing enforcement policies.
-- **Activity Analysis**: Review sign-in activity for anomalies and risk signals across user accounts.
+### Over-Privileged Account Detection
+Spot accounts with excessive permissions compared to their assigned roles, helping you maintain the principle of least privilege.
+
+### MFA Compliance Monitoring
+Continuously check which users haven't enrolled in MFA or have gaps in their enforcement policies to ensure consistent authentication security.
+
+### Activity Analysis
+Examine authentication patterns and user behaviors to spot anomalies that may signal account compromise or insider threats.
+
+These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
