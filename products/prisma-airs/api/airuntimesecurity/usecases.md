@@ -1,6 +1,6 @@
 ---
 id: usecases
-title: "Use Cases: Prisma AIRS AI Runtime Security: API Intercept"
+title: "Use Cases: Prisma AIRS AI Runtime: API Intercept"
 sidebar_label: "Scan APIs Use Cases"
 keywords:
   - AIRS
@@ -11,14 +11,14 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for Prisma AIRS AI Runtime Security: API intercept detection features.
+This document outlines key use cases for Prisma AIRS AI Runtime: API intercept detection features.
 Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS AI Runtime Security: API intercept for enhanced protection.
 
 ## Prerequisites
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime Security: API intercept](airuntimesecurityapi.md) overview page.
+1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
 2. Review the Scan API Endpoints in the Scan API Endpoints overview page.
 3. Configure the API security profile with below settings for the respective use cases:
 
