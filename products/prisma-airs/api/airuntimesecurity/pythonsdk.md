@@ -1,6 +1,6 @@
 ---
 id: pythonsdk
-title: "AI Runtime Security API Python SDK"
+title: "Prisma AIRS API Python SDK"
 sidebar_label: "Python SDK Overview"
 keywords:
   - PythonSDK
@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-AI Runtime Security API Python SDK simplifies the integration of advanced AI security scanning capabilities into Python applications.
+Prisma AIRS API Python SDK simplifies the integration of advanced AI security scanning capabilities into Python applications.
 
 It supports Python version 3.9 through 3.13, it offers synchronous and asynchronous scanning, robust error handling, and configurable retry strategies.
 
