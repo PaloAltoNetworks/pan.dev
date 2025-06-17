@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: https://www.paloaltonetworks.com/company/contact-support
+  title: AI Model Scan
+  description:
+    "This Open API spec file represents the APIs available for the AI Model Scan capabilities.\n
+    \nThese APIs use the bearer authentication.\n
+    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for AI Model Scan and then onboard in Strata Cloud Manager.\
+    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the AI Runtime Security documentation.\n\n
+    This Open API spec file was created on xxxx xx, 2025.\
+    \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
+    A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
+    All other marks mentioned herein may be trademarks of their respective companies.\n"
+  license:
+    name: Palo Alto Networks EULA
+    url: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+  version: 0.0.0
+
+servers:
+  - url: "https://api.strata.paloaltonetworks.com"
+    description: AI Model Scan
+
+tags:
+  - name: AI Model Scanning APIs
+
+paths:
+  /airt/model-scan/v1/url:
+    post:
+      summary: Scan Model URL
+      description: Scan Model URL
+      security:
+      - Bearer: []
+      operationId: scan_model_url_airt_model_scan_v1_url_post
+      tags:
+        - AI Model Scanning APIs
+      parameters:
+        - name: URL
+          description: Hugging Face model URL to scan. You can provide a link to the HuggingFace model s card  or a link to a specific commit hash. If you provide a link to the main card, the most recent version of the model will be scanned
+          in: query
+          required: true
+          schema:
+            type: string
+            format: string
+            description: Valid Hugging Face model URL to be scanned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelUrlInput"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanModelURLResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /airt/model-scan/v1/result:
+    get:
+      summary: Scan Model Result
+      security:
+      - Bearer: []
+      operationId: scan_model_result_airt_model_scan_v1_result_get
+      tags:
+        - AI Model Scannning APIs
+      parameters:
+        - name: scan_id
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Scan Id
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /airt/model-scan/v1/file:
+    post:
+      summary: Scan Model File
+      security:
+      - Bearer: []
+      operationId: scan_model_file_airt_model_scan_v1_file_post
+      tags:
+        - AI Model Scanning APIs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelFileInput"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanModelFileResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /airt/simulation/v1/validate-schema:
+    post:
+      summary: Validate Schema
+      security:
+      - Bearer: []
+      operationId: validate_schema_airt_simulation_v1_validate_schema_post
+      tags:
+        - AI Model Scanning APIs
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Body_validate_schema_airt_simulation_v1_validate_schema_post"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaValidationResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+
+components:
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+      description: This is the API access token which you create with your client ID and client secret. For details, see https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/. 
+  schemas:
+    Body_validate_schema_airt_simulation_v1_validate_schema_post:
+      properties:
+        endpoint_schema:
+          type: string
+          description: Endpoint Schema (YAML format) for a target endpoint
+          format: binary
+          title: Endpoint Schema
+          maxLength: 65536
+      type: object
+      required:
+        - endpoint_schema
+      title: Body_validate_schema_airt_simulation_v1_validate_schema_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ModelFileInput:
+      properties:
+        model_name:
+          type: string
+          description: AI model name to scan
+          maxLength: 128
+          minLength: 1
+          title: Model Name
+        model_version:
+          type: string
+          description: (Optional) Model version you want to scan
+          maxLength: 128
+          minLength: 1
+          title: Model Version
+      type: object
+      required:
+        - model_name
+      example:
+        model_name: "example-llm-model"
+      title: ModelFileInput
+    ModelUrlInput:
+      properties:
+        url:
+          type: string
+          description: Hugging Face AI model URL to scan. You can provide a link to the HuggingFace model s card  or a link to a specific commit hash. If you provide a link to the main card, the most recent version of the model will be scanned
+          minLength: 1
+          pattern: ^http
+          title: Url
+        model_name:
+          type: string
+          description: AI model name you want to scan
+          maxLength: 128
+          minLength: 1
+          title: Model Name
+        model_version:
+          type: string
+          description: (Optional) Model version you want to scan
+          maxLength: 128
+          minLength: 1
+          title: Model Version
+      type: object
+      required:
+        - url
+        - model_name
+      example:
+        url: "https://huggingface.co/example-model"
+        model_name: "example-llm-model"
+      title: ModelUrlInput
+    ScanModelFileResponse:
+      properties:
+        scan_id:
+          type: string
+          description: Scan Id obtained from create model URL response
+          title: Scan Id
+        upload_url:
+          type: string
+          title: Upload Url
+        status:
+          type: integer
+          title: Status
+          default: 1
+      type: object
+      required:
+        - scan_id
+        - upload_url
+      title: ScanModelFileResponse
+    ScanModelURLResponse:
+      properties:
+        scan_id:
+          description: Scan Id obtained from create model URL response
+          type: string
+          title: Scan Id
+        status:
+          type: integer
+          title: Status
+          default: 2
+      type: object
+      required:
+        - scan_id
+      title: ScanModelURLResponse
+    SchemaValidationResponse:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+          title: Errors
+          default: []
+        prompt:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Prompt
+        answer:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Answer
+      type: object
+      title: SchemaValidationResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type
