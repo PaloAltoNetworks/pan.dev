@@ -349,7 +349,7 @@ print(res)
           </Card>
           <Card
             title="API Reference"
-            link="/prisma-airs/api/airuntimesecurity/ai-runtime-security-api-intercept/"
+            link="/prisma-airs/api/airuntimesecurity/prisma-airs-api/"
             linkLabel="Full API Reference"
             colorMode={colorMode}
           >
