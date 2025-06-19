@@ -554,6 +554,57 @@ __Returns__
 * [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
     device.
 
+### `CheckFirewall.check_global_jumbo_frame`
+
+```python
+def check_global_jumbo_frame(mode: bool = None) -> CheckResult
+```
+
+Check if the global jumbo frame configuration matches the desired mode.
+
+__Parameters__
+
+
+- __mode__ (`bool`): The desired mode of the global jumbo frame configuration.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the global jumbo frame
+    mode matches the desired mode.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the current global jumbo
+    frame and the desired modes differ.
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when `mode` is not provided.
+
+### `CheckFirewall.check_system_environmentals`
+
+```python
+def check_system_environmentals(
+        components: Optional[List[str]] = None) -> CheckResult
+```
+
+Check system environmentals for alarms.
+
+__Parameters__
+
+
+- __components__ (`list(str), optional`): (defaults to None) List of components to check for alarms.
+    If None, all components are checked. Valid components are 'thermal', 'fantray', 'fan', 'power', 'power-supply'.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if no alarms are found in the
+    specified components.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if any alarm is found in specified
+    components.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when invalid components are
+    specified or device did not return environmentals.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python
@@ -600,6 +651,25 @@ __Returns__
         "owner": "1",
         "id": "1"
     }
+}
+```
+
+### `CheckFirewall.get_global_jumbo_frame`
+
+```python
+def get_global_jumbo_frame() -> Dict[str, bool]
+```
+
+Get whether global jumbo frame configuration is set or not.
+
+__Returns__
+
+
+`dict`: The global jumbo frame configuration.
+
+```python showLineNumbers title="Example"
+{
+    'mode': True
 }
 ```
 
