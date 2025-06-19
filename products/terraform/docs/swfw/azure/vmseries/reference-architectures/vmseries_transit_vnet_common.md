@@ -1,6 +1,6 @@
 ---
 hide_title: true
-id: common_vmseries
+id: vmseries_transit_vnet_common
 keywords:
 - pan-os
 - panos
@@ -14,7 +14,7 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Common Firewall Option
+sidebar_label: VM-Series Transit VNet Common
 title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture.
   Common NGFW Option'
 ---
@@ -30,7 +30,7 @@ The Terraform code presented here will deploy Palo Alto Networks VM-Series firew
 common VM-Series for all traffic; for a discussion of other options, please see the design guide from
 [the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/common_vmseries) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/common_vmseries)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/vmseries_transit_vnet_common) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/vmseries_transit_vnet_common)
 
 ## Reference Architecture Design
 
@@ -787,7 +787,7 @@ map(object({
       timeout                   = optional(number)
       use_cookie_based_affinity = optional(bool)
       affinity_cookie_name      = optional(string)
-      probe                     = optional(string)
+      probe_key                 = optional(string)
       root_certs = optional(map(object({
         name = string
         path = string
