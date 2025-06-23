@@ -133,8 +133,48 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'build-all')
         run: echo "BUILD_ALL=true" >> $GITHUB_ENV
 
+      - name: Include netsec
+        if: contains(github.event.pull_request.labels.*.name, 'netsec')
+        run: |
+          echo "Including 'netsec' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
+          fi
+
+      - name: Include cloud
+        if: contains(github.event.pull_request.labels.*.name, 'cloud')
+        run: |
+          echo "Including 'cloud' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,prisma-cloud,compute" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=prisma-cloud,compute" >> $GITHUB_ENV
+          fi
+
+      - name: Include sase
+        if: contains(github.event.pull_request.labels.*.name, 'sase')
+        run: |
+          echo "Including 'sase' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan,scm" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=sase,access,sdwan,scm" >> $GITHUB_ENV
+          fi
+
+      - name: Include contributing
+        if: contains(github.event.pull_request.labels.*.name, 'contributing')
+        run: |
+          echo "Including 'contributing' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,contributing" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=contributing" >> $GITHUB_ENV
+          fi
+
       - name: Determine changed products
-        if: env.BUILD_ALL != 'true'
+        if: env.BUILD_ALL != 'true' && !contains(github.event.pull_request.labels.*.name, 'netsec') && !contains(github.event.pull_request.labels.*.name, 'cloud') && !contains(github.event.pull_request.labels.*.name, 'sase') && !contains(github.event.pull_request.labels.*.name, 'contributing')
         id: products
         run: |
           PRODUCTS=$(node scripts/get-changed-products.js)
