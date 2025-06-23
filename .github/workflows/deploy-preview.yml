@@ -129,45 +129,21 @@ jobs:
       - name: Install dependencies
         run: yarn --prefer-offline
 
-      - name: Include netsec
-        if: contains(github.event.pull_request.labels.*.name, 'netsec')
+      - name: Check build-all label
+        if: contains(github.event.pull_request.labels.*.name, 'build-all')
+        run: echo "BUILD_ALL=true" >> $GITHUB_ENV
+
+      - name: Determine changed products
+        if: env.BUILD_ALL != 'true'
+        id: products
         run: |
-          echo "Including 'netsec' in build..."
-          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
-          else
-            echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
+          PRODUCTS=$(node scripts/get-changed-products.js)
+          if [ -n "$PRODUCTS" ]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS" >> $GITHUB_ENV
           fi
-      
-      - name: Include cloud
-        if: contains(github.event.pull_request.labels.*.name, 'cloud')
-        run: |
-          echo "Including 'cloud' in build..."
-          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,prisma-cloud,compute" >> $GITHUB_ENV
-          else
-            echo "PRODUCTS_INCLUDE=prisma-cloud,compute" >> $GITHUB_ENV
-          fi
-      
-      - name: Include sase
-        if: contains(github.event.pull_request.labels.*.name, 'sase')
-        run: |
-          echo "Including 'sase' in build..."
-          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan,scm" >> $GITHUB_ENV
-          else
-            echo "PRODUCTS_INCLUDE=sase,access,sdwan,scm" >> $GITHUB_ENV
-          fi
-      
-      - name: Include contributing
-        if: contains(github.event.pull_request.labels.*.name, 'contributing')
-        run: |
-          echo "Including 'contributing' in build..."
-          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,contributing" >> $GITHUB_ENV
-          else
-            echo "PRODUCTS_INCLUDE=contributing" >> $GITHUB_ENV
-          fi
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.event.pull_request.head.sha }}
 
       - name: Output final PRODUCTS_INCLUDE
         run: |
