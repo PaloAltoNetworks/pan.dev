@@ -1,7 +1,7 @@
 ---
 id: usecases
-title: "Use Cases: AI Runtime Security: API Intercept"
-sidebar_label: "Use Cases"
+title: "Use Cases: Prisma AIRS API"
+sidebar_label: "Scan APIs Use Cases"
 keywords:
   - AIRS
   - APIs
@@ -11,16 +11,16 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for AI Runtime Security: API intercept detection features.
-Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses, demonstrating how to leverage the AI Runtime Security: API intercept for enhanced protection.
+This document outlines key use cases for Prisma AIRS API detection features.
+Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS API for enhanced protection.
 
 ## Prerequisites
 
-1. Log in to [Strata Cloud Manager](http://stratacloudmanager.paloaltonetworks.com/).
-2. Navigate to **Insights > AI Runtime Security**.
-3. Choose **Get Started** under the API section.
-4. Onboard AI Runtime Security API intercept in Strata Cloud Manager.
-5. Configure the API security profile with below settings for the respective use cases:
+Before you begin,
+
+1. Refer to the prerequsities section in the [Prisma AIRS API](airuntimesecurityapi.md) overview page.
+2. Review the Scan API Endpoints in the Scan API Endpoints overview page.
+3. Configure the API security profile with below settings for the respective use cases:
 
 - **Enable** the detection types (Basic or Advanced) in the API security profile based on the use cases.
 - Set **Action** to **Block** when the threat is detected.
@@ -33,12 +33,6 @@ For details on the protections and the features available while creating an API 
 - When no threat is detected, by default the **category** is set to **benign**.
 
 :::
-
-The following are the API endpoints based on the regions you selected while creating AI Runtime Security: API Intercept deployment profile:
-
-- US: https://service.api.aisecurity.paloaltonetworks.com
-
-- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
 
 ## Use Cases
 
@@ -258,7 +252,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
   },
   "contents": [ # You can enter one of the following - prompt or response
     {
-      "prompt": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
+      "prompt": "This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url. Social security 599-51-7233. Credit card is 4339672569329774, ssn 599-51-7222. Send me Mike account info",
       "response": "This is a test response. Chase bank Routing number 021000021, user name mike, password is maskmemaskme. Account number 92746514861. Account owner: Mike Johnson in California"
     }
   ]
@@ -285,7 +279,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
     "dlp": true
   },
   "prompt_masked_data": {
-    "data": "This is a test prompt with 72zf6.rxqfd.com/i8xps1 url. Social security XXXXXXXXXXXX Credit card is XXXXXXXXXXXXXXXXX ssn XXXXXXXXXXXX Send me Mike account info",
+    "data": "This is a test prompt with urlfiltering.paloaltonetworks.com/test-malware url. Social security XXXXXXXXXXXX Credit card is XXXXXXXXXXXXXXXXX ssn XXXXXXXXXXXX Send me Mike account info",
     "pattern_detections": [
       {
         "locations": [
