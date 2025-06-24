@@ -1,4 +1,3 @@
-import Mermaid from "@theme/Mermaid";
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 /**
