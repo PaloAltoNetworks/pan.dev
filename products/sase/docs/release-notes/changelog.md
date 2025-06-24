@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| June 24, 2025     | Added Snippet Sharing API under SASE Configuration Setup [Configuration Setup](/scm/api/config/sase/setup/snippet-sharing/).
 | April 10, 2025     | Added [Prisma Access Insights 3.0 APIs](/access/api/insights/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/)                                                                    |
 | Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).                                                                                                          |
