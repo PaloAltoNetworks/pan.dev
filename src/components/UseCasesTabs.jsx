@@ -11,7 +11,7 @@ const useCases = [
     description:
       "Identify and block malicious prompt manipulation attempts in real time. Protect your AI endpoints from prompt injection attacks that try to subvert model intent or leak sensitive information.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-prompt-injection",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-prompt-injection",
     icons: [],
   },
   {
@@ -22,7 +22,7 @@ const useCases = [
     description:
       "Scan for and block malicious URLs in AI model outputs and responses, preventing phishing or malware delivery.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-malicious-url",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-malicious-url",
     icons: [],
   },
   {
@@ -33,7 +33,7 @@ const useCases = [
     description:
       "Detect and prevent exposure of sensitive data such as API keys, credit card numbers, and PII in prompts and responses.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-sensitive-data-loss",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-sensitive-data-loss",
     icons: [],
   },
   {
@@ -44,7 +44,7 @@ const useCases = [
     description:
       "Automatically mask sensitive data patterns in prompts and responses, with precise offset information for granular redaction.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#mask-sensitive-data",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#mask-sensitive-data",
     icons: [],
   },
   {
@@ -55,7 +55,7 @@ const useCases = [
     description:
       "Detect and block attempts to exploit database vulnerabilities or extract sensitive data via AI prompts and responses.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-database-security-attack",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-database-security-attack",
     icons: [],
   },
   {
@@ -66,7 +66,7 @@ const useCases = [
     description:
       "Detect and block toxic, offensive, or unsafe content in prompts and responses using advanced content moderation models.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-toxic-content",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-toxic-content",
     icons: [],
   },
   {
@@ -77,7 +77,7 @@ const useCases = [
     description:
       "Scan and block AI-generated code that may be harmful, contain exploits, or introduce vulnerabilities.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-malicious-code",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-malicious-code",
     icons: [],
   },
   {
@@ -88,7 +88,7 @@ const useCases = [
     description:
       "Identify and block threats targeting agentic AI workflows, including tool misuse, agent manipulation, and unsafe outputs.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-ai-agent-threats",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-ai-agent-threats",
     icons: [],
   },
   {
@@ -99,7 +99,7 @@ const useCases = [
     description:
       "Ensure AI outputs are grounded in the intended context and prevent hallucinations or context drift.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#detect-contextual-grounding",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#detect-contextual-grounding",
     icons: [],
   },
   {
@@ -110,7 +110,7 @@ const useCases = [
     description:
       "Define and enforce custom rules to block or allow topics based on your organization's needs.",
     learnMore:
-      "https://pan.dev/ai-runtime-security/api/usecases#custom-topic-guardrails",
+      "https://pan.dev/prisma-airs/api/airuntimesecurity/usecases#custom-topic-guardrails",
     icons: [],
   },
   {
