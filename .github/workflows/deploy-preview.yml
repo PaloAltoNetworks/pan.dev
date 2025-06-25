@@ -193,6 +193,24 @@ jobs:
         run: |
           echo "Building the following products: $PRODUCTS_INCLUDE"
 
+      - name: Inform about selective build
+        if: github.event.action == 'opened'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const products = process.env.PRODUCTS_INCLUDE || 'contributing';
+            const body = [
+              `Selective build for **${products}**.`,
+              '',
+              'Add the **build-all** label to build the entire site.',
+              'Add group labels like **netsec**, **cloud**, **sase**, or **contributing** to build specific docs.',
+            ].join('\n');
+            await github.rest.issues.createComment({
+              ...context.issue,
+              body,
+            });
+
       - name: Build site
         run: yarn build-github
 
