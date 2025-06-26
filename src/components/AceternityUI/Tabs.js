@@ -58,6 +58,8 @@ export const Tabs = ({
               tabClassName
             )}
             style={{
+              backgroundColor: "transparent",
+              border: 0,
               transformStyle: "preserve-3d",
               "&:hover": { cursor: "pointer" },
             }}

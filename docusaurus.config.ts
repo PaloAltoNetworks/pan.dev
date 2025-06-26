@@ -1,4 +1,4 @@
-import Mermaid from "@theme/Mermaid";
+import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -6,7 +6,7 @@ import Mermaid from "@theme/Mermaid";
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-let baseUrl
+let baseUrl;
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
     baseUrl = "/";
@@ -1159,6 +1159,7 @@ const config = {
         gtm: "GTM-PLXD79N",
       },
     ],
+    tailwindPlugin,
   ],
   stylesheets: [
     {
