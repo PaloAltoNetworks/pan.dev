@@ -13,12 +13,8 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-<<<<<<< HEAD
+
 | May 20, 2025     | Added [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).
-=======
-| June 24, 2025     | Added Snippet Sharing API under SASE Configuration Setup [Configuration Setup](/scm/api/config/sase/setup/snippet-sharing/).
-<<<<<<< HEAD
->>>>>>> 2c379afff74faccf65259cc0ac65aa3395d91abf
 | April 10, 2025     | Added [Prisma Access Insights 3.0 APIs](/access/api/insights/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/)                                                                    |
 | Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).                                                                                                          |
@@ -26,7 +22,6 @@ keywords:
 | Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                     |
 | July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                |
 | April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                                                             |
-=======
 | April 10, 2025     | Added [Prisma Access Insights 3.0 APIs](/access/api/insights/). |
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/) |
 | Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).|
@@ -34,7 +29,6 @@ keywords:
 | Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                              |
 | July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                               |
 | April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                           |
->>>>>>> 88c7c4328dc06642b294df17f3d562fe33f9a94f
 | September 28, 2023    | Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/).                     |
 | May 16, 2023    | Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.                                   |
 | April 26, 2023  | Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellanous other changes.     |
