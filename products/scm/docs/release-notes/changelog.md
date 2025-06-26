@@ -12,16 +12,15 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| June 24, 2025     | Added Snippet Sharing API under SASE Configuration Setup [Configuration Setup](/scm/api/config/sase/setup/snippet-sharing/).
 | May 28, 2025     | Added Snippet Sharing API under NGFW Configuration Setup [Configuration Setup](/scm/api/config/ngfw/setup/snippet-sharing/).
 | May 28, 2025     | Added Snippet Sharing API under Cloud NGFW Configuration Setup [Configuration Setup](/scm/api/config/cloudngfw/setup/snippet-sharing/).
 | May 20, 2025     | Introduced two policies Security and Internet for Security Rules under [Security Services APIs](/scm/api/config/sase/security/security-api/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/). |
-| Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/).
+| Jan 9th, 2025  | Added [SaaS Security Posture Management APIs](/sase/api/sspm/). |
 | Nov 15, 2024  | Added Strata Cloud Manager configuration APIs, along with a [Strata Cloud Manager landing page](/strata-cloud-manager/). See the [release notes](/scm/docs/release-notes/november2024) for more information. |
 | Oct 18, 2024  | Added [Prisma Access Browser APIs](/access/api/browser-mgmt/).                                       |
-| Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                                                                                                    |
-| July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).                                                                                                                     |
+| Oct 11, 2024  | Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/).                                         |
+| July 22, 2024  | Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/).          |
 | April 15, 2024  | Added [Multitenant Notification APIs](/sase/api/mt-notifications/).                                                      |
 | September 28, 2023    | Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/). |
 | May 16, 2023    | Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs. |
@@ -37,9 +36,9 @@ keywords:
 | August 15, 2022 | Updated the [Aggregate Monitoring APIs](/sase/api/mt-monitor). See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.  |
 | July 27, 2022   | Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details.    |
 | July 5, 2022    | Clarified the difference between [Device Insights 2.0 and 1.0 APIs](/access/docs/insights). <br/> Added the `support_contact` field to the [Tenancy Service](/sase/api/tenancy) APIs. |
-| June 7, 2022    | Published additional information about [IAM user accounts](/sase/docs/user-accounts).                                                                                            |
-| May 25, 2022    | Published [User Account APIs](/sase/api/iam/user-accounts) for the IAM service.                                                                                                  |
+| June 7, 2022    | Published additional information about [IAM user accounts](/sase/docs/user-accounts).                                              |
+| May 25, 2022    | Published [User Account APIs](/sase/api/iam/user-accounts) for the IAM service.                                    |
 | May 16, 2022    | Prisma Access Configuration API monthly release, which includes [breaking changes](/sase/docs/release-notes/release-notes#april-2022) to the APIs.                                    |
-| April 26, 2022  | Added Prisma Access Insights v1.0 and v2.0 APIs. |                                                                                                    
+| April 26, 2022  | Added Prisma Access Insights v1.0 and v2.0 APIs. |                                                                    
 | April 12, 2022  | Corrected base URLs in the API reference. Fixed bugs and typos in the breadcrumbs.   Added release notes to the developer documentation. Miscellaneous editorial corrections.           |
-| April 8, 2022   | First public release of the Prisma SASE API in support of MSSPs.                                                                                                                      |
+| April 8, 2022   | First public release of the Prisma SASE API in support of MSSPs.                                                           |
