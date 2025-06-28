@@ -20,7 +20,7 @@ info:
 servers:
   - url: "https://service.api.aisecurity.paloaltonetworks.com"
     description: Prisma AIRS API service URL for US regions
-  - url: "https://service-de.api.aisecurity.paloaltonetworks.com"  
+  - url: "https://service-de.api.aisecurity.paloaltonetworks.com"
     description: Prisma AIRS API service URL for EU (Germany) regions
 
 tags:
@@ -349,6 +349,11 @@ components:
           $ref: "#/components/schemas/MaskedData"
         response_masked_data:
           $ref: "#/components/schemas/MaskedData"
+        prompt_detection_details:
+          $ref: "#/components/schemas/PromptDetectionDetails"
+        response_detection_details:
+          $ref: "#/components/schemas/ResponseDetectionDetails"
+
         created_at:
           type: string
           format: date-time
@@ -415,6 +420,32 @@ components:
         topic_violation:
           type: boolean
           description: Indicates whether response contains any content violates topic guardrails
+
+    PromptDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    ResponseDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    TopicGuardRails:
+      type: object
+      properties:
+        allowed_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blocked_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic block list
 
     MaskedData:
       type: object
@@ -623,7 +654,6 @@ components:
           type: string
           description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
 
-
     AgentReportObject:
       type: object
       properties:
@@ -727,7 +757,6 @@ components:
         low_confidence_detections:
           $ref: "#/components/schemas/OffsetObject"
 
-
     TgReportObject:
       type: object
       properties:
@@ -737,7 +766,17 @@ components:
         blocked_topic_list:
           type: string
           description: Indicates whether there was a content match for the topic block list such as "MATCHED" or "NOT MATCHED"
-
+        allowedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blockedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic allow list
+        
     Error:
       type: object
       properties:
@@ -875,7 +914,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_info: []
+                  code_analysis_by_type: []
                   verdict: benign
               verdict: benign
             - action: allow
@@ -888,7 +927,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_info: []
+                  code_analysis_by_type: []
                   verdict: benign
               verdict: benign
           report_id: R46ea2f2b-0000-42e1-9972-bbc444628a26
