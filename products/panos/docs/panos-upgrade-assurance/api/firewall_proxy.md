@@ -234,6 +234,21 @@ __Returns__
 
 `bool`: `True` when connection is up, `False` otherwise.
 
+### `FirewallProxy.is_global_jumbo_frame_set`
+
+```python
+def is_global_jumbo_frame_set() -> bool
+```
+
+Get the global jumbo frame configuration.
+
+The actual API command is `show system setting jumbo-frame`.
+
+__Returns__
+
+
+`bool`: `True` when global jumbo frame configuration is on, `False` otherwise.
+
 ### `FirewallProxy.get_ha_configuration`
 
 ```python
@@ -1378,4 +1393,145 @@ __Returns__
 ```python showLineNumbers title="Sample output"
 datetime(2024, 01, 01, 00, 00, 00)
 ```
+
+### `FirewallProxy.get_system_environmentals`
+
+```python
+def get_system_environmentals() -> dict
+```
+
+Get system environmental data.
+
+The actual API command is `show system environmentals`.
+
+__Returns__
+
+
+`dict`: System environmental data including thermal, fantray, fan, power, and power-supply information.
+    Sample output has been shortened for the sake of simplicity.
+
+```python showLineNumbers title="Sample output"
+{'fan': {'Slot1': {'entry': [{'RPMs': '3435',
+                              'alarm': 'False',
+                              'description': 'Fan `1` RPM',
+                              'min': '1000',
+                              'slot': '1'},
+                             {'RPMs': '3379',
+                              'alarm': 'False',
+                              'description': 'Fan `2` RPM',
+                              'min': '1000',
+                              'slot': '1'},
+                             {'RPMs': '3355',
+                              'alarm': 'False',
+                              'description': 'Fan `3` RPM',
+                              'min': '1000',
+                              'slot': '1'}]}},
+ 'fantray': {'Slot1': {'entry': {'Inserted': 'True',
+                                 'alarm': 'False',
+                                 'description': 'Fan Tray',
+                                 'min': '1',
+                                 'slot': '1'}}},
+ 'power': {'Slot1': {'entry': [{'Volts': '1.7939999999999998',
+                                'alarm': 'False',
+                                'description': 'Power: MP - 1.8V VCCIN',
+                                'max': '1.98',
+                                'min': '1.62',
+                                'slot': '1'},
+                               {'Volts': '1.8046666666666666',
+                                'alarm': 'False',
+                                'description': 'Power: DP - 1.8V Power Rail',
+                                'max': '1.98',
+                                'min': '1.62',
+                                'slot': '1'}]}},
+ 'power-supply': {'Slot1': {'entry': [{'Inserted': 'False',
+                                       'alarm': 'True',
+                                       'description': 'Power Supply `1` (left)',
+                                       'min': 'True',
+                                       'slot': '1'},
+                                      {'Inserted': 'True',
+                                       'alarm': 'False',
+                                       'description': 'Power Supply `2` (right)',
+                                       'min': 'True',
+                                       'slot': '1'}]}},
+ 'thermal': {'Slot0': {'entry': {'DegreesC': '29.8',
+                                 'alarm': 'False',
+                                 'description': 'Temperature: Broadwell MP '
+                                                'Core',
+                                 'max': '70.0',
+                                 'min': '-5.0',
+                                 'slot': '0'}},
+             'Slot1': {'entry': [{'DegreesC': '36.5',
+                                  'alarm': 'False',
+                                  'description': 'Temperature @ Rear Left[U54]',
+                                  'max': '70.0',
+                                  'min': '-5.0',
+                                  'slot': '1'},
+                                 {'DegreesC': '46.2',
+                                  'alarm': 'False',
+                                  'description': 'Temperature: FE100 Core',
+                                  'max': '70.0',
+                                  'min': '-5.0',
+                                  'slot': '1'}]}}}
+```
+
+### `FirewallProxy.get_dp_cpu_utilization`
+
+```python
+def get_dp_cpu_utilization(minutes: int = 5) -> dict
+```
+
+Get data plane CPU utilization for the last specified minutes.
+
+The actual API command is `show running resource-monitor minute last {minutes}`.
+
+__Parameters__
+
+
+- __minutes__ (`int, optional`): (defaults to 5) The number of minutes to check, between 1 and 60.
+
+__Raises__
+
+
+- `WrongDataTypeException`: Raised when the minutes parameter is not an integer or is outside the allowed range.
+- `MalformedResponseException`: Raised when response does not contain expected elements.
+
+__Returns__
+
+
+`dict`: Data plane CPU utilization per core and per minute.
+
+```python showLineNumbers title="Sample output"
+{
+    'dp0': {
+        'cpu-load-average': {
+            '0': [0, 0, 0, 0, 0],
+            '1': [0, 0, 0, 0, 0],
+            '2': [1, 1, 1, 1, 1],
+            '3': [0, 0, 0, 0, 0]
+        }
+    }
+}
+```
+
+### `FirewallProxy.get_mp_cpu_utilization`
+
+```python
+def get_mp_cpu_utilization() -> int
+```
+
+Get management plane CPU utilization for the last 1 minute.
+
+The actual API command is `<show><system><state><filter>sys.monitor.*.mp.exports</filter></state></system></show>`.
+MP state resides under s0 or s1 depending on the target firewall platform like `sys.monitor.s0.mp.exports` or
+`sys.monitor.s1.mp.exports` so a wildcard is used to match any.
+
+__Raises__
+
+
+- `MalformedResponseException`: Raised when response does not contain expected elements or data format is invalid.
+
+__Returns__
+
+
+`int`: Management plane CPU utilization percentage for the last 1 minute.
 

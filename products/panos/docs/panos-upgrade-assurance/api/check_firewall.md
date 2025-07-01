@@ -554,6 +554,119 @@ __Returns__
 * [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when there are no jobs on a
     device.
 
+### `CheckFirewall.check_global_jumbo_frame`
+
+```python
+def check_global_jumbo_frame(mode: bool = None) -> CheckResult
+```
+
+Check if the global jumbo frame configuration matches the desired mode.
+
+__Parameters__
+
+
+- __mode__ (`bool`): The desired mode of the global jumbo frame configuration.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the global jumbo frame
+    mode matches the desired mode.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the current global jumbo
+    frame and the desired modes differ.
+* [`CheckStatus.SKIPPED`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when `mode` is not provided.
+
+### `CheckFirewall.check_system_environmentals`
+
+```python
+def check_system_environmentals(
+        components: Optional[List[str]] = None) -> CheckResult
+```
+
+Check system environmentals for alarms.
+
+__Parameters__
+
+
+- __components__ (`list(str), optional`): (defaults to None) List of components to check for alarms.
+    If None, all components are checked. Valid components are 'thermal', 'fantray', 'fan', 'power', 'power-supply'.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if no alarms are found in the
+    specified components.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if any alarm is found in specified
+    components.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when invalid components are
+    specified or device did not return environmentals.
+
+### `CheckFirewall.check_dp_cpu_utilization`
+
+```python
+def check_dp_cpu_utilization(threshold: int = 80,
+                             minutes: int = 5) -> CheckResult
+```
+
+Check if the data plane CPU utilization is below a specified threshold.
+
+This check retrieves the data plane CPU utilization for the specified duration and calculates the average CPU load
+across all cores. If the average CPU load is below the threshold, the check passes.
+
+__Parameters__
+
+
+- __threshold__ (`int, optional`): (defaults to 80) Maximum acceptable average CPU utilization percentage.
+- __minutes__ (`int, optional`): (defaults to 5) Number of minutes to check, between 1 and 60.
+
+__Raises__
+
+
+- `WrongDataTypeException`: Raised when the threshold or minutes parameters are not integers.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when average CPU utilization is below the threshold.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when average CPU utilization is equal to or above the threshold.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the data cannot be retrieved.
+
+### `CheckFirewall.check_mp_cpu_utilization`
+
+```python
+def check_mp_cpu_utilization(threshold: int = 80) -> CheckResult
+```
+
+Check if the management plane CPU utilization is below a specified threshold.
+
+This check retrieves the management plane CPU utilization for the last 1 minute and compares it
+against the provided threshold.
+
+__Parameters__
+
+
+- __threshold__ (`int, optional`): (defaults to 80) Maximum acceptable CPU utilization percentage.
+
+__Raises__
+
+
+- `WrongDataTypeException`: Raised when the threshold parameter is not an integer or is outside the allowed range.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when CPU utilization is below the threshold.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when CPU utilization is equal to or above the threshold.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the data cannot be retrieved.
+
 ### `CheckFirewall.get_content_db_version`
 
 ```python
@@ -600,6 +713,25 @@ __Returns__
         "owner": "1",
         "id": "1"
     }
+}
+```
+
+### `CheckFirewall.get_global_jumbo_frame`
+
+```python
+def get_global_jumbo_frame() -> Dict[str, bool]
+```
+
+Get whether global jumbo frame configuration is set or not.
+
+__Returns__
+
+
+`dict`: The global jumbo frame configuration.
+
+```python showLineNumbers title="Example"
+{
+    'mode': True
 }
 ```
 
