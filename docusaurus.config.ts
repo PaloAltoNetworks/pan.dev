@@ -1,4 +1,4 @@
-import Mermaid from "@theme/Mermaid";
+import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -6,7 +6,7 @@ import Mermaid from "@theme/Mermaid";
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-let baseUrl
+let baseUrl;
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
     baseUrl = "/";
@@ -192,7 +192,7 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
-                  label: "AI Runtime Security",
+                  label: "Prisma AIRS",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -204,8 +204,8 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "ai-runtime-security/scan/api/",
-                      label: "AI Runtime Security API",
+                      to: "prisma-airs/scan/api/",
+                      label: "Prisma AIRS API",
                       icon: "api-doc",
                     },
                   ],
@@ -1007,8 +1007,8 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           airuntimesecurity: {
-            specPath: "openapi-specs/ai-runtime-security/scan",
-            outputDir: "products/ai-runtime-security/api",
+            specPath: "openapi-specs/prisma-airs/scan",
+            outputDir: "products/prisma-airs/api/airuntimesecurity",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
@@ -1169,6 +1169,7 @@ const config = {
         gtm: "GTM-PLXD79N",
       },
     ],
+    tailwindPlugin,
   ],
   stylesheets: [
     {

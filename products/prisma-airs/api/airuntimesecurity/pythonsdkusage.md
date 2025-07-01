@@ -12,7 +12,7 @@ keywords:
 
 This page covers the key use cases of the AI Runtime Security Python SDK inline scan types with synchronous and asynchronous methods.
 It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, and sensitive data.
-Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
+Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/prisma-airs/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
 ## Inline Synchronous Scan
 
@@ -52,7 +52,7 @@ scan_response = scanner.sync_scan(
    ),
 )
 # See API documentation for response structure
-# https://pan.dev/ai-runtime-security/api/scan-sync-request/
+# https://pan.dev/prisma-airs/api/scan-sync-request/
 # Convert the scan_response to a dictionary and then to a JSON string
 print(json.dumps(scan_response.to_dict()))
 await scanner.close()
@@ -115,7 +115,7 @@ The code sends two different prompts for different threat detections asynchronou
 """
 Traditional Python Batch (Asynchronous/Multiple) Scan Example
 
-API Reference: https://pan.dev/ai-runtime-security/api/scan-async-request/
+API Reference: https://pan.dev/prisma-airs/api/scan-async-request/
 """
 
 import os
@@ -174,7 +174,7 @@ async_scan_objects = [
 
 response = scanner.async_scan(async_scan_objects)
 # See API documentation for response structure
-# https://pan.dev/ai-runtime-security/api/scan-async-request/
+# https://pan.dev/prisma-airs/api/scan-async-request/
 pprint({
     "received": response.received,
     "scan_id": response.scan_id,
@@ -201,7 +201,7 @@ await scanner.close()
 
 ## Inline Scan Results
 
-The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/ for schema details.
+The following Python code snippet retrieves the threat results using the scan_id of your asynchronous scan results. Refer to https://pan.dev/prisma-airs/api/get-scan-results-by-scan-i-ds/ for schema details.
 
 <details>
 <summary>python3 inline_scan_results.py</summary>
@@ -214,7 +214,7 @@ from aisecurity.scan.inline.scanner import Scanner
 aisecurity.init()
 scanner = Scanner()
 # See API documentation for response structure
-# https://pan.dev/ai-runtime-security/api/get-scan-results-by-scan-i-ds/
+# https://pan.dev/prisma-airs/api/get-scan-results-by-scan-i-ds/
 example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace with actual scan ID from the async_scan output.
 scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
 print(scan_by_ids_response)
@@ -286,7 +286,7 @@ await scanner.close()
 
 ## Inline Scan Reports
 
-The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/ endpoint for schema details.
+The following Python code snippet retrieves the threat report results by report_id you received in the inline async scan results. Refer to the https://pan.dev/prisma-airs/api/get-threat-scan-reports/ endpoint for schema details.
 
 <details>
 <summary>python3 inline_scan_reports.py</summary>
@@ -311,7 +311,7 @@ The following Python code snippet retrieves the threat report results by report_
 """
 Retrieve Threat Scan Reports by Report IDs
 
-API Reference: https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
+API Reference: https://pan.dev/prisma-airs/api/get-threat-scan-reports/
 """
 
 import aisecurity
@@ -324,7 +324,7 @@ aisecurity.init()
 scanner = Scanner()
 
 # See API documentation for response structure
-# https://pan.dev/ai-runtime-security/api/get-threat-scan-reports/
+# https://pan.dev/prisma-airs/api/get-threat-scan-reports/
 example_report_id = "R" + "YOUR_REPORT_ID"  # Replace it with your actual report ID from the scan result. Its a UUID and starts with a letter R.
 threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
 print(threat_scan_reports)
