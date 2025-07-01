@@ -22,6 +22,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 const config = {
   future: {
     experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    v4: true
   },
   title: "Develop with Palo Alto Networks",
   tagline:
