@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| July 1, 2025     | Added [Identity Security Posture Management APIs](/sase/api/identity-sspm/).
 | May 20, 2025     | Added [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).
 | April 10, 2025     | Added [Prisma Access Insights 3.0 APIs](/access/api/insights/).
 | Feb 6, 2025     | Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/)                                                                    |
