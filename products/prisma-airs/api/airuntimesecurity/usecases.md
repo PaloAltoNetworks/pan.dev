@@ -364,7 +364,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
     ]
   },
   "scan_id": "90484606-6d70-4522-8f0c-c93d878c9a5c",
-  "tr_id": "1111"
+  "tr_id": "1111" 
 }
 ```
 
@@ -463,7 +463,7 @@ The start and end offset character indexes enable the DLP service to selectively
             "data_pattern_rule2_verdict": "",
             "dlp_profile_id": "11995025",
             "dlp_profile_name": "Sensitive Content",
-            "dlp_report_id": "598936C508B5AD43CC7AC86789502422AA311B95E32107EFD316ABA51AA71FAC"
+            "dlp_report_id": "0000000000000000000000000000000000000000000000000000000000000000"
           }
         },
         "verdict": "malicious"
