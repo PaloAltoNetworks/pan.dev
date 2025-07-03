@@ -502,6 +502,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/identity-sspm",
+                      label: "Identity Security Posture Management",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "access/api/adem/autonomous-dem-api",
                       label: "Autonomous DEM",
                       icon: "api-doc",
@@ -922,6 +927,11 @@ const config = {
           sasesspm: {
             specPath: "openapi-specs/sase/sspm",
             outputDir: "products/sase/api/sspm",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          identitysspm: {
+            specPath: "openapi-specs/sase/identity-sspm",
+            outputDir: "products/sase/api/identity-sspm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           access: {
