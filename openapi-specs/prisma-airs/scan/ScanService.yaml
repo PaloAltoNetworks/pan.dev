@@ -2,15 +2,15 @@ openapi: 3.0.3
 info:
   contact:
     email: https://www.paloaltonetworks.com/company/contact-support
-  title: Prisma AIRS API
+  title: Prisma AIRS AI Runtime API Intercept
   description:
     "This Open API spec file represents the APIs available for the Prisma AIRS AI Runtime: API Intercept.\n
     \nThese APIs use the API key authentication and base URL.\n
-    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for Prisma AIRS API and then onboard the Prisma AIRS API in Strata Cloud Manager.\
-    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the Prisma AIRS API [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
+    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for Prisma AIRS AI Runtime API intercept and then onboard the API intercept in Strata Cloud Manager.\
+     For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the Prisma AIRS AI Runtime API intercept [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
     This Open API spec file was created on June 04, 2024.\
     \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
-    A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
+     A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
     All other marks mentioned herein may be trademarks of their respective companies.\n"
   license:
     name: Palo Alto Networks EULA
@@ -32,7 +32,7 @@ paths:
   /v1/scan/sync/request:
     post:
       summary: Send a Synchronous Scan Request
-      description: Post a scan request containing prompt/model-response that returns a synchronous scan response
+      description: Post a scan request containing prompt or model response that returns a synchronous scan response
       security:
         - x-pan-token: []
       operationId: ScanSyncRequest
@@ -82,7 +82,7 @@ paths:
   /v1/scan/async/request:
     post:
       summary: Send an Asynchronous Scan Request
-      description: Post a scan request that returns asynchronous scan response
+      description: Post a scan request that returns an asynchronous scan response with the scan_id and report_id
       security:
         - x-pan-token: []
       operationId: ScanAsyncRequest
@@ -128,8 +128,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /v1/scan/results:
     get:
-      summary: Retrieve Scan Results by ScanIDs
-      description: Get the Scan results for upto a maximum of 5 Scan IDs
+      summary: Retrieve Scan results by ScanIDs
+      description: Get the scan results for a scan_id, for up to a maximum of 5 scan IDs
       security:
         - x-pan-token: []
       operationId: GetScanResultsByScanIDs
@@ -151,7 +151,7 @@ paths:
           explode: false
       responses:
         200:
-          description: Successfully returned records for Scan Results
+          description: Successfully returned records for scan results
           content:
             application/json:
               schema:
@@ -187,7 +187,7 @@ paths:
   /v1/scan/reports:
     get:
       summary: Retrieve Threat Scan Reports by Report IDs
-      description: Get the Threat Scan Reports for a given list of report_ids
+      description: Get the threat scan reports for a given list of report_ids
       security:
         - x-pan-token: []
       tags:
@@ -196,7 +196,7 @@ paths:
       parameters:
         - name: report_ids
           in: query
-          description: Report Ids for Results
+          description: Report Ids for results
           required: true
           allowEmptyValue: false
           schema:
@@ -209,7 +209,7 @@ paths:
           explode: false
       responses:
         200:
-          description: Successfully returned Threat Scan Reports
+          description: Successfully returned threat scan reports
           content:
             application/json:
               schema:
@@ -243,7 +243,7 @@ paths:
 components:
   securitySchemes:
     x-pan-token:
-      description: API key token generated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
+      description: API key token generated during [onboarding Prisma AIRS AI Runtime API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
       in: header
       name: x-pan-token
       type: apiKey
@@ -307,6 +307,9 @@ components:
         ai_model:
           type: string
           description: AI model serving the AI application
+        user_ip:
+          type: string
+          description: IP address of the end user using the AI application
 
     ScanResponse:
       type: object
@@ -634,15 +637,10 @@ components:
         verdict:
           type: string
           description: Detection service verdict such as "malicious" or "benign"
-        code_analysis_by_type:
+        code_info:
           type: array
           items:
             $ref: "#/components/schemas/McEntryObject"
-        all_code_blocks:
-          type: array
-          items:
-            type: string
-            description: Code blocks extracted from prompt or response content
 
     McEntryObject:
       type: object
@@ -914,7 +912,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_analysis_by_type: []
+                  code_info: []
                   verdict: benign
               verdict: benign
             - action: allow
@@ -927,7 +925,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_analysis_by_type: []
+                  code_info: []
                   verdict: benign
               verdict: benign
           report_id: R46ea2f2b-0000-42e1-9972-bbc444628a26

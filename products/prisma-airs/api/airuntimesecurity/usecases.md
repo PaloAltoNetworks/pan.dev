@@ -1,6 +1,6 @@
 ---
 id: usecases
-title: "Use Cases: Prisma AIRS API"
+title: "Use Cases: Prisma AIRS AI Runtime API Intercept"
 sidebar_label: "Scan APIs Use Cases"
 keywords:
   - AIRS
@@ -11,14 +11,14 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for Prisma AIRS API detection features.
+This document outlines key use cases for Prisma AIRS AI Runtime API detection features.
 Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS API for enhanced protection.
 
 ## Prerequisites
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS API](airuntimesecurityapi.md) overview page.
+1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime API](airuntimesecurityapi.md) overview page.
 2. Review the Scan API Endpoints in the Scan API Endpoints overview page.
 3. Configure the API security profile with below settings for the respective use cases:
 
@@ -37,6 +37,7 @@ For details on the protections and the features available while creating an API 
 ## Use Cases
 
 ### Detect Prompt Injection
+
 <details>
   <summary>Detect Prompt Injection</summary>
 
@@ -118,12 +119,13 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
 --data '{
  "tr_id": "1234",
  "ai_profile": { // You can enter one of the following: profile_id or profile_name
-   "profile_id": "4597dc2b-0000-4e5a-a1da-fd0fe0e948df",
+   "profile_id": "00000000-0000-0000-0000-000000000000",
    "profile_name": "dummy-profile"
  },
  "metadata": {
    "app_user": "test-user-2",
-   "ai_model": "Test AI model"
+   "ai_model": "Test AI model",
+   "user_ip": "10.5.0.2"
  },
  "contents": [ # You can enter one of the following - prompt or response
    {
@@ -141,16 +143,16 @@ The response indicates a malicious URL detected with the `response_detected.url_
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "4597dc2b-d34c-0000-a1da-fd0fe0e948df",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "dummy-profile",
   "prompt_detected": {},
-  "report_id": "Rd7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "db_security": false,
     "dlp": false,
     "url_cats": true
   },
-  "scan_id": "d7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1234"
 }
 ```
@@ -318,7 +320,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
       }
     ]
   },
-  "report_id": "R90484606-6d70-4522-8f0c-c93d878c9a5c",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "dlp": true
   },
@@ -594,20 +596,20 @@ The specific action shown in the response is based on your API security profile 
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "8c8fdf8b-d494-0000-ba54-c16120c4ef0b",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "ai-sec-db-security",
   "prompt_detected": {
     "dlp": false,
     "injection": false,
     "url_cats": false
   },
-  "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "db_security": true,
     "dlp": false,
     "url_cats": false
   },
-  "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1134"
 }
 ```
@@ -674,7 +676,7 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
             "data_pattern_rule2_verdict": "",
             "dlp_profile_id": "00000000",
             "dlp_profile_name": "PII - Basic",
-            "dlp_report_id": "000002C5D89B846B21942943D46D80C973F8959DF0423C5D23E2AC96B2A06575"
+            "dlp_report_id": "0000000000000000000000000000000000000000000000000000000000000000"
           }
         },
         "verdict": "benign"
@@ -689,9 +691,9 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
         "verdict": "benign"
       }
     ],
-    "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 0,
-    "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "1134"
   }
 ]
@@ -917,6 +919,7 @@ The following async curl request scans an AI application running on an AI Agent 
 Create or update your API security profile by enabling **AI Agent Protection**.
 
 v1/scan/async/request
+
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/request' \
 -H 'Content-Type: application/json' \
@@ -967,8 +970,8 @@ The async output with report_id and scan_id:
 ```curl
 {
   "received": "2025-05-08T15:54:21.922531408Z",
-  "report_id": "R1737a162-8c89-4a18-a84c-fd7f635d018f",
-  "scan_id": "1737a162-8c89-4a18-a84c-fd7f635d018f"
+  "report_id": "R00000000-0000-0000-0000-000000000000",
+  "scan_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -997,9 +1000,9 @@ Both requests were blocked according to the security profile settings.
         "verdict": "malicious"
       }
     ],
-    "report_id": "R87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 1,
-    "scan_id": "87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2882"
   },
   {
@@ -1023,9 +1026,9 @@ Both requests were blocked according to the security profile settings.
         "verdict": "malicious"
       }
     ],
-    "report_id": "R87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 2,
-    "scan_id": "87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2082"
   }
 ]
@@ -1105,8 +1108,8 @@ Async scan output:
 Scan result:
 {
   "received": "2025-05-08T12:36:58.056655917Z",
-  "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
-  "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5"
+  "report_id": "R00000000-0000-0000-0000-000000000000",
+  "scan_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -1120,17 +1123,17 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
       "action": "block",
       "category": "malicious",
       "completed_at": "2025-05-08T12:36:59Z",
-      "profile_id": "d3da1d16-207a-46f4-a6f6-0b65b32fe3f0",
+      "profile_id": "00000000-0000-0000-0000-000000000000",
       "profile_name": "contextual-grounding-profile",
       "prompt_detected": {},
-      "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "report_id": "R00000000-0000-0000-0000-000000000000",
       "response_detected": {
         "ungrounded": true
       },
-      "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "scan_id": "00000000-0000-0000-0000-000000000000",
       "tr_id": "2082"
     },
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "status": "complete"
   },
   {
@@ -1139,17 +1142,17 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
       "action": "allow",
       "category": "benign",
       "completed_at": "2025-05-08T12:36:59Z",
-      "profile_id": "d3da1d16-207a-46f4-a6f6-0b65b32fe3f0",
+      "profile_id": "00000000-0000-0000-0000-000000000000",
       "profile_name": "contextual-grounding-profile",
       "prompt_detected": {},
-      "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "report_id": "R00000000-0000-0000-0000-000000000000",
       "response_detected": {
         "ungrounded": false
       },
-      "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "scan_id": "00000000-0000-0000-0000-000000000000",
       "tr_id": "2882"
     },
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "status": "complete"
   }
 ]
@@ -1169,9 +1172,9 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
         "verdict": "benign"
       }
     ],
-    "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 1,
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2882"
   },
   {
@@ -1184,9 +1187,9 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
         "verdict": "malicious"
       }
     ],
-    "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 2,
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2082"
   }
 ]
