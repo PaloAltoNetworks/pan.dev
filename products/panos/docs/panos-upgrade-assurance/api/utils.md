@@ -378,22 +378,22 @@ __Returns__
 def interpret_yes_no(boolstr: str) -> bool
 ```
 
-Interpret `yes`/`no` as booleans.
+Interpret `yes`/`no` and `on`/`off` as booleans.
 
 __Parameters__
 
 
-- __boolstr__ (`str`): `yes` or `no`, a typical device response for simple boolean-like queries.
+- __boolstr__ (`str`): `yes`, `no`, `on` or `off`, a typical device response for simple boolean-like queries.
 
 __Raises__
 
 
-- `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes` or `no`.
+- `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes`, `no`, `on` or `off`.
 
 __Returns__
 
 
-`bool`: `True` for *yes*, `False` for *no*.
+`bool`: `True` for *yes* / *on*, `False` otherwise.
 
 ### `printer`
 
