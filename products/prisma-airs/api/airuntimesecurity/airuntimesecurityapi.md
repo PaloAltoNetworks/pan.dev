@@ -1,7 +1,7 @@
 ---
 id: airuntimesecurityapi
-title: "Prisma AIRS API"
-sidebar_label: "Prisma AIRS API"
+title: "Prisma AIRS AI Runtime API Intercept"
+sidebar_label: "Prisma AIRS AI Runtime API Intercept"
 slug: /prisma-airs/scan/api
 keywords:
   - AIRS
@@ -10,10 +10,10 @@ keywords:
   - API
 ---
 
-**Prisma AIRS API** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code.
+**Prisma AIRS AI Runtime API intercept** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code.
 
 The scan API service scans prompts and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
-These APIs protect your AI models, AI applications, and AI datasets by programmatically scanning prompts and models for threats. These detection APIs enable robust protection across public and private models with model-agnostic functionality.
+These APIs protect your AI models, AI applications, AI datasets, and AI agents by programmatically scanning prompts and models for threats. These detection APIs enable robust protection across public and private models with model-agnostic functionality.
 
 The APIs efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss.
 To use these APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your AI security profile.
@@ -22,15 +22,15 @@ For licensing, onboarding, activation, and to obtain the API authentication key 
 
 ## Scan API Endpoints
 
-The following are the API endpoints based on the regions you selected while creating Prisma AIRS API deployment profile:
+The following are the API endpoints based on the regions you selected while creating Prisma AIRS AI Runtime: API intercept deployment profile:
 
 - US: https://service.api.aisecurity.paloaltonetworks.com 
 - EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
 
 ## Prerequisites
 
-1. Create and associate a [deployment profile](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) for Prisma AIRS API in your Customer Support Portal.
-2. [Onboard Prisma AIRS API](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
+1. Create and associate a [deployment profile](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/ai-deployment-profile-airs-api-intercept) for Prisma AIRS AI Runtime API intercept in your Customer Support Portal.
+2. [Onboard Prisma AIRS AI Runtime API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
 3. [Manage applications, API keys, security profiles, and custom topics](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/airs-apirs-manage-api-keys-profile-apps) in Strata Cloud Manager.
 
 ## Requirements for API Usage

