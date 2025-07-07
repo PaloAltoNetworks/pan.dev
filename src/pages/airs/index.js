@@ -192,10 +192,11 @@ function MainContent() {
                   maxWidth: 820,
                 }}
               >
-                Prisma AIRS API Intercept is Palo Alto Networks’ API for
-                securing AI applications and agents. Instantly protect your
-                models from prompt injection, data leaks, and unsafe outputs—so
-                you can build and deploy AI with confidence.
+                Prisma AIRS AI Runtime: API Intercept is Palo Alto Networks’ API
+                for securing AI applications, AI models, AI data, and AI agents.
+                Instantly protect your models from prompt injection, data leaks,
+                and unsafe outputs—so you can build and deploy AI with
+                confidence.
               </p>
             </div>
             <CodeBlock language="python">
@@ -308,7 +309,7 @@ print(res)
                   fontWeight: 700,
                 }}
               >
-                Prisma AIRS Scan API Python SDK
+                Prisma AIRS AI Runtime API Python SDK
               </span>
             }
             colorMode={colorMode}
@@ -348,15 +349,49 @@ print(res)
             </a>
           </Card>
           <Card
-            title="API Reference"
-            link="/prisma-airs/api/airuntimesecurity/prisma-airs-api/"
-            linkLabel="Full API Reference"
+            title={
+              <span
+                style={{
+                  color: colorMode === "dark" ? "#fff" : "#7c3aed",
+                  fontWeight: 700,
+                }}
+              >
+                API Reference Guide
+              </span>
+            }
             colorMode={colorMode}
+            style={{
+              background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+              border:
+                colorMode === "dark"
+                  ? "1px solid #333a48"
+                  : "1px solid #e0e7ef",
+              borderRadius: 20,
+              boxShadow:
+                colorMode === "dark"
+                  ? "0 2px 12px 0 rgba(124,58,237,0.10)"
+                  : "0 2px 12px 0 rgba(124,58,237,0.04)",
+              padding: 32,
+              color: colorMode === "dark" ? "#fff" : "#232237",
+              fontSize: 18,
+              minHeight: 180,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+            }}
           >
-            <div>
+            <div style={{ marginBottom: 16 }}>
               Full API documentation with endpoint details, request/response
               formats, authentication, error codes, and code samples.
             </div>
+            <a
+              href="/prisma-airs/scan/api/"
+              className={styles.button}
+              target="_self"
+            >
+              View API Reference Docs
+            </a>
           </Card>
           <Card
             title="Getting Started"

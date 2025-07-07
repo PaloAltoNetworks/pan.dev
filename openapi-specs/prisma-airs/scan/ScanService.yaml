@@ -2,12 +2,12 @@ openapi: 3.0.3
 info:
   contact:
     email: https://www.paloaltonetworks.com/company/contact-support
-  title: Prisma AIRS API
+  title: Prisma AIRS AI Runtime API Intercept
   description:
-    "This Open API spec file represents the APIs available for the AI Runtime Security: API Intercept.\n
+    "This Open API spec file represents the APIs available for the Prisma AIRS AI Runtime: API Intercept.\n
     \nThese APIs use the API key authentication and base URL.\n
-    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for the API intercept and then onboard the API intercept in Strata Cloud Manager.\
-    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the Prisma AIRS API [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
+    \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for Prisma AIRS AI Runtime API intercept and then onboard the API intercept in Strata Cloud Manager.\
+    For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the Prisma AIRS AI Runtime API intercept [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
     This Open API spec file was created on June 04, 2024.\
     \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
     A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
@@ -20,19 +20,22 @@ info:
 servers:
   - url: "https://service.api.aisecurity.paloaltonetworks.com"
     description: Prisma AIRS API service URL for US regions
-  - url: "https://service-de.api.aisecurity.paloaltonetworks.com"  
+  - url: "https://service-de.api.aisecurity.paloaltonetworks.com"
     description: Prisma AIRS API service URL for EU (Germany) regions
 
 tags:
   - name: Scans
+    description: Operations for performing AI content scans
   - name: Scan Results
+    description: Operations for retrieving scan results
   - name: Scan Reports
+    description: Operations for retrieving detailed scan reports
 
 paths:
   /v1/scan/sync/request:
     post:
       summary: Send a Synchronous Scan Request
-      description: Post a scan request containing prompt/model-response that returns a synchronous scan response
+      description: Post a scan request containing prompt or model response that returns a synchronous scan response
       security:
         - x-pan-token: []
       operationId: ScanSyncRequest
@@ -82,7 +85,7 @@ paths:
   /v1/scan/async/request:
     post:
       summary: Send an Asynchronous Scan Request
-      description: Post a scan request that returns asynchronous scan response
+      description: Post a scan request that returns an asynchronous scan response with the scan_id and report_id
       security:
         - x-pan-token: []
       operationId: ScanAsyncRequest
@@ -128,8 +131,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /v1/scan/results:
     get:
-      summary: Retrieve Scan Results by ScanIDs
-      description: Get the Scan results for upto a maximum of 5 Scan IDs
+      summary: Retrieve Scan results by ScanIDs
+      description: Get the scan results for a scan_id, for up to a maximum of 5 scan IDs
       security:
         - x-pan-token: []
       operationId: GetScanResultsByScanIDs
@@ -151,7 +154,7 @@ paths:
           explode: false
       responses:
         200:
-          description: Successfully returned records for Scan Results
+          description: Successfully returned records for scan results
           content:
             application/json:
               schema:
@@ -187,7 +190,7 @@ paths:
   /v1/scan/reports:
     get:
       summary: Retrieve Threat Scan Reports by Report IDs
-      description: Get the Threat Scan Reports for a given list of report_ids
+      description: Get the threat scan reports for a given list of report_ids
       security:
         - x-pan-token: []
       tags:
@@ -196,7 +199,7 @@ paths:
       parameters:
         - name: report_ids
           in: query
-          description: Report Ids for Results
+          description: Report Ids for results
           required: true
           allowEmptyValue: false
           schema:
@@ -209,7 +212,7 @@ paths:
           explode: false
       responses:
         200:
-          description: Successfully returned Threat Scan Reports
+          description: Successfully returned threat scan reports
           content:
             application/json:
               schema:
@@ -243,7 +246,7 @@ paths:
 components:
   securitySchemes:
     x-pan-token:
-      description: API key token generated during [onboarding AI Runtime Security API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
+      description: API key token generated during [onboarding Prisma AIRS AI Runtime API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview/onboard-api-runtime-security-api-intercept-in-scm) in Strata Cloud Manager.
       in: header
       name: x-pan-token
       type: apiKey
@@ -259,7 +262,7 @@ components:
           description: AI profile to use for the scan. You can specify one of the following - profile_id or profile_name
         metadata:
           $ref: "#/components/schemas/Metadata"
-          description: Optionally send the app_name, app_user, and ai_model in the metadata
+          description: Optionally send the app_name, app_user, ai_model, and user_ip in the metadata
         contents:
           description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
           type: array
@@ -307,6 +310,9 @@ components:
         ai_model:
           type: string
           description: AI model serving the AI application
+        user_ip:
+          type: string
+          description: IP address of the end user using the AI application
 
     ScanResponse:
       type: object
@@ -349,6 +355,11 @@ components:
           $ref: "#/components/schemas/MaskedData"
         response_masked_data:
           $ref: "#/components/schemas/MaskedData"
+        prompt_detection_details:
+          $ref: "#/components/schemas/PromptDetectionDetails"
+        response_detection_details:
+          $ref: "#/components/schemas/ResponseDetectionDetails"
+
         created_at:
           type: string
           format: date-time
@@ -415,6 +426,32 @@ components:
         topic_violation:
           type: boolean
           description: Indicates whether response contains any content violates topic guardrails
+
+    PromptDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    ResponseDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    TopicGuardRails:
+      type: object
+      properties:
+        allowed_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blocked_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic block list
 
     MaskedData:
       type: object
@@ -603,10 +640,15 @@ components:
         verdict:
           type: string
           description: Detection service verdict such as "malicious" or "benign"
-        code_info:
+        code_analysis_by_type:
           type: array
           items:
             $ref: "#/components/schemas/McEntryObject"
+        all_code_blocks:
+          type: array
+          items:
+            type: string
+            description: Code blocks extracted from prompt or response content
 
     McEntryObject:
       type: object
@@ -617,7 +659,6 @@ components:
         code_sha256:
           type: string
           description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
-
 
     AgentReportObject:
       type: object
@@ -722,7 +763,6 @@ components:
         low_confidence_detections:
           $ref: "#/components/schemas/OffsetObject"
 
-
     TgReportObject:
       type: object
       properties:
@@ -732,6 +772,16 @@ components:
         blocked_topic_list:
           type: string
           description: Indicates whether there was a content match for the topic block list such as "MATCHED" or "NOT MATCHED"
+        allowedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blockedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic allow list
 
     Error:
       type: object
@@ -870,7 +920,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_info: []
+                  code_analysis_by_type: []
                   verdict: benign
               verdict: benign
             - action: allow
@@ -883,7 +933,7 @@ components:
               detection_service: malicious_code
               result_detail:
                 mc_report:
-                  code_info: []
+                  code_analysis_by_type: []
                   verdict: benign
               verdict: benign
           report_id: R46ea2f2b-0000-42e1-9972-bbc444628a26
