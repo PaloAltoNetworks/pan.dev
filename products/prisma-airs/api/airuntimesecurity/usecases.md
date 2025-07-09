@@ -1045,7 +1045,7 @@ The following async scan request sends two prompts containing grounded and ungro
 
 :::info
 
-The maximum supported size of “Context” is 50K characters. The following size limitations apply:
+The maximum supported size of “Context” is 100K characters. The following size limitations apply:
 
 - Context: 100K characters
 - Prompt: 10K characters
