@@ -18,7 +18,7 @@ These APIs protect your AI models, AI applications, AI datasets, and AI agents b
 The APIs efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss.
 To use these APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your AI security profile.
 
-For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS API](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
+For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime API intecept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 
 ## Scan API Endpoints
 
@@ -60,3 +60,8 @@ For complete details, refer to adminstration guide for the section on how to "ma
 - One API key per deployment profile - Each deployment profile in the [Customer Support Portal](https://support.paloaltonetworks.com/Support/Index) allows a single API key.
 - 2 MB maximum payload size per synchronous scan request - Limited to a maximum of 100 URLs per request.
 - 5 MB maximum payload size per asynchronous scan request - Limited to a maximum of 100 URLs per request.
+- The following size limitations apply:
+
+  - context: 100k characters limit on the contextual grounding context
+  - prompt: 10k characters
+  - response: 20k characters
