@@ -1309,3 +1309,18 @@ The content prompt contains a topic from the blocked topic list, which causes th
 ```
 
 </details>
+| HTTP Status Code | Description | Common Scenario |
+|---|---|---|
+| **200** | Successfully scanned request | Request completed successfully and scan results returned |
+| **400** | Bad Request - Request data is invalid or malformed | - Empty request body<br>- Unreadable request body<br>- Wrong request format<br>- No scan content provided<br>- Both prompt and response are nil<br>- Empty prompt<br>- Empty response<br>- No scan IDs provided<br>- Too many scan IDs<br>- Scan ID length exceeds maximum<br>- Invalid scan ID format<br>- Invalid scan ID<br>- No report IDs provided<br>- Too many report IDs<br>- Report ID length exceeds maximum<br>- Profile ID invalid<br>- Profile name invalid |
+| **401** | Unauthenticated - Not Authenticated | - Missing authentication token<br>- Invalid authentication credentials<br>- Expired authentication token |
+| **403** | Forbidden - Invalid API Key | - Invalid or revoked API key<br>- Insufficient permissions for requested operation<br>- Account quota exceeded<br>- Feature not available for account tier |
+| **404** | Not Found - Resource is not found | - Scan ID does not exist<br>- Report ID not found<br>- Invalid API endpoint<br>- Profile not found |
+| **405** | Method Not Allowed - The method is not allowed | - Using wrong HTTP method (GET instead of POST)<br>- Endpoint doesn't support the requested method |
+| **413** | Request Too Large - The request body is too large | - Scan content exceeds size limits<br>- Too many targets in single request<br>- Bulk operation payload too large |
+| **415** | Unsupported Media Type - The media type is not supported | - Missing Content-Type header<br>- Content-Type not application/json<br>- Invalid media type for file uploads |
+| **429** | Too Many Requests - Request exceeds limit | - API rate limit exceeded<br>- Too many concurrent scans<br>- Daily/monthly quota reached |
+| **500** | Internal Server Error | - Scan engine failure<br>- Unexpected server error |
+| **502** | Bad Gateway | - Upstream service unavailable<br>- Service communication failure |
+| **503** | Service Unavailable | - Maintenance mode<br>- Scan capacity full<br>- Temporary service degradation |
+| **504** | Gateway Timeout | - Scan operation timeout<br>- Long-running request exceeded time limit |

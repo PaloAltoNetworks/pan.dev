@@ -6,6 +6,10 @@ module.exports = {
     },
     {
       type: "doc",
+      id: "prisma-airs/api/airuntimesecurity/errorcodes",
+    },
+    {
+      type: "doc",
       id: "prisma-airs/api/airuntimesecurity/usecases",
     },
     {
