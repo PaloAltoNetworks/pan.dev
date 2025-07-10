@@ -270,11 +270,13 @@ checks_configuration = [
         }
     },
     {'content_version': {'version': '8634-7678'}},
+    {'dp_cpu_utilization': {'threshold': 50, 'minutes': 2}},
     {'dynamic_updates': {'test_window': 120}},
     {"expired_licenses": {"skip_licenses": ["Threat Prevention"]}},
     {'free_disk_space': {'image_version': '10.1.6-h6'}},
     {'ha': {'skip_config_sync': True}},
-    {'planes_clock_sync': {'diff_threshold': 30}}
+    {'mp_cpu_utilization': {'threshold': 40}},
+    {'planes_clock_sync': {'diff_threshold': 30}},
     # tests below require additional configuration
     {'arp_entry_exist': {'ip': '10.0.1.1'} },
     {'ip_sec_tunnel_status': {
@@ -310,6 +312,9 @@ checks_configuration:
         hash_method: "sha1"
   - content_version:
       version: "8634-7678"
+  - dp_cpu_utilization:
+      threshold: 50
+      minutes: 2
   - dynamic_updates:
       test_window: 120
   - expired_licenses:
@@ -319,6 +324,8 @@ checks_configuration:
       image_version: "10.1.6-h6"
   - ha:
       skip_config_sync: true
+  - mp_cpu_utilization:
+      threshold: 40
   - planes_clock_sync:
       diff_threshold: 30
   # tests below require additional configuration
@@ -525,6 +532,55 @@ checks_configuration:
 ```
 
 
+### `dp_cpu_utilization`
+
+This check examines the data plane CPU utilization over a specified time period and compares it against a threshold.
+
+**Method:** [`CheckFirewall.check_dp_cpu_utilization()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_dp_cpu_utilization)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`threshold` | (optional) Maximum acceptable average CPU utilization percentage. Defaults to 80%.
+`minutes` | (optional) Number of minutes to check, between 1 and 60. Defaults to 5 minutes.
+
+**Sample configuration**
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'dp_cpu_utilization': {
+            'threshold': 90,
+            'minutes': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - dp_cpu_utilization:
+      threshold: 90
+      minutes: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+
 ### `dynamic_updates`
 
 Check if any Dynamic Update job is scheduled to run within the specified time window.
@@ -614,6 +670,54 @@ checks_configuration = [
 checks_configuration:
   - free_disk_space:
       image_version: '10.1.6-h3'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+
+### `environmentals`
+
+This check examines the system environmentals for any alarms. It can be configured to check specific components or all components if none are specified.
+
+**Method:** [`CheckFirewall.check_system_environmentals()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_system_environmentals)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`components` | (optional) List of components to check for alarms. If not provided, all components are checked. Valid components are: 'thermal', 'fantray', 'fan', 'power', 'power-supply'.
+
+**Sample configuration**
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+checks_configuration = [
+    { 
+        'environmentals': {
+            'components': ['thermal', 'power']
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - environmentals:
+      components:
+        - thermal
+        - power
 ```
 
 ```mdx-code-block
@@ -769,6 +873,53 @@ Does not require configuration.
 
 **Method**: [`CheckFirewall.check_non_finished_jobs()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_non_finished_jobs)
 
+
+### `mp_cpu_utilization`
+
+This check examines the management plane CPU utilization for the last 1 minute and compares it against a threshold.
+
+**Method:** [`CheckFirewall.check_mp_cpu_utilization()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallcheck_mp_cpu_utilization)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`threshold` | (optional) Maximum acceptable CPU utilization percentage. Defaults to 80%.
+
+**Sample configuration**
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+checks_configuration = [
+    {
+        'mp_cpu_utilization': {
+            'threshold': 75
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+checks_configuration:
+  - mp_cpu_utilization:
+      threshold: 75
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+
 ### `ntp_sync`
 
 Verify if time on a device is synchronized with an NTP server. This check fails if no NTP synchronization is configured.
@@ -884,11 +1035,44 @@ checks_configuration:
 
 ## State snapshots
 
-State snapshots store information about the state of a particular device area. They do not take any configurations. They store every possible information about an area. Use reports or custom code to extract a subset of information if required.
+State snapshots store information about the state of a particular device area. Some snapshots can take optional configurations to customize the snapshot behavior otherwise they store every possible information about an area. You may also use reports or custom code to extract a subset of information if required.
 
 They can be triggered using a common method: [`CheckFirewall.run_snapshots()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots). When running this method a list of state areas is provided using the `snapshot_config` paramter. This list is specified in [`ConfigParser`][cfgprs] class [`dialect`][dialect]. For details, refer to the documentation for this class.
 
 Following that [`dialect`][dialect], when no list is passed, **all** state snapshots are made.
+
+- `str` - the element simply specifies the name of a snapshot to run.
+- `dict` - the element contains the snapshot name and a configuration (if a particular snapshot supports one); the dictionary format is as follows:
+
+  ```mdx-code-block
+  <Tabs>
+  <TabItem value="python" label="Python" default>
+  ```
+
+  ```python
+  {
+    'snapshot_name': {
+      'config_name': 'config_value',
+      'config2_name': 'config2_value'
+    }
+  }
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  <TabItem value="ansible" label="YAML">
+  ```
+
+  ```yaml
+  snapshot_name:
+    config_name: 'config_value'
+    config2_name: 'config2_value'
+  ```
+
+  ```mdx-code-block
+  </TabItem>
+  </Tabs>
+  ```
 
 The output of the [`CheckFirewall.run_snapshots()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots) method is formatted as a dictionary where:
 
@@ -968,6 +1152,9 @@ snapshots_config = [
   'session_stats',
   'ip_sec_tunnels',
   'fib_routes',
+  {'mtu': {
+    'include_subinterfaces': True
+  }},
 ]
 ```
 
@@ -987,6 +1174,8 @@ snapshots_config:
   - session_stats
   - ip_sec_tunnels
   - fib_routes
+  - mtu:
+      include_subinterfaces: true
 ```
 
 ```mdx-code-block
@@ -1050,6 +1239,59 @@ Gets information about the session statistics, such as current sessions count pe
 
 **Method:** [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats)
 
+### `mtu`
+
+Takes a snapshot of MTU sizes for all interfaces on the device.
+
+This snapshot captures the MTU sizes for network interfaces on the device. When `include_subinterfaces` is set to `True`, 
+it will also query all sub-interfaces individually and include MTU values for all, which might take longer time to retrieve.
+
+:::caution
+Use `include_subinterfaces` with caution as it will query each sub-interface one-by-one and may take a long time to capture all
+sub-interfaces if there are a lot of them.
+:::
+
+**Method:** [`FirewallProxy.get_interfaces_mtu()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_interfaces_mtu)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`include_subinterfaces` | (optional, defaults to `False`) Whether to include sub-interfaces in the results.
+
+**Sample configuration**
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+snapshots_config = [
+    {
+        'mtu': {
+            'include_subinterfaces': True
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+snapshots_config:
+  - mtu:
+      include_subinterfaces: true
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 ## Reports
 
 The reporting part is actually the result of comparison of two snapshots. It is advised to run reports using the common method as some of the comparison results are calculated with it. The common method is: [`SnapshotCompare.compare_snapshots()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_snapshots).
@@ -1093,7 +1335,8 @@ reports = [
             {'num-max': 10},
             {'num-tcp': 10},
         ]
-    }}
+    }},
+    'mtu'
 ]
 ```
 
@@ -1132,6 +1375,7 @@ reports:
       thresholds:
         - num-max: 10
         - num-tcp: 10
+  - mtu
 ```
 
 ```mdx-code-block
@@ -1588,6 +1832,27 @@ reports:
 ```mdx-code-block
 </TabItem>
 </Tabs>
+```
+
+### `mtu`
+
+Provides a report on differences between interface MTU sizes. It simply compares MTU sizes for all interfaces from both snapshots.
+
+**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+
+**Sample configuration**
+
+This report produces the standardized dictionary.
+
+```python
+reports = [
+    'mtu'
+]
+```
+
+```yaml
+reports:
+  - mtu
 ```
 
 ## Health Checks
