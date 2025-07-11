@@ -11,21 +11,21 @@ keywords:
   - API
 ---
 
-This document outlines key use cases for Prisma AIRS AI Runtime API detection features.
-Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS API for enhanced protection.
+This document outlines key use cases for Prisma AIRS AI Runtime API intercept detection features.
+Each use case includes the sample code or API requests, API security profile configurations, along with the expected responses. The use cases demonstrate how to leverage Prisma AIRS AI Runtime: API intercept for enhanced protection.
 
 ## Prerequisites
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime API](airuntimesecurityapi.md) overview page.
-2. Review the Scan API Endpoints in the Scan API Endpoints overview page.
+1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
+2. Review the scan API endpoints in the scan API endpoints.
 3. Configure the API security profile with below settings for the respective use cases:
 
 - **Enable** the detection types (Basic or Advanced) in the API security profile based on the use cases.
 - Set **Action** to **Block** when the threat is detected.
 
-For details on the protections and the features available while creating an API security profile, refer to the administration guide page [here](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
+For details on the protections and the features available while creating an API security profile, refer to the [administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
 :::note
 
@@ -80,23 +80,23 @@ print(response.text)
 
 **Output**
 
-The output confirms prompt injection detection with the field “prompt_detected.injection” as true.
-If there is a prompt injection match the category in the response will be set to "malicious". If not the category is "benign".
+The output confirms prompt injection detection with the field `prompt_detected.injection` as `true`.
+If there is a prompt injection match the category in the response will be set to **malicious**. If not the category is **benign**.
 
 ```json
 {
    "action" : "block",
    "category" : "malicious",
-   "profile_id" : "4597dc2b-xxxx-4e5a-a1da-fd0fe0e948df",
+   "profile_id" : "00000000-0000-0000-0000-000000000000",
    "profile_name" : "dummy-profile",
    "prompt_detected" : {
       "dlp" : false,
       "injection" : true,
       "url_cats" : false
    },
-   "report_id" : "R7b8ab596-cfac-0000-aaf7-1fecba5505d3",
+   "report_id" : "R00000000-0000-0000-0000-000000000000",
    "response_detected" : {},
-   "scan_id" : "7b8ab596-cfac-0000-aaf7-1fecba5505d3",
+   "scan_id" : "00000000-0000-0000-0000-000000000000",
    "tr_id" : "1234"
 }
 ```
@@ -194,7 +194,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
 
 The expected response sample confirms sensitive data detection (`dlp: true`). If there is a DLP match (`dlp: true`), the **category** in the response will be set to **malicious**. If not the category will be **benign**.
 
-The specific action shown in the response is based on your AI security profile settings. For example, if DLP is enabled and the action is configured to "block" when a DLP threat is detected, the response will indicate that the action was "blocked."
+The specific action shown in the response is based on your AI security profile settings. For example, if DLP is enabled and the action is configured to **block** when a DLP threat is detected, the response indicates that the action was **blocked**.
 
 ```json
 {
@@ -206,12 +206,12 @@ The specific action shown in the response is based on your AI security profile s
     "injection": false,
     "url_cats": false
   },
-  "report_id": "R020e7c31-0000-4e0d-a2a6-215a0d5c56d9",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {
     "dlp": false,
     "url_cats": false
   },
-  "scan_id": "020e7c31-0000-4e0d-a2a6-215a0d5c56d9",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1234"
 }
 
@@ -223,9 +223,9 @@ The specific action shown in the response is based on your AI security profile s
 
 <details>
 <summary>Mask Sensitive Data</summary>
+
 This detection service masks the data patterns in the API output response, which scans the LLM prompt and responses.
 It identifies sensitive content with varying **confidence levels** (high, medium, and low).
-
 Each detection includes precise **offset** information.
 
 - An offset is a numerical index represented as [start_offset, end_offset] pairs, indicating where a sensitive data pattern begins and ends in the text. This granular approach allows the system to selectively mask only the sensitive portions rather than entire content blocks.
@@ -236,7 +236,7 @@ Masking the sensitive data feature is only available for a basic DLP profile and
 
 :::
 
-- v1/scan/sync/request
+- Following is a cURL example for using a `v1/scan/sync/request` endpoint:
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -263,19 +263,17 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/reques
 
 **Output**
 
-- Scan results
-
-The "prompt_masked_data" field appears when there's a "prompt" in the API contents.
+The `prompt_masked_data` field appears when there's a **prompt** in the API contents.
 
 It contains - The masked version of the prompt text, where sensitive data is replaced with "X" characters (maintaining the same length as the original sensitive data) and the offset information.
 
-Review the API scan logs for masked sensitive detection indicated by the “Content Masked” column.
+Review the API scan logs in Strata Cloud Manager for masked sensitive detection indicated by the **Content Masked** column.
 
 ```json
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "30e977b0-a6b4-41f8-aafe-74c4e3997463",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "mask-sensitive-data-pattern",
   "prompt_detected": {
     "dlp": true
@@ -539,15 +537,15 @@ The start and end offset character indexes enable the DLP service to selectively
             "data_pattern_rule2_verdict": "",
             "dlp_profile_id": "11995025",
             "dlp_profile_name": "Sensitive Content",
-            "dlp_report_id": "54D26B1D24BCBCE65642106F2F7B25B9D7AE19C80A9AEB3A114E95A5CA896E8A"
+            "dlp_report_id": "0000000000000000000000000000000000000000000000000000000000000000"
           }
         },
         "verdict": "malicious"
       }
     ],
-    "report_id": "R90484606-6d70-4522-8f0c-c93d878c9a5c",
+    "report_id": "R00000000-0000-0000-0000-000000000000",
     "req_id": 0,
-    "scan_id": "90484606-6d70-4522-8f0c-c93d878c9a5c",
+    "scan_id": "00000000-0000-0000-0000-000000000000",
     "transaction_id": "1111"
   }
 ]
@@ -561,7 +559,7 @@ The start and end offset character indexes enable the DLP service to selectively
 <summary>Detect Database Security Attack</summary>
 
 This detection is for AI applications using genAI models to generate database queries and regulate the types of queries generated.
-The following sync request sends a prompt containing a potentially malicious database query to the AI Runtime Security: API intercept for analysis.
+The following synchronous request sends a prompt containing a potentially malicious database query to the scan APIs for threat analysis.
 Enable **Database Security Detection** and set an **Allow** or **Block** action on the database queries in the API security profile for this detection.
 
 ```curl
@@ -705,9 +703,10 @@ Below is the detailed report response from the `v1/scan/reports` API endpoint fo
 
 <details>
 <summary>Detect Toxic Content</summary>
-The toxic content detection is for LLM models and securing them from generating or responding to inappropriate content.
-The following sync request sends a prompt containing potentially toxic content to Prisma AIRS APIs for analysis.
-Enable **Toxic Content Detection** in the API security profile for this detection.
+
+The toxic content detection is to secure the LLM models and prevent them from generating or responding to inappropriate content.
+The following synchronous request sends a prompt containing potentially toxic content to Prisma AIRS scan APIs for analysis.
+Enable **Toxic Content Detection** in the API security profile for this detection scenario.
 
 ```curl
 curl --location 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \
@@ -740,7 +739,7 @@ The specific action (`block`) shown in the response is based on your API securit
 {
   "action": "block",
   "category": "malicious",
-  "profile_id": "00000000-09e9-4ce5-b090-7f99fdffc9a5",
+  "profile_id": "00000000-0000-0000-0000-000000000000",
   "profile_name": "detect-toxic-content-profile",
   "prompt_detected": {
     "dlp": false,
@@ -748,9 +747,9 @@ The specific action (`block`) shown in the response is based on your API securit
     "toxic_content": true,
     "url_cats": false
   },
-  "report_id": "000000000-09ee-4908-8d5f-a4f153d8c118",
+  "report_id": "R00000000-0000-0000-0000-000000000000",
   "response_detected": {},
-  "scan_id": "00000000-09ee-4908-8d5f-a4f153d8c118",
+  "scan_id": "00000000-0000-0000-0000-000000000000",
   "tr_id": "1111"
 }
 ```
@@ -914,11 +913,9 @@ The malicious code report shows:
 
 <details>
 <summary>Detect AI Agent Threats</summary>
-The following async curl request scans an AI application running on an AI Agent framework with prompts to trigger model-based and pattern-based detections.
+The following asynchronous curl request `v1/scan/async/request` endpoint scans an AI application running on an AI Agent framework with prompts to trigger model-based and pattern-based detections.
 
 Create or update your API security profile by enabling **AI Agent Protection**.
-
-v1/scan/async/request
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/request' \
@@ -965,7 +962,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/reque
 ]'
 ```
 
-The async output with report_id and scan_id:
+Following is the asynchronous output with `report_id` and `scan_id` values:
 
 ```curl
 {
@@ -975,10 +972,10 @@ The async output with report_id and scan_id:
 }
 ```
 
-/v1/scan/reports
+Run the `/v1/scan/reports` scan API for detailed report with the above `report_id`:
 
-For req_id=1, the "model_verdict" is malicious, detected directly by the AI model.
-For req_id=2, the "model_verdict" is benign, but pattern-matching detected a **tools-memory-manipulation** category_type threat, resulting in a malicious verdict.
+For req_id=1, the `model_verdict` is malicious, detected directly by the AI model.
+For req_id=2, the `model_verdict` is benign, but pattern-matching detected a threat with `category_type: tools-memory-manipulation`, resulting in a malicious verdict.
 
 Both requests were blocked according to the security profile settings.
 
@@ -1041,11 +1038,11 @@ Both requests were blocked according to the security profile settings.
 <details>
 <summary>Detect Contextual Grounding</summary>
 
-The following async scan request sends two prompts containing grounded and ungrounded strings. For this detection, enable **Contextual Grounding** in the API security profile and set an Allow or Block action.
+The following asynchronous scan request sends two prompts containing grounded and ungrounded strings. For this detection, enable **Contextual Grounding** in the API security profile and set an **Allow** or **Block** action.
 
 :::info
 
-The maximum supported size of “Context” is 50K characters. The following size limitations apply:
+The maximum supported size of “Context” is 100K characters. The following size limitations apply:
 
 - Context: 100K characters
 - Prompt: 10K characters
@@ -1102,7 +1099,7 @@ curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/async/reque
 ]'
 ```
 
-Async scan output:
+Asynchronous scan output:
 
 ```curl
 Scan result:
@@ -1113,7 +1110,7 @@ Scan result:
 }
 ```
 
-Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snippet is subjected to contextual grounding detection. The req_id: 2 indicates an ungrounded verdict, and req_id: 1 a grounded one.
+Trigger `/v1/scan/results` endpoint with the above `scan_id`. The API output snippet is subjected to contextual grounding detection. The `req_id: 2` indicates an ungrounded verdict, and `req_id: 1` a grounded one.
 
 ```curl
 [
@@ -1158,7 +1155,7 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 ]
 ```
 
-`/v1/scan/reports` API endpoint confirms this is a contextual grounding detection. For the req_id:1 the verdict is “benign” with a default “allow” action. The verdict for req_id: 2 is “malicious” because the response is ungrounded (not present in the context). The response action is blocked for contextual grounding as configured in the API security profile.
+The `/v1/scan/reports` API endpoint confirms this is a contextual grounding detection. For the `req_id:1` the verdict is “benign” with a default “allow” action. The verdict for `req_id: 2` is “malicious” because the response is ungrounded (not present in the context). The response action is blocked for contextual grounding as configured in the API security profile.
 
 ```curl
 [
@@ -1202,7 +1199,8 @@ Trigger `/v1/scan/results` endpoint with the above “scan_id” API output snip
 <details>
 <summary>Custom Topic Guardrails</summary>
 
-The following sync scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
+The following synchronous scan API example shows how to use custom topic guardrails to detect and block content that violates your configured topic policies.
+Ensure to enable the **Custom Topic Guardrails** in your API security profile with **Allow** or **Block** actions.
 
 ```curl
 curl -L 'https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request' \

@@ -10,7 +10,7 @@ keywords:
   - API
 ---
 
-This page covers the key use cases of the AI Runtime Security Python SDK inline scan types with synchronous and asynchronous methods.
+This page covers the key use cases of the Prisma AIRS AI Runtime API Python SDK inline scan types with synchronous and asynchronous methods.
 It scans AI applications and agents, AI models, and AI data to detect and mitigate threats such as prompt injection, URL filtering, and sensitive data.
 Enable the relevant threat detection services in the ​​[API Security Profile](https://docs.paloaltonetworks.com/prisma-airs/administration/prevent-network-security-threats/api-intercept-create-configure-security-profile).
 
