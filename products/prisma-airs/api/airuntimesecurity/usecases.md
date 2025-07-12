@@ -34,6 +34,11 @@ For details on the protections and the features available while creating an API 
 
 :::
 
+## Language Support
+
+- Prompt injection detection: English, Spanish, Russian, German, French, Japanese, Portuguese, and Italian.
+- Toxic content detection, contextual grounding, and custom topic guardrails are supported in English.
+
 ## Use Cases
 
 ### Detect Prompt Injection
