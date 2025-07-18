@@ -1184,8 +1184,6 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
   customFields: {
-    firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
-    recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
     errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };
