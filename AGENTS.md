@@ -48,7 +48,7 @@ PRODUCTS_INCLUDE=contributing yarn start
 yarn format
 
 # Production build (for testing and development)
-PRODUCTS_INCLUDE=contributing,prisma-airs yarn build
+PRODUCTS_INCLUDE=contributing,prisma-airs yarn build-github
 ```
 
 ---
