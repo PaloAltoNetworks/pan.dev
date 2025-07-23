@@ -7,6 +7,8 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { PageMetadata } from "@docusaurus/theme-common";
 import { useLocation } from "@docusaurus/router";
+import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
+import TurndownService from "turndown";
 
 export default function NotFound() {
   const {
@@ -17,12 +19,32 @@ export default function NotFound() {
   } = themeConfig;
 
   const [searchResults, setSearchResults] = useState([]);
+  const [markdown, setMarkdown] = useState(null);
+  const isMdPath =
+    ExecutionEnvironment.canUseDOM && window.location.pathname.endsWith(".md");
   const location = useLocation().pathname.split("/").join(" ");
 
   const client = algoliaSearch(appId, apiKey);
   const index = client.initIndex(indexName);
 
   useEffect(() => {
+    if (isMdPath) {
+      const htmlPath = window.location.pathname.replace(/\.md$/, "");
+      fetch(htmlPath)
+        .then((res) => res.text())
+        .then((html) => {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const container =
+            doc.querySelector(".openapi-left-panel__container") ||
+            doc.querySelector(".theme-doc-markdown");
+          if (!container) return;
+          const turndown = new TurndownService();
+          setMarkdown(turndown.turndown(container.innerHTML));
+        })
+        .catch(() => {});
+      return;
+    }
+
     async function getResults() {
       const results = await Promise.resolve(
         index.search(location, {
@@ -36,6 +58,23 @@ export default function NotFound() {
 
     getResults();
   }, []);
+
+  if (isMdPath) {
+    return (
+      <>
+        <PageMetadata title="Raw Markdown" />
+        <pre
+          style={{
+            fontFamily: "monospace",
+            whiteSpace: "pre-wrap",
+            margin: "1rem",
+          }}
+        >
+          {markdown ?? ""}
+        </pre>
+      </>
+    );
+  }
 
   return (
     <>

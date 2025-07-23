@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import StackdriverErrorReporter from "stackdriver-errors-js";
-import TurndownService from "turndown";
 
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
@@ -36,26 +35,6 @@ export default function Root({ children }) {
         }
         return originalReport(err, options);
       };
-    }
-
-    if (window.location.pathname.endsWith(".md")) {
-      const htmlPath = window.location.pathname.replace(/\.md$/, "");
-      fetch(htmlPath)
-        .then((res) => res.text())
-        .then((html) => {
-          const doc = new DOMParser().parseFromString(html, "text/html");
-          const container =
-            doc.querySelector(".openapi-left-panel__container") ||
-            doc.querySelector(".theme-doc-markdown");
-          if (!container) return;
-          const turndown = new TurndownService();
-          const markdown = turndown.turndown(container.innerHTML);
-          document.body.innerHTML = "";
-          const pre = document.createElement("pre");
-          pre.textContent = markdown;
-          document.body.appendChild(pre);
-        })
-        .catch(() => {});
     }
   }, []);
 
