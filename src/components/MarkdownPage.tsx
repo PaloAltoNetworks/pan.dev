@@ -9,7 +9,7 @@ export default function MarkdownPage() {
 
   useEffect(() => {
     async function fetchAndConvert() {
-      const htmlPath = location.pathname.replace(/\.md$/, "/");
+      const htmlPath = location.pathname.replace(/\.md$/, "/index.html");
       try {
         const res = await fetch(htmlPath);
         if (!res.ok) {
@@ -53,11 +53,22 @@ export default function MarkdownPage() {
     fetchAndConvert();
   }, [location.pathname]);
 
+  const preStyle: React.CSSProperties = {
+    all: "unset",
+    whiteSpace: "pre-wrap",
+    fontFamily: "monospace",
+    display: "block",
+    padding: 0,
+    margin: 0,
+    background: "transparent",
+    color: "inherit",
+  };
+
   if (error) {
-    return <pre>{error}</pre>;
+    return <pre style={preStyle}>{error}</pre>;
   }
   if (markdown === null) {
     return <p>Loading...</p>;
   }
-  return <pre>{markdown}</pre>;
+  return <pre style={preStyle}>{markdown}</pre>;
 }
