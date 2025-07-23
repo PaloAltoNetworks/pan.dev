@@ -3,8 +3,9 @@ function markdownRoutePlugin() {
     name: "markdown-route-plugin",
     async contentLoaded({ actions }) {
       actions.addRoute({
-        path: "/:route+\\.md",
+        path: "/:route+.md",
         component: "@site/src/components/MarkdownPage",
+        exact: true,
       });
     },
   };
