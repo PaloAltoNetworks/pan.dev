@@ -9,8 +9,8 @@
 | Key                  | Value                                                                                           |
 | -------------------- | ----------------------------------------------------------------------------------------------- |
 | **Site**             | **pan.dev** – public developer documentation for Palo Alto Networks                             |
-| **Generator**        | Docusaurus **3.7.0** (static site)                                                              |
-| **Tooling**          | Yarn 4 workspaces, Node 20 LTS (see `.nvmrc`)                                                   |
+| **Generator**        | Docusaurus **3.8.1** (static site)                                                              |
+| **Tooling**          | Node 20 LTS (see `.nvmrc`)                                                                      |
 | **Selective builds** | `PRODUCTS_INCLUDE` env‑var lets you build one or more products instead of the whole site (≈1 h) |
 
 ---
@@ -19,16 +19,16 @@
 
 | Path             | Purpose                                                                 |
 | ---------------- | ----------------------------------------------------------------------- |
-| `products/`      | One folder per product → MDX docs, OpenAPI specs, `sidebars.{js,ts}`    |
+| `products/`      | One folder per product → MDX docs, MD docs, `sidebars.{js,ts}`          |
 | `src/pages/`     | Homepage & other global landing pages – **agents SHOULD improve these** |
 | `src/`           | Shared React + TS components, theme overrides, utilities                |
 | `static/`        | Assets copied verbatim to the final build                               |
 | `plugin-*`       | Custom Docusaurus plugins (`plugin-sitemap-coveo`, GTM, etc.)           |
 | `scripts/`       | Automation helpers (e.g., `openapi-to-mdx.ts`)                          |
-| `openapi-specs/` | Raw OpenAPI JSON/YAML files fed into plugin‑openapi‑docs                |
+| `openapi-specs/` | Raw OpenAPI JSON/YAML files fed into docusaurus-plugin-openapi-docs     |
 | `.github/`       | Workflows (self‑hosted runners, preview deploys)                        |
 
-> **Gotcha** – Some products share a sidebar. If you omit one of those products from `PRODUCTS_INCLUDE`, the build will throw an “Unknown sidebar” error. When unsure, include the whole family (e.g., `sase,access,sdwan,scm`).
+> **Gotcha** – Some products share a sidebar. If you omit one of those products from `PRODUCTS_INCLUDE`, the build will throw an “Unknown sidebar” error. When unsure, include the whole family (e.g., `sase,access,sdwan,scm`) or base the build command on the package.json scripts.
 
 ---
 
@@ -36,20 +36,19 @@
 
 ```bash
 # Install deps (Node 20 LTS)
-corepack enable    # enables Yarn 4 if needed
 yarn
 
 # Full dev (slow)
 yarn start
 
 # Fast dev – only selected products
-cross-env PRODUCTS_INCLUDE=panos,prisma-cloud yarn start
+PRODUCTS_INCLUDE=contributing yarn start
 
-# Lint & format
-yarn lint && yarn format
+# Format
+yarn format
 
-# Production build (selected products)
-cross-env PRODUCTS_INCLUDE=panos yarn build
+# Production build (for testing and development)
+PRODUCTS_INCLUDE=contributing,prisma-airs yarn build
 ```
 
 ---
@@ -68,26 +67,17 @@ cross-env PRODUCTS_INCLUDE=panos yarn build
 ### Front‑end Conventions
 
 * React functional components in **TypeScript strict mode** (see `tsconfig.json`).
-* Style with CSS Modules or Tailwind (theme pre‑configured).
-* Absolute import paths use the `@/` alias.
+* Style with CSS Modules.
+* Theme import paths use the `@theme/` alias.
+* Site import paths use the `@site/` alias.
 
 ---
 
 ## 🤖 Common Agent Tasks
 
-1. **Generate docs from OpenAPI**
-
-   ```bash
-   yarn openapi:generate
-   ```
-2. **Author / update MDX** – add file, update product sidebar, run selective build.
-3. **Fix links**
-
-   ```bash
-   yarn lint:links
-   ```
-4. **Improve landing pages** – edit `src/pages/index.mdx` & friends.
-5. **CI tweaks** – update `.github/workflows/*.yml`, keep `PRODUCTS_INCLUDE` label logic intact.
+1. **Generate product documentation based on input from human.** - update/add MDX or MD files, update sidebars, test with selective build, etc.
+2. **Improve landing pages** – edit/update and improve pages under `src/pages`.
+3. **Fix issues** - open a PR with proposed fix(es) after thoroughly reviewing a Github issue. 
 
 > Always open a PR —even for small fixes. GitHub Actions deploys a preview to Firebase for human review.
 
@@ -106,7 +96,8 @@ cross-env PRODUCTS_INCLUDE=panos yarn build
 * [`README.md`](./README.md) – project overview
 * [`CONTRIBUTING.md`](./CONTRIBUTING.md) – full contribution guide
 * Docusaurus docs → [https://docusaurus.io/docs](https://docusaurus.io/docs)
+* Docusaurus OpenAPI Docs plugin → [https://docusaurus-openapi.tryingpan.dev](https://docusaurus-openapi.tryingpan.dev)
 
 ---
 
-*Last updated: **2025‑06‑18***
+*Last updated: **2025‑07‑23***
