@@ -1171,7 +1171,6 @@ const config = {
       },
     ],
     tailwindPlugin,
-    require.resolve("./plugins/markdown-export.cjs"),
   ],
   stylesheets: [
     {
