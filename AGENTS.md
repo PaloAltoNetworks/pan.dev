@@ -42,7 +42,7 @@ yarn
 yarn start
 
 # Fast dev – only selected products
-cross-env PRODUCTS_INCLUDE=contributing yarn start
+PRODUCTS_INCLUDE=contributing yarn start
 
 # Format
 yarn format
