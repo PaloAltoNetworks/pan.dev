@@ -1,6 +1,6 @@
 ---
 hide_title: true
-id: dedicated_vmseries_and_autoscale
+id: vmseries_transit_vnet_common_autoscale
 keywords:
 - pan-os
 - panos
@@ -14,12 +14,12 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Dedicated Firewall Option with Autoscaling
+sidebar_label: VM-Series Transit VNet Common with Autoscaling
 title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture,
-  Dedicated Inbound NGFW Option with Autoscaling'
+  Common NGFW Option with Autoscaling'
 ---
 
-# Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture, Dedicated Inbound NGFW Option with Autoscaling
+# Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture, Common NGFW Option with Autoscaling
 
 Palo Alto Networks produces several
 [validated reference architecture design and deployment documentation guides](https://www.paloaltonetworks.com/resources/reference-architectures),
@@ -27,16 +27,16 @@ which describe well-architected and tested deployments. When deploying VM-Series
 guide users toward the best security outcomes, whilst reducing rollout time and avoiding common integration efforts.
 
 The Terraform code presented here will deploy Palo Alto Networks VM-Series firewalls in Azure based on a centralized design with
-dedicated-inbound VM-Series with autoscaling(Virtual Machine Scale Sets); for a discussion of other options, please see the design
-guide from [the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
+common VM-Series with autoscaling(Virtual Machine Scale Sets); for a discussion of other options, please see the design guide from
+[the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
 
 Virtual Machine Scale Sets (VMSS) are used for autoscaling to run the Next Generation Firewalls, with custom data plane oriented
 metrics published by PanOS it is possible to adjust the number of firewall appliances to the current workload (data plane
-utilization). Since firewalls are added or removed automatically, they cannot be managed in a classic way. Therefore they are not
-assigned with public IP addresses. To ease licensing, management and updates a Panorama appliance is suggested. Deployment of a
-Panorama instance is not covered in this example, but a [dedicated one exists](../standalone_panorama).
+utilization). Since firewalls are added or removed automatically, they cannot be managed in a classic way. To ease licensing,
+management and updates a Panorama appliance is suggested. Deployment of a Panorama instance is not covered in this example,
+but a [dedicated one exists](../standalone\_panorama).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/dedicated_vmseries_and_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/dedicated_vmseries_and_autoscale)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/vmseries_transit_vnet_common_autoscale) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/vmseries_transit_vnet_common_autoscale)
 
 ## Reference Architecture Design
 
@@ -46,8 +46,8 @@ This code implements:
 
 - a *centralized design*, a hub-and-spoke topology with a Transit VNet containing VM-Series to inspect all inbound, outbound,
   east-west, and enterprise traffic
-- the *dedicated inbound option*, which separates inbound traffic flows onto a separate set of VM-Series
-- *auto scaling* for the VM-Series, where Virtual Machine Scale Sets (VMSS) are used to provision VM-Series that will scale in and
+- the *common option*, which routes all traffic flows onto a single set of VM-Series
+- *auto scaling- for the VM-Series, where a Virtual Machine Scale Set (VMSS) is used to provision VM-Series that will scale in and
   out dynamically, as workload demands fluctuate
 
 ## Detailed Architecture and Design
@@ -58,15 +58,14 @@ This design uses a Transit VNet. Application functions and resources are deploye
 hub-and-spoke topology. The hub of the topology, or transit VNet, is the central point of connectivity for all inbound, outbound,
 east-west, and enterprise traffic. You deploy all VM-Series firewalls within the transit VNet.
 
-### Dedicated Inbound Option
+### Common Option
 
-The dedicated inbound option separates traffic flows across two separate sets of VM-Series firewalls. One set of VM-Series
-firewalls is dedicated to inbound traffic flows, allowing for greater flexibility and scaling of inbound traffic loads. The second
-set of VM-Series firewalls services all outbound, east-west, and enterprise network traffic flows. This deployment choice offers
-increased scale and operational resiliency and reduces the chances of high bandwidth use from the inbound traffic flows affecting
-other traffic flows within the deployment.
+The common firewall option leverages a single set of VM-Series firewalls. The sole set of firewalls operates as a shared resource
+and may present scale limitations with all traffic flowing through a single set of firewalls due to the performance degradation
+that occurs when traffic crosses virtual routers. This option is suitable for smaller scale deployments because inbound and
+outbound traffic flows occur on the same set of firewalls. However, the technical integration complexity is high.
 
-![Detailed Topology Diagram](2c794716-f3d5-4d90-9f9f-e826fc9e3fef.png)
+![Detailed Topology Diagram](516780a2-f66e-4677-885f-c5ba18db168c.png)
 
 This reference architecture consists of:
 
@@ -75,16 +74,17 @@ This reference architecture consists of:
     - 3 of them dedicated to the firewalls: management, private and public
     - one dedicated to an Application Gateway
   - Route Tables and Network Security Groups
-- 2 Virtual Machine Scale Sets:
-  - one for inbound, one for outbound and east-west traffic
+- 1 Virtual Machine Scale Set:
+  - deployed across availability zones
+  - for inbound, outbound and east-west traffic
   - with 3 network interfaces: management, public, private
-  - no public addresses are assigned to firewalls' interfaces
+  - with public IP addresses assigned to:
+    - management interface
+    - public interface - due to use of a public Load Balancer this public IP is used mainly for outgoing traffic
 - 2 Load Balancers:
-  - public - with a public IP address assigned, in front of the public interfaces of the inbound VMSS, for incoming traffic
-  - private - in front of the firewalls private interfaces of the OBEW VMSS, for outgoing and east-west traffic
-- a NAT Gateway responsible for handling the outgoing traffic for the management (updates) and public (outbound traffic in OBEW
-- firewalls mainly) interfaces
-- 2 Application Insights, one per each scale set, used to store the custom PanOS metrics
+  - public - with a public IP address assigned, in front of the public interfaces of the firewalls in VMSS, for incoming traffic
+  - private - in front of the private interfaces of the firewalls in VMSS, for outgoing and east-west traffic
+- an Application Insights, used to store the custom PanOS metrics sent from firewalls in scale set
 - an Application Gateway, serving as a reverse proxy for incoming traffic, with a sample rule setting the XFF header properly
 - _(optional)_ test workloads with accompanying infrastructure:
   - 2 Spoke VNETs with Route Tables and Network Security Groups
@@ -94,7 +94,15 @@ This reference architecture consists of:
 **NOTE!**
 - In order to deploy the architecture without test workloads described above, empty the `test_infrastructure` map in
   `example.tfvars` file.
-- This is an example of a non-zonal deployment. Resiliency is maintained by using fault domains (Scale Set's default mechanism).
+
+**Disclaimer!** \
+Public IP addresses are assigned to management interfaces in this example in order to simplify the deployment. With a private
+Panorama connectivity in place and Panorama Software Firewall License plugin you can bootstrap the firewalls without public IPs
+assigned to the management interfaces. You should also enable
+[Automatically push content when software device registers to Panorama](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-new-features/panorama-features/automatic-content-push-for-vm-series-and-cn-series-firewalls)
+on the template stack and
+[schedule content updates using Panorama](https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-upgrade/upgrade-panorama/deploy-updates-to-firewalls-log-collectors-and-wildfire-appliances-using-panorama/schedule-a-content-update-using-panorama).
+Alternatively content updates can be configured to be fetched via data plane interfaces with service routes.
 
 ### Auto Scaling VM-Series
 
@@ -102,8 +110,8 @@ Auto scaling: Public-cloud environments focus on scaling out a deployment instea
 stems primarily from the capability of public-cloud environments to dynamically increase or decrease the number of resources
 allocated to your environment. Using native Azure services like Virtual Machine Scale Sets (VMSS), Application Insights and
 VM-Series automation features, the guide implements VM-Series that will scale in and out dynamically, as your protected workload
-demands fluctuate. The VM-Series firewalls are deployed in separate Virtual Machine Scale Sets for inbound and outbound/east-west
-firewalls, and are automatically registered to Azure Load Balancers.
+demands fluctuate. The VM-Series firewalls are deployed in a Virtual Machine Scale Set for inbound and outbound/east-west
+firewalls in common option, and are automatically registered to Azure Load Balancers.
 
 ## Prerequisites
 
@@ -115,8 +123,7 @@ A list of requirements might vary depending on the platform used to deploy the i
 - if you have not run Palo Alto NGFW images in a subscription it might be necessary to accept the license first
   ([see this note](../../modules/vmseries#accept-azure-marketplace-terms))
 
-A non-platform requirement would be a running Panorama instance. For full automation you might want to consider the following
-requirements:
+A non-platform requirement would be a running Panorama instance. For full automation you might want to consider the following requirements:
 
 - a template and a template stack with `DAY0` configuration
 - a device group with security configuration (`DAY1` [iron skillet](https://github.com/PaloAltoNetworks/iron-skillet) for example)
@@ -138,8 +145,7 @@ requirements:
 - checkout the code locally (if you haven't done so yet)
 - copy the [`example.tfvars`](./example.tfvars) file, rename it to `terraform.tfvars` and adjust it to your needs (take a closer
   look at the `TODO` markers). If you already have a configured Panorama (with at least minimum configuration described above) you
-  might want to also adjust the `bootstrap_options` for each scale set ([inbound](./example.tfvars#L205) and
-  [obew](./example.tfvars#L249) separately).
+  might want to also adjust the `bootstrap_options` for the scale set [`common`](./example.tfvars#L224).
 - _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice
 - provide `subscription_id` either by creating an environment variable named `ARM_SUBSCRIPTION_ID` with Subscription ID as value
   in your shell (recommended option) or by setting the value of `subscription_id` variable within your `tfvars` file (discouraged
@@ -165,7 +171,7 @@ requirements:
   The deployment takes couple of minutes. Observe the output. At the end you should see a summary similar to this:
 
   ```console
-  Apply complete! Resources: 52 added, 0 changed, 0 destroyed.
+  Apply complete! Resources: 43 added, 0 changed, 0 destroyed.
 
   Outputs:
 
@@ -194,7 +200,7 @@ terraform output metrics_instrumentation_keys
 ```
 
 The retrieved keys should be put into appropriate templates in Panorama and pushed to the devices. From this moment on, custom
-metrics are being sent to Application Insights and retrieved by Virtual Machine Scale Sets to trigger scale-in and scale-out
+metrics are being sent to Application Insights and retrieved by the Virtual Machine Scale Set to trigger scale-in and scale-out
 operations.
 
 Although firewalls in a Scale Set are not meant to be managed directly, they are still configured with password authentication.
@@ -398,7 +404,9 @@ map(object({
       address_prefixes                = optional(list(string), [])
       network_security_group_key      = optional(string)
       route_table_key                 = optional(string)
+      default_outbound_access_enabled = optional(bool)
       enable_storage_service_endpoint = optional(bool)
+      enable_appgw_delegation         = optional(bool)
       enable_cloudngfw_delegation     = optional(bool)
     })), {})
   }))
@@ -509,6 +517,7 @@ object({
       idle_timeout_in_minutes    = optional(number)
       prefix_name                = optional(string)
       prefix_resource_group_name = optional(string)
+      prefix_id                  = optional(string)
     })), {})
     public_ip_prefixes = optional(map(object({
       create              = bool
@@ -718,8 +727,8 @@ Below you can find a brief list of most important properties:
                        described by `subnet_key`.
 - `subnet_key`       - (`string`, required) a key pointing to a Subnet definition in the `var.vnets` map, this has to be an
                        Application Gateway V2 dedicated subnet.
-- `zones`            - (`list`, optional, defaults to module default) parameter controlling if this is a zonal, or a non-zonal
-                       deployment.
+- `zones`            - (`list`, optional, defaults to `["1", "2", "3"]`) parameter controlling if this is a zonal, or a
+                       non-zonal deployment.
 - `public_ip`        - (`map`, required) defines a Public IP resource used by the Application Gateway instance, a newly created
                        Public IP will have it's name prefixes with `var.name_prefix`.
 - `listeners`        - (`map`, required) defines Application Gateway's Listeners, see
@@ -748,7 +757,7 @@ map(object({
     name       = string
     vnet_key   = string
     subnet_key = string
-    zones      = optional(list(string))
+    zones      = optional(list(string), ["1", "2", "3"])
     public_ip = object({
       create              = optional(bool, true)
       name                = optional(string)
@@ -808,7 +817,7 @@ map(object({
       timeout                   = optional(number)
       use_cookie_based_affinity = optional(bool)
       affinity_cookie_name      = optional(string)
-      probe                     = optional(string)
+      probe_key                 = optional(string)
       root_certs = optional(map(object({
         name = string
         path = string
@@ -1021,7 +1030,9 @@ It duplicates popular properties from `scale_sets` variable, specifically `scale
 set within this variable. As a result, all universal properties can be overriden on a per-VMSS basis.
 
 Following properties are supported:
-  
+
+- `use_airs`          - (`bool`, optional, defaults to `false`) when set to `true`, the AI Runtime Security VM image is used 
+                        instead of the one passed to the module and version for `airs-flex` offer must be provided.  
 - `version`           - (`string`, optional) describes the PAN-OS image version from Azure Marketplace.
 - `size`              - (`string`, optional, defaults to module default) Azure VM size (type). Consult the *VM-Series
                         Deployment Guide* as only a few selected sizes are supported.
@@ -1035,8 +1046,9 @@ Type:
 
 ```hcl
 object({
-    version = optional(string)
-    size    = optional(string)
+    use_airs = optional(bool)
+    version  = optional(string)
+    size     = optional(string)
     bootstrap_options = optional(object({
       type                                  = optional(string)
       ip-address                            = optional(string)
@@ -1225,6 +1237,7 @@ map(object({
       ssh_keys                        = optional(list(string), [])
     })
     image = optional(object({
+      use_airs                = optional(bool)
       version                 = optional(string)
       publisher               = optional(string)
       offer                   = optional(string)
@@ -1302,6 +1315,7 @@ map(object({
       pip_idle_timeout_in_minutes    = optional(number)
       pip_prefix_name                = optional(string)
       pip_prefix_resource_group_name = optional(string)
+      pip_prefix_id                  = optional(string)
       load_balancer_key              = optional(string)
       application_gateway_key        = optional(string)
     }))
@@ -1494,7 +1508,9 @@ map(object({
         address_prefixes                = optional(list(string), [])
         network_security_group_key      = optional(string)
         route_table_key                 = optional(string)
+        default_outbound_access_enabled = optional(bool)
         enable_storage_service_endpoint = optional(bool)
+        enable_appgw_delegation         = optional(bool)
         enable_cloudngfw_delegation     = optional(bool)
       })), {})
       local_peer_config = optional(object({

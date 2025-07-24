@@ -1,6 +1,6 @@
 ---
 hide_title: true
-id: standalone_panorama
+id: panorama_standalone
 keywords:
 - pan-os
 - panos
@@ -14,7 +14,7 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Standalone Panorama Deployment
+sidebar_label: Panorama Standalone
 title: Standalone Panorama Deployment
 ---
 
@@ -29,7 +29,7 @@ The Terraform code presented here will deploy Palo Alto Networks Panorama manage
 (without additional logging disks). For option on how to add additional logging disks - please refer to panorama
 [module documentation](../../modules/panorama#input_logging_disks).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/standalone_panorama) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/standalone_panorama)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/panorama_standalone) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/panorama_standalone)
 
 ## Topology
 
@@ -296,7 +296,9 @@ map(object({
       address_prefixes                = optional(list(string), [])
       network_security_group_key      = optional(string)
       route_table_key                 = optional(string)
+      default_outbound_access_enabled = optional(bool)
       enable_storage_service_endpoint = optional(bool)
+      enable_appgw_delegation         = optional(bool)
       enable_cloudngfw_delegation     = optional(bool)
     })), {})
   }))
@@ -380,6 +382,7 @@ object({
       idle_timeout_in_minutes    = optional(number)
       prefix_name                = optional(string)
       prefix_resource_group_name = optional(string)
+      prefix_id                  = optional(string)
     })), {})
     public_ip_prefixes = optional(map(object({
       create              = bool

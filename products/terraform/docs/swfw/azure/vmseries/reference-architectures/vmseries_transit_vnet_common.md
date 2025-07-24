@@ -1,6 +1,6 @@
 ---
 hide_title: true
-id: dedicated_vmseries
+id: vmseries_transit_vnet_common
 keywords:
 - pan-os
 - panos
@@ -14,12 +14,12 @@ keywords:
 - azure
 pagination_next: null
 pagination_prev: null
-sidebar_label: Dedicated Firewall Option
-title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture,
-  Dedicated Inbound NGFW Option'
+sidebar_label: VM-Series Transit VNet Common
+title: 'Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture.
+  Common NGFW Option'
 ---
 
-# Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture, Dedicated Inbound NGFW Option
+# Reference Architecture with Terraform: VM-Series in Azure, Centralized Architecture. Common NGFW Option
 
 Palo Alto Networks produces several
 [validated reference architecture design and deployment documentation guides](https://www.paloaltonetworks.com/resources/reference-architectures),
@@ -27,10 +27,10 @@ which describe well-architected and tested deployments. When deploying VM-Series
 guide users toward the best security outcomes, whilst reducing rollout time and avoiding common integration efforts.
 
 The Terraform code presented here will deploy Palo Alto Networks VM-Series firewalls in Azure based on a centralized design with
-dedicated-inbound VM-Series; for a discussion of other options, please see the design guide from
+common VM-Series for all traffic; for a discussion of other options, please see the design guide from
 [the reference architecture guides](https://www.paloaltonetworks.com/resources/reference-architectures).
 
-[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/dedicated_vmseries) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/dedicated_vmseries)
+[![GitHub Logo](/img/view_on_github.png)](https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules/tree/main/examples/vmseries_transit_vnet_common) [![Terraform Logo](/img/view_on_terraform_registry.png)](https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest/examples/vmseries_transit_vnet_common)
 
 ## Reference Architecture Design
 
@@ -40,7 +40,7 @@ This code implements:
 
 - a *centralized design*, a hub-and-spoke topology with a Transit VNet containing VM-Series to inspect all inbound, outbound,
   east-west, and enterprise traffic
-- the *dedicated inbound option*, which separates inbound traffic flows onto a separate set of VM-Series.
+- the *common option*, which routes all traffic flows onto a single set of VM-Series.
 
 ## Detailed Architecture and Design
 
@@ -50,32 +50,32 @@ This design uses a Transit VNet. Application functions and resources are deploye
 a hub-and-spoke topology. The hub of the topology, or transit VNet, is the central point of connectivity for all inbound,
 outbound, east-west, and enterprise traffic. You deploy all VM-Series firewalls within the transit VNet.
 
-### Dedicated Inbound Option
+### Common Option
 
-The dedicated inbound option separates traffic flows across two separate sets of VM-Series firewalls. One set of VM-Series
-firewalls is dedicated to inbound traffic flows, allowing for greater flexibility and scaling of inbound traffic loads.
-The second set of VM-Series firewalls services all outbound, east-west, and enterprise network traffic flows. This deployment
-choice offers increased scale and operational resiliency and reduces the chances of high bandwidth use from the inbound traffic
-flows affecting other traffic flows within the deployment.
+The common firewall option leverages a single set of VM-Series firewalls. The sole set of firewalls operates as a shared resource
+and may present scale limitations with all traffic flowing through a single set of firewalls due to the performance degradation
+that occurs when traffic crosses virtual routers. This option is suitable for proof-of-concepts and smaller scale deployments
+because the number of firewalls low. However, the technical integration complexity is high.
 
-![Detailed Topology Diagram](8f7a8530-c2a8-4bf2-845d-200b6f5675f2.png)
+![Detailed Topology Diagram](798c4559-f218-4351-b0ee-c0dfb864ad3b.png)
 
 This reference architecture consists of:
 
 - a VNET containing:
-  - 3 subnets dedicated to the firewalls: management, private and public
+  - 4 subnets:
+    - 3 of them dedicated to the firewalls: management, private and public
+    - one dedicated to an Application Gateway
   - Route Tables and Network Security Groups
 - 2 Load Balancers:
   - public - with a public IP address assigned, in front of the firewalls public interfaces, for incoming traffic
   - private - in front of the firewalls private interfaces, for outgoing and east-west traffic
-- a Storage Account used to keep bootstrap packages containing `DAY0` configuration for the firewalls
-- 4 firewalls:
+- 2 firewalls:
   - deployed in different zones
-  - 2 pairs, one for inbound, the other for outbound and east-west traffic
-  - with 3 network interfaces each: management, public, private
+  - with 3 network interfaces: management, public, private
   - with public IP addresses assigned to:
     - management interface
-    - public interface
+    - public interface - due to use of a public Load Balancer this public IP is used mainly for outgoing traffic
+- an Application Gateway, serving as a reverse proxy for incoming traffic, with a sample rule setting the XFF header properly
 - _(optional)_ test workloads with accompanying infrastructure:
   - 2 Spoke VNETs with Route Tables and Network Security Groups
   - 2 Spoke VMs serving as WordPress-based web servers
@@ -89,27 +89,25 @@ This reference architecture consists of:
 
 A list of requirements might vary depending on the platform used to deploy the infrastructure but a minimum one includes:
 
-- _(in case of non cloud shell deployment)_ credentials and (optionally) tools required to authenticate against Azure Cloud, see
-  [AzureRM provider documentation for details](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure)
+- _(in case of non cloud shell deployment)_ credentials and (optionally) tools required to authenticate against Azure Cloud,
+  see [AzureRM provider documentation for details](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure)
 - [supported](#requirements) version of [`Terraform`](<https://developer.hashicorp.com/terraform/downloads>)
 - if you have not run Palo Alto NGFW images in a subscription it might be necessary to accept the license first
-  ([see this note](../../modules/vmseries#accept-azure-marketplace-terms))
+  ([see this note](../../modules/vmseries#accept-azure-marketplace-terms)).
 
-**Note!**
-- after the deployment the firewalls remain not licensed, they do however contain minimum `DAY0` configuration (required NIC, VR,
-  routes configuration).
-- this example contains some **files** that **can contain sensitive data**. Keep in mind that **this code** is
-  **only an example**. It's main purpose is to introduce the Terraform modules.
+**NOTE!**
+- after the deployment the firewalls remain not configured and not licensed
+- this example contains some **files** that **can contain sensitive data**, namely the `TFVARS` file can contain
+  `bootstrap_options` properties in `var.vmseries` definition. Keep in mind that **this code** is **only an example**.
+  It's main purpose is to introduce the Terraform modules.
 
 ## Usage
 
 ### Deployment Steps
 
 - checkout the code locally (if you haven't done so yet)
-- copy the [`example.tfvars`](./example.tfvars) file, rename it to `terraform.tfvars` and adjust it to your needs (take a closer
-  look at the `TODO` markers)
-- copy the [`init-cfg.sample.txt`](./files/init-cfg.sample.txt) to `init-cfg.txt` and fill it out with required bootstrap
-  parameters (see this [documentation](https://docs.paloaltonetworks.com/vm-series/9-1/vm-series-deployment/bootstrap-the-vm-series-firewall/create-the-init-cfgtxt-file/init-cfgtxt-file-components#id07933d91-15be-414d-bc8d-f2a5f3d8df6b) for details)
+- copy the [`example.tfvars`](./example.tfvars) file, rename it to `terraform.tfvars` and adjust it to your needs
+  (take a closer look at the `TODO` markers)
 - _(optional)_ authenticate to AzureRM, switch to the Subscription of your choice
 - provide `subscription_id` either by creating an environment variable named `ARM_SUBSCRIPTION_ID` with Subscription ID as value
   in your shell (recommended option) or by setting the value of `subscription_id` variable within your `tfvars` file (discouraged
@@ -135,22 +133,23 @@ A list of requirements might vary depending on the platform used to deploy the i
   The deployment takes couple of minutes. Observe the output. At the end you should see a summary similar to this:
 
   ```console
-  bootstrap_storage_urls = <sensitive>
+  Apply complete! Resources: 53 added, 0 changed, 0 destroyed.
+
+  Outputs:
+
   lb_frontend_ips = {
     "private" = {
       "ha-ports" = "1.2.3.4"
     }
     "public" = {
-      "palo-lb-app1-pip" = "1.2.3.4"
+      "palo-lb-app1" = "1.2.3.4"
     }
   }
   password = <sensitive>
   username = "panadmin"
   vmseries_mgmt_ips = {
-    "fw-in-1" = "1.2.3.4"
-    "fw-in-2" = "1.2.3.4"
-    "fw-obew-1" = "1.2.3.4"
-    "fw-obew-2" = "1.2.3.4"
+    "fw-1" = "1.2.3.4"
+    "fw-2" = "1.2.3.4"
   }
   ```
 
@@ -183,10 +182,7 @@ You can now login to the devices using either:
 - cli - ssh client is required
 - Web UI (https) - any modern web browser, note that initially the traffic is encrypted with a self-signed certificate.
 
-As mentioned, the devices already contain `DAY0` configuration, so all network interfaces should be configured and Azure Load
-Balancer should already report that the devices are healthy.
-
-You can now proceed with licensing the devices and configuring your first rules.
+You can now proceed with licensing and configuring the devices.
 
 Please also refer to [this repository](https://github.com/PaloAltoNetworks/iron-skillet) for `DAY1` configuration
 (security hardening).
@@ -195,7 +191,7 @@ Please also refer to [this repository](https://github.com/PaloAltoNetworks/iron-
 
 To remove the deployed infrastructure run:
 
-```bash
+```sh
 terraform destroy
 ```
 
@@ -381,7 +377,9 @@ map(object({
       address_prefixes                = optional(list(string), [])
       network_security_group_key      = optional(string)
       route_table_key                 = optional(string)
+      default_outbound_access_enabled = optional(bool)
       enable_storage_service_endpoint = optional(bool)
+      enable_appgw_delegation         = optional(bool)
       enable_cloudngfw_delegation     = optional(bool)
     })), {})
   }))
@@ -492,6 +490,7 @@ object({
       idle_timeout_in_minutes    = optional(number)
       prefix_name                = optional(string)
       prefix_resource_group_name = optional(string)
+      prefix_id                  = optional(string)
     })), {})
     public_ip_prefixes = optional(map(object({
       create              = bool
@@ -701,8 +700,8 @@ Below you can find a brief list of most important properties:
                        described by `subnet_key`.
 - `subnet_key`       - (`string`, required) a key pointing to a Subnet definition in the `var.vnets` map, this has to be an
                        Application Gateway V2 dedicated subnet.
-- `zones`            - (`list`, optional, defaults to module default) parameter controlling if this is a zonal, or a non-zonal
-                       deployment.
+- `zones`            - (`list`, optional, defaults to `["1", "2", "3"]`) parameter controlling if this is a zonal, or a
+                       non-zonal deployment.
 - `public_ip`        - (`map`, required) defines a Public IP resource used by the Application Gateway instance, a newly created
                        Public IP will have it's name prefixes with `var.name_prefix`.
 - `listeners`        - (`map`, required) defines Application Gateway's Listeners, see
@@ -731,7 +730,7 @@ map(object({
     name       = string
     vnet_key   = string
     subnet_key = string
-    zones      = optional(list(string))
+    zones      = optional(list(string), ["1", "2", "3"])
     public_ip = object({
       create              = optional(bool, true)
       name                = optional(string)
@@ -791,7 +790,7 @@ map(object({
       timeout                   = optional(number)
       use_cookie_based_affinity = optional(bool)
       affinity_cookie_name      = optional(string)
-      probe                     = optional(string)
+      probe_key                 = optional(string)
       root_certs = optional(map(object({
         name = string
         path = string
@@ -1034,7 +1033,9 @@ However, if values are set in those maps, they still take precedence over the on
 universal properties can be overriden on a per-VM basis.
 
 Following properties are supported:
-  
+
+- `use_airs`          - (`bool`, optional, defaults to `false`) when set to `true`, the AI Runtime Security VM image is used 
+                        instead of the one passed to the module and version for `airs-flex` offer must be provided.  
 - `version`           - (`string`, optional) describes the PAN-OS image version from Azure Marketplace.
 - `size`              - (`string`, optional, defaults to module default) Azure VM size (type). Consult the *VM-Series
                         Deployment Guide* as only a few selected sizes are supported.
@@ -1048,8 +1049,9 @@ Type:
 
 ```hcl
 object({
-    version = optional(string)
-    size    = optional(string)
+    use_airs = optional(bool)
+    version  = optional(string)
+    size     = optional(string)
     bootstrap_options = optional(object({
       type                                  = optional(string)
       ip-address                            = optional(string)
@@ -1223,6 +1225,7 @@ map(object({
       ssh_keys                        = optional(list(string), [])
     }), {})
     image = optional(object({
+      use_airs                = optional(bool)
       version                 = optional(string)
       publisher               = optional(string)
       offer                   = optional(string)
@@ -1451,7 +1454,9 @@ map(object({
         address_prefixes                = optional(list(string), [])
         network_security_group_key      = optional(string)
         route_table_key                 = optional(string)
+        default_outbound_access_enabled = optional(bool)
         enable_storage_service_endpoint = optional(bool)
+        enable_appgw_delegation         = optional(bool)
         enable_cloudngfw_delegation     = optional(bool)
       })), {})
       local_peer_config = optional(object({
