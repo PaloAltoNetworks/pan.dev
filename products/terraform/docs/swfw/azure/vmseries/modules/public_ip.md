@@ -229,6 +229,8 @@ List of available properties:
                                  should be allocated.
 - `prefix_resource_group_name` - (`string`, optional, defaults to the PIP's RG) name of a Resource Group hosting an existing
                                  Public IP Prefix resource.
+- `prefix_id`                  - (`string`, optional) you can specify Public IP Prefix ID as an alternative to the properties
+                                 above (name and resource group), in case you want to avoid using a data source block.
   
 Example:
 
@@ -274,6 +276,7 @@ map(object({
     idle_timeout_in_minutes    = optional(number)
     prefix_name                = optional(string)
     prefix_resource_group_name = optional(string)
+    prefix_id                  = optional(string)
   }))
 ```
 

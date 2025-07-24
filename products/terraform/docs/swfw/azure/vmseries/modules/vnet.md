@@ -209,6 +209,8 @@ Name | Type | Description
 Name |  Description
 --- | ---
 `virtual_network_id` | The identifier of the created or sourced Virtual Network.
+`virtual_network_name` | The name of the created or sourced Virtual Network.
+`virtual_network_resource_group` | The Resource Group name of the created or sourced Virtual Network.
 `vnet_cidr` | VNET address space.
 `subnet_ids` | The identifiers of the created or sourced Subnets.
 `subnet_cidrs` | Subnet CIDRs (sourced or created).
@@ -517,9 +519,14 @@ List of available attributes of each subnet entry:
                                       `network_security_groups` that should be assigned to this subnet.
 - `route_table_key`                 - (`string`, optional, defaults to `null`) a key identifying a Route Table defined in
                                       `route_tables` that should be assigned to this subnet.
+- `default_outbound_access_enabled` - (`bool`, optional, defaults to `false`) a flag that enables default outbound access to
+                                      the Internet from the subnet. Using explicit Internet access methods is recommended.
 - `enable_storage_service_endpoint` - (`bool`, optional, defaults to `false`) a flag that enables `Microsoft.Storage` service
                                       endpoint on a subnet. This is a suggested setting for the management interface when full
                                       bootstrapping using an Azure Storage Account is used.
+- `enable_appgw_delegation`         - (`bool`, optional, defaults to `false`) a flag that enables subnet delegation to 
+                                      `Microsoft.Network/applicationGateways` service. This is required for Application Gateway
+                                      Enhanced Network Isolation.
 - `enable_cloudngfw_delegation`     - (`bool`, optional, defaults to `false`) a flag that enables subnet delegation to
                                       `PaloAltoNetworks.Cloudngfw/firewalls` service. This is required for Cloud NGFW to work
                                       in a VNET-based deployment.
@@ -555,7 +562,9 @@ map(object({
     address_prefixes                = optional(list(string), [])
     network_security_group_key      = optional(string)
     route_table_key                 = optional(string)
+    default_outbound_access_enabled = optional(bool, false)
     enable_storage_service_endpoint = optional(bool, false)
+    enable_appgw_delegation         = optional(bool, false)
     enable_cloudngfw_delegation     = optional(bool, false)
   }))
 ```

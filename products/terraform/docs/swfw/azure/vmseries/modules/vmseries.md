@@ -169,6 +169,8 @@ Basic Azure VM image configuration.
 
 Following properties are available:
 
+- `use_airs`                - (`bool`, optional, defaults to `false`) when set to `true`, the AI Runtime Security VM image is
+                              used instead of the one passed to the module and version for `airs-flex` offer must be provided.
 - `version`                 - (`string`, optional, defaults to `null`) VM-Series PAN-OS version; list available with
                               `az vm image list -o table --publisher paloaltonetworks --offer vmseries-flex --all`.
 - `publisher`               - (`string`, optional, defaults to `paloaltonetworks`) the Azure Publisher identifier for a image
@@ -190,6 +192,7 @@ Type:
 
 ```hcl
 object({
+    use_airs                = optional(bool, false)
     version                 = optional(string)
     publisher               = optional(string, "paloaltonetworks")
     offer                   = optional(string, "vmseries-flex")

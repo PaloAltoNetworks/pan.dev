@@ -240,6 +240,8 @@ Basic Azure VM configuration.
 
 Following properties are available:
 
+- `use_airs`                - (`bool`, optional, defaults to `false`) when set to `true`, the AI Runtime Security VM image is
+                              used instead of the one passed to the module and version for `airs-flex` offer must be provided.
 - `version`                 - (`string`, optional, defaults to `null`) VM-Series PAN-OS version; list available with 
                               `az vm image list -o table --publisher paloaltonetworks --offer vmseries-flex --all`.
 - `publisher`               - (`string`, optional, defaults to `paloaltonetworks`) the Azure Publisher identifier for an image
@@ -261,6 +263,7 @@ Type:
 
 ```hcl
 object({
+    use_airs                = optional(bool, false)
     version                 = optional(string)
     publisher               = optional(string, "paloaltonetworks")
     offer                   = optional(string, "vmseries-flex")
@@ -298,6 +301,9 @@ Following configuration options are available:
                                      Addresses should be allocated.
 - `pip_prefix_resource_group_name` - (`string`, optional, defaults to the VMSS's RG) name of a Resource Group hosting an 
                                      existing Public IP Prefix resource.
+- `pip_prefix_id`                  - (`string`, optional) you can specify Public IP Prefix ID as an alternative to the
+                                     properties above (name and resource group), in case you want to avoid using a data source
+                                     block.
 - `lb_backend_pool_ids`            - (`list`, optional, defaults to `[]`) a list of identifiers of existing Load Balancer
                                      backend pools to associate the interface with.
 - `appgw_backend_pool_ids`         - (`list`, optional, defaults to `[]`) a list of identifier of Application Gateway's backend
@@ -336,6 +342,7 @@ list(object({
     pip_idle_timeout_in_minutes    = optional(number)
     pip_prefix_name                = optional(string)
     pip_prefix_resource_group_name = optional(string)
+    pip_prefix_id                  = optional(string)
     lb_backend_pool_ids            = optional(list(string), [])
     appgw_backend_pool_ids         = optional(list(string), [])
   }))
