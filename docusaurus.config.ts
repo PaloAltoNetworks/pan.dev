@@ -997,7 +997,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           dlp: {
-            specPath: "openapi-specs/dlp/DLPAPI.yaml",
+            specPath: "openapi-specs/dlp",
             outputDir: "products/dlp/api",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
