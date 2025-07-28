@@ -417,12 +417,6 @@ components:
       type: object
     IncidentInventoryRequest:
       properties:
-        columns:
-          description: Array of column names to include in the incident inventory
-            response.
-          items:
-            type: string
-          type: array
         filter:
           description: Filter criteria to narrow down incident search results.
           minLength: 1
@@ -436,13 +430,6 @@ components:
           description: Number of incidents to return per page for pagination.
           format: int32
           type: integer
-        sort_by:
-          description: Field name to sort the incident inventory results by.
-          type: string
-        sort_order:
-          description: Sort order for the incident inventory results (ascending or
-            descending).
-          type: string
         time_range:
           description: Time range for incident data retrieval with predefined options
             (1 hour, 3 hours, 24 hours, 7 days, 30 days, 90 days).
@@ -588,11 +575,6 @@ components:
       type: object
     ResultsDownloadRequest:
       properties:
-        columns:
-          description: Specific columns to include in the downloaded results file.
-          items:
-            type: string
-          type: array
         filter:
           description: Filter criteria to apply when downloading incident results.
           type: string
@@ -600,12 +582,6 @@ components:
           description: Maximum number of rows to include in the download file.
           format: int32
           type: integer
-        sort_by:
-          description: Field name to sort the downloaded results by.
-          type: string
-        sort_order:
-          description: Sort order for the downloaded results (ascending or descending).
-          type: string
         time_range:
           description: Time range for the data to be included in the download.
           enum:
@@ -657,6 +633,7 @@ paths:
       - description: 'Number of rows to include in each response (default: 1000)'
         in: query
         name: pageSize
+        required: true
         schema:
           type: string
       responses:
@@ -705,32 +682,28 @@ paths:
         content:
           application/json:
             example:
-              time_range: DAY_30
+              time_range: HOUR_24
             schema:
               $ref: '#/components/schemas/IncidentInventoryRequest'
-        description: 'Incident inventory table request
-
-
-          Required parameters:
-
-          - time_range: the range to fetch records
-
-
-          Optional parameters:
-
-          - filter: list of filters to apply
-
-          - columns: list of columns to fetch
-
-          - sort_by: the column to sort by
-
-          - sort_order: the sorting order
-
-          - page_size: page size (default: 1000)
-
-          - maxRows: maximum number of rows to be returned (default: 100,000)
-
-          '
+        description: "Incident inventory table request\n\nRequired parameters:\n-\
+          \ time_range: the range to fetch records\n    * Possible values\n      \
+          \  - HOUR_1\n        - HOUR_3\n        - HOUR_24\n        - DAY_7\n    \
+          \    - DAY_30\n        - DAY_90    \n\nOptional parameters:\n- filter: list\
+          \ of filters to apply \n    * Examples: \n        - \"filter\": \"Tag =\
+          \ 'Needs Escalation'\"\n        - \"filter\": \"Status in ('New','open','under_investigation')\"\
+          \n        - \"filter\": \"UrlDomain = 'dlptest.com'\"\n        - \"filter\"\
+          : \"Channel = 'PRISMA_ACCESS' AND DataProfile in ('11995030','11995033')\"\
+          \                    \n    * Pattern: {FilterName} =/in {value}\n    * Possible\
+          \ values for FilterName:\n        - Action\n        - ApplicationName\n\
+          \        - Asset\n        - AssigneeId\n        - AssigneeName\n       \
+          \ - Channel\n        - DataPattern (for Detection Types)\n        - DataProfile\n\
+          \        - Destination\n        - IncidentId\n        - Priority\n     \
+          \   - ReportId\n        - Severity \n            - Values\n            \
+          \    - 5 for Critical\n                - 4 for High\n                - 3\
+          \ for Medium\n                - 2 for Low\n                - 1 for Informational\n\
+          \        - Source\n        - Region\n        - Status\n        - UrlDomain\n\
+          \        - Tag                    \n- page_size: page size (default: 1000)\n\
+          - maxRows: maximum number of rows to be returned (default: 100,000)\n"
         required: true
       responses:
         '200':
@@ -779,33 +752,31 @@ paths:
         content:
           application/json:
             example:
-              time_range: DAY_30
+              time_range: HOUR_24
             schema:
               $ref: '#/components/schemas/ResultsDownloadRequest'
-        description: 'Incident Download Request
-
-
-          **Note:** Either ''time_range'' or ''token'' is required.
-
-
-          **Parameters:**
-
-          - **time_range** (optional when token is provided): The range to fetch records
-
-          - **filter** (optional): List of filters to apply
-
-          - **columns**: (optional) list of columns to fetch
-
-          - **sort_by** (optional): The column to sort by
-
-          - **sort_order** (optional): The sorting order
-
-          - **maxRows** (optional): Maximum number of rows to be returned (default:
-          100,000)
-
-          - **token** (optional when time_range is provided): Query token
-
-          '
+        description: "Incident Download request\n\n**Note:** Either 'time_range' or\
+          \ 'token' is required.\n\nParameters:\n- time_range (optional when token\
+          \ is provided) : the range to fetch records\n    * Possible values\n   \
+          \     - HOUR_1\n        - HOUR_3\n        - HOUR_24\n        - DAY_7\n \
+          \       - DAY_30\n        - DAY_90\n- token (optional when time_range is\
+          \ provided): Query token received from incident inventory request\n- filter\
+          \ (optional): list of filters to apply \n    * Examples: \n        - \"\
+          filter\": \"Tag = 'Needs Escalation'\"\n        - \"filter\": \"Status in\
+          \ ('New','open','under_investigation')\"\n        - \"filter\": \"UrlDomain\
+          \ = 'dlptest.com'\"\n        - \"filter\": \"Channel = 'PRISMA_ACCESS' AND\
+          \ DataProfile in ('11995030','11995033')\"                    \n    * Pattern:\
+          \ {FilterName} =/in {value}\n    * Possible values for FilterName:\n   \
+          \     - Action\n        - ApplicationName\n        - Asset\n        - AssigneeId\n\
+          \        - AssigneeName\n        - Channel\n        - DataPattern (for Detection\
+          \ Types)\n        - DataProfile\n        - Destination\n        - IncidentId\n\
+          \        - Priority\n        - ReportId\n        - Severity \n         \
+          \   - Values\n                - 5 for Critical\n                - 4 for\
+          \ High\n                - 3 for Medium\n                - 2 for Low\n  \
+          \              - 1 for Informational\n        - Source\n        - Region\n\
+          \        - Status\n        - UrlDomain\n        - Tag                  \
+          \  \n- page_size (optional): page size (default: 1000)\n- maxRows (optional):\
+          \ maximum number of rows to be returned (default: 100,000)\n"
         required: true
       responses:
         '200':
