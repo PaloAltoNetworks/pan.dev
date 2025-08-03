@@ -417,14 +417,9 @@ components:
       type: object
     IncidentInventoryRequest:
       properties:
-        columns:
-          description: Array of column names to include in the incident inventory
-            response.
-          items:
-            type: string
-          type: array
         filter:
           description: Filter criteria to narrow down incident search results.
+          example: Tag = 'Needs Escalation'
           minLength: 1
           type: string
         maxRows:
@@ -436,13 +431,6 @@ components:
           description: Number of incidents to return per page for pagination.
           format: int32
           type: integer
-        sort_by:
-          description: Field name to sort the incident inventory results by.
-          type: string
-        sort_order:
-          description: Sort order for the incident inventory results (ascending or
-            descending).
-          type: string
         time_range:
           description: Time range for incident data retrieval with predefined options
             (1 hour, 3 hours, 24 hours, 7 days, 30 days, 90 days).
@@ -588,24 +576,14 @@ components:
       type: object
     ResultsDownloadRequest:
       properties:
-        columns:
-          description: Specific columns to include in the downloaded results file.
-          items:
-            type: string
-          type: array
         filter:
           description: Filter criteria to apply when downloading incident results.
+          example: Tag = 'Needs Escalation'
           type: string
         maxRows:
           description: Maximum number of rows to include in the download file.
           format: int32
           type: integer
-        sort_by:
-          description: Field name to sort the downloaded results by.
-          type: string
-        sort_order:
-          description: Sort order for the downloaded results (ascending or descending).
-          type: string
         time_range:
           description: Time range for the data to be included in the download.
           enum:
@@ -615,9 +593,6 @@ components:
           - DAY_7
           - DAY_30
           - DAY_90
-          type: string
-        token:
-          description: Authentication or session token for the download request.
           type: string
       type: object
   securitySchemes:
@@ -641,22 +616,27 @@ paths:
         and sorting capabilities.
       operationId: get-v4-api-incidents
       parameters:
-      - description: Query results token (received from the initial inventory table
-          post request)
+      - description: The pagination token received from the initial POST /incidents
+          API call. This token identifies the specific query for which results are
+          being paginated.
         in: query
         name: token
         required: true
         schema:
           type: string
-      - description: Row offset to start fetching from
+      - description: The row offset from which to start fetching incident records.
+          For the first paginated request, this would typically be page_size. For
+          subsequent requests, it would be previous_offset + page_size
         in: query
         name: offset
         required: true
         schema:
           type: string
-      - description: 'Number of rows to include in each response (default: 1000)'
+      - description: The maximum number of incident records to return in this paginated
+          response. This value should be between 1 and 1000
         in: query
         name: pageSize
+        required: true
         schema:
           type: string
       responses:
@@ -705,32 +685,9 @@ paths:
         content:
           application/json:
             example:
-              time_range: DAY_30
+              time_range: HOUR_24
             schema:
               $ref: '#/components/schemas/IncidentInventoryRequest'
-        description: 'Incident inventory table request
-
-
-          Required parameters:
-
-          - time_range: the range to fetch records
-
-
-          Optional parameters:
-
-          - filter: list of filters to apply
-
-          - columns: list of columns to fetch
-
-          - sort_by: the column to sort by
-
-          - sort_order: the sorting order
-
-          - page_size: page size (default: 1000)
-
-          - maxRows: maximum number of rows to be returned (default: 100,000)
-
-          '
         required: true
       responses:
         '200':
@@ -779,33 +736,9 @@ paths:
         content:
           application/json:
             example:
-              time_range: DAY_30
+              time_range: HOUR_24
             schema:
               $ref: '#/components/schemas/ResultsDownloadRequest'
-        description: 'Incident Download Request
-
-
-          **Note:** Either ''time_range'' or ''token'' is required.
-
-
-          **Parameters:**
-
-          - **time_range** (optional when token is provided): The range to fetch records
-
-          - **filter** (optional): List of filters to apply
-
-          - **columns**: (optional) list of columns to fetch
-
-          - **sort_by** (optional): The column to sort by
-
-          - **sort_order** (optional): The sorting order
-
-          - **maxRows** (optional): Maximum number of rows to be returned (default:
-          100,000)
-
-          - **token** (optional when time_range is provided): Query token
-
-          '
         required: true
       responses:
         '200':
@@ -841,24 +774,13 @@ paths:
                 assignee_display_name: John Doe
                 assignee_email: john.doe@example.com
                 assignee_id: user123
-                notes: Escalated for further investigation due to sensitive data exposure
+                notes: Escalated for further investigation
                 priority: 2
                 resolution_status: under_investigation
                 resolved_by: admin@example.com
                 tag: security-review
             schema:
               $ref: '#/components/schemas/IncidentUpdateRequest'
-        description: "Incident Update Request\n\n**Parameters:**\n- **incident_ids**:\
-          \ List of incident IDs to update\n- **update_details**: Object containing\
-          \ the fields to update:\n  - **assignee_display_name** (optional): Display\
-          \ name of the assignee\n  - **assignee_email** (optional): Email address\
-          \ of the assignee\n  - **assignee_id** (optional): Unique identifier of\
-          \ the assignee\n  - **resolution_status** (optional): Status of the incident\
-          \ (e.g., 'new', 'open', 'under_investigation', 'closed')\n  - **priority**\
-          \ (optional): Priority level of the incident (numeric value)\n  - **tag**\
-          \ (optional): Tag to associate with the incident\n  - **notes** (optional):\
-          \ Additional notes or comments about the incident\n  - **resolved_by** (optional):\
-          \ Email or identifier of the person who resolved the incident\n"
         required: true
       responses:
         '200':
