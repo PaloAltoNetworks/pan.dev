@@ -142,7 +142,8 @@ __Attributes__
 
 ```python
 def __init__(valid_elements: Iterable,
-             requested_config: Optional[List[ConfigElement]] = None)
+             requested_config: Optional[List[ConfigElement]] = None,
+             explicit_elements: Optional[Set[str]] = None)
 ```
 
 ConfigParser constructor.
@@ -164,6 +165,8 @@ __Parameters__
 - __valid_elements__ (`Iterable`): Valid elements against which we check the requested config.
 - __requested_config__ (`list, optional`): (defaults to `None`) A list of requested configuration items with an optional
     configuration.
+- __explicit_elements__ (`set, optional`): (defaults to `None`) A set of elements that should only be included when
+    explicitly requested.
 
 __Raises__
 
