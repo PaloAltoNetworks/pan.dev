@@ -15,7 +15,7 @@ module.exports = {
     {
       label: "Python SDK",
       type: "category",
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: "doc",
@@ -31,6 +31,27 @@ module.exports = {
         },
       ],      
     },
-    require("./api/airuntimesecurity/sidebar"),
+    {
+      label: "AI Runtime Security API",
+      type: "category",
+      collapsed: false,
+      items: require("./api/airuntimesecurity/scan/sidebar"),
+    },
+    {
+      label: "Management API", 
+      type: "category",
+      collapsed: false,
+          items: [
+            {
+              type: "doc",
+              id: "prisma-airs/api/airuntimesecurity/prismaairsmanagementapi",
+            },
+            {
+              type: "doc",
+              id: "prisma-airs/api/airuntimesecurity/oauth-based-authentication",
+            },
+            ...require("./api/airuntimesecurity/management/sidebar"),
+          ],
+    },
   ],
 };
