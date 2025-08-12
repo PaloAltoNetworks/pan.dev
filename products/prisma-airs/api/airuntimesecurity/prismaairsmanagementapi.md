@@ -20,11 +20,13 @@ https://api.sase.paloaltonetworks.com/aisec
 
 ## Authentication
 
-This API uses bearer token authentication. Include your token in the Authorization header:
+This API uses OAuth 2.0 bearer token authentication. Include your token in the Authorization header:
 
 ```bash
 Authorization: Bearer YOUR_TOKEN_HERE
 ```
+
+For detailed instructions on how to obtain an OAuth 2.0 token, see [Enable OAuth-Based Authentication](/prisma-airs/api/airuntimesecurity/oauth-based-authentication).
 
 ## API Categories
 
