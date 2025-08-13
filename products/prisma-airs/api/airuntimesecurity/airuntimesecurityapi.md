@@ -61,10 +61,10 @@ For complete details, refer to adminstration guide for the section on how to "ma
 
 ## Limitations
 
-- One AI security profile per Tenant Service Group (TSG) - Limited to one security profile per group.
 - One API key per deployment profile - Each deployment profile in the [Customer Support Portal](https://support.paloaltonetworks.com/Support/Index) allows a single API key.
 - 2 MB maximum payload size per synchronous scan request - Limited to a maximum of 100 URLs per request.
 - 5 MB maximum payload size per asynchronous scan request - Limited to a maximum of 100 URLs per request.
+- Asynchronous requests are limited to a maximum of 25 batched requests.
 - The following limitations apply to contextual grounding:
 
   - **Context**: supports a maximum of 100,000 characters

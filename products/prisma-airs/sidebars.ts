@@ -12,14 +12,7 @@ module.exports = {
     {
       type: "doc",
       id: "prisma-airs/api/airuntimesecurity/errorcodes",
-    },
-    
-    // Authentication (should come early)
-    {
-      type: "doc",
-      id: "prisma-airs/api/airuntimesecurity/oauth-based-authentication",
-    },
-    
+    },    
     // Management API (foundational setup)
     {
       label: "Management API", 
@@ -30,6 +23,10 @@ module.exports = {
           type: "doc",
           id: "prisma-airs/api/airuntimesecurity/prismaairsmanagementapi",
         },
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/oauth-based-authentication",
+        },        
         ...require("./api/airuntimesecurity/management/sidebar"),
       ],
     },

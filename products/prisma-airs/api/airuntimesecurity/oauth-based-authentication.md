@@ -1,7 +1,7 @@
 ---
 id: oauth-based-authentication
-title: "Enable OAuth-Based Authentication"
-sidebar_label: "Enable OAuth-Based Authentication"
+title: "Role-Based Access Control (RBAC) Roles"
+sidebar_label: "Role-Based Access Control (RBAC) Roles"
 keywords:
   - AIRS
   - Reference
@@ -33,7 +33,7 @@ You will use a service account's Client ID (which is your API key) and a Client 
 curl -vk -XPOST "https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token" -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json' -d'client_id=demoTest@0000000000
 .iam.panserviceaccount.com&client_secret=00000000-0000-0000-0000-000000000000
-&grant_type=client_credentials&"scope":"tsg_id:1886770935"'
+&grant_type=client_credentials&"scope":"tsg_id:xxxxxxxxxx"'
 ```
 
 2. Once you have the token, export it as an environment variable:
@@ -46,7 +46,7 @@ export TOKEN=<output-of-above>
 
 ```curl
 curl -vk -XPOST "https://api.sase.paloaltonetworks.com/aisec/v1/mgmt/oauth/client_credential/accesstoken?tokenTtlInterval=1&tokenTtlUnit=hour" --data '{"client_id":"000000000000000000000000000000000000000000000000
-", "customer_app":"scm-dev-new-1-app"}' -H"x-pan-aisec-tsg-id: 1886770935" -H"Authorization:Bearer $TOKEN" | json_pp
+", "customer_app":"scm-dev-new-1-app"}' -H"x-pan-aisec-tsg-id: xxxxxxxxxx" -H"Authorization:Bearer $TOKEN" | json_pp
 ```
 
 4. The response from the POST request provides the OAuth 2.0 token that you will use for subsequent API calls.
