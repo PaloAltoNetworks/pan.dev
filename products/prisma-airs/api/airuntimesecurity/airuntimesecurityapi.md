@@ -12,7 +12,7 @@ keywords:
 
 **Prisma AIRS AI Runtime API intercept** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code.
 
-The Prisma AIRS AI Runtime: API intercept consists of two main API categories:
+The API intercept consists of two main API categories:
 
 1. **Scan API** - The runtime scanning service that scans prompts and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
 2. **Management API** - Configuration and administrative APIs for managing security profiles, API keys, applications, and other settings. For complete details, see the [Management API documentation](/prisma-airs/api/management).
@@ -20,7 +20,7 @@ The Prisma AIRS AI Runtime: API intercept consists of two main API categories:
 These APIs protect your AI models, AI applications, AI datasets, and AI agents by programmatically scanning prompts and models for threats. These detection APIs enable robust protection across public and private models with model-agnostic functionality.
 
 The APIs efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss.
-To use these APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your AI security profile.
+To use the scan APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your API security profile.
 
 For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime API intecept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 

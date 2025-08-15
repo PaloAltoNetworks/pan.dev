@@ -17,7 +17,7 @@ module.exports = {
     {
       label: "Management API", 
       type: "category",
-      collapsed: true,
+      collapsed: false,
       items: [
         {
           type: "doc",
