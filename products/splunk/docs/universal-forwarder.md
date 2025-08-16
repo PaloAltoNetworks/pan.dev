@@ -96,7 +96,7 @@ Restart Splunk Universal Forwarder:
 If it doesn't exist, add a listening port on Splunk Indexer:
 
 1.  From the Web Interface navigate to **Settings->;Forwarding and receiving**
-2.  Under **Recieve Data**, click on **Configure receiving**
+2.  Under **Receive Data**, click on **Configure receiving**
 3.  If port 9997 is already listed then you are done
 4.  Otherwise, click on **New**
 5.  Add port 9997 to **Listen on this port**
