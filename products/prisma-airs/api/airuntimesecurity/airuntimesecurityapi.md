@@ -14,13 +14,15 @@ keywords:
 
 The API intercept consists of two main API categories:
 
-1. **Scan API** - The runtime scanning service that scans prompts and responses in real-time to identify potential threats and provide threat assessments with actionable recommendations.
+1. **Scan API** - With Scan APIs, you can scan prompts and responses in real-time to identify potential threats and receive threat assessments with actionable recommendations. These APIs protect your AI models, applications, datasets, and agents by programmatically scanning for threats, offering robust protection across public and private models with model-agnostic functionality. They efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss. To use the scan APIs, you send prompts or model responses from your application.
 2. **Management API** - Configuration and administrative APIs for managing security profiles, API keys, applications, and other settings. For complete details, see the [Management API documentation](/prisma-airs/api/management).
 
-These APIs protect your AI models, AI applications, AI datasets, and AI agents by programmatically scanning prompts and models for threats. These detection APIs enable robust protection across public and private models with model-agnostic functionality.
+## Authentication
 
-The APIs efficiently scan for various threats, including prompt injections, insecure outputs, AI agentic threats, and sensitive data loss.
-To use the scan APIs, send prompts or model responses from your application and receive a threat assessment with recommended actions based on your API security profile.
+Both scan and management APIs support two authentication types:
+
+- **API key-based**: Use the `x-pan-token` header: `-H 'x-pan-token: <x-pan-token>'`.
+- **OAuth 2.0-based token (RBAC)**: Use the `Authorization` header with a bearer token: `-H 'Authorization: Bearer <token>'`.
 
 For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime API intecept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 

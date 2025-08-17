@@ -6,12 +6,12 @@ keywords:
   - AIRS
   - Reference
   - Cloud
-  - API
+  - Management API
 ---
 
-Role-Based Access Control (RBAC) in Strata Cloud Manager now allows you to enforce granular permissions for the AI Runtime Security APIs. For a comprehensive overview of Strata Cloud Manager roles, refer to the [Roles Overview](https://pan.dev/scm/docs/roles-overview/) document.
+Role-Based Access Control (RBAC) in Strata Cloud Manager now allows you to enforce granular permissions for the Prisma AIRS AI Runtime APIs. For a comprehensive overview of Strata Cloud Manager roles, refer to the [Roles Overview](https://pan.dev/scm/docs/roles-overview/) document.
 
-The primary roles relevant to AI Runtime Security are:
+The primary roles relevant to Prisma AIRS AI Runtime API are:
 
 | User Role | Permission |
 | --- | --- |
