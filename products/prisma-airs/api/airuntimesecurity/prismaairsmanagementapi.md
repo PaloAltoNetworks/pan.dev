@@ -36,7 +36,7 @@ For instructions on how to obtain an OAuth 2.0 token, see the [Access Tokens](ht
 
 ## API Categories
 
-The Management API includes the following categories:
+The Management APIs consist of the following categories:
 
 - **API Key Management** - Create, manage, and rotate API keys
 - **AI Security Profiles** - Configure and manage AI security profiles  
@@ -52,7 +52,7 @@ The Management API includes the following categories:
 The following workflow lists the steps for setting up and using Prisma AIRS Management APIs. For detailed steps, refer to the [Strata Cloud Management APIs](https://pan.dev/scm/docs/getstarted/) documentation.
 
 1. **Configure an Identity**: Set up a user role or service account in Strata Cloud Manager to act as the identity for your application or script.
-2. **Create Roles**: Use [predefined roles](https://pan.dev/scm/docs/roles-overview/) or create [custom roles](oauth-based-authentication.md) and assign them to the identity you configured in the "Configure an Identity" step.
+2. **Create Roles**: Use [predefined roles](oauth-based-authentication.md) or create [custom roles](oauth-based-authentication.md) and assign them to the identity you configured in the "Configure an Identity" step.
 3. **Obtain a Token**: Use your client ID and client secret to retrieve an OAuth 2.0 token.
 4. **Make API Calls**: Use the acquired OAuth2.0 token in the `Authorization: Bearer <token>` header for all your API requests.
 
