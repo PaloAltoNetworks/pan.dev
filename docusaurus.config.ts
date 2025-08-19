@@ -1009,7 +1009,14 @@ const config = {
           },
           airuntimesecurity: {
             specPath: "openapi-specs/prisma-airs/scan",
-            outputDir: "products/prisma-airs/api/airuntimesecurity",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/scan",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          // Add management API as separate config
+          airuntimesecuritymgmt: {
+            specPath: "openapi-specs/prisma-airs/management",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/management",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
