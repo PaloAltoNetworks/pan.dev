@@ -104,6 +104,7 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/sase/operations/operations-api",
             },
+      
             require("./api/config/sase/operations/sidebar"),
           ],
         },
@@ -114,6 +115,10 @@ module.exports = {
             {
               type: "doc",
               id: "scm/api/config/sase/setup/setup-api",
+            },
+            {
+              type: "doc",
+              id: "scm/api/config/sase/setup/snippet-sharing",
             },
             require("./api/config/sase/setup/sidebar"),
           ],
@@ -199,6 +204,10 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/ngfw/setup/setup-api-ngfw",
             },
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/snippet-sharing",
+            },
             require("./api/config/ngfw/setup/sidebar"),
           ],
         },
@@ -282,6 +291,10 @@ module.exports = {
             {
               type: "doc",
               id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
+            },
+            {
+              type: "doc",
+              id: "scm/api/config/cloudngfw/setup/snippet-sharing",
             },
             require("./api/config/cloudngfw/setup/sidebar"),
           ],

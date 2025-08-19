@@ -6,11 +6,11 @@ on:
 
 jobs:
   precheck:
+    if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' }}
     name: Precheck
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
     outputs:
       is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
     steps:
@@ -18,15 +18,22 @@ jobs:
         id: is-org-member
         run: |
           if [[ "${{ github.actor }}" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
-            echo "is-org-member-result=null" >> "$GITHUB_OUTPUT"
-          else
-            echo "is-org-member-result=$(gh api -X GET orgs/PaloAltoNetworks/memberships/${{ github.actor }} | jq -r .message)" >> "$GITHUB_OUTPUT"
+            echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-    env:
-      GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
+          
+          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/orgs/PaloAltoNetworks/members/${{ github.actor }})
+          if [ "$status" = "204" ]; then
+            echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
 
   analyze:
-    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
+    if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'true'
     name: Analyze
     needs: precheck
     runs-on: ubuntu-latest
@@ -54,7 +61,7 @@ jobs:
       uses: github/codeql-action/analyze@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3
 
   analyze_unsafe:
-    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
+    if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'false'
     name: Analyze Unsafe
     needs: precheck
     runs-on: ubuntu-latest
@@ -85,11 +92,10 @@ jobs:
   build:
     name: Build
     needs: [analyze, analyze_unsafe]
-    # if: |
-    #   !failure() && !cancelled() && 
-    #   (success('analyze') || success('analyze_unsafe'))
-    if: ${{ !cancelled() &&
-        (needs.analyze.result == 'success' || needs.analyze_unsafe.result == 'success') }}
+    if: |
+      github.repository == 'PaloAltoNetworks/pan.dev' &&
+      !failure() && !cancelled() &&
+      (success('analyze') || success('analyze_unsafe'))
     runs-on: pan-dev-runner-xl
     permissions:
       contents: read
@@ -110,22 +116,6 @@ jobs:
         id: yarn-cache
         run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
 
-      # - name: Cache dependencies
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ${{ steps.yarn-cache.outputs.YARN_CACHE_DIR }}
-      #     key: ${{ runner.os }}-pandev-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pandev-
-
-      # - name: Cache docusaurus build
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: node_modules/.cache/webpack
-      #     key: ${{ runner.os }}-pandev-pr-${{ github.event.number }}-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pandev-pr-${{ github.event.number }}-
-
       - name: Install dependencies
         run: yarn --prefer-offline
 
@@ -134,9 +124,9 @@ jobs:
         run: |
           echo "Including 'netsec' in build..."
           if [[ -n "$PRODUCTS_INCLUDE" ]]; then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,ai-runtime-security" >> $GITHUB_ENV
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
           else
-            echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,ai-runtime-security" >> $GITHUB_ENV
+            echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
           fi
       
       - name: Include cloud
@@ -198,8 +188,12 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    if: ${{ !failure() && !cancelled() }}
+    if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' && !failure() && !cancelled() }}
     runs-on: pan-dev-runner-lg
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
 
     steps:
       - name: Checkout repository
@@ -231,7 +225,7 @@ jobs:
 
       - name: Deploy to Firebase
         id: deploy_preview
-        uses: FirebaseExtended/action-hosting-deploy@120e124148ab7016bec2374e5050f15051255ba2 # v0.7.1
+        uses: FirebaseExtended/action-hosting-deploy@0cbcac4740c2bfb00d632f0b863b57713124eb5a # v0.9.0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'

@@ -91,7 +91,10 @@ const Feature = ({ buttonClass, title, description, logo, index, cta }) => {
       <div className="flex justify-between mb-4 relative z-10 px-10 text-neutral-600 dark:text-neutral-400">
         <img style={{ width: "50px" }} src={logo} />
         <Link to={cta.src}>
-          <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none">
+          <button
+            className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none"
+            style={{ border: 0 }}
+          >
             <span className={buttonClass} />
             <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
               {cta.text}
