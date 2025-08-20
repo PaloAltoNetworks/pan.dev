@@ -1,4 +1,4 @@
-import Mermaid from "@theme/Mermaid";
+import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -6,7 +6,7 @@ import Mermaid from "@theme/Mermaid";
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-let baseUrl
+let baseUrl;
 if (process.env.CI_MERGE_REQUEST_IID) {
   if (process.env.CI_PROJECT_DIR == "dev") {
     baseUrl = "/";
@@ -22,6 +22,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 const config = {
   future: {
     experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    v4: true
   },
   title: "Develop with Palo Alto Networks",
   tagline:
@@ -192,7 +193,7 @@ const config = {
                 "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
               products: [
                 {
-                  label: "AI Runtime Security",
+                  label: "Prisma AIRS",
                   to: "#",
                   logoClass: "panos",
                   docs: [
@@ -204,8 +205,8 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "ai-runtime-security/scan/api/",
-                      label: "AI Runtime Security API",
+                      to: "prisma-airs/scan/api/",
+                      label: "Prisma AIRS AI Runtime: API Intercept",
                       icon: "api-doc",
                     },
                   ],
@@ -498,6 +499,11 @@ const config = {
                     {
                       to: "sase/api/sspm",
                       label: "SaaS Security Posture Management",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/identity-sspm",
+                      label: "Identity Security Posture Management",
                       icon: "api-doc",
                     },
                     {
@@ -923,6 +929,11 @@ const config = {
             outputDir: "products/sase/api/sspm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          identitysspm: {
+            specPath: "openapi-specs/sase/identity-sspm",
+            outputDir: "products/sase/api/identity-sspm",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
@@ -986,7 +997,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           dlp: {
-            specPath: "openapi-specs/dlp/DLPAPI.yaml",
+            specPath: "openapi-specs/dlp",
             outputDir: "products/dlp/api",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
@@ -997,8 +1008,8 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           airuntimesecurity: {
-            specPath: "openapi-specs/ai-runtime-security/scan",
-            outputDir: "products/ai-runtime-security/api",
+            specPath: "openapi-specs/prisma-airs/scan",
+            outputDir: "products/prisma-airs/api/airuntimesecurity",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
@@ -1069,8 +1080,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "34.01",
-            label: "v34.01",
+            version: "34.02",
+            label: "v34.02",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1138,6 +1149,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-00/",
           },
+           compute_3401: {
+            specPath: "openapi-specs/compute/34-01",
+            outputDir: "products/compute/api/34-01",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/34-01/",
+          },
         },
       },
     ],
@@ -1159,6 +1177,7 @@ const config = {
         gtm: "GTM-PLXD79N",
       },
     ],
+    tailwindPlugin,
   ],
   stylesheets: [
     {
@@ -1172,8 +1191,6 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   trailingSlash: true,
   customFields: {
-    firebaseApiKey: process.env.REACT_APP_FIREBASE_APIKEY,
-    recaptchaApiKey: process.env.REACT_APP_RECAPTCHA_APIKEY,
     errorReporterApiKey: process.env.REACT_APP_ERROR_REPORTER_APIKEY,
   },
 };

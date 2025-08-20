@@ -25,6 +25,24 @@ tags:
     description: Configuration snippets
   - name: Variables
     description: Configuration variables
+  - name: Snippet Categories
+    description: Configuration snippets and category information
+  - name: Trusted Tenants Overview
+    description: Overview of published and subscribed tenants
+  - name: Trust Information
+    description: Trust Information with shared snippets
+  - name: Trusts
+    description: Trusts between tenants
+  - name: Trust Validations
+    description: Validates trust information
+  - name: Subscribed Tenants
+    description: Subscribed Tenants information
+  - name: Snippet Snapshots
+    description: Snippet Snapshots
+  - name: Shared Snippets
+    description: Shared Snippets
+  - name: Snippet Audit Logs
+    description: Snippet Audit Logs
 paths:
   /labels:
     get:
@@ -632,11 +650,7 @@ paths:
         - $ref: '#/components/parameters/uuid'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/folders'
-          description: OK
+          $ref: '#/components/responses/http_ok'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -658,6 +672,7 @@ paths:
         - Devices
       operationId: ListDevices
       parameters:
+        - $ref: '#/components/parameters/pagination-optional'
         - $ref: '#/components/parameters/limit-optional'
         - $ref: '#/components/parameters/offset-optional'
         - $ref: '#/components/parameters/name-optional'
@@ -732,7 +747,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/devices'
+                $ref: '#/components/schemas/devices-put'
         description: The `device` resource definition.
       responses:
         '200':
@@ -745,6 +760,736 @@ paths:
           $ref: '#/components/responses/access_errors'
         '404':
           $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-categories:
+    get:
+      summary: List snippets categories
+      description: |
+        Retrieve a list of snippet categories.
+      tags:
+        - Snippet Categories
+      operationId: ListSnippetCategories
+      parameters:
+        - $ref: '#/components/parameters/limit-optional'
+        - $ref: '#/components/parameters/offset-optional'
+        - $ref: '#/components/parameters/name-optional'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/snippet_categories'
+                  limit:
+                    type: number
+                    default: 200
+                  offset:
+                    type: number
+                    default: 0
+                  total:
+                    type: number
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-categories/{id}:
+    get:
+      summary: Get a snippet category
+      description: |
+        Retrieve an existing snippet category.
+      tags:
+        - Snippet Categories
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      operationId: GetSnippetCategoryByID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_categories'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      summary: Delete a snippet category
+      description: |
+        Delete an existing snippet category.
+      tags:
+        - Snippet Categories
+      operationId: DeleteSnippetCategoryByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_categories'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /trusted-tenant-overview:
+    get:
+      summary: Trusted Tenants Overview
+      description: |
+        Overview of publishers and subscribers.
+      tags:
+        - Trusted Tenants Overview
+      operationId: GetTrustedTenantsOverview
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trusted_tenant_overview'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /trusted-tenants:
+    get:
+      summary: Trusted Tenants With Snippets
+      description: |
+        Retrieve a list of trusted tenants with snippets.
+      tags:
+        - Trust Information
+      operationId: ListTrustedTenantsWithSnippets
+      parameters:
+        - $ref: '#/components/parameters/trusted-tenant-type'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/trust_info_with_shared_snippets'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /trusts:
+    post:
+      summary: Create a trust
+      description: |
+        Create a new trust.
+      tags:
+        - Trusts
+      operationId: CreateTrust
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trusts'
+        description: The `trusts` resource definition
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tenant_trust_info'
+          description: CREATED
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      summary: Delete a Trust
+      description: |
+        Delete an existing Trust.
+      tags:
+        - Trusts
+      operationId: DeleteTrust
+      parameters:
+        - $ref: '#/components/parameters/trust-ids'
+        - $ref: '#/components/parameters/trusted-tenant-type'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tenant_trust_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /trust-validations:
+    post:
+      summary: Validates Trust
+      description: |
+        Validate trust.
+      tags:
+        - Trust Validations
+      operationId: ValidateTrust
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trusts_validation_payload'
+        description: The `trust validation` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tenant_trust_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /subscribed-tenants/{id}:
+    get:
+      summary: Get Subscribed Tenants
+      description: |
+        Retrieve a list of subscribed tenants.
+      tags:
+        - Subscribed Tenants
+      operationId: ListSubscribedTenantsByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/snippet_share_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /subscribed-tenants:
+    post:
+      summary: Create Subscribed Tenant
+      description: |
+        Create Subscribed Tenant.
+      tags:
+        - Subscribed Tenants
+      operationId: CreateSubscribedTenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/add_subscriber_request_payload'
+        description: The `Subscribed Tenant` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tenant_trust_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      summary: Update a subscribed tenant
+      description: |
+        Update an existing subscribed tenant.
+      tags:
+        - Subscribed Tenants
+      operationId: UpdateSubscribedTenantBySnippetID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subscriber_property_payload'
+        description: The `subscribed tenant` resource definition.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscriber_property_payload'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      summary: Delete a subscribed tenant
+      description: |
+        Delete an existing subscribed tenant.
+      tags:
+        - Subscribed Tenants
+      operationId: DeleteSubscribedTenantBySnippedID
+      parameters:
+        - $ref: '#/components/parameters/snippet-id'
+        - $ref: '#/components/parameters/recipient-tsgs'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deleted_subscriber'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:
+    post:
+      summary: Save Snippet Snapshots
+      description: |
+        Save Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: SaveSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/save_snippet_snapshot_payload'
+        description: The `Save Snippet Snapshots` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/save_snippet_snapshot_config_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:publish:
+    post:
+      summary: Publish Snippet Snapshots
+      description: |
+        Publish Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: PublishSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_snapshot_publish_request'
+        description: The `Snippet Snapshots To Publish` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_snapshot_publish_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:compare:
+    post:
+      summary: Compare Snippet Snapshots
+      description: |
+        Compare Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: CompareSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/compare_snippet_snapshot_config_payload'
+        description: The `Snippet Snapshots To Compare` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_snapshot_compare_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:diff:
+    post:
+      summary: Diff Snippet Snapshots
+      description: |
+        Diff Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: DiffSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/compare_tlo_payload'
+        description: The `Snippet Snapshots To Differentiate` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_snapshot_diff_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:load:
+    post:
+      summary: Load Snippet Snapshots
+      description: |
+        Load Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: LoadSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_snapshot_load_snippet_payload'
+        description: The `Snippet Snapshots To Load` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_snapshot_load_snippet_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:updates:
+    post:
+      summary: Update Snippet Snapshots
+      description: |
+        Update Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: UpdateSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_snapshot_subscriber_compare_payload'
+        description: The `Snippet Snapshots To Update` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_snapshot_subscriber_compare_response'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-snapshots:convert:
+    post:
+      summary: Convert Snippet Snapshots
+      description: |
+        Convert Snippet Snapshots.
+      tags:
+        - Snippet Snapshots
+      operationId: ConvertSnippetSnapshot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/common_snippet_snapshot_payload'
+        description: The `Snippet Snapshots To Convert` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dynamic_entry'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /shared-snippets:
+    get:
+      summary: Get Shared Snippets
+      description: |
+        Retrieve a list of shared snippets.
+      tags:
+        - Shared Snippets
+      operationId: ListSharedSnippets
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/snippet_share_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      summary: Update Shared Snippets
+      description: |
+        Update Shared Snippets.
+      tags:
+        - Shared Snippets
+      operationId: ConvertSharedSnippets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_share_upload_payload'
+        description: The `Shared Snippets To Update` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_share_info'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /shared-snippets:load:
+    post:
+      summary: Load Shared Snippets
+      description: |
+        Convert Snippet Snippets.
+      tags:
+        - Shared Snippets
+      operationId: LoadSharedSnippets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_share_load_payload'
+        description: The `Snippet Snapshots To Convert` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_share_load_payload'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-audit-logs/{id}:
+    get:
+      summary: Get a snippet audit logs
+      description: |
+        Retrieve an existing snippet audit logs by UUID.
+      tags:
+        - Snippet Audit Logs
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+        - $ref: '#/components/parameters/trusted-tenant-type'
+      operationId: GetSnippetAuditLogsByID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_audit_history'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /snippet-audit-logs:
+    post:
+      summary: Create snippet audit logs configuration
+      description: |
+        Create snippet audit logs configuration.
+      tags:
+        - Snippet Audit Logs
+      operationId: CreateSnippetAuditLogs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/snippet_audit_payload'
+        description: The `Snippet Snapshots To Convert` resource definition
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/snippet_audit_history'
+          description: OK
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
         '409':
           $ref: '#/components/responses/conflict_errors'
         default:
@@ -785,6 +1530,13 @@ components:
       schema:
         type: string
       description: The UUID of the resource
+    pagination-optional:
+      name: pagination
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: The parameter to mention if the response should be paginated. By default, its set to false
     name-optional:
       name: name
       in: query
@@ -830,6 +1582,41 @@ components:
         type: string
       description: |
         The device in which the resource is defined
+    trusted-tenant-type:
+      name: type
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - subscriber
+          - publisher
+      description: |
+        Specifies the type of the tenant that is trusted, either 'subscriber' or 'publisher'.
+    trust-ids:
+      name: trustids
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        Comma-separated list of trust IDs
+    snippet-id:
+      name: snippet-id
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        The ID of the snippet
+    recipient-tsgs:
+      name: tsgs
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        Comma-separated list of recipient TSG IDs
   responses:
     http_ok:
       description: OK
@@ -1144,7 +1931,9 @@ components:
         message:
           type: string
         details:
-          type: object
+          oneOf:
+            - type: string
+            - type: object
         help:
           type: string
     variables:
@@ -1309,6 +2098,28 @@ components:
         "description":
           type: string
           description: The description of the label
+    devices-put:
+      type: object
+      properties:
+        "display_name":
+          type: string
+          description: The display name of the device
+        "folder":
+          type: string
+          description: The folder containing the device
+        "description":
+          type: string
+          description: The description of the device
+        "labels":
+          type: array
+          items:
+            type: string
+          description: Labels assigned to the device
+        "snippets":
+          type: array
+          items:
+            type: string
+          description: Snippets associated with the device
     devices:
       type: object
       required:
@@ -1323,6 +2134,9 @@ components:
         "name":
           type: string
           description: The name of the device
+        "display_name":
+          type: string
+          description: The display name of the device
         "folder":
           type: string
           description: The folder containing the device
@@ -1484,6 +2298,768 @@ components:
                 type: string
                 readOnly: true
           readOnly: true
+    snippet_categories:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+        id:
+          type: string
+          readOnly: true
+        enable_prefix:
+          type: boolean
+          readOnly: true
+        prefix:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        error:
+          type: string
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        donor_tenant_id:
+          type: string
+          readOnly: true
+        donor_tenant_name:
+          type: string
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_tenant_id:
+          type: string
+          readOnly: true
+        recipient_tenant_name:
+          type: string
+          readOnly: true
+        snippet_uuid:
+          type: string
+          readOnly: true
+        donor_snippet_version:
+          type: integer
+          readOnly: true
+        donor_snippet_file_id:
+          type: integer
+          readOnly: true
+        donor_created:
+          type: integer
+          readOnly: true
+        msg_uuid:
+          type: string
+          readOnly: true
+        created_in:
+          type: string
+          format: date-time
+          readOnly: true
+        last_update:
+          type: string
+          format: date-time
+          readOnly: true
+        folders:
+          type: array
+          items:
+            $ref: '#/components/schemas/used_folders'
+        shared_in:
+          type: string
+          readOnly: true
+        labels:
+          type: array
+          items:
+            type: string
+            readOnly: true
+        recipient_paused_update:
+          type: boolean
+          readOnly: true
+        recipient_validate_before_update:
+          type: boolean
+          readOnly: true
+        version:
+          type: integer
+          readOnly: true
+      required:
+        - name
+        - id
+    used_folders:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - name
+    trusted_tenant_overview:
+      type: object
+      properties:
+        publisher:
+          type: object
+          properties:
+            total:
+              type: integer
+              readOnly: true
+            pending:
+              type: integer
+              readOnly: true
+        subscriber:
+          type: object
+          properties:
+            total:
+              type: integer
+              readOnly: true
+            pending:
+              type: integer
+              readOnly: true
+    trust_info_with_shared_snippets:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_paused_update:
+          type: integer
+          readOnly: true
+        recipient_validate_before_update:
+          type: integer
+          readOnly: true
+        snippet_uuid:
+          type: string
+          readOnly: true
+        snippet_name:
+          type: string
+          readOnly: true
+        donor_snippet_version:
+          type: integer
+          readOnly: true
+        donor_snippet_file_id:
+          type: integer
+          readOnly: true
+        donor_created:
+          type: integer
+          readOnly: true
+        recipient_snippet_version:
+          type: integer
+          readOnly: true
+        recipient_snippet_file_id:
+          type: integer
+          readOnly: true
+        msg_uuid:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        error:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        last_updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+        shared_snippets:
+          type: array
+          items:
+            $ref: '#/components/schemas/snippet_share_info'
+    snippet_share_info:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_paused_update:
+          type: boolean
+          readOnly: true
+        recipient_validate_before_update:
+          type: boolean
+          readOnly: true
+        snippet_uuid:
+          type: string
+          readOnly: true
+        snippet_name:
+          type: string
+          readOnly: true
+        donor_snippet_version:
+          type: integer
+          readOnly: true
+        donor_snippet_file_id:
+          type: integer
+          readOnly: true
+        donor_created:
+          type: integer
+          readOnly: true
+        recipient_snippet_version:
+          type: integer
+          readOnly: true
+        recipient_snippet_file_id:
+          type: integer
+          readOnly: true
+        msg_uuid:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        error:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        last_updated:
+          type: string
+          format: date-time
+          readOnly: true
+        donor_tenant_id:
+          type: string
+          readOnly: true
+        donor_tenant_name:
+          type: string
+          readOnly: true
+        recipient_tenant_id:
+          type: string
+          readOnly: true
+        recipient_tenant_name:
+          type: string
+          readOnly: true
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/snippet_share_property'
+    snippet_share_property:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        donor_tenant:
+          type: string
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_tenant:
+          type: string
+          readOnly: true
+        snippet_uuid:
+          type: string
+          readOnly: true
+        snippet_name:
+          type: string
+          readOnly: true
+        property_name:
+          type: string
+          readOnly: true
+        property_value:
+          type: string
+          readOnly: true
+        msg_uuid:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        error:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: string
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+    trusts:
+      type: object
+      properties:
+        tsg:
+          type: string
+        donor_tenant_name:
+          type: string
+        recipient_tenant_name:
+          type: string
+        trust_id:
+          type: integer
+          nullable: true
+        psk:
+          type: string
+    tenant_trust_info:
+      type: object
+      properties:
+        trust_id:
+          type: integer
+        donor_trust_info_id:
+          type: integer
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        donor_tenant_id:
+          type: string
+        donor_tenant_name:
+          type: string
+        donor_cluster:
+          type: string
+          readOnly: true
+        donor_region:
+          type: string
+          readOnly: true
+        donor_project:
+          type: string
+          readOnly: true
+        recipient_trust_info_id:
+          type: integer
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_tenant_id:
+          type: string
+          readOnly: true
+        recipient_tenant_name:
+          type: string
+        recipient_cluster:
+          type: string
+          readOnly: true
+        recipient_region:
+          type: string
+          readOnly: true
+        recipient_project:
+          type: string
+          readOnly: true
+        psk:
+          type: string
+        donor_msg_uuid:
+          type: string
+          readOnly: true
+        recipient_msg_uuid:
+          type: string
+          readOnly: true
+        current_status:
+          type: string
+          readOnly: true
+        error_details:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: string
+          readOnly: true
+        last_updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+    trusts_validation_payload:
+      type: object
+      required:
+        - tsg
+        - donor_tenant_name
+        - recipient_tenant_name
+        - trust_id
+        - psk
+      properties:
+        tsg:
+          type: string
+        donor_tenant_name:
+          type: string
+        recipient_tenant_name:
+          type: string
+        trust_id:
+          type: integer
+          nullable: true
+        psk:
+          type: string
+    add_subscriber_request_payload:
+      type: array
+      items:
+        type: object
+        required:
+          - tsg_id
+          - snippet_id
+          - snippet_name
+        properties:
+          tsg_id:
+            type: string
+          snippet_id:
+            type: string
+          snippet_name:
+            type: string
+    subscriber_property_payload:
+      type: object
+      required:
+        - tsg_id
+        - snippet_id
+        - snippet_name
+      properties:
+        tsg_id:
+          type: string
+        snippet_id:
+          type: string
+        snippet_name:
+          type: string
+        property:
+          type: array
+          items:
+            $ref: '#/components/schemas/property_item'
+    property_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        value:
+          type: string
+    deleted_subscriber:
+      type: object
+      properties:
+        info:
+          $ref: '#/components/schemas/snippet_share_info'
+        status:
+          type: string
+        details:
+          type: string
+    snippet_snapshot_publish_request:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tsgs:
+          type: array
+          items:
+            type: string
+        validation:
+          type: boolean
+        version:
+          type: integer
+    snippet_snapshot_publish_response:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          readOnly: true
+        tsgs:
+          type: array
+          readOnly: true
+          items:
+            type: string
+        version:
+          type: integer
+          readOnly: true
+          nullable: true
+        file_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        job_id:
+          type: integer
+          readOnly: true
+    save_snippet_snapshot_payload:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - description
+    save_snippet_snapshot_config_response:
+      type: object
+      readOnly: true
+      properties:
+        status:
+          type: string
+          readOnly: true
+        result:
+          type: object
+          readOnly: true
+          properties:
+            version:
+              type: string
+    compare_snippet_snapshot_config_payload:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        comparing_version:
+          type: integer
+      required:
+        - id
+        - version
+        - comparing_version
+    compare_tlo_payload:
+      type: object
+      properties:
+        snippet_id:
+          type: string
+        object_id:
+          type: string
+        version:
+          type: integer
+        comparing_version:
+          type: integer
+      required:
+        - snippet_id
+        - object_id
+        - version
+        - comparing_version    -
+    common_snippet_snapshot_payload:
+      type: object
+      properties:
+        id:
+          type: string
+        keep_local:
+          type: boolean
+    snippet_snapshot_compare_entry:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          type: string
+          readOnly: true
+        admin:
+          type: string
+          readOnly: true
+          format: email
+        loc:
+          type: string
+        loctype:
+          type: string
+        objectname:
+          type: string
+        objecttype:
+          type: string
+        operations:
+          type: string
+          enum: [edit, create]
+        timestamp:
+          type: string
+          format: date-time
+    snippet_snapshot_compare_response:
+      type: array
+      readOnly: true
+      items:
+        $ref: '#/components/schemas/snippet_snapshot_compare_entry'
+    snippet_snapshot_diff_response:
+      type: object
+      properties:
+        after:
+          type: object
+          readOnly: true
+          properties:
+            '@ts':
+              type: string
+              readOnly: true
+              format: date-time
+            entry:
+              type: array
+              readOnly: true
+              items:
+                $ref: '#/components/schemas/dynamic_entry'
+        before:
+          type: object
+          properties:
+            '@ts':
+              type: string
+              format: date-time
+            entry:
+              type: array
+              items:
+                $ref: '#/components/schemas/dynamic_entry'
+    snippet_snapshot_load_snippet_payload:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: string
+      required:
+        - id
+        - version
+    snippet_snapshot_load_snippet_response:
+      type: object
+      readOnly: true
+      properties:
+        status:
+          type: string
+    snippet_snapshot_subscriber_compare_payload:
+      type: object
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+          description: Publisher Tenant ID
+      required:
+        - id
+        - tenant_id
+    snippet_snapshot_subscriber_compare_response:
+      type: object
+      properties:
+        publisher:
+          type: object
+          readOnly: true
+          properties:
+            entry:
+              type: array
+              items:
+                $ref: '#/components/schemas/dynamic_entry'
+        subscriber:
+          type: object
+          readOnly: true
+          properties:
+            entry:
+              type: array
+              items:
+                $ref: '#/components/schemas/dynamic_entry'
+    dynamic_entry:
+      type: object
+      readOnly: true
+      additionalProperties: true
+    snippet_share_upload_payload:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        pause_update:
+          type: boolean
+        validate_before_update:
+          type: boolean
+    snippet_share_load_payload:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        validation:
+          type: boolean
+          nullable: true
+    snippet_audit_history:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+          readOnly: true
+        donor_tsg:
+          type: string
+          readOnly: true
+        donor_tenant_name:
+          type: string
+          readOnly: true
+        recipient_tsg:
+          type: string
+          readOnly: true
+        recipient_tenant_name:
+          type: string
+          readOnly: true
+        donor_created:
+          type: integer
+          readOnly: true
+        snippet_uuid:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        version:
+          type: string
+          readOnly: true
+        action:
+          type: string
+          readOnly: true
+        display:
+          type: integer
+          readOnly: true
+        details:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted:
+          type: integer
+          readOnly: true
+    snippet_audit_payload:
+      type: object
+      properties:
+        donor_tsg:
+          type: string
+        donor_tenant_name:
+          type: string
+        recipient_tsg:
+          type: string
+        recipient_tenant_name:
+          type: string
+        donor_created:
+          type: integer
+        snippet_uuid:
+          type: string
+        version:
+          type: string
+        action:
+          type: string
+        details:
+          type: string
 security:
   - scmToken: []
 x-internal: false
