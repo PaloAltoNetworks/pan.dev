@@ -29,8 +29,7 @@ To request an access token for use with Strata Cloud Manager API requests, you m
 
 3. Ensure that the service account has a [role assignment](/scm/docs/roles-overview) that provides the permissions 
    necessary to perform the actions you intend to perform on API resources within Strata Cloud Manager. You can 
-   review the available roles and permissions in the [Identity and Access Management]
-   (https://docs.paloaltonetworks.com/strata-cloud-manager/getting-started/access-control) common service.
+   review the available roles and permissions in the [Identity and Access Management](https://docs.paloaltonetworks.com/strata-cloud-manager/getting-started/access-control) common service.
 
 4. Make an [access token request](/scm/docs/access-tokens) to the Strata Cloud Manager token service using the 
    `grant_type`, `scope`, `tsg_id`, `client_id`, and `client_secret` values.
