@@ -1,5 +1,5 @@
 parameters:
-- description: An optional string that sets the start of a time range for devices to retrieve. This is the time when a device was last active. (It’s unnecessary to set etime=now or etime=<time> because it is always treated as now.)
+- description: An optional string that sets the start of a time range for devices to retrieve. This is the time when a device was last active. (It's unnecessary to set etime=now or etime=<time> because it is always treated as now.)
   in: query
   name: stime
   required: false
@@ -18,16 +18,22 @@ parameters:
   required: false
   schema:
     type: integer
-- description: The return of more device attributes (true) or fewer attributes (false)
+    maximum: 1000
+- description: A comma-separated list of device fields to include in the response. Maximum of 50 fields can be specified. Available fields can be retrieved from the device/attributes api. If omitted, only common attributes are returned (attributes specific to a third party will not be returned in this case).
   in: query
-  name: detail
+  name: projection
   required: false
   schema:
     type: string
-    enum:
-    - 'true'
-    - 'false'
-- description: The alphanumeric order in which devices are displayed by MAC address. asc indicates an ascending order from smallest tolargest. desc, which is the default, indicates a descending order from largest to smallest.
+  example: 'profile_type,hostname,risk_score'
+- description: A comma-separated list of site names to filter devices by specific sites
+  in: query
+  name: site_names
+  required: false
+  schema:
+    type: string
+  example: 'site_1,site_2'
+- description: The alphanumeric order in which devices are displayed. asc indicates an ascending order from smallest to largest. desc, which is the default, indicates a descending order from largest to smallest.
   in: query
   name: sortdirection
   required: false
@@ -36,12 +42,14 @@ parameters:
     enum:
     - asc
     - desc
-- description: The device attribute to use for sorting. Currently only MAC is supported.
+    default: desc
+- description: The device attribute to use for sorting. Supported fields include hostname, mac_address, risk_score, last_activity, and others.
   in: query
   name: sortfield
   required: false
   schema:
     type: string
+  example: 'hostname'
 - description: Field to filter devices with traffic restricted
   in: query
   name: trafficRestricted
@@ -53,14 +61,14 @@ parameters:
 
 responses:
   '200':
-    description: Successful Response (We only show some important fields here.)
+    description: Successful Response (Only showing attributes that are always returned here - attributes vary based on projection parameter)
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas.yaml#/schemas/IoTDeviceInventoryResponse'
+          $ref: '../../components/schemas.yaml#/schemas/IoTDeviceInventoryV2Response'
         examples:
           deviceInventoryResponseExample:
-            $ref: '../../components/examples.yaml#/examples/DeviceInventoryResponseExample'
+            $ref: '../../components/examples.yaml#/examples/DeviceInventoryV2ResponseExample'
   '4XX':
     description: Client Error Response
     content:
