@@ -7,7 +7,9 @@ sidebar_label: DEPRECATED - IoT Standalone Public API Authentication
 
 To call public apis via the IoT Standalone Portal use the api path: `https://{TENANT_NAME}.iot.paloaltonetworks.com/pub/v4.0/{API_ROUTE}`
 
-For example: `https://panw.iot.paloaltonetworks.com/pub/v4.0/device/list`
+Additionally, please provide `customerid` as a query parameter in your api. `customerid` should be equal to your tenant name, or the value before `.iot` in your portal url.
+
+For example: `https://panw.iot.paloaltonetworks.com/pub/v4.0/device/list?customerid=panw`
 
 To ensure that only valid users can access the IoT Cloud database, all remote API calls must include an `access key` and `key ID`. This provides a safe and convenient way to integrate IoT Cloud data with your own automation.
 
