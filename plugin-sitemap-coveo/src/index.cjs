@@ -21,7 +21,6 @@ function pluginSitemap(_context, options) {
         routesPaths,
         options
       );
-      //console.log(generatedSitemap);
       // Write sitemap file.
       const sitemapPath = path.join(outDir, "coveo-sitemap.xml");
       try {
