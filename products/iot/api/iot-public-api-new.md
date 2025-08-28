@@ -34,7 +34,7 @@ following the steps below.
 5.  Copy the **Client ID** and **Client Secret** from the Client Credentials
     screen. When finished, go to the **Next** screen.  
 6.  Assign roles to your service account.  
-    1. Apps & Services: **IoT Security**  
+    1. Apps & Services: **Device Security**  
     2. Role: **Superuser**  
 7.  Click **Submit** to create the new service account, and then verify that your
     service account appears in the Access Management table.
