@@ -1,894 +1,918 @@
 openapi: 3.0.3
 info:
-  contact:
-    email: https://www.paloaltonetworks.com/company/contact-support
-  title: Prisma AIRS API Management service
-  description: OpenAPI Specification for Prisma AIRS AI Runtime API Management Service
-  version: 0.0.0
+ title: Prisma AIRS API Management service
+ description: OpenAPI Specification for Prisma AIRS AI Runtime API Management Service
+ version: 0.0.0
 servers:
-  - url: 'https://api.sase.paloaltonetworks.com/aisec'
-    description: Prisma AIRS API service URL
+ - url: 'https://api.sase.paloaltonetworks.com/aisec'
+   description: Prisma AIRS API service URL
 tags:
-  - name: API key
-    description: Operations related to API key management
-  - name: AI Sec Profile
-    description: Operations related to AI security profile management
-  - name: DLP Profiles
-    description: Operations related to DLP profile management
-  - name: Deployment Profiles
-    description: Operations related to deployment profile management
-  - name: Customer App
-    description: Operations related to customer application management
-  - name: Scan Logs
-    description: Operations related to scan log retrieval
-  - name: Oauth
-    description: Operations related to OAuth tokens
-  - name: Custom Topic
-    description: Operations related to custom topic management
-  - name: AI Security Policy
-    description: Operations related to AI security policy management
+ - name: API key
+   description: Operations related to API key management
+ - name: AI Sec Profile
+   description: Operations related to AI security profile management
+ - name: DLP Profiles
+   description: Operations related to DLP profile management
+ - name: Deployment Profiles
+   description: Operations related to deployment profile management
+ - name: Customer App
+   description: Operations related to customer application management
+ - name: Scan Logs
+   description: Operations related to scan log retrieval
+ - name: Oauth
+   description: Operations related to OAuth tokens
+ - name: Custom Topic
+   description: Operations related to custom topic management
+ - name: AI Security Policy
+   description: Operations related to AI security policy management
 paths:
-  /v1/mgmt/apikey:
-    post:
-      summary: Create a New API Key
-      description: Post a new API key
-      tags:
-        - API key
-      security:
-        - Auth: []
-      operationId: CreateNewAPIKey
-      requestBody:
-        description: API key creation request object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/APIKeyCreationObject'
-      responses:
-        '200':
-          description: Successfully created a new API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/apikeys/tsg/{tsg_id}:
-    get:
-      summary: Retrieve All API Keys And Their Metadata By TSG ID
-      description: Get all API keys and their metadata for a given TSG ID
-      tags:
-        - API key
-      security:
-        - Auth: []
-      operationId: GetAllAPIKeysByTSGId
-      parameters:
-        - name: tsg_id
-          in: path
-          description: encoded TSG ID
-          required: true
-          schema:
-            type: string
-        - name: offset
-          in: query
-          description: The offset at which to start fetching more records
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: limit
-          in: query
-          description: The number of records to return.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Successfully returned metadata for a given API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAPIKeyObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/apikey/delete/{api_key_name}:
-    delete:
-      summary: Delete An API Key
-      description: Delete a given API key and its associated customer app
-      tags:
-        - API key
-      security:
-        - Auth: []
-      operationId: DeleteAPIKey
-      parameters:
-        - name: api_key_name
-          in: path
-          description: API key Name to delete
-          required: true
-          schema:
-            type: string
-        - name: updated_by
-          in: query
-          description: The email address of the person who performed the deletion
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully deleted a given API key and associated customer app
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/apikey/regenerate/{api_key_id}:
-    post:
-      summary: Regenerate An API Key
-      description: Regenerate an API key with the given uuid of apikey
-      tags:
-        - API key
-      security:
-        - Auth: []
-      operationId: RegenerateAPIKeyById
-      requestBody:
-        description: 'Request to regenerate an API key with the given uuid and optional rotation time interval and unit'
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                rotation_time_interval:
-                  type: integer
-                  format: int32
-                rotation_time_unit:
-                  type: string
-                updated_by:
-                  type: string
-              required:
-                - rotation_time_interval
-                - rotation_time_unit
-      parameters:
-        - name: api_key_id
-          in: path
-          description: API key uuid to regenerate
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully regenerated API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/apikey/autorotate/{api_key_id}:
-    post:
-      summary: Auto-Rotate An API Key
-      description: Autorotate an API key with the given uuid of apikey
-      tags:
-        - API key
-      security:
-        - Auth: []
-      operationId: AutoRotateAPIKeyById
-      requestBody:
-        description: 'Request to autorotate an API key with the given uuid and optional rotation time interval and unit'
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                rotation_time_interval:
-                  type: integer
-                  format: int32
-                rotation_time_unit:
-                  type: string
-                updated_by:
-                  type: string
-              required:
-                - rotation_time_interval
-                - rotation_time_unit
-      parameters:
-        - name: api_key_id
-          in: path
-          description: API key uuid to autorotate
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully autorotated API key
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/profile:
-    post:
-      summary: Create A New AI Security Profile
-      description: Post a new AI Sec Profile
-      tags:
-        - AI Sec Profile
-      security:
-        - Auth: []
-      operationId: CreateNewAIProfile
-      requestBody:
-        description: AI Sec Profile creation request object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AIProfileObject'
-      responses:
-        '200':
-          description: Successfully created a new AI Sec Profile
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AIProfileObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/profile/{profile_id}:
-    delete:
-      summary: Delete An AI Security Profile
-      description: Delete a given AI Sec Profile
-      tags:
-        - AI Sec Profile
-      security:
-        - Auth: []
-      operationId: DeleteAIProfile
-      parameters:
-        - name: profile_id
-          in: path
-          description: AI Sec ProfileId to delete
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully deleted a given AI Sec Profile
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        '409':
-          description: conflict occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteAIProfileResponse'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/profile/uuid/{profile_id}:
-    put:
-      summary: Modify AI Security Profile Details
-      description: Update metadata for a given AI Sec Profile Id.
-      tags:
-        - AI Sec Profile
-      security:
-        - Auth: []
-      operationId: UpdateProfileByProfileId
-      parameters:
-        - name: profile_id
-          in: path
-          description: encoded AI Sec Profile Id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: AI SEC profile object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AIProfileObject'
-      responses:
-        '200':
-          description: Successfully updated metadata for a given AI Sec Profile Id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AIProfileObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/profiles/tsg/{tsg_id}:
-    get:
-      summary: Retrieve All AI Security Profiles By TSG ID
-      description: Get all AI Sec Profiles and their metadata for a given CSP ID and TSG ID
-      tags:
-        - AI Sec Profile
-      security:
-        - Auth: []
-      operationId: GetAllAIProfilesByTsgId
-      parameters:
-        - name: tsg_id
-          in: path
-          description: encoded TSG ID
-          required: true
-          schema:
-            type: string
-        - name: offset
-          in: query
-          description: The offset at which to start fetching more records
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: limit
-          in: query
-          description: The number of records to return.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Successfully returned metadata for all AI Sec Profiles for a given CSP Id and TSG Id.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAIProfileObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/dlpprofiles:
-    get:
-      summary: Retrieve All DLP Profiles By TSG ID
-      description: Get all DLP Profiles and their metadata for a TSG ID
-      tags:
-        - DLP Profiles
-      security:
-        - Auth: []
-      operationId: GetAllDlpProfilesByTsgId
-      responses:
-        '200':
-          description: Successfully returned metadata for all DLP Profiles for a given TsgId.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayDlpProfileObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/deploymentprofiles:
-    get:
-      summary: Retrieve All Deployment Profiles By TSG ID
-      description: Get all Deployment Profiles for a given TSG ID.
-      tags:
-        - Deployment Profiles
-      security:
-        - Auth: []
-      operationId: GetDeploymentProfilesByTsgId
-      parameters:
-        - name: unactivated
-          in: query
-          description: Get available and unactivated Deployment Profiles. Also include previously activated DP that do not have any associated apps or api keys.
-          required: false
-          schema:
-            type: boolean
-      responses:
-        '200':
-          description: Successfully returned Deployment Profiles for TSG Id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeploymentProfilesObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/scanlogs:
-    post:
-      summary: Retrieve Scan Logs By TSG ID And Time Interval
-      description: Get the Scan logs for a TSG in the specified time interval
-      tags:
-        - Scan Logs
-      security:
-        - Auth: []
-      operationId: GetScanLogsByTime
-      parameters:
-        - name: time_interval
-          in: query
-          description: Time interval between which to return results
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: time_unit
-          in: query
-          description: Indicates whether time_interval is in hour or days etc.
-          required: true
-          schema:
-            type: string
-        - name: pageNumber
-          in: query
-          description: The pageNumber requested
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: pageSize
-          in: query
-          description: The number of records to return per page
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: filter
-          in: query
-          description: The filter to be applied to the scan logs (all|benign|threat)
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Encrypted page token that includes the start_time, end_time, tsg_id and timestamp of the last record in the result set (Limit the result set to max 2K rows)
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PageTokenJsonObject'
-      responses:
-        '200':
-          description: Successfully returned records for Scan Requests
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedScanResultsObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/customerapp:
-    get:
-      summary: Retrieve Customer Application Details
-      description: Get the customer app details for a given TSG ID and app name
-      tags:
-        - Customer App
-      security:
-        - Auth: []
-      operationId: GetCustomerApp
-      parameters:
-        - name: app_name
-          in: query
-          description: The customer app name for which to fetch details
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully returned metadata for a Customer App
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerAppObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/customerapp/tsg/{tsg_id}:
-    get:
-      summary: Retrieve All Customer Applications By TSG ID
-      description: Get all Customer Apps and their metadata for a given TSG ID
-      tags:
-        - Customer App
-      security:
-        - Auth: []
-      operationId: GetAllCustomerAppsByTsgID
-      parameters:
-        - name: tsg_id
-          in: path
-          description: encoded TSG ID
-          required: true
-          schema:
-            type: string
-        - name: offset
-          in: query
-          description: The offset at which to start fetching more records
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: limit
-          in: query
-          description: The number of records to return.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Successfully returned metadata for all Customer Apps for a given TSG ID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedCustomerAppObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/topic:
-    post:
-      summary: Create A New Custom Topic
-      description: Post a new Custom Topic
-      tags:
-        - Custom Topic
-      security:
-        - Auth: []
-      operationId: CreateNewCustomTopic
-      requestBody:
-        description: Custom Topic creation request object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomTopicObject'
-      responses:
-        '200':
-          description: Successfully created a new Custom Topic
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomTopicObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/topic/{topic_id}:
-    delete:
-      summary: Delete A Custom Topic
-      description: Delete a given Custom Topic
-      tags:
-        - Custom Topic
-      security:
-        - Auth: []
-      operationId: DeleteCustomTopic
-      parameters:
-        - name: topic_id
-          in: path
-          description: Custom TopicId to delete
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully deleted a given Custom Topic
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        '409':
-          description: conflict occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteCustomTopicResponse'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/topic/{topic_id}/force:
-    delete:
-      summary: Force Delete A Custom Topic
-      description: Force delete a given Custom Topic, bypassing any safety checks
-      tags:
-        - Custom Topic
-      security:
-        - Auth: []
-      operationId: ForceDeleteCustomTopic
-      parameters:
-        - name: topic_id
-          in: path
-          description: Custom TopicId to force delete
-          required: true
-          schema:
-            type: string
-        - name: updated_by
-          in: query
-          description: User performing the force deletion
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully force deleted the Custom Topic
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/topic/uuid/{topic_id}:
-    put:
-      summary: Modify Custom Topic Details
-      description: Update metadata for a given Custom Topic Id.
-      tags:
-        - Custom Topic
-      security:
-        - Auth: []
-      operationId: UpdateTopicByTopicId
-      parameters:
-        - name: topic_id
-          in: path
-          description: encoded Custom Topic Id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Custom Topic object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomTopicObject'
-      responses:
-        '200':
-          description: Successfully updated metadata for a given Custom Topic Id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomTopicObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/topics/tsg/{tsg_id}:
-    get:
-      summary: Retrieve All Custom Topics By TSG ID
-      description: Get all Custom Topics and their metadata for a given CSP ID.
-      tags:
-        - Custom Topic
-      security:
-        - Auth: []
-      operationId: GetAllCustomTopicsByTsgId
-      parameters:
-        - name: tsg_id
-          in: path
-          description: encoded TSG ID
-          required: true
-          schema:
-            type: string
-        - name: offset
-          in: query
-          description: The offset at which to start fetching more records
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: limit
-          in: query
-          description: The number of records to return.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: Successfully returned metadata for all Custom Topics for a given CspId and TsgId.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedCustomTopicObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/oauth/invalidateToken:
-    post:
-      summary: Invalidate An OAuth 2.0 Token
-      description: Invalidate oauth2.0 token
-      tags:
-        - Oauth
-      security:
-        - Auth: []
-      operationId: InvalidateApigeeOauthToken
-      parameters:
-        - name: token
-          in: query
-          description: the oauth token to invalidate
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: ClientId and Customer App Name object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClientIdAndCustomerApp'
-      responses:
-        '200':
-          description: Successfully invalidated oauth2.0 token
-          content:
-            application/json:
-              schema:
-                type: string
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /v1/mgmt/oauth/client_credential/accesstoken:
-    post:
-      summary: Get An OAuth 2.0 Token For Client Credentials
-      description: Get oauth2.0 token for a given set of client credentials
-      tags:
-        - Oauth
-      security:
-        - Auth: []
-      operationId: GetApigeeOauthToken
-      parameters:
-        - name: tokenTtlInterval
-          in: query
-          description: The token time-to-live (TTL) interval (1h, 3h, 24h, 1 day, 7 days, 30 days) in the OAuth token request
-          required: false
-          schema:
-            type: integer
-            format: int32
-        - name: tokenTtlUnit
-          in: query
-          description: The token time-to-live (TTL) unit (hours) in the OAuth token request
-          required: false
-          schema:
-            type: string
-      requestBody:
-        description: ClientId and Customer App Name object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClientIdAndCustomerApp'
-      responses:
-        '200':
-          description: Successfully returned Oauth2 token for a given set of client credentials for a given TSG ID.
-            Default duration is 24 hour.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Oauth2TokenObject'
-        default:
-          description: error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+ /v1/mgmt/apikey:
+   post:
+     summary: Create A New API KeyRequest to create a new API key
+     description: Post a new API key
+     tags:
+       - API key
+     security:
+       - Auth: []
+     operationId: CreateNewAPIKey
+     requestBody:
+       description: API key creation request object
+       required: true
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/APIKeyCreationObject'
+     responses:
+       '200':
+         description: Successfully created a new API key
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/APIKeyObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/apikeys/tsg/{tsg_id}:
+   get:
+     summary: Retrieve All API Keys And Their Metadata By TSG ID
+     description: Get all API keys and their metadata for a given TSG ID
+     tags:
+       - API key
+     security:
+       - Auth: []
+     operationId: GetAllAPIKeysByTSGId
+     parameters:
+       - name: tsg_id
+         in: path
+         description: encoded TSG ID
+         required: true
+         schema:
+           type: string
+       - name: offset
+         in: query
+         description: The offset at which to start fetching more records
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: limit
+         in: query
+         description: The number of records to return.
+         required: true
+         schema:
+           type: integer
+           format: int32
+     responses:
+       '200':
+         description: Successfully returned metadata for a given API key
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/PaginatedAPIKeyObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/apikey/delete/{api_key_name}:
+   delete:
+     summary: Delete an API Key
+     description: Delete a given API key and its associated customer app
+     tags:
+       - API key
+     security:
+       - Auth: []
+     operationId: DeleteAPIKey
+     parameters:
+       - name: api_key_name
+         in: path
+         description: API key Name to delete
+         required: true
+         schema:
+           type: string
+       - name: updated_by
+         in: query
+         description: The email address of the person who performed the deletion
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully deleted a given API key and associated customer app
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 message:
+                   type: string
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/apikey/regenerate/{api_key_id}:
+   post:
+     summary: Regenerate an API Key
+     description: Regenerate an API key with the given uuid of apikey
+     tags:
+       - API key
+     security:
+       - Auth: []
+     operationId: RegenerateAPIKeyById
+     requestBody:
+       description: 'Request to regenerate an API key with the given uuid and optional rotation time interval and unit'
+       required: true
+       content:
+         application/json:
+           schema:
+             type: object
+             properties:
+               rotation_time_interval:
+                 type: integer
+                 format: int32
+               rotation_time_unit:
+                 type: string
+               updated_by:
+                 type: string
+             required:
+               - rotation_time_interval
+               - rotation_time_unit
+     parameters:
+       - name: api_key_id
+         in: path
+         description: API key uuid to regenerate
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully regenerated API key
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/APIKeyObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/apikey/autorotate/{api_key_id}:
+   post:
+     summary: Auto-Rotate An API Key
+     description: Autorotate an API key with the given uuid of apikey
+     tags:
+       - API key
+     security:
+       - Auth: []
+     operationId: AutoRotateAPIKeyById
+     requestBody:
+       description: 'Request to autorotate an API key with the given uuid and optional rotation time interval and unit'
+       required: true
+       content:
+         application/json:
+           schema:
+             type: object
+             properties:
+               rotation_time_interval:
+                 type: integer
+                 format: int32
+               rotation_time_unit:
+                 type: string
+               updated_by:
+                 type: string
+             required:
+               - rotation_time_interval
+               - rotation_time_unit
+     parameters:
+       - name: api_key_id
+         in: path
+         description: API key uuid to autorotate
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully autorotated API key
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/APIKeyObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/profile:
+   post:
+     summary: Create A New AI Security Profile
+     description: Post a new AI Sec Profile
+     tags:
+       - AI Sec Profile
+     security:
+       - Auth: []
+     operationId: CreateNewAIProfile
+     requestBody:
+       description: AI Sec Profile creation request object
+       required: true
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/AIProfileObject'
+     responses:
+       '200':
+         description: Successfully created a new AI Sec Profile
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/AIProfileObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/profile/{profile_id}:
+   delete:
+     summary: Delete An AI Security Profile
+     description: Delete a given AI Sec Profile
+     tags:
+       - AI Sec Profile
+     security:
+       - Auth: []
+     operationId: DeleteAIProfile
+     parameters:
+       - name: profile_id
+         in: path
+         description: AI Sec ProfileId to delete
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully deleted a given AI Sec Profile
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 message:
+                   type: string
+       '409':
+         description: conflict occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/DeleteAIProfileResponse'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/profile/uuid/{profile_id}:
+   put:
+     summary: Modify AI Security Profile Details
+     description: Update metadata for a given AI Sec Profile Id.
+     tags:
+       - AI Sec Profile
+     security:
+       - Auth: []
+     operationId: UpdateProfileByProfileId
+     parameters:
+       - name: profile_id
+         in: path
+         description: encoded AI Sec Profile Id
+         required: true
+         schema:
+           type: string
+     requestBody:
+       description: AI SEC profile object
+       required: true
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/AIProfileObject'
+     responses:
+       '200':
+         description: Successfully updated metadata for a given AI Sec Profile Id
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/AIProfileObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/profiles/tsg/{tsg_id}:
+   get:
+     summary: Retrieve All AI Security Profiles By TSG ID
+     description: Get all AI Sec Profiles and their metadata for a given CSP ID and TSG ID
+     tags:
+       - AI Sec Profile
+     security:
+       - Auth: []
+     operationId: GetAllAIProfilesByTsgId
+     parameters:
+       - name: tsg_id
+         in: path
+         description: encoded TSG ID
+         required: true
+         schema:
+           type: string
+       - name: offset
+         in: query
+         description: The offset at which to start fetching more records
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: limit
+         in: query
+         description: The number of records to return.
+         required: true
+         schema:
+           type: integer
+           format: int32
+     responses:
+       '200':
+         description: Successfully returned metadata for all AI Sec Profiles for a given CSP Id and TSG Id.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/PaginatedAIProfileObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/dlpprofiles:
+   get:
+     summary: Retrieve All DLP Profiles By TSG ID
+     description: Get all DLP Profiles and their metadata for a TSG ID
+     tags:
+       - DLP Profiles
+     security:
+       - Auth: []
+     operationId: GetAllDlpProfilesByTsgId
+     responses:
+       '200':
+         description: Successfully returned metadata for all DLP Profiles for a given TsgId.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/ArrayDlpProfileObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/deploymentprofiles:
+   get:
+     summary: Retrieve All Deployment Profiles By TSG ID
+     description: Get all Deployment Profiles for a given TSG ID.
+     tags:
+       - Deployment Profiles
+     security:
+       - Auth: []
+     operationId: GetDeploymentProfilesByTsgId
+     parameters:
+       - name: unactivated
+         in: query
+         description: Get available and unactivated Deployment Profiles. Also include previously activated DP that do not have any associated apps or api keys.
+         required: false
+         schema:
+           type: boolean
+     responses:
+       '200':
+         description: Successfully returned Deployment Profiles for TSG Id
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/DeploymentProfilesObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/scanlogs:
+   post:
+     summary: Retrieve Scan Logs By TSG ID And Time Interval
+     description: Get the Scan logs for a TSG in the specified time interval
+     tags:
+       - Scan Logs
+     security:
+       - Auth: []
+     operationId: GetScanLogsByTime
+     parameters:
+       - name: time_interval
+         in: query
+         description: Time interval between which to return results
+         required: true
+         schema:
+           type: integer
+           format: int64
+       - name: time_unit
+         in: query
+         description: Indicates whether time_interval is in hour or days etc.
+         required: true
+         schema:
+           type: string
+       - name: pageNumber
+         in: query
+         description: The pageNumber requested
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: pageSize
+         in: query
+         description: The number of records to return per page
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: filter
+         in: query
+         description: The filter to be applied to the scan logs (all|benign|threat)
+         required: true
+         schema:
+           type: string
+     requestBody:
+       description: Encrypted page token
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/PageTokenJsonObject'
+     responses:
+       '200':
+         description: Successfully returned records for Scan Requests
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/PaginatedScanResultsObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/customerapp:
+   get:
+     summary: Retrieve Customer Application Details
+     description: Get the customer app details for a given TSG ID and app name
+     tags:
+       - Customer App
+     security:
+       - Auth: []
+     operationId: GetCustomerApp
+     parameters:
+       - name: app_name
+         in: query
+         description: The customer app name for which to fetch details
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully returned metadata for a Customer App
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/CustomerAppObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/customerapp/tsg/{tsg_id}:
+   get:
+     summary: Retrieve All Customer Applications By TSG ID
+     description: Get all Customer Apps and their metadata for a given TSG ID
+     tags:
+       - Customer App
+     security:
+       - Auth: []
+     operationId: GetAllCustomerAppsByTsgID
+     parameters:
+       - name: tsg_id
+         in: path
+         description: encoded TSG ID
+         required: true
+         schema:
+           type: string
+       - name: offset
+         in: query
+         description: The offset at which to start fetching more records
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: limit
+         in: query
+         description: The number of records to return.
+         required: true
+         schema:
+           type: integer
+           format: int32
+     responses:
+       '200':
+         description: Successfully returned metadata for all Customer Apps for a given TSG ID
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/PaginatedCustomerAppObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/topic:
+   post:
+     summary: Create a New Custom Topic
+     description: Post a new Custom Topic
+     tags:
+       - Custom Topic
+     security:
+       - Auth: []
+     operationId: CreateNewCustomTopic
+     requestBody:
+       description: Custom Topic creation request object
+       required: true
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/CustomTopicObject'
+     responses:
+       '200':
+         description: Successfully created a new Custom Topic
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/CustomTopicObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/topic/{topic_id}:
+   delete:
+     summary: Delete a Custom Topic
+     description: Delete a given Custom Topic
+     tags:
+       - Custom Topic
+     security:
+       - Auth: []
+     operationId: DeleteCustomTopic
+     parameters:
+       - name: topic_id
+         in: path
+         description: Custom TopicId to delete
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully deleted a given Custom Topic
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 message:
+                   type: string
+       '409':
+         description: conflict occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/DeleteCustomTopicResponse'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/topic/{topic_id}/force:
+   delete:
+     summary: Force Delete a Custom Topic
+     description: Force delete a given Custom Topic, bypassing any safety checks
+     tags:
+       - Custom Topic
+     security:
+       - Auth: []
+     operationId: ForceDeleteCustomTopic
+     parameters:
+       - name: topic_id
+         in: path
+         description: Custom TopicId to force delete
+         required: true
+         schema:
+           type: string
+       - name: updated_by
+         in: query
+         description: User performing the force deletion
+         required: true
+         schema:
+           type: string
+     responses:
+       '200':
+         description: Successfully force deleted the Custom Topic
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 message:
+                   type: string
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/topic/uuid/{topic_id}:
+   put:
+     summary: Mdify Custom Topic Details
+     description: Update metadata for a given Custom Topic Id.
+     tags:
+       - Custom Topic
+     security:
+       - Auth: []
+     operationId: UpdateTopicByTopicId
+     parameters:
+       - name: topic_id
+         in: path
+         description: encoded Custom Topic Id
+         required: true
+         schema:
+           type: string
+     requestBody:
+       description: Custom Topic object
+       required: true
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/CustomTopicObject'
+     responses:
+       '200':
+         description: Successfully updated metadata for a given Custom Topic Id
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/CustomTopicObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/topics/tsg/{tsg_id}:
+   get:
+     summary: Retrieve All Custom Topics By TSG ID
+     description: Get all Custom Topics and their metadata for a given CSP ID and TSG ID
+     tags:
+       - Custom Topic
+     security:
+       - Auth: []
+     operationId: GetAllCustomTopicsByTsgId
+     parameters:
+       - name: tsg_id
+         in: path
+         description: encoded TSG ID
+         required: true
+         schema:
+           type: string
+       - name: offset
+         in: query
+         description: The offset at which to start fetching more records
+         required: true
+         schema:
+           type: integer
+           format: int32
+       - name: limit
+         in: query
+         description: The number of records to return.
+         required: true
+         schema:
+           type: integer
+           format: int32
+     responses:
+       '200':
+         description: Successfully returned metadata for all Custom Topics for a given CspId and TsgId.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/PaginatedCustomTopicObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/oauth/invalidateToken:
+   post:
+     summary: Invalidate An OAuth 2.0 Token
+     description: Invalidate oauth2.0 token
+     tags:
+       - Oauth
+     security:
+       - Auth: []
+     operationId: InvalidateApigeeOauthToken
+     parameters:
+       - name: token
+         in: query
+         description: the oauth token to invalidate
+         required: true
+         schema:
+           type: string
+     requestBody:
+       description: ClientId and Customer App Name object
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/ClientIdAndCustomerApp'
+     responses:
+       '200':
+         description: Successfully invalidated oauth2.0 token
+         content:
+           application/json:
+             schema:
+               type: string
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+ /v1/mgmt/oauth/client_credential/accesstoken:
+   post:
+     summary: Get An OAuth 2.0 Token For Client Credentials
+     description: Get oauth2.0 token for a given set of client credentials
+     tags:
+       - Oauth
+     security:
+       - Auth: []
+     operationId: GetApigeeOauthToken
+     parameters:
+       - name: tokenTtlInterval
+         in: query
+         description: The token time-to-live (TTL) interval (1h, 3h, 24h, 1 day, 7 days, 30 days) in the OAuth token request
+         required: false
+         schema:
+           type: integer
+           format: int32
+       - name: tokenTtlUnit
+         in: query
+         description: The token time-to-live (TTL) unit (hours) in the OAuth token request
+         required: false
+         schema:
+           type: string
+     requestBody:
+       description: ClientId and Customer App Name object
+       content:
+         application/json:
+           schema:
+             $ref: '#/components/schemas/ClientIdAndCustomerApp'
+     responses:
+       '200':
+         description: Successfully returned Oauth2 token for a given set of client credentials for a given TSG ID.
+           Default duration is 24 hour.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Oauth2TokenObject'
+       default:
+         description: error occurred
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
 components:
-  securitySchemes:
-    Auth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
+ securitySchemes:
+   Auth:
+     type: http
+     scheme: bearer
+     bearerFormat: JWT
+ schemas:
     APIKeyObject:
       type: object
+      description: API Key Object Structure
       properties:
         api_key_id:
           type: string
+          description: API Key Id Value
         api_key_last8:
           type: string
+          description: Last eight Characters of api key
         api_key_name:
           type: string
+          description: API Key Name
         auth_code:
           type: string
+          description: Auth Code Associated with deployment profile
         csp_id:
           type: string
+          description: Customer Service Portal ID
         tsg_id:
           type: string
+          description: Tenant Service group ID
         expiration:
           type: string
           format: date-time
+          description: Api Key Expiration Time Stamp
         revoked:
           type: boolean
+          description: Indicates if the API Key has been revoked
         revoke_reason:
           type: string
+          description: If API Key is Revoked, captures the reason for revocation
         cust_app:
           type: string
+          description: Customer app associated with the API Key
         cust_env:
           type: string
+          description: Environment refers to customer app environment like production, staging, etc
         cust_ai_agent_framework:
           type: string
+          description: Customer App AI Agent Framework
         cust_cloud_provider:
           type: string
+          description: Cloud provide refers to the customer's APPs LLM model cloud provider
         created_by:
           type: string
+          description: Email of the user that created the API Key
         updated_by:
           type: string
+          description: Email of the user that updated the API Key
         last_modified_ts:
           type: string
           format: date-time
+          description: Api key last modified Time Stamp
         rotation_time_interval:
           type: integer
           format: int32
+          description: Api Key Rotation time interval
         rotation_time_unit:
           type: string
+          description: Api Key Rotation time unit
         dp_name:
           type: string
+          description: Deployment Profile Name
         status:
           type: string
+          description: Api key status
         api_key:
           type: string
+          description: Api key Value
         lic_expiration:
           type: string
           format: date-time
+          description: License Expiration Time stamp
         avg_text_records:
           type: integer
           format: int32
+          description: Text Records
         creation_ts:
           type: string
           format: date-time
+          description: API Key creation timestamp
+
       required:
         - api_key_id
         - api_key_last8
@@ -900,37 +924,52 @@ components:
       properties:
         tsg_id:
           type: string
+          description: Tenant Service group ID
         dp_name:
           type: string
+          description: Deployment Profile Name
         auth_code:
           type: string
+          description: Auth Code Associated with deployment profile
         customer_appId:
           type: string
+          description: Customer Application ID
         cust_app:
           type: string
+          description: Customer app under deployment profile 
         cust_env:
           type: string
+          description: Environment refers to customer app environment like production, staging, etc
         cust_cloud_provider:
           type: string
+          description: Cloud provide refers to the customer's APPs LLM model cloud provider
         cust_ai_agent_framework:
           type: string
+          description: Customer App AI Agent Framework
         expiration:
           type: string
           format: date-time
+          description: Api Key Expiration Time Stamp
         revoked:
           type: boolean
+          description: Revoke the current API key
         created_by:
           type: string
+          description: Api Key Created Time Stamp
         api_key_name:
           type: string
+          description: Api Key Name
         rotation_time_interval:
           type: integer
           format: int32
+          description: Api Key Rotation time interval
         rotation_time_unit:
           type: string
+          description: Api Key Rotation time unit
         creation_ts:
           type: string
           format: date-time
+          description: Api Key Created Time Stamp
       required:
         - tsg_id
         - auth_code
@@ -940,6 +979,7 @@ components:
         - api_key_name
         - rotation_time_interval
         - rotation_time_unit
+
     PaginatedAPIKeyObject:
       type: object
       properties:
@@ -947,27 +987,33 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/APIKeyObject'
+            description: Type of object in the array.
         next_offset:
           type: integer
           format: int32
+          description: Next offset from which to fetch the records
     AIProfileObject:
       type: object
       properties:
         profile_id:
           type: string
+          description: Unique identifier for the profile. 
         profile_name:
           type: string
+          description: Name of the profile. 
         csp_id:
           type: string
+          description: Customer Service Portal ID 
         tsg_id:
           type: string
+          description: Tenant Service group ID 
         revision:
           type: integer
           format: int32
+          description: AI Profile Revision
         active:
           type: boolean
-        dlp_tenant_id:
-          type: string
+          description: Indicates if AI profile is active
         policy:
           type: object
           properties:
@@ -981,11 +1027,14 @@ components:
                 $ref: '#/components/schemas/AiSecurityProfileObject'
         created_by:
           type: string
+          description: Email of the user who created the Profile
         updated_by:
           type: string
+          description: Email of the user who updated the Profile
         last_modified_ts:
           type: string
           format: date-time
+          description: Profile Last Modified Time Stamp
       required:
         - profile_name
         - csp_id
@@ -997,115 +1046,142 @@ components:
       properties:
         model-type:
           type: string
+          description: AI LLM model type
         content-type:
           type: string
+          description: Content for AI profile
         model-configuration:
           type: object
+          description: AI LLM model configuration
           properties:
+            mask-data-in-storage:
+              type: boolean
+              description: Boolean flag to determine whether data is masked in storage
             latency:
               $ref: '#/components/schemas/LatencyObject'
+              description: Latency configuration for AI profile
             data-protection:
               $ref: '#/components/schemas/DataProtectionObject'
+              description: Data protection configuration for AI profile
             app-protection:
               $ref: '#/components/schemas/AppProtectionObject'
+              description: App protection configuration for AI profile
             model-protection:
               $ref: '#/components/schemas/ModelProtectionObject'
+              description: Model protection configuration for AI profile
             agent-protection:
               $ref: '#/components/schemas/AgentProtectionObject'
+              description: Agent protection configuration for AI profile 
     DLPDataProfileObject:
       type: object
       properties:
         name:
           type: string
+          description: Name of the DLP data profile
         uuid:
           type: string
-        description:
-          type: string
+          description: Unique identifier for the DLP data profile
         id:
           type: string
+          description: DLP data profile id
         version:
           type: string
+          description: DLP version 
         rule1:
           type: object
+          description: First DLP data profile rule configuration
           properties:
             action:
               type: string
+              description: Action to be taken for the first DLP data profile rule
         rule2:
           type: object
+          description: Second DLP data profile rule configuration
           properties:
             action:
               type: string
+              description: Action to be taken for the second DLP data profile rule
         log-severity:
           type: string
+          description: Severity level for data leak detection logging
         non-file-based:
           type: string
+          description: Non-file based data leak detection configuration
         file-based:
           type: string
+          description: File-based data leak detection configuration
       required:
         - name
         - uuid
     ModelProtectionObject:
-      type: array
-      items:
-        type: object
-        properties:
-          name:
-            type: string
-          action:
-            type: string
-          topic-list:
-            type: array
+        type: array
+        items:
+          type: object
+          description: Model protection configuration details
+          properties:
+            name:
+              type: string
+              description: Name of the model protection configuration
+            action:
+              type: string
+              description: Action to be taken for model protection
+            topic-list:
+              type: array
+              description: List of topics for model protection configuration
             items:
               $ref: '#/components/schemas/TopicArray'
         required:
           - name
           - action
     DataProtectionObject:
-      type: object
-      properties:
-        data-leak-detection:
-          type: object
-          properties:
-            member:
-              type: array
-              items:
-                type: object
-                properties:
-                  text:
-                    type: string
-                  id:
-                    type: string
-                  version:
-                    type: string
-                required:
-                  - text
-            action:
-              type: string
-            mask-data-inline:
+     type: object
+     properties:
+       data-leak-detection:
+         type: object
+         properties:
+           member:
+             type: array
+             items:
+               type: object
+               properties:
+                 text:
+                   type: string
+                 id:
+                   type: string
+                 version:
+                   type: string
+               required:
+                 - text
+           action:
+            type: string
+            description: Action to be taken for data leak detection
+           mask-data-inline:
               type: boolean
-          required:
-            - member
-            - action
-        database-security:
+              description: Boolean flag to determine whether data is masked inline
+         required:
+           - member
+           - action
+
+    database-security:
           type: array
           items:
             type: object
             properties:
               name:
                 type: string
+                description: Database security configuration name
               action:
                 type: string
+                description: Action for DB security configuration
             required:
               - name
               - action
-      required:
-        - data-leak-detection
-        - database-security
     AppProtectionObject:
       type: object
       properties:
         alert-url-category:
           type: object
+          description: URL categories for raising alerts
           properties:
             member:
               type: array
@@ -1113,6 +1189,7 @@ components:
                 type: string
         block-url-category:
           type: object
+          description: URL categories to be blocked
           properties:
             member:
               type: array
@@ -1120,35 +1197,37 @@ components:
                 type: string
         allow-url-category:
           type: object
+          description: URL categories to be allowed
           properties:
             member:
               type: array
               items:
                 type: string
-        default-url-category:
+    default-url-category:
           type: object
+          description: Default URL category configuration
           properties:
             member:
               type: array
               items:
                 type: string
-            required:
-              - member
-        url-detected-action:
+          required:
+            - member
+    url-detected-action:
           type: string
-        malicious-code-protection:
+          description: Action to be taken when a URL matches the above categories
+    malicious-code-protection:
           type: object
           properties:
             name:
               type: string
+              description: Name of malicious code protection configuration
             action:
               type: string
+              description: Action to be taken for malicious code protection
           required:
             - name
             - action
-      required:
-        - default-url-category
-        - url-detected-action
     AgentProtectionObject:
       type: array
       items:
@@ -1156,8 +1235,10 @@ components:
         properties:
           name:
             type: string
+            description: Name of agent protection configuration
           action:
             type: string
+            description: Action to be taken for agent protection configuration
         required:
           - name
           - action
@@ -1166,30 +1247,38 @@ components:
       properties:
         inline-timeout-action:
           type: string
+          description: Action to be taken when inline timeout occurs
         max-inline-latency:
           type: integer
           format: int32
+          description: Maximum allowed inline latency in seconds
     TopicObject:
       type: object
       properties:
         topic_name:
           type: string
+          description: Name of the topic for topic guardrail configuration
         topic_id:
           type: string
+          description: Unique identifier for the topic
         revision:
           type: integer
           format: int64
+          description: Revision number for the topic
       required:
         - topic_name
         - topic_id
         - revision
     TopicArray:
       type: object
+      description: Topic Array for Topic Guardrail
       properties:
         action:
           type: string
+          description: Action to be taken for topic guardrails configuration
         topic:
           type: array
+          description: Custom Topic array
           items:
             $ref: '#/components/schemas/TopicObject'
       required:
@@ -1212,37 +1301,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DLPDataProfileObject'
+
+
     ScanRequestObject:
       type: object
       properties:
         tsg_id:
           type: string
+          description: Unique Tenant Service group ID
         csp_id:
           type: string
+          description: Unique Customer Service Portal ID
         scan_id:
           type: string
+          description: Unique identifier for the scan
         profile_name:
           type: string
+          description: AI security profile name used for scanning
         profile_id:
           type: string
+          description: Unique identifier of the AI security profile used for scanning
         app_name:
           type: string
+          description: AI application requesting the content scan
         app_user:
           type: string
+          description: End user using the AI application
         user_ip:
           type: string
+          description: End user IP using the AI application
         ai_model:
           type: string
+          description: AI model serving the AI application
         content:
           type: string
+          description: Prompt or Response or Both
         input_time:
           type: string
           format: date-time
+          description: Input Time stamp
         input_type:
           type: string
+          description: Input Type for Scan Request Object
         metering:
           type: integer
           format: int32
+          description: Metering(ex daily usage token)
       required:
         - tsg_id
         - csp_id
@@ -1254,37 +1358,46 @@ components:
         - input_time
         - metering
     PaginatedScanRequestsObject:
-      type: object
-      properties:
-        scan_reqs:
-          type: array
-          items:
-            $ref: '#/components/schemas/ScanRequestObject'
-        next_offset:
-          type: integer
-          format: int32
+     type: object
+     properties:
+       scan_reqs:
+         type: array
+         items:
+           $ref: '#/components/schemas/ScanRequestObject'
+       next_offset:
+         type: integer
+         format: int32
     ScanResultObject:
       type: object
       properties:
         report_id:
           type: string
+          description: Unique identifier for the scan report
         scan_id:
           type: string
+          description: Unique identifier for the scan
         profile_name:
           type: string
+          description: AI security profile name used for scanning
         profile_id:
           type: string
+          description: Unique identifier of the AI security profile used for scanning
         output_time:
           type: string
           format: date-time
+          description: Output Time stamp
         output_type:
           type: string
+          description: Output Type for Scan Result Object
         content:
           type: string
+          description: Prompt or Response or Both
         verdict_category:
           type: string
+          description: Category of the scanned content verdicts such as "malicious" or "benign"
         action:
           type: string
+          description: Action whether allowed or blocked
         prompt_detected:
           $ref: '#/components/schemas/PromptDetected'
         response_detected:
@@ -1305,17 +1418,26 @@ components:
       properties:
         url_cats:
           type: boolean
+          description: Indicates whether prompt contains any malicious URLs
         dlp:
           type: boolean
+          description: Indicates whether prompt contains any sensitive information
         injection:
           type: boolean
+          description: Indicates whether prompt contains any injection threats
+
+
     response_detected:
       type: object
       properties:
         url_cats:
           type: boolean
+          description: Indicates whether response contains any malicious URLs
         dlp:
           type: boolean
+          description: Indicates whether response contains any sensitive information
+
+
     PaginatedScanResultsObject:
       type: object
       properties:
@@ -1332,173 +1454,255 @@ components:
           format: int32
         page_token:
           type: string
+        revision:
+          type: integer
+          format: int32
+          description: AI Profile Revision
+
+
     ScanResultForDashboard:
       type: object
       properties:
         text_records_count:
           type: integer
           format: int32
+          description: Total number of text-based records processed during scanning time interval selected in the dashboard
         api_calls_count:
           type: integer
           format: int32
+          description: API calls counts processed during scanning time interval selected in the dashboard
         threats_count:
           type: integer
           format: int32
+          description: Total number of threat instances detected during scanning time interval selected in the dashboard
         all_transactions_count:
           type: integer
           format: int32
+          description: Total number of transactions processed during scanning time interval selected in the dashboard
         benign_transaction_count:
           type: integer
           format: int32
+          description: Total number of benign transactions processed during scanning time interval selected in the dashboard
         scan_result_entries:
           type: array
+          description: List of scan logs
           items:
             $ref: '#/components/schemas/ScanResultEntryFromView'
+
+
     ScanResultEntryFromView:
       type: object
       properties:
         csp_id:
           type: string
+          description: Cloud Service Portal ID associated with the scan 
         tsg_id:
           type: string
+          description: Tenant services groupId associated with the scan
         scan_id:
           type: string
+          description: Unique identifier for the specific scan 
         scan_sub_req_id:
           type: integer
           format: int32
+          description: Scan sub request unique identifier
         transaction_id:
           type: string
+          description: Unique identifier for the transaction associated with the scan 
         api_key_name:
           type: string
+          description: API key used for this scan
         profile_id:
           type: string
+          description: Unique identifier of the AI security profile used for for this scan
         profile_name:
           type: string
+          description: Name of the AI security profile used for this scan
         app_name:
           type: string
+          description: Name of the customer app used in the scan
         model_name:
           type: string
+          description: Name of the AI model used in the scan 
         user:
           type: string
+          description: User identifier associated with the scan 
         environment:
           type: string
+          description: Cloud environment of the customer app associated with this scan
         cloud_provider:
           type: string
+          description: Cloud provider of the LLM associated with the scan
         agent_framework:
           type: string
+          description: Agent framework associated with the customer app associated with this scan
         tokens:
           type: integer
           format: int32
+          description: Number of tokens processed during the scan
         text_records:
           type: integer
           format: int32
+          description: Number of text records processed during the scan
         report_id:
           type: string
+          description: Unique identifier for the scan report generated
         received_ts:
           type: string
           format: date-time
+          description: Timestamp when the scan was received
         completed_ts:
           type: string
           format: date-time
+          description: Timestamp when the scan was completed
         status:
           type: string
+          description: Scan status indicating if scan was complete or pending
         verdict:
           type: string
+          description: Final Verdict of the scan 
         action:
           type: string
+          description: Final action of the scan
         is_prompt:
           type: boolean
+          description: Indicates whether prompt was present in the scan
         is_response:
           type: boolean
+          description: Indicates whether response was present in the scan
         pi_final_verdict:
           type: string
+          description: Final verdict for Prompt Injection detection 
         uf_final_verdict:
           type: string
+          description: Final verdict for URL filtering
         dlp_final_verdict:
           type: string
+          description: Final verdict for Data Loss Prevention detection
         dbs_final_verdict:
           type: string
+          description: Final verdict for Database Security detection
         tc_final_verdict:
           type: string
+          description: Final verdict for toxic content detection
         mc_final_verdict:
           type: string
+          description: Final verdict for Malicious Code detection
         agent_final_verdict:
           type: string
+          description: Final verdict for Agent security detection
         cg_final_verdict:
           type: string
+          description: Final verdict for contextual grounding detection
         tg_final_verdict:
           type: string
+          description: Final verdict for topic guardrails detection
         prompt_pi_verdict:
           type: string
+          description: Prompt Injection verdict for prompt scan 
         prompt_uf_verdict:
           type: string
+          description: URL filtering verdict for prompt scan
         prompt_dlp_verdict:
           type: string
+          description: Data Loss Protection verdict for prompt scan
         prompt_tc_verdict:
           type: string
+          description: Toxic Content verdict for prompt scan
         prompt_mc_verdict:
           type: string
+          description: Malicious Code verdict for prompt scan
         prompt_agent_verdict:
           type: string
+          description: Agent security verdict for prompt scan
         prompt_tg_verdict:
           type: string
+          description: Topic guardrails verdict for prompt scan
         prompt_verdict:
           type: string
+          description: Final verdict for prompt scan
         prompt_pi_action:
           type: string
+          description: Prompt Injection action for prompt scan
         prompt_uf_action:
           type: string
+          description: URL filtering action for prompt scan
         prompt_dlp_action:
           type: string
+          description: Data Loss Protection action for prompt scan
         prompt_tc_action:
           type: string
+          description: Toxic Content action for prompt scan
         prompt_mc_action:
           type: string
+          description: Malicious Code action for prompt scan
         prompt_agent_action:
           type: string
+          description: Agent security action for prompt scan
         prompt_tg_action:
           type: string
+          description: Topic guardrails action for prompt scan
         response_uf_verdict:
           type: string
+          description: URL filtering verdict for response scan
         response_dlp_verdict:
           type: string
+          description: Data Loss Prevention verdict for response scan
         response_dbs_verdict:
           type: string
+          description: Database Security verdict for response scan
         response_tc_verdict:
           type: string
+          description: Toxic Content verdict for response scan
         response_mc_verdict:
           type: string
+          description: Malicious Code verdict for response scan
         response_agent_verdict:
           type: string
+          description: Agent security verdict for response scan
         response_cg_verdict:
           type: string
+          description: Contextual Grounding verdict for response scan
         response_tg_verdict:
           type: string
+          description: Topic guardrails verdict for response scan
         response_uf_action:
           type: string
+          description: URL filtering action for response scan
         response_dlp_action:
           type: string
+          description: Data Loss Prevention action for response scan
         response_dbs_action:
           type: string
+          description: Database Security action for response scan
         response_tc_action:
           type: string
+          description: Toxic Content action for response scan
         response_mc_action:
           type: string
+          description: Malicious Code action for response scan
         response_agent_action:
           type: string
+          description: Agent security action for response scan
         response_cg_action:
           type: string
+          description: Contextual Grounding action for response scan
         response_tg_action:
           type: string
+          description: Topic guardrails action for response scan
         response_verdict:
           type: string
+          description: Final verdict for response scan
         detection_service_flags:
           type: integer
           format: int32
+          description: Bitwise flags for detection service settings
         content_masked:
           type: boolean
+          description: Indicates whether content was masked when we returned the results
         user_ip:
           type: string
+          description: IP address of the user initiating the request
       required:
         - csp_id
         - tsg_id
@@ -1508,440 +1712,91 @@ components:
         - app_name
         - tokens
         - text_records
-    AiInstanceObject:
-      type: object
-      properties:
-        tenant_id:
-          type: string
-        platform_region:
-          type: string
-        tenant_instance_name:
-          type: string
-        tsg_id:
-          type: string
-        support_account_id:
-          type: string
-        support_account_name:
-          type: string
-        app_id:
-          type: string
-        region:
-          type: string
-        created_by:
-          type: string
-        license_name:
-          type: string
-        license_expiration:
-          type: string
-        serial_number:
-          type: string
-        sku:
-          type: string
-        auth_code:
-          type: string
-        description:
-          type: string
-        trial:
-          type: string
-        associations:
-          $ref: '#/components/schemas/TSGAssociationsObject'
-        tsg_instances:
-          $ref: '#/components/schemas/TSGInstancesObject'
-        entitlements:
-          $ref: '#/components/schemas/TSGEntitlementsObject'
-        extra:
-          $ref: '#/components/schemas/TSGExtraObject'
-      required:
-        - tsg_id
-        - tenant_id
-        - region
-        - support_account_id
-        - app_id
-    TSGAssociationsObject:
-      type: array
-      items:
-        type: object
-        properties:
-          app_id:
-            type: string
-          tenant_id:
-            type: string
-          tsg_id:
-            type: string
-          region:
-            type: string
-          serial_number:
-            type: string
-        required:
-          - app_id
-          - tenant_id
-          - tsg_id
-    TSGInstancesObject:
-      type: array
-      items:
-        type: object
-        properties:
-          app_id:
-            type: string
-          tenant_id:
-            type: string
-          tsg_id:
-            type: string
-          region:
-            type: string
-          entitlements:
-            $ref: '#/components/schemas/TSGEntitlementsObject'
-          extra:
-            $ref: '#/components/schemas/TSGExtraObject'
-        required:
-          - app_id
-          - tenant_id
-          - tsg_id
-    TSGEntitlementsObject:
-      type: array
-      items:
-        type: object
-        properties:
-          license_type:
-            type: string
-          license_term:
-            type: integer
-            format: int32
-          license_unit:
-            type: string
-          license_expiration:
-            type: string
-          license_display_name:
-            type: string
-          product_type:
-            type: string
-          purchased_unit:
-            type: string
-          allocated_size:
-            type: integer
-            format: int32
-          remained_size:
-            type: integer
-            format: int32
-          auth_code:
-            type: string
-          serial_number:
-            type: string
-          app_id:
-            type: string
-          sku:
-            type: string
-          dp_name:
-            type: string
-    TSGExtraObject:
-      type: object
-      properties:
-        purchased_size:
-          type: integer
-          format: int32
-        license_version:
-          type: string
-        deployment_profiles:
-          $ref: '#/components/schemas/TSGDeploymentProfilesObject'
-    TSGDeploymentProfilesObject:
-      type: array
-      items:
-        type: object
-        properties:
-          deploymentProfileId:
-            type: string
-          profileName:
-            type: string
-          dAuthCode:
-            type: string
-          type:
-            type: string
-          subType:
-            type: string
-          license_expiration:
-            type: string
-          aveTextRecord:
-            type: integer
-            format: int32
-          subscriptions:
-            $ref: '#/components/schemas/TSGSubscriptionsObject'
-        required:
-          - dAuthCode
-          - aveTextRecord
-    TSGSubscriptionsObject:
-      type: array
-      items:
-        type: object
-        properties:
-          subscription:
-            type: string
-          app_id:
-            type: string
-          status:
-            type: integer
-            format: int32
-          entitlements:
-            $ref: '#/components/schemas/TSGEntitlementsObject'
-    AiInstanceRespObject:
-      type: object
-      properties:
-        application_name:
-          type: string
-        is_success:
-          type: boolean
-        tenant_id:
-          type: string
-        tsg_id:
-          type: string
-    InstanceMetadataResponseObject:
-      type: object
-      properties:
-        tenant_id:
-          type: string
-        tsg_id:
-          type: string
-        support_account_id:
-          type: string
-        support_account_name:
-          type: string
-        app_id:
-          type: string
-        region:
-          type: string
-        created_by:
-          type: string
-        dlp_tenant_id:
-          type: string
-        deploymentprofiles:
-          type: array
-          items:
-            $ref: '#/components/schemas/InstanceMetadataDPObject'
-      required:
-        - tsg_id
-        - tenant_id
-        - region
-        - support_account_id
-    InstanceMetadataDPObject:
-      type: object
-      properties:
-        dp_name:
-          type: string
-        auth_code:
-          type: string
-        created_by:
-          type: string
-        updated_by:
-          type: string
-        license_type:
-          type: string
-        license_name:
-          type: string
-        license_expiration:
-          type: string
-        license_qty:
-          type: integer
-          format: int64
-        license_unit:
-          type: string
-        license_term:
-          type: integer
-          format: int64
-        serial_number:
-          type: string
-        activated_ts:
-          type: string
-        deactivated_ts:
-          type: string
-        last_modified_ts:
-          type: string
-        status:
-          type: string
-        device_status:
-          type: string
-    AiDevicesObject:
-      type: object
-      properties:
-        created_by:
-          type: string
-        instance:
-          $ref: '#/components/schemas/DeviceInstanceObject'
-        devices:
-          $ref: '#/components/schemas/DeviceObject'
-    DeviceInstanceObject:
-      type: object
-      properties:
-        app_id:
-          type: string
-        tenant_id:
-          type: string
-        tsg_id:
-          type: string
-        region:
-          type: string
-      required:
-        - app_id
-        - tenant_id
-        - tsg_id
-    DeviceObject:
-      type: array
-      items:
-        type: object
-        properties:
-          device_type:
-            type: string
-          serial_number:
-            type: string
-          model:
-            type: string
-          sku:
-            type: string
-          support_account_id:
-            type: string
-          licenses:
-            $ref: '#/components/schemas/DeviceLicensesObject'
-      required:
-        - serial_number
-        - model
-    DeviceLicensesObject:
-      type: array
-      items:
-        type: object
-        properties:
-          serialNumber:
-            type: string
-          authorizationCode:
-            type: string
-          partNumber:
-            type: string
-          licenseType:
-            type: boolean
-          expirationDate:
-            type: string
-          licensePanDbIdentification:
-            type: string
-          subtypeName:
-            type: string
-    AiDevicesRespObject:
-      type: object
-      properties:
-        status:
-          type: string
-        devicesFailed:
-          type: array
-          items:
-            $ref: '#/components/schemas/DeviceRespObject'
-    DeviceRespObject:
-      type: object
-      properties:
-        serial_number:
-          type: string
-        status:
-          type: string
-        error:
-          type: string
-      required:
-        - serial_number
-        - status
-    DPActivateObject:
-      type: object
-      properties:
-        dp_name:
-          type: string
-        auth_code:
-          type: string
-        tsg_id:
-          type: string
-        status:
-          type: string
-      required:
-        - dp_name
-        - auth_code
-        - tsg_id
     DeploymentProfilesObject:
-      type: object
-      properties:
-        deployment_profiles:
-          type: array
-          items:
-            $ref: '#/components/schemas/DeploymentProfileEntryObject'
-        status:
-          type: string
-      required:
-        - deployment_profiles
-        - status
+     type: object
+     properties:
+       deployment_profiles:
+         type: array
+         items:
+           $ref: '#/components/schemas/DeploymentProfileEntryObject'
+       status:
+         type: string
+     required:
+       - deployment_profiles
+       - status
     DeploymentProfileEntryObject:
-      type: object
-      properties:
-        dp_name:
-          type: string
-        auth_code:
-          type: string
-        tsg_id:
-          type: string
-        status:
-          type: string
-        expiration_date:
-          type: string
-        ave_text_records:
-          type: integer
-          format: int32
-      required:
-        - dp_name
-        - auth_code
+     type: object
+     properties:
+       dp_name:
+         type: string
+       auth_code:
+         type: string
+       tsg_id:
+         type: string
+       status:
+         type: string
+       expiration_date:
+         type: string
+       ave_text_records:
+         type: integer
+         format: int32
+     required:
+       - dp_name
+       - auth_code
     ThreatScanReportObjects:
-      type: array
-      items:
-        $ref: '#/components/schemas/ThreatScanReportObject'
+     type: array
+     items:
+       $ref: '#/components/schemas/ThreatScanReportObject'
     ThreatScanReportObject:
-      type: object
-      properties:
-        report_id:
-          type: string
-        scan_id:
-          type: string
-        sub_scan_req_id:
-          type: integer
-          format: uint32
-        transaction_id:
-          type: string
-        detection_results:
-          type: array
-          items:
-            $ref: '#/components/schemas/DetectionServiceResultObject'
+     type: object
+     properties:
+       report_id:
+         type: string
+       scan_id:
+         type: string
+       sub_scan_req_id:
+         type: integer
+         format: uint32
+       transaction_id:
+         type: string
+       detection_results:
+         type: array
+         items:
+           $ref: '#/components/schemas/DetectionServiceResultObject'
     DetectionServiceResultObject:
-      type: object
-      properties:
-        data_type:
-          type: string
-        detection_service:
-          type: string
-        verdict:
-          type: string
-        action:
-          type: string
-        result_detail:
-          $ref: '#/components/schemas/DSDetailResultObject'
+     type: object
+     properties:
+       data_type:
+         type: string
+       detection_service:
+         type: string
+       verdict:
+         type: string
+       action:
+         type: string
+       result_detail:
+         $ref: '#/components/schemas/DSDetailResultObject'
     DSDetailResultObject:
-      type: object
-      properties:
-        pi_report:
-          $ref: '#/components/schemas/PiReportObject'
-        urlf_report:
-          $ref: '#/components/schemas/UrlFilterReportObject'
-        dlp_report:
-          $ref: '#/components/schemas/DlpReportObject'
-        dbs_report:
-          $ref: '#/components/schemas/DbsReportObject'
-        tc_report:
-          $ref: '#/components/schemas/TcReportObject'
-        mc_report:
-          $ref: '#/components/schemas/McReportObject'
-        agent_report:
-          $ref: '#/components/schemas/AgentReportObject'
+     type: object
+     properties:
+       pi_report:
+         $ref: '#/components/schemas/PiReportObject'
+       urlf_report:
+         $ref: '#/components/schemas/UrlFilterReportObject'
+       dlp_report:
+         $ref: '#/components/schemas/DlpReportObject'
+       dbs_report:
+         $ref: '#/components/schemas/DbsReportObject'
+       tc_report:
+         $ref: '#/components/schemas/TcReportObject'
+       mc_report:
+         $ref: '#/components/schemas/McReportObject'
+       agent_report:
+         $ref: '#/components/schemas/AgentReportObject'
     DbsReportObject:
-      type: array
-      items:
-        $ref: '#/components/schemas/DbsEntryObject'
+     type: array
+     items:
+       $ref: '#/components/schemas/DbsEntryObject'
     DbsEntryObject:
       type: object
       properties:
@@ -1969,6 +1824,8 @@ components:
         probability:
           type: number
           format: float
+
+
     McReportObject:
       type: object
       properties:
@@ -1979,6 +1836,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/McEntryObject'
+
+
     McEntryObject:
       type: object
       properties:
@@ -1988,6 +1847,8 @@ components:
         code_sha256:
           type: string
           description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
+
+
     AgentReportObject:
       type: object
       properties:
@@ -2001,6 +1862,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AgentEntryObject'
+
+
     AgentEntryObject:
       type: object
       properties:
@@ -2010,71 +1873,102 @@ components:
         verdict:
           type: string
           description: Verdict associated with the Agent threat Category, such as "malicious" or "benign"
+
+
     PiReportObject:
       type: object
       properties:
         probability:
           type: number
           format: float
+
+
     UrlFilterReportObject:
       type: array
       items:
         $ref: '#/components/schemas/UrlfEntryObject'
+
+
     UrlfEntryObject:
       type: object
       properties:
         url:
           type: string
+          description: URL in the Scan request
         risk_level:
           type: string
+          description: Risk level associated with the URL, such as "high", "medium", or "low"
         categories:
           type: array
+          description: Categories associated with the URL
           items:
             type: string
+
+
     DlpReportObject:
       type: object
       properties:
         report_id:
           type: string
+          description: Unique identifier for the DLP report
         dlp_profile_name:
           type: string
+          description: DLP profile name used for the scan
         dlp_profile_id:
           type: string
+          description: Unique identifier for the DLP profile used for the scan
         dlp_profile_version:
           type: integer
           format: int32
+          description: Version of the DLP profile used for the scan
         data_pattern_rule1_verdict:
           type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
         data_pattern_rule2_verdict:
           type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
+
+
     CustomerAppObject:
       type: object
       properties:
         customer_appId:
           type: string
+          description: Customer Application ID
         tsg_id:
           type: string
+          description: Tenant Service Group ID for Customer App
         app_name:
           type: string
+          description: Customer Application Name
         model_name:
           type: string
+          description: AI Model Name for Customer App
         cloud_provider:
           type: string
+          description: Cloud Provider Name for Customer App
         environment:
           type: string
+          description: Cloud Provider Name for Customer App
         status:
           type: string
+          description: Indicates Customer App Status whether completed or pending
         created_by:
           type: string
+          description: Customer App timestamp
         updated_by:
           type: string
+          description: Customer App timestamp
         ai_agent_framework:
           type: string
+          description: Framework associated for AI Agent
       required:
         - tsg_id
         - app_name
         - cloud_provider
         - environment
+
+
     PaginatedCustomerAppObject:
       type: object
       properties:
@@ -2085,6 +1979,8 @@ components:
         next_offset:
           type: integer
           format: int32
+
+
     CustomerAppObjectWithAPIKeyAndDP:
       type: object
       properties:
@@ -2092,6 +1988,7 @@ components:
           type: string
         tsg_id:
           type: string
+          description: Tenant Service Group ID
         app_name:
           type: string
         model_name:
@@ -2112,6 +2009,8 @@ components:
         - app_name
         - cloud_provider
         - environment
+
+
     APIKeyDPInfo:
       type: object
       properties:
@@ -2125,288 +2024,291 @@ components:
         - api_key_name
         - dp_name
         - auth_code
+
+
     PageTokenJsonObject:
       type: object
       properties:
         page_token:
           type: string
     ClientIdAndCustomerApp:
-      type: object
-      properties:
-        client_id:
-          type: string
-        customer_app:
-          type: string
-      required:
-        - client_id
-        - customer_app
+     type: object
+     properties:
+       client_id:
+         type: string
+       customer_app:
+         type: string
+     required:
+       - client_id
+       - customer_app
     Oauth2TokenObject:
-      type: object
-      properties:
-        token_type:
-          type: string
-        issued_at:
-          type: string
-        client_id:
-          type: string
-        access_token:
-          type: string
-        expires_in:
-          type: string
-        status:
-          type: string
-      required:
-        - access_token
+     type: object
+     properties:
+       token_type:
+         type: string
+       issued_at:
+         type: string
+       client_id:
+         type: string
+       access_token:
+         type: string
+       expires_in:
+         type: string
+       status:
+         type: string
+     required:
+       - access_token
     Error:
-      type: object
-      properties:
-        status_code:
-          type: integer
-          format: int32
-        error_message:
-          type: string
-      required:
-        - status_code
-        - error_message
+     type: object
+     properties:
+       status_code:
+         type: integer
+         format: int32
+       error_message:
+         type: string
+     required:
+       - status_code
+       - error_message
     CustomTopicObject:
       type: object
       properties:
-        topic_id:
-          type: string
-        topic_name:
-          type: string
-        csp_id:
-          type: string
-        tsg_id:
-          type: string
-        revision:
-          type: integer
-          format: int64
-        active:
-          type: boolean
-        description:
-          type: string
-        examples:
-          type: array
-          items:
-            type: string
-        created_by:
-          type: string
-        updated_by:
-          type: string
-        last_modified_ts:
-          type: string
-          format: date-time
-        created_ts:
-          type: string
-          format: date-time
+       topic_id:
+         type: string
+       topic_name:
+         type: string
+       csp_id:
+         type: string
+       tsg_id:
+         type: string
+       revision:
+         type: integer
+         format: int64
+       active:
+         type: boolean
+       description:
+         type: string
+       examples:
+         type: array
+         items:
+           type: string
+       created_by:
+         type: string
+       updated_by:
+         type: string
+       last_modified_ts:
+         type: string
+         format: date-time
+       created_ts:
+         type: string
+         format: date-time
       required:
-        - topic_name
-        - csp_id
-        - tsg_id
-        - revision
-        - description
-        - examples
+       - topic_name
+       - csp_id
+       - tsg_id
+       - revision
+       - description
+       - examples
     PaginatedCustomTopicObject:
-      type: object
-      properties:
-        custom_topics:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomTopicObject'
-        next_offset:
-          type: integer
-          format: int32
+     type: object
+     properties:
+       custom_topics:
+         type: array
+         items:
+           $ref: '#/components/schemas/CustomTopicObject'
+       next_offset:
+         type: integer
+         format: int32
     DeleteCustomTopicResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        payload:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProfilePayload'
-          minItems: 0
+     type: object
+     properties:
+       message:
+         type: string
+       payload:
+         type: array
+         items:
+           $ref: '#/components/schemas/ProfilePayload'
+         minItems: 0
     ProfilePayload:
-      type: object
-      properties:
-        profile_id:
-          type: string
-        profile_name:
-          type: string
-        revision:
-          type: integer
-          format: int64
+     type: object
+     properties:
+       profile_id:
+         type: string
+       profile_name:
+         type: string
+       revision:
+         type: integer
+         format: int64
     AIPolicyObject:
-      type: object
-      properties:
-        policy_id:
-          type: string
-        policy_name:
-          type: string
-        csp_id:
-          type: string
-        tsg_id:
-          type: string
-        cie_tenant_id:
-          type: string
-        profile_id:
-          type: string
-        profile_name:
-          type: string
-        priority:
-          type: integer
-          format: int64
-        domain:
-          $ref: '#/components/schemas/DomainObject'
-        user_groups:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserGroupObject'
-        revision:
-          type: integer
-          format: int64
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-            - ARCHIVED
-          default: ACTIVE
-          description: Status of the policy indicating its current state
-        created_by:
-          type: string
-        updated_by:
-          type: string
-        last_modified_ts:
-          type: string
-          format: date-time
-        created_ts:
-          type: string
-          format: date-time
-        last_synced_ts:
-          type: string
-          format: date-time
-      required:
-        - policy_name
-        - csp_id
-        - tsg_id
-        - cie_tenant_id
-        - priority
-        - revision
-        - profile_id
-        - profile_name
-        - domain
-        - user_groups
-        - status
+     type: object
+     properties:
+       policy_id:
+         type: string
+       policy_name:
+         type: string
+       csp_id:
+         type: string
+       tsg_id:
+         type: string
+       cie_tenant_id:
+         type: string
+       profile_id:
+         type: string
+       profile_name:
+         type: string
+       priority:
+         type: integer
+         format: int64
+       domain:
+         $ref: '#/components/schemas/DomainObject'
+       user_groups:
+         type: array
+         items:
+           $ref: '#/components/schemas/UserGroupObject'
+       revision:
+         type: integer
+         format: int64
+       status:
+         type: string
+         enum:
+           - ACTIVE
+           - INACTIVE
+           - ARCHIVED
+         default: ACTIVE
+         description: Status of the policy indicating its current state
+       created_by:
+         type: string
+       updated_by:
+         type: string
+       last_modified_ts:
+         type: string
+         format: date-time
+       created_ts:
+         type: string
+         format: date-time
+       last_synced_ts:
+         type: string
+         format: date-time
+     required:
+       - policy_name
+       - csp_id
+       - tsg_id
+       - cie_tenant_id
+       - priority
+       - revision
+       - profile_id
+       - profile_name
+       - domain
+       - user_groups
+       - status
     PaginatedAIPolicyObject:
-      type: object
-      properties:
-        ai_policies:
-          type: array
-          items:
-            $ref: '#/components/schemas/AIPolicyObject'
-        next_offset:
-          type: integer
-          format: int32
+     type: object
+     properties:
+       ai_policies:
+         type: array
+         items:
+           $ref: '#/components/schemas/AIPolicyObject'
+       next_offset:
+         type: integer
+         format: int32
     DomainObject:
-      type: object
-      properties:
-        domain_name:
-          type: string
-          description: Display Name of the domain
-        primary_domain:
-          type: string
-          description: Primary Name of the domain
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          default: ACTIVE
-          description: Status of the domain indicating its current state
-      required:
-        - domain_name
-        - primary_domain
+     type: object
+     properties:
+       domain_name:
+         type: string
+         description: Display Name of the domain
+       primary_domain:
+         type: string
+         description: Primary Name of the domain
+       status:
+         type: string
+         enum:
+           - ACTIVE
+           - INACTIVE
+         default: ACTIVE
+         description: Status of the domain indicating its current state
+     required:
+       - domain_name
+       - primary_domain
     UserGroupObject:
-      type: object
-      properties:
-        user_group_id:
-          type: string
-        user_group_name:
-          type: string
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - INACTIVE
-          default: ACTIVE
-          description: Status of the user group indicating its current state
-        modified_since:
-          type: integer
-          format: int64
-      required:
-        - user_group_id
-        - user_group_name
-        - modified_since
+     type: object
+     properties:
+       user_group_id:
+         type: string
+       user_group_name:
+         type: string
+       status:
+         type: string
+         enum:
+           - ACTIVE
+           - INACTIVE
+         default: ACTIVE
+         description: Status of the user group indicating its current state
+       modified_since:
+         type: integer
+         format: int64
+     required:
+       - user_group_id
+       - user_group_name
+       - modified_since
     PaginatedDomainObject:
-      type: object
-      properties:
-        domains:
-          type: array
-          items:
-            $ref: '#/components/schemas/DomainObject'
-        next_offset:
-          type: integer
-          format: int32
+     type: object
+     properties:
+       domains:
+         type: array
+         items:
+           $ref: '#/components/schemas/DomainObject'
+       next_offset:
+         type: integer
+         format: int32
     PaginatedUserGroupObject:
-      type: object
-      properties:
-        groups:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserGroupObject'
-        next_offset:
-          type: integer
-          format: int32
+     type: object
+     properties:
+       groups:
+         type: array
+         items:
+           $ref: '#/components/schemas/UserGroupObject'
+       next_offset:
+         type: integer
+         format: int32
     DeleteAIProfileResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        payload:
-          type: array
-          items:
-            $ref: '#/components/schemas/PolicyPayload'
-          minItems: 0
+     type: object
+     properties:
+       message:
+         type: string
+       payload:
+         type: array
+         items:
+           $ref: '#/components/schemas/PolicyPayload'
+         minItems: 0
     PolicyPayload:
-      type: object
-      properties:
-        policy_id:
-          type: string
-        policy_name:
-          type: string
-        priority:
-          type: integer
-          format: int64
+     type: object
+     properties:
+       policy_id:
+         type: string
+       policy_name:
+         type: string
+       priority:
+         type: integer
+         format: int64
     MatchedAIPolicyObject:
-      type: object
-      properties:
-        message:
-          type: string
-        payload:
-          type: array
-          items:
-            $ref: '#/components/schemas/MatchedPolicyPayload'
-          minItems: 0
+     type: object
+     properties:
+       message:
+         type: string
+       payload:
+         type: array
+         items:
+           $ref: '#/components/schemas/MatchedPolicyPayload'
+         minItems: 0
     MatchedPolicyPayload:
-      type: object
-      properties:
-        policy_id:
-          type: string
-        policy_name:
-          type: string
-        user_group_id:
-          type: string
-        user_group_name:
-          type: string
+     type: object
+     properties:
+       policy_id:
+         type: string
+       policy_name:
+         type: string
+       user_group_id:
+         type: string
+       user_group_name:
+         type: string
+

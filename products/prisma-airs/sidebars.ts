@@ -26,8 +26,8 @@ module.exports = {
         {
           type: "doc",
           id: "prisma-airs/api/airuntimesecurity/oauth-based-authentication",
-        },        
-        ...require("./api/airuntimesecurity/management/sidebar"),
+        },
+        require("./api/airuntimesecurity/management/sidebar"),
       ],
     },
     
