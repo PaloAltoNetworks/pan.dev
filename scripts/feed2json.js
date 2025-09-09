@@ -1,6 +1,7 @@
 // rssParser.js
 // Plain HTTP(S) fetch -> parse RSS/Atom to JSON Feed.
 // Playwright fallback ONLY when Vercel challenge is detected (429 + challenge headers).
+// Improvements: no blocking during prewarm, stronger waits, retry loop, optional soft-fail.
 
 const fs = require("fs");
 const https = require("https");
@@ -10,8 +11,9 @@ const xml2js = require("xml2js");
 
 const VERBOSE = process.env.FEED_DEBUG === "1";
 const STORAGE_STATE_PATH = "./.playwright-storage.json";
+const FEED_SOFT_FAIL = process.env.FEED_SOFT_FAIL === "1"; // return empty feed instead of throw on persistent 429
 
-// ---------------- Helper: plain fetch (KEEPING ORIGINAL BEHAVIOR) ----------------
+// ---------------- Helper: plain fetch (original behavior) ----------------
 function fetchXmlFromUrl(feedUrl) {
   return new Promise((resolve, reject) => {
     const url = new URL(feedUrl);
@@ -25,10 +27,9 @@ function fetchXmlFromUrl(feedUrl) {
 
       if (res.statusCode !== 200) {
         const err = new Error(`Request failed with status ${res.statusCode}`);
-        // attach headers so caller can decide if it's a Vercel challenge
         err.statusCode = res.statusCode;
         err.headers = res.headers;
-        res.resume(); // drain
+        res.resume();
         return reject(err);
       }
 
@@ -37,9 +38,7 @@ function fetchXmlFromUrl(feedUrl) {
       res.on("end", () => resolve(data));
     });
 
-    req.on("error", (err) => {
-      reject(err);
-    });
+    req.on("error", (err) => reject(err));
   });
 }
 
@@ -53,6 +52,9 @@ function isVercelChallenge(errOrHeaders) {
   const challenge = headers["x-vercel-challenge-token"];
   return status === 429 && (!!challenge || mitigated === "challenge");
 }
+
+// Small helper: sleep
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ---------------- Playwright fallback (ephemeral, no Keychain) ----------------
 async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
@@ -73,9 +75,9 @@ async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
       "--disable-background-networking",
       "--disable-background-timer-throttling",
       "--disable-renderer-backgrounding",
-      "--disable-features=UseKeychain", // macOS hint to avoid Keychain
-      "--use-mock-keychain", // macOS hint
-      "--password-store=basic", // Linux: avoid Keyring/KWallet
+      "--disable-features=UseKeychain",
+      "--use-mock-keychain",
+      "--password-store=basic",
     ],
   });
 
@@ -87,107 +89,123 @@ async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
     javaScriptEnabled: true,
   };
   if (fs.existsSync(storageStatePath)) {
-    contextOptions.storageState = storageStatePath; // reuse cookies if we have them
+    contextOptions.storageState = storageStatePath; // reuse cookies
   }
   const context = await browser.newContext(contextOptions);
 
-  // Speed: block heavy/irrelevant resource types
-  await context.route("**/*", (route) => {
-    const type = route.request().resourceType();
-    const url = route.request().url();
-    if (
-      type === "image" ||
-      type === "media" ||
-      type === "font" ||
-      type === "stylesheet"
-    ) {
-      return route.abort();
-    }
-    if (
-      /\b(googletagmanager|google-analytics|doubleclick|segment|mixpanel|hotjar|sentry)\b/i.test(
-        url
-      )
-    ) {
-      return route.abort();
-    }
-    return route.continue();
-  });
-
-  try {
-    const page = await context.newPage();
-
-    // If no cookies yet, prewarm once so any JS challenge runs
-    if (!fs.existsSync(storageStatePath)) {
-      if (VERBOSE) console.error("[pw] prewarming:", prewarmUrl);
-      await page.goto(prewarmUrl, {
-        waitUntil: "domcontentloaded",
-        timeout: 45000,
-      });
-      await page
-        .waitForLoadState("networkidle", { timeout: 8000 })
-        .catch(() => {});
-      try {
-        const state = await context.storageState();
-        fs.writeFileSync(storageStatePath, JSON.stringify(state, null, 2));
-        if (VERBOSE) console.error("[pw] storageState saved (after prewarm)");
-      } catch {}
-    }
-
-    if (VERBOSE) console.error("[pw] fetching feed:", feedUrl);
-    const resp = await page.goto(feedUrl, {
-      waitUntil: "domcontentloaded",
-      timeout: 45000,
-    });
-    if (!resp) throw new Error("[pw] No response for feed URL");
-
-    const status = resp.status();
-    const headers = resp.headers();
-    if (VERBOSE) console.error("[pw] status:", status, "headers:", headers);
-
-    if (status !== 200) {
-      // Try one refresh cycle if stored cookies are stale
-      if (fs.existsSync(storageStatePath)) {
-        if (VERBOSE)
-          console.error("[pw] stale cookies? retrying with fresh prewarm…");
-        await context.clearCookies();
-        await context.clearPermissions();
-        await page.goto(prewarmUrl, {
-          waitUntil: "domcontentloaded",
-          timeout: 45000,
-        });
-        await page
-          .waitForLoadState("networkidle", { timeout: 8000 })
-          .catch(() => {});
-        const resp2 = await page.goto(feedUrl, {
-          waitUntil: "domcontentloaded",
-          timeout: 45000,
-        });
-        if (resp2 && resp2.status() === 200) {
-          const xml2 = await resp2.text();
-          try {
-            const state2 = await context.storageState();
-            fs.writeFileSync(storageStatePath, JSON.stringify(state2, null, 2));
-            if (VERBOSE) console.error("[pw] storageState refreshed");
-          } catch {}
-          await browser.close();
-          return xml2;
-        }
+  // Route blocking: OFF during prewarm (allow challenge to load everything)
+  // We'll enable blocking only for the XML fetch step.
+  const enableBlocking = async () => {
+    await context.unroute("**/*").catch(() => {});
+    await context.route("**/*", (route) => {
+      const type = route.request().resourceType();
+      const url = route.request().url();
+      if (
+        type === "image" ||
+        type === "media" ||
+        type === "font" ||
+        type === "stylesheet"
+      ) {
+        return route.abort();
       }
-      const e = new Error(`[pw] Feed request failed: ${status}`);
-      e.statusCode = status;
-      e.headers = headers;
-      throw e;
-    }
+      if (
+        /\b(googletagmanager|google-analytics|doubleclick|segment|mixpanel|hotjar|sentry)\b/i.test(
+          url
+        )
+      ) {
+        return route.abort();
+      }
+      return route.continue();
+    });
+  };
 
-    const xml = await resp.text();
+  const page = await context.newPage();
+
+  async function prewarmOnce() {
+    if (VERBOSE) console.error("[pw] prewarming:", prewarmUrl);
+    await context.unroute("**/*").catch(() => {}); // make sure nothing is blocked
+    const resp = await page.goto(prewarmUrl, {
+      waitUntil: "networkidle",
+      timeout: 60000,
+    });
+    if (VERBOSE) {
+      console.error("[pw] prewarm status:", resp?.status?.());
+    }
+    // A tiny idle to allow any post-load challenge work to complete
+    await delay(1500);
+    // Save cookies/state for reuse
     try {
       const state = await context.storageState();
       fs.writeFileSync(storageStatePath, JSON.stringify(state, null, 2));
-      if (VERBOSE) console.error("[pw] storageState saved");
+      if (VERBOSE) console.error("[pw] storageState saved (after prewarm)");
     } catch {}
+  }
 
-    await browser.close();
-    return xml;
+  async function tryFetchFeedOnce() {
+    await enableBlocking(); // now speed up the feed request
+    const resp = await page.goto(feedUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
+    if (!resp) throw new Error("[pw] No response for feed URL");
+    const status = resp.status();
+    const headers = resp.headers();
+    if (VERBOSE) console.error("[pw] feed status:", status, headers);
+    return { status, headers, text: status === 200 ? await resp.text() : null };
+  }
+
+  try {
+    // If no cookies, do a prewarm
+    if (!fs.existsSync(storageStatePath)) {
+      await prewarmOnce();
+    }
+
+    // Try feed → if 429, prewarm again and retry (up to 2 times)
+    let attempt = 0;
+    let last = null;
+    const maxAttempts = 3;
+    while (attempt < maxAttempts) {
+      attempt++;
+      const { status, headers, text } = await tryFetchFeedOnce();
+      if (status === 200 && text) {
+        // Refresh stored state (keeps cookies fresh)
+        try {
+          const state = await context.storageState();
+          fs.writeFileSync(storageStatePath, JSON.stringify(state, null, 2));
+          if (VERBOSE) console.error("[pw] storageState saved");
+        } catch {}
+        await browser.close();
+        return text;
+      }
+
+      last = { status, headers };
+      if (
+        status === 429 &&
+        isVercelChallenge({ statusCode: status, headers })
+      ) {
+        if (VERBOSE)
+          console.error(
+            `[pw] 429 challenge on attempt ${attempt}, re-prewarming...`
+          );
+        // clear and re-warm
+        await context.clearCookies();
+        await context.clearPermissions();
+        await prewarmOnce();
+        await delay(800); // small jitter before retry
+        continue;
+      }
+
+      // Not a vercel 429 or still blocked → break
+      break;
+    }
+
+    // If we get here, we failed to get 200
+    const e = new Error(
+      `[pw] Feed request failed: ${last?.status ?? "unknown"}`
+    );
+    e.statusCode = last?.status;
+    e.headers = last?.headers;
+    throw e;
   } catch (e) {
     try {
       await browser.close();
@@ -202,19 +220,32 @@ async function parseRSS(source) {
     let xml;
 
     if (source.startsWith("http://") || source.startsWith("https://")) {
-      // ORIGINAL PATH FIRST (unchanged behavior for Medium & others)
+      // ORIGINAL PATH FIRST
       try {
         xml = await fetchXmlFromUrl(source);
       } catch (err) {
-        // If the site is Vercel and challenged us, use the Playwright fallback
         if (isVercelChallenge(err)) {
           if (VERBOSE)
-            console.error(
-              "[main] Vercel 429 challenge → falling back to Playwright"
-            );
-          xml = await fetchXmlWithPlaywright(source);
+            console.error("[main] Vercel 429 challenge → Playwright fallback");
+          try {
+            xml = await fetchXmlWithPlaywright(source);
+          } catch (pwErr) {
+            if (FEED_SOFT_FAIL && isVercelChallenge(pwErr)) {
+              // Return an empty feed so CI can proceed
+              console.error(
+                "[main] Soft-failing on persistent Vercel 429 (returning empty feed)."
+              );
+              return {
+                version: "https://jsonfeed.org/version/1",
+                title: "",
+                home_page_url: source,
+                description: "",
+                items: [],
+              };
+            }
+            throw pwErr;
+          }
         } else if (err && err.code === "SELF_SIGNED_CERT_IN_CHAIN") {
-          // original graceful handling
           return {
             version: "https://jsonfeed.org/version/1",
             title: "",
@@ -223,12 +254,10 @@ async function parseRSS(source) {
             items: [],
           };
         } else {
-          // Not a Vercel case → bubble up (preserves original behavior)
           throw err;
         }
       }
     } else {
-      // Local file path (original behavior)
       xml = fs.readFileSync(source, "utf-8");
     }
 
@@ -244,7 +273,7 @@ async function parseRSS(source) {
     const result = await parser.parseStringPromise(xml);
 
     if (result.rss?.channel) {
-      // RSS 2.0 Format
+      // RSS 2.0
       const channel = result.rss.channel;
       const items = Array.isArray(channel.item) ? channel.item : [channel.item];
 
@@ -266,7 +295,7 @@ async function parseRSS(source) {
         })),
       };
     } else if (result.feed) {
-      // Atom Format
+      // Atom
       const feed = result.feed;
       const entries = Array.isArray(feed.entry) ? feed.entry : [feed.entry];
 
@@ -308,7 +337,7 @@ async function parseRSS(source) {
 
 // ---------------- Example usage ----------------
 (async () => {
-  const source = process.argv[2] || "example.xml"; // File path or URL passed via CLI
+  const source = process.argv[2] || "example.xml";
   const jsonOutput = await parseRSS(source);
   console.log(JSON.stringify(jsonOutput, null, 2));
 })();
