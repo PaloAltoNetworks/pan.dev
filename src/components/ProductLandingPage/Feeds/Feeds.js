@@ -89,16 +89,9 @@ function Feeds() {
     <div className="container">
       <section className="feeds-container">
         <header className="feeds-header">
-          <h1>Latest Terraform News from</h1>
+          <h1>Latest Terraform Blogs</h1>
         </header>
-        <Tabs>
-          {/* <TabItem value="HashiCorp" label="HashiCorp">
-            <FeedItem feeds={hashicorpFeeds} imageFeeds={hashicorpImageFeeds} />
-          </TabItem> */}
-          <TabItem value="PAN.dev" label="PAN.dev">
-            <FeedItem feeds={mediumFeeds} imageFeeds={mediumImageFeeds} />
-          </TabItem>
-        </Tabs>
+        <FeedItem feeds={mediumFeeds} imageFeeds={mediumImageFeeds} />
       </section>
     </div>
   );
