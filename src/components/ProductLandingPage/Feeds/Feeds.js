@@ -5,7 +5,7 @@ import TabItem from "@theme/TabItem";
 import "./Feeds.scss";
 
 let mediumFeedsJson;
-let feedsJson;
+// let feedsJson;
 
 try {
   mediumFeedsJson = require("../../Medium/blogs.json");
@@ -13,15 +13,15 @@ try {
   mediumFeedsJson = null;
 }
 
-try {
-  feedsJson = require("./feeds.json");
-} catch (error) {
-  feedsJson = null;
-}
+// try {
+//   feedsJson = require("./feeds.json");
+// } catch (error) {
+//   feedsJson = null;
+// }
 
 function Feeds() {
-  const hashicorpImageFeeds = feedsJson.items.slice(0, 2);
-  const hashicorpFeeds = feedsJson.items.slice(2, 6);
+  // const hashicorpImageFeeds = feedsJson.items.slice(0, 2);
+  // const hashicorpFeeds = feedsJson.items.slice(2, 6);
 
   const filterMediumTerraform = (item) => {
     const title = item.title;
@@ -92,9 +92,9 @@ function Feeds() {
           <h1>Latest Terraform News from</h1>
         </header>
         <Tabs>
-          <TabItem value="HashiCorp" label="HashiCorp">
+          {/* <TabItem value="HashiCorp" label="HashiCorp">
             <FeedItem feeds={hashicorpFeeds} imageFeeds={hashicorpImageFeeds} />
-          </TabItem>
+          </TabItem> */}
           <TabItem value="PAN.dev" label="PAN.dev">
             <FeedItem feeds={mediumFeeds} imageFeeds={mediumImageFeeds} />
           </TabItem>
