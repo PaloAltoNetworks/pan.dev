@@ -11,7 +11,8 @@ const xml2js = require("xml2js");
 
 const VERBOSE = process.env.FEED_DEBUG === "1";
 const STORAGE_STATE_PATH = "./.playwright-storage.json";
-const FEED_SOFT_FAIL = process.env.FEED_SOFT_FAIL === "1"; // return empty feed instead of throw on persistent 429
+// return empty feed instead of throw on persistent 429
+const FEED_SOFT_FAIL = process.env.FEED_SOFT_FAIL === undefined ? true : process.env.FEED_SOFT_FAIL === "1"; 
 
 // ---------------- Helper: plain fetch (original behavior) ----------------
 function fetchXmlFromUrl(feedUrl) {
