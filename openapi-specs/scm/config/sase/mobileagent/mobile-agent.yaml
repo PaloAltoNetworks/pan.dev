@@ -61,13 +61,13 @@ paths:
                         items:
                           $ref: '#/components/schemas/agent-profiles'
                   limit:
-                    type: number
+                    type: integer
                     default: 200
                   offset:
-                    type: number
+                    type: integer
                     default: 0
                   total:
-                    type: number
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -95,7 +95,11 @@ paths:
               $ref: '#/components/schemas/agent-profiles'
       responses:
         '201':
-          $ref: '#/components/responses/http_created'
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/agent-profiles'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic_with_body'
         '401':
@@ -212,13 +216,13 @@ paths:
                         items:
                           $ref: '#/components/schemas/authentication-settings'
                   limit:
-                    type: number
+                    type: integer
                     default: 200
                   offset:
-                    type: number
+                    type: integer
                     default: 0
                   total:
-                    type: number
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -246,7 +250,11 @@ paths:
               $ref: '#/components/schemas/authentication-settings'
       responses:
         '201':
-          $ref: '#/components/responses/http_created'
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authentication-settings'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic_with_body'
         '401':
@@ -312,7 +320,7 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
-  '/authentication-settings:move':
+  '/authentication-settings/{name}:move':
     post:
       tags:
         - Agent Authentication Settings
@@ -321,7 +329,7 @@ paths:
         Move a GlobalProtect authentication setting
       operationId: MoveGlobalProtectAuthenticationSettings
       parameters:
-        - $ref: '#/components/parameters/name-required'
+        - $ref: '#/components/parameters/name-in-path'
         - $ref: '#/components/parameters/folder-mobileusers-required'
       requestBody:
         description: Created
@@ -589,13 +597,13 @@ paths:
                         items:
                           $ref: '#/components/schemas/mobile-agent-locations'
                   limit:
-                    type: number
+                    type: integer
                     default: 200
                   offset:
-                    type: number
+                    type: integer
                     default: 0
                   total:
-                    type: number
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -663,13 +671,13 @@ paths:
                         items:
                           $ref: '#/components/schemas/tunnel-profiles'
                   limit:
-                    type: number
+                    type: integer
                     default: 200
                   offset:
-                    type: number
+                    type: integer
                     default: 0
                   total:
-                    type: number
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -697,7 +705,11 @@ paths:
               $ref: '#/components/schemas/tunnel-profiles'
       responses:
         '201':
-          $ref: '#/components/responses/http_created'
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel-profiles'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic_with_body'
         '401':
@@ -725,7 +737,11 @@ paths:
               $ref: '#/components/schemas/tunnel-profiles'
       responses:
         '200':
-          $ref: '#/components/responses/http_ok'
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tunnel-profiles'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic_with_body'
         '401':
@@ -779,13 +795,20 @@ components:
       required: true
       schema:
         type: string
+    name-in-path:
+      name: name
+      in: path
+      description: The name of the configuration resource
+      required: true
+      schema:
+        type: string
     limit:
       name: limit
       in: query
       description: The maximum number of results per page
       required: false
       schema:
-        type: number
+        type: integer
         default: 200
     offset:
       name: offset
@@ -793,14 +816,13 @@ components:
       description: The offset into the list of results returned
       required: false
       schema:
-        type: number
+        type: integer
         default: 0
     folder-mobileusers-required:
       name: folder
       in: query
       description: |
         The folder in which the resource is defined
-      required: true
       schema:
         enum:
           - Mobile Users
@@ -1588,6 +1610,8 @@ components:
             - bottom
         destination:
           type: string
+        folder:
+          type: string
     mobile-agent-global-settings:
       type: object
       properties:
@@ -1731,6 +1755,11 @@ components:
                   description: Time in seconds for another request to be sent
                   minimum: 1
                   maximum: 30
+
+        static_ip_pools:
+          type: array
+          items:
+            $ref: '#/components/schemas/static-ip-pool'
       required:
         - id
         - name
@@ -1889,9 +1918,71 @@ components:
         message:
           type: string
         details:
-          type: object
+          oneOf:
+            - type: string
+            - type: object
         help:
           type: string
+    static-ip-pool:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          description: "Name of the static-ip-pool entry. Alphanumeric string [0-9a-zA-Z._-]"
+        pool_type:
+          type: string
+          enum: [ "Static-IP" ]
+        ip_pool:
+          type: array
+          items:
+            type: string
+            format: cidr
+          description: "IP subnets"
+        theatres:
+          type: array
+          items:
+            type: string
+          description: "IP pools on theatres"
+        users:
+          type: array
+          items:
+            type: string
+          description: "IP pools on users"
+        user_groups:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                maxLength: 320
+                description: "Distinguished Name of the group"
+              directory:
+                type: string
+          description: "IP pools on user groups"
+        location_groups:
+          type: array
+          items:
+            type: string
+          description: "IP pools on location groups"
+        devices:
+          type: string
+          enum: [ "Any" ]
+          description: "IP pools on device groups"
+        lease_period:
+          type: integer
+          minimum: 0
+          maximum: 7776000
+          description: "Lease period in seconds"
+        grace_period:
+          type: integer
+          minimum: 0
+          maximum: 7776000
+          description: "Grace period in seconds"
+      required:
+        - name
+        - ip_pool
 security:
   - scmToken: []
 x-internal: false
