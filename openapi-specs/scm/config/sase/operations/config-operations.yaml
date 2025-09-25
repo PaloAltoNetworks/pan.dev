@@ -39,13 +39,13 @@ paths:
                         items:
                           $ref: '#/components/schemas/jobs'
                   limit:
-                    type: number
+                    type: integer
                     default: 200
                   offset:
-                    type: number
+                    type: integer
                     default: 0
                   total:
-                    type: number
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -72,7 +72,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/jobs'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/jobs'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -127,7 +132,7 @@ paths:
               properties:
                 admin:
                   type: array
-                  description: Use this field to list administrators or service accounts. If you intend to push all folders, do not include this admin field; instead, list each folder individually in the folder field.
+                  description: List the administrators and/or service accounts in this field. If you want to push folder named All, please do not add this admin field at all and list each of the folders under All in the folder field.
                   items:
                     type: string
                 description:
@@ -296,7 +301,7 @@ components:
       description: The maximum number of results per page
       required: false
       schema:
-        type: number
+        type: integer
         default: 200
     offset:
       name: offset
@@ -304,7 +309,7 @@ components:
       description: The offset into the list of results returned
       required: false
       schema:
-        type: number
+        type: integer
         default: 0
     jobid:
       name: id
@@ -650,31 +655,29 @@ components:
         end_ts:
           type: string
           description: The timestamp indicating when the job was finished
-          format: date-time
         id:
-          type: integer
+          type: string
           description: The job ID
-          example: 115
+          example: "115"
         job_result:
-          type: integer
+          type: string
           description: The job result
-          example: 2
+          example: "2"
         job_status:
-          type: integer
+          type: string
           description: The current status of the job
-          example: 2
+          example: "2"
         job_type:
-          type: integer
+          type: string
           description: The job type
-          example: 53
+          example: "53"
         parent_id:
-          type: integer
+          type: string
           description: The parent job ID
-          example: 114
+          example: "114"
         percent:
-          type: integer
+          type: string
           description: Job completion percentage
-          maximum: 100
         result_str:
           type: string
           enum:
@@ -687,7 +690,6 @@ components:
         start_ts:
           type: string
           description: The timestamp indicating when the job was created
-          format: date-time
         status_str:
           type: string
           enum:
@@ -696,6 +698,7 @@ components:
             - PEND
             - PUSHSENT
             - PUSHFAIL
+            - PUSHABORT
           description: The current status of the job
         summary:
           type: string
@@ -717,6 +720,10 @@ components:
           type: string
           description: A description provided by the administrator or service account
           example: Added a new security rule for marketing
+        details:
+          type: string
+          description: JSON string with detailed errors or info
+          example: "{\"errors\":[\"Config push aborted, error: Failed to handle VPN clusters. Please check AutoVPN config for the device\"]}"
       required:
         - device_name
         - end_ts
