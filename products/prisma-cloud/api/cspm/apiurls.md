@@ -30,3 +30,8 @@ The URL for the Prisma Cloud service varies depending on the cluster on which yo
 | <https://app.jp.prismacloud.io>  | <https://api.jp.prismacloud.io>  |
 | <https://app.fr.prismacloud.io>  | <https://api.fr.prismacloud.io>  |
 | <https://app.id.prismacloud.io>  | <https://api.id.prismacloud.io>  |
+
+| Prisma Cloud DSPM (Dig) Location   | Prisma Cloud API URL             |  
+| -------------------------------- | -------------------------------- |
+| North America                    | https://api.use1.dig.security    |
+| EMEA                             | https://api.dig.security         |
