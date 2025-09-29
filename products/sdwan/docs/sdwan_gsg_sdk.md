@@ -136,6 +136,47 @@ Your script can use the following snippet to extract the AUTH_TOKEN information 
     CGX_USER = None
     CGX_PASSWORD = None
 
+## Resolve SSL Certificate Errors in CloudGenix SDK
+
+Resolve SSL Certificate Errors in CloudGenix SDK
+
+### Problem 
+
+If you use CloudGenix SDK 6.5.2 b1 or an older version and encounter SSL issues, this is due to a certificate change from GoDaddy to DigiCert.
+
+
+### Solution 
+
+To resolve this issue you may follow one of the following options:
+#### Option 1
+Install Cloudgenix 6.5.2.b4 version:
+
+1. Run the following command to uninstall Cloudgenix:
+
+    `pip uninstall cloudgenix`
+
+2. Update CloudGenix SDK: 
+Run any of the following commands to upgrade to CloudGenix SDK 6.5.2b4:
+
+	* `pip install cloudgenix` 
+
+	or 
+
+	* `pip install cloudgenix==6.5.2.b4`
+
+This updates the SDK by adding the missing DigiCert CA, which resolves the SSL issue without requiring any code modifications.
+
+#### Option 2
+Migrate to Prisma SASE SDK: 
+You can switch to the Prisma SASE SDK by making the following changes in your script:
+
+   - Change `import cloudgenix` to `import prisma_sase`
+
+   - Change` sdk = cloudgenix.API()` to `sdk = prisma_sase.API()`
+
+   - Change `sdk.interactive.use_token(auth)` to `sdk.interactive.login_secret(client_id=cid, client_secret=csecret, tsg_id=tsg)`
+
+**Note**: To obtain the `client_id`, `client_secret`, and `tsg_id`, navigate to the **Strata Cloud Manager** user interface and generate a service account with the appropriate access role. Use those values in your script.
 ## API Methods
 
 Prisma SD-WAN SDK supports all the standard RESTful HTTP API methods GET, PUT, PATCH, DELETE and
