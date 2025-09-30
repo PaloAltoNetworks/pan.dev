@@ -138,8 +138,6 @@ Your script can use the following snippet to extract the AUTH_TOKEN information 
 
 ## Resolve SSL Certificate Errors in CloudGenix SDK
 
-Resolve SSL Certificate Errors in CloudGenix SDK
-
 ### Problem 
 
 If you use CloudGenix SDK 6.5.2 b1 or an older version and encounter SSL issues, this is due to a certificate change from GoDaddy to DigiCert.
@@ -158,11 +156,11 @@ Install Cloudgenix 6.5.2.b4 version:
 2. Update CloudGenix SDK: 
 Run any of the following commands to upgrade to CloudGenix SDK 6.5.2b4:
 
-	* `pip install cloudgenix` 
+	`pip install cloudgenix` 
 
 	or 
 
-	* `pip install cloudgenix==6.5.2.b4`
+	`pip install cloudgenix==6.5.2.b4`
 
 This updates the SDK by adding the missing DigiCert CA, which resolves the SSL issue without requiring any code modifications.
 
