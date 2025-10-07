@@ -9,7 +9,7 @@ keywords:
   - API
 ---
 
-This page specifies the error codes for the Prisma AIRS AI Network: API intercept scan APIs.
+This page specifies the error codes for the Prisma AIRS AI Runtime: API intercept scan APIs.
 An error response in the API appears in the following format:
 
 ```json
@@ -30,5 +30,5 @@ An error response in the API appears in the following format:
 | **405** | Method Not Allowed | - Using the wrong HTTP method (Refer to the Scan endpoints [reference docs](https://pan.dev/prisma-airs/api/airuntimesecurity/prisma-airs-ai-runtime-api-intercept/) for the relevant methods for each endpoint)<br>- Endpoint doesn't support the requested method |
 | **413** | Request Too Large - The request body is too large | - Scan content exceeds [size limits](https://pan.dev/prisma-airs/scan/api/) |
 | **415** | Unsupported Media Type | - Missing Content-Type header<br>- Content-Type is not application/json |
-| **429** | Too Many Requests - Request exceeds the limit | - API rate limit exceeded (Refer to the [limitations](https://pan.dev/prisma-airs/scan/api/) page for details)<br>- Too many concurrent scans<br>Limitations<br>* Synchrounous & asynchronous scans are limited based on API call quota<br>* Scan results and reports are not subject to an API call quota, but are subject to a 10 requests limit per minute|
+| **429** | Too Many Requests - Request exceeds the limit | - API rate limit exceeded (Refer to the [limitations](https://pan.dev/prisma-airs/scan/api/) page for details)<br>- Too many concurrent scans<br>Limitations<br>* Synchronous & asynchronous scans are limited based on API call quota<br>* Scan results and reports are not subject to an API call quota, but are subject to a 10 requests limit per minute|
 | **500** | Internal Server Error | - Unexpected server error |

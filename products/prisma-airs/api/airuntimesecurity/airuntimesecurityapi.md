@@ -30,9 +30,9 @@ For licensing, onboarding, activation, and to obtain the API authentication key 
 
 The following are the API endpoints based on the regions you selected while creating Prisma AIRS AI Runtime: API intercept deployment profile:
 
-- US: https://service.api.aisecurity.paloaltonetworks.com 
-- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
-- IN: https://service-in.api.aisecurity.paloaltonetworks.com
+- US: <https://service.api.aisecurity.paloaltonetworks.com>
+- EU (Germany): <https://service-de.api.aisecurity.paloaltonetworks.com>
+- IN: <https://service-in.api.aisecurity.paloaltonetworks.com>
 
 ## Prerequisites
 

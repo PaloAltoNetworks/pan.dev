@@ -55,7 +55,7 @@ scan_response = scanner.sync_scan(
 # https://pan.dev/prisma-airs/api/scan-sync-request/
 # Convert the scan_response to a dictionary and then to a JSON string
 print(json.dumps(scan_response.to_dict()))
-await scanner.close()
+scanner.close()
 ```
 
 </details>
@@ -145,7 +145,7 @@ ai_profile = AiProfile(profile_name=AI_PROFILE_NAME)
 scanner = Scanner()
 
 req_ids = 0
-# Batch (Asyncronous) Scan supports up to 5 Scan Request Objects
+# Batch (Asynchronous) Scan supports up to 5 Scan Request Objects
 async_scan_objects = [
     AsyncScanObject(
         req_id=(req_ids := req_ids + 1),
@@ -180,7 +180,7 @@ pprint({
     "scan_id": response.scan_id,
     "report_id": response.report_id,
 })
-await scanner.close()
+scanner.close()
 ```
 
 </details>
@@ -218,7 +218,7 @@ scanner = Scanner()
 example_scan_id = "00000000-0000-0000-0000-000000000000" # Replace with actual scan ID from the async_scan output.
 scan_by_ids_response = scanner.query_by_scan_ids(scan_ids=[example_scan_id])
 print(scan_by_ids_response)
-await scanner.close()
+scanner.close()
 ```
 
 </details>
@@ -328,7 +328,7 @@ scanner = Scanner()
 example_report_id = "R" + "YOUR_REPORT_ID"  # Replace it with your actual report ID from the scan result. Its a UUID and starts with a letter R.
 threat_scan_reports = scanner.query_by_report_ids(report_ids=[example_report_id])
 print(threat_scan_reports)
-await scanner.close()
+scanner.close()
 ```
 
 </details>
