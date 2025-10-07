@@ -18,7 +18,7 @@ Each use case includes the sample code or API requests, API security profile con
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
+1. Refer to the prerequisites section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
 2. Review the scan API endpoints in the scan API endpoints.
 3. Configure the API security profile with below settings for the respective use cases:
 
