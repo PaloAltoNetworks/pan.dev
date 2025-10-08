@@ -1,17 +1,45 @@
 module.exports = {
   airuntimesecurity_api: [
+    // Overview and Getting Started
     {
       type: "doc",
       id: "prisma-airs/api/airuntimesecurity/airuntimesecurityapi",
     },
     {
       type: "doc",
-      id: "prisma-airs/api/airuntimesecurity/errorcodes",
+      id: "prisma-airs/api/airuntimesecurity/usecases",
     },
     {
       type: "doc",
-      id: "prisma-airs/api/airuntimesecurity/usecases",
+      id: "prisma-airs/api/airuntimesecurity/errorcodes",
+    },    
+    // Management API (foundational setup)
+    {
+      label: "Management API", 
+      type: "category",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/prismaairsmanagementapi",
+        },
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/oauth-based-authentication",
+        },
+        require("./api/airuntimesecurity/management/sidebar"),
+      ],
     },
+    
+    // Core Runtime Security API (main functionality)
+    {
+      label: "AI Runtime Security API",
+      type: "category",
+      collapsed: false,
+      items: require("./api/airuntimesecurity/scan/sidebar"),
+    },
+    
+    // SDKs (implementation details)
     {
       label: "Python SDK",
       type: "category",
@@ -31,6 +59,5 @@ module.exports = {
         },
       ],      
     },
-    require("./api/airuntimesecurity/sidebar"),
   ],
 };
