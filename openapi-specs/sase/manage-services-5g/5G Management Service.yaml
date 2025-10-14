@@ -13,17 +13,6 @@ components:
         tsg_id:
           type: string
       type: object
-    Enable5GRequest:
-      properties:
-        action:
-          type: string
-        compute_region:
-          type: string
-        ipv4_cidr:
-          type: string
-        ipv6_cidr:
-          type: string
-      type: object
     JsonObject:
       items:
         type: string
@@ -42,6 +31,72 @@ components:
         secret:
           type: string
       type: object
+    RegisterUE:
+      description: A list of one or more UEs
+      items:
+        properties:
+          apn:
+            description: APN (Access Point Name) for the Tenant UE
+            example: apn@panw.com
+            type: string
+          cellId:
+            type: string
+          eventTime:
+            description: epoc time in ms
+            type: integer
+          expiryTime:
+            description: epoc time in ms
+            type: integer
+          imei:
+            description: 15 digit IMEI (International Mobile Equipment Identity) number.
+              Error is returned if number of digits is not exactly 15.Last digit will
+              be replaced by zero.
+            example: '123456789012345'
+            type: string
+          imsi:
+            description: 15 digit IMSI (International Mobile Subscriber Identity)
+              number. Error is returned if number of digits is not exactly 15.
+            example: '123456789012345'
+            type: string
+          ipType:
+            description: it tells whether it is ipv4, ipv6 or dual stack. Valid values
+              are IPv4, IPv6, IPv4v6
+            example: IPV4
+            type: string
+          ipv4Addr:
+            type: string
+          ipv6Addr:
+            type: string
+          msisdn:
+            type: string
+          ratType:
+            type: string
+          sliceId:
+            type: string
+          supi:
+            type: string
+        required:
+        - eventTime
+        - ipType
+        - imsi
+        - imei
+        - apn
+        type: object
+      type: array
+    SetInterface:
+      properties:
+        interfaceType:
+          example: RADIUS
+          type: string
+        interimMsgInterval:
+          description: How often interim messages will come(in minutes)
+          type: integer
+        processInterimMsg:
+          default: false
+          type: boolean
+      required:
+      - interfaceType
+      type: object
     TenantGroupInfo:
       properties:
         group_name:
@@ -55,13 +110,13 @@ components:
       type: object
     TenantGroupInfoListInput:
       properties:
+        group_id:
+          type: string
         tsg_id:
           type: string
       type: object
     TenantUEInfoListInput:
       properties:
-        group_id:
-          type: string
         tsg_id:
           type: string
       type: object
@@ -85,6 +140,15 @@ components:
             type: string
           type: array
       type: object
+    UpdateInterimMsg:
+      properties:
+        interval:
+          description: How often interim messages will come(in minutes)
+          type: integer
+        processMsg:
+          default: false
+          type: boolean
+      type: object
   securitySchemes:
     Bearer:
       scheme: bearer
@@ -107,8 +171,8 @@ info:
     \ answer to these pressing needs, \noffering a new approach to securing the future\
     \ of enterprise connectivity.\n\nThese APIs use the common SASE authentication\
     \ mechanism and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
-    \ guide for more information.\n\nThis Open API spec file was created on May 20,\
-    \ 2025. To check for a more recent version of this file, see\n[SASE 5G Manage\
+    \ guide for more information.\n\nThis Open API spec file was created on October\
+    \ 07, 2025. To check for a more recent version of this file, see\n[SASE 5G Manage\
     \ Services APIs on pan.dev](https://pan.dev/sase/api/manage-services-5g/introduction).\n\
     \n\xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
     \ of Palo\nAlto Networks. A list of our trademarks can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
@@ -245,6 +309,68 @@ paths:
       security:
       - Bearer: []
       summary: Download certificate
+      tags:
+      - ControlPlane Resource
+  /mt/manage/5g/control/interface:
+    get:
+      description: 'Retrieve details of the interface currently selected by the user.
+
+        '
+      operationId: get-mt-manage-5g-control-interface
+      responses:
+        '200':
+          description: Successful response
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Get Interface
+      tags:
+      - ControlPlane Resource
+    post:
+      description: 'Set the interface type. You can optionally include interim message
+        configuration in the request.
+
+        '
+      operationId: post-mt-manage-5g-control-interface
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetInterface'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Add Interface
+      tags:
+      - ControlPlane Resource
+  /mt/manage/5g/control/interimMsg:
+    put:
+      description: This api allows you to update the interim message config
+      operationId: put-mt-manage-5g-control-interimmsg
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInterimMsg'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      security:
+      - Bearer: []
+      summary: Update the Interim Message Configuration
       tags:
       - ControlPlane Resource
   /mt/manage/5g/control/proxycert:
@@ -417,60 +543,218 @@ paths:
       summary: Get RADIUS server details
       tags:
       - ControlPlane Resource
-  /mt/manage/5g/ipcidr/{compute_region}:
+  /mt/manage/5g/control/supported/interfaces:
     get:
-      description: 'Retrieve the IPv4 and IPv6 Classless Inter-Domain Routing (CIDR)
-        blocks for a specified compute region. This is used to define the IP address
-        ranges for the network.
+      description: 'Retrieve all supported interface types available in the system.
 
         '
-      operationId: get-mt-manage-5g-ipcidr-compute_region
-      parameters:
-      - in: path
-        name: compute_region
-        required: true
-        schema:
-          type: string
+      operationId: get-mt-manage-5g-control-supported-interfaces
       responses:
         '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Data Not Found
+          description: Successful response
         '500':
           description: Server Error
       security:
       - Bearer: []
-      summary: Get IP CIDR
+      summary: List Supported Interfaces
       tags:
-      - 5G API
-  /mt/manage/5g/setup:
+      - ControlPlane Resource
+  /mt/manage/5g/deregister/ue:
     post:
-      description: 'Enable 5G connectivity for a specified region. This involves configuring
-        the necessary settings and infrastructure to support 5G network access.
+      description: 'Remove a previously registered User Equipment (UE) from the system.
 
         '
-      operationId: post-mt-manage-5g-setup
+      operationId: post-mt-manage-5g-deregister-ue
       requestBody:
         content:
           application/json:
+            examples:
+              Degister Success:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  imei: '333333333333333'
+                  imsi: '333333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.8
             schema:
-              $ref: '#/components/schemas/Enable5GRequest'
+              $ref: '#/components/schemas/RegisterUE'
       responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Data Not Found
-        '500':
-          description: Server Error
+        '202':
+          content:
+            application/json:
+              examples:
+                Successful:
+                  summary: Request Accepted
+              schema:
+                type: object
+          description: Accepted
+        '401':
+          content:
+            application/json:
+              example:
+                clientRequestId: fd96df3d-4178-4141-a497-f4b12bc4d5ab
+                details: Interface set is not API
+                errorCode: '60076'
+                message: Either 5g is not enabled or interface is not API
+                requestId: fd96df3d-4178-4141-a497-f4b12bc4d5ab
+                service: 5G Management Service
+              schema:
+                type: object
+          description: Unauthorized
       security:
       - Bearer: []
-      summary: Enable 5G connectivity
+      summary: DeRegister UE
       tags:
-      - 5G API
+      - UE Enrichment
+  /mt/manage/5g/register/ue:
+    post:
+      description: 'Register a User Equipment (UE) with the system by submitting IMSI,
+        IMEI, APN, IP address, and event details.
+
+        '
+      operationId: post-mt-manage-5g-register-ue
+      requestBody:
+        content:
+          application/json:
+            examples:
+              IP out of Range:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  imei: '333333333333333'
+                  imsi: '333333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 192.29.0.8
+              Incorrect Payload:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  imei: '333333333333333'
+                  imsi: '3333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.8
+              Missing mandory param:
+                value:
+                - apn: demo.com
+                  imei: '333333333333333'
+                  imsi: '333333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.8
+              Partially correct payload:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  expiryTime: 1234568988
+                  imei: '444444444444444'
+                  imsi: '444444444444444'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.10
+                - apn: demo.com
+                  expiryTime: 1234568988
+                  imei: '333333333333444'
+                  imsi: '333333333333444'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.9
+                  msisdn: test
+              Register UE With mandatory params:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  imei: '333333333333333'
+                  imsi: '333333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.8
+              Update expiry Time:
+                value:
+                - apn: demo.com
+                  eventTime: 123456789009
+                  expiryTime: 8765432190
+                  imei: '333333333333333'
+                  imsi: '333333333333333'
+                  ipType: IPv4
+                  ipv4Addr: 172.29.0.8
+            schema:
+              $ref: '#/components/schemas/RegisterUE'
+      responses:
+        '202':
+          content:
+            application/json:
+              examples:
+                Successful:
+                  summary: Request Accepted
+              schema:
+                type: object
+          description: Accepted
+        '207':
+          content:
+            application/json:
+              example:
+                apn: demo.com
+                errorMsg: Event time is must
+                expiryTime: 1234568988
+                imei: '333333333333440'
+                imsi: '333333333333444'
+                ipType: 0
+                ipv4Addr: 172.29.0.9
+                msisdn: test
+              schema:
+                type: object
+          description: Partial Success
+        '400':
+          content:
+            application/json:
+              examples:
+                example-0:
+                  summary: Incorrect Payload
+                  value:
+                    apn: demo.com
+                    errorMsg: IMSI needs to be 15 digits, current length is 13
+                    eventTime: 123456789009
+                    imei: '333333333333333'
+                    imsi: '3333333333333'
+                    ipType: 0
+                    ipv4Addr: 172.29.0.8
+                example-1:
+                  summary: IP Out of Range
+                  value:
+                    apn: demo.com
+                    errorMsg: IP is not a part of any ue cidr block
+                    eventTime: 123456789009
+                    imei: '333333333333330'
+                    imsi: '333333333333333'
+                    ipType: 0
+                    ipv4Addr: 192.29.0.8
+                example-2:
+                  summary: Missing mandatory param
+                  value:
+                    apn: demo.com
+                    errorMsg: Event time is must
+                    imei: '333333333333330'
+                    imsi: '333333333333333'
+                    ipType: 0
+                    ipv4Addr: 172.29.0.8
+              schema:
+                type: object
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              example:
+                clientRequestId: fd96df3d-4178-4141-a497-f4b12bc4d5ab
+                details: Interface set is not API
+                errorCode: '60076'
+                message: Either 5g is not enabled or interface is not API
+                requestId: fd96df3d-4178-4141-a497-f4b12bc4d5ab
+                service: 5G Management Service
+              schema:
+                type: object
+          description: Unauthorized
+      security:
+      - Bearer: []
+      summary: Register UE
+      tags:
+      - UE Enrichment
   /mt/manage/5g/tenantUEInfo:
     post:
       description: 'Create tenant-user equipment (UE) information. This includes mapping
@@ -794,7 +1078,7 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Delete the Tenant UE mapping
+      summary: Delete tenant-UE mapping by ID
       tags:
       - UE Info Resource
     put:
@@ -903,7 +1187,7 @@ paths:
           description: Server Error
       security:
       - Bearer: []
-      summary: Update tenant-UE mapping
+      summary: Update tenant-UE mapping by ID
       tags:
       - UE Info Resource
   /mt/manage/5g/tenantUEInfo/{ueInfoId}:
@@ -1342,12 +1626,6 @@ tags:
     \ of the control plane, which orchestrates the overall network management and\
     \ security policies.\n"
   name: Control Plane Resource API
-- description: "The Enable 5G API encompasses a set of endpoints designed to facilitate\
-    \ the setup and management of 5G connectivity within the SASE framework. \nThis\
-    \ includes enabling 5G network access for specified regions, configuring necessary\
-    \ settings, and ensuring that the infrastructure supports seamless 5G communication.\
-    \ \nThis API is vital for deploying and maintaining 5G services.\n"
-  name: Enable 5G API
 - description: 'The User Equipment (UE) Info Resource API manages information related
     to user devices within the 5G SASE system. This includes creating, updating, listing,
     and deleting tenant-user equipment mappings.
@@ -1364,3 +1642,10 @@ tags:
     \ into groups, this API facilitates the application of group-based security policies\
     \ and simplifies the management of multiple devices within the network.\n"
   name: Group Resource API
+- description: "The User Equipment (UE) Enrichment API is designed to augment UE data\
+    \ with additional context and security-related information. This includes enriching\
+    \ UE profiles with details such as device type, location, user identity, and security\
+    \ posture. \nBy enriching this data, the API enables more granular policy enforcement,\
+    \ better threat detection, and improved network visibility, helping administrators\
+    \ to make more informed decisions about device access and security.\n"
+  name: UE Enrichment API
