@@ -2,7 +2,7 @@
 id: prismaairsmanagementapi
 title: "Prisma AIRS AI Runtime Management APIs Overview"
 sidebar_label: "Prisma AIRS Management APIs"
-slug: /prisma-airs/api/management/
+slug: /prisma-airs/api/management
 keywords:
   - AIRS
   - Reference
