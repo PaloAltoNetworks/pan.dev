@@ -205,7 +205,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "prisma-airs/scan/api/",
+                      to: "prisma-airs/api/airuntimesecurity/airuntimesecurityapi",
                       label: "Prisma AIRS AI Runtime: API Intercept",
                       icon: "api-doc",
                     },
