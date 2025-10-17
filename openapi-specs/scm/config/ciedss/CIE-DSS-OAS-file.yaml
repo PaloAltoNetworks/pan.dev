@@ -5,7 +5,7 @@ info:
   description: "Use the CIE Directory Sync API to retrieve real-time user, group,\
     \ and domain information from your connected directories. \nThis guide provides\
     \ the details needed to integrate identity-aware context into your applications\
-    \ and security services. This Open API spec file was created on October 14, 2025.\
+    \ and security services. This Open API spec file was created on October 17, 2025.\
     \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
     \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
@@ -106,13 +106,20 @@ components:
         domain: paloaltonetworks.com
         attrs:
         - Common-Name
-        - Mail
         - Unique Identifier
-        - Manager
-        - User Principal Name
         - Name
         - Distinguished Name
         - SAM Account Name
+        - Department
+        - Last Login
+        - LastLogonTime
+        - Location
+        - Mail
+        - Manager
+        - Title
+        - User Principal Name
+        - UserAccountControl
+        - WhenChanged
         useNormalizedAttrs: 'True'
     fetch_all_users_attrs:
       description: Retrieve all attributes for a specific user.
@@ -273,13 +280,8 @@ components:
           - 'False'
       example:
         domain: paloaltonetworks.com
-        attrs:
-        - Common-Name
-        - Unique Identifier
-        - Name
-        - Distinguished Name
-        - SAM Account Name
-        useNormalizedAttrs: 'True'
+        pageNum: 1,
+        pageSz: 80
     list_specific_groups:
       description: Retrieve specific groups matching a name-based filter. Supports
         filtering of groups based on specific attributes and values (similar to the
@@ -360,6 +362,16 @@ components:
         - Name
         - Distinguished Name
         - SAM Account Name
+        - Department
+        - Last Login
+        - LastLogonTime
+        - Location
+        - Mail
+        - Manager
+        - Title
+        - User Principal Name
+        - UserAccountControl
+        - WhenChanged
     check_user_in_particular_group:
       description: Check if a specific group has a particular user in it, filtered
         using attribute-based filter (to filter the group) and group-based filter
@@ -449,8 +461,9 @@ paths:
   /directory-sync/v1/domains:
     get:
       summary: Get Domain Details
-      description: Retrieve list of all domains and details specific to each of these
-        domains that are configured in the CIE Directory Sync Service.
+      description: Get list of all domains configured in the Directory Sync Service
+        (DSS). The response includes details for each domain, such as its status,
+        last successful sync time, and object counts (users, groups, etc.).
       operationId: GetDirectory-syncV1Domains
       responses:
         '200':
@@ -476,8 +489,7 @@ paths:
                   sync_duration: 14607313
                   type: Active Directory
         '500':
-          description: If CIE Directory Sync Service is down then we see the Internal
-            Service Error
+          description: CIE Directory Sync Service is down
           $ref: '#/components/responses/500_internal_error'
       parameters: []
       tags:
@@ -485,27 +497,43 @@ paths:
   /directory-sync/v1/cache-users:
     post:
       summary: Get User Information
-      description: 'This endpoint retrieves user data from the CIE Directory Sync
-        Service for different scenarios/use-cases. Optional pagination parameters
-        can be used. Choose the payload schema that matches your use case:
-
-        - **list_all_users_in_domain**: Retrieve all users in a domain.
-
-        - **list_specific_users**: Retrieve specific users matching a name-based filter
-        in a domain. Supports filtering of users based on specific attributes and
-        values (similar to the WHERE clause in SQL).
-
-        - **list_users_in_particular_group**: Retrieve users belonging to a specified
-        group, filtered using the group-based filter
-
-        - **check_group_membership**: Check if a specific user belongs to a specified
-        group.'
+      description: "Get user related information. This endpoint supports several use\
+        \ cases by using different request payloads. It also supports pagination to\
+        \ manage large result sets.\n\nUse this endpoint to:\n  - **list_all_users_in_domain**:\
+        \ List all users within a specific domain.\n  - **list_specific_users**: Find\
+        \ specific users by filtering on attributes like name or email.\n  - **list_users_in_particular_group**:\
+        \ Get all users who are members of a specific group.\n  - **check_group_membership**:\
+        \ Check if a user is a member of a particular group."
       operationId: PostDirectory-syncV1Cache-users
       responses:
         '200':
-          description: Returns an array of user objects matching the query.
+          description: List of all matching user profiles
           content:
             application/json:
+              example:
+                success: true
+                result:
+                  count: 1
+                  data:
+                    domains:
+                    - domainName: example.onmicrosoft.com
+                      lastSyncTmp: 1760646692
+                      netbios: example
+                      objects:
+                      - Common-Name: Jack Park
+                        Country: GERMANY
+                        Department: Sales
+                        Distinguished Name: CN=Jack,UID=Park,DC=example,DC=com
+                        Location: Munich
+                        Mail: jackpark@example.com
+                        Name: JACK, PARK
+                        SAM Account Name: jack.park
+                        Unique Identifier: 00009498-94e8-4873-b957-015e9e2587eb
+                        User Principal Name: jackpark@example.come
+                        WhenChanged: 20230815042928.345954Z
+                  pageNum: 1
+                  pageSz: 1
+                  remains: 50
               schema:
                 type: object
                 properties:
@@ -546,28 +574,58 @@ paths:
   /directory-sync/v1/cache-groups:
     post:
       summary: Get Group Information
-      description: 'This endpoint retrieves group data from the CIE Directory Sync
-        Service under various conditions. Optional pagination parameters can be used.
-        Choose the payload schema that matches your use case:
+      description: 'Get group related information. This endpoint supports several
+        use cases by using different request payloads. It also supports pagination
+        to manage large result sets.
 
-        - **list_all_groups_in_domain**: Retrieve all groups in a domain.
 
-        - **list_specific_groups**: Retrieve specific groups matching a name-based
-        filter. Supports filtering of groups based on specific attributes and values
-        (similar to the WHERE clause in SQL).
+        Use this endpoint to:
 
-        - **list_groups_user_belongs_to**: Retrieve all groups containing specific
-        users based on user-filter
+        - **list_all_groups_in_domain**: List all groups within a specific domain.
 
-        - **check_user_in_particular_group**: Check if a specific group has a particular
-        user in it, filtered using attribute-based filter (to filter the user) and
-        group-based filter (to filter the group).'
+        - **list_specific_groups**: Find specific groups by filtering on attributes
+        like name.
+
+        - **list_groups_user_belongs_to**: Get all groups that a specific user belongs
+        to.
+
+        - **check_user_in_particular_group**: Check if a group contains a particular
+        user.'
       operationId: PostDirectory-syncV1Cache-groups
       responses:
         '200':
-          description: Returns an array of group objects matching the query.
+          description: list of all matching group profiles
           content:
             application/json:
+              example:
+                success: true
+                result:
+                  count: 1
+                  data:
+                    domains:
+                    - domainName: example.onmicrosoft.com
+                      lastSyncTmp: 1760648138
+                      netbios: example
+                      objects:
+                      - cn: ADMIN
+                        created: 20230117094434.800831Z
+                        dn: CN=ADMIN,DC=example,DC=onmicrosoft,DC=com
+                        domain: example.onmicrosoft.com
+                        groupType: security
+                        member: []
+                        meta_created: 2023-01-17 09:44:34.800831+00:00
+                        meta_lastModified: 2025-08-26 13:26:11.093255+00:00
+                        meta_resourceType: Group
+                        name: ADMIN
+                        objectClass:
+                        - group
+                        objectGUID: 0087272b-0ea5-4884-8dac-17b1673c1496
+                        sAMAccountName: ADMIN
+                        topoIndex: 0
+                        whenChanged: 20250826132611.093255Z
+                  pageNum: 1
+                  pageSz: 1
+                  remains: 50
               schema:
                 type: object
                 properties:
