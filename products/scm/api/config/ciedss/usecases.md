@@ -47,7 +47,7 @@ The following use cases focus on retrieving information about users. [cache-user
     {
       "domain": "panw.lab",
       "name": {
-        "attrName": "user Principal Name",
+        "attrName": "User Principal Name",
         "attrValue": "ankita@panw.lab",
         "match": "equal"
       },
@@ -107,7 +107,7 @@ The following use cases focus on retrieving information about users. [cache-user
     {
       "domain": "panw.lab",
       "name": {
-        "attrName": "user Principal Name",
+        "attrName": "User Principal Name",
         "attrValue": "ankita@panw.lab",
         "match": "equal"
       },
