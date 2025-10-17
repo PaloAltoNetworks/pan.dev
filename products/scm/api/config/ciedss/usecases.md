@@ -47,7 +47,7 @@ The following use cases focus on retrieving information about users. [cache-user
     {
       "domain": "panw.lab",
       "name": {
-        "attrName": "user Principal Name",
+        "attrName": "User Principal Name",
         "attrValue": "ankita@panw.lab",
         "match": "equal"
       },
@@ -92,7 +92,7 @@ The following use cases focus on retrieving information about users. [cache-user
  **Key Parameters:**
   * The `filter.type` is set to `group` to indicate you are querying based on group membership.
 
-  * `level: "immediate"` ensures you get all members, even if they belong to a nested group. Use `"direct"` for immediate members only.
+  * `level: "immediate"` ensures you get all members, even if they belong to a nested group. Use `"immediate"` for immediate members only.
 
 ### Verify user in a group
 
@@ -107,7 +107,7 @@ The following use cases focus on retrieving information about users. [cache-user
     {
       "domain": "panw.lab",
       "name": {
-        "attrName": "user Principal Name",
+        "attrName": "User Principal Name",
         "attrValue": "ankita@panw.lab",
         "match": "equal"
       },

@@ -38,9 +38,6 @@ The Directory Sync Service is the primary data aggregation engine of CIE. It con
 * Google Workspace
 * PingFederate
 
-**Key Capabilities:**
-* Integrates with any Identity Provider (IdP) that supports the **SAML 2.0** protocol.
-
 ## Key Data Feature: User and Group Context
 
 A primary benefit of using the CIE API is access to the User and group context features. This provides enriched, contextual data about users beyond basic attributes. This can include information such as a user's device, location, and logon events, which is critical for building advanced, context-aware security policies and analytics.
