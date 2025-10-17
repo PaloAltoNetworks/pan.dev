@@ -20,7 +20,11 @@ This document provides practical examples for the most common use cases of the C
 
 * Before making any calls, you must acquire a **Bearer Token**. Your token contains a `TSG ID` that automatically scopes all API requests to your specific CIE tenant, ensuring you only see data from your configured directories.
 
-* To get the [Access token](https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/), create a [service account](https://pan.dev/scm/docs/service-accounts/) in Strata Cloud Manager. 
+* To get the [Access token](https://pan.dev/sase/api/auth/post-auth-v-1-oauth-2-access-token/), create a [service account](https://pan.dev/scm/docs/service-accounts/) in Strata Cloud Manager with the following permissions: 
+  * ```deployment_admin```
+  * ```msp_superuser```
+  * ```view_only_admin```
+  * ```superadmin```
 
 
 ## Prerequisite: Domain discovery
