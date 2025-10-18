@@ -53,7 +53,7 @@ async def main():
             response="Questionable Model Response Text",
         ),
     )
-    # See API documentation for response structuree
+    # See API documentation for response structure
     # https://pan.dev/prisma-airs/api/scan-sync-request/
     pprint(scan_response)
     await scanner.close()
@@ -174,7 +174,7 @@ async_scan_objects = [
 
 async def main():
       response = await scanner.async_scan(async_scan_objects)
-      # See API documentation for response structuree
+      # See API documentation for response structure
       # https://pan.dev/prisma-airs/api/scan-async-request/
       pprint({
           "received": response.received,
