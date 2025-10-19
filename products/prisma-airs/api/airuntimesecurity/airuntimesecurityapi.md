@@ -24,15 +24,15 @@ Both scan and management APIs support two authentication types:
 - **API key-based**: Use the `x-pan-token` header: `-H 'x-pan-token: <x-pan-token>'`.
 - **OAuth 2.0-based token (RBAC)**: Use the `Authorization` header with a bearer token: `-H 'Authorization: Bearer <token>'`.
 
-For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime API intecept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
+For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the [Prisma AIRS AI Runtime API intercept](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview) administration documentation.
 
 ## Scan API Endpoints
 
 The following are the API endpoints based on the regions you selected while creating Prisma AIRS AI Runtime: API intercept deployment profile:
 
-- US: https://service.api.aisecurity.paloaltonetworks.com 
-- EU (Germany): https://service-de.api.aisecurity.paloaltonetworks.com
-- IN: https://service-in.api.aisecurity.paloaltonetworks.com
+- US: <https://service.api.aisecurity.paloaltonetworks.com>
+- EU (Germany): <https://service-de.api.aisecurity.paloaltonetworks.com>
+- IN: <https://service-in.api.aisecurity.paloaltonetworks.com>
 
 ## Prerequisites
 
@@ -50,15 +50,15 @@ Specify this profile name or the profile ID in the API request payload in the `a
 :::info
 You can manage API keys and AI security profiles in Strata Cloud Manager.
 
-1. Log in to [Strata Cloud Manager](http://stratacloudmanager.paloaltonetworks.com/).
+1. Log in to [Strata Cloud Manager](https://stratacloudmanager.paloaltonetworks.com/).
 2. Navigate to **Insights > Prisma AIRS > Prisma AIRS AI Runtime: API Intercept**.
 3. In the top right corner, click:
 
 - **Manage > API Keys** to copy, regenerate, or rotate the API key token.
 - **Manage > Security Profiles** to fetch details or update AI security profiles.
-- **Manage > Custom Topics** create or update custom topics for custom topic guardrails threat detections.
+- **Manage > Custom Topics** to create or update custom topics for custom topic guardrails threat detections.
 
-For complete details, refer to adminstration guide for the section on how to "manage applications, API Keys, security profiles, and custom topics".
+For complete details, refer to administration guide for the section on how to "manage applications, API Keys, security profiles, and custom topics".
 :::
 
 ## Limitations
