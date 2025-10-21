@@ -5,7 +5,7 @@ info:
   description: "Use the CIE Directory Sync API to retrieve real-time user, group,\
     \ and domain information from your connected directories. \nThis guide provides\
     \ the details needed to integrate identity-aware context into your applications\
-    \ and security services. This Open API spec file was created on October 17, 2025.\
+    \ and security services. This Open API spec file was created on October 21, 2025.\
     \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
     \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
@@ -18,7 +18,7 @@ components:
       properties:
         pageNum:
           type: integer
-          description: Page number to retrieve (starting from page-1).
+          description: Page number to retrieve (starting from page 1).
           example: 1
         pageSz:
           type: integer
@@ -43,20 +43,26 @@ components:
       - match
       properties:
         attrName:
-          description: Attribute name.
+          description: Attribute name
           type: string
-          example: Mail
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
+          example: Distinguished Name
         attrValue:
-          description: Attribute value.
+          description: Attribute value
           type: string
-          example: alice@paloaltonetworks.com
+          example: CN=Jack,UID=Park,DC=example,DC=com
         match:
           description: Value you want to match.
           type: string
           enum:
           - equal
-          - in
-          - contain
+          - textSearch
           example: equal
     group_filter:
       type: object
@@ -75,7 +81,7 @@ components:
         level:
           type: string
           enum:
-          - direct
+          - immediate
           - recursive
     list_all_users_in_domain:
       description: Retrieve all users in a domain.
@@ -175,8 +181,15 @@ components:
       example:
         domain: paloaltonetworks.com
         name:
-          attrName: Mail
-          attrValue: alice@paloaltonetworks.com
+          attrName: Distinguished Name
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
+          attrValue: CN=Jack,UID=Park,DC=example,DC=com
           match: equal
         attrs:
         - Common-Name
@@ -309,6 +322,13 @@ components:
         domain: paloaltonetworks.com
         name:
           attrName: Common-Name
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
           attrValue: admins
           match: equal
         attrs:
@@ -354,8 +374,15 @@ components:
         filter:
           type: user
           name:
-            attrName: Mail
-            attrValue: alice@paloaltonetworks.com
+            attrName: Distinguished Name
+            attrValue: CN=Jack,UID=Park,DC=example,DC=com
+            enum:
+            - User Principal Name
+            - Common-Name
+            - Name
+            - Distinguished Name
+            - SAM Account Name
+            - Unique Identifier
             match: equal
         attrs:
         - Common-Name
@@ -461,10 +488,12 @@ ExternalTags: {}
 paths:
   https://api.strata.paloaltonetworks.com/directory-sync/v1/domains:
     get:
-      summary: Get Domain Details
-      description: Get list of all domains configured in the Directory Sync Service
-        (DSS). The response includes details for each domain, such as its status,
-        last successful sync time, and object counts (users, groups, etc.).
+      summary: Domain Details
+      description: "Retrieves a list of all domains configured for a specific CIE\
+        \ tenant within the Directory Sync Service (DSS). \nThis operation returns\
+        \ details for each of the tenant's configured domains, including its current\
+        \ status, the timestamp of the last successful synchronization, and object\
+        \ counts (such as users and groups)."
       responses:
         '200':
           description: List of all domain metadata
@@ -489,24 +518,27 @@ paths:
                   sync_duration: 14607313
                   type: Active Directory
         '500':
-          description: CIE Directory Sync Service is down
+          description: If CIE Directory Sync Service is down then we see the Internal
+            Service Error
           $ref: '#/components/responses/500_internal_error'
       parameters: []
       tags:
       - Directory Sync Service
   https://api.strata.paloaltonetworks.com/directory-sync/v1/cache-users:
     post:
-      summary: Get User Information
-      description: "Get user related information. This endpoint supports several use\
-        \ cases by using different request payloads. It also supports pagination to\
-        \ manage large result sets.\n\nUse this endpoint to:\n  - **list_all_users_in_domain**:\
-        \ List all users within a specific domain.\n  - **list_specific_users**: Find\
-        \ specific users by filtering on attributes like name or email.\n  - **list_users_in_particular_group**:\
-        \ Get all users who are members of a specific group.\n  - **check_group_membership**:\
-        \ Check if a user is a member of a particular group."
+      summary: User Information
+      description: "Provides user related information for a domain present in Specific\
+        \ CIE tenant.\nThis endpoint supports several use cases by using different\
+        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
+        \          \n          Use this endpoint to:\n            - **list_all_users_in_domain**:\
+        \ List all users within a specific domain.\n            - **list_specific_users**:\
+        \ Find specific users by filtering on attributes like name or email.\n   \
+        \         - **list_users_in_particular_group**: Get all users who are members\
+        \ of a specific group.\n            - **check_group_membership**: Check if\
+        \ a user is a member of a particular group."
       responses:
         '200':
-          description: List of all matching user profiles
+          description: Returns an array of user objects matching the query.
           content:
             application/json:
               example:
@@ -572,27 +604,18 @@ paths:
               - $ref: '#/components/schemas/check_group_membership'
   https://api.strata.paloaltonetworks.com/directory-sync/v1/cache-groups:
     post:
-      summary: Get Group Information
-      description: 'Get group related information. This endpoint supports several
-        use cases by using different request payloads. It also supports pagination
-        to manage large result sets.
-
-
-        Use this endpoint to:
-
-        - **list_all_groups_in_domain**: List all groups within a specific domain.
-
-        - **list_specific_groups**: Find specific groups by filtering on attributes
-        like name.
-
-        - **list_groups_user_belongs_to**: Get all groups that a specific user belongs
-        to.
-
-        - **check_user_in_particular_group**: Check if a group contains a particular
-        user.'
+      summary: Group Information
+      description: "Provides group related information for a domain present in Specific\
+        \ CIE tenant. \nThis endpoint supports several use cases by using different\
+        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
+        \nUse this endpoint to:\n- **list_all_groups_in_domain**: List all groups\
+        \ within a specific domain.\n- **list_specific_groups**: Find specific groups\
+        \ by filtering on attributes like name.\n- **list_groups_user_belongs_to**:\
+        \ Get all groups that a specific user belongs to.\n- **check_user_in_particular_group**:\
+        \ Check if a group contains a particular user."
       responses:
         '200':
-          description: list of all matching group profiles
+          description: Returns an array of group objects matching the query.
           content:
             application/json:
               example:
