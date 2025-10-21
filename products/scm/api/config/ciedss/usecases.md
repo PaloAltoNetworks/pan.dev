@@ -45,9 +45,7 @@ The following use cases focus on retrieving information about users. [cache-user
 
 **Example:** Find a user whose User Principal Name is `ankita@panw.lab`.
 
-  **Request Body (`list_specific_users` schema):**
-
-    ```json
+  **Request Body (`list_specific_users` schema):**    
     {
       "domain": "panw.lab",
       "name": {
@@ -62,7 +60,7 @@ The following use cases focus on retrieving information about users. [cache-user
       ],
       "useNormalizedAttrs": "True"
     }
-    ```
+
   **Key Parameters:**
     
   * The `name` object acts as a "WHERE" clause to filter for a specific user.
@@ -78,8 +76,6 @@ The following use cases focus on retrieving information about users. [cache-user
 
   **Request Body (`list_users_in_particular_group` schema):**
 
-
-    ```json
     {
       "domain": "panw.lab",
       "filter": {
@@ -92,7 +88,7 @@ The following use cases focus on retrieving information about users. [cache-user
         "level": "immediate"
       }
     }
-    ```
+    
  **Key Parameters:**
   * The `filter.type` is set to `group` to indicate you are querying based on group membership.
 
@@ -106,8 +102,6 @@ The following use cases focus on retrieving information about users. [cache-user
 
   **Request Body (`check_group_membership` schema):**
 
-
-    ```json
     {
       "domain": "panw.lab",
       "name": {
@@ -125,7 +119,7 @@ The following use cases focus on retrieving information about users. [cache-user
         "level": "recursive"
       }
     }
-    ```
+  
   **How it Works:** This request combines a `name` filter (for the user) and a `filter` object (for the group). The API returns the user's data if they are a member, or an empty result if they are not.
 
 ---
@@ -143,7 +137,7 @@ These use cases focus on retrieving information about groups. [cache-groups](/sc
   **Request Body (`list_specific_groups` schema):**
 
    
-    ```json
+    
     {
       "domain": "paloaltonetworks.com",
       "name": {
@@ -157,7 +151,7 @@ These use cases focus on retrieving information about groups. [cache-groups](/sc
         "Unique Identifier"
       ]
     }
-    ```
+    
 
 ### Get group membership details
 
@@ -166,8 +160,7 @@ These use cases focus on retrieving information about groups. [cache-groups](/sc
 **Example:** Get all groups that the user `alice@paloaltonetworks.com` is a member of.
 
   **Request Body (`list_groups_user_belongs_to` schema):**
-
-    ```json
+  
     {
       "domain": "paloaltonetworks.com",
       "filter": {
@@ -183,7 +176,7 @@ These use cases focus on retrieving information about groups. [cache-groups](/sc
         "Distinguished Name"
       ]
     }
-    ```
+  
   **Key Parameter:** The `filter.type` is set to `user` to indicate you are querying for groups based on a user member.
 
 ---
