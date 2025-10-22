@@ -969,6 +969,11 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
@@ -1039,6 +1044,11 @@ const config = {
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          scmciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           mssp: {

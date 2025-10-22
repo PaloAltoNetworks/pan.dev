@@ -211,6 +211,11 @@ export default function SCMLandingPage() {
             to: "cdl/api/log-forwarding",
             icon: "api-doc",
           },
+          {
+            label: "CIE Directory Sync Service",
+            to: "scm/api/config/ciedss/ciedss",
+            icon: "api-doc",
+          },
         ],
       },
     },
