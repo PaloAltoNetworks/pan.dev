@@ -18,7 +18,7 @@ Each use case includes the sample code or API requests, API security profile con
 
 Before you begin,
 
-1. Refer to the prerequsities section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
+1. Refer to the prerequisites section in the [Prisma AIRS AI Runtime: API intercept](airuntimesecurityapi.md) overview page.
 2. Review the scan API endpoints in the scan API endpoints.
 3. Configure the API security profile with below settings for the respective use cases:
 
@@ -36,8 +36,9 @@ For details on the protections and the features available while creating an API 
 
 ## Language Support
 
-- Prompt injection detection: English, Spanish, Russian, German, French, Japanese, Portuguese, and Italian.
-- Toxic content detection, contextual grounding, and custom topic guardrails are supported in English.
+- Prompt injection detection, Toxic content detection: English, Spanish, Russian, German, French, Japanese, Portuguese, Italian,and simplified Chinese.
+- Contextual grounding : English, Spanish, Russian, German, French, Japanese, Portuguese, and Italian.
+- Custom topic guardrails are supported in English.
 
 ## Use Cases
 
