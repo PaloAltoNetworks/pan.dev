@@ -386,7 +386,7 @@ print(res)
               formats, authentication, error codes, and code samples.
             </div>
             <a
-              href="/prisma-airs/scan/api/"
+              href="/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/"
               className={styles.button}
               target="_self"
             >
