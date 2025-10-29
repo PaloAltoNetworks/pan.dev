@@ -301,20 +301,9 @@ print(res)
       </div>
       <div className={styles.responsiveSection} style={{ marginTop: 24 }}>
         <section className={styles.gridSection}>
-          <Card
-            title={
-              <span
-                style={{
-                  color: colorMode === "dark" ? "#fff" : "#7c3aed",
-                  fontWeight: 700,
-                }}
-              >
-                Prisma AIRS AI Runtime API Python SDK
-              </span>
-            }
-            colorMode={colorMode}
+          <div
             style={{
-              background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+              background: colorMode === "dark" ? "#23272e" : "#fff",
               border:
                 colorMode === "dark"
                   ? "1px solid #333a48"
@@ -322,46 +311,49 @@ print(res)
               borderRadius: 20,
               boxShadow:
                 colorMode === "dark"
-                  ? "0 2px 12px 0 rgba(124,58,237,0.10)"
-                  : "0 2px 12px 0 rgba(124,58,237,0.04)",
+                  ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+                  : "0 2px 12px 0 rgba(0,0,0,0.04)",
               padding: 32,
-              color: colorMode === "dark" ? "#fff" : "#232237",
+              color: colorMode === "dark" ? "#fff" : "#222",
               fontSize: 18,
-              minHeight: 180,
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
+              flex: 1,
+              minWidth: 260,
             }}
           >
+            <h3
+              style={{
+                marginTop: 0,
+                fontWeight: 700,
+                background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              Prisma AIRS AI Runtime API Python SDK
+            </h3>
             <div style={{ marginBottom: 16 }}>
               Quickly integrate advanced AI runtime security into your Python
               apps with our official SDK. Effortlessly scan prompts and
               responses for threats, unsafe content, and data leaks—directly
               from your code.
             </div>
-            <a
-              href="/prisma-airs/api/airuntimesecurity/pythonsdk/"
-              className={styles.pythonSdkButton}
-              target="_self"
-            >
-              View Python SDK Docs
-            </a>
-          </Card>
-          <Card
-            title={
-              <span
-                style={{
-                  color: colorMode === "dark" ? "#fff" : "#7c3aed",
-                  fontWeight: 700,
-                }}
+            <div style={{ marginTop: "auto" }}>
+              <a
+                href="/prisma-airs/api/airuntimesecurity/pythonsdk/"
+                className={styles.pythonSdkButton}
+                target="_self"
               >
-                API Reference Guide
-              </span>
-            }
-            colorMode={colorMode}
+                View Python SDK Docs
+              </a>
+            </div>
+          </div>
+          <div
             style={{
-              background: colorMode === "dark" ? "#232237" : "#f7f5ff",
+              background: colorMode === "dark" ? "#23272e" : "#fff",
               border:
                 colorMode === "dark"
                   ? "1px solid #333a48"
@@ -369,41 +361,93 @@ print(res)
               borderRadius: 20,
               boxShadow:
                 colorMode === "dark"
-                  ? "0 2px 12px 0 rgba(124,58,237,0.10)"
-                  : "0 2px 12px 0 rgba(124,58,237,0.04)",
+                  ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+                  : "0 2px 12px 0 rgba(0,0,0,0.04)",
               padding: 32,
-              color: colorMode === "dark" ? "#fff" : "#232237",
+              color: colorMode === "dark" ? "#fff" : "#222",
               fontSize: 18,
-              minHeight: 180,
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
+              flex: 1,
+              minWidth: 260,
             }}
           >
+            <h3
+              style={{
+                marginTop: 0,
+                fontWeight: 700,
+                background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              API Reference Guide
+            </h3>
             <div style={{ marginBottom: 16 }}>
               Full API documentation with endpoint details, request/response
               formats, authentication, error codes, and code samples.
             </div>
-            <a
-              href="/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/"
-              className={styles.button}
-              target="_self"
-            >
-              View API Reference Docs
-            </a>
-          </Card>
-          <Card
-            title="Getting Started"
-            link="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
-            linkLabel="Read the Guide"
-            colorMode={colorMode}
+            <div style={{ marginTop: "auto" }}>
+              <a
+                href="/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/"
+                className={styles.pythonSdkButton}
+                target="_self"
+              >
+                View API Reference Docs
+              </a>
+            </div>
+          </div>
+          <div
+            style={{
+              background: colorMode === "dark" ? "#23272e" : "#fff",
+              border:
+                colorMode === "dark"
+                  ? "1px solid #333a48"
+                  : "1px solid #e0e7ef",
+              borderRadius: 20,
+              boxShadow:
+                colorMode === "dark"
+                  ? "0 2px 12px 0 rgba(0,0,0,0.18)"
+                  : "0 2px 12px 0 rgba(0,0,0,0.04)",
+              padding: 32,
+              color: colorMode === "dark" ? "#fff" : "#222",
+              fontSize: 18,
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minWidth: 260,
+            }}
           >
-            <div>
+            <h3
+              style={{
+                marginTop: 0,
+                fontWeight: 700,
+                background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              Getting Started
+            </h3>
+            <div style={{ marginBottom: 16 }}>
               Guided setup for developers: activate your profile, configure
               security, generate API keys, and integrate with your app.
             </div>
-          </Card>
+            <div style={{ marginTop: "auto" }}>
+              <a
+                href="https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview"
+                className={styles.pythonSdkButton}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Read the Guide
+              </a>
+            </div>
+          </div>
         </section>
       </div>
     </main>
