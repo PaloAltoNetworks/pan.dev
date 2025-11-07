@@ -40,7 +40,7 @@ To get started, choose how you would like to contribute:
     <article className="col col--6 margin-bottom--lg">
       <a className="card padding--lg" href="/contributing/create-doc-tldr">
         <h2 className="text--truncate" title="Create (quickstart)">🚀 Create (quickstart)</h2>
-        <p className="text--truncate" title="If you are famliar with git, yarn, etc.">
+        <p className="text--truncate" title="If you are familiar with git, yarn, etc.">
             (if you are already familiar with git, yarn, etc.)
         </p>
       </a>

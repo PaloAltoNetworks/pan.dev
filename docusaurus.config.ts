@@ -205,7 +205,7 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "prisma-airs/scan/api/",
+                      to: "prisma-airs/api/airuntimesecurity/airuntimesecurityapi",
                       label: "Prisma AIRS AI Runtime: API Intercept",
                       icon: "api-doc",
                     },
@@ -969,6 +969,11 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
@@ -1009,7 +1014,14 @@ const config = {
           },
           airuntimesecurity: {
             specPath: "openapi-specs/prisma-airs/scan",
-            outputDir: "products/prisma-airs/api/airuntimesecurity",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/scan",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          // Add management API as separate config
+          airuntimesecuritymgmt: {
+            specPath: "openapi-specs/prisma-airs/management",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/management",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
@@ -1032,6 +1044,11 @@ const config = {
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          scmciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           mssp: {
