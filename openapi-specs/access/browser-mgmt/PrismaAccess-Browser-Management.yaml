@@ -1,0 +1,1983 @@
+openapi: 3.0.0
+info:
+  title: Prisma Access Browser Management Console Public API
+  version: 1.0.0
+  description: "This Open API spec file represents the APIs available for Palo Alto\
+    \ Networks Prisma Access Browser Management APIs. These APIs are available for\
+    \ all PAB tenants to scale and automate their processes related to the browser.\
+    \ \nAll of the functionality exposed by these APIs can also be performed using\
+    \ the [Prisma Access Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
+    These APIs use the common SASE authentication mechanism and base URL. See the\
+    \ [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted/) guide for\
+    \ more information. This Open API spec file was created on November 06, 2025.\
+    \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
+    \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    Order:
+      type: string
+      description: The sort order
+      enum:
+      - asc
+      - desc
+    EPP:
+      type: object
+      required:
+      - name
+      - version
+      - state
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        state:
+          type: string
+    DeviceEPP:
+      type: object
+      required:
+      - products
+      - enabled
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/EPP'
+        enabled:
+          type: boolean
+    DevicePasswordPosturePolicy:
+      type: object
+      required:
+      - complexityReq
+      - maxPasswordAge
+      - minPasswordLength
+      properties:
+        complexityReq:
+          type: boolean
+        maxPasswordAge:
+          type: integer
+        minPasswordLength:
+          type: integer
+    DevicePasswordPosture:
+      type: object
+      required:
+      - enabled
+      - products
+      properties:
+        enabled:
+          type: boolean
+        passwordPolicy:
+          $ref: '#/components/schemas/DevicePasswordPosturePolicy'
+    CrowdstrikeZTAPosture:
+      type: object
+      required:
+      - score
+      - sensorScore
+      - osScore
+      - CID
+      properties:
+        score:
+          type: integer
+        sensorScore:
+          type: integer
+        osScore:
+          type: integer
+        CID:
+          type: string
+    SystemIntegrityPostureServices:
+      type: object
+      properties:
+        driversSigningEnforcement:
+          type: boolean
+        kernelDebugger:
+          type: boolean
+        secureBoot:
+          type: boolean
+        SIP:
+          type: boolean
+        gatekeeper:
+          type: boolean
+    SystemIntegrityPostureStatus:
+      type: string
+      description: System integrity status
+      enum:
+      - pass
+      - fail
+      - unknown
+    SystemIntegrityPosture:
+      type: object
+      required:
+      - status
+      - services
+      properties:
+        status:
+          $ref: '#/components/schemas/SystemIntegrityPostureStatus'
+        services:
+          $ref: '#/components/schemas/SystemIntegrityPostureServices'
+    DeviceManagementSystem:
+      type: object
+      properties:
+        system:
+          type: string
+          enum:
+          - ad
+          - azureAd
+          - intune
+          - jamf
+        details:
+          type: string
+    DeviceManagement:
+      type: object
+      required:
+      - status
+      - systems
+      properties:
+        status:
+          type: string
+          enum:
+          - managed
+          - unmanaged
+        systems:
+          type: array
+          description: Device Management
+          items:
+            $ref: '#/components/schemas/DeviceManagementSystem'
+    LocationMethod:
+      type: string
+      description: Location detection method
+      enum:
+      - GeoIp
+      - Location services
+      - Unknown
+    DiskEncryptionVendorName:
+      type: string
+      description: Disk encryption vendor name
+      enum:
+      - 2BrightSparks Pte Ltd
+      - Acronis
+      - Adolix
+      - Apimac, software
+      - Apple Inc.
+      - archicrypt
+      - Arcserve (USA), LLC
+      - Ashampoo GmbH & Co. KG
+      - AVG Technologies CZ, s.r.o.
+      - Axantum Software AB
+      - AxCrypt AB
+      - Beachhead Solutions
+      - Becrypt Ltd
+      - BeLight Software Ltd.
+      - Bitdefender
+      - Braincell consult & research GmbH
+      - Check Point Software Technologies
+      - CipherShed
+      - COMODO Security Solutions
+      - CoSoSys Ltd.
+      - CP-Lab.com
+      - Crypto Systems, Inc.
+      - Cypherix Software Pvt. Ltd.
+      - DATEV eG
+      - Dekart
+      - Dell Inc.
+      - Deltacrypt Technologies Inc
+      - DESlock Limited
+      - Digital Millenium Inc.
+      - DoGoodSoft
+      - EgoSecure
+      - EGSoftWeb
+      - ENC Security Systems
+      - Encrypt4all Software
+      - ESET
+      - Evgeny Korovin
+      - EXLADE, Inc.
+      - Exosphere Labs, Inc.
+      - FileEncryption.org.
+      - G Data Software AG
+      - GiliSoft International LLC
+      - GitHub, Inc.
+      - GitLab Inc.
+      - Hewlett-Packard
+      - Hitek Software LLC
+      - HummerStudio
+      - IDRIX
+      - InterCrypto Ltd
+      - Inv Softworks LLC
+      - Jetico, Inc.
+      - Kaspersky Lab
+      - Kovell Ventures Ltd.
+      - Kromtech
+      - Kruptos 2 Software
+      - Lavasoft
+      - MadowSoft Software
+      - Max Secure Software
+      - McAfee, Inc.
+      - Microsoft Corporation
+      - MicroWorld Technologies Inc.
+      - Mnemonic Security Inc.
+      - MoRUN.net
+      - MSecure Data Labs
+      - NCH Software
+      - New Softwares.net
+      - Nomadesk NV
+      - ntldr
+      - Packetizer, Inc.
+      - Panda Security, S.L.
+      - PC Dynamics
+      - PDFKey
+      - PRIMX
+      - R-tools Technology, Inc.
+      - Ranquel Technologies
+      - RentAnAdviser
+      - Rogers
+      - Safetica Technologies
+      - Sarah Dean
+      - SecurStar GmbH
+      - SoftWinter
+      - Solid Programs
+      - Sophos Limited
+      - Stoneage Softwares
+      - SUSE LINUX GmbH
+      - Symantec Corporation
+      - TEHTRIS
+      - Tesline-Service SRL
+      - The Gpg4win Project
+      - Trellix
+      - Trend Micro, Inc.
+      - TrueCrypt Foundation
+      - TrustPort, a.s.
+      - Utimaco Safeware AG
+      - Vassil Arabadjiev
+      - WARDWIZ
+      - Webminds, Inc.
+      - WinEncrypt
+      - WinMagic Inc.
+      - Zmanda, Inc.
+    DiskEncryptionProduct:
+      type: object
+      description: Disk encryption product information
+      required:
+      - vendorName
+      - productName
+      - fullyEncrypted
+      properties:
+        vendorName:
+          $ref: '#/components/schemas/DiskEncryptionVendorName'
+        productName:
+          type: string
+          description: Product name of the disk encryption product
+    DeviceDiskEncryptionDetails:
+      type: object
+      description: Disk encryption details for the device
+      required:
+      - products
+      properties:
+        products:
+          type: array
+          description: List of disk encryption products detected on the device
+          items:
+            $ref: '#/components/schemas/DiskEncryptionProduct'
+    FirewallVendorName:
+      type: string
+      description: Firewall vendor name
+      enum:
+      - Agnitum Ltd.
+      - NETGATE Technologies s.r.o.
+      - ParetoLogic, Inc.
+      - LANDESK Software, Inc.
+      - AT&T
+      - Bitdefender
+      - Mysecuritywin
+      - G Data Software AG
+      - Max Secure Software
+      - AhnLab, Inc.
+      - AVG Technologies CZ, s.r.o.
+      - Symantec Corporation
+      - Kaspersky Lab
+      - Avira GmbH
+      - Panda Security, S.L.
+      - Webroot Software, Inc.
+      - Quick Heal Technologies (P) Ltd.
+      - nProtect, Inc.
+      - F-Secure Corporation
+      - ThreatTrack Security, Inc.
+      - McAfee, Inc.
+      - eEye Digital Security
+      - Arcabit
+      - BeyondTrust, Inc.
+      - "Telef\xF3nica S.A."
+      - GEN-X Technologies
+      - K7 Computing Pvt Ltd
+      - Faronics Corporation
+      - TELUS
+      - Kingsoft Corporation
+      - BiniSoft.org
+      - GFI Software Ltd.
+      - TG Soft S.a.s.
+      - Scandium Security Inc.
+      - Datpol
+      - Tech Guard Technologies
+      - NCP engineering GmbH
+      - SoftSphere Technologies
+      - Quick Guard Technologies
+      - Emsisoft Ltd
+      - Datalink Industrial Corporation
+      - COMODO Security Solutions
+      - MicroWorld Technologies Inc.
+      - AVAST Software a.s.
+      - ESET
+      - Beijing Rising Information Technology Co., Ltd.
+      - Smart Heal
+      - Rogers
+      - Check Point Software Technologies
+      - CellSecurity
+      - AS3 Soft4U
+      - Ates Software & Internet Technologies
+      - MSecure Data Labs
+      - SGA SOLUTIONS
+      - ALLIT Service, LLC.
+      - adaware
+      - SentinelOne
+      - CrowdStrike, Inc.
+      - CSIS Security Group
+      - SOURCENEXT CORPORATION
+      - Microsoft Corporation
+      - SecureMix LLC
+      - Swiss security laboratory.
+      - AsiaInfo, Inc.
+      - INCA Internet Co., Ltd.
+      - ESTsoft Corp.
+      - Sunrise Antivirus
+      - Hauri, Inc.
+      - SecuraShield India Pvt. Ltd.
+      - NIFTY Corporation
+      - Trend Micro, Inc.
+      - Fujitsu Services Ltd.
+      - LogMeIn, Inc.
+      - Stormshield
+      - Palo Alto Networks, Inc.
+      - Chili Security
+      - Sophos Limited
+      - NortonLifeLock Inc
+      - Massachusetts Institute of Technology
+      - WatchGuard Technologies Inc
+      - Beijing Huorong Network Technology Co., Ltd.
+      - Le Minh Thanh
+      - Qi An Xin Group
+      - Avast Software s.r.o.
+      - TEHTRIS
+      - Avira Operations GmbH & Co. KG
+      - WithSecure Corporation
+      - Musarubra US LLC.
+      - GoTo, Inc.
+      - INCA Internet Co.,Ltd.
+      - SECURA WEB DATA LABS PVT LTD
+      - Broadcom
+      - Gen Digital Inc.
+      - Actipace Private Limited
+      - Siyano Labs Pvt. Ltd.
+      - Bkav Corporation
+      - CMC InfoSec
+      - Total Defense, Inc.
+      - TrustPort, a.s.
+      - Fortinet Inc.
+      - Avanquest Software
+      - Doctor Web, Ltd.
+      - Security Software Limited
+      - BullGuard Ltd.
+      - HDD Labs. Inc
+      - EarthLink, Inc.
+      - Roboscan Inc
+      - Thirtyseven4
+      - PC Security Shield
+      - CA, Inc.
+      - Privacyware/PWI, Inc.
+      - "K\xE1roly Pados"
+      - PeerBlock, LLC
+      - ProgrammerWorld.Net
+      - Jetico, Inc.
+      - Tiny Software Inc.
+      - Sphinx Software
+      - Defender Pro
+      - Soft4Ever
+      - Lavasoft
+      - Norman AS
+      - PC Tools Software
+      - Apple Inc.
+    FirewallProduct:
+      type: object
+      description: Firewall product information
+      required:
+      - vendorName
+      - productName
+      - enabled
+      properties:
+        vendorName:
+          $ref: '#/components/schemas/FirewallVendorName'
+        productName:
+          type: string
+          description: Product name of the firewall
+        enabled:
+          type: boolean
+          description: Whether the firewall is enabled
+    DeviceFirewallDetails:
+      type: object
+      description: Firewall details for the device
+      required:
+      - products
+      properties:
+        products:
+          type: array
+          description: List of firewall products detected on the device
+          items:
+            $ref: '#/components/schemas/FirewallProduct'
+    DeviceBrowserBrand:
+      type: string
+      description: Browser brand
+      enum:
+      - Arc
+      - Brave
+      - Chrome
+      - Edge
+      - Opera
+      - Dia
+      - Comet
+      - Prisma Access Browser
+      - Unknown
+    DevicePlatform:
+      type: string
+      description: Device platform
+      enum:
+      - Desktop Browser
+      - Mobile Browser
+      - Browser Extension
+      - Unknown
+    BrowserSelfProtectionWindowsDriverStatus:
+      type: string
+      description: Windows driver status
+      default: Unknown
+      enum:
+      - Unknown
+      - Protected
+      - Inactive
+      - UnprotectedArmIncompatible
+      - UnprotectedUserInstall
+      - Unprotected
+    BrowserSelfProtectionModule:
+      type: object
+      description: Browser self-protection module
+      properties:
+        windows:
+          type: object
+          description: Windows driver info
+          properties:
+            status:
+              $ref: '#/components/schemas/BrowserSelfProtectionWindowsDriverStatus'
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
+        externalId:
+          type: string
+          format: string
+          description: External identifier
+        email:
+          type: string
+          description: Email
+        lastSeen:
+          type: string
+          format: date-time
+          description: Last seen time
+        firstSeen:
+          type: string
+          format: date-time
+          description: First seen time
+        name:
+          type: string
+          description: Name
+        profilePictureURL:
+          type: string
+          description: Profile Picture URL
+        deletedTime:
+          type: string
+          format: date-time
+          description: Deleted Time
+        provider:
+          type: string
+          description: Provider
+          enum:
+          - saml
+          - local
+          - oidc
+        deviceIds:
+          type: array
+          description: Device IDs
+          items:
+            type: string
+        userGroups:
+          type: array
+          description: User Groups
+          items:
+            $ref: '#/components/schemas/UserGroup'
+      required:
+      - id
+      - email
+      - lastSeen
+      - firstSeen
+      - name
+      - profilePictureURL
+      - deletedTime
+      - provider
+      - externalId
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        name:
+          type: string
+          description: Name
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Last updated
+        createdAt:
+          type: string
+          format: date-time
+          description: Created at
+        provider:
+          type: string
+          enum:
+          - sso
+          - local
+          description: Provider
+      required:
+      - id
+      - name
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
+        externalId:
+          type: string
+          format: string
+          description: External identifier
+        firstSeen:
+          type: string
+          format: date-time
+          description: First seen time
+        lastSeen:
+          type: string
+          format: date-time
+          description: Last seen time
+        osType:
+          type: string
+          description: Operating System type
+          enum:
+          - windows
+          - macOS
+          - linux
+          - ios
+          - android
+          - unknown
+        osVersion:
+          type: string
+          description: OS Version
+        osDisplayName:
+          type: string
+          description: OS Display Name
+        chromeosVersion:
+          type: string
+          description: ChromeOS version (only for ChromeOS devices)
+        locationMethod:
+          $ref: '#/components/schemas/LocationMethod'
+        arch:
+          type: string
+          description: Architecture
+        nativeArch:
+          type: string
+          description: Native Architecture
+        hostname:
+          type: string
+          description: Hostname
+        model:
+          type: string
+          description: Device Model
+        serialNumber:
+          type: string
+          description: Serial Number
+        mobileVendor:
+          type: string
+          description: Mobile device vendor/manufacturer (e.g., Samsung, Apple)
+        mobileHardware:
+          type: string
+          description: Mobile device hardware identifier (e.g., iPhone14,2, SM-G998B)
+        mobileIsRooted:
+          type: boolean
+          description: Whether the mobile device is rooted/jailbroken
+        macAddresses:
+          type: array
+          items:
+            type: string
+          description: MAC Addresses
+        screenLockStatus:
+          type: string
+          description: Screen Lock Status
+          enum:
+          - ScreenLockStatusUnknown
+          - ScreenLockStatusDisabled
+          - ScreenLockStatusEnabled
+        diskEncryptionStatus:
+          type: string
+          description: Disk Encryption Status
+          enum:
+          - DiskEncryptionStatusUnknown
+          - DiskEncryptionStatusDisabled
+          - DiskEncryptionStatusEnabled
+        diskEncryptionDetails:
+          $ref: '#/components/schemas/DeviceDiskEncryptionDetails'
+        firewallStatus:
+          type: string
+          description: Firewall Status
+          enum:
+          - FireWallStatusUnknown
+          - FireWallStatusDisabled
+          - FireWallStatusEnabled
+        firewallDetails:
+          $ref: '#/components/schemas/DeviceFirewallDetails'
+        userAgent:
+          type: string
+          description: User Agent
+        ip:
+          type: string
+          description: IP Address
+          nullable: true
+        talonExtensionVersion:
+          type: string
+          description: Talon Extension Version
+        browserVersion:
+          type: string
+          description: Browser Version
+        browserBrand:
+          $ref: '#/components/schemas/DeviceBrowserBrand'
+        deviceType:
+          type: string
+          description: Device Type
+          enum:
+          - unknown
+          - desktop
+          - laptop
+          - vm
+          - smartphone
+          - tablet
+          - chromebook
+        platform:
+          $ref: '#/components/schemas/DevicePlatform'
+        deviceEPP:
+          $ref: '#/components/schemas/DeviceEPP'
+        devicePassword:
+          $ref: '#/components/schemas/DevicePasswordPosture'
+        crowdstrikeZTA:
+          $ref: '#/components/schemas/CrowdstrikeZTAPosture'
+        systemIntegrity:
+          $ref: '#/components/schemas/SystemIntegrityPosture'
+        isRunningOnRemoteSession:
+          type: boolean
+          description: Whether the device is running on a remote session (e.g., RDP,
+            VNC)
+        deviceManagement:
+          $ref: '#/components/schemas/DeviceManagement'
+        browserSelfProtectionModule:
+          $ref: '#/components/schemas/BrowserSelfProtectionModule'
+        isOSUserAdmin:
+          type: boolean
+          description: OS user is admin
+        isBrowserInstalledAsAdmin:
+          type: boolean
+          description: Browser installed as admin
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - id
+      - firstSeen
+      - lastSeen
+      - osType
+      - osDisplayName
+      - platform
+      - browserBrand
+      - arch
+      - nativeArch
+      - hostname
+      - model
+      - serialNumber
+      - macAddresses
+      - screenLockStatus
+      - diskEncryptionStatus
+      - firewallStatus
+      - isBrowserInstalledAsAdmin
+      - userAgent
+      - talonExtensionVersion
+      - browserVersion
+      - deviceType
+      - osVersion
+      - externalId
+    PageInfo:
+      type: object
+      properties:
+        hasNextPage:
+          type: boolean
+          description: When paginating forwards, are there more items?
+        cursor:
+          type: string
+          nullable: true
+          description: When paginating forwards, the cursor to continue.
+      required:
+      - hasNextPage
+    ApplicationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
+        appId:
+          type: integer
+        name:
+          type: string
+          format: string
+          description: Name of the application
+        urls:
+          type: array
+          description: Url Pattenrs for the application
+          items:
+            type: string
+        category:
+          type: string
+          format: string
+        reputation:
+          type: integer
+        resetPasswordUrl:
+          type: string
+          format: string
+        type:
+          type: string
+          format: string
+        primaryUrl:
+          type: string
+          format: string
+        routeToPrisma:
+          type: boolean
+      required:
+      - id
+      - createTime
+      - updateTime
+      - name
+      - urls
+    PluginResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
+        createTime:
+          type: string
+          format: date-time
+          description: Creation time of the plugin
+        updateTime:
+          type: string
+          format: date-time
+          description: Last update time of the plugin
+        plugin:
+          $ref: '#/components/schemas/Plugin'
+        applicationId:
+          type: string
+          description: Application ID of the application the plugin is associated
+            to
+      required:
+      - id
+      - createTime
+      - updateTime
+      - plugin
+      - applicationId
+    Plugin:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/PluginEvent'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/PluginLink'
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/PluginElement'
+    PluginEvent:
+      type: object
+      properties:
+        eventType:
+          type: string
+          enum:
+          - loginFail
+          - loginAttempt
+          - passwordReset
+          - userRegistration
+        requestUrl:
+          type: string
+        triggerUrl:
+          type: string
+        triggerOnSuccess:
+          type: boolean
+        triggerOnFail:
+          type: boolean
+        method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        statusCode:
+          type: integer
+        minContentLength:
+          type: integer
+        maxContentLength:
+          type: integer
+        headers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              content:
+                type: string
+            required:
+            - name
+            - content
+      required:
+      - eventType
+    PluginLink:
+      type: object
+      properties:
+        urlPattern:
+          type: string
+        resetPasswordUrl:
+          type: string
+        loginPageUrl:
+          type: string
+    PluginElement:
+      type: object
+      properties:
+        elementType:
+          type: string
+          enum:
+          - excludeAccountShield
+          - includeAccountShield
+        urlPattern:
+          type: string
+        selectors:
+          type: array
+          items:
+            type: string
+      required:
+      - elementType
+      - selectors
+    UserRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
+        userId:
+          type: string
+          format: string
+          description: Request unique identifier
+        type:
+          type: string
+          format: string
+          description: Request type
+        status:
+          type: string
+          format: string
+          description: Request status
+        url:
+          type: string
+          format: string
+          description: bypassing url
+        reason:
+          type: string
+          format: string
+          description: reason for request
+        deviceId:
+          type: string
+          format: string
+          description: Device unique identifier
+        ruleId:
+          type: string
+          format: string
+          description: Blocking rule unique identifier
+        adminComment:
+          type: string
+          format: string
+          description: Admin comment
+        createdAt:
+          type: string
+          format: date-time
+          description: Request created at
+        userAcceptedAt:
+          type: string
+          format: date-time
+          description: User accepted response at
+        responseTime:
+          type: string
+          format: date-time
+          description: Admin response time
+        adminBypassTimeframe:
+          type: integer
+          format: string
+          description: The timeframe for which the approval is valid
+        respondedBy:
+          type: string
+          format: string
+          description: Response by
+        revokedBy:
+          type: string
+          format: string
+          description: Revoked by
+        revokedAt:
+          type: string
+          format: date-time
+          description: Admin revoke time
+        revokerComment:
+          type: string
+          format: string
+          description: Revoke comment
+      required:
+      - id
+      - userId
+      - status
+      - type
+      - url
+      - reason
+      - ruleId
+      - createdAt
+      - deviceId
+    RequestError:
+      type: object
+      properties:
+        error_message:
+          type: string
+    RequestAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - decline
+          description: Action to perform on the request
+        adminComment:
+          type: string
+          format: string
+          description: Admin comment on the action
+        adminBypassTimeframe:
+          type: string
+          enum:
+          - Once
+          - 10m
+          - 1h
+          - 4h
+          - 9h
+          - 12h
+          - 24h
+          - 3d
+          - 7d
+          - 14d
+          - 30d
+          - 60d
+          - 90d
+          description: The timeframe for which the approval is valid
+      required:
+      - action
+    RevokeRequestAction:
+      type: object
+      properties:
+        revokerComment:
+          type: string
+          format: string
+          description: Admin revoke comment
+      required:
+      - action
+ExternalTags: {}
+paths:
+  /seb-api/v1/users:
+    get:
+      summary: Get Users List
+      description: Retrieve a list of [users](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-users).
+      operationId: GetSeb-apiV1Users
+      responses:
+        '200':
+          description: A list of users with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      parameters:
+      - name: limit
+        in: query
+        description: Number of users to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: includeDeleted
+        in: query
+        description: Include deleted users
+        required: false
+        schema:
+          type: boolean
+      - name: user.name
+        in: query
+        description: Filter by user name
+        required: false
+        schema:
+          type: string
+      - name: user.email
+        in: query
+        description: Filter by user email
+        required: false
+        schema:
+          type: string
+      - name: user.first_seen_gte
+        in: query
+        description: Filter by first seen time or after
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: user.last_seen_lte
+        in: query
+        description: Filter by last seen time or before
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - user.name
+          - user.email
+          - user.first_seen
+          - user.last_seen
+      - name: order
+        in: query
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
+      tags:
+      - Users
+  /seb-api/v1/users/{id}:
+    get:
+      summary: Users List by ID
+      description: Retrieve users list by [ID](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-users).
+      operationId: GetSeb-apiV1Usersbyid
+      responses:
+        '200':
+          description: A user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      tags:
+      - Users
+  /seb-api/v1/devices:
+    get:
+      summary: List Devices
+      description: Retrieve list of [devices](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-devices).
+      operationId: GetSeb-apiV1Devices
+      responses:
+        '200':
+          description: A list of devices with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Device'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      parameters:
+      - name: limit
+        in: query
+        description: Number of devices to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: device.hostname
+        in: query
+        description: Filter by hostname
+        required: false
+        schema:
+          type: string
+      - name: user.name
+        in: query
+        description: Filter by user name
+        required: false
+        schema:
+          type: string
+      - name: device.os_type
+        in: query
+        description: Filter by OS type
+        required: false
+        schema:
+          type: string
+      - name: device.first_seen_gte
+        in: query
+        description: Filter by first seen time or after
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: device.last_seen_lte
+        in: query
+        description: Filter by last seen time or before
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: device.type
+        in: query
+        description: Filter by device type
+        required: false
+        schema:
+          type: string
+      - name: device.firewall_status
+        in: query
+        description: Filter by firewall status
+        required: false
+        schema:
+          type: string
+      - name: device.screen_lock_status
+        in: query
+        description: Filter by screen lock status
+        required: false
+        schema:
+          type: string
+      - name: device.disk_encryption_status
+        in: query
+        description: Filter by disk encryption status
+        required: false
+        schema:
+          type: string
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - device.hostname
+          - device.os_type
+          - device.browser_version
+          - device.first_seen
+          - device.last_seen
+          - user.name
+      - name: order
+        in: query
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
+      tags:
+      - Devices
+  /seb-api/v1/devices/{id}:
+    get:
+      summary: Devices by ID
+      description: Retrieve devices by [ID](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-devices).
+      operationId: GetSeb-apiV1Devicesbyid
+      responses:
+        '200':
+          description: A device
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Device not found
+      parameters:
+      - name: id
+        in: path
+        description: Device ID
+        required: true
+        schema:
+          type: string
+      tags:
+      - Devices
+  /seb-api/v1/user-groups:
+    get:
+      summary: List User Groups
+      description: Retrieve a list of user groups.
+      operationId: GetSeb-apiV1User-groups
+      responses:
+        '200':
+          description: A list of user groups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserGroup'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters:
+      - name: limit
+        in: query
+        description: Number of user requests to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      tags:
+      - UserGroups
+    post:
+      summary: New User Group
+      description: Creates a new user group.
+      operationId: PostSeb-apiV1User-groups
+      responses:
+        '201':
+          description: User group created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userGroupId:
+                    type: string
+                    description: The ID of the newly created user group
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - UserGroups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the user group
+                userIds:
+                  type: array
+                  items:
+                    type: string
+                  description: List of user IDs
+              required:
+              - name
+              - userIds
+  /seb-api/v1/user-groups/{id}:
+    get:
+      summary: Single User group by ID
+      description: Get a single user group by ID.
+      operationId: GetSeb-apiV1User-groupsbyid
+      responses:
+        '200':
+          description: A single user group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroup'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the user group to retrieve
+        schema:
+          type: string
+      tags:
+      - UserGroups
+    put:
+      summary: Update User Group
+      description: Updates a user group.
+      operationId: PutSeb-apiV1User-groupsbyid
+      responses:
+        '200':
+          description: User group updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userGroupId:
+                    type: string
+                    description: The ID of the updated user group
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the user group to update
+        schema:
+          type: string
+      tags:
+      - UserGroups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        description: User ID
+                      action:
+                        type: string
+                        enum:
+                        - add
+                        - remove
+                        description: Action to perform (add or remove the user)
+                    required:
+                    - userId
+                    - action
+                  description: List of user updates
+              required:
+              - users
+    delete:
+      summary: Delete User Group
+      description: Deletes an user group.
+      operationId: DeleteSeb-apiV1User-groupsbyid
+      responses:
+        '200':
+          description: User group deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userGroupId:
+                    type: string
+                    description: The ID of the deleted user group
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the user group to delete
+        schema:
+          type: string
+      tags:
+      - UserGroups
+  /seb-api/v1/applications:
+    get:
+      summary: List Applications
+      description: Get list of [applications](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-applications).
+      operationId: GetSeb-apiV1Applications
+      responses:
+        '200':
+          description: A list of all application objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApplicationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Optional name string to search in applications
+        required: false
+      - in: query
+        name: url
+        schema:
+          type: string
+        description: Optional url string to search in applications
+        required: false
+      tags:
+      - Applications
+  /seb-api/v1/applications/plugins:
+    get:
+      summary: List Application Plugins
+      description: Get a list of application plugins.
+      operationId: GetSeb-apiV1ApplicationsPlugins
+      responses:
+        '200':
+          description: A list of all application plugin objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PluginResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Applications
+  /seb-api/v1/applications/{id}/plugins:
+    get:
+      summary: Plugin with ID
+      description: Returns the plugin associated with the application ID.
+      operationId: GetSeb-apiV1ApplicationsBy_idPlugins
+      responses:
+        '200':
+          description: A single plugin associated with the application ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Plugin not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the application to retrieve the plugin for
+        schema:
+          type: string
+      tags:
+      - Applications
+    post:
+      summary: Create plugin
+      description: Creates a new plugin associated with the application ID.
+      operationId: PostSeb-apiV1ApplicationsBy_idPlugins
+      responses:
+        '201':
+          description: Plugin created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pluginId:
+                    type: string
+                    description: The ID of the newly created plugin
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the application to create the plugin for
+        schema:
+          type: string
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plugin:
+                  $ref: '#/components/schemas/Plugin'
+              required:
+              - plugin
+    put:
+      summary: Update Plugin
+      description: Updates the plugin associated with the application ID.
+      operationId: PutSeb-apiV1ApplicationsBy_idPlugins
+      responses:
+        '200':
+          description: Plugin updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pluginId:
+                    type: string
+                    description: The ID of the updated plugin
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Plugin not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the application to update the plugin for
+        schema:
+          type: string
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plugin:
+                  $ref: '#/components/schemas/Plugin'
+              required:
+              - plugin
+    delete:
+      summary: Delete Plugin
+      description: Deletes the plugin associated with the application ID.
+      operationId: DeleteSeb-apiV1ApplicationsBy_idPlugins
+      responses:
+        '200':
+          description: Plugin deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pluginId:
+                    type: string
+                    description: The ID of the deleted plugin
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the application associated with the plugin to delete
+        schema:
+          type: string
+      tags:
+      - Applications
+  /seb-api/v1/user-requests:
+    get:
+      summary: List user requests
+      description: Retrieves a list of user requests based on optional filtering,
+        sorting, and pagination parameters.
+      operationId: GetSeb-apiV1User-requests
+      responses:
+        '200':
+          description: A list of requests with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserRequest'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      parameters:
+      - name: limit
+        in: query
+        description: Number of user requests to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: request.type
+        in: query
+        description: Filter by request type
+        required: false
+        schema:
+          type: string
+          enum:
+          - WebAccess
+          - AppLogin
+      - name: request.user_id
+        in: query
+        description: Filter by request user id
+        required: false
+        schema:
+          type: string
+      - name: request.device_id
+        in: query
+        description: Filter by request device id
+        required: false
+        schema:
+          type: string
+      - name: request.rule_id
+        in: query
+        description: Filter by request rule id
+        required: false
+        schema:
+          type: string
+      - name: request.url
+        in: query
+        description: Filter by request url
+        required: false
+        schema:
+          type: string
+      - name: request.responded_by
+        in: query
+        description: Filter by response by user id
+        required: false
+        schema:
+          type: string
+      - name: request.status
+        in: query
+        description: Filter by request status
+        required: false
+        schema:
+          type: string
+          enum:
+          - Approved
+          - Declined
+          - Pending
+          - Revoked
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - request.created_at
+          - request.type
+          - request.status
+          - request.response_time
+          - request.url
+      - name: order
+        in: query
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
+      tags:
+      - UserRequests
+  /seb-api/v1/user-requests/{id}:
+    get:
+      summary: Get request details by ID
+      description: Retrieves the full details for a single user request identified
+        by its unique ID.
+      operationId: GetSeb-apiV1User-requestsbyid
+      responses:
+        '200':
+          description: A request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRequest'
+        '404':
+          description: Request not found
+      parameters:
+      - name: id
+        in: path
+        description: Request ID
+        required: true
+        schema:
+          type: string
+      tags:
+      - UserRequests
+  /seb-api/v1/user-requests/{id}/action:
+    post:
+      summary: Act on request
+      description: Submits an action (e.g., approve, decline) on a specific user request.
+      operationId: PostSeb-apiV1User-requestsBy_idAction
+      responses:
+        '200':
+          description: Action performed on request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRequest'
+        '404':
+          description: Request not found
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        description: Request ID
+        required: true
+        schema:
+          type: string
+      tags:
+      - UserRequests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestAction'
+  /seb-api/v1/user-requests/{id}/revoke:
+    post:
+      summary: Revoke approved request
+      description: Revokes a previously approved user request.
+      operationId: PostSeb-apiV1User-requestsBy_idRevoke
+      responses:
+        '200':
+          description: Action performed on request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRequest'
+        '404':
+          description: Request not found
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        description: Request ID
+        required: true
+        schema:
+          type: string
+      tags:
+      - UserRequests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeRequestAction'
