@@ -9,7 +9,7 @@ info:
     \nTo use the APIs, you must first activate and associate a deployment profile in Customer Support Portal for Prisma AIRS AI Runtime API intercept and then onboard the API intercept in Strata Cloud Manager.\
     For licensing, onboarding, activation, and to obtain the API authentication key and profile name, refer to the Prisma AIRS AI Runtime API intercept [Administration guide](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).\n\n
     This Open API spec file was created on June 04, 2024.\
-    \n\n\xA9 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
+    \n\n© 2024 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
     A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
     All other marks mentioned herein may be trademarks of their respective companies.\n"
   license:
@@ -22,6 +22,10 @@ servers:
     description: Prisma AIRS API service URL for US regions
   - url: "https://service-de.api.aisecurity.paloaltonetworks.com"
     description: Prisma AIRS API service URL for EU (Germany) regions
+  - url: "https://service-in.api.aisecurity.paloaltonetworks.com"
+    description: Prisma AIRS API service URL for India regions
+  - url: "https://service-sg.api.aisecurity.paloaltonetworks.com"
+    description: Prisma AIRS API service URL for Singapore regions
 
 tags:
   - name: Scans
@@ -257,12 +261,13 @@ components:
         tr_id:
           type: string
           description: Provide any unique identifier string for correlating the prompt and response transactions. This is an optional field. The tr_id value received for scan request is returned in the scan response along with the scan ID.
+        session_id:
+          type: string
+          description: Provide any unique identifier string for tracking Sessions. This is an optional field. The session_id value received for scan request is returned in the scan response along with the scan ID.
         ai_profile:
           $ref: "#/components/schemas/AiProfile"
-          description: AI profile to use for the scan. You can specify one of the following - profile_id or profile_name
         metadata:
           $ref: "#/components/schemas/Metadata"
-          description: Optionally send the app_name, app_user, ai_model, and user_ip in the metadata
         contents:
           description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
           type: array
@@ -284,6 +289,9 @@ components:
               context:
                 type: string
                 description: The data context for contextual grounding
+              tool_event:
+                $ref: "#/components/schemas/ToolEvent"
+                description:  Tool or function call event details
       required:
         - contents
         - ai_profile
@@ -294,6 +302,7 @@ components:
         profile_id:
           description: Unique identifier for the profile. If not provided, then profile_name is required.
           type: string
+          format: uuid
         profile_name:
           description: Name of the profile. If not provided, then profile_id is required.
           type: string
@@ -312,41 +321,74 @@ components:
           description: AI model serving the AI application
         user_ip:
           type: string
-          description: IP address of the end user using the AI application
+          description: End user IP using the AI application
+        agent_meta:
+          $ref: "#/components/schemas/AgentMeta"
+          description: Additional metadata about the agent used in the scan request
+
+    AgentMeta:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          description: Agent identifier
+        agent_version:
+          type: string
+          description: Agent version
+        agent_arn:
+          type: string
+          description: Agent ARN
+
+    ToolEvent:
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/ToolEventMetadata"
+          description: Metadata associated with the tool or function call event
+        input:
+          type: string
+          description: Raw JSON string of input to the server
+          example: '{"file_key":"abc123"}'
+        output:
+          type: string
+          description: Raw JSON string of output from the server
+          example: '{"content":[{"type":"text","text":"Fetched file"}]}'
+      anyOf:
+        - required: ["input"]
+        - required: ["output"]
 
     ScanResponse:
       type: object
       properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
         report_id:
           type: string
           description: Unique identifier for the scan report
-          example: R82f1e879-0000-49af-9345-da907431c08f
         scan_id:
           type: string
           format: uuid
           description: Unique identifier for the scan
-          example: 82f1e879-0000-49af-9345-da907431c08f
         tr_id:
           type: string
           description: Unique identifier for the transaction
-          example: 1234
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
         profile_id:
           type: string
           format: uuid
           description: Unique identifier of the AI security profile used for scanning
-          example: 12345678-0000-1234-1234-123456789012
         profile_name:
           type: string
           description: AI security profile name used for scanning
-          example: ai-dummy-profile
         category:
           type: string
           description: Category of the scanned content verdicts such as "malicious" or "benign"
-          example: malicious
         action:
           type: string
           description: The action is set to "block" or "allow" based on AI security profile used for scanning
-          example: block
         prompt_detected:
           $ref: "#/components/schemas/PromptDetected"
         response_detected:
@@ -359,7 +401,8 @@ components:
           $ref: "#/components/schemas/PromptDetectionDetails"
         response_detection_details:
           $ref: "#/components/schemas/ResponseDetectionDetails"
-
+        tool_detected:
+          $ref: "#/components/schemas/ToolDetected"
         created_at:
           type: string
           format: date-time
@@ -439,6 +482,12 @@ components:
         topic_guardrails_details:
           $ref: "#/components/schemas/TopicGuardRails"
 
+    ToolDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
     TopicGuardRails:
       type: object
       properties:
@@ -481,34 +530,111 @@ components:
         items:
           type: integer
 
-    ScanIdResult:
+    ToolDetected:
       type: object
+      additionalProperties: false
       properties:
-        req_id:
-          type: integer
-          description: Unique identifier of an individual element sent in the batch scan request
-        status:
-          type: string
-          description: Scan request processing state such as "complete" or "pending"
-          example: complete
-        scan_id:
-          type: string
-          description: Unique identifier for the scan
-          example: 020e7c31-0000-4e0d-a2a6-215a0d5c56d9
-        result:
-          $ref: "#/components/schemas/ScanResponse"
-
-    TcReportObject:
-      type: object
-      properties:
-        confidence:
-          type: string
-          description: Confidence level of the threat classification ("high" and "moderate")
         verdict:
           type: string
-          description: "Detection service verdict such as 'malicious' or 'benign' example: 020e7c31-0000-4e0d-a2a6-215a0d5c56d9"
-        result:
-          $ref: "#/components/schemas/ScanResponse"
+          example: malicious
+        metadata:
+          $ref: "#/components/schemas/ToolEventMetadata"
+        summary:
+          $ref: "#/components/schemas/ScanSummary"
+        input_detected:
+          $ref: "#/components/schemas/IODetected"
+        output_detected:
+          $ref: "#/components/schemas/IODetected"
+
+    ToolEventMetadata:
+      type: object
+      additionalProperties: false
+      required: [ecosystem, method, server_name]
+      properties:
+        ecosystem:
+          type: string
+          description: Ecosystem or protocol of the tool
+          example: "mcp"
+        method:
+          type: string
+          description: Method type of the tool event
+          example: "tools/list"
+        server_name:
+          type: string
+          description: Name of the MCP server
+          example: "Internal MCP server"
+        tool_invoked:
+          type: string
+          description: Name of the tool
+          example: "get_file"
+
+    ScanSummary:
+      type: object
+      additionalProperties: false
+      required: [detections, threats]
+      properties:
+        detections:
+          $ref: "#/components/schemas/ToolDetectionFlags"
+        threats:
+          type: array
+          items: {type: string}
+          example: ["credential leakage", "context poisoning"]
+
+    ToolDetectionFlags:
+      type: object
+      additionalProperties: false
+      properties:
+        injection:
+          type: boolean
+          description: Indicates whether the content contains any injection threats
+        url_cats:
+          type: boolean
+          description: Indicates whether response contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether response contains any sensitive information
+        db_security:
+          type: boolean
+          description: Indicates whether response contains any database security threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether response contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether response contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether response contains any Agent related threats
+        topic_violation:
+          type: boolean
+          description: Indicates whether prompt contains any content violates topic guardrails
+
+    IODetected:
+      type: object
+      additionalProperties: false
+      properties:
+        detection_entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolDetectionEntry"
+
+    ToolDetectionEntry:
+      type: object
+      additionalProperties: false
+      properties:
+        tool_invoked:
+          type: string
+          example: "get_file"
+        detections:
+          $ref: "#/components/schemas/ToolDetectionFlags"
+        threats:
+          type: array
+          items: {type: string}
+          example: ["credential leakage", "context poisoning"]
+        details:
+          $ref: "#/components/schemas/ToolDetectionDetails"
+        masked_data:
+          $ref: "#/components/schemas/MaskedData"
 
     AsyncScanRequest:
       type: array
@@ -538,14 +664,33 @@ components:
         scan_id:
           type: string
           description: Unique identifier for the asynchronous scan request
-          example: 82f1e879-0000-49af-9345-da907431c08f
         report_id:
           type: string
           description: Unique identifier for the asynchronous scan report
-          example: R82f1e879-0000-49af-9345-da907431c08f
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
       required:
         - received
         - scan_id
+
+    ScanIdResult:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+        req_id:
+          type: integer
+          description: Unique identifier of an individual element sent in the batch scan request
+        status:
+          type: string
+          description: Scan request processing state such as "complete" or "pending"
+        scan_id:
+          type: string
+          description: Unique identifier for the scan
+        result:
+          $ref: "#/components/schemas/ScanResponse"
 
     ThreatScanReportObjects:
       type: array
@@ -555,14 +700,15 @@ components:
     ThreatScanReportObject:
       type: object
       properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
         report_id:
           type: string
           description: Unique identifier for the scan report
-          example: R82f1e879-0000-49af-9345-da907431c08f
         scan_id:
           type: string
           description: Unique identifier for the scan
-          example: 82f1e879-0000-49af-9345-da907431c08f
         req_id:
           type: integer
           format: uint32
@@ -570,7 +716,9 @@ components:
         transaction_id:
           type: string
           description: Unique identifier for the transaction
-          example: 442116912
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
         detection_results:
           type: array
           items:
@@ -581,22 +729,40 @@ components:
       properties:
         data_type:
           type: string
-          description: Content type such as "prompt" or "response"
-          example: prompt
+          description: Content type such as "prompt", "response" or "tool_event"
         detection_service:
           type: string
           description: Detection service name generating the results such as "urlf", "dlp", and "prompt injection"
-          example: pi
         verdict:
           type: string
           description: Detection service verdict such as "malicious" or "benign"
-          example: malicious
         action:
           type: string
           description: The action is set to "block" or "allow" based on AI security profile used for scanning
-          example: block
+        metadata:
+          $ref: "#/components/schemas/DSResultMetadata"
         result_detail:
           $ref: "#/components/schemas/DSDetailResultObject"
+
+    DSResultMetadata:
+      type: object
+      properties:
+        ecosystem:
+          type: string
+          example: "mcp"
+        method:
+          type: string
+          example: "tools/call"
+        server_name:
+          type: string
+          example: "MCP server"
+        tool_invoked:
+          type: string
+          example: "get_file"
+        direction:
+          type: string
+          enum: ["input", "output"]
+          description: Indicates the direction of data flow, either input to or output from a tool or service
 
     DSDetailResultObject:
       type: object
@@ -615,6 +781,8 @@ components:
           $ref: "#/components/schemas/AgentReportObject"
         topic_guardrails_report:
           $ref: "#/components/schemas/TgReportObject"
+        cg_report:
+          $ref: "#/components/schemas/CgReportObject"
 
     DbsReportObject:
       type: array
@@ -634,21 +802,44 @@ components:
           type: string
           description: The action is set to "block" or "allow" based on AI security profile used for scanning
 
-    McReportObject:
+    TcReportObject:
       type: object
       properties:
+        confidence:
+          type: string
+          description: Confidence level of the threat classification ("high" and "moderate")
         verdict:
           type: string
           description: Detection service verdict such as "malicious" or "benign"
-        code_analysis_by_type:
-          type: array
-          items:
-            $ref: "#/components/schemas/McEntryObject"
+
+    McReportObject:
+      type: object
+      properties:
         all_code_blocks:
           type: array
           items:
             type: string
             description: Code blocks extracted from prompt or response content
+        code_analysis_by_type:
+          type: array
+          items:
+            $ref: "#/components/schemas/McEntryObject"
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        malware_script_report:
+          $ref: "#/components/schemas/MalwareReportObject"
+          description: Malware script scanning report details
+        command_injection_report:
+          $ref: "#/components/schemas/CmdInjectReportObject"
+          description: Command injection scanning report details
+
+    MalwareReportObject:
+      type: object
+      properties:
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
 
     McEntryObject:
       type: object
@@ -659,6 +850,21 @@ components:
         code_sha256:
           type: string
           description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
+
+    CmdInjectReportObject:
+      type: array
+      items:
+        $ref: "#/components/schemas/CmdEntryObject"
+
+    CmdEntryObject:
+      type: object
+      properties:
+        code_block:
+          type: string
+          description: Code block extracted from prompt or response content
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
 
     AgentReportObject:
       type: object
@@ -695,21 +901,17 @@ components:
         url:
           type: string
           description: URL in the scan request
-          example: urlfiltering.paloaltonetworks.com/test-malware
         risk_level:
           type: string
           description: Risk level associated with the URL, such as "high", "medium", or "low"
-          example: high
         action:
           type: string
           description: Action associated with the URL Category, such as "allow", "block", or "unknown"
         categories:
           type: array
           description: Categories associated with the URL
-          example: malware
           items:
             type: string
-            example: prompt detection
 
     DlpReportObject:
       type: object
@@ -717,15 +919,12 @@ components:
         dlp_report_id:
           type: string
           description: Unique identifier for the DLP report
-          example: 0000023BD6053DF065925BDB2EB7E21C36ABD93F69AEB48DE8D6EE8E6FED3F91
         dlp_profile_name:
           type: string
           description: DLP profile name used for the scan
-          example: Sensitive Content
         dlp_profile_id:
           type: string
           description: Unique identifier for the DLP profile used for the scan
-          example: 11995043
         dlp_profile_version:
           type: integer
           format: int32
@@ -733,11 +932,9 @@ components:
         data_pattern_rule1_verdict:
           type: string
           description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
-          example: NOT_MATCHED
         data_pattern_rule2_verdict:
           type: string
           description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
-          example: ""
         data_pattern_detection_offsets:
           type: array
           description: Matched patterns and their byte locations
@@ -782,6 +979,19 @@ components:
           items:
             type: string
           description: Indicates the list of blocked topics if there was a content match for the topic allow list
+
+    CgReportObject:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Indicates the status of cg explanation such as  "completed" or "pending"
+        explanation:
+          type: string
+          description: Indicates the the contextual grounding explanation given by the model
+        category:
+          type: string
+          description: Indicates the predefined category of contextual grounding results
 
     Error:
       type: object
@@ -1048,3 +1258,132 @@ components:
             tr_id: "2082"
           scan_id: "a43e8177-9776-465b-8ef3-a95c5a9607f8"
           status: "complete"
+    ExampleToolsListScan:
+      summary: Example sync scan response for MCP tools/list method
+      value:
+        source: "AI-Runtime-MCP-Server"
+        report_id: "R8d3f7a2e-1234-4b5c-9e8f-a1b2c3d4e5f6"
+        scan_id: "8d3f7a2e-1234-4b5c-9e8f-a1b2c3d4e5f6"
+        tr_id: "txn-5001"
+        session_id: "session-abc123"
+        profile_id: "7b4a9de9-09e9-4ce5-b090-7f99fdffc9a5"
+        profile_name: "mcp-security-profile"
+        category: "benign"
+        action: "allow"
+        tool_detected:
+          verdict: "benign"
+          metadata:
+            ecosystem: "mcp"
+            method: "tools/list"
+            server_name: "file-system-mcp-server"
+          summary:
+            detections:
+              injection: false
+              url_cats: false
+              dlp: false
+              db_security: false
+              toxic_content: false
+              malicious_code: false
+              agent: false
+              topic_violation: false
+            threats: []
+          output_detected:
+            detection_entries:
+              - tool_invoked: "read_file"
+                detections:
+                  injection: false
+                  url_cats: false
+                  dlp: false
+                  db_security: false
+                  toxic_content: false
+                  malicious_code: false
+                  agent: false
+                  topic_violation: false
+                threats: []
+              - tool_invoked: "write_file"
+                detections:
+                  injection: false
+                  url_cats: false
+                  dlp: false
+                  db_security: false
+                  toxic_content: false
+                  malicious_code: false
+                  agent: false
+                  topic_violation: false
+                threats: []
+        created_at: "2025-04-17T10:15:20Z"
+        completed_at: "2025-04-17T10:15:21Z"
+    ExampleToolsCallScan:
+      summary: Example sync scan response for MCP tools/call method with detected threats
+      value:
+        source: "AI-Runtime-MCP-Server"
+        report_id: "R9e4f8b3f-2345-5c6d-af9g-b2c3d4e5f6g7"
+        scan_id: "9e4f8b3f-2345-5c6d-af9g-b2c3d4e5f6g7"
+        tr_id: "txn-5002"
+        session_id: "session-xyz789"
+        profile_id: "7b4a9de9-09e9-4ce5-b090-7f99fdffc9a5"
+        profile_name: "mcp-security-profile"
+        category: "malicious"
+        action: "block"
+        tool_detected:
+          verdict: "malicious"
+          metadata:
+            ecosystem: "mcp"
+            method: "tools/call"
+            server_name: "database-mcp-server"
+            tool_invoked: "execute_query"
+          summary:
+            detections:
+              injection: true
+              url_cats: false
+              dlp: true
+              db_security: false
+              toxic_content: false
+              malicious_code: false
+              agent: false
+              topic_violation: false
+            threats:
+              - "credential leakage"
+          input_detected:
+            detection_entries:
+              - tool_invoked: "execute_query"
+                detections:
+                  injection: true
+                  url_cats: false
+                  dlp: false
+                  db_security: false
+                  toxic_content: false
+                  malicious_code: false
+                  agent: false
+                  topic_violation: false
+                threats:
+                details:
+                  topic_guardrails_details:
+                    allowed_topics: []
+                    blocked_topics: []
+          output_detected:
+            detection_entries:
+              - tool_invoked: "execute_query"
+                detections:
+                  injection: false
+                  url_cats: false
+                  dlp: true
+                  db_security: false
+                  toxic_content: false
+                  malicious_code: false
+                  agent: false
+                  topic_violation: false
+                threats:
+                  - "credential leakage"
+                details:
+                  topic_guardrails_details:
+                    allowed_topics: []
+                    blocked_topics: []
+                masked_data:
+                  data: "SELECT * FROM users WHERE password='***REDACTED***'"
+                  pattern_detections:
+                    - pattern: "password"
+                      locations:
+                        - [35, 54]
+        created_at: "2025-04-17T10:20:30Z"
+        completed_at: "2025-04-17T10:20:32Z"
