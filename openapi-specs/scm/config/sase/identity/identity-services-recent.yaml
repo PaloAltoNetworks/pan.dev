@@ -43,6 +43,8 @@ tags:
     description: OCSP Responders
   - name: RADIUS Server Profiles
     description: RADIUS Server Profiles
+  - name: Redistribution Profile
+    description: Redistribution Profile
   - name: SAML Server Profiles
     description: SAML Server Profiles
   - name: SCEP Profiles
@@ -1357,6 +1359,175 @@ paths:
       description: |
         Delete a RADIUS server profile.
       operationId: DeleteRADIUSServerProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /redistribution-profile:
+    get:
+      tags:
+        - Redistribution Profile
+      summary: List redistribution profiles
+      description: |
+        Retrieve a list of redistribution profiles. Redistribution profiles define 
+        data flow between identity workflows (like CIE Onboarding) and security systems,
+        enabling automated sharing of identity data, user mappings, and security tags.
+      operationId: ListRedistributionProfiles
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/redistribution-profile'
+                  limit:
+                    type: integer
+                    default: 200
+                  offset:
+                    type: integer
+                    default: 0
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    post:
+      tags:
+        - Redistribution Profile
+      summary: Create a redistribution profile
+      description: |
+        Create a new redistribution profile. Configure data flow between source workflows
+        (like CIE Onboarding or Identity Redistribution) and destination systems by
+        specifying contributor and receiver data types.
+      operationId: CreateRedistributionProfiles
+      requestBody:
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/redistribution-profile'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/redistribution-profile'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /redistribution-profiles/{id}:
+    get:
+      tags:
+        - Redistribution Profile
+      summary: Get a redistribution profile
+      description: |
+        Get an existing redistribution profile by ID. Returns the complete configuration
+        including source workflow, contributor/receiver data types, and segment details.
+      operationId: GetRedistributionProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/redistribution-profile'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags:
+        - Redistribution Profile
+      summary: Update a redistribution profile
+      description: |
+        Update an existing redistribution profile. Modify source workflows, data types,
+        or segment configuration for identity data redistribution.
+      operationId: UpdateRedistributionProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      requestBody:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/redistribution-profile'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/redistribution-profile'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags:
+        - Redistribution Profile
+      summary: Delete a redistribution profile
+      description: |
+        Delete a redistribution profile. This will stop all data flow configured
+        through this profile between source and destination systems.
+      operationId: DeleteRedistributionProfilesByID
       parameters:
         - $ref: '#/components/parameters/uuid'
       responses:
@@ -2898,7 +3069,7 @@ components:
         Tenant Service Group (TSG) ID.  The resulting JWT access token should 
         be attached to all API calls as a `Bearer` token in the `Authorization` 
         header (ex. `Authorization: Bearer tokenstring`).
-      flows: 
+      flows:
         clientCredentials:
           tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
           scopes: {}
@@ -3283,8 +3454,7 @@ components:
   schemas:
     authentication-rules:
       type: object
-      required: 
-        - id
+      required:
         - name
         - from
         - to
@@ -3425,7 +3595,7 @@ components:
         - rulebase
     authentication-portals:
       type: object
-      required: 
+      required:
         - id
         - redirect_host
       properties:
@@ -3466,34 +3636,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     authentication-profiles:
       type: object
       required:
@@ -3642,37 +3812,37 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     local-users:
       type: object
-      required: 
+      required:
         - id
         - name
         - password
@@ -3701,37 +3871,37 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     local-user-groups:
       type: object
-      required: 
+      required:
         - id
         - name
       properties:
@@ -3756,34 +3926,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     saml-server-profiles:
       type: object
       required:
@@ -3843,34 +4013,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     ldap-server-profiles:
       type: object
       required:
@@ -3944,34 +4114,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     radius-server-profiles:
       type: object
       required:
@@ -4072,34 +4242,143 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
+    redistribution-profile:
+      type: object
+      required:
+        - id
+        - name
+        - segment_id
+        - source
+      properties:
+        id:
+          type: string
+          description: The UUID of the redistribution profile
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          type: string
+          maxLength: 127
+          description: The name of the redistribution profile
+          example: string
+        segment_id:
+          type: string
+          maxLength: 127
+          description: The segment ID/UUID for the redistribution profile
+          example: "123"
+        description:
+          type: string
+          maxLength: 1023
+          description: Human-readable description of the redistribution profile
+          example: test desc
+        source:
+          type: string
+          maxLength: 128
+          description: The source workflow (e.g. 'CIE Onboarding', 'Identity Redistribution', or custom string)
+          example: string
+        contributor:
+          type: array
+          items:
+            type: string
+            enum:
+              - HIP Report
+              - IP Port User
+              - IP Tag
+              - IP User
+              - Quarantine List
+              - User Tag
+            maxLength: 31
+            description: Data type that can be contributed by this profile
+          description: Data types that this redistribution profile can contribute/send
+          example:
+            - HIP Report
+            - IP Port User
+            - IP Tag
+            - IP User
+            - Quarantine List
+            - User Tag
+        receiver:
+          type: array
+          items:
+            type: string
+            enum:
+              - HIP Report
+              - IP Port User
+              - IP Tag
+              - IP User
+              - Quarantine List
+              - User Tag
+            maxLength: 31
+            description: Data type that can be received by this profile
+          description: Data types that this redistribution profile can receive
+          example:
+            - HIP Report
+            - IP Port User
+            - IP Tag
+            - IP User
+            - Quarantine List
+            - User Tag
+      oneOf:
+        - type: object
+          title: folder
+          properties:
+            folder:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The folder in which the resource is defined
+              example: My Folder
+          required:
+            - folder
+        - type: object
+          title: snippet
+          properties:
+            snippet:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The snippet in which the resource is defined
+              example: My Snippet
+          required:
+            - snippet
+        - type: object
+          title: device
+          properties:
+            device:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The device in which the resource is defined
+              example: My Device
+          required:
+            - device
     tacacs-server-profiles:
       type: object
       required:
@@ -4157,37 +4436,37 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     kerberos-server-profiles:
       type: object
-      required: 
+      required:
         - id
         - name
         - server
@@ -4223,34 +4502,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     authentication-sequences:
       type: object
       required:
@@ -4280,34 +4559,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     mfa-servers:
       type: object
       required:
@@ -4334,7 +4613,7 @@ components:
               properties:
                 okta_adaptive_v1:
                   type: object
-                  required: 
+                  required:
                     - okta_api_host
                     - okta_baseuri
                     - okta_token
@@ -4364,8 +4643,7 @@ components:
                       type: string
                       minLength: 2
                       default: /api/v1
-                  description:
-                    Integration with [Okta Adaptive MFA](https://www.okta.com/products/adaptive-multi-factor-authentication)
+                  description: Integration with [Okta Adaptive MFA](https://www.okta.com/products/adaptive-multi-factor-authentication)
             - type: object
               title: ping_identity_v1
               properties:
@@ -4409,8 +4687,7 @@ components:
                       maximum: 600
                       default: 30
                       description: Ping Identity timeout (seconds)
-                  description:
-                    Integation with [Ping Identity](https://www.pingidentity.com/en/platform.html)
+                  description: Integation with [Ping Identity](https://www.pingidentity.com/en/platform.html)
             - type: object
               title: rsa_securid_access_v1
               properties:
@@ -4439,21 +4716,20 @@ components:
                     rsa_assurancepolicyid:
                       type: string
                       minLength: 3
-                      description: RSA SecurID assurance level 
+                      description: RSA SecurID assurance level
                     rsa_timeout:
                       type: integer
                       minimum: 5
                       maximum: 600
                       default: 30
                       description: RSA SecurID timeout (seconds)
-                  description:
-                    Integration with [RSA SecurID](https://www.rsa.com/products/securid/)
+                  description: Integration with [RSA SecurID](https://www.rsa.com/products/securid/)
             - type: object
               title: duo_security_v2
               properties:
                 duo_security_v2:
                   type: object
-                  required: 
+                  required:
                     - duo_api_host
                     - duo_integration_key
                     - duo_secret_key
@@ -4494,34 +4770,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     certificates-get:
       type: object
       properties:
@@ -4578,37 +4854,37 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     certificates-post:
       type: object
-      required: 
+      required:
         - id
         - name
         - common_name
@@ -4644,7 +4920,7 @@ components:
                     - 4096
               required:
                 - ecdsa_number_of_bits
-          description: Encryption algorithm 
+          description: Encryption algorithm
         alternate_email:
           type: array
           items:
@@ -4725,34 +5001,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     certificates-import:
       type: object
       required:
@@ -4776,7 +5052,7 @@ components:
           description: Certificate format
         key_file:
           type: string
-          description: The Base64 encoded content of the certificate private key 
+          description: The Base64 encoded content of the certificate private key
         passphrase:
           type: string
           format: password
@@ -4787,34 +5063,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     certificate-profiles:
       type: object
       required:
@@ -4849,8 +5125,8 @@ components:
           type: array
           items:
             type: object
-            required: 
-              -  name
+            required:
+              - name
             properties:
               name:
                 type: string
@@ -4883,54 +5159,50 @@ components:
           description: Use OCSP?
         block_unknown_cert:
           type: boolean
-          description: 
-            Block session if certificate status is unknown?
+          description: Block session if certificate status is unknown?
         block_timeout_cert:
           type: boolean
-          description: 
-            Block session if certificate status cannot be retrieved within timeout?
+          description: Block session if certificate status cannot be retrieved within timeout?
         block_unauthenticated_cert:
           type: boolean
-          description: 
-            Block session if the certificate was not issued to the authenticating device?
+          description: Block session if the certificate was not issued to the authenticating device?
         block_expired_cert:
           type: boolean
-          description: 
-            Block sessions with expired certificates?
+          description: Block sessions with expired certificates?
       oneOf:
         - type: object
           title: folder
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     scep-profiles:
       type: object
       required:
@@ -5068,34 +5340,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     trusted-certificate-authorities:
       type: object
       properties:
@@ -5215,34 +5487,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     ocsp-responders:
       type: object
       required:
@@ -5271,34 +5543,34 @@ components:
           properties:
             folder:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The folder in which the resource is defined
               example: My Folder
-          required: 
-            -  folder
+          required:
+            - folder
         - type: object
           title: snippet
           properties:
             snippet:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The snippet in which the resource is defined
               example: My Snippet
-          required: 
-            -  snippet
+          required:
+            - snippet
         - type: object
           title: device
           properties:
             device:
               type: string
-              pattern: ^[a-zA-Z\d-_\. ]+$
+              pattern: ^[a-zA-Z\d\-_\. ]+$
               maxLength: 64
               description: The device in which the resource is defined
               example: My Device
-          required: 
-            -  device
+          required:
+            - device
     export-certificate-payload:
       type: object
       properties:
