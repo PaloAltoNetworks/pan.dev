@@ -2,13 +2,26 @@ import React from "react";
 import Link from "@docusaurus/Link";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import feedsJson from "./feeds.json";
-import mediumFeedsJson from "../../Medium/blogs.json";
 import "./Feeds.scss";
 
+let mediumFeedsJson;
+// let feedsJson;
+
+try {
+  mediumFeedsJson = require("../../Medium/blogs.json");
+} catch (error) {
+  mediumFeedsJson = null;
+}
+
+// try {
+//   feedsJson = require("./feeds.json");
+// } catch (error) {
+//   feedsJson = null;
+// }
+
 function Feeds() {
-  const hashicorpImageFeeds = feedsJson.items.slice(0, 2);
-  const hashicorpFeeds = feedsJson.items.slice(2, 6);
+  // const hashicorpImageFeeds = feedsJson.items.slice(0, 2);
+  // const hashicorpFeeds = feedsJson.items.slice(2, 6);
 
   const filterMediumTerraform = (item) => {
     const title = item.title;
@@ -76,16 +89,9 @@ function Feeds() {
     <div className="container">
       <section className="feeds-container">
         <header className="feeds-header">
-          <h1>Latest Terraform News from</h1>
+          <h1>Latest Terraform Blogs</h1>
         </header>
-        <Tabs>
-          <TabItem value="HashiCorp" label="HashiCorp">
-            <FeedItem feeds={hashicorpFeeds} imageFeeds={hashicorpImageFeeds} />
-          </TabItem>
-          <TabItem value="PAN.dev" label="PAN.dev">
-            <FeedItem feeds={mediumFeeds} imageFeeds={mediumImageFeeds} />
-          </TabItem>
-        </Tabs>
+        <FeedItem feeds={mediumFeeds} imageFeeds={mediumImageFeeds} />
       </section>
     </div>
   );

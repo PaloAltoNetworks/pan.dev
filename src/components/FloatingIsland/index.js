@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
-import ApplauseButton from "../Applause";
 import EditThisPageButton from "../EditThisPageButton";
 import CopyButton from "../CopyButton";
 import { ReportAnIssueIcon } from "../Issue";
@@ -36,7 +35,7 @@ function Divider() {
 function FloatingIsland() {
   const { metadata } = useDoc();
   const { editUrl, frontMatter } = metadata;
-  const { hide_applause, hide_issue } = frontMatter;
+  const { hide_issue } = frontMatter;
   const containerRef = useRef(null);
   const isVisible = ExecutionEnvironment.canUseDOM
     ? isInViewport(containerRef)
@@ -60,7 +59,7 @@ function FloatingIsland() {
       >
         {!isVisible && editUrl && <EditThisPageButton />}
         {!isVisible && editUrl && <Divider />}
-        <CopyButton isVisible={isVisible} />
+        {!isVisible && <CopyButton isVisible={isVisible} />}
         {!isVisible && <Divider />}
         {!isVisible && !hide_issue && <ReportAnIssueIcon />}
       </div>

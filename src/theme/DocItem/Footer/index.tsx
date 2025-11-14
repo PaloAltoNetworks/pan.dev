@@ -8,6 +8,7 @@ import TagsListInline, {
 } from "@theme/TagsListInline";
 
 import styles from "./styles.module.css";
+import CopyButton from "../../../components/CopyButton";
 import FloatingIsland from "../../../components/FloatingIsland";
 import { ReportAnIssue } from "../../../components/Issue";
 
@@ -32,7 +33,6 @@ type EditMetaRowProps = Pick<
   | "lastUpdatedAt"
   | "lastUpdatedBy"
   | "formattedLastUpdatedAt"
-  | "hide_applause"
   | "hide_issue"
 >;
 function EditMetaRow({
@@ -40,16 +40,16 @@ function EditMetaRow({
   lastUpdatedAt,
   lastUpdatedBy,
   formattedLastUpdatedAt,
-  hide_applause,
   hide_issue,
 }: EditMetaRowProps) {
   return (
     <>
       <hr></hr>
-      <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, "row")}>
+      <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, styles.docFooterEditMetaRow, "row")}>
         <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
         </div>
         <div className={styles.docFooterEditMetaRowItemRight}>
+          <CopyButton isVisible={true}/>
           {editUrl && <EditThisPage editUrl={editUrl} />}
           {!hide_issue && <ReportAnIssue />}
         </div>
@@ -68,14 +68,13 @@ export default function DocItemFooter(): JSX.Element | null {
     tags,
     frontMatter,
   } = metadata;
-  const { hide_applause, hide_issue } = frontMatter;
+  const { hide_issue } = frontMatter;
 
   const canDisplayTagsRow = tags.length > 0;
   const canDisplayEditMetaRow = !!(
     editUrl ||
     lastUpdatedAt ||
     lastUpdatedBy ||
-    !hide_applause ||
     !hide_issue
   );
 
@@ -97,7 +96,6 @@ export default function DocItemFooter(): JSX.Element | null {
           lastUpdatedAt={lastUpdatedAt}
           lastUpdatedBy={lastUpdatedBy}
           formattedLastUpdatedAt={formattedLastUpdatedAt}
-          hide_applause={hide_applause}
           hide_issue={hide_issue}
         />
       )}

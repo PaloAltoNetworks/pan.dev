@@ -142,7 +142,8 @@ __Attributes__
 
 ```python
 def __init__(valid_elements: Iterable,
-             requested_config: Optional[List[ConfigElement]] = None)
+             requested_config: Optional[List[ConfigElement]] = None,
+             explicit_elements: Optional[Set[str]] = None)
 ```
 
 ConfigParser constructor.
@@ -164,6 +165,8 @@ __Parameters__
 - __valid_elements__ (`Iterable`): Valid elements against which we check the requested config.
 - __requested_config__ (`list, optional`): (defaults to `None`) A list of requested configuration items with an optional
     configuration.
+- __explicit_elements__ (`set, optional`): (defaults to `None`) A set of elements that should only be included when
+    explicitly requested.
 
 __Raises__
 
@@ -378,22 +381,22 @@ __Returns__
 def interpret_yes_no(boolstr: str) -> bool
 ```
 
-Interpret `yes`/`no` as booleans.
+Interpret `yes`/`no` and `on`/`off` as booleans.
 
 __Parameters__
 
 
-- __boolstr__ (`str`): `yes` or `no`, a typical device response for simple boolean-like queries.
+- __boolstr__ (`str`): `yes`, `no`, `on` or `off`, a typical device response for simple boolean-like queries.
 
 __Raises__
 
 
-- `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes` or `no`.
+- `WrongDataTypeException`: An exception is raised when `boolstr` is neither `yes`, `no`, `on` or `off`.
 
 __Returns__
 
 
-`bool`: `True` for *yes*, `False` for *no*.
+`bool`: `True` for *yes* / *on*, `False` otherwise.
 
 ### `printer`
 

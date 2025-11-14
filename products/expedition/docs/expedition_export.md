@@ -266,27 +266,6 @@ changeto system
 The configuration is exported as a **.txt** file and is readable using any text editor.
 :::
 
-## SonicWall
-
-In collaboration with the Expedition Team, Migration Factory team has committed to redesigning all the converters present in the Expedition2 tool with the goal of pushing their capabilities further and increasing maintainability. The team also develops a tool called **PANser**, a parser for PAN-OS configuration files that is designed to be flexible and extensible, making it a valuable tool for a wide range of use cases.   
-
-By using PANser as an external parser on your Expedition2 environment, you can enhance the number and variety of 3rd party parsers.
-
-Please fulfil and follow instructions on the form to download the <a href="https://forms.gle/zXGWh9cNgNaHSFBW6">**PANser docker image**</a>  
-
-For more details, please reach out to the Migration Factory team at
-pso-migration-factory@paloaltonetworks.com  
-
-To export the configuration of a SonicWall firewall, you can follow these general steps:
-
-1. Log in to the SonicWall firewall management interface using a web browser.
-2. Navigate to the "System" or "Administration" section of the interface.
-3. Look for an option like "Export Settings" or "Backup Configuration."
-4. Select the option to export the configuration.
-5. Choose a location to save the configuration file on your local machine.
-6. Save the configuration file with a **.EXP** format.
-
-
 ## Forcepoint
 
 ### SideWinder

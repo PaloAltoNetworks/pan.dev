@@ -44,8 +44,23 @@ jobs:
         - name: Install dependencies
           run: yarn --prefer-offline
 
+        # needed for fetching Hashicorp blog feed
+        - name: Install Playwright
+          run: |
+            npx playwright install chromium
+            npx playwright install-deps chromium
+
+        - name: Cache Playwright
+          uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+          with:
+            path: |
+              ~/.cache/ms-playwright
+            key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
+            restore-keys: |
+              ${{ runner.os }}-playwright-
+
         - name: Build site
-          run: REACT_APP_ERROR_REPORTER_APIKEY=${{ secrets.ERROR_REPORTER_APIKEY }} REACT_APP_FIREBASE_APIKEY=${{ secrets.FIREBASE_APIKEY }} REACT_APP_RECAPTCHA_APIKEY=${{ secrets.RECAPTCHA_APIKEY }} yarn build-github && zip -r build.zip build
+          run: REACT_APP_ERROR_REPORTER_APIKEY=${{ secrets.ERROR_REPORTER_APIKEY }} REACT_APP_FIREBASE_APIKEY=${{ secrets.FIREBASE_APIKEY }} REACT_APP_RECAPTCHA_APIKEY=${{ secrets.RECAPTCHA_APIKEY }} FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github && zip -r build.zip build
 
         - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
           with:
@@ -56,6 +71,8 @@ jobs:
       name: Deploy
       needs: build
       runs-on: pan-dev-runner-lg
+      permissions:
+        id-token: write
 
       steps:
         - name: Checkout repository
@@ -74,12 +91,26 @@ jobs:
         - name: Unzip build artifact
           run: unzip build.zip
 
+        - name: Authenticate to Google Cloud
+          id: auth
+          uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5
+          with:
+            workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+            service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+        - name: Export Google Cloud Credentials
+          run: echo "GCP_SA_KEY=$(cat ${{ steps.auth.outputs.credentials_file_path }})" >> $GITHUB_ENV
+
+        - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
+          with:
+            name: build
+
         - name: Deploy to Firebase
           id: deploy_live
-          uses: FirebaseExtended/action-hosting-deploy@120e124148ab7016bec2374e5050f15051255ba2 # v0.7.1
+          uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0.10.0
           with:
             repoToken: '${{ secrets.GITHUB_TOKEN }}'
-            firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'
+            firebaseServiceAccount: "${{ env.GCP_SA_KEY }}"
             projectId: pan-dev-f1b58
             channelId: live
           env:

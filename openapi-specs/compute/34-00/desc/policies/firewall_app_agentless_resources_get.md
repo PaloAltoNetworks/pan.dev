@@ -1,0 +1,1 @@
+ Returns the WAAS VPC configuration resources.

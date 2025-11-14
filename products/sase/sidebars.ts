@@ -303,6 +303,11 @@ module.exports = {
     "sase/api/mt-interconnect/mt-interconnect",
     require("./api/mt-interconnect/sidebar"),
   ],
+  manageservices: [
+    "sase/api/manage-services-5g/introduction_5g",
+    "sase/api/manage-services-5g/overview_5g",
+    require("./api/manage-services-5g/sidebar"),
+  ],
   configorch: [
     "sase/api/config-orch/introduction",
     "sase/api/config-orch/api-workflow",
@@ -312,6 +317,10 @@ module.exports = {
     "sase/api/sspm/sspm-introduction",
     "sase/api/sspm/sspm-api-workflow",
     require("./api/sspm/sidebar"),
+  ],
+  identitysspm: [
+    "sase/api/identity-sspm/introduction",
+    require("./api/identity-sspm/sidebar"),
   ],
   sasesubscription: [
     "sase/api/subscription/subscription-api",
