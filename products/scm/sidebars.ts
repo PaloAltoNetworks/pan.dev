@@ -125,6 +125,17 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Network Configuration",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/sase/network configurations/network-api",
+            },
+            require("./api/config/sase/network configurations/sidebar"),
+          ],
+        },
+        {
+          type: "category",
           label: "Network Deployment",
           items: [
             {
