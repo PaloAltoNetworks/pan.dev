@@ -153,15 +153,40 @@ async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
   async function prewarmOnce() {
     if (VERBOSE) console.error("[pw] prewarming:", prewarmUrl);
     await context.unroute("**/*").catch(() => {}); // make sure nothing is blocked
-    const resp = await page.goto(prewarmUrl, {
-      waitUntil: "networkidle",
-      timeout: 60000,
-    });
-    if (VERBOSE) {
-      console.error("[pw] prewarm status:", resp?.status?.());
+
+    try {
+      // Try with 'load' first (less strict than 'networkidle')
+      const resp = await page.goto(prewarmUrl, {
+        waitUntil: "load",
+        timeout: 45000,
+      });
+      if (VERBOSE) {
+        console.error("[pw] prewarm status:", resp?.status?.());
+      }
+      // A tiny idle to allow any post-load challenge work to complete
+      await delay(2000);
+    } catch (err) {
+      if (VERBOSE) {
+        console.error(
+          "[pw] prewarm failed, trying with minimal wait:",
+          err.message
+        );
+      }
+      // Fallback: try with just 'domcontentloaded'
+      try {
+        await page.goto(prewarmUrl, {
+          waitUntil: "domcontentloaded",
+          timeout: 30000,
+        });
+        await delay(3000); // Give more time for challenge to complete
+      } catch (err2) {
+        if (VERBOSE) {
+          console.error("[pw] prewarm fallback also failed:", err2.message);
+        }
+        // Continue anyway - maybe we don't need prewarming
+      }
     }
-    // A tiny idle to allow any post-load challenge work to complete
-    await delay(1500);
+
     // Save cookies/state for reuse
     try {
       const state = await context.storageState();
@@ -184,20 +209,25 @@ async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
   }
 
   try {
-    // If no cookies, do a prewarm
-    if (!fs.existsSync(storageStatePath)) {
-      await prewarmOnce();
-    }
-
-    // Try feed → if 429, prewarm again and retry (up to 2 times)
+    let needsPrewarm = !fs.existsSync(storageStatePath);
     let attempt = 0;
     let last = null;
     const maxAttempts = 3;
+
     while (attempt < maxAttempts) {
       attempt++;
+
+      // Do prewarm if needed (first attempt without cookies, or after challenge)
+      if (needsPrewarm && attempt > 1) {
+        if (VERBOSE)
+          console.error(`[pw] Prewarming before attempt ${attempt}...`);
+        await prewarmOnce();
+        needsPrewarm = false;
+      }
+
       const { status, headers, text } = await tryFetchFeedOnce();
       if (status === 200 && text) {
-        // Refresh stored state (keeps cookies fresh)
+        // Success! Refresh stored state (keeps cookies fresh)
         try {
           const state = await context.storageState();
           fs.writeFileSync(storageStatePath, JSON.stringify(state, null, 2));
@@ -208,23 +238,29 @@ async function fetchXmlWithPlaywright(feedUrl, opts = {}) {
       }
 
       last = { status, headers };
+
+      // Check if we need to prewarm and retry
       if (
-        status === 429 &&
-        isVercelChallenge({ statusCode: status, headers })
+        (status === 429 &&
+          isVercelChallenge({ statusCode: status, headers })) ||
+        (status === 403 &&
+          isCloudflareChallenge({ statusCode: status, headers }))
       ) {
         if (VERBOSE)
           console.error(
-            `[pw] 429 challenge on attempt ${attempt}, re-prewarming...`
+            `[pw] Challenge detected (${status}) on attempt ${attempt}, will retry with prewarm...`
           );
-        // clear and re-warm
+        // clear and prepare to re-warm on next iteration
         await context.clearCookies();
         await context.clearPermissions();
-        await prewarmOnce();
-        await delay(800); // small jitter before retry
+        needsPrewarm = true;
+        await delay(1000); // small delay before retry
         continue;
       }
 
-      // Not a vercel 429 or still blocked → break
+      // Not a challenge we can handle → break
+      if (VERBOSE)
+        console.error(`[pw] Unhandled response status ${status}, giving up`);
       break;
     }
 
