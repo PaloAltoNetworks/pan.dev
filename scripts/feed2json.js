@@ -12,7 +12,10 @@ const xml2js = require("xml2js");
 const VERBOSE = process.env.FEED_DEBUG === "1";
 const STORAGE_STATE_PATH = "./.playwright-storage.json";
 // return empty feed instead of throw on persistent 429
-const FEED_SOFT_FAIL = process.env.FEED_SOFT_FAIL === undefined ? true : process.env.FEED_SOFT_FAIL === "1"; 
+const FEED_SOFT_FAIL =
+  process.env.FEED_SOFT_FAIL === undefined
+    ? true
+    : process.env.FEED_SOFT_FAIL === "1";
 
 // ---------------- Helper: plain fetch (original behavior) ----------------
 function fetchXmlFromUrl(feedUrl) {
@@ -20,7 +23,20 @@ function fetchXmlFromUrl(feedUrl) {
     const url = new URL(feedUrl);
     const client = url.protocol === "https:" ? https : http;
 
-    const req = client.get(feedUrl, (res) => {
+    const options = {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept:
+          "application/rss+xml, application/xml, application/atom+xml, text/xml, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
+    };
+
+    const req = client.get(feedUrl, options, (res) => {
       if (VERBOSE) {
         console.error("[plain] status:", res.statusCode);
         console.error("[plain] headers:", res.headers);
@@ -52,6 +68,18 @@ function isVercelChallenge(errOrHeaders) {
     .toLowerCase();
   const challenge = headers["x-vercel-challenge-token"];
   return status === 429 && (!!challenge || mitigated === "challenge");
+}
+
+// ---------------- Cloudflare challenge detection ----------------
+function isCloudflareChallenge(errOrHeaders) {
+  const headers = errOrHeaders?.headers || errOrHeaders || {};
+  const status = errOrHeaders?.statusCode;
+  const cfMitigated = (headers["cf-mitigated"] || "").toString().toLowerCase();
+  const server = (headers["server"] || "").toString().toLowerCase();
+  return (
+    (status === 403 || status === 503) &&
+    (cfMitigated === "challenge" || server === "cloudflare")
+  );
 }
 
 // Small helper: sleep
@@ -225,16 +253,24 @@ async function parseRSS(source) {
       try {
         xml = await fetchXmlFromUrl(source);
       } catch (err) {
-        if (isVercelChallenge(err)) {
+        if (isVercelChallenge(err) || isCloudflareChallenge(err)) {
+          const challengeType = isVercelChallenge(err)
+            ? "Vercel"
+            : "Cloudflare";
           if (VERBOSE)
-            console.error("[main] Vercel 429 challenge → Playwright fallback");
+            console.error(
+              `[main] ${challengeType} challenge (${err.statusCode}) → Playwright fallback`
+            );
           try {
             xml = await fetchXmlWithPlaywright(source);
           } catch (pwErr) {
-            if (FEED_SOFT_FAIL && isVercelChallenge(pwErr)) {
+            if (
+              FEED_SOFT_FAIL &&
+              (isVercelChallenge(pwErr) || isCloudflareChallenge(pwErr))
+            ) {
               // Return an empty feed so CI can proceed
               console.error(
-                "[main] Soft-failing on persistent Vercel 429 (returning empty feed)."
+                `[main] Soft-failing on persistent ${challengeType} challenge (returning empty feed).`
               );
               return {
                 version: "https://jsonfeed.org/version/1",
