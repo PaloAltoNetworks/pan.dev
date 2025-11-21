@@ -27,16 +27,6 @@ The API uses standard RESTful principles to execute four core operational groups
 
 ---
 
-## Style Guide and Usability
-
-The API's documentation adheres to standard technical writing principles, prioritizing clarity and ease of integration:
-
-* **Endpoint Summaries:** Each endpoint uses a concise, three-word summary for rapid comprehension (e.g., "**List FQDN rules**" or "**Update quiesce state**").
-* **Descriptions:** Descriptions use **active voice** and simple, direct language to specify the exact action the operation performs (e.g., "Retrieves a list of ZTNA connectors..." or "Creates a new wildcard rule.").
-
-This structure ensures developers can quickly understand the API's architecture and confidently implement automation scripts and integrations.
-
-
 All of the functionality exposed by these APIs can also be performed using the
 [Strata Cloud Manager user interface](https://docs.paloaltonetworks.com/prisma-access-browser/administration/use-the-prisma-access-browser-dashboards).
 
