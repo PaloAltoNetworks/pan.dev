@@ -1,0 +1,3670 @@
+openapi: 3.0.0
+info:
+  title: ZTNA Connector Restful API
+  version: v2
+  license:
+    name: Palo Alto Networks EULA
+    url: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+  description: "ZTNA Connector Restful API Specification This Open API spec file was\
+    \ created on November 21, 2025. \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks\
+    \ is a registered trademark of Palo Alto Networks. A list of our trademarks can\
+    \ be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.sase.paloaltonetworks.com
+security:
+- bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    x-panw-region:
+      name: x-panw-region
+      description: The region of the tenant
+      in: header
+      schema:
+        type: string
+        enum:
+        - americas
+        - au
+        - ca
+        - de
+        - europe
+        - in
+        - jp
+        - sg
+        - uk
+    pagination.offset:
+      name: offset
+      description: 'A 0-based offset into the collection.
+
+        It is the index of the starting entry of the page
+
+        '
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+    pagination.limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+      description: The max count in result entry (count per page)
+    query.sort:
+      name: sort
+      description: List of fields from item response to sort by.
+      in: query
+      schema:
+        type: string
+      examples:
+        threeItems:
+          value: A[asc],B[desc],C
+          summary: An example sort list that sorts first by A in ascending order,
+            then B in descending order, and finally C in ascending order.
+    query.search:
+      name: search
+      description: String to filter list results by. Is searched over multiple fields
+        in each object. Multiple searches can be specified.
+      in: query
+      schema:
+        type: string
+        example: connector1
+    query.filters:
+      name: filters
+      description: String to filter list results by searching one specified field
+        of an object. Multiple filters can be specified.
+      in: query
+      schema:
+        type: string
+      examples:
+        freeFormFilter:
+          value:
+            field: name
+            search: abc
+          summary: A free form filter on the field name searching for a substring
+            match of abc.
+        staticFilter:
+          value:
+            field: connector_group
+            filter: abc
+          summary: A static filter on the field connector_group searching for an exact
+            match of abc.
+    query.field:
+      name: field
+      description: String that represents a static filter field. Call any of the /filters
+        endpoints without specifying a field to get a list of all available fields.
+      in: query
+      schema:
+        type: string
+        example: connector_group
+    path.oid:
+      name: oid
+      in: path
+      description: Object ID
+      required: true
+      schema:
+        type: string
+    path.id:
+      name: id
+      in: path
+      description: request id
+      required: true
+      schema:
+        type: string
+    path.cloud_account_id:
+      name: id
+      in: path
+      description: Cloud Account ID
+      required: true
+      schema:
+        type: string
+  schemas:
+    license_info:
+      type: object
+      properties:
+        license_name:
+          type: string
+        max_applications:
+          type: number
+        max_connectors:
+          type: number
+        applications:
+          type: number
+        connectors:
+          type: number
+        expiry:
+          type: string
+          format: date-time
+    problems.type:
+      type: string
+      description: 'A URI reference [[RFC3986](https://datatracker.ietf.org/doc/html/rfc3986)]
+        that identifies the problem type.
+
+
+        This specification encourages that, when dereferenced,
+
+        it provide human-readable documentation for the problem type (e.g., using
+        HTML [[W3C.REC-html5-20141028](https://datatracker.ietf.org/doc/html/rfc7807#ref-W3C.REC-html5-20141028)]).
+
+
+        When this member is not present, its value is assumed to be "about:blank".
+
+        '
+      format: uri
+    problems.title:
+      type: string
+      description: 'A short, human-readable summary of the problem type.
+
+
+        It SHOULD NOT change from occurrence to occurrence of the problem,
+
+        except for purposes of localization (e.g., using proactive content negotiation;
+        see [[RFC7231, Section 3.4](https://datatracker.ietf.org/doc/html/rfc7231#section-3.4)]).
+
+
+        While optional, it is recommended to provide this property,
+
+        so that a more specific message can be shown to the user,
+
+        instead of the generic message generated based on the HTTP status code.
+
+        '
+    problems.status:
+      type: integer
+      description: 'The HTTP status code [[RFC7231, Section 6](https://datatracker.ietf.org/doc/html/rfc7231#section-6)]
+        generated by the origin server for this occurrence of the problem.
+
+
+        This is useful where the HTTP status code is not available such as in logs.
+
+
+        This is optional, and the consumer of the API can get the status directly
+        from the response status.
+
+        But if there is some log collecting system in between,
+
+        the log collector may not collect or preserve the response status.
+
+
+        In that case, providing this property will be beneficial or even required.
+
+        '
+      minimum: 400
+      maximum: 599
+    problems.detail:
+      type: string
+      description: 'A human-readable explanation specific to this occurrence of the
+        problem.
+
+
+        Consumers SHOULD NOT parse this member for information.
+
+        '
+    problems.instance:
+      type: string
+      description: 'A URI reference that identifies the specific occurrence of the
+        problem.
+
+        It may or may not yield further information if dereferenced.
+
+        '
+    google.protobuf.duration:
+      type: object
+      properties:
+        seconds:
+          type: number
+        nanos:
+          type: number
+    google.rpc.retry_info:
+      title: Retry Info
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.RetryInfo
+        retry_delay:
+          $ref: '#/components/schemas/google.protobuf.duration'
+      required:
+      - '@type'
+      - retry_delay
+    google.rpc.debug_info:
+      title: Debug Info
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.DebugInfo
+        stack_entries:
+          type: array
+          items:
+            type: string
+        detail:
+          type: string
+      required:
+      - '@type'
+    google.rpc.quota_failure.violation:
+      title: Violation
+      type: object
+      properties:
+        subject:
+          type: string
+        description:
+          type: string
+    google.rpc.quota_failure:
+      title: Quota Failure
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.QuotaFailure
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.rpc.quota_failure.violation'
+      required:
+      - '@type'
+      - violations
+    google.rpc.error_info:
+      title: Error Info
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.ErrorInfo
+        reason:
+          type: string
+        domain:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+      - '@type'
+      - reason
+    google.rpc.precondition_failure.violation:
+      title: Violation
+      type: object
+      properties:
+        type:
+          type: string
+        subject:
+          type: string
+        description:
+          type: string
+    google.rpc.precondition_failure:
+      title: Precondition Failure
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.PreconditionFailure
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.rpc.precondition_failure.violation'
+      required:
+      - '@type'
+      - violations
+    google.rpc.bad_request.field_violation:
+      title: Field Violation
+      type: object
+      properties:
+        field:
+          type: string
+        description:
+          type: string
+    google.rpc.bad_request:
+      title: Bad Request
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.BadRequest
+        field_violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.rpc.bad_request.field_violation'
+      required:
+      - '@type'
+      - field_violations
+    google.rpc.request_info:
+      title: Request Info
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.RequestInfo
+        request_id:
+          type: string
+        serving_data:
+          type: string
+      required:
+      - '@type'
+      - request_id
+    google.rpc.resource_info:
+      title: Resource Info
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.ResourceInfo
+        resource_type:
+          type: string
+        resource_name:
+          type: string
+        owner:
+          type: string
+        description:
+          type: string
+      required:
+      - '@type'
+    google.rpc.help.link:
+      title: Link
+      type: object
+      properties:
+        description:
+          type: string
+        url:
+          type: string
+    google.rpc.help:
+      title: Help
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.Help
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.rpc.help.link'
+      required:
+      - '@type'
+      - links
+    google.rpc.localized_message:
+      title: Localized Message
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - type.googleapis.com/google.rpc.LocalizedMessage
+        locale:
+          type: string
+        message:
+          type: string
+      required:
+      - '@type'
+      - locale
+      - message
+    google.rpc.error_details:
+      type: array
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/google.rpc.retry_info'
+        - $ref: '#/components/schemas/google.rpc.debug_info'
+        - $ref: '#/components/schemas/google.rpc.quota_failure'
+        - $ref: '#/components/schemas/google.rpc.error_info'
+        - $ref: '#/components/schemas/google.rpc.precondition_failure'
+        - $ref: '#/components/schemas/google.rpc.bad_request'
+        - $ref: '#/components/schemas/google.rpc.request_info'
+        - $ref: '#/components/schemas/google.rpc.resource_info'
+        - $ref: '#/components/schemas/google.rpc.help'
+        - $ref: '#/components/schemas/google.rpc.localized_message'
+    google.rpc.code.unauthenticated:
+      type: object
+      properties:
+        code:
+          type: number
+          enum:
+          - 16
+        status:
+          type: string
+          enum:
+          - UNAUTHENTICATED
+        message:
+          type: string
+        details:
+          $ref: '#/components/schemas/google.rpc.error_details'
+    problems-401:
+      title: Unauthorized
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/google.rpc.code.unauthenticated'
+    google-cloud-api.error.error.code.failed_precondition:
+      type: number
+      description: Failed precondition
+      enum:
+      - 9
+    google-cloud-api.error.error.status.failed_precondition:
+      type: string
+      description: Corresponds to `google.rpc.Code = 9`
+      enum:
+      - FAILED_PRECONDITION
+    google-cloud-api.error.error.message:
+      type: string
+      description: "The error message should help users understand and resolve the\
+        \ API error easily and quickly.\nIn general, consider the following guidelines\
+        \ when writing error messages:\n\n- Do not assume the user is an expert user\
+        \ of your API.\n  Users could be client developers, operations people, IT\
+        \ staff, or end-users of apps.\n- Do not assume the user knows anything about\
+        \ your service implementation or is familiar with the context of the errors\
+        \ (such as log analysis).\n- When possible,\n  error messages should be constructed\
+        \ such that a technical user (but not necessarily a developer of your API)\
+        \ can respond to the error and correct it.\n- Keep the error message brief.\n\
+        \  If needed, provide a link where a confused reader can ask questions,\n\
+        \  give feedback, or get more information that doesn't cleanly fit in an error\
+        \ message.\n  Otherwise, use the details field to expand.\n\n[Reference](https://cloud.google.com/apis/design/errors#error_messages)\n"
+    google-cloud-api.error.error.details.cause_info.causes:
+      type: array
+      items:
+        $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info.cause'
+    google-cloud-api.error.error.details.cause_info.cause:
+      type: object
+      properties:
+        module:
+          type: string
+        message:
+          type: string
+        causes:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info.causes'
+      additionalProperties: true
+      required:
+      - message
+    google-cloud-api.error.error.details.cause_info:
+      type: object
+      properties:
+        '@type':
+          type: string
+          enum:
+          - google-cloud-api/CauseInfo
+          description: '`google-cloud-api.CauseInfo` is an alternative to `type.googleapis.com/google.rpc.DebugInfo`.
+
+
+            `google-cloud-api.CauseInfo` does not have the `stack_entries` field,
+
+            which can cause leak sensitive information.
+
+            '
+        causes:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info.causes'
+      required:
+      - '@type'
+      - causes
+    google-cloud-api.error.error.details:
+      type: array
+      description: 'Additional error information that the client code can use to handle
+        the error,
+
+        such as retry info or a help link.
+
+
+        This is defined by [Google Cloud API](https://cloud.google.com/apis/design/errors#error_details),
+
+        With the [`google-cloud-api.CauseInfo` extension](https://github.com/unional/iso-error/blob/main/packages/google-cloud-api/open_api/google-cloud-api.yml).
+
+        '
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/google.rpc.retry_info'
+        - $ref: '#/components/schemas/google.rpc.debug_info'
+        - $ref: '#/components/schemas/google.rpc.quota_failure'
+        - $ref: '#/components/schemas/google.rpc.error_info'
+        - $ref: '#/components/schemas/google.rpc.precondition_failure'
+        - $ref: '#/components/schemas/google.rpc.bad_request'
+        - $ref: '#/components/schemas/google.rpc.request_info'
+        - $ref: '#/components/schemas/google.rpc.resource_info'
+        - $ref: '#/components/schemas/google.rpc.help'
+        - $ref: '#/components/schemas/google.rpc.localized_message'
+        - $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info'
+    google-cloud-api.error.error-failed_precondition:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code.failed_precondition'
+        status:
+          $ref: '#/components/schemas/google-cloud-api.error.error.status.failed_precondition'
+        message:
+          $ref: '#/components/schemas/google-cloud-api.error.error.message'
+        details:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details'
+    problems-424:
+      title: Failed Dependency
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/google-cloud-api.error.error-failed_precondition'
+    fqdn_rule-existing:
+      type: object
+      properties:
+        oid:
+          type: string
+          description: Id of the entry.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the FQDN rule.
+          readOnly: true
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: 'A comma separated list of [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+
+            the entry is assigned to.'
+        spec:
+          type: array
+          items:
+            type: object
+            properties:
+              fqdn:
+                type: string
+                description: FQDN of the rule.
+                readOnly: true
+              protocol:
+                type: string
+                enum:
+                - tcp
+                - udp
+                readOnly: true
+              port:
+                type: string
+                description: 'Port number of the rule.
+
+
+                  It can be a single port number, multiple port numbers separated
+                  by comma,
+
+                  or a port range like 8000-9000.
+
+
+                  If omitted, it means the rule applies to any port.'
+              probe_type:
+                type: string
+                enum:
+                - tcp_ping
+                - icmp_ping
+                description: 'The probing type.
+
+
+                  If `protocol` is `tcp`,
+
+                  the value can be `tcp_ping`, `icmp_ping`, or omitted.
+
+
+                  If `protocol` is `tcp` and `port` is a single port,
+
+                  the value can be only be `tcp_ping`.
+
+
+                  If `protocol` is `udp`,
+
+                  the value can be `icmp_ping` or omitted'
+              probe_port:
+                type: string
+                description: The probing port if the `probe_type` is `tcp_ping`.
+            required:
+            - fqdn
+            - protocol
+            - port
+        app_enabled:
+          type: boolean
+      required:
+      - oid
+      - name
+      - group
+      - app_enabled
+    fqdn_rule.status:
+      type: object
+      properties:
+        spec:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+        state:
+          type: number
+        state_bits:
+          type: number
+        error:
+          type: string
+    entity_meta:
+      type: object
+      properties:
+        created_time:
+          type: string
+        updated_time:
+          type: string
+    pagination.total:
+      type: integer
+      title: The total number of objects
+    pagination.limit:
+      type: integer
+      title: The manimum number of objects to return
+    pagination.offset:
+      type: integer
+      title: The offset into the total number of objects
+    fqdn_rule.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/fqdn_rule-existing'
+            - $ref: '#/components/schemas/fqdn_rule.status'
+            - $ref: '#/components/schemas/entity_meta'
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    google-cloud-api.error.error.code.aborted:
+      description: Aborted
+      type: number
+      enum:
+      - 10
+    google-cloud-api.error.error.code.already_exists:
+      description: Already Exists
+      type: number
+      enum:
+      - 6
+    google-cloud-api.error.error.code.cancelled:
+      description: Cancelled
+      type: number
+      enum:
+      - 1
+    google-cloud-api.error.error.code.data_loss:
+      type: number
+      description: Data Loss
+      enum:
+      - 15
+    google-cloud-api.error.error.code.deadline_exceeded:
+      type: number
+      description: Deadline exceeded
+      enum:
+      - 4
+    google-cloud-api.error.error.code.internal:
+      type: number
+      description: Internal
+      enum:
+      - 13
+    google-cloud-api.error.error.code.invalid_argument:
+      type: number
+      description: Invalid argument
+      enum:
+      - 3
+    google-cloud-api.error.error.code.not_found:
+      type: number
+      description: Not found
+      enum:
+      - 5
+    google-cloud-api.error.error.code.out_of_range:
+      type: number
+      description: Out of range
+      enum:
+      - 11
+    google-cloud-api.error.error.code.permission_denied:
+      type: number
+      description: Permission denied
+      enum:
+      - 7
+    google-cloud-api.error.error.code.resource_exhausted:
+      type: number
+      description: Resource Exhausted
+      enum:
+      - 8
+    google-cloud-api.error.error.code.unauthenticated:
+      type: number
+      description: Unauthenticated
+      enum:
+      - 16
+    google-cloud-api.error.error.code.unavailable:
+      type: number
+      description: Unavailable
+      enum:
+      - 14
+    google-cloud-api.error.error.code.unimplemented:
+      type: number
+      description: Unimplemented
+      enum:
+      - 12
+    google-cloud-api.error.error.code.unknown:
+      type: number
+      description: Unknown
+      enum:
+      - 2
+    google-cloud-api.error.error.code:
+      title: google.rpc.Code
+      description: 'Google APIs must use the canonical error codes defined by [google.rpc.Code](https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto).
+
+        Individual APIs must avoid defining additional error codes,
+
+        since developers are very unlikely to write logic to handle a large number
+        of error codes.
+
+        For reference,
+
+        handling an average of three error codes per API call would mean most application
+        logic would just be for error handling,
+
+        which would not be a good developer experience.
+
+
+        [Reference](https://cloud.google.com/apis/design/errors#error_codes)
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.aborted'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.already_exists'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.cancelled'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.data_loss'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.deadline_exceeded'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.failed_precondition'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.internal'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.invalid_argument'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.not_found'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.out_of_range'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.permission_denied'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.resource_exhausted'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.unauthenticated'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.unavailable'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.unimplemented'
+      - $ref: '#/components/schemas/google-cloud-api.error.error.code.unknown'
+    problems.error.status:
+      type: string
+      description: 'This is the enum version for `google.rpc.Status.code`.
+
+
+        This value should match the `error.code` value.
+
+        '
+    problems.error.message:
+      type: string
+      description: 'A developer-facing human-readable error message in English.
+
+        It should both explain the error and offer an actionable resolution to it.
+
+
+        This is defined in [Google Cloud API](https://cloud.google.com/apis/design/errors).
+
+
+        If missing, consumer can generate this using other properties in the response,
+
+        particularly from the `title`, `detail`, and `details` properties.
+
+        '
+    google.rpc.code.invalid_argument:
+      type: object
+      properties:
+        code:
+          type: number
+          enum:
+          - 3
+        status:
+          type: string
+          enum:
+          - INVALID_ARGUMENT
+        message:
+          type: string
+        details:
+          $ref: '#/components/schemas/google.rpc.error_details'
+    problems.error-400:
+      type: object
+      description: 'This property contains the additional information from [Google
+        Cloud API](https://cloud.google.com/apis/design/errors).
+
+        '
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code'
+        status:
+          $ref: '#/components/schemas/problems.error.status'
+        message:
+          $ref: '#/components/schemas/problems.error.message'
+        details:
+          type: array
+          description: 'Additional error information that the client code can use
+            to handle the error,
+
+            such as retry info or a help link.
+
+
+            This is defined by [Google Cloud API](https://cloud.google.com/apis/design/errors#error_details),
+
+            With the [`google-cloud-api.CauseInfo` extension](https://github.com/unional/iso-error/blob/main/packages/google-cloud-api/open_api/google-cloud-api.yml).
+
+
+            It is STRONGLY RECOMMENDED to provide this information,
+
+            both for debugging purpose (`google-cloud-api.CauseInfo`),
+
+            and for machine-readable data for specific errors (e.g. `FieldViolations`
+            for `400 BadRequest`).
+
+            '
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/google.rpc.bad_request'
+            - $ref: '#/components/schemas/google.rpc.code.invalid_argument'
+            - $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info'
+    problems-400:
+      title: Bad Request
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/problems.error-400'
+    fqdn_rule-new:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Name of the FQDN rule.
+
+
+            It can only be 64 characters long
+
+            and contain unicode text, space, dash, or underscore, or period.'
+          maxLength: 64
+          minLength: 1
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: A comma separated list of [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+        spec:
+          type: array
+          items:
+            type: object
+            properties:
+              fqdn:
+                type: string
+                description: FQDN of the rule.
+                pattern: (?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)+[a-zA-Z]{2,63}$)
+              protocol:
+                type: string
+                enum:
+                - tcp
+                - udp
+              port:
+                type: string
+                description: 'Port number of the rule.
+
+
+                  It can be a single port number, multiple port numbers separated
+                  by comma,
+
+                  or a port range like 8000-9000.
+
+
+                  If omitted, it means the rule applies to any port.'
+              probe_type:
+                type: string
+                enum:
+                - tcp_ping
+                - icmp_ping
+                description: 'The probing type.
+
+
+                  If `protocol` is `tcp`,
+
+                  the value can be `tcp_ping`, `icmp_ping`, or omitted.
+
+
+                  If `protocol` is `tcp` and `port` is a single port,
+
+                  the value can be only be `tcp_ping`.
+
+
+                  If `protocol` is `udp`,
+
+                  the value can be `icmp_ping` or omitted'
+              probe_port:
+                type: string
+                description: The probing port if the `probe_type` is `tcp_ping`.
+            required:
+            - fqdn
+            - protocol
+            - port
+        app_enabled:
+          type: boolean
+      required:
+      - name
+      - spec
+      - group
+      - app_enabled
+    google-cloud-api.error.error.status.permission_denied:
+      type: string
+      description: Corresponds to `google.rpc.Code = 7`
+      enum:
+      - PERMISSION_DENIED
+    google-cloud-api.error.error-permission_denied:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code.permission_denied'
+        status:
+          $ref: '#/components/schemas/google-cloud-api.error.error.status.permission_denied'
+        message:
+          $ref: '#/components/schemas/google-cloud-api.error.error.message'
+        details:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details'
+    problems-403:
+      title: Forbidden
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/google-cloud-api.error.error-permission_denied'
+    google-cloud-api.error.error.status.already_exists:
+      description: Corresponds to `google.rpc.Code = 6`
+      type: string
+      enum:
+      - ALREADY_EXISTS
+    google-cloud-api.error.error-already_exists:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code.already_exists'
+        status:
+          $ref: '#/components/schemas/google-cloud-api.error.error.status.already_exists'
+        message:
+          $ref: '#/components/schemas/google-cloud-api.error.error.message'
+        details:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details'
+    problems-409:
+      title: Not Found
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/google-cloud-api.error.error-already_exists'
+    filters:
+      type: array
+      items:
+        type: string
+    google-cloud-api.error.error.status.not_found:
+      type: string
+      description: Corresponds to `google.rpc.Code = 5`
+      enum:
+      - NOT_FOUND
+    google-cloud-api.error.error-not_found:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code.not_found'
+        status:
+          $ref: '#/components/schemas/google-cloud-api.error.error.status.not_found'
+        message:
+          $ref: '#/components/schemas/google-cloud-api.error.error.message'
+        details:
+          $ref: '#/components/schemas/google-cloud-api.error.error.details'
+    problems-404:
+      title: Not Found
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/google-cloud-api.error.error-not_found'
+    subnet_rule-existing:
+      type: object
+      properties:
+        oid:
+          description: Id of the entry.
+          type: string
+          readOnly: true
+        name:
+          type: string
+          description: Name of the IP Subnet rule.
+          readOnly: true
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: 'A comma separated list of [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+
+            the entry is assigned to.'
+        ip_subnets:
+          type: string
+          description: IPv4 subnet in CIDR notation (x.x.x.x/y)
+        app_enabled:
+          type: boolean
+      required:
+      - name
+      - group
+      - ip_subnets
+      - app_enabled
+    subnet_rule.status:
+      type: object
+      properties:
+        state_bits:
+          type: number
+    subnet_rule.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/subnet_rule-existing'
+            - $ref: '#/components/schemas/subnet_rule.status'
+            - $ref: '#/components/schemas/entity_meta'
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    subnet_rule-new:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Name of the IP Subnet rule.
+
+
+            It can only be 64 characters long
+
+            and contain unicode text, space, dash, or underscore, or period.'
+          maxLength: 64
+          minLength: 1
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: A comma separated list of [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+        ip_subnets:
+          type: string
+          description: IPv4 subnet in CIDR notation (x.x.x.x/y)
+        app_enabled:
+          type: boolean
+      required:
+      - name
+      - group
+      - ip_subnets
+      - app_enabled
+    wildcard-existing:
+      type: object
+      properties:
+        id:
+          description: Id of the entry.
+          type: string
+          readOnly: true
+        name:
+          type: string
+          description: Name of the wildcard.
+          readOnly: true
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: A comma separated list of [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+        fqdn:
+          type: string
+          description: The wildcard to match.
+          readOnly: true
+        protocol:
+          type: string
+          enum:
+          - tcp
+          - udp
+          readOnly: true
+        port:
+          type: string
+          description: 'Port number of the rule.
+
+
+            It can be a single port number, multiple port numbers separated by comma,
+
+            or a port range like 8000-9000.
+
+
+            If omitted, it means the rule applies to any port.'
+        probe_type:
+          type: string
+          enum:
+          - tcp_ping
+          - icmp_ping
+          description: 'The probing type.
+
+
+            If `protocol` is `tcp`,
+
+            the value can be `tcp_ping`, `icmp_ping`, or omitted.
+
+
+            If `protocol` is `tcp` and `port` is a single port,
+
+            the value can be only be `tcp_ping`.
+
+
+            If `protocol` is `udp`,
+
+            the value can be `icmp_ping` or omitted'
+          readOnly: true
+        probe_port:
+          type: string
+          description: The probing port if the `probe_type` is `tcp_ping`.
+          readOnly: true
+        app_enabled:
+          type: boolean
+      required:
+      - name
+      - group
+      - fqdn
+      - port
+      - app_enabled
+    wildcard.status:
+      type: object
+      properties:
+        activated:
+          type: boolean
+        applications:
+          type: object
+          description: Discovered Wildcard App oid to name mapping.
+          additionalProperties:
+            type: string
+    wildcard.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/wildcard-existing'
+            - $ref: '#/components/schemas/wildcard.status'
+            - $ref: '#/components/schemas/entity_meta'
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    connector-existing:
+      type: object
+      properties:
+        oid:
+          type: string
+          description: Id of the entry.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the connector.
+          readOnly: true
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: 'The [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+
+            this connector is assigned to.'
+      required:
+      - oid
+      - group
+    connector.status:
+      type: object
+      properties:
+        cgnx_sw_version:
+          type: string
+        cgnx_vion_ip:
+          type: string
+        cgnx_location:
+          type: string
+        cidr:
+          type: string
+        local_ip:
+          type: string
+        sc_id:
+          description: Service Connection ID
+          type: string
+        sc_name:
+          type: string
+        token_active:
+          type: string
+        token_secret:
+          type: string
+        state_bits:
+          type: number
+        flags:
+          type: object
+          properties:
+            config_state:
+              type: string
+            tunnel_up:
+              type: boolean
+            token_state:
+              type: string
+            control_plane_up:
+              type: boolean
+            capabilities:
+              type: object
+              properties:
+                wildcard_supported:
+                  type: boolean
+                ipsubnet_supported:
+                  type: boolean
+        error:
+          type: object
+        cgnx_scheduled_sw_version:
+          type: string
+        cgnx_scheduled_download:
+          type: string
+        cgnx_scheduled_upgrade:
+          type: string
+        cgnx_upgrade_state:
+          description: When undefined, no upgrade is in progress.
+          type: string
+          enum:
+          - download_cancelled
+          - download_complete
+          - download_discovery
+          - download_failed
+          - download_init
+          - download_scheduled
+          - failed
+          - init
+          - installing
+          - install_failed
+          - upgrade_cancelled
+          - upgrade_init
+          - upgrade_scheduled
+          - upgrade_timeout
+          - upgrading
+          - verify
+          - verifying
+        cgnx_upgrade_description:
+          type: string
+        cgnx_upgrade_failure_info:
+          type: string
+        cgnx_upgrade_download_percent:
+          type: number
+        cgnx_upgrade_retry_count:
+          type: number
+        cgnx_upgrade_status_last_updated:
+          type: string
+    connector.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/connector-existing'
+            - $ref: '#/components/schemas/connector.status'
+            - $ref: '#/components/schemas/entity_meta'
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    connector-new:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Name of the connector.
+
+
+            It can only be 64 characters long
+
+            and contain unicode text, space, dash, or underscore, or period.'
+          maxLength: 64
+          minLength: 1
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        description:
+          type: string
+          maxLength: 64
+          pattern: ^[\p{L}\p{N}\p{P}\s,.:_-]*$
+        group:
+          type: string
+          description: The [connector group id](#tag/connector-group/operation/list.connector_group.v2)
+      required:
+      - name
+      - group
+    connector.scheduled_upgrade:
+      type: object
+      properties:
+        image_id:
+          type: string
+        scheduled_download:
+          type: string
+        scheduled_upgrade:
+          type: string
+      required:
+      - image_id
+    connector_group-existing:
+      type: object
+      properties:
+        oid:
+          description: Connector Group ID
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+        is_autoscale:
+          type: boolean
+        preserve_user_id:
+          type: boolean
+      required:
+      - oid
+      - name
+    connector_group.status:
+      type: object
+      properties:
+        token_active:
+          type: string
+        token_secret:
+          type: string
+        counts:
+          type: object
+          properties:
+            applications:
+              type: integer
+            connectors:
+              type: integer
+            wildcards:
+              type: integer
+            ipsubnets:
+              type: integer
+        pa_region:
+          type: string
+        anycast_ip:
+          type: string
+        sw_version:
+          type: string
+        user_id_ip:
+          type: string
+        user_id_port:
+          type: string
+    connector_group.list:
+      type: object
+      description: 'Connector Group summary containing information needed to show
+        connector groups in a tabular format.
+
+        '
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/connector_group-existing'
+            - $ref: '#/components/schemas/connector_group.status'
+            - $ref: '#/components/schemas/entity_meta'
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    connector_group-new:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+        is_autoscale:
+          type: boolean
+        preserve_user_id:
+          type: boolean
+      required:
+      - name
+    connector_group.fqdn_rules:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/connector_group-existing'
+        applications:
+          $ref: '#/components/schemas/fqdn_rule.list'
+    connector_group.subnet_rules:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/connector_group-existing'
+        subnets:
+          $ref: '#/components/schemas/subnet_rule.list'
+    connector_group.wildcards:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/connector_group-existing'
+        wildcards:
+          $ref: '#/components/schemas/wildcard.list'
+    connector_group.connectors:
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/connector_group-existing'
+        connectors:
+          $ref: '#/components/schemas/connector.list'
+    connector_group.scheduled_upgrade:
+      type: object
+      properties:
+        image_id:
+          type: string
+        scheduled_download:
+          type: string
+        scheduled_upgrade:
+          type: string
+      required:
+      - image_id
+    discovered_application.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              tenant_id:
+                type: string
+              count:
+                type: number
+              cie_tenant_id:
+                type: string
+              applications:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    fqdn:
+                      type: string
+                    port:
+                      type: string
+                    protocol:
+                      type: string
+                    provider:
+                      type: string
+                    app_spec:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          fqdn:
+                            type: string
+                          port:
+                            type: string
+                          protocol:
+                            type: string
+        total:
+          $ref: '#/components/schemas/pagination.total'
+        limit:
+          $ref: '#/components/schemas/pagination.limit'
+        offset:
+          $ref: '#/components/schemas/pagination.offset'
+      required:
+      - data
+      - total
+      - offset
+      - limit
+    diagnostic_file.list:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: Request id
+                type: string
+              state:
+                description: stopped, complete, inprogress
+                type: string
+                enum:
+                - inprogress
+                - complete
+                - stopped
+              date:
+                type: string
+              filename:
+                description: Name of the file.
+                type: string
+              filesize:
+                description: Size of the file.
+                type: number
+    packet_capture.create:
+      type: object
+      properties:
+        interface:
+          description: Following are the acceptable labels - internal, external, tunnel
+          type: string
+        host:
+          description: IPv4 address
+          type: string
+        port:
+          description: Port number
+          type: string
+        protocol:
+          description: Following are the acceptable labels - TCP, UDP, ICMP, ARP
+          type: string
+      required:
+      - interface
+    packet_capture:
+      type: object
+      properties:
+        id:
+          description: Request id generated by the micro-service, and is used on other
+            API calls
+          type: string
+        status:
+          description: Return code (CDBG_ERROR or CDBG_OK)
+          type: string
+        message:
+          description: Return code description
+          type: number
+    connector.quiesce:
+      type: object
+      properties:
+        mode:
+          type: string
+      required:
+      - mode
+    problems.error.details:
+      type: array
+      description: 'Additional error information that the client code can use to handle
+        the error,
+
+        such as retry info or a help link.
+
+
+        This is defined by [Google Cloud API](https://cloud.google.com/apis/design/errors#error_details),
+
+        With the [`google-cloud-api.CauseInfo` extension](https://github.com/unional/iso-error/blob/main/packages/google-cloud-api/open_api/google-cloud-api.yml).
+
+
+        It is STRONGLY RECOMMENDED to provide this information,
+
+        both for debugging purpose (`google-cloud-api.CauseInfo`),
+
+        and for machine-readable data for specific errors (e.g. `FieldViolations`
+        for `400 BadRequest`).
+
+        '
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/google.rpc.retry_info'
+        - $ref: '#/components/schemas/google.rpc.debug_info'
+        - $ref: '#/components/schemas/google.rpc.quota_failure'
+        - $ref: '#/components/schemas/google.rpc.error_info'
+        - $ref: '#/components/schemas/google.rpc.precondition_failure'
+        - $ref: '#/components/schemas/google.rpc.bad_request'
+        - $ref: '#/components/schemas/google.rpc.request_info'
+        - $ref: '#/components/schemas/google.rpc.resource_info'
+        - $ref: '#/components/schemas/google.rpc.help'
+        - $ref: '#/components/schemas/google.rpc.localized_message'
+        - $ref: '#/components/schemas/google-cloud-api.error.error.details.cause_info'
+    problems.error:
+      type: object
+      description: 'This property contains the additional information from [Google
+        Cloud API](https://cloud.google.com/apis/design/errors).
+
+        '
+      properties:
+        code:
+          $ref: '#/components/schemas/google-cloud-api.error.error.code'
+        status:
+          $ref: '#/components/schemas/problems.error.status'
+        message:
+          $ref: '#/components/schemas/problems.error.message'
+        details:
+          $ref: '#/components/schemas/problems.error.details'
+    problems:
+      title: Basic PANW Problem Type
+      description: The Problem Details JSON Object. Based on [[RFC7807](https://tools.ietf.org/html/rfc7807)]
+        and [Google Cloud API](https://cloud.google.com/apis/design/errors).
+      type: object
+      additionalProperties: true
+      properties:
+        type:
+          $ref: '#/components/schemas/problems.type'
+        title:
+          $ref: '#/components/schemas/problems.title'
+        status:
+          $ref: '#/components/schemas/problems.status'
+        detail:
+          $ref: '#/components/schemas/problems.detail'
+        instance:
+          $ref: '#/components/schemas/problems.instance'
+        error:
+          $ref: '#/components/schemas/problems.error'
+    cloud_account.aws_cft:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 32
+        account_id:
+          type: string
+      required:
+      - name
+      - account_id
+    cloud_account.valawsarn:
+      type: object
+      properties:
+        account_id:
+          type: string
+        role_arn:
+          type: string
+      required:
+      - account_id
+      - role_arn
+    cloud_account.valawsarn_rsp:
+      type: object
+      properties:
+        role_arn_validation_status:
+          type: string
+        error:
+          type: string
+    cloud_account.summary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          maxLength: 32
+        cloud_provider:
+          type: string
+        account_id:
+          type: string
+        role_arn:
+          type: string
+        enabled:
+          type: boolean
+        created_time:
+          type: integer
+        updated_time:
+          type: integer
+        last_discovery_time:
+          type: integer
+        next_discovery_time:
+          type: integer
+        deleting:
+          type: boolean
+    cloud_accounts.summary:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/cloud_account.summary'
+            - $ref: '#/components/schemas/entity_meta'
+      required:
+      - data
+    cloud_account-new:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 32
+        cloud_provider:
+          type: string
+        account_id:
+          type: string
+        role_arn:
+          type: string
+        enabled:
+          type: boolean
+      required:
+      - name
+      - cloud_provider
+      - account_id
+      - role_arn
+      - enabled
+    cloud_account-update:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 32
+        enabled:
+          type: boolean
+      required:
+      - name
+      - enabled
+  examples:
+    problems-unauthenticated:
+      summary: Not Authenticated
+      value:
+        error:
+          code: 16
+          status: UNAUTHENTICATED
+          message: Not Authenticated
+    problems-token_expired:
+      summary: Token Expired
+      description: 'The message for token expired is the same as not authenticated,
+
+        so that it provides less information to the user about what was the problem.
+
+
+        This is a security measurement explicitly to avoid giving additional information
+        to potential hackers.
+
+        '
+      value:
+        error:
+          code: 16
+          status: UNAUTHENTICATED
+          message: Not Authenticated
+    filter-empty:
+      summary: when no filter value is available
+      value: []
+    filter:
+      summary: common scenario
+      value:
+      - value 1
+      - value 2
+  responses:
+    problems-401_unauthorized:
+      x-summary: Unauthorized
+      description: '[401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401)
+
+        '
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-401'
+          examples:
+            not_authenticated:
+              $ref: '#/components/examples/problems-unauthenticated'
+            token_expired:
+              $ref: '#/components/examples/problems-token_expired'
+    problems-424_failed_dependency:
+      x-summary: Failed Dependency
+      description: '[424 Failed Dependency](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/424)
+
+
+        Note that:
+
+
+        > Regular web servers will normally not return this status code. But some
+        other protocols, like WebDAV, can return it.
+
+        '
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-424'
+    http.202_accepted:
+      x-summary: Accepted
+      description: '[202 Accepted](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/202)
+
+        '
+    problems-400_bad_request:
+      x-summary: Bad Request
+      description: '[400 Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400)
+
+        '
+      headers:
+        Content-Type:
+          $ref: '#/components/headers/problems.content_type'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-400'
+    http.201_created:
+      x-summary: Created
+      description: '[201 Created](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201)
+
+        '
+    problems-403_forbidden:
+      x-summary: Forbidden
+      description: '[403 Forbidden](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403)
+
+        '
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-403'
+    problems-409_conflict:
+      x-summary: Conflict
+      description: '[409 Conflict](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409)
+
+        '
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-409'
+    problems-404_not_found:
+      x-summary: Not Found
+      description: '[404 Not Found](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404)
+
+        '
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems-404'
+    http.204_no_content:
+      x-summary: No Content
+      description: '[204 No Content](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/204)
+
+        '
+    problems-5xx_server_errors:
+      x-summary: Server Errors
+      description: '5xx should occur in very rare situations.
+
+
+        In most cases, service should capture any problem and returns an appropriate
+        4xx responses.
+
+        At such, it is not mandatory for 5xx to return a `problem` body.
+
+
+        But if there are cases that 5xx is returned intentionally,
+
+        a `problem` body should be included.
+
+        '
+      headers:
+        Content-Type:
+          $ref: '#/components/headers/problems.content_type'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problems'
+  headers:
+    problems.content_type:
+      description: '[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+
+        for [[RFC9457](https://datatracker.ietf.org/doc/html/rfc9457)] problem responses
+        should include
+
+        media type `application/problem+json` (default) or `application/problem+xml`.'
+      schema:
+        type: string
+        enum:
+        - application/problem+json
+        - application/problem+xml
+ExternalTags: {}
+paths:
+  /sse/connector/v2.0/api/license:
+    get:
+      summary: Get license info
+      description: Retrieves information about the tenant license, including expiration
+        dates and usage limits.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/license_info'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '424':
+          $ref: '#/components/responses/problems-424_failed_dependency'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - tenant
+      - v2
+      operationId: get.license.v2
+  /sse/connector/v3/license:
+    get:
+      summary: Get license info
+      description: Retrieves information about the tenant license, including expiration
+        dates and usage limits.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/license_info'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '424':
+          $ref: '#/components/responses/problems-424_failed_dependency'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - tenant
+      - v3
+      operationId: get.license.v3
+  /sse/connector/v2.0/api/tenant:start-onboarding:
+    post:
+      summary: Start tenant onboarding
+      description: Initiates the onboarding process for a new tenant.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - tenant
+      - v2
+      operationId: start_onboarding.v2
+  /sse/connector/v2.0/api/applications:
+    get:
+      summary: List FQDN rules
+      description: Retrieves a list of Fully Qualified Domain Name (FQDN) rules based
+        on the applied filters.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fqdn_rule.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: list.fqdn_rules.v2
+    post:
+      summary: Create FQDN rule
+      description: Creates a new Fully Qualified Domain Name (FQDN) rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: create.fqdn_rule.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fqdn_rule-new'
+  /sse/connector/v2.0/api/applications/filters:
+    get:
+      summary: List rule filters
+      description: Retrieves the available filter values for Fully Qualified Domain
+        Name (FQDN) rule fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: get.fqdn_rule.filters.v2
+  /sse/connector/v2.0/api/applications/{oid}:
+    get:
+      summary: Get FQDN rule
+      description: Retrieves details for the specified Fully Qualified Domain Name
+        (FQDN) rule.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/fqdn_rule-existing'
+                - $ref: '#/components/schemas/entity_meta'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: get.fqdn_rule.v2
+    put:
+      summary: Update FQDN rule
+      description: Updates the configuration of the specified Fully Qualified Domain
+        Name (FQDN) rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: update.fqdn_rule.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/fqdn_rule-existing'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete FQDN rule
+      description: Deletes the specified Fully Qualified Domain Name (FQDN) rule.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - fqdn-rule
+      - v2
+      operationId: delete.fqdn_rule.v2
+  /sse/connector/v2.0/api/subnets:
+    get:
+      summary: List subnet rules
+      description: Retrieves a list of IP Address subnet rules based on the applied
+        filters.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subnet_rule.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: list.subnet_rules.v2
+    post:
+      summary: Create subnet rule
+      description: Creates a new IP Address subnet rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: create.subnet_rule.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subnet_rule-new'
+  /sse/connector/v2.0/api/subnets/filters:
+    get:
+      summary: List subnet filters
+      description: Retrieves the available filter values for subnet rule fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: list.subnet_rules.filters.v2
+  /sse/connector/v2.0/api/subnets/{oid}:
+    get:
+      summary: Get subnet rule
+      description: Retrieves details for the specified subnet rule.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/subnet_rule-existing'
+                - $ref: '#/components/schemas/entity_meta'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: get.subnet_rule.v2
+    put:
+      summary: Update subnet rule
+      description: Updates the configuration of the specified subnet rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: update.subnet_rule.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/subnet_rule-existing'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete subnet rule
+      description: Deletes the specified subnet rule.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - subnet-rule
+      - v2
+      operationId: delete.subnet_rule.v2
+  /sse/connector/v2.0/api/wildcards:
+    get:
+      summary: List wildcard rules
+      description: Retrieves a list of wildcard rules based on the applied filters.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wildcard.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - wildcard
+      - v2
+      operationId: list.wildcards.v2
+    post:
+      summary: Create wildcard rule
+      description: Creates a new wildcard rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - wildcard
+      - v2
+      operationId: create.wildcard.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subnet_rule-new'
+  /sse/connector/v2.0/api/wildcards/filters:
+    get:
+      summary: List wildcard filters
+      description: Retrieves the available filter values for wildcard fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - wildcard
+      - v2
+      operationId: list.wildcard.filters.v2
+  /sse/connector/v2.0/api/wildcards/{oid}:
+    get:
+      summary: Get wildcard rule
+      description: Retrieves details for the specified wildcard rule.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/wildcard-existing'
+                - $ref: '#/components/schemas/entity_meta'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - wildcard
+      - v2
+      operationId: get.wildcard.v2
+    put:
+      summary: Update wildcard rule
+      description: Updates the configuration of the specified wildcard rule.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - wildcard
+      - v2
+      operationId: update.wildcard.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/wildcard-existing'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete wildcard rule
+      description: Deletes the specified wildcard rule.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - wildcard
+      - v2
+      operationId: delete.wildcard.v2
+  /sse/connector/v2.0/api/connectors:
+    get:
+      summary: List connector details
+      description: Retrieves a list of ZTNA connectors based on the applied filters.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector
+      - v2
+      operationId: list.connectors.v2
+    post:
+      summary: Create new connector
+      description: Creates a new ZTNA connector configuration.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - connector
+      - v2
+      operationId: create.connector.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector-new'
+  /sse/connector/v2.0/api/connectors/filters:
+    get:
+      summary: List connector filters
+      description: Retrieves the available filter values for connector fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - connector
+      - v2
+      operationId: list.connector.filters.v2
+  /sse/connector/v2.0/api/connectors/{oid}:
+    get:
+      summary: Get connector details
+      description: Retrieves details for the specified connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/connector-existing'
+                - $ref: '#/components/schemas/entity_meta'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: get.connector.v2
+    put:
+      summary: Update connector details
+      description: Updates the configuration of the specified connector.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: update.connector.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/connector-existing'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete connector instance
+      description: Deletes the specified connector configuration.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: delete.connector.v2
+  /sse/connector/v2.0/api/connector-images:
+    get:
+      summary: List connector images
+      description: Retrieves a list of available connector image versions.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters: []
+      tags:
+      - connector
+      - v2
+      operationId: list.connect_images.v2
+  /sse/connector/v2.0/api/connectors/{oid}/scheduled-upgrade:
+    get:
+      summary: Get upgrade schedule
+      description: Retrieves the scheduled upgrade configuration for the connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector.scheduled_upgrade'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: get.connector.scheduled_upgrade.v2
+    post:
+      summary: Set upgrade schedule
+      description: Schedules a software upgrade for the connector.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: create.connector.scheduled_upgrade.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector.scheduled_upgrade'
+    put:
+      summary: Update upgrade schedule
+      description: Updates the existing upgrade schedule for the connector.
+      responses:
+        '204':
+          $ref: '#/components/responses/http.204_no_content'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: update.connector.scheduled_upgrade.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector.scheduled_upgrade'
+    delete:
+      summary: Delete upgrade schedule
+      description: Cancels the scheduled upgrade for the connector.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: delete.connector.scheduled_upgrade.v2
+  /sse/connector/v2.0/api/connector-groups:
+    get:
+      summary: List connector groups
+      description: Retrieves a list of connector groups based on the applied filters.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_groups.v2
+    post:
+      summary: Create connector group
+      description: Creates a new connector group.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - connector-group
+      - v2
+      operationId: create.connector_group.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector_group-new'
+  /sse/connector/v2.0/api/connector-groups/filters:
+    get:
+      summary: List group filters
+      description: Retrieves the available filter values for connector group fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_group.filters.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}:
+    get:
+      summary: Get connector group
+      description: Retrieves details for the specified connector group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/connector_group-existing'
+                - $ref: '#/components/schemas/entity_meta'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: get.connector_group.v2
+    put:
+      summary: Update connector group
+      description: Updates the configuration of the specified connector group.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: update.connector_group.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/connector_group-existing'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete connector group
+      description: Deletes the specified connector group.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: delete.connector-group.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}/applications:
+    get:
+      summary: List group applications
+      description: Retrieves the FQDN rules associated with the specified connector
+        group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.fqdn_rules'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_group.fqdn_rules.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}/subnets:
+    get:
+      summary: List group subnets
+      description: Retrieves the subnet rules associated with the specified connector
+        group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.subnet_rules'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_group.subnet_rules.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}/wildcards:
+    get:
+      summary: List group wildcards
+      description: Retrieves the wildcard rules associated with the specified connector
+        group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.wildcards'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_group.wildcards.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}/connectors:
+    get:
+      summary: List group connectors
+      description: Retrieves the connectors associated with the specified connector
+        group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.connectors'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - connector-group
+      - v2
+      operationId: list.connector_group.connectors.v2
+  /sse/connector/v2.0/api/connector-groups/{oid}/scheduled-upgrade:
+    get:
+      summary: Get group upgrade
+      description: Retrieves the scheduled upgrade configuration for the connector
+        group.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector_group.scheduled_upgrade'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: get.connector_group.scheduled_upgrade.v2
+    post:
+      summary: Set group upgrade
+      description: Schedules a software upgrade for the connector group.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: create.connector_group.scheduled_upgrade.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector_group.scheduled_upgrade'
+    put:
+      summary: Update group upgrade
+      description: Updates the existing upgrade schedule for the connector group.
+      responses:
+        '204':
+          $ref: '#/components/responses/http.204_no_content'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: update.connector_group.scheduled_upgrade.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector_group.scheduled_upgrade'
+    delete:
+      summary: Delete group upgrade
+      description: Cancels the scheduled upgrade for the connector group.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '403':
+          $ref: '#/components/responses/problems-403_forbidden'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector-group
+      - v2
+      operationId: delete.connector_group.scheduled_upgrade.v2
+  /sse/connector/v2.0/api/discovered-applications:
+    get:
+      summary: List discovered apps
+      description: Retrieves a list of applications discovered by the system.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/discovered_application.list'
+        '202':
+          description: Retry later, CIE domain data missing
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/pagination.offset'
+      - $ref: '#/components/parameters/pagination.limit'
+      - $ref: '#/components/parameters/query.sort'
+      - $ref: '#/components/parameters/query.search'
+      - $ref: '#/components/parameters/query.filters'
+      tags:
+      - discovered-application
+      - v2
+      operationId: list.discovered_application.v2
+  /sse/connector/v2.0/api/discovered-applications/filters:
+    get:
+      summary: List app filters
+      description: Retrieves the available filter values for discovered application
+        fields.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filters'
+              examples:
+                empty:
+                  $ref: '#/components/examples/filter-empty'
+                common:
+                  $ref: '#/components/examples/filter'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/query.field'
+      - $ref: '#/components/parameters/query.search'
+      tags:
+      - discovered-application
+      - v2
+      operationId: list.discovered_application.filters.v2
+  /sse/connector/v2.0/api/connectors/{oid}/pcaps:
+    get:
+      summary: List packet captures
+      description: Retrieves a list of captured packet files available on the ZTNA
+        connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/diagnostic_file.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: list.connector.packet_captures.v2
+    post:
+      summary: Start packet capture
+      description: Starts a packet capture operation on the specified interface of
+        the ZTNA connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/packet_capture'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: start.connector.packet_capture.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/packet_capture.create'
+  /sse/connector/v2.0/api/connectors/{oid}/pcaps/{id}:stop:
+    post:
+      summary: Stop packet capture
+      description: Stops an in-progress packet capture operation on the ZTNA connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/packet_capture'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/path.id'
+      tags:
+      - connector
+      - v2
+      operationId: stop.connector.packet_capture.v2
+  /sse/connector/v2.0/api/connectors/{oid}/pcaps/{id}:download:
+    get:
+      summary: Download capture file
+      description: Downloads the specified captured packet file from the ZTNA connector.
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/path.id'
+      tags:
+      - connector
+      - v2
+      operationId: download.connector.packet_capture_file.v2
+  /sse/connector/v2.0/api/connectors/{oid}/tech-support-files:
+    get:
+      summary: List support files
+      description: Retrieves a list of available tech support dump files on the ZTNA
+        connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/diagnostic_file.list'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: list.connector.tech_support_files.v2
+    post:
+      summary: Generate support file
+      description: Generates a tech support diagnostic file on the ZTNA connector
+        using the "dump tech-support" command.
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: generate.connector.tech_support_file.v2
+  /sse/connector/v2.0/api/connectors/{oid}/tech-support-files/{id}:stop:
+    post:
+      summary: Stop support generation
+      description: Stops the generation of a tech support file on the ZTNA connector.
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/path.id'
+      tags:
+      - connector
+      - v2
+      operationId: stop.connector.tech_support_file.v2
+  /sse/connector/v2.0/api/connectors/{oid}/tech-support-files/{id}:download:
+    get:
+      summary: Download support file
+      description: Downloads the specified tech support file from the ZTNA connector.
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/path.oid'
+      - $ref: '#/components/parameters/path.id'
+      tags:
+      - connector
+      - v2
+      operationId: download.connector.tech_support_file.v2
+  /sse/connector/v2.0/api/connectors/{oid}/quiesce:
+    get:
+      summary: Get quiesce state
+      description: Retrieves the current quiesce status of the connector.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connector.quiesce'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '424':
+          $ref: '#/components/responses/problems-424_failed_dependency'
+        5XX:
+          $ref: '#/components/responses/problems-5xx_server_errors'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: get.connector.quiesce.v2
+    put:
+      summary: Update quiesce state
+      description: Updates the quiesce status of the connector to pause or resume
+        operations.
+      responses:
+        '204':
+          $ref: '#/components/responses/http.204_no_content'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '424':
+          $ref: '#/components/responses/problems-424_failed_dependency'
+        5XX:
+          $ref: '#/components/responses/problems-5xx_server_errors'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.oid'
+      tags:
+      - connector
+      - v2
+      operationId: update.connector.quiesce.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/connector.quiesce'
+  /sse/connector/v2.0/api/cad/feature:
+    get:
+      summary: Get feature status
+      description: Checks if the target discovery feature is enabled for the tenant.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  target_discovery:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: get.cloud_account.feature.v2
+  /sse/connector/v2.0/api/cad/tenant:enable-target-discovery:
+    post:
+      summary: Enable target discovery
+      description: Enables the target discovery feature for the tenant.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: enable.cloud_account.target_discovery.v2
+  /sse/connector/v2.0/api/cad/tenant:disable-target-discovery:
+    post:
+      summary: Disable target discovery
+      description: Disables the target discovery feature for the tenant.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+        '424':
+          $ref: '#/components/responses/problems-424_failed_dependency'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: disable.cloud_account.target_discovery.v2
+  /sse/connector/v2.0/api/cad/cloud-accounts/aws-cft:
+    post:
+      summary: Download AWS template
+      description: Retrieves the AWS CloudFormation Template (CFT) required to create
+        an assume role for an AWS account.
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud_account
+      - v2
+      operationId: download.cloud_account.aws_cft.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cloud_account.aws_cft'
+  /sse/connector/v2.0/api/cad/cloud-accounts:validate-aws-role-arn:
+    post:
+      summary: Validate AWS role
+      description: Validates the Role ARN for the assume role created on AWS.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloud_account.valawsarn_rsp'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: validate.cloud_account.aws_role_arn.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cloud_account.valawsarn'
+  /sse/connector/v2.0/api/cad/cloud-accounts:
+    get:
+      summary: List cloud accounts
+      description: Retrieves a list of all configured cloud accounts.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloud_accounts.summary'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: list.cloud_accounts.v2
+    post:
+      summary: Create cloud account
+      description: Adds a new cloud account configuration for target discovery.
+      responses:
+        '201':
+          $ref: '#/components/responses/http.201_created'
+        '400':
+          $ref: '#/components/responses/problems-400_bad_request'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      tags:
+      - cloud-account
+      - v2
+      operationId: create.cloud_account.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cloud_account-new'
+  /sse/connector/v2.0/api/cad/cloud-accounts/{id}:
+    get:
+      summary: Get account details
+      description: Retrieves details for the specified cloud account.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cloud_account.summary'
+                - $ref: '#/components/schemas/entity_meta'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.cloud_account_id'
+      tags:
+      - cloud-account
+      - v2
+      operationId: get.cloud_account.v2
+    put:
+      summary: Update cloud account
+      description: Updates the configuration of the specified cloud account.
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.cloud_account_id'
+      tags:
+      - cloud-account
+      - v2
+      operationId: update.cloud_account.v2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/cloud_account-update'
+              - $ref: '#/components/schemas/entity_meta'
+    delete:
+      summary: Delete cloud account
+      description: Deletes the specified cloud account.
+      responses:
+        '202':
+          $ref: '#/components/responses/http.202_accepted'
+        '401':
+          $ref: '#/components/responses/problems-401_unauthorized'
+        '404':
+          $ref: '#/components/responses/problems-404_not_found'
+        '409':
+          $ref: '#/components/responses/problems-409_conflict'
+      parameters:
+      - $ref: '#/components/parameters/x-panw-region'
+      - $ref: '#/components/parameters/path.cloud_account_id'
+      tags:
+      - cloud-account
+      - v2
+      operationId: delete.cloud_account.v2
