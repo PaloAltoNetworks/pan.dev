@@ -1117,13 +1117,6 @@ const config = {
               },
             },
           },
-          compute_3207: {
-            specPath: "openapi-specs/compute/32-07",
-            outputDir: "products/compute/api/32-07",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-07/",
-          },
           compute_3300: {
             specPath: "openapi-specs/compute/33-00",
             outputDir: "products/compute/api/33-00",
