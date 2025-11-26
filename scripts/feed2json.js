@@ -6,6 +6,7 @@
 const fs = require("fs");
 const https = require("https");
 const http = require("http");
+const zlib = require("zlib");
 const { URL } = require("url");
 const xml2js = require("xml2js");
 
@@ -50,9 +51,21 @@ function fetchXmlFromUrl(feedUrl) {
         return reject(err);
       }
 
+      // Handle content-encoding (gzip, deflate, br)
+      let stream = res;
+      const encoding = (res.headers["content-encoding"] || "").toLowerCase();
+      if (encoding === "gzip") {
+        stream = res.pipe(zlib.createGunzip());
+      } else if (encoding === "deflate") {
+        stream = res.pipe(zlib.createInflate());
+      } else if (encoding === "br") {
+        stream = res.pipe(zlib.createBrotliDecompress());
+      }
+
       let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(data));
+      stream.on("data", (chunk) => (data += chunk));
+      stream.on("end", () => resolve(data));
+      stream.on("error", (err) => reject(err));
     });
 
     req.on("error", (err) => reject(err));
