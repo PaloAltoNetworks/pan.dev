@@ -9,7 +9,7 @@ keywords:
   - API
 ---
 
-**Prisma AIRS AI Runtime API** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code.
+**Prisma AIRS AI Runtime API** is a threat detection service designed to secure AI applications. It helps discover and protect applications using REST APIs by embedding Security-as-Code directly into your source code. 
 
 The API intercept consists of two main API categories:
 
@@ -67,7 +67,7 @@ For complete details, refer to adminstration guide for the section on how to "ma
 - 2 MB maximum payload size per synchronous scan request - Limited to a maximum of 100 URLs per request.
 - 5 MB maximum payload size per asynchronous scan request - Limited to a maximum of 100 URLs per request.
 - Asynchronous requests are limited to a maximum of 25 batched requests.
-- The following limitations apply to the contextual grounding detector:
+- The following limitations apply to the contextual grounding:
 
   - **Context**: supports a maximum of 100,000 characters
   - **Prompt**: supports a maximum of 10,000 characters
