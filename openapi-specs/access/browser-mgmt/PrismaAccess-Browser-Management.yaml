@@ -1,20 +1,20 @@
 openapi: 3.0.0
 info:
-  title: Prisma Access Browser Management Console Public API
+  title: Prisma Browser Management Console Public API
   version: 1.0.0
   description: "This Open API spec file represents the APIs available for Palo Alto\
-    \ Networks Prisma Access Browser Management APIs. These APIs are available for\
-    \ all PAB tenants to scale and automate their processes related to the browser.\
+    \ Networks Prisma Browser Management APIs. These APIs are available for all Prisma\
+    \ Browser tenants to scale and automate their processes related to the browser.\
     \ \nAll of the functionality exposed by these APIs can also be performed using\
-    \ the [Prisma Access Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
+    \ the [Prisma Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
     These APIs use the common SASE authentication mechanism and base URL. See the\
     \ [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted/) guide for\
-    \ more information. This Open API spec file was created on November 19, 2025.\
+    \ more information. This Open API spec file was created on December 11, 2025.\
     \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
     \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
-servers:
-- url: https://api.sase.paloaltonetworks.com
+security:
+- BearerAuth: []
 components:
   schemas:
     ErrorResponse:
@@ -724,7 +724,7 @@ components:
       - Opera
       - Dia
       - Comet
-      - Prisma Access Browser
+      - Prisma Browser
       - Unknown
     DevicePlatform:
       type: string
@@ -1855,8 +1855,8 @@ components:
           - enabled
         privilegedProcess:
           type: object
-          description: Include only devices on which Prisma Access Browser is running
-            with elevated/root permissions
+          description: Include only devices on which Prisma Browser is running with
+            elevated/root permissions
           properties:
             negate:
               type: boolean
@@ -1961,7 +1961,7 @@ components:
         locationServices:
           type: object
           description: Check if the device's location services can be accessed by
-            Prisma Access Browser
+            Prisma Browser
           properties:
             negate:
               type: boolean
@@ -2209,6 +2209,12 @@ components:
           description: Admin revoke comment
       required:
       - action
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT Bearer token to authorize.
 ExternalTags: {}
 paths:
   /seb-api/v1/users:
@@ -2462,8 +2468,9 @@ paths:
   /seb-api/v1/device-groups:
     get:
       summary: List Device Groups
-      description: Retrieve the device groups details through this Application Programming
-        Interface endpoint.
+      description: "Retrieves a paginated list of device groups based on provided\
+        \ search criteria. \nSupports filtering by name, platform, creation time,\
+        \ and update time."
       operationId: GetSeb-apiV1Device-groups
       responses:
         '200':
@@ -2566,10 +2573,11 @@ paths:
           $ref: '#/components/schemas/Order'
       tags:
       - DeviceGroups
-      descriptions: Retrieve a list of device groups.
     post:
-      summary: New Device Group
-      description: Creates a new device group.
+      summary: Create Device Group
+      description: "Creates a new device group using the attributes provided in the\
+        \ request body. \nValidates the input payload and returns the unique identifier\
+        \ of the newly generated resource."
       operationId: PostSeb-apiV1Device-groups
       responses:
         '201':
@@ -2615,8 +2623,9 @@ paths:
               $ref: '#/components/schemas/DeviceGroupRequest'
   /seb-api/v1/device-groups/{device-group-id}:
     get:
-      summary: Device Group By ID
-      description: Get details on group devices by ID.
+      summary: Get Device Group By ID
+      description: Retrieves the full configuration details of a specific device group
+        identified by its unique ID.
       operationId: GetSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -2651,9 +2660,9 @@ paths:
       - DeviceGroups
     put:
       summary: Replace Device Group
-      description: "Replaces the entire configuration of the specified device group.\
-        \ \nThis operation disables any attributes omitted from the request and sets\
-        \ the provided attributes to the specified values."
+      description: "Replaces the entire configuration of an existing device group.\
+        \ \nOverwrites all current attributes with the provided values and resets\
+        \ any omitted attributes to their default or disabled state."
       operationId: PutSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -2698,9 +2707,9 @@ paths:
               $ref: '#/components/schemas/DeviceGroupRequest'
     patch:
       summary: Update Device Group
-      description: "Modifies specific attributes of an existing device group. \nThis\
-        \ operation updates only the fields provided in the request body and leaves\
-        \ all other attributes unchanged."
+      description: "Updates specific attributes of an existing device group. \nModifies\
+        \ only the fields provided in the request body while retaining the current\
+        \ values for any unspecified attributes."
       operationId: PatchSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -2746,6 +2755,7 @@ paths:
     delete:
       summary: Delete Device Group
       description: Permanently removes the specified device group from the system.
+        This action cannot be undone.
       operationId: DeleteSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '204':
@@ -2776,10 +2786,10 @@ paths:
       - DeviceGroups
   /seb-api/v1/device-groups/{device-group-id}/serials/add:
     post:
-      summary: Add Serial Numbers
+      summary: Add Group Serials
       description: "Appends a list of serial numbers to the specified device group.\
-        \ \nThis operation is idempotent and ignores any serial numbers that the group\
-        \ already contains."
+        \ \nTreats the operation as idempotent, ignoring any serial numbers that are\
+        \ already associated with the group."
       operationId: PostSeb-apiV1Device-groupsBy_device-group-idSerialsAdd
       responses:
         '200':
@@ -2842,10 +2852,10 @@ paths:
               - serials
   /seb-api/v1/device-groups/{device-group-id}/serials/remove:
     post:
-      summary: Remove Serial Numbers
-      description: "Detaches a list of serial numbers from the specified device group.\
-        \ \nThis operation is idempotent and takes no action on serial numbers that\
-        \ are not currently members of the group."
+      summary: Remove Group Serials
+      description: "Removes a specified list of serial numbers from the device group.\
+        \ \nTreats the operation as idempotent, performing no action for serial numbers\
+        \ that do not currently exist in the group."
       operationId: PostSeb-apiV1Device-groupsBy_device-group-idSerialsRemove
       responses:
         '200':
@@ -3004,7 +3014,7 @@ paths:
               - userIds
   /seb-api/v1/user-groups/{id}:
     get:
-      summary: Single User Group By ID
+      summary: Single User group by ID
       description: Get a single user group by ID.
       operationId: GetSeb-apiV1User-groupsbyid
       responses:
