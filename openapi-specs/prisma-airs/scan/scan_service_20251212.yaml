@@ -1,0 +1,1241 @@
+openapi: 3.0.3
+info:
+  title: AISec API service
+  description: OpenAPI Specification for the AI Runtime Security API service
+  version: 0.0.0
+
+servers:
+  - url: "http://localhost:39090/"
+    description: "Local"
+
+tags:
+  - name: Scans
+  - name: Scan Results
+  - name: Scan Reports
+  - name: Safety Provider
+
+paths:
+  /v1/internal/health:
+    get:
+      summary: Internal API for health check
+      description: Used by gateway/LB to probe service aliveness
+      tags:
+        - Internal Health Check
+      operationId: InternalHealthCheck
+      responses:
+        200:
+          description: 200 is the only response code for a health service
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/scan/sync/request:
+    post:
+      summary: Send a Synchronous Scan Request
+      description: Post a scan request containing prompt/model-response that returns a synchronous scan response
+      security: []
+      operationId: ScanSyncRequest
+      tags:
+        - Scans
+      requestBody:
+        description: Scan request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanRequest"
+      responses:
+        "200":
+          description: successfully scanned request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanResponse"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+
+  /v1/scan/async/request:
+    post:
+      summary: Send an Asynchronous Scan Request
+      description: Post a scan request that returns asynchronous scan response
+      security: []
+      operationId: ScanAsyncRequest
+      tags:
+        - Scans
+      requestBody:
+        description: A list of scan request objects
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AsyncScanRequest"
+      responses:
+        "200":
+          description: successfully scanned request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsyncScanResponse"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /safety-provider/scan/sync/request:
+    post:
+      summary: Send a Synchronous Scan Request as Safety Provider Integration
+      description: |
+        Endpoint for Safety Provider integration.
+        Accepts message-based scan requests and returns synchronous scan responses.
+        Note: This endpoint coexists with /v1/scan/sync/request and is NOT a replacement.
+      security: []
+      operationId: SafetyProviderSyncScan
+      tags:
+        - Safety Provider
+      parameters:
+        - name: x-api-key
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Your API key
+        - name: Content-Type
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [application/json]
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [application/json]
+        - name: X-Request-Id
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Azure-Resource-Id
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        description: Safety provider scan request with message-based format
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SafetyScanRequest"
+      responses:
+        "200":
+          description: Evaluation succeeded (may include BLOCK actions)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SafetyScanResponse"
+        "400":
+          description: Bad Request - schema/validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SafetyScanError"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "413":
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SafetyScanError"
+        "429":
+          description: Throttled
+        "5XX":
+          description: Server error
+
+  /v1/scan/results:
+    get:
+      summary: Retrieve Scan Results by ScanIDs
+      description: Get the Scan results for upto a maximum of 5 Scan IDs
+      security: []
+      operationId: GetScanResultsByScanIDs
+      tags:
+        - Scan Results
+      parameters:
+        - name: scan_ids
+          in: query
+          description: Scan Ids for Results
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
+            maximum: 5
+          style: form # Serialize as scan_ids=id1,id2,id3
+          explode: false
+      responses:
+        200:
+          description: Successfully returned records for Scan Results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScanIdResult"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/scan/reports:
+    get:
+      summary: Retrieve Threat Scan Reports by Report IDs
+      description: Get the Threat Scan Reports for a given list of report_ids
+      security: []
+      tags:
+        - Scan Reports
+      operationId: GetThreatScanReports
+      parameters:
+        - name: report_ids
+          in: query
+          description: Report Ids for Results
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: false
+            maxItems: 5
+          style: form # Serialize as report_ids=id1,id2,id3
+          explode: false
+      responses:
+        200:
+          description: Successfully returned Threat Scan Reports
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThreatScanReportObjects"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    # === Sync Scan ===
+    ScanRequest:
+      type: object
+      properties:
+        tr_id:
+          type: string
+          description: Unique identifier for the transaction correlating prompt and response
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
+        ai_profile:
+          $ref: "#/components/schemas/AiProfile"
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        contents:
+          description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
+          type: array
+          items:
+            type: object
+            properties:
+              prompt:
+                type: string
+                description: The prompt content that you want to scan
+              response:
+                type: string
+                description: The response content that you want to scan
+              code_prompt:
+                type: string
+                description: Code snippet extracted from Prompt content that you want to scan
+              code_response:
+                type: string
+                description: Code snippet extracted from Response content that you want to scan
+              context:
+                type: string
+                description: The data context for contextual grounding
+              tool_event:
+                $ref: "#/components/schemas/ToolEvent"
+      required:
+        - contents
+        - ai_profile
+
+    AiProfile:
+      type: object
+      properties:
+        profile_id:
+          description: Unique identifier for the profile. If not provided, then profile_name is required.
+          type: string
+          format: uuid
+        profile_name:
+          description: Name of the profile. If not provided, then profile_id is required.
+          type: string
+
+    Metadata:
+      type: object
+      properties:
+        app_name:
+          type: string
+          description: AI application requesting the content scan
+        app_user:
+          type: string
+          description: End user using the AI application
+        ai_model:
+          type: string
+          description: AI model serving the AI application
+        user_ip:
+          type: string
+          description: End user IP using the AI application
+        agent_meta:
+          $ref: "#/components/schemas/AgentMeta"
+
+    AgentMeta:
+      type: object
+      properties:
+        agent_id:
+          type: string
+          description: Agent identifier
+        agent_version:
+          type: string
+          description: Agent version
+        agent_arn:
+          type: string
+          description: Agent ARN
+
+    ToolEvent:
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/ToolEventMetadata"
+        input:
+          type: string
+          description: Raw JSON string of input to the server
+          example: '{"file_key":"abc123"}'
+        output:
+          type: string
+          description: Raw JSON string of output from the server
+          example: '{"content":[{"type":"text","text":"Fetched file"}]}'
+      anyOf:
+        - required: ["input"]
+        - required: ["output"]
+
+    ScanResponse:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+        report_id:
+          type: string
+          description: Unique identifier for the scan report
+        scan_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the scan
+        tr_id:
+          type: string
+          description: Unique identifier for the transaction
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
+        profile_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the AI security profile used for scanning
+        profile_name:
+          type: string
+          description: AI security profile name used for scanning
+        category:
+          type: string
+          description: Category of the scanned content verdicts such as "malicious", "benign", "error" or "timeout"
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+        prompt_detected:
+          $ref: "#/components/schemas/PromptDetected"
+        response_detected:
+          $ref: "#/components/schemas/ResponseDetected"
+        prompt_masked_data:
+          $ref: "#/components/schemas/MaskedData"
+        response_masked_data:
+          $ref: "#/components/schemas/MaskedData"
+        prompt_detection_details:
+          $ref: "#/components/schemas/PromptDetectionDetails"
+        response_detection_details:
+          $ref: "#/components/schemas/ResponseDetectionDetails"
+        tool_detected:
+          $ref: "#/components/schemas/ToolDetected"
+        created_at:
+          type: string
+          format: date-time
+          description: Scan request timestamp
+        completed_at:
+          type: string
+          format: date-time
+          description: Scan completion timestamp
+        timeout:
+          type: boolean
+          description: Indicates whether any detection service timed out during scanning
+        error:
+          type: boolean
+          description: Indicates whether any detection service encountered an error during scanning
+        errors:
+          type: array
+          description: List of detection service errors or timeouts
+          items:
+            $ref: "#/components/schemas/ContentErrors"
+      required:
+        - report_id
+        - scan_id
+        - category
+        - action
+        - timeout
+        - error
+        - errors
+
+    ContentErrors:
+      type: object
+      description: Errors information for prompt and response detection services
+      properties:
+        content_type:
+          $ref: "#/components/schemas/ContentErrorType"
+        feature:
+          $ref: "#/components/schemas/DetectionServiceName"
+        status:
+          $ref: "#/components/schemas/ErrorStatus"
+
+    ContentErrorType:
+      type: string
+      description: Type of content that encountered an error
+      enum:
+        - prompt
+        - response
+
+    ErrorStatus:
+      type: string
+      description: Status indicating error or timeout
+      enum:
+        - error
+        - timeout
+
+    DetectionServiceName:
+      type: string
+      description: Name of detection service
+      enum:
+        - dlp
+        - injection
+        - url_cats
+        - toxic_content
+        - malicious_code
+        - agent
+        - topic_violation
+        - db_security
+        - ungrounded
+
+    PromptDetected:
+      type: object
+      properties:
+        url_cats:
+          type: boolean
+          description: Indicates whether prompt contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether prompt contains any sensitive information
+        injection:
+          type: boolean
+          description: Indicates whether prompt contains any injection threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether prompt contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether prompt contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether prompt contains any Agent related threats
+        topic_violation:
+          type: boolean
+          description: Indicates whether prompt contains any content violates topic guardrails
+
+    ResponseDetected:
+      type: object
+      properties:
+        url_cats:
+          type: boolean
+          description: Indicates whether response contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether response contains any sensitive information
+        db_security:
+          type: boolean
+          description: Indicates whether response contains any database security threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether response contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether response contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether response contains any Agent related threats
+        ungrounded:
+          type: boolean
+          description: Indicates whether response contains any ungrounded content
+        topic_violation:
+          type: boolean
+          description: Indicates whether response contains any content violates topic guardrails
+
+    PromptDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    ResponseDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    ToolDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    TopicGuardRails:
+      type: object
+      properties:
+        allowed_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blocked_topics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic block list
+
+    MaskedData:
+      type: object
+      properties:
+        data:
+          type: string
+          description: Original data with sensitive pattern masked
+        pattern_detections:
+          type: array
+          items:
+            $ref: "#/components/schemas/PatternDetections"
+
+    PatternDetections:
+      type: object
+      properties:
+        pattern:
+          type: string
+          description: Matched pattern
+        locations:
+          $ref: "#/components/schemas/OffsetObject"
+
+    OffsetObject:
+      type: array
+      description: Array of start, end offsets
+      items:
+        type: array
+        items:
+          type: integer
+
+    ToolDetected:
+      type: object
+      additionalProperties: false
+      properties:
+        verdict:
+          type: string
+          example: malicious
+        metadata:
+          $ref: "#/components/schemas/ToolEventMetadata"
+        summary:
+          $ref: "#/components/schemas/ScanSummary"
+        input_detected:
+          $ref: "#/components/schemas/IODetected"
+        output_detected:
+          $ref: "#/components/schemas/IODetected"
+
+    ToolEventMetadata:
+      type: object
+      additionalProperties: false
+      required: [ecosystem, method, server_name]
+      properties:
+        ecosystem:
+          type: string
+          description: Ecosystem or protocol of the tool
+          example: "mcp"
+        method:
+          type: string
+          description: Method type of the tool event
+          example: "tools/list"
+        server_name:
+          type: string
+          description: Name of the MCP server
+          example: "Internal MCP server"
+        tool_invoked:
+          type: string
+          description: Name of the tool
+          example: "get_file"
+
+    ScanSummary:
+      type: object
+      additionalProperties: false
+      required: [detections, threats]
+      properties:
+        detections:
+          $ref: "#/components/schemas/ToolDetectionFlags"
+        threats:
+          type: array
+          items: {type: string}
+          example: ["credential leakage", "context poisoning"]
+
+    ToolDetectionFlags:
+      type: object
+      additionalProperties: false
+      properties:
+        injection:
+          type: boolean
+          description: Indicates whether the content contains any injection threats
+        url_cats:
+          type: boolean
+          description: Indicates whether response contains any malicious URLs
+        dlp:
+          type: boolean
+          description: Indicates whether response contains any sensitive information
+        db_security:
+          type: boolean
+          description: Indicates whether response contains any database security threats
+        toxic_content:
+          type: boolean
+          description: Indicates whether response contains any harmful content
+        malicious_code:
+          type: boolean
+          description: Indicates whether response contains any malicious code
+        agent:
+          type: boolean
+          description: Indicates whether response contains any Agent related threats
+        topic_violation:
+          type: boolean
+          description: Indicates whether prompt contains any content violates topic guardrails
+
+    IODetected:
+      type: object
+      additionalProperties: false
+      properties:
+        detection_entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolDetectionEntry"
+
+    ToolDetectionEntry:
+      type: object
+      additionalProperties: false
+      properties:
+        tool_invoked:
+          type: string
+          example: "get_file"
+        detections:
+          $ref: "#/components/schemas/ToolDetectionFlags"
+        threats:
+          type: array
+          items: {type: string}
+          example: ["credential leakage", "context poisoning"]
+        details:
+          $ref: "#/components/schemas/ToolDetectionDetails"
+        masked_data:
+          $ref: "#/components/schemas/MaskedData"
+
+    # === Async Sync ===
+    AsyncScanRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/AsyncScanObject"
+
+    AsyncScanObject:
+      type: object
+      properties:
+        req_id:
+          type: integer
+          format: uint32
+          description: Unique identifier of an individual element sent in the batch scan request
+        scan_req:
+          $ref: "#/components/schemas/ScanRequest"
+      required:
+        - req_id
+        - scan_req
+
+    AsyncScanResponse:
+      type: object
+      properties:
+        received:
+          type: string
+          format: date-time
+          description: Asynchronous scan received timestamp
+        scan_id:
+          type: string
+          description: Unique identifier for the asynchronous scan request
+        report_id:
+          type: string
+          description: Unique identifier for the asynchronous scan report
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+      required:
+        - received
+        - scan_id
+
+    # === Get Scan Results by scan_ids ===
+    ScanIdResult:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+        req_id:
+          type: integer
+          description: Unique identifier of an individual element sent in the batch scan request
+        status:
+          type: string
+          description: Scan request processing state such as "complete" or "pending"
+        scan_id:
+          type: string
+          description: Unique identifier for the scan
+        result:
+          $ref: "#/components/schemas/ScanResponse"
+
+    # === Get Threat Scan Reports by report_ids ===
+    ThreatScanReportObjects:
+      type: array
+      items:
+        $ref: "#/components/schemas/ThreatScanReportObject"
+
+    ThreatScanReportObject:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+        report_id:
+          type: string
+          description: Unique identifier for the scan report
+        scan_id:
+          type: string
+          description: Unique identifier for the scan
+        req_id:
+          type: integer
+          format: uint32
+          description: Unique identifier of an individual element sent in the batch scan request
+        transaction_id:
+          type: string
+          description: Unique identifier for the transaction
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
+        detection_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/DetectionServiceResultObject"
+
+    DetectionServiceResultObject:
+      type: object
+      properties:
+        data_type:
+          type: string
+          description: Content type such as "prompt", "response" or "tool_event"
+        detection_service:
+          type: string
+          description: Detection service name generating the results such as "urlf", "dlp", and "prompt injection"
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+        metadata:
+          $ref: "#/components/schemas/DSResultMetadata"
+        result_detail:
+          $ref: "#/components/schemas/DSDetailResultObject"
+
+    DSResultMetadata:
+      type: object
+      properties:
+        ecosystem:
+          type: string
+          example: "mcp"
+        method:
+          type: string
+          example: "tools/call"
+        server_name:
+          type: string
+          example: "MCP server"
+        tool_invoked:
+          type: string
+          example: "get_file"
+        direction:
+          type: string
+          enum: ["input", "output"]
+          description: Indicates the direction of data flow, either input to or output from a tool or service
+
+    DSDetailResultObject:
+      type: object
+      properties:
+        urlf_report:
+          $ref: "#/components/schemas/UrlFilterReportObject"
+        dlp_report:
+          $ref: "#/components/schemas/DlpReportObject"
+        dbs_report:
+          $ref: "#/components/schemas/DbsReportObject"
+        tc_report:
+          $ref: "#/components/schemas/TcReportObject"
+        mc_report:
+          $ref: "#/components/schemas/McReportObject"
+        agent_report:
+          $ref: "#/components/schemas/AgentReportObject"
+        topic_guardrails_report:
+          $ref: "#/components/schemas/TgReportObject"
+        cg_report:
+          $ref: "#/components/schemas/CgReportObject"
+
+    DbsReportObject:
+      type: array
+      items:
+        $ref: "#/components/schemas/DbsEntryObject"
+
+    DbsEntryObject:
+      type: object
+      properties:
+        sub_type:
+          type: string
+          description: Database security sql query sub-type, such as "create", "read", "update", or "delete"
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+
+    TcReportObject:
+      type: object
+      properties:
+        confidence:
+          type: string
+          description: Confidence level of the threat classification ("high" and "moderate")
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+
+    McReportObject:
+      type: object
+      properties:
+        all_code_blocks:
+          type: array
+          items:
+            type: string
+            description: Code blocks extracted from prompt or response content
+        code_analysis_by_type:
+          type: array
+          items:
+            $ref: "#/components/schemas/McEntryObject"
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        malware_script_report:
+          $ref: "#/components/schemas/MalwareReportObject"
+        command_injection_report:
+          $ref: "#/components/schemas/CmdInjectReportObject"
+
+    MalwareReportObject:
+      type: object
+      properties:
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+
+    McEntryObject:
+      type: object
+      properties:
+        file_type:
+          type: string
+          description: code file type, such as "javascript", "Python", "VBScript" and others
+        code_sha256:
+          type: string
+          description: SHA256 of the code file that was analyzed, such as a code snippet containing the potentially malicious code
+
+    CmdInjectReportObject:
+      type: array
+      items:
+        $ref: "#/components/schemas/CmdEntryObject"
+
+    CmdEntryObject:
+      type: object
+      properties:
+        code_block:
+          type: string
+          description: Code block extracted from prompt or response content
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+
+    AgentReportObject:
+      type: object
+      properties:
+        model_verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+        agent_framework:
+          type: string
+          description: Agent builder framework used to build Agents such as "AWS_Agent_Builder", "Microsoft_copilot_studio" and others
+        agent_patterns:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentEntryObject"
+
+    AgentEntryObject:
+      type: object
+      properties:
+        category_type:
+          type: string
+          description: Agent threat category type, such as "tools misuse", "memory manipulation" and others
+        verdict:
+          type: string
+          description: Verdict associated with the Agent threat Category, such as "malicious" or "benign"
+
+    UrlFilterReportObject:
+      type: array
+      items:
+        $ref: "#/components/schemas/UrlfEntryObject"
+
+    UrlfEntryObject:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL in the scan request
+        risk_level:
+          type: string
+          description: Risk level associated with the URL, such as "high", "medium", or "low"
+        action:
+          type: string
+          description: Action associated with the URL Category, such as "allow", "block", or "unknown"
+        categories:
+          type: array
+          description: Categories associated with the URL
+          items:
+            type: string
+
+    DlpReportObject:
+      type: object
+      properties:
+        dlp_report_id:
+          type: string
+          description: Unique identifier for the DLP report
+        dlp_profile_name:
+          type: string
+          description: DLP profile name used for the scan
+        dlp_profile_id:
+          type: string
+          description: Unique identifier for the DLP profile used for the scan
+        dlp_profile_version:
+          type: integer
+          format: int32
+          description: Version of the DLP profile used for the scan
+        data_pattern_rule1_verdict:
+          type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
+        data_pattern_rule2_verdict:
+          type: string
+          description: Indicates whether there was a content match for this rule such as "MATCHED" or "NOT MATCHED"
+        data_pattern_detection_offsets:
+          type: array
+          description: Matched patterns and their byte locations
+          items:
+            $ref: "#/components/schemas/DlpPatternDetectionsObject"
+
+    DlpPatternDetectionsObject:
+      type: object
+      properties:
+        data_pattern_id:
+          type: string
+          description: Unique identifier for the data pattern matched
+        version:
+          type: integer
+          description: Version of the data pattern matched
+        name:
+          type: string
+          description: Name of the data pattern matched
+        high_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+        medium_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+        low_confidence_detections:
+          $ref: "#/components/schemas/OffsetObject"
+
+    TgReportObject:
+      type: object
+      properties:
+        allowed_topic_list:
+          type: string
+          description: Indicates whether there was a content match for the topic allow list such as "MATCHED" or "NOT MATCHED"
+        blocked_topic_list:
+          type: string
+          description: Indicates whether there was a content match for the topic block list such as "MATCHED" or "NOT MATCHED"
+        allowedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of allowed topics if there was a content match for the topic allow list
+        blockedTopics:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of blocked topics if there was a content match for the topic allow list
+
+    CgReportObject:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Indicates the status of cg explanation such as  "completed" or "pending"
+        explanation:
+          type: string
+          description: Indicates the the contextual grounding explanation given by the model
+        category:
+          type: string
+          description: Indicates the predefined category of contextual grounding results
+
+    # === Safety Provider Sync Scan Request/Response (Message-Based Format) ===
+    SafetyRole:
+      type: string
+      description: Role of the message sender
+      enum: [User, Assistant, PreTool, PostTool]
+
+    ContentType:
+      type: string
+      description: Type of content (text, image, or multimodality). Note that SafetyContent in requests only accepts text and image.
+      enum: [Text, Image, Multimodality]
+
+    SafetyScanRequest:
+      type: object
+      description: Safety provider scan request with message-based format. Only the last message is scanned; previous messages provide conversation context.
+      properties:
+        messages:
+          type: array
+          description: Array of messages (max 10). Only the last message is scanned.
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/SafetyMessage"
+      required:
+        - messages
+
+    SafetyMessage:
+      type: object
+      description: A message in the conversation. The last message in the array must not exceed 1KB (combined size of all contents).
+      properties:
+        role:
+          $ref: "#/components/schemas/SafetyRole"
+        contents:
+          type: array
+          description: Array of content items (max 10 per message)
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/SafetyContent"
+      required:
+        - role
+        - contents
+
+    SafetyContent:
+      type: object
+      description: Content in a message. Only 'text' and 'image' types are accepted in requests. 'multimodality' is not valid for input.
+      properties:
+        type:
+          $ref: "#/components/schemas/ContentType"
+        text:
+          type: string
+          description: Required if type == "text"
+        imageBase64:
+          type: string
+          description: Optional if type == "image"
+      required:
+        - type
+
+    SafetyScanResponse:
+      type: object
+      properties:
+        ContentResultDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/SafetyContentResult"
+
+    SafetyContentResult:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ContentType"
+        contentIndices:
+          type: array
+          items:
+            type: integer
+        action:
+          type: string
+          enum: [Block, Annotate]
+        message:
+          type: string
+        details:
+          $ref: "#/components/schemas/ContentResultDetails"
+
+    ContentResultDetails:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source of the scan request (e.g., 'AI-Runtime-MCP-Server' or 'AI-Runtime-API')
+        report_id:
+          type: string
+          description: Unique identifier for the scan report
+        scan_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the scan
+        tr_id:
+          type: string
+          description: Unique identifier for the transaction
+        session_id:
+          type: string
+          description: Unique identifier for tracking Sessions
+        profile_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the AI security profile used for scanning
+        profile_name:
+          type: string
+          description: AI security profile name used for scanning
+        role:
+          $ref: "#/components/schemas/SafetyRole"
+        created_at:
+          type: string
+          format: date-time
+          description: Scan request timestamp
+        completed_at:
+          type: string
+          format: date-time
+          description: Scan completion timestamp
+        detections:
+          $ref: "#/components/schemas/SafetyContentResultDetails"
+          description: Detection results for this content including category, action, and detected threats
+
+    ContentDetected:
+      type: object
+      properties:
+        agent:
+          type: boolean
+          description: Indicates whether content contains any Agent related threats
+        db_security:
+          type: boolean
+          description: Indicates whether content contains any database security threats
+        dlp:
+          type: boolean
+          description: Indicates whether content contains any sensitive information
+        injection:
+          type: boolean
+          description: Indicates whether content contains any injection threats
+        malicious_code:
+          type: boolean
+          description: Indicates whether content contains any malicious code
+        topic_violation:
+          type: boolean
+          description: Indicates whether content violates topic guardrails
+        toxic_content:
+          type: boolean
+          description: Indicates whether content contains any harmful content
+        url_cats:
+          type: boolean
+          description: Indicates whether content contains any malicious URLs
+
+    ContentDetectionDetails:
+      type: object
+      properties:
+        topic_guardrails_details:
+          $ref: "#/components/schemas/TopicGuardRails"
+
+    SafetyContentResultDetails:
+      type: object
+      properties:
+        category:
+          type: string
+          description: Category of the scanned content verdicts such as "malicious" or "benign"
+        action:
+          type: string
+          description: The action is set to "block" or "allow" based on AI security profile used for scanning
+        content_detected:
+          $ref: "#/components/schemas/ContentDetected"
+        content_detected_details:
+          $ref: "#/components/schemas/ContentDetectionDetails"
+
+    SafetyScanError:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/SafetyErrorDetail"
+
+    SafetyErrorDetail:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code indicating the type of error (e.g., "400", "InvalidRequest")
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error details
+        traceId:
+          type: string
+          description: Trace ID for request tracking
+
+    # === common ===
+    Error:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          format: int32
+          description: The HTTP status code for the error
+        message:
+          type: string
+          description: The error message
+      required:
+        - status_code
+        - message
