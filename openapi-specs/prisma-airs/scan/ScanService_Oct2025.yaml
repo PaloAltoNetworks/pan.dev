@@ -385,10 +385,21 @@ components:
           description: AI security profile name used for scanning
         category:
           type: string
-          description: Category of the scanned content verdicts such as "malicious" or "benign"
+          description: Category of the scanned content verdicts such as "malicious", "benign", "error" or "timeout"
         action:
           type: string
           description: The action is set to "block" or "allow" based on AI security profile used for scanning
+        timeout:
+          type: boolean
+          description: Indicates whether any detection service timed out during scanning
+        error:
+          type: boolean
+          description: Indicates whether any detection service encountered an error during scanning
+        errors:
+          type: array
+          description: List of detection service errors or timeouts
+          items:
+            $ref: "#/components/schemas/ContentErrors"
         prompt_detected:
           $ref: "#/components/schemas/PromptDetected"
         response_detected:
@@ -416,6 +427,48 @@ components:
         - scan_id
         - category
         - action
+        - timeout
+        - error
+        - errors
+
+    ContentErrors:
+      type: object
+      description: Errors information for prompt and response detection services
+      properties:
+        content_type:
+          $ref: "#/components/schemas/ContentErrorType"
+        feature:
+          $ref: "#/components/schemas/DetectionServiceName"
+        status:
+          $ref: "#/components/schemas/ErrorStatus"
+
+    ContentErrorType:
+      type: string
+      description: Type of content that encountered an error
+      enum:
+        - prompt
+        - response
+
+    ErrorStatus:
+      type: string
+      description: Status indicating error or timeout
+      enum:
+        - error
+        - timeout
+
+    DetectionServiceName:
+      type: string
+      description: Name of detection service
+      enum:
+        - dlp
+        - injection
+        - url_cats
+        - toxic_content
+        - malicious_code
+        - agent
+        - topic_violation
+        - db_security
+        - ungrounded
 
     PromptDetected:
       type: object
