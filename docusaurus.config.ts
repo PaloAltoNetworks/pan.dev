@@ -216,8 +216,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "prisma-airs-redteam/api/redteamapi",
-                      label: "Prisma AIRS AI Red Team",
+                      to: "prisma-airs-redteam/api/ai-integration/aiintegration",
+                      label: "Prisma AIRS AI Integration",
                       icon: "api-doc",
                     },
                   ],
@@ -1030,17 +1030,16 @@ const config = {
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
-          //Prisma AIRS RedTeam-data plane as config
-          redteamdataplane: {
+          aiintegration: {
             specPath: "openapi-specs/prisma-airs-redteam/data-plane",
-            outputDir: "products/prisma-airs-redteam/api/dataplane",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
           //Prisma AIRS RedTeam-management as config
           redteammgmt: {
             specPath: "openapi-specs/prisma-airs-redteam/management",
-            outputDir: "products/prisma-airs-redteam/api/management",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/management",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
