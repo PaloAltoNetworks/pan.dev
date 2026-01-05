@@ -69,7 +69,7 @@ const Card = ({ title, children, link, linkLabel, colorMode }) => {
 export default function AIRSApiIntercept() {
   return (
     <Layout
-      title="Prisma AIRS AI Red Team"
+      title="Prisma AIRS AI Red Teaming"
       description="??? Add Description"
       wrapperClassName="airs-api-redteam-landing"
     >
@@ -192,10 +192,12 @@ function MainContent() {
                   maxWidth: 820,
                 }}
               >
-                Prisma AIRS AI Red Team is Palo Alto Networks’ API for securing
-                AI applications, AI models, AI data, and AI agents. Instantly
-                protect your models from prompt injection, data leaks, and
-                unsafe outputs—so you can build and deploy AI with confidence.
+                The AI Red Teaming product contains a comprehensive security
+                framework built on a multi-tenant architecture with Row Level
+                Security (RLS) to ensure data isolation. Tenant Security Groups
+                (TSG) provide additional isolation layers between tenants, while
+                user-based access control is enforced across all endpoints to
+                maintain proper authorization and permissions.
               </p>
             </div>
             <CodeBlock language="python">
