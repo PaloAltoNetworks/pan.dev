@@ -43,7 +43,7 @@ All interactions with the Prisma AIRS AI Red Teaming APIs begin at the base URL.
 This API uses OAuth 2.0 bearer token authentication, and your token must be included in the Authorization header:
 `Authorization: Bearer YOUR_TOKEN_HERE`
 
-For instructions on how to obtain an OAuth 2.0 token, see the Access Tokens section.
+For instructions on how to obtain an OAuth 2.0 token, see the [Access Tokens](https://pan.dev/scm/docs/access-tokens/) section.
 
 ---
 

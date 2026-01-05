@@ -70,7 +70,9 @@ export default function AIRSApiIntercept() {
   return (
     <Layout
       title="Prisma AIRS AI Red Teaming"
-      description="??? Add Description"
+      description="|
+                   AI Red Teaming API provides an automated and secure solution for LLM Red Teaming, allowing organizations to evaluate the security and safety of GenAI systems.
+                   It leverages both an attack library and an LLM agent-based approach to perform vulnerability assessments."
       wrapperClassName="airs-api-redteam-landing"
     >
       <MainContent />
@@ -334,56 +336,6 @@ print(res)
                 color: "transparent",
               }}
             >
-              Prisma AIRS AI Runtime API Python SDK
-            </h3>
-            <div style={{ marginBottom: 16 }}>
-              Quickly integrate advanced AI runtime security into your Python
-              apps with our official SDK. Effortlessly scan prompts and
-              responses for threats, unsafe content, and data leaks—directly
-              from your code.
-            </div>
-            <div style={{ marginTop: "auto" }}>
-              <a
-                href="/prisma-airs/api/airuntimesecurity/pythonsdk/"
-                className={styles.pythonSdkButton}
-                target="_self"
-              >
-                View Python SDK Docs
-              </a>
-            </div>
-          </div>
-          <div
-            style={{
-              background: colorMode === "dark" ? "#23272e" : "#fff",
-              border:
-                colorMode === "dark"
-                  ? "1px solid #333a48"
-                  : "1px solid #e0e7ef",
-              borderRadius: 20,
-              boxShadow:
-                colorMode === "dark"
-                  ? "0 2px 12px 0 rgba(0,0,0,0.18)"
-                  : "0 2px 12px 0 rgba(0,0,0,0.04)",
-              padding: 32,
-              color: colorMode === "dark" ? "#fff" : "#222",
-              fontSize: 18,
-              display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              minWidth: 260,
-            }}
-          >
-            <h3
-              style={{
-                marginTop: 0,
-                fontWeight: 700,
-                background: "linear-gradient(90deg, #7c3aed 0%, #00c0e8 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
               API Reference Guide
             </h3>
             <div style={{ marginBottom: 16 }}>
@@ -392,7 +344,7 @@ print(res)
             </div>
             <div style={{ marginTop: "auto" }}>
               <a
-                href="/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/"
+                href="/prisma-airs-redteam/api/ai-integration/introduction/"
                 className={styles.pythonSdkButton}
                 target="_self"
               >
