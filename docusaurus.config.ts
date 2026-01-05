@@ -550,13 +550,13 @@ const config = {
                   ],
                 },
                 {
-                  label: "Prisma Access Browser",
+                  label: "Prisma Browser Management",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
                       to: "access/api/browser-mgmt/browser-mgmt-api",
-                      label: "Prisma Access Browser",
+                      label: "Prisma Browser Management",
                       icon: "api-doc",
                     },
                   ],

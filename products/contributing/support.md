@@ -1,5 +1,13 @@
-# Support Guidelines
-
+---
+id: support
+title: Support Guidelines
+sidebar_label: Support Guidelines
+hide_title: false
+slug: /support
+hide_table_of_contents: true
+keywords:
+  - support guidelines
+---
 ## PAN.dev Support
 
 The software in this repository is released under an as-is, best-effort support policy. This software is community-supported; Palo Alto Networks will contribute expertise as and when possible.
