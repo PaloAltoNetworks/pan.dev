@@ -216,8 +216,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "prisma-airs-redteam/api/ai-integration/aiintegration",
-                      label: "Prisma AIRS AI Integration",
+                      to: "prisma-airs-redteam/api/ai-integration/introduction",
+                      label: "Prisma AIRS AI Red Teaming",
                       icon: "api-doc",
                     },
                   ],

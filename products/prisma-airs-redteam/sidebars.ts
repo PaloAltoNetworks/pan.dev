@@ -3,21 +3,25 @@ module.exports = {
       // 1. Overview Doc
       {
         type: "doc",
-        id: "prisma-airs-redteam/api/ai-integration/aiintegration",
+        id: "prisma-airs-redteam/api/ai-integration/introduction",
       },
       {
         type: "doc",
         id: "prisma-airs-redteam/api/ai-integration/errorcodes",
       }, 
+      {
+        type: "doc",
+        id: "prisma-airs-redteam/api/ai-integration/aiintegration",
+      }, 
       // 3. Management API Category
       {
-        label: "Management API",
+        label: "Management Plane API",
         type: "category",
         collapsed: false,
         items: [
           {
             type: "doc",
-            id: "prisma-airs-redteam/api/ai-integration/aiintegration",
+            id: "prisma-airs-redteam/api/ai-integration/management/managementplane",
           },
           ...require("./api/ai-integration/management/sidebar"),
         ],
@@ -25,10 +29,18 @@ module.exports = {
   
       // 4. DataPlane API Category
       {
-        label: "DataPlane API",
+        label: "Data Plane API",
         type: "category",
         collapsed: false,
-        items: require("./api/ai-integration/data-plane/sidebar"),
+        items: [
+          {
+            type: "doc",
+            id: "prisma-airs-redteam/api/ai-integration/data-plane/dataplane",
+          },
+          ...require("./api/ai-integration/data-plane/sidebar"),
+        ],
       },
-    ],
+    
+  ]
+  
   };
