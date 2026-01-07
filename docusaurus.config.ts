@@ -824,6 +824,11 @@ const config = {
             outputDir: "products/scm/api/config/sase/security",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-sase-network configurations": {
+            specPath: "openapi-specs/scm/config/sase/network configurations",
+            outputDir: "products/scm/api/config/sase/network configurations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-operations": {
             specPath: "openapi-specs/scm/config/ngfw/operations",
             outputDir: "products/scm/api/config/ngfw/operations",
