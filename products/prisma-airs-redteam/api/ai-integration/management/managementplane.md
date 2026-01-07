@@ -10,6 +10,7 @@ keywords:
 ---
 
 The Management Plane supports configuration, setup, and administrative operations. It provides endpoints for managing targets, instances, custom prompts, and templates.
+For instructions on how to obtain an OAuth 2.0 token, see the [Access Tokens](https://pan.dev/scm/docs/access-tokens/) section.
 
 ### Management Plane Key Capabilities
 
