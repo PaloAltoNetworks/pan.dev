@@ -101,8 +101,8 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/sase/mobileagent/mobileagent-api",
-            label: "GlobalProtect",
+            to: "scm/api/config/sase/network configurations/network-api",
+            label: "Network Configurations",
             icon: "api-doc",
           },
           {
