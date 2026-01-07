@@ -35,6 +35,15 @@ strings. These strings are compared in several places to parse the configuration
 This class is used to avoid hardcoding these strings. It maps the actual configuration string to a variable that can be
 referenced in the code.
 
+## class `SnapStatus`
+
+Status enum for snapshot operations.
+
+Represents the possible statuses for snapshot operations:
+
+* `SUCCESS` - Snapshot was successfully captured
+* `ERROR` - An error occurred during snapshot capture
+
 ## class `CheckStatus`
 
 Class containing possible statuses for the check results.
@@ -62,6 +71,90 @@ bool(SupportedHashes.MD5.value < SupportedHashes.SHA256.value)
 ```
 
 would produce `True`.
+
+### `enum_state_dict_factory`
+
+```python
+def enum_state_dict_factory(data)
+```
+
+Custom dict factory to handle Enum values in dataclasses.
+
+Converts SnapStatus or CheckStatus enums to boolean (SUCCESS=True, others=False).
+Also includes the original enum name as a string.
+
+## class `SnapResult`
+
+Class representing the result of a snapshot operation.
+
+It provides three types of information:
+
+* `status` which represents the outcome of the snapshot operation,
+* `reason` explaining why a snapshot operation succeeded or failed,
+* `snapshot` containing the actual snapshot data when successful.
+
+__Attributes__
+
+
+- `status (SnapStatus)`: Holds the status of a snapshot operation. See [`SnapStatus`](#class-snapstatus) class for details.
+- `reason (str)`: Explanation of the snapshot outcome, particularly useful for error conditions.
+- `snapshot (Optional[dict])`: Contains the actual snapshot data when successful, None otherwise.
+
+### `SnapResult.__str__`
+
+```python
+def __str__()
+```
+
+This class' string representation.
+
+__Returns__
+
+
+`str`: a string combined from the `self.status` and `self.reason` variables. Provides a human readable representation of
+the snapshot operation.
+
+### `SnapResult.__bool__`
+
+```python
+def __bool__()
+```
+
+Class' boolean representation.
+
+__Returns__
+
+
+`bool`: a boolean value interpreting the value of the current `status`:
+
+* `True` when `status` [`SnapStatus.SUCCESS`](#class-snapstatus)
+* `False` otherwise.
+
+### `SnapResult.to_dict`
+
+```python
+def to_dict() -> dict
+```
+
+Convert the SnapResult object to a dictionary.
+
+Converts the enum status to a more serializable format and adds state boolean value for success or failure.
+
+__Returns__
+
+
+`dict`: A dictionary containing the state (boolean), status (string), reason, and snapshot data.
+
+```python showLineNumbers title="Sample output"
+{
+    'reason': '',
+    'snapshot': {'ethernet1/1': 'up',
+                 'ethernet1/2': 'up',
+                 'ethernet1/3': 'down'},
+    'state': True,
+    'status': 'SUCCESS'
+}
+```
 
 ## class `CheckResult`
 
@@ -112,6 +205,29 @@ __Returns__
 
 * `True` when `status` [`CheckStatus.SUCCESS`](#class-checkstatus)
 * `False` otherwise.
+
+### `CheckResult.to_dict`
+
+```python
+def to_dict() -> dict
+```
+
+Convert the CheckResult object to a dictionary.
+
+Converts the enum status to a more serializable format and adds state boolean value for success or failure.
+
+__Returns__
+
+
+`dict`: A dictionary containing the state (boolean), status (string), and reason.
+
+```python showLineNumbers title="Sample output"
+{
+    'reason': 'Pending changes found on device.',
+    'state': False,
+    'status': 'FAIL'
+}
+```
 
 ## class `ConfigParser`
 

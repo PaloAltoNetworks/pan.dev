@@ -57,7 +57,7 @@ __Parameters__
 
 - __left_snapshot__ (`dict`): First snapshot dictionary to be compared, usually the older one, for example a pre-upgrade snapshot.
 - __right_snapshot__ (`dict`): Second snapshot dictionary to be compared, usually the newer one, for example a post-upgrade
-snapshot.
+    snapshot.
 
 ### `SnapshotCompare.compare_snapshots`
 
@@ -105,15 +105,15 @@ __Returns__
 `dict`: Result of comparison in a form of the Python dictionary. Keys in this dictionary are again state areas where values
     depend on the actual comparison method that was run.
 
-### `SnapshotCompare.key_checker`
+### `SnapshotCompare.validate_keys_exist`
 
 ```python
 @staticmethod
-def key_checker(left_dict: dict, right_dict: dict, key: Union[str, set,
-                                                              list]) -> None
+def validate_keys_exist(left_dict: dict, right_dict: dict,
+                        key: Union[str, set, list]) -> None
 ```
 
-The static method to check if a key or a list/set of keys is available in both dictionaries.
+The static method to validate if a key or a list/set of keys is available in both dictionaries.
 
 This method looks for a given key or list/set of keys in two dictionaries. Its main purpose is to assure that when
 comparing a key-value pair from two dictionaries, it actually exists in both.
@@ -129,57 +129,6 @@ __Raises__
 
 
 - `MissingKeyException`: when key is not available in at least one snapshot.
-
-### `SnapshotCompare.calculate_change_percentage`
-
-```python
-@staticmethod
-def calculate_change_percentage(
-        first_value: Union[str, int], second_value: Union[str, int],
-        threshold: Union[str, float]) -> Dict[str, Union[bool, float]]
-```
-
-The static method to compare differences between values against a given threshold.
-
-Values to be compared should be the `int` or `str` representation of `int`. This method is used when comparing a count of
-elements so a floating point value here is not expected. The threshold value, on the other hand, should be the `float` or
-`str` representation of `float`. This is a percentage value.
-
-The format of the returned value is the following:
-
-```python showLineNumbers
-{
-    passed: bool,
-    change_percentage: float,
-    change_threshold: float
-}
-```
-
-Where:
-
-- `passed` is an information if the test passed:
-    - `True` if difference is lower or equal to threshold,
-    - `False` otherwise,
-- the actual difference represented as percentage,
-- the originally requested threshold (for reporting purposes).
-
-__Parameters__
-
-
-- __first_value__ (`int, str`): First value to compare.
-- __second_value__ (`int, str`): Second value to compare.
-- __threshold__ (`float, str`): Maximal difference between values given as percentage.
-
-__Raises__
-
-
-- `WrongDataTypeException`: An exception is raised when the threshold value is not between `0` and `100` (typical percentage
-    boundaries).
-
-__Returns__
-
-
-`dict`: A dictionary with the comparison results.
 
 ### `SnapshotCompare.calculate_diff_on_dicts`
 
@@ -367,7 +316,7 @@ def calculate_passed(result: Dict[str, Union[dict, str]]) -> None
 The static method to calculate the upper level `passed` value.
 
 When two snapshots are compared, a dictionary that is the result of this comparison is structured as in the following
-[`get_diff_and_threshold()`](#snapshotcompareget_diff_and_threshold) method: each root key contains a dictionary that has
+[`compare_type_generic()`](#snapshotcomparecompare_type_generic) method: each root key contains a dictionary that has
 a structure returned by the [`calculate_diff_on_dicts()`](#snapshotcomparecalculate_diff_on_dicts) method.
 
 This method takes a dictionary under the root key and calculates the `passed` flag based on the all `passed` flags in
@@ -405,17 +354,107 @@ __Parameters__
 
 - __result__ (`dict`): A dictionary for which the `passed` property should be calculated.
 
-### `SnapshotCompare.get_diff_and_threshold`
+### `SnapshotCompare._calculate_metric_change_percentage`
 
 ```python
-def get_diff_and_threshold(
+def _calculate_metric_change_percentage(
+        first_value: Union[str, int], second_value: Union[str, int],
+        threshold: Union[str, float]) -> Dict[str, Union[bool, float]]
+```
+
+Compare differences between metric values against a given threshold.
+
+Values to be compared should be the `int` or `str` representation of `int`. This method is used when comparing a count of
+elements so a floating point value here is not expected. The threshold value, on the other hand, should be the `float` or
+`str` representation of `float`. This is a percentage value.
+
+The format of the returned value is the following:
+
+```python showLineNumbers
+{
+    passed: bool,
+    change_percentage: float,
+    change_threshold: float
+}
+```
+
+Where:
+
+- `passed` is an information if the test passed:
+    - `True` if difference is lower or equal to threshold,
+    - `False` otherwise,
+- the actual difference represented as percentage,
+- the originally requested threshold (for reporting purposes).
+
+__Parameters__
+
+
+- __first_value__ (`int, str`): First value to compare.
+- __second_value__ (`int, str`): Second value to compare.
+- __threshold__ (`float, str`): Maximal difference between values given as percentage.
+
+__Raises__
+
+
+- `WrongDataTypeException`: An exception is raised when the threshold value is not between `0` and `100` (typical percentage
+    boundaries).
+
+__Returns__
+
+
+`dict`: A dictionary with the comparison results.
+
+### `SnapshotCompare._calculate_count_change_percentage`
+
+```python
+def _calculate_count_change_percentage(
+    comparison_result: Dict[str,
+                            dict], left_snapshot_type_dict: Dict[str,
+                                                                 Union[str,
+                                                                       dict]],
+    right_snapshot_type_dict: Dict[str, Union[str, dict]],
+    count_change_threshold: Union[int,
+                                  float]) -> Dict[str, Union[bool, float]]
+```
+
+Calculate the percentage of elements changed between two snapshots of a snapshot type.
+
+This method calculates what percentage of elements have been added, removed, or changed
+between two snapshot captures of a snapshot type, and determines if this percentage is within
+an acceptable threshold.
+
+__Parameters__
+
+
+- __comparison_result__ (`dict`): The comparison result dictionary containing added, missing and changed keys for a snapshot type.
+- __left_snapshot_type_dict__ (`dict`): The left (usually older) snapshot dictionary for a particualar snapshot type.
+- __right_snapshot_type_dict__ (`dict`): The right (usually newer) snapshot dictionary for a particualar snapshot type.
+- __count_change_threshold__ (`int, float`): The maximum acceptable percentage change.
+
+__Raises__
+
+
+- `WrongDataTypeException`: If the threshold is not between 0 and 100.
+
+__Returns__
+
+
+`dict`: A dictionary with the calculation results containing:
+`- passed (bool)`: Whether the change percentage is within threshold
+`- change_percentage (float)`: The calculated change percentage
+`- change_threshold (float)`: The original threshold value
+
+### `SnapshotCompare.compare_type_generic`
+
+```python
+def compare_type_generic(
     report_type: str,
     properties: Optional[List[str]] = None,
     count_change_threshold: Optional[Union[int, float]] = None
-) -> Optional[Dict[str, Optional[Union[bool, dict]]]]
+) -> Dict[str, Union[bool, dict]]
 ```
 
-The generic snapshot comparison method.
+The generic snapshot type comparison method.
 
 The generic method to compare two snapshots of a given type. It is meant to fit most of the comparison cases.
 It is capable of calculating both - a difference between two snapshots and the change count in the elements against a
@@ -505,20 +544,20 @@ __Returns__
 
 `dict`: Comparison results.
 
-### `SnapshotCompare.get_count_change_percentage`
+### `SnapshotCompare.compare_type_metric_values`
 
 ```python
-def get_count_change_percentage(
+def compare_type_metric_values(
     report_type: str,
     thresholds: Optional[List[Dict[str, Union[int, float]]]] = None
 ) -> Optional[Dict[str, Union[bool, dict]]]
 ```
 
-Generic method to calculate the change on values and compare them against a given threshold.
+Generic method to compare metric values of a snapshot type against given thresholds.
 
-In opposition to the [`get_diff_and_threshold()`](#snapshotcompareget_diff_and_threshold) method, this one does not
+In opposition to the [`compare_type_generic()`](#snapshotcomparecompare_type_generic) method, this one does not
 calculate the count change but the actual difference between the numerical values.
-A good example is a change in the session count. The snapshot for this area is a dictionary with the keys taking values
+A good example is a change in the session stats. The snapshot for this area is a dictionary with the keys taking values
 of different session types and values containing the actual session count:
 
 ```python showLineNumbers title="Example"
@@ -591,7 +630,7 @@ __Raises__
 __Returns__
 
 
-`dict`: The result of difference compared against a threshold. The result for each value is in the same form as returned             by the [`calculate_change_percentage()`](#snapshotcomparecalculate_change_percentage) method. For the examples             above, the return value would be:
+`dict`: The result of difference compared against a threshold. The result for each value is in the same form as returned             by the [`_calculate_metric_change_percentage()`](#snapshotcompare_calculate_metric_change_percentage) method. For the examples             above, the return value would be:
 
 ```python showLineNumbers title="Sample output"
 {
@@ -608,4 +647,55 @@ __Returns__
     'passed': False
 }
 ```
+
+### `SnapshotCompare.compare_type_are_routes`
+
+```python
+def compare_type_are_routes(
+    report_type: str,
+    properties: Optional[List[str]] = None,
+    count_change_threshold: Optional[Union[int, float]] = None
+) -> Dict[str, Union[bool, dict]]
+```
+
+Compare advanced routing engine routes between two snapshots of the are_routes type.
+
+This method specifically handles the advanced routing engine data format where:
+- Only installed routes for each destination (CIDR key) on each logical router are considered
+- Nexthops are organized as (ethernet, IP) pairs for comparison
+
+__Parameters__
+
+
+- __report_type__ (`str`): Name of report (type) that has to be compared (always "are_routes" as of now)
+- __properties__ (`list(str), optional`): Optional list of properties to include/exclude when comparing
+- __count_change_threshold__ (`int, float, optional`): Maximum difference between number of changed
+    elements in each snapshot (as percentage)
+
+__Returns__
+
+
+`dict`: Comparison results with the same structure as compare_type_generic()
+
+### `SnapshotCompare._normalize_are_routes`
+
+```python
+def _normalize_are_routes(are_routes: Dict) -> Dict
+```
+
+Normalize advanced routing engine routes for comparison.
+
+For each logical router and destination:
+1. Select only installed routes
+2. Convert nexthop list to dict with ethernet_ip as keys
+
+__Parameters__
+
+
+- __are_routes__ (`dict`): The ARE routes data from a snapshot
+
+__Returns__
+
+
+`dict`: Normalized routing data for comparison
 
