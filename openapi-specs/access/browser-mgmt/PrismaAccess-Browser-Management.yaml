@@ -9,9 +9,9 @@ info:
     \ the [Prisma Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
     These APIs use the common SASE authentication mechanism and base URL. See the\
     \ [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted/) guide for\
-    \ more information. This Open API spec file was created on December 11, 2025.\
-    \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
-    \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ more information. This Open API spec file was created on January 02, 2026. \xA9\
+    \ 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of\
+    \ Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 security:
 - BearerAuth: []
@@ -26,6 +26,78 @@ components:
           type: string
         message:
           type: string
+        missingDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were not found (only present for device
+            not found errors)
+    DeviceStatusChangeRequest:
+      type: object
+      properties:
+        deviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs
+          minItems: 1
+      required:
+      - deviceIds
+    DeviceArchiveResponse:
+      type: object
+      properties:
+        archivedDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were archived
+        message:
+          type: string
+          example: 3 devices archived successfully
+    DeviceRestoreResponse:
+      type: object
+      properties:
+        restoredDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were restored
+        message:
+          type: string
+          example: 3 devices restored successfully
+    DeviceSuspendResponse:
+      type: object
+      properties:
+        suspendedDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were suspended
+        message:
+          type: string
+          example: 3 devices suspended successfully
+    DeviceResumeResponse:
+      type: object
+      properties:
+        resumedDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were resumed
+        message:
+          type: string
+          example: 3 devices resumed successfully
+    DeviceDeleteResponse:
+      type: object
+      properties:
+        deletedDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were deleted
+        message:
+          type: string
+          example: 3 devices deleted successfully
     Order:
       type: string
       description: The sort order
@@ -851,6 +923,13 @@ components:
           type: string
           format: string
           description: External identifier
+        status:
+          type: string
+          description: Device status
+          enum:
+          - active
+          - archived
+          - suspended
         firstSeen:
           type: string
           format: date-time
@@ -988,6 +1067,7 @@ components:
           $ref: '#/components/schemas/User'
       required:
       - id
+      - status
       - firstSeen
       - lastSeen
       - osType
@@ -2465,6 +2545,225 @@ paths:
           type: string
       tags:
       - Devices
+  /seb-api/v1/devices/archive:
+    post:
+      summary: Archive Devices
+      description: Archive one or more devices by changing their status to archived.
+      operationId: PostSeb-apiV1DevicesArchive
+      responses:
+        '200':
+          description: Devices archived successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceArchiveResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
+  /seb-api/v1/devices/restore:
+    post:
+      summary: Restore Archived
+      description: Restore one or more archived devices by changing their status to
+        active.
+      operationId: PostSeb-apiV1DevicesRestore
+      responses:
+        '200':
+          description: Devices restored successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceRestoreResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
+  /seb-api/v1/devices/suspend:
+    post:
+      summary: Suspend Devices
+      description: Suspend one or more devices by changing their status to suspended.
+      operationId: PostSeb-apiV1DevicesSuspend
+      responses:
+        '200':
+          description: Devices suspended successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceSuspendResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
+  /seb-api/v1/devices/resume:
+    post:
+      summary: Resume Suspended Devices
+      description: Resume one or more suspended devices by changing their status to
+        active.
+      operationId: PostSeb-apiV1DevicesResume
+      responses:
+        '200':
+          description: Devices resumed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceResumeResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
+  /seb-api/v1/devices/delete:
+    post:
+      summary: Delete Devices
+      description: Delete one or more devices permanently. **Note:** Suspended devices
+        cannot be deleted - they must be resumed first.
+      operationId: PostSeb-apiV1DevicesDelete
+      responses:
+        '200':
+          description: Devices deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDeleteResponse'
+        '400':
+          description: Bad request - invalid input or attempting to delete suspended
+            devices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
   /seb-api/v1/device-groups:
     get:
       summary: List Device Groups
@@ -2571,6 +2870,15 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/Order'
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
       - DeviceGroups
     post:
@@ -2656,6 +2964,15 @@ paths:
         required: true
         schema:
           type: string
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
       - DeviceGroups
     put:
