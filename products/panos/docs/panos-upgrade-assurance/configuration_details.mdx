@@ -1077,62 +1077,182 @@ Following that [`dialect`][dialect], when no list is passed, **all** state snaps
 The output of the [`CheckFirewall.run_snapshots()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallrun_snapshots) method is formatted as a dictionary where:
 
 - keys are state areas as passed in `snapshot_config` parameter,
-- values are dictionaries with the actual data. Each dictionary can have a different structure. The structure depends on the nature of data we want to capture (see sections below for details).
+- values are dictionaries representing [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) objects, containing four keys:
+
+  - `state`: a `bool` representation of the snapshot outcome:
+    - `True` when the snapshot was captured successfully,
+    - `False` when an error occurred during snapshot capture.
+  - `status`: a `str` representation of the [`SnapStatus`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapstatus) enum:
+    - `"SUCCESS"` when the snapshot was captured successfully,
+    - `"ERROR"` when an error occurred during snapshot capture.
+  - `reason`: a `str` providing explanation of the snapshot outcome, particularly useful for understanding error conditions.
+  - `snapshot`: a `dict` or `None` containing the actual snapshot data when successful, `None` when an error occurred. The structure of this dictionary depends on the nature of data being captured (see sections below for details on each snapshot type).
 
 The sample output containing a snapshot for *route tables*, *licenses*, and *IPSec tunnels* is shown below (one element per each area):
 
 ```mdx-code-block
 <Tabs>
-<TabItem value="json" label="JSON" default>
+<TabItem value="python" label="Python" default>
 ```
 
-```json showLineNumbers
-{
-  "ip_sec_tunnels": {
-    "ipsec_tun": {
-      "peerip": "10.26.129.5",
-      "name": "ipsec_tun",
-      "outer-if": "ethernet1/2",
-      "gwid": "1",
-      "localip": "0.0.0.0",
-      "state": "init",
-      "inner-if": "tunnel.1",
-      "mon": "off",
-      "owner": "1",
-      "id": "1"
-    },
-  }.
-  "routes": {
-    "default_0.0.0.0/0_ethernet1/3_10.26.129.129": {
-      "virtual-router": "default",
-      "destination": "0.0.0.0/0",
-      "nexthop": "10.26.129.129",
-      "metric": "10",
-      "flags": "A S",
-      "age": null,
-      "interface": "ethernet1/3",
-      "route-table": "unicast"
-    },
+```python showLineNumbers
+result = {
+  'ip_sec_tunnels': {
+    'state': True,
+    'status': 'SUCCESS',
+    'reason': '',
+    'snapshot': {
+      'ipsec_tun': {
+        'peerip': '10.26.129.5',
+        'name': 'ipsec_tun',
+        'outer-if': 'ethernet1/2',
+        'gwid': '1',
+        'localip': '0.0.0.0',
+        'state': 'init',
+        'inner-if': 'tunnel.1',
+        'mon': 'off',
+        'owner': '1',
+        'id': '1'
+      }
+    }
   },
-  "license": {
-    "DNS Security": {
-      "feature": "DNS Security",
-      "description": "Palo Alto Networks DNS Security License",
-      "serial": "007257000334668",
-      "issued": "November 08, 2022",
-      "expires": "November 01, 2023",
-      "expired": "no",
-      "base-license-name": "PA-VM",
-      "authcode": null
-    },
+  'routes': {
+    'state': True,
+    'status': 'SUCCESS',
+    'reason': '',
+    'snapshot': {
+      'default_0.0.0.0/0_ethernet1/3_10.26.129.129': {
+        'virtual-router': 'default',
+        'destination': '0.0.0.0/0',
+        'nexthop': '10.26.129.129',
+        'metric': '10',
+        'flags': 'A S',
+        'age': None,
+        'interface': 'ethernet1/3',
+        'route-table': 'unicast'
+      }
+    }
+  },
+  'license': {
+    'state': True,
+    'status': 'SUCCESS',
+    'reason': '',
+    'snapshot': {
+      'DNS Security': {
+        'feature': 'DNS Security',
+        'description': 'Palo Alto Networks DNS Security License',
+        'serial': '007257000334668',
+        'issued': 'November 08, 2022',
+        'expires': 'November 01, 2023',
+        'expired': 'no',
+        'base-license-name': 'PA-VM',
+        'authcode': None
+      }
+    }
   }
 }
 ```
 
 ```mdx-code-block
 </TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+result:
+  ip_sec_tunnels:
+    state: true
+    status: SUCCESS
+    reason: ''
+    snapshot:
+      ipsec_tun:
+        peerip: 10.26.129.5
+        name: ipsec_tun
+        outer-if: ethernet1/2
+        gwid: '1'
+        localip: 0.0.0.0
+        state: init
+        inner-if: tunnel.1
+        mon: 'off'
+        owner: '1'
+        id: '1'
+  routes:
+    state: true
+    status: SUCCESS
+    reason: ''
+    snapshot:
+      default_0.0.0.0/0_ethernet1/3_10.26.129.129:
+        virtual-router: default
+        destination: 0.0.0.0/0
+        nexthop: 10.26.129.129
+        metric: '10'
+        flags: A S
+        age: null
+        interface: ethernet1/3
+        route-table: unicast
+  license:
+    state: true
+    status: SUCCESS
+    reason: ''
+    snapshot:
+      DNS Security:
+        feature: DNS Security
+        description: Palo Alto Networks DNS Security License
+        serial: '007257000334668'
+        issued: November 08, 2022
+        expires: November 01, 2023
+        expired: 'no'
+        base-license-name: PA-VM
+        authcode: null
+```
+
+```mdx-code-block
+</TabItem>
 </Tabs>
 ```
+
+When a snapshot fails to capture, the structure reflects the error:
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+result = {
+  'routes': {
+    'state': False,
+    'status': 'ERROR',
+    'reason': 'Command failed with error: Invalid command',
+    'snapshot': None
+  }
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+result:
+  routes:
+    state: false
+    status: ERROR
+    reason: 'Command failed with error: Invalid command'
+    snapshot: null
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+In this case:
+- `state` is `False` (Python) / `false` (YAML) indicating failure
+- `status` is `"ERROR"`
+- `reason` provides the error details
+- `snapshot` is `None` (Python) / `null` (YAML) since no data was captured
 
 Following state areas are available:
 
@@ -1152,6 +1272,8 @@ snapshots_config = [
   'session_stats',
   'ip_sec_tunnels',
   'fib_routes',
+  'are_routes',
+  'are_fib_routes',
   {'mtu': {
     'include_subinterfaces': True
   }},
@@ -1174,6 +1296,8 @@ snapshots_config:
   - session_stats
   - ip_sec_tunnels
   - fib_routes
+  - are_routes
+  - are_fib_routes
   - mtu:
       include_subinterfaces: true
 ```
@@ -1189,55 +1313,55 @@ Please see the sections below for details of each state snapshot:
 
 Makes a snapshot of ARP table.
 
-**Method:** [`FirewallProxy.get_arp_table()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_arp_table)
+**Method:** [`CheckFirewall.get_arp_table_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_arp_table_snapshot)
 
 ### `content_version`
 
 Grabs the currently installed Content DB version.
 
-**Method:** [`CheckFirewall.get_content_db_version()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_content_db_version)
+**Method:** [`CheckFirewall.get_content_db_version_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_content_db_version_snapshot)
 
 ### `ip_sec_tunnels`
 
 Takes a snapshot of configuration of all IPSec tunnels along with their state.
 
-**Method:** [`CheckFirewall.get_ip_sec_tunnels()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_ip_sec_tunnels)
+**Method:** [`CheckFirewall.get_ip_sec_tunnels_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_ip_sec_tunnels_snapshot)
 
 ### `license`
 
 Takes a snapshot of information about all licenses installed on a device.
 
-**Method:** [`FirewallProxy.get_licenses()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_licenses)
+**Method:** [`CheckFirewall.get_license_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_license_snapshot)
 
 ### `nics`
 
 Takes a snapshot of a state of all configured (not installed) network interfaces.
 
-**Method:** [`FirewallProxy.get_nics()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_nics)
+**Method:** [`CheckFirewall.get_nics_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_nics_snapshot)
 
 ### `routes`
 
 Takes a snapshot of the Route Table (this includes routes populated from DHCP as well as manually entered ones).
 
-**Method:** [`FirewallProxy.get_routes()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_routes)
+**Method:** [`CheckFirewall.get_routes_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_routes_snapshot)
 
 ### `bgp_peers`
 
 Takes a snapshot of configuration of BGP peers along with their status.
 
-**Method:** [`FirewallProxy.get_bgp_peers()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_bgp_peers)
+**Method:** [`CheckFirewall.get_bgp_peers_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_bgp_peers_snapshot)
 
 ### `fib_routes`
 
 Takes a snapshot of the Forwarding table (routes that are actually taken into forwarding decisions based on routing table).
 
-**Method:** [`FirewallProxy.get_fib()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_fib)
+**Method:** [`CheckFirewall.get_fib_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_fib_snapshot)
 
 ### `session_stats`
 
 Gets information about the session statistics, such as current sessions count per a session type (TCP, UDP, etc).
 
-**Method:** [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats)
+**Method:** [`CheckFirewall.get_session_stats_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_session_stats_snapshot)
 
 ### `mtu`
 
@@ -1251,7 +1375,7 @@ Use `include_subinterfaces` with caution as it will query each sub-interface one
 sub-interfaces if there are a lot of them.
 :::
 
-**Method:** [`FirewallProxy.get_interfaces_mtu()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_interfaces_mtu)
+**Method:** [`CheckFirewall.get_interfaces_mtu_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_interfaces_mtu_snapshot)
 
 **Configuration parameters**
 
@@ -1292,6 +1416,18 @@ snapshots_config:
 </Tabs>
 ```
 
+### `are_routes`
+
+Takes a snapshot of Advanced Routing Engine (ARE) routing table entries. This snapshot is specifically for devices using the Advanced Routing Engine.
+
+**Method:** [`CheckFirewall.get_are_routes_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_are_routes_snapshot)
+
+### `are_fib_routes`
+
+Takes a snapshot of Advanced Routing Engine (ARE) FIB (Forwarding Information Base) table entries. This snapshot is specifically for devices using the Advanced Routing Engine.
+
+**Method:** [`CheckFirewall.get_are_fib_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_are_fib_snapshot)
+
 ## Reports
 
 The reporting part is actually the result of comparison of two snapshots. It is advised to run reports using the common method as some of the comparison results are calculated with it. The common method is: [`SnapshotCompare.compare_snapshots()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_snapshots).
@@ -1323,6 +1459,14 @@ reports = [
         'count_change_threshold': 10
     }},
     {'fib_routes': {
+        'properties': ['!flags'],
+        'count_change_threshold': 10
+    }},
+    {'are_routes': {
+        'properties': ['!uptime', '!internalNextHopNum'],
+        'count_change_threshold': 10
+    }},
+    {'are_fib_routes': {
         'properties': ['!flags'],
         'count_change_threshold': 10
     }},
@@ -1367,6 +1511,15 @@ reports:
       properties:
         - "!flags"
       count_change_threshold: 10
+  - are_routes:
+      properties:
+        - "!uptime"
+        - "!internalNextHopNum"
+      count_change_threshold: 10
+  - are_fib_routes:
+      properties:
+        - "!flags"
+      count_change_threshold: 10
   - bgp_peers:
       properties:
         - "status"
@@ -1384,7 +1537,7 @@ reports:
 ```
 
 
-For most reports, a generic comparison method is used ([`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)). It produces the standardized dictionary. For details, see documentation for this method. Common method assigns a report result to a report area providing a dictionary where keys are report areas and values are report results.
+For most reports, a generic comparison method is used ([`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)). It produces the standardized dictionary. For details, see documentation for this method. Common method assigns a report result to a report area providing a dictionary where keys are report areas and values are report results.
 
 For details on which configuration can be passed, check each report area below (for each report, we will explain the above-mentioned configuration):
 
@@ -1392,7 +1545,7 @@ For details on which configuration can be passed, check each report area below (
 
 Runs comparison of ARP tables snapshots.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1449,13 +1602,13 @@ reports:
 
 This is one of a few checks that does not take any configuration. It simply compares Content DB version from both snapshots. Results are presented as the standardized dictionary.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 ### `ip_sec_tunnels`
 
 Compares configuration and the state of IPSec tunnels.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1508,7 +1661,7 @@ reports:
 
 Compares installed licenses. This report does not only check if we have the same set of licenses in both snapshots but also compares license details, such as expiration date, etc.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1562,7 +1715,7 @@ Provides a report on status of network interfaces. This report is limited to inf
 
 At the moment of writing this documentation, the snapshot contains only interface state information. Despite the fact that we use the generic method for preparing this report, the only reasonable parameter to use is `count_change_threshold`.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1615,7 +1768,7 @@ Provides a report on differences between Route Table entries. It includes:
 - availability of a route in one of the snapshots,
 - for routes available in two snapshots, difference in route properties, such as age, next hop, etc.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1671,7 +1824,7 @@ reports:
 
 Compares configuration and the status of BGP peers.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1726,7 +1879,7 @@ Provides a report on differences between FIB Table entries. It includes:
 - availability of a fib entry in one of the snapshots,
 - for fib entries available in two snapshots, difference in fib entry properties, such as destination, next hop, flags etc.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Configuration parameters**
 
@@ -1778,13 +1931,137 @@ reports:
 </Tabs>
 ```
 
+### `are_routes`
+
+Provides a report on differences between Advanced Routing Engine (ARE) routing table entries. This snapshot type is specifically designed for devices using the Advanced Routing Engine. It includes:
+
+- availability of a route in one of the snapshots,
+- for routes available in two snapshots, difference in route properties, such as protocol, nexthops, installed status, etc.
+
+The comparison automatically:
+- Filters to only installed routes for each destination per logical router
+- Normalizes nexthop information for accurate comparison
+- Organizes nexthops as interface/IP pairs
+
+**Method:** [`SnapshotCompare.compare_type_are_routes()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_are_routes)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`properties` | (optional) a set of properties to skip or include when comparing two route entries, all properties are checked when this parameter is skipped
+`count_change_threshold` | (optional) maximum difference percentage of changed entries in routing table in both snapshots, skipped when this property is not specified
+
+**Sample configuration**
+
+The following configuration:
+
+- compares ARE routing table entries between both snapshots, but when comparing two entries the `uptime` and `internalNextHopNum` parameters are not taken into consideration,
+- calculates the count of changed routing table entries from both snapshots and marks comparison as failed if the difference is bigger than 10%.
+
+This report produces the standardized dictionary.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'are_routes': {
+            'properties': ['!uptime', '!internalNextHopNum'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - are_routes:
+      properties:
+        - '!uptime'
+        - '!internalNextHopNum'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### `are_fib_routes`
+
+Provides a report on differences between Advanced Routing Engine (ARE) FIB (Forwarding Information Base) table entries. This snapshot type is specifically designed for devices using the Advanced Routing Engine. It includes:
+
+- availability of a FIB entry in one of the snapshots,
+- for FIB entries available in two snapshots, difference in FIB entry properties, such as destination, interface, nexthop, MTU, etc.
+
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
+
+**Configuration parameters**
+
+parameter | description
+--- | ---
+`properties` | (optional) a set of properties to skip or include when comparing two FIB entries, all properties are checked when this parameter is skipped
+`count_change_threshold` | (optional) maximum difference percentage of changed entries in FIB table in both snapshots, skipped when this property is not specified
+
+**Sample configuration**
+
+The following configuration:
+
+- compares ARE FIB table entries between both snapshots, but when comparing two entries the `flags` parameter is not taken into consideration,
+- calculates the count of changed FIB table entries from both snapshots and marks comparison as failed if the difference is bigger than 10%.
+
+This report produces the standardized dictionary.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+reports = [
+    {
+        'are_fib_routes': {
+            'properties': ['!flags'],
+            'count_change_threshold': 10
+        }
+    }
+]
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="ansible" label="YAML">
+```
+
+```yaml showLineNumbers
+reports:
+  - are_fib_routes:
+      properties:
+        - '!flags'
+      count_change_threshold: 10
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 ### `session_stats`
 
-This report is slightly different than reports made with the [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold) method as the snapshot data is different (refer to the [`FirewallProxy.get_session_stats()`](/panos/docs/panos-upgrade-assurance/api/firewall_proxy#firewallproxyget_session_stats) method documentation for details).
+This report is slightly different than reports made with the [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic) method as the snapshot data is different (refer to the [`CheckFirewall.get_session_stats_snapshot()`](/panos/docs/panos-upgrade-assurance/api/check_firewall#checkfirewallget_session_stats_snapshot) method documentation for details).
 
 It takes one parameter only: `thresholds`. It contains a list of sessions stats as available in the snapshot. For each stat a threshold value is provided. This report calculates a change in the session statistics and compares it to the threshold value. This parameter does not have a default value - when skipped the report gives no results.
 
-**Method:** [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage)
+**Method:** [`SnapshotCompare.compare_type_metric_values()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_metric_values)
 
 **Configuration parameters**
 
@@ -1796,7 +2073,7 @@ parameter | description
 
 The following configuration compares only stats for `num-max` and `num-tcp`. For both, the accepted difference is 10%.
 
-This report produces a `dict` as documented in the [`SnapshotCompare.get_count_change_percentage()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_count_change_percentage) method documentation.
+This report produces a `dict` as documented in the [`SnapshotCompare.compare_type_metric_values()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_metric_values) method documentation.
 
 ```mdx-code-block
 <Tabs>
@@ -1838,7 +2115,7 @@ reports:
 
 Provides a report on differences between interface MTU sizes. It simply compares MTU sizes for all interfaces from both snapshots.
 
-**Method:** [`SnapshotCompare.get_diff_and_threshold()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcompareget_diff_and_threshold)
+**Method:** [`SnapshotCompare.compare_type_generic()`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#snapshotcomparecompare_type_generic)
 
 **Sample configuration**
 

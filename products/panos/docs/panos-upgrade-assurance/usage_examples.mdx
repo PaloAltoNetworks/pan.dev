@@ -259,6 +259,66 @@ FAILED: arp_entry_exist - [FAIL] Entry not found in the ARP table.
 </Tabs>
 ```
 
+### Taking state snapshots on a single device
+
+State snapshots capture the current state of various device areas such as network interfaces, routing tables, licenses, ARP tables, etc. These snapshots can be taken before and after an upgrade to verify that the device state remains consistent.
+
+In this example, we take snapshots of multiple state areas on a device. Each snapshot is returned as a [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) object containing the snapshot state, status, and the actual data captured:
+
+```mdx-code-block
+<Tabs>
+<TabItem value="python" label="Python" default>
+```
+
+```python showLineNumbers
+from panos_upgrade_assurance.check_firewall import CheckFirewall
+from panos_upgrade_assurance.firewall_proxy import FirewallProxy
+
+firewall = FirewallProxy(hostname='1.2.3.4', api_username='ro_admin', api_password='************')
+checks = CheckFirewall(firewall)
+
+# Take snapshots of specific state areas
+snapshots_config = [
+  'nics',
+  'routes',
+  'license',
+  'arp_table',
+]
+
+snapshot = checks.run_snapshots(snapshots_config)
+
+# Check if all snapshots were captured successfully
+for snap_type in snapshots_config:
+  if snapshot[snap_type]['state']:
+    print(f'SUCCESS: {snap_type} snapshot captured')
+  else:
+    print(f'FAILED: {snap_type} - {snapshot[snap_type]["reason"]}')
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+The sample output of this portion of the script (three snapshots succeed, one fails):
+
+```mdx-code-block
+<Tabs>
+<TabItem value="output" label="Output" default>
+```
+
+```console showLineNumbers
+SUCCESS: nics snapshot captured
+SUCCESS: routes snapshot captured
+SUCCESS: license snapshot captured
+FAILED: arp_table - Command failed with error: Invalid response
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
 ### Generating a report based on snapshots
 
 In this example, we take two snapshots (one for each device in an HA pair) and we use the [`SnapshotCompare`](/panos/docs/panos-upgrade-assurance/api/snapshot_compare#class-snapshotcompare) class to compare licenses. Based on the comparison result, a decision is made whether to continue with the rest of the script.

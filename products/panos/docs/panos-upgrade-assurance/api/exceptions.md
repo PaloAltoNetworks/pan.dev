@@ -73,6 +73,10 @@ Used when an exception about the missing keys in a dictionary is thrown.
 
 Used when a snapshot element contains different properties in both snapshots.
 
+## class `SnapshotNoneComparisonException`
+
+Raised when attempting to compare None with dict in snapshot comparison.
+
 ## class `UnknownParameterException`
 
 Used when one of the requested configuration parameters is not a valid.
