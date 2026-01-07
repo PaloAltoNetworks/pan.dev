@@ -9,7 +9,8 @@ keywords:
   - API
 ---
 
-The Data Plane supports scan execution, monitoring, and reporting operations. It provides endpoints for running scans, retrieving attack details, and generating reports.
+The Data Plane supports scan execution, monitoring, and reporting operations. It provides endpoints for running scans, retrieving attack details, and generating reports. 
+For instructions on how to obtain an OAuth 2.0 token, see the [Access Tokens](https://pan.dev/scm/docs/access-tokens/) section.
 
 ### Key Capabilities
 
