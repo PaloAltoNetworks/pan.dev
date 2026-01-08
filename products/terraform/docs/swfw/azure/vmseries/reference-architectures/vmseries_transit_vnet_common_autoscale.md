@@ -1209,7 +1209,10 @@ The basic Scale Set configuration properties are as follows:
   - `name`                    - (`string`, required) name of the network interface (will be prefixed with `var.name_prefix`).
   - `subnet_key`              - (`string`, required) a key of a subnet to which the interface will be assigned as defined in
                                 `var.vnets`.
-  - `create_public_ip`        - (`bool`, optional, defaults to module default) create Public IP for an interface.
+  - `ip_configurations`       - (`map`, required) A map that contains the IP configurations for the interface.
+      - `name`                  - (`string`, optional, defaults to `primary`) the name of the interface IP configuration.
+      - `primary`               - (`bool`, optional, defaults to `true`) sets the current IP configuration as the primary one.
+      - `create_public_ip`      - (`bool`, optional, defaults to `false`) if `true`, create a public IP for the interface.
   - `load_balancer_key`       - (`string`, optional, defaults to `null`) key of a Load Balancer defined in the
                                 `var.loadbalancers` variable, network interface that has this property defined will be added to
                                 the Load Balancer's backend pool.
@@ -1246,9 +1249,10 @@ map(object({
       custom_id               = optional(string)
     }))
     virtual_machine_scale_set = optional(object({
-      size      = optional(string)
-      zones     = optional(list(string))
-      disk_type = optional(string)
+      orchestration_type = optional(string)
+      size               = optional(string)
+      zones              = optional(list(string))
+      disk_type          = optional(string)
       bootstrap_options = optional(object({
         type                                  = optional(string)
         ip-address                            = optional(string)
@@ -1308,16 +1312,20 @@ map(object({
       webhooks_uris           = optional(map(string), {})
     }), {})
     interfaces = list(object({
-      name                           = string
-      subnet_key                     = string
-      create_public_ip               = optional(bool)
-      pip_domain_name_label          = optional(string)
-      pip_idle_timeout_in_minutes    = optional(number)
-      pip_prefix_name                = optional(string)
-      pip_prefix_resource_group_name = optional(string)
-      pip_prefix_id                  = optional(string)
-      load_balancer_key              = optional(string)
-      application_gateway_key        = optional(string)
+      name       = string
+      subnet_key = string
+      ip_configurations = optional(map(object({
+        name                           = optional(string)
+        primary                        = optional(bool, true)
+        create_public_ip               = optional(bool, false)
+        pip_domain_name_label          = optional(string)
+        pip_idle_timeout_in_minutes    = optional(number)
+        pip_prefix_name                = optional(string)
+        pip_prefix_resource_group_name = optional(string)
+        pip_prefix_id                  = optional(string)
+      })))
+      load_balancer_key       = optional(string)
+      application_gateway_key = optional(string)
     }))
     autoscaling_profiles = optional(list(object({
       name          = string
