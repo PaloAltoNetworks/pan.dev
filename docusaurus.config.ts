@@ -197,9 +197,15 @@ const config = {
                   to: "#",
                   logoClass: "panos",
                   docs: [
+                    
                     {
                       to: "/airs",
                       label: "Prisma AIRS",
+                      icon: "doc",
+                    },
+                    {
+                      to: "/redteam",
+                      label: "Prisma AIRS AI Red Team",
                       icon: "doc",
                     },
                   ],
@@ -209,7 +215,13 @@ const config = {
                       label: "Prisma AIRS AI Runtime: API Intercept",
                       icon: "api-doc",
                     },
+                    {
+                      to: "prisma-airs-redteam/api/ai-integration/introduction",
+                      label: "Prisma AIRS AI Red Teaming",
+                      icon: "api-doc",
+                    },
                   ],
+          
                 },
                 {
                   label: "PAN-OS",
@@ -1020,6 +1032,19 @@ const config = {
           airuntimesecurity: {
             specPath: "openapi-specs/prisma-airs/scan",
             outputDir: "products/prisma-airs/api/airuntimesecurity/scan",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          aiintegration: {
+            specPath: "openapi-specs/prisma-airs-redteam/data-plane",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          //Prisma AIRS RedTeam-management as config
+          redteammgmt: {
+            specPath: "openapi-specs/prisma-airs-redteam/management",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/management",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
