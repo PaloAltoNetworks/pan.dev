@@ -203,11 +203,6 @@ const config = {
                       label: "Prisma AIRS",
                       icon: "doc",
                     },
-                    {
-                      to: "/redteam",
-                      label: "Prisma AIRS AI Red Team",
-                      icon: "doc",
-                    },
                   ],
                   apiDocs: [
                     {
