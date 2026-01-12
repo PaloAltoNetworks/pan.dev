@@ -1375,6 +1375,178 @@ __Returns__
 }
 ```
 
+### `FirewallProxy.get_are_fib`
+
+```python
+def get_are_fib() -> dict
+```
+
+Get the information from the Advanced Routing Engine forwarding information table (FIB).
+
+The actual API command run is `show advanced-routing fib`.
+
+As of now API returns the complete same structure with the `show routing fib` command.
+See `get_fib()` for details of the return type.
+
+__Returns__
+
+
+`dict`: Status of the route entries in the FIB
+
+### `FirewallProxy._parse_fib`
+
+```python
+def _parse_fib(fib_response) -> dict
+```
+
+Parse the forwarding information base (FIB) response from PAN-OS API.
+
+This helper method processes the output from both 'show routing fib' and
+'show advanced-routing fib' API commands, which share the same structure.
+It converts the API response into a standardized dictionary format with
+keys that combine destination, interface, and nexthop values.
+
+__Parameters__
+
+
+- __fib_response__ (`dict`): Raw FIB response from the API.
+
+__Returns__
+
+
+`dict`: Parsed FIB entries where each key is formatted as:
+    '{destination}_{interface}_{nexthop}' with detailed route information as values.
+
+### `FirewallProxy.get_are_routes`
+
+```python
+def get_are_routes() -> dict
+```
+
+Get the advanced routing engine routes.
+
+The actual API command run is `show advanced-routing route`.
+
+This method fetches the routes from the advanced routing engine. The response includes
+information about routes in different logical routers and their details such as
+prefix, protocol, nexthops, etc.
+
+__Returns__
+
+
+`dict`: The advanced routing engine routes by logical router.
+
+```python showLineNumbers title="Sample output"
+{
+  "public-lr": {
+    "0.0.0.0/0": [
+      {
+        "prefix": "0.0.0.0/0",
+        "protocol": "static",
+        "vrfId": 0,
+        "vrfName": "default",
+        "selected": true,
+        "destSelected": true,
+        "distance": 10,
+        "metric": 10,
+        "installed": true,
+        "table": 254,
+        "internalStatus": 16,
+        "internalFlags": 73,
+        "internalNextHopNum": 2,
+        "internalNextHopActiveNum": 2,
+        "installedNexthopGroupId": 35,
+        "uptime": "00:00:26",
+        "nexthops": [
+          {
+            "flags": "A E ",
+            "fib": true,
+            "directlyConnected": true,
+            "interfaceIndex": 16,
+            "interfaceName": "ethernet1/1",
+            "active": true,
+            "weight": 1
+          },
+          {
+            "flags": "A E ",
+            "fib": true,
+            "directlyConnected": true,
+            "interfaceIndex": 17,
+            "interfaceName": "ethernet1/2",
+            "active": true,
+            "weight": 1
+          }
+        ]
+      }
+    ],
+    "10.0.0.0/8": [
+      {
+        "prefix": "10.0.0.0/8",
+        "protocol": "static",
+        "vrfId": 0,
+        "vrfName": "default",
+        "selected": true,
+        "destSelected": true,
+        "distance": 10,
+        "metric": 10,
+        "installed": true,
+        "table": 254,
+        "internalStatus": 16,
+        "internalFlags": 73,
+        "internalNextHopNum": 1,
+        "internalNextHopActiveNum": 1,
+        "installedNexthopGroupId": 3,
+        "uptime": "2d23h53m",
+        "nexthops": [
+          {
+            "flags": "A ",
+            "fib": true,
+            "directlyConnected": true,
+            "interfaceIndex": 61442,
+            "interfaceName": "private-lr",
+            "active": true,
+            "weight": 1
+          }
+        ]
+      }
+    ]
+  },
+  "private-lr": {
+    "0.0.0.0/0": [
+      {
+        "prefix": "0.0.0.0/0",
+        "protocol": "static",
+        "vrfId": 0,
+        "vrfName": "default",
+        "selected": true,
+        "destSelected": true,
+        "distance": 10,
+        "metric": 10,
+        "installed": true,
+        "table": 254,
+        "internalStatus": 16,
+        "internalFlags": 73,
+        "internalNextHopNum": 1,
+        "internalNextHopActiveNum": 1,
+        "installedNexthopGroupId": 3,
+        "uptime": "2d23h53m",
+        "nexthops": [
+          {
+            "flags": "A ",
+            "fib": true,
+            "directlyConnected": true,
+            "interfaceIndex": 61441,
+            "interfaceName": "public-lr",
+            "active": true,
+            "weight": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### `FirewallProxy.get_system_time_rebooted`
 
 ```python
