@@ -670,80 +670,18 @@ __Returns__
 * [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when CPU utilization is equal to or above the threshold.
 * [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the data cannot be retrieved.
 
-### `CheckFirewall.get_nics_snapshot`
+### `CheckFirewall.get_content_db_version`
 
 ```python
-def get_nics_snapshot() -> SnapResult
+def get_content_db_version() -> Dict[str, str]
 ```
 
-Get NICs information as a snapshot.
+Get Content DB version.
 
 __Returns__
 
 
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the NICs snapshot operation.
-
-### `CheckFirewall.get_routes_snapshot`
-
-```python
-def get_routes_snapshot() -> SnapResult
-```
-
-Get routes information for Legacy Routing Engine as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the routes snapshot operation.
-
-### `CheckFirewall.get_bgp_peers_snapshot`
-
-```python
-def get_bgp_peers_snapshot() -> SnapResult
-```
-
-Get BGP peers information for Legacy Routing Engine as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the BGP peers snapshot operation.
-
-### `CheckFirewall.get_license_snapshot`
-
-```python
-def get_license_snapshot() -> SnapResult
-```
-
-Get license information as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the license snapshot operation.
-
-### `CheckFirewall.get_arp_table_snapshot`
-
-```python
-def get_arp_table_snapshot() -> SnapResult
-```
-
-Get ARP table information as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the ARP table snapshot operation.
-
-### `CheckFirewall.get_content_db_version_snapshot`
-
-```python
-def get_content_db_version_snapshot() -> SnapResult
-```
-
-Get Content DB version as a snapshot.
-
-To keep the standard of all snapshots represented as a dictionary, content version is also returned as a dictionary             in the following format:
+`dict(str)`: To keep the standard of all `get` methods returning a dictionary this value is also returned as a dictionary             in the following format:
 
 ```python showLineNumbers
 {
@@ -751,33 +689,18 @@ To keep the standard of all snapshots represented as a dictionary, content versi
 }
 ```
 
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the content DB version snapshot operation.
-
-### `CheckFirewall.get_session_stats_snapshot`
+### `CheckFirewall.get_ip_sec_tunnels`
 
 ```python
-def get_session_stats_snapshot() -> SnapResult
+def get_ip_sec_tunnels() -> Dict[str, dict]
 ```
 
-Get session statistics as a snapshot.
+Extract information about IPSEC tunnels from all tunnel data retrieved from a device.
 
 __Returns__
 
 
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the session statistics snapshot operation.
-
-### `CheckFirewall.get_ip_sec_tunnels_snapshot`
-
-```python
-def get_ip_sec_tunnels_snapshot() -> SnapResult
-```
-
-Get IPSec tunnels information as a snapshot.
-
-Currently configured IPSEC tunnels. The returned snapshot value is similar to the example below. It can differ though             depending on the version of PanOS:
+`dict`: Currently configured IPSEC tunnels. The returned value is similar to the example below. It can differ though             depending on the version of PanOS:
 
 ```python showLineNumbers title="Example"
 {
@@ -796,89 +719,24 @@ Currently configured IPSEC tunnels. The returned snapshot value is similar to th
 }
 ```
 
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the IPSec tunnels snapshot operation.
-
-### `CheckFirewall.get_fib_snapshot`
+### `CheckFirewall.get_global_jumbo_frame`
 
 ```python
-def get_fib_snapshot() -> SnapResult
+def get_global_jumbo_frame() -> Dict[str, bool]
 ```
 
-Get FIB routes information for Legacy Routing Engine as a snapshot.
+Get whether global jumbo frame configuration is set or not.
 
 __Returns__
 
 
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the FIB routes snapshot operation.
-
-### `CheckFirewall.get_global_jumbo_frame_snapshot`
-
-```python
-def get_global_jumbo_frame_snapshot() -> SnapResult
-```
-
-Get global jumbo frame configuration as a snapshot.
-
-The global jumbo frame configuration. The returned snapshot value is similar to the example below.
+`dict`: The global jumbo frame configuration.
 
 ```python showLineNumbers title="Example"
 {
     'mode': True
 }
 ```
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the global jumbo frame snapshot operation.
-
-### `CheckFirewall.get_interfaces_mtu_snapshot`
-
-```python
-def get_interfaces_mtu_snapshot(
-        include_subinterfaces: bool = False) -> SnapResult
-```
-
-Get interfaces MTU information as a snapshot.
-
-__Parameters__
-
-
-- __include_subinterfaces__ (`bool, optional`): (defaults to False) Whether to include sub-interfaces in the snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the interfaces MTU snapshot operation.
-
-### `CheckFirewall.get_are_routes_snapshot`
-
-```python
-def get_are_routes_snapshot() -> SnapResult
-```
-
-Get ARE routes information as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the ARE routes snapshot operation.
-
-### `CheckFirewall.get_are_fib_snapshot`
-
-```python
-def get_are_fib_snapshot() -> SnapResult
-```
-
-Get ARE FIB routes information as a snapshot.
-
-__Returns__
-
-
-`SnapResult`: Object of [`SnapResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-snapresult) class             representing the result of the ARE FIB routes snapshot operation.
 
 ### `CheckFirewall.run_readiness_checks`
 
@@ -936,7 +794,7 @@ __Raises__
 __Returns__
 
 
-`dict`: The results of the executed snapshots, including status, reason, and snapshot data as dictionary values.
+`dict`: The results of the executed snapshots.
 
 ### `CheckFirewall.run_health_checks`
 
