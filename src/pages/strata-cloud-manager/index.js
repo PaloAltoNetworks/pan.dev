@@ -46,6 +46,11 @@ export default function SCMLandingPage() {
           to: "scm/docs/release-notes",
           icon: "doc",
         },
+        {
+          label: "Strata Cloud Manager API Best Practices",
+          to: "scm/docs/api-best-practices",
+          icon: "doc",
+        },
       ],
     },
     {

@@ -22,6 +22,10 @@ module.exports = {
           id: "scm/docs/service-accounts",
         },
         {
+          type: "doc",
+          id: "scm/docs/api-best-practices",
+        },
+        {
           type: "category",
           label: "Roles",
           collapsed: true,
