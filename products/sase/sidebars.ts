@@ -300,8 +300,9 @@ module.exports = {
     require("./api/mt-notifications/sidebar"),
   ],
   sasemtinterconnect: [
-    "sase/api/mt-interconnect/mt-interconnect",
-    require("./api/mt-interconnect/sidebar"),
+    "sase/api/mt-interconnect/Manage/introduction",
+    "sase/api/mt-interconnect/Monitor/monitor-introduction",
+    require("./api/mt-interconnect/Manage/sidebar"),
   ],
   manageservices: [
     "sase/api/manage-services-5g/introduction_5g",

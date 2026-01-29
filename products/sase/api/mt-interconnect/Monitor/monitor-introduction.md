@@ -1,7 +1,7 @@
 ---
-id: mt-interconnect
-title: Multitenant Interconnect APIs
-sidebar_label: Multitenant Interconnect APIs
+id: monitor-introduction
+title: Multitenant Interconnect Monitor APIs
+sidebar_label: Multitenant Interconnect Monitor APIs
 slug: /sase/api/mt-interconnect
 keywords:
   - SASE

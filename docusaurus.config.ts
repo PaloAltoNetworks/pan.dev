@@ -921,9 +921,14 @@ const config = {
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          mtinterconnect: {
-            specPath: "openapi-specs/sase/mt-interconnect",
-            outputDir: "products/sase/api/mt-interconnect",
+          ManageInterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect/Manage",
+            outputDir: "products/sase/api/mt-interconnect/Manage",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          MonitorInterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect/Monitor",
+            outputDir: "products/sase/api/mt-interconnect/Monitor",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           manageservices: {

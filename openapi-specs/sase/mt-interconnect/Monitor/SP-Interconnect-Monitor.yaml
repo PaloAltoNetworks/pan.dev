@@ -1,0 +1,466 @@
+openapi: 3.1.0
+info:
+  title: SP Interconnect Manage APIs
+  version: '1.0'
+  description: "This Open API spec file was created on January 28, 2026. \xA9 2026\
+    \ Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo\
+    \ Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.sase.paloaltonetworks.com
+security:
+- BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+ExternalTags: {}
+paths:
+  /mt/sp-interconnect/monitor/vlanAttachments/stats:
+    post:
+      summary: Get VLAN Attachment Stats
+      description: Returns statistics for VLAN attachments including throughput and
+        connection details.
+      operationId: PostMtSp-interconnectMonitorVlanattachmentsStats
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - cloudProvider: GCP
+                  cloudRouterIp: 169.254.23.177/29
+                  cloudRouterIpv6: 2600:2d00:0:1:8000:25:4:7879/125
+                  createTime: 1737611965296
+                  egress_throughput: 0.0011975343058471016
+                  ingress_throughput: 0.0017068013320864356
+                  interconnect_id: c4ac1cc9-684e-11f0-92e9-4201ac16024e
+                  interconnect_name: ic-us-east1
+                  region: us-east1
+                  state: ACTIVE_BGP_UP_BGP_IPV6_UP
+                  status: ACTIVE
+                  tenants: 0
+                  up_time: 1763134414000
+                  updateTime: 1763755310226
+                  vlan_attachment_id: 9764ced6-ef10-437e-80a4-d7609dee6264
+                  vlan_attachment_name: us-east-1-add-2
+                requestId: 45759649-4f0f-41b7-a8d2-766f924eaf67
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters: []
+      tags:
+      - VLAN Attachment Statistics
+      requestBody:
+        content:
+          application/json:
+            example:
+              properties:
+              - property: ingress_throughput
+                function: avg
+              - property: egress_throughput
+                function: avg
+              - property: vlan_attachment_name
+              - property: interconnect_name
+              - property: vlan_attachment_id
+              - property: interconnect_id
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 30
+                - property: interconnect_id
+                  operator: in
+                  values:
+                  - c4ac1cc9-684e-11f0-92e9-4201ac16024e
+  /mt/sp-interconnect/monitor/interconnects/traffic:
+    post:
+      summary: Get Interconnect Data Transfer
+      description: Returns egress and ingress traffic data for interconnects. Use
+        lifetime=true query parameter for lifetime traffic data.
+      operationId: PostMtSp-interconnectMonitorInterconnectsTraffic
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Egress Traffic:
+                  value:
+                    data:
+                    - interconnect_name: ic-us-central1
+                      egress_traffic: 73.40927790249995
+                    requestId: c39c2083-2aa0-4255-9b22-d87c75ec6ade
+                Traffic Over Time:
+                  value:
+                    data:
+                    - interconnect_name: ic-us-central1
+                      event_time: 1763424000000
+                      egress_traffic: 25.912407871000052
+                      ingress_traffic: 50.45267106150007
+                    - interconnect_name: ic-us-central1
+                      event_time: 1763510400000
+                      egress_traffic: 26.001434308999958
+                      ingress_traffic: 48.22614097999999
+                    requestId: c9369eee-108d-4ab8-8498-15bcbb6cf55e
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters:
+      - name: lifetime
+        in: query
+        schema:
+          type: boolean
+        description: Set to true to get lifetime traffic data
+      tags:
+      - Interconnect Traffic
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Egress Traffic Last N Days:
+                value:
+                  properties:
+                  - property: interconnect_name
+                    sort:
+                      order: asc
+                  - function: sum
+                    property: egress_traffic
+                  filter:
+                    operator: AND
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 30
+                    - property: interconnect_id
+                      operator: equals
+                      values:
+                      - c4ac1d7a-684e-11f0-92e9-4201ac16024e
+              Traffic Over Time:
+                value:
+                  properties:
+                  - property: egress_traffic
+                    function: sum
+                  - property: ingress_traffic
+                    function: sum
+                  - property: interconnect_name
+                    sort:
+                      order: asc
+                  filter:
+                    operator: AND
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 30
+                    - property: interconnect_id
+                      operator: in
+                      values:
+                      - c4ac1d7a-684e-11f0-92e9-4201ac16024e
+                  histogram:
+                    property: event_time
+                    range: day
+                    enableEmptyInterval: false
+                    value: '1'
+              Lifetime Traffic:
+                value:
+                  properties:
+                  - property: interconnect_name
+                    sort:
+                      order: asc
+                  - function: sum
+                    property: egress_traffic
+                  filter:
+                    operator: AND
+                    rules:
+                    - property: event_time
+                      operator: lessThan
+                      values:
+                      - '1766104066466'
+                    - property: interconnect_id
+                      operator: equals
+                      values:
+                      - c4ac1d7a-684e-11f0-92e9-4201ac16024e
+  /mt/sp-interconnect/monitor/interconnects/throughput:
+    post:
+      summary: Get Throughput by Interconnect
+      description: Returns throughput trends for interconnects over time.
+      operationId: PostMtSp-interconnectMonitorInterconnectsThroughput
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - egress_throughput: 0.002407656942160277
+                  ingress_throughput: 0.004687820775191641
+                  event_time: 1763424000000
+                  interconnect_name: ic-us-central1
+                - egress_throughput: 0.0024075402109722268
+                  ingress_throughput: 0.0044653834247916635
+                  event_time: 1763510400000
+                  interconnect_name: ic-us-central1
+                requestId: 3fb923a8-0077-443b-a334-07b3cd2123ed
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters: []
+      tags:
+      - Interconnect Throughput
+      requestBody:
+        content:
+          application/json:
+            example:
+              properties:
+              - property: egress_throughput
+              - property: ingress_throughput
+              - property: event_time
+              - property: interconnect_name
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 30
+                - property: interconnect_id
+                  operator: equals
+                  values:
+                  - c4ac1d7a-684e-11f0-92e9-4201ac16024e
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+  /mt/sp-interconnect/monitor/vlanAttachments/throughput:
+    post:
+      summary: Get VLAN Attachment Throughput Trends
+      description: Returns throughput trends for VLAN attachments over time.
+      operationId: PostMtSp-interconnectMonitorVlanattachmentsThroughput
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1763424000000
+                  egress_throughput: 0.0012025526091289183
+                  ingress_throughput: 0.0019499224276655067
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1763510400000
+                  egress_throughput: 0.001203609572708337
+                  ingress_throughput: 0.0017978866898611117
+                requestId: 8bcffcf2-5cba-4ed6-bc63-ed1e8a60bec6
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters: []
+      tags:
+      - VLAN Attachment Throughput
+      requestBody:
+        content:
+          application/json:
+            example:
+              properties:
+              - property: egress_throughput
+                function: avg
+              - property: ingress_throughput
+                function: avg
+              - property: vlan_attachment_name
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 30
+                - property: vlan_attachment_id
+                  operator: in
+                  values:
+                  - 30eb7634-0f21-4dae-a42f-94d7f7cfdbd1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+  /mt/sp-interconnect/monitor/vlanAttachments/traffic:
+    post:
+      summary: Get VLAN Attachment Traffic Trends
+      description: Returns traffic trends for VLAN attachments over time.
+      operationId: PostMtSp-interconnectMonitorVlanattachmentsTraffic
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1763424000000
+                  egress_traffic: 12.942472452499988
+                  ingress_traffic: 20.98604013349996
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1763510400000
+                  egress_traffic: 12.99898336799997
+                  ingress_traffic: 19.417176225000027
+                requestId: 3291624f-4e40-4b10-9a9c-9851c8bbbd82
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters: []
+      tags:
+      - VLAN Attachment Traffic
+      requestBody:
+        content:
+          application/json:
+            example:
+              properties:
+              - property: egress_traffic
+                function: sum
+              - property: ingress_traffic
+                function: sum
+              - property: vlan_attachment_name
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 30
+                - property: vlan_attachment_id
+                  operator: in
+                  values:
+                  - 30eb7634-0f21-4dae-a42f-94d7f7cfdbd1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+  /mt/sp-interconnect/monitor/vlanAttachments/latency:
+    post:
+      summary: Get VLAN Attachment Latency Trends
+      description: Returns latency trends for VLAN attachments over time.
+      operationId: PostMtSp-interconnectMonitorVlanattachmentsLatency
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1766016000000
+                  latency: 4.204661846160889
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1765238400000
+                  latency: 3.15822172164917
+                - vlan_attachment_name: us-centrl-con-2
+                  event_time: 1764115200000
+                  latency: 4.052086353302002
+                requestId: 8e701533-5ab3-4815-90af-b4da543804a9
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters: []
+      tags:
+      - VLAN Attachment Latency
+      requestBody:
+        content:
+          application/json:
+            example:
+              properties:
+              - property: latency
+              - property: event_time
+              - property: region
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 30
+                - property: vlan_attachment_id
+                  operator: in
+                  values:
+                  - 30eb7634-0f21-4dae-a42f-94d7f7cfdbd1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+  /mt/sp-interconnect/monitor/ip-pool-usage:
+    get:
+      summary: Get IP Address Pool Usage
+      description: Returns IP Address pool usage statistics for an interconnect.
+      operationId: GetMtSp-interconnectMonitorIp-pool-usage
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - configuredIps: 16
+                  createTime: 1734992147821
+                  incidentCount: 1
+                  ipBlockType: SECONDARY
+                  ipProvider: SP
+                  location: US Central
+                  percentageUsed: 100
+                  region: us-central1
+                  updateTime: 1734992205233
+                  usedIps: 16
+                - configuredIps: 4
+                  createTime: 1734992147821
+                  incidentCount: 1
+                  ipBlockType: PRIMARY
+                  ipProvider: SP
+                  location: US Central
+                  percentageUsed: 100
+                  region: us-central1
+                  updateTime: 1734992205233
+                  usedIps: 4
+                requestId: 4c06b78f-caa4-4be9-ab90-c58c3855bd8c
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      parameters:
+      - name: interconnectId
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The interconnect ID to query
+        example: c4ac1d7a-684e-11f0-92e9-4201ac16024e
+      tags:
+      - IP Pool Usage
