@@ -125,6 +125,17 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Network Configuration",
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/sase/network configurations/network-api",
+            },
+            require("./api/config/sase/network configurations/sidebar"),
+          ],
+        },
+        {
+          type: "category",
           label: "Network Deployment",
           items: [
             {
@@ -340,6 +351,11 @@ module.exports = {
   scmsubscription: [
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
+  ],
+  scmciedss: [
+    "scm/api/config/ciedss/ciedss",
+    "scm/api/config/ciedss/usecases",
+    require("./api/config/ciedss/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };

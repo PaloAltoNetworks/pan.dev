@@ -197,6 +197,7 @@ const config = {
                   to: "#",
                   logoClass: "panos",
                   docs: [
+                    
                     {
                       to: "/airs",
                       label: "Prisma AIRS",
@@ -205,11 +206,17 @@ const config = {
                   ],
                   apiDocs: [
                     {
-                      to: "prisma-airs/scan/api/",
+                      to: "prisma-airs/api/airuntimesecurity/airuntimesecurityapi",
                       label: "Prisma AIRS AI Runtime: API Intercept",
                       icon: "api-doc",
                     },
+                    {
+                      to: "prisma-airs-redteam/api/ai-integration/introduction",
+                      label: "Prisma AIRS AI Red Teaming",
+                      icon: "api-doc",
+                    },
                   ],
+          
                 },
                 {
                   label: "PAN-OS",
@@ -462,7 +469,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "/access/api/ztna/ztna-connector-apis",
+                      to: "/access/api/ztna/ztna-connector-api",
                       label: "ZTNA Connector",
                       icon: "api-doc",
                     },
@@ -538,13 +545,13 @@ const config = {
                   ],
                 },
                 {
-                  label: "Prisma Access Browser",
+                  label: "Prisma Browser Management",
                   to: "#",
                   logoClass: "prisma",
                   apiDocs: [
                     {
                       to: "access/api/browser-mgmt/browser-mgmt-api",
-                      label: "Prisma Access Browser",
+                      label: "Prisma Browser Management",
                       icon: "api-doc",
                     },
                   ],
@@ -812,6 +819,11 @@ const config = {
             outputDir: "products/scm/api/config/sase/security",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-sase-network configurations": {
+            specPath: "openapi-specs/scm/config/sase/network configurations",
+            outputDir: "products/scm/api/config/sase/network configurations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-operations": {
             specPath: "openapi-specs/scm/config/ngfw/operations",
             outputDir: "products/scm/api/config/ngfw/operations",
@@ -969,6 +981,11 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
@@ -1009,7 +1026,27 @@ const config = {
           },
           airuntimesecurity: {
             specPath: "openapi-specs/prisma-airs/scan",
-            outputDir: "products/prisma-airs/api/airuntimesecurity",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/scan",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          aiintegration: {
+            specPath: "openapi-specs/prisma-airs-redteam/data-plane",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          //Prisma AIRS RedTeam-management as config
+          redteammgmt: {
+            specPath: "openapi-specs/prisma-airs-redteam/management",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/management",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          // Add management API as separate config
+          airuntimesecuritymgmt: {
+            specPath: "openapi-specs/prisma-airs/management",
+            outputDir: "products/prisma-airs/api/airuntimesecurity/management",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
@@ -1032,6 +1069,11 @@ const config = {
           cdl: {
             specPath: "openapi-specs/cdl/logforwarding",
             outputDir: "products/cdl/api/logforwarding",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
+          },
+          scmciedss: {
+            specPath: "openapi-specs/scm/config/ciedss",
+            outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
           mssp: {
@@ -1080,8 +1122,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "34.02",
-            label: "v34.02",
+            version: "34.03",
+            label: "v34.03",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1099,20 +1141,6 @@ const config = {
                 baseUrl: "/compute/api/32-07/",
               },
             },
-          },
-          compute_3206: {
-            specPath: "openapi-specs/compute/32-06",
-            outputDir: "products/compute/api/32-06",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-06/",
-          },
-          compute_3207: {
-            specPath: "openapi-specs/compute/32-07",
-            outputDir: "products/compute/api/32-07",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/32-07/",
           },
           compute_3300: {
             specPath: "openapi-specs/compute/33-00",
@@ -1155,6 +1183,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-01/",
+          },
+           compute_3402: {
+            specPath: "openapi-specs/compute/34-02",
+            outputDir: "products/compute/api/34-02",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/34-02/",
           },
         },
       },

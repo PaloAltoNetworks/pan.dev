@@ -54,10 +54,13 @@ module.exports = {
     "access/api/browser-mgmt/browser-mgmt-api",
     require("./api/browser-mgmt/sidebar"),
   ],
+  saseztna: [
+    "access/api/ztna/ztna-connector-api",
+    require("./api/ztna/sidebar"),
+  ],
   saseprismaaccess: [
     "access/api/prisma-access-config/config-api",
     require("./api/prisma-access-config/sidebar"),
   ],
   adem: [require("./api/adem/sidebar")],
-  ztna: [require("./api/ztna/sidebar")],
 };

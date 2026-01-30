@@ -417,19 +417,38 @@ components:
       type: object
     IncidentInventoryRequest:
       properties:
+        columns:
+          description: Array of column names to include in the incident inventory
+            response.
+          items:
+            type: string
+          type: array
+        end_time:
+          description: Timestamp in milliseconds(ms)
+          format: int64
+          type: integer
         filter:
           description: Filter criteria to narrow down incident search results.
           example: Tag = 'Needs Escalation'
           minLength: 1
           type: string
-        maxRows:
-          description: Maximum number of rows to return in the incident inventory
-            response.
+        max_rows:
           format: int32
           type: integer
         page_size:
           description: Number of incidents to return per page for pagination.
           format: int32
+          type: integer
+        sort_by:
+          description: Field name to sort the incident inventory results by.
+          type: string
+        sort_order:
+          description: Sort order for the incident inventory results (ascending or
+            descending).
+          type: string
+        start_time:
+          description: Timestamp in milliseconds(ms)
+          format: int64
           type: integer
         time_range:
           description: Time range for incident data retrieval with predefined options
@@ -441,8 +460,10 @@ components:
           - DAY_7
           - DAY_30
           - DAY_90
-          minLength: 1
+          - CUSTOM
           type: string
+      required:
+      - time_range
       type: object
     IncidentInventoryResponse:
       properties:
@@ -576,16 +597,53 @@ components:
       type: object
     ResultsDownloadRequest:
       properties:
+        columns:
+          description: Columns to include in the downloaded results file.
+          items:
+            type: string
+          type: array
+        end_time:
+          description: Timestamp in milliseconds(ms)
+          format: int64
+          type: integer
         filter:
-          description: Filter criteria to apply when downloading incident results.
+          description: "Filter expression string\n<br>Operators supported: =, in and\
+            \ AND\n<br>Pattern: {FilterName} = {value} or {FilterName} in ({value1},\
+            \ {value2}, ...)\n<br>Supported FilterName values:\n- Action: Filter by\
+            \ action taken (e.g., 'block', 'allow')\n- ApplicationName: Filter by\
+            \ application name\n- Asset: Filter by asset name\n- AssigneeId: Filter\
+            \ by assignee user ID\n- AssigneeName: Filter by assignee display name\n\
+            - Channel: Filter by channel (e.g., 'PRISMA_ACCESS', 'NGFW')\n- DataPattern:\
+            \ Filter by detection types/data patterns (e.g., 'SSN', 'Credit Card')\n\
+            - DataProfile: Filter by data profile ID\n- Destination: Filter by destination\n\
+            - IncidentId: Filter by specific incident ID\n- Priority: Filter by priority\
+            \ level (numeric values 1-5)\n- ReportId: Filter by report ID\n- Severity:\
+            \ Filter by severity level\n        - 5 = Critical\n        - 4 = High\n\
+            \        - 3 = Medium\n        - 2 = Low\n        - 1 = Informational\n\
+            - Source: Filter by source\n- Region: Filter by region (e.g., 'US', 'EU',\
+            \ 'UK', 'SG', 'IN', 'AU', 'CA', 'JP')\n- Status: Filter by incident status\
+            \ (e.g., 'New', 'open', 'under_investigation', 'closed')\n- UrlDomain:\
+            \ Filter by URL domain\n- Tag: Filter by incident tags\n\nExamples:\n\
+            - \"Tag = 'Needs Escalation'\"\n- \"Status in ('New','open','under_investigation')\"\
+            \n- \"UrlDomain = 'dlptest.com'\"\n- \"Channel = 'PRISMA_ACCESS' AND DataProfile\
+            \ in ('11995030','11995033')\"\n"
           example: Tag = 'Needs Escalation'
           type: string
-        maxRows:
-          description: Maximum number of rows to include in the download file.
+        max_rows:
           format: int32
           type: integer
+        sort_by:
+          description: Field name for sorting the downloaded results.
+          type: string
+        sort_order:
+          description: Sort order for downloaded results (ascending or descending).
+          type: string
+        start_time:
+          description: Timestamp in milliseconds(ms)
+          format: int64
+          type: integer
         time_range:
-          description: Time range for the data to be included in the download.
+          description: Time range for data inclusion in the download.
           enum:
           - HOUR_1
           - HOUR_3
@@ -593,6 +651,15 @@ components:
           - DAY_7
           - DAY_30
           - DAY_90
+          - CUSTOM
+          type: string
+        token:
+          description: Authentication or session token for the download request.
+          type: string
+      type: object
+    ResultsDownloadResponse:
+      properties:
+        download_url:
           type: string
       type: object
   securitySchemes:
@@ -639,6 +706,11 @@ paths:
         required: true
         schema:
           type: string
+      - description: Flag to include data profiles
+        in: query
+        name: include_data_profiles
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -681,6 +753,12 @@ paths:
       description: "Query the DLP incident inventory with customizable parameters\
         \ for comprehensive incident analysis.\n             \n"
       operationId: post-v4-api-incidents
+      parameters:
+      - description: Flag to include data profiles.
+        in: query
+        name: include_data_profiles
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -747,7 +825,7 @@ paths:
               example:
                 download_url: https://storage.googleapis.com/casb-data-platform-prod-uim-inc-export/1494634703/incidents_20250721_205140_e3f288124dec432c8f94ed4f5b49b19b.csv.gz?test_signed_url
               schema:
-                $ref: '#/components/schemas/ResultsDownloadRequest'
+                $ref: '#/components/schemas/ResultsDownloadResponse'
           description: Successful!
         '400':
           description: Bad Request
@@ -806,7 +884,7 @@ paths:
         its unique identifier.
       operationId: get-v4-api-incidents-id
       parameters:
-      - description: Incident ID
+      - description: Incident ID.
         in: path
         name: id
         required: true

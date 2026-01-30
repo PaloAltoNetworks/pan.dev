@@ -1,0 +1,680 @@
+openapi: 3.0.2
+info:
+  title: CIE Directory Sync Service APIs Mounted on Strata Cloud Manger
+  version: 1.0.1
+  description: "Use the CIE Directory Sync API to retrieve real-time user, group,\
+    \ and domain information from your connected directories. \nThis guide provides\
+    \ the details needed to integrate identity-aware context into your applications\
+    \ and security services. This Open API spec file was created on October 21, 2025.\
+    \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
+    \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+  server: https://api.sase.paloaltonetworks.com
+components:
+  schemas:
+    pagination_params:
+      type: object
+      description: Optional pagination parameters.
+      properties:
+        pageNum:
+          type: integer
+          description: Page number to retrieve (starting from page 1).
+          example: 1
+        pageSz:
+          type: integer
+          description: Number of records per page (max is 1000 per page).
+          example: 500
+    domain_param:
+      type: object
+      description: Domain name for a specific directory.
+      required:
+      - domain
+      properties:
+        domain:
+          type: string
+          description: Domain name of the target directory.
+          example: paloaltonetworks.com
+    attr_based_filter:
+      type: object
+      description: Attribute-based filter.
+      required:
+      - attrName
+      - attrValue
+      - match
+      properties:
+        attrName:
+          description: Attribute name
+          type: string
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
+          example: Distinguished Name
+        attrValue:
+          description: Attribute value
+          type: string
+          example: CN=Jack,UID=Park,DC=example,DC=com
+        match:
+          description: Value you want to match.
+          type: string
+          enum:
+          - equal
+          - textSearch
+          example: equal
+    group_filter:
+      type: object
+      description: Group-based filter.
+      required:
+      - type
+      - name
+      - level
+      properties:
+        type:
+          type: string
+          enum:
+          - group
+        name:
+          $ref: '#/components/schemas/attr_based_filter'
+        level:
+          type: string
+          enum:
+          - immediate
+          - recursive
+    list_all_users_in_domain:
+      description: Retrieve all users in a domain.
+      allOf:
+      - $ref: '#/components/schemas/domain_param'
+      - $ref: '#/components/schemas/pagination_params'
+      properties:
+        attrs:
+          type: array
+          description: User attributes included as part of the response.
+          items:
+            type: string
+          example:
+          - Common-Name
+          - Mail
+          - Unique Identifier
+          - Manager
+          - User Principal Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+        useNormalizedAttrs:
+          type: string
+          enum:
+          - 'True'
+          - 'False'
+          example: 'True'
+      example:
+        domain: paloaltonetworks.com
+        attrs:
+        - Common-Name
+        - Unique Identifier
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+        - Department
+        - Last Login
+        - LastLogonTime
+        - Location
+        - Mail
+        - Manager
+        - Title
+        - User Principal Name
+        - UserAccountControl
+        - WhenChanged
+        useNormalizedAttrs: 'True'
+    fetch_all_users_attrs:
+      description: Retrieve all attributes for a specific user.
+      allOf:
+      - $ref: '#/components/schemas/domain_param'
+      - $ref: '#/components/schemas/pagination_params'
+      properties:
+        attrs:
+          type: array
+          description: User attributes included as part of the response.
+          items:
+            type: string
+          example:
+          - Common-Name
+          - Mail
+          - Unique Identifier
+          - Manager
+          - User Principal Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+        useNormalizedAttrs:
+          description: Use the normalized attribute.
+          type: string
+          enum:
+          - 'True'
+          - 'False'
+          example: 'True'
+      example:
+        domain: paloaltonetworks.com
+        attrs:
+        - Common-Name
+        - Mail
+        - Unique Identifier
+        - Manager
+        - User Principal Name
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+        useNormalizedAttrs: 'True'
+    list_specific_users:
+      description: Retrieve specific users matching a name-based filter in a domain.
+        Supports filtering of users based on specific attributes and values (similar
+        to the WHERE clause in SQL).
+      allOf:
+      - $ref: '#/components/schemas/fetch_all_users_attrs'
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/attr_based_filter'
+      example:
+        domain: paloaltonetworks.com
+        name:
+          attrName: Distinguished Name
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
+          attrValue: CN=Jack,UID=Park,DC=example,DC=com
+          match: equal
+        attrs:
+        - Common-Name
+        - Mail
+        - Unique Identifier
+        - Manager
+        - User Principal Name
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+        useNormalizedAttrs: 'True'
+    list_users_in_particular_group:
+      description: Retrieve specific attributes for users belonging to a particular
+        group, filtered using the group-based filter.
+      allOf:
+      - $ref: '#/components/schemas/domain_param'
+      - $ref: '#/components/schemas/pagination_params'
+      required:
+      - filter
+      properties:
+        filter:
+          $ref: '#/components/schemas/group_filter'
+        attrs:
+          type: array
+          description: user attributes part of the response
+          items:
+            type: string
+          example:
+          - Common-Name
+          - Mail
+          - Unique Identifier
+          - Manager
+          - User Principal Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+      example:
+        domain: paloaltonetworks.com
+        filter:
+          type: group
+          name:
+            attrName: Common-Name
+            attrValue: Administrators
+            match: equal
+          level: recursive
+        attrs:
+        - Common-Name
+        - Mail
+        - Unique Identifier
+        - Manager
+        - User Principal Name
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+    check_group_membership:
+      description: Check if a specific user belongs to a particular group, filtered
+        using attribute-based filter (to filter the user) and group-based filter (to
+        filter the group)
+      allOf:
+      - $ref: '#/components/schemas/list_users_in_particular_group'
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/attr_based_filter'
+      example:
+        domain: paloaltonetworks.com
+        filter:
+          type: group
+          name:
+            attrName: Common-Name
+            attrValue: Admins
+            match: equal
+          level: recursive
+        name:
+          attrName: User Principal Name
+          attrValue: carol@paloaltonetworks.com
+          match: equal
+    list_all_groups_in_domain:
+      description: Retrieve all groups in a particular domain.
+      allOf:
+      - $ref: '#/components/schemas/domain_param'
+      - $ref: '#/components/schemas/pagination_params'
+      required:
+      - attrs
+      properties:
+        attrs:
+          type: array
+          items:
+            type: string
+          description: Group attributes included as part of the response.
+          example:
+          - Common-Name
+          - Unique Identifier
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+        useNormalizedAttrs:
+          type: string
+          enum:
+          - 'True'
+          - 'False'
+      example:
+        domain: paloaltonetworks.com
+        pageNum: 1,
+        pageSz: 80
+    list_specific_groups:
+      description: Retrieve specific groups matching a name-based filter. Supports
+        filtering of groups based on specific attributes and values (similar to the
+        WHERE clause in SQL).
+      allOf:
+      - $ref: '#/components/schemas/list_all_groups_in_domain'
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/attr_based_filter'
+        attrs:
+          type: array
+          items:
+            type: string
+          description: group attributes part of the response
+          example:
+          - Common-Name
+          - Unique Identifier
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+      example:
+        domain: paloaltonetworks.com
+        name:
+          attrName: Common-Name
+          enum:
+          - User Principal Name
+          - Common-Name
+          - Name
+          - Distinguished Name
+          - SAM Account Name
+          - Unique Identifier
+          attrValue: admins
+          match: equal
+        attrs:
+        - Common-Name
+        - Unique Identifier
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+        useNormalizedAttrs: 'False'
+    list_groups_user_belongs_to:
+      description: Retrieve all groups containing specific users based on user-filter.
+      allOf:
+      - $ref: '#/components/schemas/domain_param'
+      - $ref: '#/components/schemas/pagination_params'
+      required:
+      - filter
+      properties:
+        filter:
+          type: object
+          required:
+          - type
+          - name
+          properties:
+            type:
+              type: string
+              enum:
+              - user
+            name:
+              $ref: '#/components/schemas/attr_based_filter'
+            attrs:
+              type: array
+              description: group attributes part of the response
+              items:
+                type: string
+              example:
+              - Common-Name
+              - Unique Identifier
+              - Name
+              - Distinguished Name
+              - SAM Account Name
+      example:
+        domain: paloaltonetworks.com
+        filter:
+          type: user
+          name:
+            attrName: Distinguished Name
+            attrValue: CN=Jack,UID=Park,DC=example,DC=com
+            enum:
+            - User Principal Name
+            - Common-Name
+            - Name
+            - Distinguished Name
+            - SAM Account Name
+            - Unique Identifier
+            match: equal
+        attrs:
+        - Common-Name
+        - Unique Identifier
+        - Name
+        - Distinguished Name
+        - SAM Account Name
+        - Department
+        - Last Login
+        - LastLogonTime
+        - Location
+        - Mail
+        - Manager
+        - Title
+        - User Principal Name
+        - UserAccountControl
+        - WhenChanged
+    check_user_in_particular_group:
+      description: Check if a specific group has a particular user in it, filtered
+        using attribute-based filter (to filter the group) and group-based filter
+        (to filter the user)
+      allOf:
+      - $ref: '#/components/schemas/list_all_groups_in_domain'
+      required:
+      - name
+      - filter
+      properties:
+        name:
+          $ref: '#/components/schemas/attr_based_filter'
+        filter:
+          type: object
+          required:
+          - type
+          - name
+          properties:
+            type:
+              type: string
+              enum:
+              - user
+            name:
+              $ref: '#/components/schemas/attr_based_filter'
+            attrs:
+              type: array
+              description: group attributes part of the response
+              items:
+                type: string
+              example:
+              - Common-Name
+              - Unique Identifier
+              - Name
+              - Distinguished Name
+              - SAM Account Name
+      example:
+        domain: paloaltonetworks.com
+        filter:
+          type: group
+          name:
+            attrName: Common-Name
+            attrValue: Admins
+            match: equal
+          level: recursive
+        name:
+          attrName: User Principal Name
+          attrValue: carol@paloaltonetworks.com
+          match: equal
+  responses:
+    400_bad_request:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 400
+              error:
+                type: string
+                example: Bad Request
+              message:
+                type: string
+                example: Required field is missing or invalid.
+    500_internal_error:
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              result:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      error-message:
+                        type: string
+                        example: Internal Server Error
+ExternalTags: {}
+paths:
+  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/domains:
+    get:
+      summary: Domain Details
+      description: "Retrieves a list of all domains configured for a specific CIE\
+        \ tenant within the Directory Sync Service (DSS). \nThis operation returns\
+        \ details for each of the tenant's configured domains, including its current\
+        \ status, the timestamp of the last successful synchronization, and object\
+        \ counts (such as users and groups)."
+      responses:
+        '200':
+          description: List of all domain metadata
+          content:
+            application/json:
+              example:
+                success: true
+                result:
+                - count:
+                    computer: 1
+                    container: 117
+                    group: 50
+                    ou: 1
+                    user: 16
+                  domain: cyberarktest.com
+                  log: []
+                  netbios: cyberarktest
+                  status:
+                    description: cache_applied
+                    lastSuccessUpdatedOn: 1737572486
+                    statusUpdatedOn: 1737572486
+                  sync_duration: 14607313
+                  type: Active Directory
+        '500':
+          description: If CIE Directory Sync Service is down then we see the Internal
+            Service Error
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Directory Sync Service
+  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/cache-users:
+    post:
+      summary: User Information
+      description: "Provides user related information for a domain present in Specific\
+        \ CIE tenant.\nThis endpoint supports several use cases by using different\
+        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
+        \          \n          Use this endpoint to:\n            - **list_all_users_in_domain**:\
+        \ List all users within a specific domain.\n            - **list_specific_users**:\
+        \ Find specific users by filtering on attributes like name or email.\n   \
+        \         - **list_users_in_particular_group**: Get all users who are members\
+        \ of a specific group.\n            - **check_group_membership**: Check if\
+        \ a user is a member of a particular group."
+      responses:
+        '200':
+          description: Returns an array of user objects matching the query.
+          content:
+            application/json:
+              example:
+                success: true
+                result:
+                  count: 1
+                  data:
+                    domains:
+                    - domainName: example.onmicrosoft.com
+                      lastSyncTmp: 1760646692
+                      netbios: example
+                      objects:
+                      - Common-Name: Jack Park
+                        Country: GERMANY
+                        Department: Sales
+                        Distinguished Name: CN=Jack,UID=Park,DC=example,DC=com
+                        Location: Munich
+                        Mail: jackpark@example.com
+                        Name: JACK, PARK
+                        SAM Account Name: jack.park
+                        Unique Identifier: 00009498-94e8-4873-b957-015e9e2587eb
+                        User Principal Name: jackpark@example.come
+                        WhenChanged: 20230815042928.345954Z
+                  pageNum: 1
+                  pageSz: 1
+                  remains: 50
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      pageNum:
+                        type: integer
+                      pageSz:
+                        type: integer
+                      remains:
+                        type: integer
+                      data:
+                        type: array
+                        items:
+                          type: object
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Directory Sync Service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/list_all_users_in_domain'
+              - $ref: '#/components/schemas/list_specific_users'
+              - $ref: '#/components/schemas/list_users_in_particular_group'
+              - $ref: '#/components/schemas/check_group_membership'
+  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/cache-groups:
+    post:
+      summary: Group Information
+      description: "Provides group related information for a domain present in a specific\
+        \ CIE tenant. \nThis endpoint supports several use cases by using different\
+        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
+        \nUse this endpoint to:\n- **list_all_groups_in_domain**: List all groups\
+        \ within a specific domain.\n- **list_specific_groups**: Find specific groups\
+        \ by filtering on attributes like name.\n- **list_groups_user_belongs_to**:\
+        \ Get all groups that a specific user belongs to.\n- **check_user_in_particular_group**:\
+        \ Check if a group contains a particular user."
+      responses:
+        '200':
+          description: Returns an array of group objects matching the query.
+          content:
+            application/json:
+              example:
+                success: true
+                result:
+                  count: 1
+                  data:
+                    domains:
+                    - domainName: example.onmicrosoft.com
+                      lastSyncTmp: 1760648138
+                      netbios: example
+                      objects:
+                      - cn: ADMIN
+                        created: 20230117094434.800831Z
+                        dn: CN=ADMIN,DC=example,DC=onmicrosoft,DC=com
+                        domain: example.onmicrosoft.com
+                        groupType: security
+                        member: []
+                        meta_created: 2023-01-17 09:44:34.800831+00:00
+                        meta_lastModified: 2025-08-26 13:26:11.093255+00:00
+                        meta_resourceType: Group
+                        name: ADMIN
+                        objectClass:
+                        - group
+                        objectGUID: 0087272b-0ea5-4884-8dac-17b1673c1496
+                        sAMAccountName: ADMIN
+                        topoIndex: 0
+                        whenChanged: 20250826132611.093255Z
+                  pageNum: 1
+                  pageSz: 1
+                  remains: 50
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      data:
+                        type: array
+                        items:
+                          type: object
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Directory Sync Service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/list_all_groups_in_domain'
+              - $ref: '#/components/schemas/list_specific_groups'
+              - $ref: '#/components/schemas/list_groups_user_belongs_to'
+              - $ref: '#/components/schemas/check_user_in_particular_group'

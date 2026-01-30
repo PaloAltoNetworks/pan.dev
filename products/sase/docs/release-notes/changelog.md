@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Oct 8, 2025     | Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).
 | July 1, 2025     | Added [Identity Security Posture Management APIs](/sase/api/identity-sspm/).
 | June 24, 2025     | Added Plugin API to [SaaS Security Posture Management APIs](/sase/api/sspm/).
 | May 20, 2025     | Added [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).

@@ -101,8 +101,8 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/sase/mobileagent/mobileagent-api",
-            label: "GlobalProtect",
+            to: "scm/api/config/sase/network configurations/network-api",
+            label: "Network Configurations",
             icon: "api-doc",
           },
           {
@@ -209,6 +209,11 @@ export default function SCMLandingPage() {
           {
             label: "Log Forwarding",
             to: "cdl/api/log-forwarding",
+            icon: "api-doc",
+          },
+          {
+            label: "CIE Directory Sync Service",
+            to: "scm/api/config/ciedss/ciedss",
             icon: "api-doc",
           },
         ],
