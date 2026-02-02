@@ -2,20 +2,18 @@
 id: monitor-introduction
 title: Multitenant Interconnect Monitor APIs
 sidebar_label: Multitenant Interconnect Monitor APIs
-slug: /sase/api/mt-interconnect
 keywords:
   - SASE
   - Reference
   - API
 ---
 
-Welcome to the Strata Cloud Manager Multitenant Service Provider Interconnect APIs. The Service
-Provider (SP) Interconnect API allows you to use Service Provider Backbones like BT, Orange, AT&T,
-and more for directing Prisma Access egress traffic. Without the SP Interconnect, Prisma Access
-egress traffic relies on public cloud providers like GCP, AWS, and Azure for network backbone
-connectivity. The SP Interconnect API offers several benefits, including enhanced security,optimized
-network costs, and reliability. You can easily manage traffic routing preferences on a per-SP and
-per-Prisma Access location or region basis, ensuring flexibility and efficiency in network
-operations. 
+The **SP Interconnect Monitoring** API provides real-time visibility into the health, performance, and consumption of your infrastructure.
+
+## Key Monitoring Metrics
+* **Interconnect Health**: Monitor operational status across all regions to detect disruptions.
+* **VlanAttachment Status**: Track the connectivity state and performance of virtual circuits.
+* **IP Pool Usage**: Gain insights into IP address pool consumption to prevent exhaustion.
+* **Multi-tenant Visibility**: View monitoring summaries across all tenants to identify regional issues.
 
 These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.

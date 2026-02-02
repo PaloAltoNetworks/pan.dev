@@ -2,9 +2,16 @@ openapi: 3.1.0
 info:
   title: SP Interconnect Manage APIs
   version: '1.0'
-  description: "This Open API spec file was created on January 28, 2026. \xA9 2026\
-    \ Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo\
-    \ Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+  description: "These APIs deliver real-time visibility and performance analytics\
+    \ for all configured interconnect \nresources through the monitoring plane. They\
+    \ allow network teams to track health, bandwidth throughput, \nand data transfer\
+    \ volumes at the edge to ensure optimal network security and reliability. \nAccess\
+    \ these metrics during routine audits or active troubleshooting to diagnose latency\
+    \ spikes or BGP session instability. \nBy applying time-based filters and histograms,\
+    \ you can generate detailed traffic trends and monitor IP pool consumption across\
+    \ your global infrastructure. This Open API spec file was created on February\
+    \ 02, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered\
+    \ trademark of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 servers:
 - url: https://api.sase.paloaltonetworks.com
@@ -20,34 +27,19 @@ ExternalTags: {}
 paths:
   /mt/sp-interconnect/monitor/vlanAttachments/stats:
     post:
-      summary: Get VLAN Attachment Stats
-      description: Returns statistics for VLAN attachments including throughput and
-        connection details.
+      summary: Get Vlan Attachment Statistics
+      description: "Retrieve granular performance metrics and operational metadata\
+        \ for virtual circuits within the multi-tenant interconnect framework. This\
+        \ data resides in the monitoring plane and provides visibility into throughput,\
+        \ BGP states, and uptime for specific regional attachments. Access these statistics\
+        \ during health audits or when verifying that provisioned bandwidth aligns\
+        \ with actual consumption. To execute, define the desired properties\u2014\
+        such as ingress/egress throughput or cloud router IPs\u2014and apply filters\
+        \ based on time ranges or specific interconnect IDs."
       operationId: PostMtSp-interconnectMonitorVlanattachmentsStats
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - cloudProvider: GCP
-                  cloudRouterIp: 169.254.23.177/29
-                  cloudRouterIpv6: 2600:2d00:0:1:8000:25:4:7879/125
-                  createTime: 1737611965296
-                  egress_throughput: 0.0011975343058471016
-                  ingress_throughput: 0.0017068013320864356
-                  interconnect_id: c4ac1cc9-684e-11f0-92e9-4201ac16024e
-                  interconnect_name: ic-us-east1
-                  region: us-east1
-                  state: ACTIVE_BGP_UP_BGP_IPV6_UP
-                  status: ACTIVE
-                  tenants: 0
-                  up_time: 1763134414000
-                  updateTime: 1763755310226
-                  vlan_attachment_id: 9764ced6-ef10-437e-80a4-d7609dee6264
-                  vlan_attachment_name: us-east-1-add-2
-                requestId: 45759649-4f0f-41b7-a8d2-766f924eaf67
         '400':
           description: Bad Request
         '401':
@@ -84,33 +76,18 @@ paths:
   /mt/sp-interconnect/monitor/interconnects/traffic:
     post:
       summary: Get Interconnect Data Transfer
-      description: Returns egress and ingress traffic data for interconnects. Use
-        lifetime=true query parameter for lifetime traffic data.
+      description: Aggregate data transfer volumes for entire Interconnect containers
+        to track total network consumption. This information is calculated at the
+        edge locations and allows administrators to monitor data egress and ingress
+        for billing or capacity planning. Utilize this for monthly usage reports or
+        when analyzing long-term traffic trends across SHARED or PER_TENANT models.
+        You can retrieve either specific windowed data or total lifetime traffic by
+        toggling the lifetime query parameter and defining the appropriate time-based
+        filters.
       operationId: PostMtSp-interconnectMonitorInterconnectsTraffic
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              examples:
-                Egress Traffic:
-                  value:
-                    data:
-                    - interconnect_name: ic-us-central1
-                      egress_traffic: 73.40927790249995
-                    requestId: c39c2083-2aa0-4255-9b22-d87c75ec6ade
-                Traffic Over Time:
-                  value:
-                    data:
-                    - interconnect_name: ic-us-central1
-                      event_time: 1763424000000
-                      egress_traffic: 25.912407871000052
-                      ingress_traffic: 50.45267106150007
-                    - interconnect_name: ic-us-central1
-                      event_time: 1763510400000
-                      egress_traffic: 26.001434308999958
-                      ingress_traffic: 48.22614097999999
-                    requestId: c9369eee-108d-4ab8-8498-15bcbb6cf55e
         '400':
           description: Bad Request
         '401':
@@ -148,72 +125,20 @@ paths:
                       operator: equals
                       values:
                       - c4ac1d7a-684e-11f0-92e9-4201ac16024e
-              Traffic Over Time:
-                value:
-                  properties:
-                  - property: egress_traffic
-                    function: sum
-                  - property: ingress_traffic
-                    function: sum
-                  - property: interconnect_name
-                    sort:
-                      order: asc
-                  filter:
-                    operator: AND
-                    rules:
-                    - property: event_time
-                      operator: last_n_days
-                      values:
-                      - 30
-                    - property: interconnect_id
-                      operator: in
-                      values:
-                      - c4ac1d7a-684e-11f0-92e9-4201ac16024e
-                  histogram:
-                    property: event_time
-                    range: day
-                    enableEmptyInterval: false
-                    value: '1'
-              Lifetime Traffic:
-                value:
-                  properties:
-                  - property: interconnect_name
-                    sort:
-                      order: asc
-                  - function: sum
-                    property: egress_traffic
-                  filter:
-                    operator: AND
-                    rules:
-                    - property: event_time
-                      operator: lessThan
-                      values:
-                      - '1766104066466'
-                    - property: interconnect_id
-                      operator: equals
-                      values:
-                      - c4ac1d7a-684e-11f0-92e9-4201ac16024e
   /mt/sp-interconnect/monitor/interconnects/throughput:
     post:
-      summary: Get Throughput by Interconnect
-      description: Returns throughput trends for interconnects over time.
+      summary: Get Throughput By Interconnect
+      description: Monitor the real-time and historical throughput rates for designated
+        Interconnect resources. This metric tracks the speed of data flow across the
+        Service Provider bridge to identify potential bottlenecks or underutilized
+        capacity. Access this when performing performance tuning or when investigating
+        regional latency issues. To proceed, define the throughput properties and
+        use the histogram object to group data by time intervals, such as daily or
+        hourly trends.
       operationId: PostMtSp-interconnectMonitorInterconnectsThroughput
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - egress_throughput: 0.002407656942160277
-                  ingress_throughput: 0.004687820775191641
-                  event_time: 1763424000000
-                  interconnect_name: ic-us-central1
-                - egress_throughput: 0.0024075402109722268
-                  ingress_throughput: 0.0044653834247916635
-                  event_time: 1763510400000
-                  interconnect_name: ic-us-central1
-                requestId: 3fb923a8-0077-443b-a334-07b3cd2123ed
         '400':
           description: Bad Request
         '401':
@@ -250,25 +175,18 @@ paths:
                 value: '1'
   /mt/sp-interconnect/monitor/vlanAttachments/throughput:
     post:
-      summary: Get VLAN Attachment Throughput Trends
-      description: Returns throughput trends for VLAN attachments over time.
+      summary: Get Vlan Attachment Throughput Trends
+      description: Track throughput performance specifically for individual virtual
+        circuits within an Interconnect. This provides granular visibility into the
+        load distribution across multiple VlanAttachments to ensure high-availability
+        (HA) domains are operating as expected. Use this when diagnosing specific
+        circuit failures or verifying that a new attachment is carrying traffic correctly.
+        Define the VlanAttachment ID and apply a time-based histogram to visualize
+        throughput shifts over the desired monitoring period.
       operationId: PostMtSp-interconnectMonitorVlanattachmentsThroughput
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1763424000000
-                  egress_throughput: 0.0012025526091289183
-                  ingress_throughput: 0.0019499224276655067
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1763510400000
-                  egress_throughput: 0.001203609572708337
-                  ingress_throughput: 0.0017978866898611117
-                requestId: 8bcffcf2-5cba-4ed6-bc63-ed1e8a60bec6
         '400':
           description: Bad Request
         '401':
@@ -306,25 +224,18 @@ paths:
                 value: '1'
   /mt/sp-interconnect/monitor/vlanAttachments/traffic:
     post:
-      summary: Get VLAN Attachment Traffic Trends
-      description: Returns traffic trends for VLAN attachments over time.
+      summary: Get Vlan Attachment Traffic Trends
+      description: Analyze traffic volume trends for specific virtual circuits over
+        time. This function captures the total amount of data processed by a VlanAttachment,
+        assisting in usage-based auditing or capacity forecasting for regional egress.
+        Deploy this when identifying which virtual circuits are the primary contributors
+        to regional data transfer. Provide the unique circuit identifier and specify
+        the aggregation function, such as a sum of egress traffic, to generate a time-series
+        traffic report.
       operationId: PostMtSp-interconnectMonitorVlanattachmentsTraffic
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1763424000000
-                  egress_traffic: 12.942472452499988
-                  ingress_traffic: 20.98604013349996
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1763510400000
-                  egress_traffic: 12.99898336799997
-                  ingress_traffic: 19.417176225000027
-                requestId: 3291624f-4e40-4b10-9a9c-9851c8bbbd82
         '400':
           description: Bad Request
         '401':
@@ -362,26 +273,18 @@ paths:
                 value: '1'
   /mt/sp-interconnect/monitor/vlanAttachments/latency:
     post:
-      summary: Get VLAN Attachment Latency Trends
-      description: Returns latency trends for VLAN attachments over time.
+      summary: Get Vlan Attachment Latency Trends
+      description: Monitor latency performance for virtual circuits to ensure network
+        paths meet required service levels. This metric measures the delay in traffic
+        traversal between Prisma Access and the Service Provider edge. Access this
+        during troubleshooting to determine if network slowness is related to the
+        private Interconnect path rather than internal cloud routing. Specify the
+        vlan_attachment_id and utilize a daily or hourly histogram to detect latency
+        spikes or persistent high-delay trends.
       operationId: PostMtSp-interconnectMonitorVlanattachmentsLatency
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1766016000000
-                  latency: 4.204661846160889
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1765238400000
-                  latency: 3.15822172164917
-                - vlan_attachment_name: us-centrl-con-2
-                  event_time: 1764115200000
-                  latency: 4.052086353302002
-                requestId: 8e701533-5ab3-4815-90af-b4da543804a9
         '400':
           description: Bad Request
         '401':
@@ -418,36 +321,17 @@ paths:
   /mt/sp-interconnect/monitor/ip-pool-usage:
     get:
       summary: Get IP Address Pool Usage
-      description: Returns IP Address pool usage statistics for an interconnect.
+      description: Retrieve consumption statistics for the IP Address address pools
+        assigned to an Interconnect. This visibility helps prevent IP Address exhaustion
+        by tracking the percentage of used versus configured addresses across primary
+        and secondary blocks. Use this when monitoring regional IP Address resources
+        or when investigating incidents related to IP Address address unavailability.
+        By submitting a valid interconnectId, you receive data on used IPs, incident
+        counts, and pool locations for the specified resource.
       operationId: GetMtSp-interconnectMonitorIp-pool-usage
       responses:
         '200':
           description: Success
-          content:
-            application/json:
-              example:
-                data:
-                - configuredIps: 16
-                  createTime: 1734992147821
-                  incidentCount: 1
-                  ipBlockType: SECONDARY
-                  ipProvider: SP
-                  location: US Central
-                  percentageUsed: 100
-                  region: us-central1
-                  updateTime: 1734992205233
-                  usedIps: 16
-                - configuredIps: 4
-                  createTime: 1734992147821
-                  incidentCount: 1
-                  ipBlockType: PRIMARY
-                  ipProvider: SP
-                  location: US Central
-                  percentageUsed: 100
-                  region: us-central1
-                  updateTime: 1734992205233
-                  usedIps: 4
-                requestId: 4c06b78f-caa4-4be9-ab90-c58c3855bd8c
         '400':
           description: Bad Request
         '401':

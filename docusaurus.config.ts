@@ -489,8 +489,8 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/mt-interconnect",
-                      label: "Multitenant Interconnect",
+                      to: "sase/api/mt-interconnect/introduction",
+                      label: "Service Provider Interconnect",
                       icon: "api-doc",
                     },
                     {
@@ -924,12 +924,12 @@ const config = {
           ManageInterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect/Manage",
             outputDir: "products/sase/api/mt-interconnect/Manage",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag",categoryLinkSource: "info" },
           },
           MonitorInterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect/Monitor",
             outputDir: "products/sase/api/mt-interconnect/Monitor",
-            sidebarOptions: { groupPathsBy: "tag" },
+            sidebarOptions: { groupPathsBy: "tag",categoryLinkSource: "info" },
           },
           manageservices: {
             specPath: "openapi-specs/sase/manage-services-5g",
