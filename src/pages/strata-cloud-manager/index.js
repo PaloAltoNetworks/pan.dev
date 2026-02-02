@@ -253,6 +253,11 @@ export default function SCMLandingPage() {
           label: "Prisma Access Insights",
           icon: "api-doc",
         },
+        {
+          to: "sase/api/incident-scm",
+          label: "Unified Incident Framework APIs",
+          icon: "api-doc",
+        },
       ],
     },
   ];
