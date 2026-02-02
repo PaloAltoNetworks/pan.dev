@@ -7,8 +7,7 @@ keywords:
   - Reference
   - API
 ---
-
-**Deprecation Notice** 
+:::warning Deprecation Notice
 
 The **Backbone** and **Connection** APIs are now **deprecated** and have been replaced by the **Service Provider (SP) Interconnect** framework. 
 
@@ -20,6 +19,8 @@ The **Backbone** and **Connection** APIs are now **deprecated** and have been re
 **What You Should Do:**
 1. **Migrate Endpoints:** Update API calls to the new `/sp-interconnect/` directory structure.
 2. **Update Resources:** Align internal logic with the new **SHARED** and **PER_TENANT** types.
+
+:::
 
 ## Overview
 Welcome to the **Strata Cloud Manager Multitenant Service Provider (SP) Interconnect APIs**. 
