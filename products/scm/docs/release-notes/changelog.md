@@ -12,7 +12,8 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Febuary 2, 2026     | Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/).
+| February 2, 2026     | Redesigned the [SP Interconnect APIs](/sase/api/mt-interconnect/introduction.md).
+| January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).
 | October 21, 2025     | Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/).
 | June 27, 2025     | Added [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/).
 | May 20, 2025     | Introduced two policies Security and Internet for Security Rules under [Security Services APIs](/scm/api/config/sase/security/security-api/).
