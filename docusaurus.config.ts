@@ -924,12 +924,12 @@ const config = {
           ManageInterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect/Manage",
             outputDir: "products/sase/api/mt-interconnect/Manage",
-            sidebarOptions: { groupPathsBy: "tag",categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           MonitorInterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect/Monitor",
             outputDir: "products/sase/api/mt-interconnect/Monitor",
-            sidebarOptions: { groupPathsBy: "tag",categoryLinkSource: "info" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           manageservices: {
             specPath: "openapi-specs/sase/manage-services-5g",
