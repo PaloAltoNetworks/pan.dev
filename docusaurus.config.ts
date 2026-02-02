@@ -410,6 +410,11 @@ const config = {
                       label: "Changelog",
                       icon: "doc",
                     },
+                    {
+                      to: "scm/docs/api-best-practices",
+                      label: "Strata Cloud Manager API Best Practices",
+                      icon: "doc",
+                    },
                   ],
                 },
               ],
