@@ -957,7 +957,7 @@ paths:
             schema:
               $ref: '#/components/schemas/decryption-rules'
       responses:
-        '200':
+        '201':
           description: OK
           content:
             application/json:
@@ -2102,7 +2102,7 @@ paths:
             schema:
               $ref: '#/components/schemas/security-rules'
       responses:
-        '200':
+        '201':
           description: OK
           content:
             application/json:
@@ -4583,8 +4583,15 @@ components:
               title: ssl_inbound_inspection
               properties:
                 ssl_inbound_inspection:
-                  type: string
+                  type: object
                   description: add the certificate name for SSL inbound inspection
+                  properties:
+                    certificates:
+                      type: array
+                      items:
+                        type: string
+                      description: List of certificate names for SSL inbound inspection
+                      example: ["Authentication Cookie CA", "Forward-Trust-CA"]
               required:
                 - ssl_inbound_inspection
           description: The type of decryption
@@ -5268,12 +5275,7 @@ components:
     file-blocking-profiles:
       type: object
       required:
-        - id
         - name
-        - action
-        - application
-        - direction
-        - file_type
       properties:
         id:
           type: string
@@ -5309,6 +5311,19 @@ components:
                   - any
                 items:
                   type: string
+                  # these are a few examples of applications to choose from
+                  enum:
+                    - any
+                    - axifile
+                    - dl-free
+                    - facebook-mail
+                    - file.io
+                    - giphy-base
+                    - glassdoor-uploading
+                    - http-proxy
+                    - redbooth
+                    - send-anywhere
+                    - zoho-mail
               direction:
                 description: The direction of the file transfer
                 enum:
@@ -5324,6 +5339,20 @@ components:
                   - any
                 items:
                   type: string
+                  # these are ONLY the best practice file types, but there are 226 file types in total to choose from
+                  enum:
+                    - any
+                    - 7z
+                    - chm
+                    - hlp
+                    - bat
+                    - class
+                    - dll
+                    - hta
+                    - jar
+                    - pif
+                    - vbe
+                    - wsf
             required:
               - name
               - action
@@ -5391,13 +5420,20 @@ components:
                 description: The name of the HTTP header insertion rule
               type:
                 type: array
-                description: A list of HTTP header insertion definitions (_This should be an object rather than an array_)
+                description: A list of HTTP header insertion definitions 
                 items:
                   type: object
                   properties:
                     name:
                       type: string
-                      description: The HTTP header insertion type (_This is a predefined list in the UI_)
+                      description: The HTTP header insertion type 
+                      enum:
+                        - Custom
+                        - Dropbox Network Control
+                        - Dynamic Fields
+                        - Google Apps Access Control
+                        - Microsoft Office365 Tenant Restrictions
+                        - Youtube Safe Search
                     domains:
                       type: array
                       description: A list of DNS domains
@@ -5413,8 +5449,7 @@ components:
                         properties:
                           name:
                             type: string
-                            description: An auto-generated name (_This should be removed_)
-                            readOnly: true
+                            description: The name of the HTTP header
                           header:
                             type: string
                             description: The HTTP header string
