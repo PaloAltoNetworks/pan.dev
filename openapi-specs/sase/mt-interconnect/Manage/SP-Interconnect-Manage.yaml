@@ -9,11 +9,614 @@ info:
     \ public cloud backbones. Use these tools during initial deployment or regional\
     \ expansion to provision high-capacity physical and virtual links. \nBy submitting\
     \ specific regional and partner parameters, you can automate the creation of shared\
-    \ or dedicated per-tenant infrastructure. This Open API spec file was created\
-    \ on February 04, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks\
-    \ is a registered trademark of Palo Alto Networks. A list of our trademarks can\
-    \ be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
-    \ All other marks mentioned herein may be trademarks of their respective companies."
+    \ or dedicated per-tenant infrastructure. This spec was created on February 04,\
+    \ 2026. \xA9 2026 Palo Alto Networks, Inc."
+paths:
+  /mt/sp-interconnect/interconnects:
+    get:
+      tags:
+      - Interconnect
+      summary: Retrieve All Interconnects
+      description: Access a complete inventory of Service Provider Interconnects configured
+        within the multi-tenant environment. This inventory resides in the management
+        plane and allows administrators to audit existing connectivity across AWS
+        and GCP providers. Use this during system audits or when mapping regional
+        resource availability to verify that backbones align with tenant requirements.
+        Query parameters facilitate targeted searches by including default interconnects
+        or expanding associated tenant data.
+      parameters:
+      - name: includeDefaultInterconnect
+        in: query
+        schema:
+          type: boolean
+      - name: includeTenantsAssociated
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnects
+    post:
+      tags:
+      - Interconnect
+      summary: Create New Interconnect
+      description: Provision a top-level Interconnect resource to serve as the logical
+        container for all subsequent virtual connectivity. This resource creates a
+        private bridge between a Service Provider and Prisma Access to bypass public
+        internet routes. Initialize this when onboarding a new region or establishing
+        isolated per-tenant infrastructure for high-compliance environments. Provide
+        the cloud provider, region, and usage model (SHARED or PER_TENANT) along with
+        partner contact details to begin the automated setup process.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterconnectRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Server Error
+      operationId: PostMtSp-interconnectInterconnects
+  /mt/sp-interconnect/interconnects/physical-connections:
+    get:
+      tags:
+      - Physical Connection
+      summary: List Physical Connections
+      description: Retrieve technical data regarding the underlying hardware links
+        that support your Interconnects. This visibility allows network engineers
+        to monitor link speeds (10G/100G) and MACsec encryption status at specific
+        colocation sites. Access this information when troubleshooting layer-1 connectivity
+        or performing routine infrastructure health checks. The system returns a list
+        of physical resources, indicating their current operational status and colocation
+        zone.
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsPhysical-connections
+    post:
+      tags:
+      - Physical Connection
+      summary: Provision Physical Connection
+      description: Initiate a physical link request within an Interconnect at a specific
+        colocation facility. This establishes the core hardware foundation required
+        before virtual circuits can be provisioned. Use this when expanding regional
+        bandwidth capacity or establishing a new physical Point of Presence (PoP).
+        To proceed, define the desired link speed, the link count, and the specific
+        colocation facility IDs intended for deployment.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhysicalConnectionEntry'
+        required: true
+      responses:
+        '201':
+          description: Success
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: PostMtSp-interconnectInterconnectsPhysical-connections
+  /mt/sp-interconnect/interconnects/physical-connections/{physicalConnectionId}:
+    delete:
+      tags:
+      - Physical Connection
+      summary: Delete Physical Connection
+      description: Decommission a specific physical link from the environment using
+        its unique identifier. Terminating these links helps release hardware resources
+        and end service agreements when specific hardware paths are no longer required.
+        Execute this during hardware refreshes or regional exit strategies. The system
+        immediately marks the connection for deletion and initiates the teardown in
+        the management database and provider portals.
+      parameters:
+      - name: physicalConnectionId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: DeleteMtSp-interconnectInterconnectsPhysical-connectionsBy_physicalconnectionid
+    get:
+      tags:
+      - Physical Connection
+      summary: Get Physical Connection
+      description: View the detailed technical specification of a single physical
+        link. This displays configuration parameters such as colocation addresses,
+        HA status, and link types. Use this when preparing for on-site maintenance
+        at a data center or verifying link readiness before provisioning virtual circuits.
+        By submitting the physicalConnectionId, you obtain the full state and list
+        of permitted management actions for that specific resource.
+      parameters:
+      - name: physicalConnectionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: includeDetails
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+      operationId: GetMtSp-interconnectInterconnectsPhysical-connectionsBy_physicalconnectionid
+  /mt/sp-interconnect/interconnects/summary:
+    get:
+      tags:
+      - Interconnect
+      summary: Summarize All Interconnects
+      description: View a high-level statistical snapshot of the current Interconnect
+        ecosystem. This summary provides active/inactive counts, total IP Address
+        pool usage, and bandwidth distribution across cloud providers. Utilize this
+        for executive summaries or operational dashboards to monitor global health
+        at a glance. Filtering by usage type allows you to isolate metrics for SHARED
+        versus PER_TENANT deployment models.
+      parameters:
+      - name: usage
+        in: query
+        schema:
+          $ref: '#/components/schemas/InterconnectUsage'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsSummary
+  /mt/sp-interconnect/interconnects/{interconnectId}:
+    get:
+      tags:
+      - Interconnect
+      summary: Retrieve Specific Interconnect
+      description: Fetch the full configuration data and current operational state
+        of a single Interconnect container. This reveals regional placement, current
+        status, and the collection of virtual circuits (VlanAttachments) grouped within
+        the Interconnect. Use this when diagnosing regional connectivity issues or
+        retrieving internal IDs for sub-resource management. The response details
+        cloud-specific parameters and optional data regarding tenants currently utilizing
+        the resource.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: includeTenantsAssociated
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsBy_interconnectid
+    delete:
+      tags:
+      - Interconnect
+      summary: Remove Specific Interconnect
+      description: Permanently remove an Interconnect and its associated configuration
+        from the environment. This retirees the bridge once all virtual attachments
+        have been deleted and egress traffic has been rerouted. Execute this only
+        when a regional Interconnect is no longer required for egress traffic. Success
+        removes the resource from the database and ends its logical association with
+        the Prisma Access backend.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      operationId: DeleteMtSp-interconnectInterconnectsBy_interconnectid
+  /mt/sp-interconnect/interconnects/{interconnectId}/ip-pool:
+    put:
+      tags:
+      - IP Pool
+      summary: Update Existing Pool
+      description: Modify the assigned IP Address blocks or the provider type for
+        an existing Interconnect pool. This update occurs within the specific Interconnect
+        context and allows for scaling the number of CIDR blocks as traffic grows.
+        Use this when expanding Bring Your Own IP Address (BYOIP) capacity or updating
+        edge location mappings. You must submit the full updated list of IP Address
+        blocks, specifying their primary or secondary status and the designated edge
+        location.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPPoolRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Internal Error
+        '400':
+          description: Bad Request
+      operationId: PutMtSp-interconnectInterconnectsBy_interconnectidIp-pool
+    get:
+      tags:
+      - IP Pool
+      summary: Get IP Address Address Pool
+      description: View the current IP Address address configuration assigned to an
+        Interconnect, including CIDR ranges and provider status. This provides visibility
+        into the addressing scheme used at the edge for egress routing. Access this
+        to verify that the correct SP-provided or public IP Address ranges are in
+        effect. The data returned includes the IP Address pool ID, its provisioning
+        state, and a list of all active CIDR blocks.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidIp-pool
+    delete:
+      tags:
+      - IP Pool
+      summary: Delete IP Address Pool
+      description: Remove all IP Address block associations and provider settings
+        from the specified Interconnect. Terminating the pool stops the use of specific
+        CIDRs for routing and returns the container to an unassigned state. Use this
+        when retiring BYOIP ranges or preparing to swap service provider IP Address
+        schemes. Note that deleting an active pool will immediately impact egress
+        traffic relying on those addresses.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+      operationId: DeleteMtSp-interconnectInterconnectsBy_interconnectidIp-pool
+    post:
+      tags:
+      - IP Pool
+      summary: Create New Pool
+      description: Provision and attach a new IP Address address pool to an existing
+        Interconnect. This defines the addressing model (SP-provided or PANW-provided)
+        that Prisma Access traffic will use at the edge. Use this when finalizing
+        the egress setup for a new regional Interconnect container. When using SP-provided
+        pools, you must include at least one valid public CIDR block mapped to a supported
+        edge location.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPPoolRequest'
+        required: true
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Error
+      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidIp-pool
+  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments:
+    get:
+      tags:
+      - Vlan Attachment
+      summary: List Vlan Attachments
+      description: Retrieve all virtual circuits configured within a specific Interconnect.
+        This allows administrators to verify the regional distribution of attachments
+        and their current BGP states. Use this when auditing high-availability (HA)
+        domains or verifying pairing key availability. The response lists BGP parameters,
+        edge availability domains, and current provisioning states for each circuit.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachments
+    post:
+      tags:
+      - Vlan Attachment
+      summary: Provision Vlan Attachment
+      description: Create a new virtual circuit, known as a VlanAttachment, within
+        an Interconnect to enable data transfer. This establishes the actual logical
+        path for Prisma Access traffic routing through the Service Provider. Deploy
+        this when initializing new egress paths or adding redundant links for regional
+        reliability. Required parameters include a unique name, BGP Peer ASN, and
+        BFD initialization mode to ensure robust connectivity.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VlanAttachmentRequest'
+        required: true
+      responses:
+        '201':
+          description: Success
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidVlan-attachments
+  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}:
+    get:
+      tags:
+      - Vlan Attachment
+      summary: Get Vlan Attachment
+      description: View the full technical specification of a single virtual circuit
+        by its unique identifier. This displays parameters such as MD5 authentication,
+        BGP session timers, and stack type (IPv4/Dual-Stack). Use this to verify pairing
+        key generation or to inspect the specific edge availability domain assigned
+        for redundancy. The returned data provides the exact state needed for alignment
+        with service provider configurations.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: vlanAttachmentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentid
+    delete:
+      tags:
+      - Vlan Attachment
+      summary: Delete Vlan Attachment
+      description: Permanently remove a specific virtual circuit and its logical configuration
+        from the Interconnect. Terminating these circuits is necessary when network
+        paths are being replaced or retired. Execute this during scheduled maintenance
+        windows or regional re-architecting. Ensure the paired service provider resource
+        is also manually decommissioned to prevent unintended billing.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: vlanAttachmentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: DeleteMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentid
+  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}/accept:
+    post:
+      tags:
+      - Vlan Attachment
+      summary: Accept AWS Attachment
+      description: Transition a pending AWS Direct Connect attachment into the accepted
+        state within the management plane. This serves as the final confirmation required
+        by AWS to activate the virtual circuit. Trigger this action when the circuit
+        state reaches PENDING_SP_ACCEPTANCE in the AWS console. Note that this action
+        is exclusive to AWS deployments and cannot be used for GCP or other providers.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: vlanAttachmentId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentidAccept
+  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}/logs:
+    get:
+      tags:
+      - Vlan Attachment
+      summary: Fetch Router Logs
+      description: Retrieve real-time CloudRouter logs for virtual attachments deployed
+        on the GCP network. These logs provide critical data on BGP session stability,
+        peer adjacency events, and routing updates. Use this during initial deployment
+        or when troubleshooting regional connectivity drops. You must provide a valid
+        lookback duration (e.g., 1h, 1d); this feature is not supported for AWS-based
+        attachments.
+      parameters:
+      - name: interconnectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: vlanAttachmentId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: duration
+        in: query
+        description: 'Duration for logs. Allowed values: 15m, 1h, 1d, 3d'
+        schema:
+          type: string
+          default: 1d
+          enum:
+          - 15m
+          - 1h
+          - 1d
+          - 3d
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentidLogs
+  /mt/sp-interconnect/regions:
+    get:
+      tags:
+      - Interconnect
+      summary: List of Regions and Edge Locations
+      description: Fetch the master list of all geographical regions and edge locations
+        supported by the SP Interconnect service. This assists in network planning
+        by identifying optimal locations for Interconnect placement. Consult this
+        data to determine the closest edge location to your physical infrastructure
+        for low-latency traffic egress. The response is dynamically filtered based
+        on the cloudProvider to ensure regional compatibility.
+      parameters:
+      - name: cloudProvider
+        in: query
+        schema:
+          $ref: '#/components/schemas/CloudProvider'
+      responses:
+        '200':
+          description: Success
+      operationId: GetMtSp-interconnectRegions
+  /mt/sp-interconnect/regions/physical-connections:
+    get:
+      tags:
+      - Interconnect
+      summary: List of Physical Connection Regions in GCP
+      description: Retrieve the specific regions and colocation facilities available
+        for physical interconnect deployments on the GCP network. This informs network
+        engineers of the precise locations where high-speed physical links can be
+        provisioned. Use this when developing a dedicated physical connectivity strategy
+        for large-scale multi-tenant environments. The data provides a hierarchy of
+        continents, cities, and specific facility names.
+      responses:
+        '200':
+          description: Success
+      operationId: GetMtSp-interconnectRegionsPhysical-connections
+  /mt/sp-interconnect/settings:
+    post:
+      tags:
+      - Interconnect
+      summary: Configure Egress Settings
+      description: Apply traffic routing preferences and egress behavior for a specific
+        Tenant Service Group (TSG). This determines whether egress traffic utilizes
+        the private Service Provider (SP) path or the standard Prisma Access (PA)
+        path. Set this during tenant onboarding or when modifying existing regional
+        traffic policies. If SP egress is selected, you must specify the CIDR ranges
+        that should participate in the private routing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsEntry'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      operationId: PostMtSp-interconnectSettings
+    get:
+      tags:
+      - Interconnect
+      summary: Get Egress Settings
+      description: View the current egress and routing configuration for the authenticated
+        tenant context. This verifies whether the tenant is currently utilizing the
+        SP Interconnect or the default public path for their egress traffic. Access
+        this to validate that your network architecture policies have been correctly
+        applied at the management plane. The response provides the egress type and
+        all participating CIDR blocks.
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      operationId: GetMtSp-interconnectSettings
 servers:
 - url: https://api.sase.paloaltonetworks.com
 security:
@@ -238,615 +841,3 @@ components:
       type: http
       scheme: Bearer
 ExternalTags: {}
-paths:
-  /mt/sp-interconnect/interconnects:
-    get:
-      summary: Retrieve All Interconnects
-      description: Access a complete inventory of Service Provider Interconnects configured
-        within the multi-tenant environment. This inventory resides in the management
-        plane and allows administrators to audit existing connectivity across AWS
-        and GCP providers. Use this during system audits or when mapping regional
-        resource availability to verify that backbones align with tenant requirements.
-        Query parameters facilitate targeted searches by including default interconnects
-        or expanding associated tenant data.
-      operationId: GetMtSp-interconnectInterconnects
-      responses:
-        '200':
-          description: Success
-        '500':
-          description: Server Error
-      parameters:
-      - name: includeDefaultInterconnect
-        in: query
-        schema:
-          type: boolean
-      - name: includeTenantsAssociated
-        in: query
-        schema:
-          type: boolean
-      tags:
-      - Interconnect
-    post:
-      summary: Create New Interconnect
-      description: Provision a top-level Interconnect resource to serve as the logical
-        container for all subsequent virtual connectivity. This resource creates a
-        private bridge between a Service Provider and Prisma Access to bypass public
-        internet routes. Initialize this when onboarding a new region or establishing
-        isolated per-tenant infrastructure for high-compliance environments. Provide
-        the cloud provider, region, and usage model (SHARED or PER_TENANT) along with
-        partner contact details to begin the automated setup process.
-      operationId: PostMtSp-interconnectInterconnects
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '409':
-          description: Conflict
-        '500':
-          description: Server Error
-      parameters: []
-      tags:
-      - Interconnect
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InterconnectRequest'
-        required: true
-  /mt/sp-interconnect/interconnects/physical-connections:
-    get:
-      summary: List Physical Connections
-      description: Retrieve technical data regarding the underlying hardware links
-        that support your Interconnects. This visibility allows network engineers
-        to monitor link speeds (10G/100G) and MACsec encryption status at specific
-        colocation sites. Access this information when troubleshooting layer-1 connectivity
-        or performing routine infrastructure health checks. The system returns a list
-        of physical resources, indicating their current operational status and colocation
-        zone.
-      operationId: GetMtSp-interconnectInterconnectsPhysical-connections
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters: []
-      tags:
-      - Physical Connection
-    post:
-      summary: Provision Physical Connection
-      description: Initiate a physical link request within an Interconnect at a specific
-        colocation facility. This establishes the core hardware foundation required
-        before virtual circuits can be provisioned. Use this when expanding regional
-        bandwidth capacity or establishing a new physical Point of Presence (PoP).
-        To proceed, define the desired link speed, the link count, and the specific
-        colocation facility IDs intended for deployment.
-      operationId: PostMtSp-interconnectInterconnectsPhysical-connections
-      responses:
-        '201':
-          description: Success
-        '404':
-          description: Not Found
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters: []
-      tags:
-      - Physical Connection
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PhysicalConnectionEntry'
-        required: true
-  /mt/sp-interconnect/interconnects/physical-connections/{physicalConnectionId}:
-    delete:
-      summary: Delete Physical Connection
-      description: Decommission a specific physical link from the environment using
-        its unique identifier. Terminating these links helps release hardware resources
-        and end service agreements when specific hardware paths are no longer required.
-        Execute this during hardware refreshes or regional exit strategies. The system
-        immediately marks the connection for deletion and initiates the teardown in
-        the management database and provider portals.
-      operationId: DeleteMtSp-interconnectInterconnectsPhysical-connectionsbyphysicalconnectionid
-      responses:
-        '200':
-          description: Success
-        '404':
-          description: Not Found
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: physicalConnectionId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Physical Connection
-    get:
-      summary: Get Physical Connection
-      description: View the detailed technical specification of a single physical
-        link. This displays configuration parameters such as colocation addresses,
-        HA status, and link types. Use this when preparing for on-site maintenance
-        at a data center or verifying link readiness before provisioning virtual circuits.
-        By submitting the physicalConnectionId, you obtain the full state and list
-        of permitted management actions for that specific resource.
-      operationId: GetMtSp-interconnectInterconnectsPhysical-connectionsbyphysicalconnectionid
-      responses:
-        '200':
-          description: Success
-        '404':
-          description: Not Found
-      parameters:
-      - name: physicalConnectionId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: includeDetails
-        in: query
-        schema:
-          type: boolean
-      tags:
-      - Physical Connection
-  /mt/sp-interconnect/interconnects/summary:
-    get:
-      summary: Summarize All Interconnects
-      description: View a high-level statistical snapshot of the current Interconnect
-        ecosystem. This summary provides active/inactive counts, total IP Address
-        pool usage, and bandwidth distribution across cloud providers. Utilize this
-        for executive summaries or operational dashboards to monitor global health
-        at a glance. Filtering by usage type allows you to isolate metrics for SHARED
-        versus PER_TENANT deployment models.
-      operationId: GetMtSp-interconnectInterconnectsSummary
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: usage
-        in: query
-        schema:
-          $ref: '#/components/schemas/InterconnectUsage'
-      tags:
-      - Interconnect
-  /mt/sp-interconnect/interconnects/{interconnectId}:
-    get:
-      summary: Retrieve Specific Interconnect
-      description: Fetch the full configuration data and current operational state
-        of a single Interconnect container. This reveals regional placement, current
-        status, and the collection of virtual circuits (VlanAttachments) grouped within
-        the Interconnect. Use this when diagnosing regional connectivity issues or
-        retrieving internal IDs for sub-resource management. The response details
-        cloud-specific parameters and optional data regarding tenants currently utilizing
-        the resource.
-      operationId: GetMtSp-interconnectInterconnectsbyinterconnectid
-      responses:
-        '200':
-          description: Success
-        '404':
-          description: Not Found
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: includeTenantsAssociated
-        in: query
-        schema:
-          type: boolean
-      tags:
-      - Interconnect
-    delete:
-      summary: Remove Specific Interconnect
-      description: Permanently remove an Interconnect and its associated configuration
-        from the environment. This retirees the bridge once all virtual attachments
-        have been deleted and egress traffic has been rerouted. Execute this only
-        when a regional Interconnect is no longer required for egress traffic. Success
-        removes the resource from the database and ends its logical association with
-        the Prisma Access backend.
-      operationId: DeleteMtSp-interconnectInterconnectsbyinterconnectid
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Interconnect
-  /mt/sp-interconnect/interconnects/{interconnectId}/ip-pool:
-    put:
-      summary: Update Existing Pool
-      description: Modify the assigned IP Address blocks or the provider type for
-        an existing Interconnect pool. This update occurs within the specific Interconnect
-        context and allows for scaling the number of CIDR blocks as traffic grows.
-        Use this when expanding Bring Your Own IP Address (BYOIP) capacity or updating
-        edge location mappings. You must submit the full updated list of IP Address
-        blocks, specifying their primary or secondary status and the designated edge
-        location.
-      operationId: PutMtSp-interconnectInterconnectsBy_interconnectidIp-pool
-      responses:
-        '200':
-          description: Success
-        '500':
-          description: Internal Error
-        '400':
-          description: Bad Request
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - IP Pool
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPPoolRequest'
-        required: true
-    get:
-      summary: Get IP Address Address Pool
-      description: View the current IP Address address configuration assigned to an
-        Interconnect, including CIDR ranges and provider status. This provides visibility
-        into the addressing scheme used at the edge for egress routing. Access this
-        to verify that the correct SP-provided or public IP Address ranges are in
-        effect. The data returned includes the IP Address pool ID, its provisioning
-        state, and a list of all active CIDR blocks.
-      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidIp-pool
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - IP Pool
-    delete:
-      summary: Delete IP Address Pool
-      description: Remove all IP Address block associations and provider settings
-        from the specified Interconnect. Terminating the pool stops the use of specific
-        CIDRs for routing and returns the container to an unassigned state. Use this
-        when retiring BYOIP ranges or preparing to swap service provider IP Address
-        schemes. Note that deleting an active pool will immediately impact egress
-        traffic relying on those addresses.
-      operationId: DeleteMtSp-interconnectInterconnectsBy_interconnectidIp-pool
-      responses:
-        '200':
-          description: Success
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - IP Pool
-    post:
-      summary: Create New Pool
-      description: Provision and attach a new IP Address address pool to an existing
-        Interconnect. This defines the addressing model (SP-provided or PANW-provided)
-        that Prisma Access traffic will use at the edge. Use this when finalizing
-        the egress setup for a new regional Interconnect container. When using SP-provided
-        pools, you must include at least one valid public CIDR block mapped to a supported
-        edge location.
-      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidIp-pool
-      responses:
-        '201':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Internal Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - IP Pool
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPPoolRequest'
-        required: true
-  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments:
-    get:
-      summary: List Vlan Attachments
-      description: Retrieve all virtual circuits configured within a specific Interconnect.
-        This allows administrators to verify the regional distribution of attachments
-        and their current BGP states. Use this when auditing high-availability (HA)
-        domains or verifying pairing key availability. The response lists BGP parameters,
-        edge availability domains, and current provisioning states for each circuit.
-      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachments
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Vlan Attachment
-    post:
-      summary: Provision Vlan Attachment
-      description: Create a new virtual circuit, known as a VlanAttachment, within
-        an Interconnect to enable data transfer. This establishes the actual logical
-        path for Prisma Access traffic routing through the Service Provider. Deploy
-        this when initializing new egress paths or adding redundant links for regional
-        reliability. Required parameters include a unique name, BGP Peer ASN, and
-        BFD initialization mode to ensure robust connectivity.
-      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidVlan-attachments
-      responses:
-        '201':
-          description: Success
-        '404':
-          description: Not Found
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Vlan Attachment
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VlanAttachmentRequest'
-        required: true
-  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}:
-    get:
-      summary: Get Vlan Attachment
-      description: View the full technical specification of a single virtual circuit
-        by its unique identifier. This displays parameters such as MD5 authentication,
-        BGP session timers, and stack type (IPv4/Dual-Stack). Use this to verify pairing
-        key generation or to inspect the specific edge availability domain assigned
-        for redundancy. The returned data provides the exact state needed for alignment
-        with service provider configurations.
-      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsbyvlanattachmentid
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: vlanAttachmentId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Vlan Attachment
-    delete:
-      summary: Delete Vlan Attachment
-      description: Permanently remove a specific virtual circuit and its logical configuration
-        from the Interconnect. Terminating these circuits is necessary when network
-        paths are being replaced or retired. Execute this during scheduled maintenance
-        windows or regional re-architecting. Ensure the paired service provider resource
-        is also manually decommissioned to prevent unintended billing.
-      operationId: DeleteMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsbyvlanattachmentid
-      responses:
-        '200':
-          description: Success
-        '404':
-          description: Not Found
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: vlanAttachmentId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Vlan Attachment
-  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}/accept:
-    post:
-      summary: Accept AWS Attachment
-      description: Transition a pending AWS Direct Connect attachment into the accepted
-        state within the management plane. This serves as the final confirmation required
-        by AWS to activate the virtual circuit. Trigger this action when the circuit
-        state reaches PENDING_SP_ACCEPTANCE in the AWS console. Note that this action
-        is exclusive to AWS deployments and cannot be used for GCP or other providers.
-      operationId: PostMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentidAccept
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: vlanAttachmentId
-        in: path
-        required: true
-        schema:
-          type: string
-      tags:
-      - Vlan Attachment
-  /mt/sp-interconnect/interconnects/{interconnectId}/vlan-attachments/{vlanAttachmentId}/logs:
-    get:
-      summary: Fetch Router Logs
-      description: Retrieve real-time CloudRouter logs for virtual attachments deployed
-        on the GCP network. These logs provide critical data on BGP session stability,
-        peer adjacency events, and routing updates. Use this during initial deployment
-        or when troubleshooting regional connectivity drops. You must provide a valid
-        lookback duration (e.g., 1h, 1d); this feature is not supported for AWS-based
-        attachments.
-      operationId: GetMtSp-interconnectInterconnectsBy_interconnectidVlan-attachmentsBy_vlanattachmentidLogs
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '500':
-          description: Server Error
-      parameters:
-      - name: interconnectId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: vlanAttachmentId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: duration
-        in: query
-        description: 'Duration for logs. Allowed values: 15m, 1h, 1d, 3d'
-        schema:
-          type: string
-          default: 1d
-          enum:
-          - 15m
-          - 1h
-          - 1d
-          - 3d
-      tags:
-      - Vlan Attachment
-  /mt/sp-interconnect/regions:
-    get:
-      summary: List of Regions and Edge Locations
-      description: Fetch the master list of all geographical regions and edge locations
-        supported by the SP Interconnect service. This assists in network planning
-        by identifying optimal locations for Interconnect placement. Consult this
-        data to determine the closest edge location to your physical infrastructure
-        for low-latency traffic egress. The response is dynamically filtered based
-        on the cloudProvider to ensure regional compatibility.
-      operationId: GetMtSp-interconnectRegions
-      responses:
-        '200':
-          description: Success
-      parameters:
-      - name: cloudProvider
-        in: query
-        schema:
-          $ref: '#/components/schemas/CloudProvider'
-      tags:
-      - Interconnect
-  /mt/sp-interconnect/regions/physical-connections:
-    get:
-      summary: List of Physical Connection Regions in GCP
-      description: Retrieve the specific regions and colocation facilities available
-        for physical interconnect deployments on the GCP network. This informs network
-        engineers of the precise locations where high-speed physical links can be
-        provisioned. Use this when developing a dedicated physical connectivity strategy
-        for large-scale multi-tenant environments. The data provides a hierarchy of
-        continents, cities, and specific facility names.
-      operationId: GetMtSp-interconnectRegionsPhysical-connections
-      responses:
-        '200':
-          description: Success
-      parameters: []
-      tags:
-      - Interconnect
-  /mt/sp-interconnect/settings:
-    post:
-      summary: Configure Egress Settings
-      description: Apply traffic routing preferences and egress behavior for a specific
-        Tenant Service Group (TSG). This determines whether egress traffic utilizes
-        the private Service Provider (SP) path or the standard Prisma Access (PA)
-        path. Set this during tenant onboarding or when modifying existing regional
-        traffic policies. If SP egress is selected, you must specify the CIDR ranges
-        that should participate in the private routing.
-      operationId: PostMtSp-interconnectSettings
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '409':
-          description: Conflict
-      parameters: []
-      tags:
-      - Interconnect
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SettingsEntry'
-        required: true
-    get:
-      summary: Get Egress Settings
-      description: View the current egress and routing configuration for the authenticated
-        tenant context. This verifies whether the tenant is currently utilizing the
-        SP Interconnect or the default public path for their egress traffic. Access
-        this to validate that your network architecture policies have been correctly
-        applied at the management plane. The response provides the egress type and
-        all participating CIDR blocks.
-      operationId: GetMtSp-interconnectSettings
-      responses:
-        '200':
-          description: Success
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-      parameters: []
-      tags:
-      - Interconnect
