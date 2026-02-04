@@ -14,7 +14,6 @@ The **Backbone** and **Connection** APIs are now **deprecated** and have been re
 **Key Terminology Changes:**
 * **Backbone** is now **Interconnect**.
 * **Connection** is now **VlanAttachment**.
-* **Physical Connection** is now **Physical VlanAttachment**.
 
 **What You Should Do:**
 1. **Migrate Endpoints:** Update API calls to the new `/sp-interconnect/` directory structure.
