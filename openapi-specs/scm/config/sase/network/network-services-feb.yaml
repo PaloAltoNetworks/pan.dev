@@ -105,6 +105,8 @@ tags:
     description: Ssl Decrypt
   - name: Remote Networks License
     description: Remote Networks License Info
+  - name: LLDP Profiles
+    description: LLDP Profiles
   - name: ConfigMatchList
     description: ConfigMatchList
   - name: GlobalprotectMatchList
@@ -5860,9 +5862,6 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/name'
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
       responses:
         '200':
           description: OK
@@ -6128,7 +6127,6 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
-
   /sdwan-error-correction-profiles:
     get:
       tags:
@@ -7401,6 +7399,167 @@ paths:
                   error:
                     type: string
                     example: Failed to retrieve license data
+  /lldp-profiles:
+    get:
+      tags:
+        - LLDP Profiles
+      summary: List LLDP profiles
+      description: |
+        Retrieve a list of LLDP profiles.
+      operationId: ListLLDPProfiles
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/lldp-profiles'
+                  limit:
+                    type: integer
+                    default: 200
+                  offset:
+                    type: integer
+                    default: 0
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    post:
+      tags:
+        - LLDP Profiles
+      summary: Create an LLDP profile
+      description: |
+        Create a new LLDP profile.
+      operationId: CreateLLDPProfiles
+      requestBody:
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lldp-profiles'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lldp-profiles'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  '/lldp-profiles/{id}':
+    get:
+      tags:
+        - LLDP Profiles
+      summary: Get an LLDP profile
+      description: |
+        Get an existing LLDP profile.
+      operationId: GetLLDPProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lldp-profiles'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags:
+        - LLDP Profiles
+      summary: Update an LLDP profile
+      description: |
+        Update an existing LLDP profile.
+      operationId: UpdateLLDPProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      requestBody:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lldp-profiles'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lldp-profiles'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags:
+        - LLDP Profiles
+      summary: Delete an LLDP profile
+      description: |
+        Delete an LLDP profile.
+      operationId: DeleteLLDPProfilesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
 components:
   parameters:
     name:
@@ -8368,6 +8527,7 @@ components:
           maxLength: 63
         local_address:
           type: object
+          x-computed-field: true
           properties:
             interface:
               type: string
@@ -8461,9 +8621,11 @@ components:
               default: ikev2-preferred
         protocol_common:
           type: object
+          x-computed-field: true
           properties:
             nat_traversal:
               type: object
+              x-computed-field: true
               description: Enables NAT traversal for the IKE gateway.
               properties:
                 enable:
@@ -8474,10 +8636,10 @@ components:
               default: false
             fragmentation:
               type: object
+              x-computed-field: true
               properties:
                 enable:
-                  enum:
-                    - false
+                  type: boolean
                   default: false
         peer_address:
           type: object
@@ -9115,9 +9277,16 @@ components:
                         type: object
                         properties:
                           name:
-                            type: string
+                            enum:
+                              - class1
+                              - class2
+                              - class3
+                              - class4
+                              - class5
+                              - class6
+                              - class7
+                              - class8
                             description: Traffic class
-                            maxLength: 31
                           priority:
                             enum:
                               - real-time
@@ -9134,11 +9303,13 @@ components:
                                 description: max sending bandwidth in mbps
                                 minimum: 0
                                 maximum: 60000
+                                default: 0
                               egress_guaranteed:
                                 type: integer
                                 description: guaranteed sending bandwidth in mbps
                                 minimum: 0
                                 maximum: 60000
+                                default: 0
             - type: object
               title: percentage
               properties:
@@ -9152,9 +9323,16 @@ components:
                         type: object
                         properties:
                           name:
-                            type: string
+                            enum:
+                              - class1
+                              - class2
+                              - class3
+                              - class4
+                              - class5
+                              - class6
+                              - class7
+                              - class8
                             description: Traffic class
-                            maxLength: 31
                           priority:
                             enum:
                               - real-time
@@ -9171,11 +9349,13 @@ components:
                                 description: max sending bandwidth in percentage
                                 minimum: 0
                                 maximum: 100
+                                default: 0
                               egress_guaranteed:
                                 type: integer
                                 description: guaranteed sending bandwidth in percentage
                                 minimum: 0
                                 maximum: 100
+                                default: 0
       required:
         - name
       oneOf:
@@ -9226,7 +9406,6 @@ components:
           maxLength: 63
         folder:
           type: string
-          readOnly: true
         enable_user_identification:
           type: boolean
         enable_device_identification:
@@ -10552,6 +10731,13 @@ components:
           $ref: '#/components/schemas/poe'
       anyOf:
         - oneOf:
+            - title: aggregate_group
+              required:
+                - aggregate_group
+              properties:
+                aggregate_group:
+                  type: string
+                  example: '$aggregate-interface-example'
             - title: tap
               properties:
                 tap:
@@ -10991,15 +11177,20 @@ components:
                     type: string
                     description: IPv6 Address
                     example: '2001:DB8::1/128'
-                  interface_id:
-                    type: string
-                    description: Interface ID
-                    default: "EUI-64"
+                  anycast:
+                    description: Anycast
+                    type: object
+                  prefix:
+                    description: Use interface ID as host portion
+                    type: object
             enabled:
               description: Enable IPv6
               type: boolean
               default: false
-                
+            interface_id:
+              type: string
+              description: Interface ID
+              default: "EUI-64"
       oneOf:
         - type: object
           title: folder
@@ -11075,6 +11266,39 @@ components:
                 description: Tunnel Interface IP address(es)
             required:
               - name
+        ipv6:
+          description: Tunnel Interface IPv6 Configuration
+          type: object
+          properties:
+            address:
+              description: IPv6 Address Parent
+              type: array
+              items:
+                type: object
+                properties:
+                  enable_on_interface:
+                    type: boolean
+                    description: Enable Address on Interface
+                    default: true
+                  name:
+                    type: string
+                    description: IPv6 Address
+                    example: '2001:DB8::1/128'
+                  anycast:
+                    description: Anycast
+                    type: object
+                  prefix:
+                    description: Use interface ID as host portion
+                    type: object
+            enabled:
+              description: Enable IPv6
+              type: boolean
+              default: false
+            interface_id:
+              type: string
+              description: Interface ID
+              default: "EUI-64"
+
       oneOf:
         - type: object
           title: folder
@@ -11320,16 +11544,18 @@ components:
           description: Name
           type: string
         ipv4:
-          required:
-            - ipv4
+          description: IPv4 Address Family
+          type: object
           properties:
-            ipv4:
-              type: object
-              properties:
-                unicast:
-                  $ref: '#/components/schemas/bgp-address-family'
-                multicast:
-                  $ref: '#/components/schemas/bgp-address-family'
+            unicast:
+              $ref: '#/components/schemas/bgp-address-family'
+            multicast:
+              $ref: '#/components/schemas/bgp-address-family'
+          anyOf:
+            - required:
+                - unicast
+            - required:
+                - multicast
       oneOf:
         - type: object
           title: folder
@@ -11587,22 +11813,23 @@ components:
         description:
           type: string
         ipv4:
-          required:
-            - ipv4
+          type: object
+          anyOf:
+            - required:
+                - unicast
+            - required:
+                - multicast
           properties:
-            ipv4:
-              type: object
-              properties:
-                unicast:
-                  $ref: '#/components/schemas/bgp-filter'
-                multicast:
-                  oneOf:
-                    - type: object
-                      properties:
-                        inherit:
-                          description: Inherit from unicast
-                          type: boolean
-                    - $ref: '#/components/schemas/bgp-filter'
+            unicast:
+              $ref: '#/components/schemas/bgp-filter'
+            multicast:
+              oneOf:
+                - type: object
+                  properties:
+                    inherit:
+                      description: Inherit from unicast
+                      type: boolean
+                - $ref: '#/components/schemas/bgp-filter'
       oneOf:
         - type: object
           title: folder
@@ -16848,58 +17075,64 @@ components:
         description:
           description: Description
           type: string
-        ipv4:
+        type:
           type: object
+          description: Address Family Type
+          required:
+            - ipv4
           properties:
-            ipv4_entry:
-              description: IPv4 prefix lists
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    description: Sequence number
-                    type: integer
-                    minimum: 1
-                    maximum: 65535
-                  action:
-                    description: Action
-                    type: string
-                    enum:
-                      - deny
-                      - permit
-                  prefix:
+            ipv4:
+              type: object
+              properties:
+                ipv4_entry:
+                  description: IPv4 prefix lists
+                  type: array
+                  items:
                     type: object
-                    oneOf:
-                      - title: network
-                        required:
-                          - network
-                        properties:
-                          network:
-                            description: Network
-                            type: string
-                            enum:
-                              - any
-                      - title: entry
-                        required:
-                          - "entry"
-                        properties:
-                          entry:
-                            type: object
+                    properties:
+                      name:
+                        description: Sequence number
+                        type: integer
+                        minimum: 1
+                        maximum: 65535
+                      action:
+                        description: Action
+                        type: string
+                        enum:
+                          - deny
+                          - permit
+                      prefix:
+                        type: object
+                        oneOf:
+                          - title: network
+                            required:
+                              - network
                             properties:
                               network:
                                 description: Network
                                 type: string
-                              greater_than_or_equal:
-                                description: Greater than or equal to
-                                type: integer
-                                minimum: 0
-                                maximum: 32
-                              less_than_or_equal:
-                                description: Less than or equal to
-                                type: integer
-                                minimum: 0
-                                maximum: 32
+                                enum:
+                                  - any
+                          - title: entry
+                            required:
+                              - "entry"
+                            properties:
+                              entry:
+                                type: object
+                                properties:
+                                  network:
+                                    description: Network
+                                    type: string
+                                  greater_than_or_equal:
+                                    description: Greater than or equal to
+                                    type: integer
+                                    minimum: 0
+                                    maximum: 32
+                                  less_than_or_equal:
+                                    description: Less than or equal to
+                                    type: integer
+                                    minimum: 0
+                                    maximum: 32
       oneOf:
         - type: object
           title: folder
@@ -18518,6 +18751,97 @@ components:
         enable_mesh_between_hubs:
           description: Enable mesh connection between hubs?
           type: boolean
+    lldp-profiles:
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUID of the resource
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          description: LLDP profile name
+          type: string
+        mode:
+          description: LLDP mode
+          type: string
+        snmp_syslog_notification:
+          description: SNMP syslog notification
+          type: boolean
+        option_tlvs:
+          type: object
+          properties:
+            port_description:
+              description: Option TLV Port Description
+              type: boolean
+            system_name:
+              description: Option TLV System Name
+              type: boolean
+            system_description:
+              description: Option TLV System Description
+              type: boolean
+            system_capabilities:
+              description: Option TLV System Capabilities
+              type: boolean
+            management_address:
+              type: object
+              properties:
+                enabled:
+                  description: Management address enabled
+                  type: boolean
+                iplist:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Name
+                        type: string
+                      interface:
+                        description: Interface
+                        type: string
+                      ipv4:
+                        description: IPv4 Address
+                        type: string
+                      ipv6:
+                        description: IPv6 Address
+                        type: string
+      required:
+        - name
+      oneOf:
+        - type: object
+          title: folder
+          properties:
+            folder:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The folder in which the resource is defined
+              example: My Folder
+          required:
+            - folder
+        - type: object
+          title: snippet
+          properties:
+            snippet:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The snippet in which the resource is defined
+              example: My Snippet
+          required:
+            - snippet
+        - type: object
+          title: device
+          properties:
+            device:
+              type: string
+              pattern: ^[a-zA-Z\d\-_\. ]+$
+              maxLength: 64
+              description: The device in which the resource is defined
+              example: My Device
+          required:
+            - device
     sdwan-error-correction-profiles:
       type: object
       required:
