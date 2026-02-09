@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| February 2, 2026     | Redesigned the [SP Interconnect APIs](/sase/api/mt-interconnect/introduction.md).
 | Oct 8, 2025     | Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).
 | July 1, 2025     | Added [Identity Security Posture Management APIs](/sase/api/identity-sspm/).
 | June 24, 2025     | Added Plugin API to [SaaS Security Posture Management APIs](/sase/api/sspm/).
