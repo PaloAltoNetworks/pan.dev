@@ -499,8 +499,13 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/manage-services-5g",
+                      to: "sase/api/manage-services-5g/introduction",
                       label: "SASE 5G Manage Services",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/monitor-services-5g/introduction-monitor",
+                      label: "SASE 5G Monitor Services",
                       icon: "api-doc",
                     },
                     {
@@ -934,6 +939,11 @@ const config = {
           manageservices: {
             specPath: "openapi-specs/sase/manage-services-5g",
             outputDir: "products/sase/api/manage-services-5g",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          monitorservices: {
+            specPath: "openapi-specs/sase/monitor-services-5g",
+            outputDir: "products/sase/api/monitor-services-5g",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           configorch: {
