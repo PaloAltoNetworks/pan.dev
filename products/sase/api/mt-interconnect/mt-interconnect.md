@@ -1,21 +1,37 @@
 ---
 id: mt-interconnect
-title: Multitenant Interconnect APIs
-sidebar_label: Multitenant Interconnect APIs
-slug: /sase/api/mt-interconnect
+title: Service Provider Interconnect APIs
+sidebar_label: Service Provider Interconnect Overview
 keywords:
   - SASE
   - Reference
   - API
 ---
 
-Welcome to the Strata Cloud Manager Multitenant Service Provider Interconnect APIs. The Service
-Provider (SP) Interconnect API allows you to use Service Provider Backbones like BT, Orange, AT&T,
-and more for directing Prisma Access egress traffic. Without the SP Interconnect, Prisma Access
-egress traffic relies on public cloud providers like GCP, AWS, and Azure for network backbone
-connectivity. The SP Interconnect API offers several benefits, including enhanced security,optimized
-network costs, and reliability. You can easily manage traffic routing preferences on a per-SP and
-per-Prisma Access location or region basis, ensuring flexibility and efficiency in network
-operations. 
+:::warning Deprecation Notice
+The **Backbone** and **Connection** APIs are now deprecated and have been replaced by the **Service Provider (SP) Interconnect** framework.
 
-These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
+**Key Terminology Changes:**
+* **Backbone** is now **Interconnect**.
+* **Connection** is now **VlanAttachment**.
+
+**What You Should Do:**
+1.  **Migrate Endpoints:** Update API calls to the new `/sp-interconnect/` directory structure.
+2.  **Update Resources:** Align internal logic with the new `SHARED` and `PER_TENANT` types.
+:::
+
+## Overview
+Welcome to the Strata Cloud Manager Service Provider (SP) Interconnect APIs. 
+
+The SP Interconnect API allows you to use Service Provider Interconnects (e.g., BT, Orange, AT&T) for directing Prisma Access egress traffic. Without SP Interconnect, traffic relies on public cloud backbones like GCP, AWS, and Azure. This framework provides enhanced security, optimized costs, and improved reliability.
+
+## Key Components
+
+* **Interconnects:** The top-level resource grouping connectivity by region and cloud provider.
+* **VlanAttachments:** Virtual circuits (formerly "Connections") that facilitate data flow.
+* **Physical VlanAttachments:** Underlying physical infrastructure mapping.
+* **IPPools:** Managed IP sets attached directly to an Interconnect.
+
+---
+
+> These APIs use the [common SASE authentication](/sase/docs/getstarted) for service access and authorization.
