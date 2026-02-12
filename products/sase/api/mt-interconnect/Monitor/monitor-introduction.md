@@ -1,5 +1,5 @@
 ---
-id: manage-introduction
+id: monitor-introduction
 title: Service Provider Interconnect Monitor APIs
 sidebar_label: Service Provider Interconnect Monitor APIs
 keywords:

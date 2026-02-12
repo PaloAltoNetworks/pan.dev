@@ -1,5 +1,5 @@
 ---
-id: mt-interconnect
+id: introduction
 title: Service Provider Interconnect APIs
 sidebar_label: Service Provider Interconnect Overview
 keywords:
