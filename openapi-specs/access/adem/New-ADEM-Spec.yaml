@@ -1,0 +1,3626 @@
+openapi: 3.0.0
+info:
+  title: ADEM data API
+  version: 2.1.1
+  description: "API for ADEM timeseries data. This spec was created on February 12,\
+    \ 2026. \xA9 2026 Palo Alto Networks, Inc."
+paths:
+  /adem/telemetry/v2/agent/properties:
+    get:
+      x-controller-name: AgentController
+      x-operation-name: getAgentProperties
+      tags:
+      - AgentController
+      summary: Get agent properties
+      responses:
+        '200':
+          description: Agent properties
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/AgentSummary'
+                - $ref: '#/components/schemas/AgentSeries'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: true
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include agent properties e.g. AgentProperties.disks,AgentProperties.wlans,AgentProperties.computerName
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - rnAgent
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+      operationId: AgentController.getAgentProperties
+      description: Retrieve the properties details through this endpoint.
+  /adem/telemetry/v2/measure/agent/metric:
+    get:
+      x-controller-name: AgentController
+      x-operation-name: getAgentMetric
+      tags:
+      - AgentController
+      summary: Get agent metrics
+      responses:
+        '200':
+          description: Agent metric
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/MetricSummaryCollection'
+                - $ref: '#/components/schemas/MetricSeries'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - rnAgent
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - grouped-summary
+      operationId: AgentController.getAgentMetric
+      description: Retrieve the metric details through this endpoint.
+  /adem/telemetry/v2/measure/agent/score:
+    get:
+      x-controller-name: AgentController
+      x-operation-name: getAgentScore
+      tags:
+      - AgentController
+      summary: Get agent scores
+      responses:
+        '200':
+          description: Summary of agent scores
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ScoreSummary'
+                - $ref: '#/components/schemas/ScoreSeries'
+                - $ref: '#/components/schemas/ScoreSummaryCollection'
+                - $ref: '#/components/schemas/ScoreSeriesCollection'
+                - $ref: '#/components/schemas/ScoreDistributionCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include agent properties or entity counts e.g. EntityCounts.endpoint,EntityCounts.user,AgentProperties.computername
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - rnAgent
+      - name: result-filter
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            description: aggregate filter e.g. Score.application==poor,fair or MuAgent.selfServeUserEnabled==false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      - name: distribution-by
+        in: query
+        required: false
+        schema:
+          type: string
+          description: distribution entity e.g. Entity.user or Entity.endpoint
+      operationId: AgentController.getAgentScore
+      description: Retrieve the score details through this endpoint.
+  /adem/telemetry/v2/measure/application/metric:
+    get:
+      x-controller-name: ApplicationController
+      x-operation-name: getApplicationMetric
+      tags:
+      - ApplicationController
+      summary: Get application metric
+      responses:
+        '200':
+          description: Application metrics
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/MetricSeries'
+                - $ref: '#/components/schemas/MetricSummary'
+                - $ref: '#/components/schemas/MetricSeriesCollection'
+                - $ref: '#/components/schemas/MetricSummaryCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - muProbe
+          - rnAgent
+          - rnProbe
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - grouped-summary
+          - grouped-timeseries
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      operationId: ApplicationController.getApplicationMetric
+      description: Retrieve the metric details through this endpoint.
+  /adem/telemetry/v2/measure/application/score:
+    get:
+      x-controller-name: ApplicationController
+      x-operation-name: getApplicationScore
+      tags:
+      - ApplicationController
+      summary: Get application scores
+      responses:
+        '200':
+          description: Application scores
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ScoreSeries'
+                - $ref: '#/components/schemas/ScoreSummary'
+                - $ref: '#/components/schemas/ScoreDistribution'
+                - $ref: '#/components/schemas/ScoreSummaryCollection'
+                - $ref: '#/components/schemas/ScoreSeriesCollection'
+                - $ref: '#/components/schemas/ScoreDistributionCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include entity counts e.g. EntityCounts.endpoint,EntityCounts.user
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - muProbe
+          - rnAgent
+          - rnProbe
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+          - grouped-distribution
+      - name: result-filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: aggregate filter e.g. Score.application==poor,fair or MuAgent.selfServeUserEnabled==false
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      operationId: ApplicationController.getApplicationScore
+      description: Retrieve the score details through this endpoint.
+  /adem/telemetry/v2/measure/internet/metric:
+    get:
+      x-controller-name: InternetController
+      x-operation-name: getInternetMetric
+      tags:
+      - InternetController
+      summary: Get internet metrics)
+      responses:
+        '200':
+          description: Internet test metrics
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/MetricSeries'
+                - $ref: '#/components/schemas/MetricSummary'
+                - $ref: '#/components/schemas/MetricSeriesCollection'
+                - $ref: '#/components/schemas/MetricSummaryCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - muProbe
+          - rnAgent
+          - rnProbe
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - grouped-timeseries
+          - grouped-summary
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      operationId: InternetController.getInternetMetric
+      description: Retrieve the metric details through this endpoint.
+  /adem/telemetry/v2/measure/nav/traffic:
+    get:
+      x-controller-name: NavController
+      x-operation-name: getNavTraffic
+      tags:
+      - NavController
+      summary: Get NAV traffic
+      responses:
+        '200':
+          description: NAV traffic
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/TrafficSeries'
+                - $ref: '#/components/schemas/TrafficSummary'
+                - $ref: '#/components/schemas/TrafficSeriesCollection'
+                - $ref: '#/components/schemas/TrafficSummaryCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - grouped-timeseries
+          - grouped-summary
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      operationId: NavController.getNavTraffic
+      description: Retrieve the traffic details through this endpoint.
+  /adem/telemetry/v2/measure/route/hops:
+    get:
+      x-controller-name: RouteController
+      x-operation-name: getRouteHops
+      tags:
+      - RouteController
+      summary: Get traceroute summary for overlay and underlay paths
+      responses:
+        '200':
+          description: Traceroute summary for overlay and underlay paths
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: endpoint-type
+        in: query
+        required: true
+        schema:
+          type: string
+          description: endpoint type
+          enum:
+          - muAgent
+          - muProbe
+          - rnAgent
+          - rnProbe
+      operationId: RouteController.getRouteHops
+      description: Retrieve the hops details through this endpoint.
+  /adem/telemetry/v2/measure/rum/metric:
+    get:
+      x-controller-name: RumController
+      x-operation-name: getRumMetric
+      tags:
+      - RumController
+      summary: Real User Metrics
+      responses:
+        '200':
+          description: Real User Metrics
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/RumMetricSummary'
+                - $ref: '#/components/schemas/RumMetricSeries'
+                - $ref: '#/components/schemas/RumMetricDistribution'
+                - $ref: '#/components/schemas/RumMetricSummaryCollection'
+                - $ref: '#/components/schemas/RumMetricSeriesCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: Prisma-Client-RequestId
+        in: header
+        schema:
+          type: string
+          description: optional request identifier
+        required: false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+          - grouped-distribution
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include entity counts e.g. EntityCounts.endpoint,EntityCounts.user
+      - name: result-filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: aggregate filter e.g. Score.application==poor,fair or MuAgent.selfServeUserEnabled==false
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      operationId: RumController.getRumMetric
+      description: Retrieve the metric details through this endpoint.
+  /adem/telemetry/v2/measure/rum/score:
+    get:
+      x-controller-name: RumController
+      x-operation-name: getRumScore
+      tags:
+      - RumController
+      summary: Real User Metrics Score
+      responses:
+        '200':
+          description: Real User Metrics Score
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/RumScoreSummary'
+                - $ref: '#/components/schemas/RumScoreSeries'
+                - $ref: '#/components/schemas/RumScoreDistributionCollection'
+                - $ref: '#/components/schemas/RumScoreSummaryCollection'
+                - $ref: '#/components/schemas/RumScoreSeriesCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: Prisma-Client-RequestId
+        in: header
+        schema:
+          type: string
+          description: optional request identifier
+        required: false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+          - grouped-distribution
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include entity counts e.g. EntityCounts.endpoint,EntityCounts.user
+      - name: result-filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: aggregate filter e.g. Score.application==poor,fair or MuAgent.selfServeUserEnabled==false
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      - name: distribution-by
+        in: query
+        required: false
+        schema:
+          type: string
+          description: distribution entity e.g. Entity.user or Entity.endpoint
+      - name: distribution-score
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Score entity to run distribution on (e.g if endpointScore is
+            specified, distribution will be based on it)
+      operationId: RumController.getRumScore
+      description: Retrieve the score details through this endpoint.
+  /adem/telemetry/v2/measure/zoom/participant:
+    get:
+      x-controller-name: ZoomParticipantController
+      x-operation-name: getZoomParticipant
+      tags:
+      - ZoomParticipantController
+      summary: Get Zoom participants
+      responses:
+        '200':
+          description: Return a list of Zoom participants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoomParticipant'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      operationId: ZoomParticipantController.getZoomParticipant
+      description: Retrieve the participant details through this endpoint.
+  /adem/telemetry/v2/measure/zoom/participant-score:
+    get:
+      x-controller-name: ZoomParticipantController
+      x-operation-name: getZoomParticipantScore
+      tags:
+      - ZoomParticipantController
+      summary: Get Zoom participant score
+      responses:
+        '200':
+          description: Zoom participant score
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ZoomParticipantScoreSeries'
+                - $ref: '#/components/schemas/ZoomParticipantScoreSummary'
+                - $ref: '#/components/schemas/ZoomParticipantScoreSeriesCollection'
+                - $ref: '#/components/schemas/ZoomParticipantScoreSummaryCollection'
+                - $ref: '#/components/schemas/ZoomParticipantScoreDistribution'
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include entity counts e.g. EntityCounts.endpoint,EntityCounts.user
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      operationId: ZoomParticipantController.getZoomParticipantScore
+      description: Retrieve the participant score details through this endpoint.
+  /adem/telemetry/v2/measure/zoom/qos:
+    get:
+      x-controller-name: ZoomQosController
+      x-operation-name: getZoomQosMetric
+      tags:
+      - ZoomQosController
+      summary: Get Zoom QoS
+      responses:
+        '200':
+          description: Zoom QoS
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ZoomQosMetricSummary'
+                - $ref: '#/components/schemas/ZoomQosMetricSeries'
+                - $ref: '#/components/schemas/ZoomQosMetricDistribution'
+                - $ref: '#/components/schemas/ZoomQosMetricSummaryCollection'
+                - $ref: '#/components/schemas/ZoomQosMetricSeriesCollection'
+                - $ref: '#/components/schemas/ZoomQosMetricDistributionCollection'
+        '400':
+          description: Invalid Request
+        '401':
+          description: Invalid Client
+        '500':
+          description: Server Error
+      parameters:
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample start time in seconds (unix epoch)
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          maximum: 2147483648
+          description: sample end time in seconds (unix epoch)
+      - name: timerange
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A time range e.g 'last_3_hours', 'last_7_days'
+      - name: truncate-timerange
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: round timestamps to nearest sample period
+          default: true
+      - name: filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter results e.g. application==zoom-meeting or application==zoom-meeting,
+            application==Gmail
+      - name: Prisma-Tenant
+        in: header
+        schema:
+          type: string
+          description: Tenant ( tenant_service_group or tenant_service_group:subtenant
+            )
+        required: true
+      - name: Prisma-SubTenant
+        in: header
+        schema:
+          type: string
+          description: SubTenant
+        required: false
+      - name: response-type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - timeseries
+          - summary
+          - distribution
+          - grouped-summary
+          - grouped-timeseries
+          - grouped-distribution
+      - name: group
+        in: query
+        required: false
+        schema:
+          type: string
+          description: entity to group results by (e.g. Entity.user or Entity.user,Entity.endpoint)
+      - name: include
+        in: query
+        required: false
+        schema:
+          type: string
+          description: include entity counts e.g. EntityCounts.endpoint,EntityCounts.user
+      - name: result-filter
+        in: query
+        required: false
+        schema:
+          type: string
+          description: aggregate filter e.g. Score.application==poor,fair or MuAgent.selfServeUserEnabled==false
+      - name: pagination
+        in: query
+        required: false
+        schema:
+          type: string
+          description: paginate results (e.g. page==0;limit==10;sortBy==application;sortOrder==asc
+      operationId: ZoomQosController.getZoomQosMetric
+      description: Retrieve the qos details through this endpoint.
+servers:
+- url: /
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Pagination:
+      title: Pagination
+      type: object
+      properties:
+        page:
+          type: number
+          description: page number
+        limit:
+          type: number
+          description: page limit
+        sortBy:
+          type: string
+          description: sort by field
+        sortOrder:
+          type: string
+          description: 'sort order : asc, desc'
+        enabled:
+          type: boolean
+      additionalProperties: false
+    EntityCounts:
+      title: EntityCounts
+      type: object
+      properties:
+        endpoint:
+          type: number
+          description: count of distinct endpoints
+        location:
+          type: number
+          description: count of distinct locations
+        user:
+          type: number
+          description: count of distinct users
+        site:
+          type: number
+          description: count of distinct sites
+        test:
+          type: number
+          description: count of distinct application tests
+      additionalProperties: false
+    AgentDisk:
+      title: AgentDisk
+      type: object
+      properties:
+        name:
+          type: string
+          description: disk name
+        queueLengthAverage:
+          type: number
+          description: disk queue length average
+        queueLengthMin:
+          type: number
+          description: minimum disk queue length
+        queueLengthMax:
+          type: number
+          description: maximum disk queue length
+        spaceUsed:
+          type: number
+          description: disk space used, percentage
+      additionalProperties: false
+    AgentWlan:
+      title: AgentWlan
+      type: object
+      properties:
+        macAddress:
+          type: string
+          description: wireless LAN MAC address, e.g 8c:85:90:58:15:98
+        ssid:
+          type: string
+          description: wireless LAN SSID, e.g TP-LINK_72D1_5G
+        bssid:
+          type: string
+          description: wireless LAN BSSID, e.g 70:4f:57:74:72:d2
+        channel:
+          type: string
+          description: wireless LAN channel e.g 36
+        quality:
+          type: number
+          description: wireless LAN quality, 0 - 100
+        minQuality:
+          type: number
+          description: minimum wireless LAN quality, 0 - 100
+        maxQuality:
+          type: number
+          description: maximum wireless LAN quality, 0 - 100
+        rx:
+          type: number
+          description: wireless LAN received bytes
+        minRx:
+          type: number
+          description: minimum wireless LAN received bytes
+        maxRx:
+          type: number
+          description: maximum wireless LAN received bytes
+        tx:
+          type: number
+          description: maximum wireless LAN sent bytes
+        minTx:
+          type: number
+          description: minimum wireless LAN sent bytes
+        maxtx:
+          type: number
+          description: maximum wireless LAN sent bytes
+        phyMode:
+          type: string
+          description: wireless LAN PHY mode e.g. 802.11ac
+      additionalProperties: false
+    AgentTopProcess:
+      title: AgentTopProcess
+      type: object
+      properties:
+        command:
+          type: string
+          description: command name
+        cpu:
+          type: number
+          description: command CPU usage, percent
+        memory:
+          type: number
+          description: command RAM usage, percent
+      additionalProperties: false
+    AgentGpGateway:
+      title: AgentGpGateway
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: GP tunnel location change time
+        value:
+          type: string
+          description: GP tunnel location change value e.g. US West
+      additionalProperties: false
+    AgentGpTunnelStatus:
+      title: AgentGpTunnelStatus
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: GP tunnel status change time
+        value:
+          type: string
+          description: GP tunnel status change value e.g connected, disconnected
+      additionalProperties: false
+    AgentWifiLinkQualityNotification:
+      title: AgentWifiLinkQualityNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: wireless LAN link quality change time
+        disposition:
+          type: number
+          description: wireless LAN quality disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        ssid:
+          type: string
+          description: wireless LAN link quality SSID
+        quality:
+          type: number
+          description: wireless LAN link quality value
+        threshold:
+          type: number
+          description: wireless LAN link quality threshold
+      additionalProperties: false
+    AgentWifiSsidChangeNotification:
+      title: AgentWifiSsidChangeNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: wireless LAN SSID change time
+        disposition:
+          type: number
+          description: wireless LAN SSID disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        currentSsid:
+          type: string
+          description: wireless LAN SSID current value
+        previousSsid:
+          type: string
+          description: wireless LAN SSID previous value
+        currentQuality:
+          type: number
+          description: wireless LAN quality current value
+        previousQuality:
+          type: number
+          description: wireless LAN quality previous value
+        threshold:
+          type: number
+          description: wireless LAN quality threshold
+      additionalProperties: false
+    AgentWifiConnectivityNotification:
+      title: AgentWifiConnectivityNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: wireless LAN connectivity change time
+        disposition:
+          type: number
+          description: wireless LAN connectivity disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        connected:
+          type: boolean
+          description: wireless LAN connectivity
+      additionalProperties: false
+    AgentInternetConnectivityNotification:
+      title: AgentInternetConnectivityNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: internet connectivity change time
+        disposition:
+          type: number
+          description: internet connectivity disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        connected:
+          type: boolean
+          description: internet connectivity
+      additionalProperties: false
+    AgentSystemCpuNotification:
+      title: AgentSystemCpuNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: CPU change time
+        disposition:
+          type: number
+          description: CPU disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        usage:
+          type: number
+          description: CPU usage, percent
+        threshold:
+          type: number
+          description: CPU threshold, percent
+      additionalProperties: false
+    AgentSystemMemoryNotification:
+      title: AgentSystemMemoryNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: system memory change time
+        disposition:
+          type: number
+          description: system memory disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        usage:
+          type: number
+          description: system memory usage, percent
+        threshold:
+          type: number
+          description: system memory threshold, percent
+      additionalProperties: false
+    AgentSystemCpuMemoryNotification:
+      title: AgentSystemCpuMemoryNotification
+      type: object
+      properties:
+        time:
+          type: number
+          description: system memory or cpu change time
+        disposition:
+          type: number
+          description: system memory or cpu disposition (1=enabled,2=disabled,3=enabled+acknowledged
+        cpuUsage:
+          type: number
+          description: cpu usage, percent
+        cpuThreshold:
+          type: number
+          description: cpu threshold, percent
+        memoryUsage:
+          type: number
+          description: system memory usage, percent
+        memoryThreshold:
+          type: number
+          description: system memory threshold, percent
+      additionalProperties: false
+    Agent:
+      title: Agent
+      type: object
+      properties:
+        sample:
+          type: number
+          description: sample time (Unix timestamp)
+        muGatewayPublicIp:
+          type: string
+          description: IP Adress of the MU gateway to which the agent connects
+        agentPublicIp:
+          type: string
+          description: Public IP Adress of the agent
+        username:
+          type: string
+          description: Global Protect username
+        globalProtectVersion:
+          type: string
+          description: Global Protect version
+        globalProtectGatewayLocation:
+          type: string
+          description: Global Protect location
+        globalProtectTunnelStatus:
+          type: string
+          description: Global Protect tunnel status
+        endpointVersion:
+          type: string
+          description: endpoint device version
+        operatingSystemVersion:
+          type: string
+          description: endpoint device operating system version
+        operatingSystem:
+          type: string
+          description: endpoint device operating system name
+        computerName:
+          type: string
+          description: endpoint device computer name
+        model:
+          type: string
+          description: endpoint device computer model
+        country:
+          type: string
+          description: endpoint device country (derived from public IP)
+        city:
+          type: string
+          description: endpoint device city (derived from public IP)
+        latitude:
+          type: number
+          description: endpoint device latitude (derived from public IP)
+        longitude:
+          type: number
+          description: endpoint device longitude (derived from public IP)
+        asn:
+          type: number
+          description: endpoint device ASN (derived from public IP)
+        asnOrgName:
+          type: string
+          description: endpoint device ASN ORG (derived from public IP)
+        cpuAverage:
+          type: number
+          description: average CPU (float)
+        cpuMin:
+          type: number
+          description: minimum CPU (float)
+        cpuMax:
+          type: number
+          description: maximum CPU (float)
+        ramAverage:
+          type: number
+          description: average RAM (float)
+        ramMin:
+          type: number
+          description: minimum RAM (float)
+        ramMax:
+          type: number
+          description: maximum RAM (float)
+        batteryCharge:
+          type: number
+        batteryIsCharging:
+          type: number
+        batterySaver:
+          type: number
+        deviceCount:
+          type: number
+        disks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentDisk'
+        wlans:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentWlan'
+        topMemoryProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTopProcess'
+        topCpuProcesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTopProcess'
+        gpGateway:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentGpGateway'
+        gpTunnelStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentGpTunnelStatus'
+        wifiLinkQualityNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentWifiLinkQualityNotification'
+        wifiSsidChangeNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentWifiSsidChangeNotification'
+        wifiConnectivityNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentWifiConnectivityNotification'
+        internetConnectivityNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentInternetConnectivityNotification'
+        systemCpuNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentSystemCpuNotification'
+        systemMemoryNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentSystemMemoryNotification'
+        systemCpuMemoryNotificationArray:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentSystemCpuMemoryNotification'
+        selfServeConfigEnabled:
+          type: boolean
+          description: self serve config enabled
+        selfServeUserEnabled:
+          type: boolean
+          description: self serve user enabled
+        wifiLinkQualityNotification:
+          type: number
+          description: wireless LAN quality notifications
+        wifiSsidChangeNotification:
+          type: number
+          description: wireless LAN SSID change notifications
+        internetConnectivityNotification:
+          type: number
+          description: internet connectivity change notifications
+        systemCpuNotification:
+          type: number
+          description: system cpu change notifications
+        systemMemoryNotification:
+          type: number
+          description: system memory change notifications
+        systemCpuMemoryNotification:
+          type: number
+          description: system cpu or memory change notifications
+        wifiConnectivityNotification:
+          type: number
+          description: wireless LAN connectivity change notifications
+        totalNotifications:
+          type: number
+          description: total notifications
+      additionalProperties: false
+    AgentSummary:
+      title: AgentSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        entityCounts:
+          $ref: '#/components/schemas/EntityCounts'
+        average:
+          $ref: '#/components/schemas/Agent'
+      required:
+      - id
+      additionalProperties: false
+    SeriesEntityCounts:
+      title: SeriesEntityCounts
+      type: object
+      properties:
+        endpoint:
+          type: number
+          description: count of distinct endpoints
+        location:
+          type: number
+          description: count of distinct locations
+        user:
+          type: number
+          description: count of distinct users
+        site:
+          type: number
+          description: count of distinct sites
+        test:
+          type: number
+          description: count of distinct application tests
+        sample:
+          type: number
+          description: sample time (Unix timestamp)
+      additionalProperties: false
+    AgentSeries:
+      title: AgentSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+        seriesEntityCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/SeriesEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    Score:
+      title: Score
+      type: object
+      properties:
+        sample:
+          type: number
+        endpointScore:
+          type: number
+          description: endpoint device score (memory, cpu, disk), 0 - 100
+        wlan:
+          type: number
+          description: wireless network score, 0 - 100
+        lan:
+          type: number
+          description: local network score, 0 - 100
+        vpnUnderlay:
+          type: number
+          description: underlay score (tunnel endpoint), 0 - 100
+        vpnOverlay:
+          type: number
+          description: overlay score (tunnel), 0 - 100
+        application:
+          type: number
+          description: application score, 0 - 100
+        internet:
+          type: number
+          description: internet score, 0 - 100
+      additionalProperties: false
+    ScoreSummary:
+      title: ScoreSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        average:
+          $ref: '#/components/schemas/Score'
+        entityCounts:
+          $ref: '#/components/schemas/EntityCounts'
+        agentProperties:
+          $ref: '#/components/schemas/Agent'
+      required:
+      - id
+      additionalProperties: false
+    ScoreSeries:
+      title: ScoreSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/Score'
+        seriesEntityCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/SeriesEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    ScoreSummaryCollection:
+      title: ScoreSummaryCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreSummary'
+      additionalProperties: false
+    ScoreSeriesCollection:
+      title: ScoreSeriesCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreSeries'
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+      additionalProperties: false
+    Distribution:
+      title: Distribution
+      type: object
+      properties:
+        score:
+          type: number
+          description: average of all scores in distribution
+        clients:
+          type: number
+          description: count of distribution entity e.g. application tests, endpoints
+        poor:
+          type: number
+          description: count of scores classified as poor
+        fair:
+          type: number
+          description: count of scores classified as fair
+        good:
+          type: number
+          description: count of scores classified as good
+      additionalProperties: false
+    ScoreDistribution:
+      title: ScoreDistribution
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        classifier:
+          type: string
+          description: score classifier e.g. poor:[0 - 30],fair:[30 - 70],good:[70
+            - 100]
+        entityCounts:
+          $ref: '#/components/schemas/EntityCounts'
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+      additionalProperties: false
+    ScoreDistributionCollection:
+      title: ScoreDistributionCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        classifier:
+          type: string
+          description: score classifier e.g. poor:[0 - 30],fair:[30 - 70],good:[70
+            - 100]
+        entityCounts:
+          $ref: '#/components/schemas/EntityCounts'
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreDistribution'
+      additionalProperties: false
+    Metric:
+      title: Metric
+      type: object
+      properties:
+        sample:
+          type: number
+          description: sample time (Unix timestamp)
+        loss:
+          type: number
+          description: packet loss, percentage
+        maxLoss:
+          type: number
+          description: maximum packet loss, percentage
+        jitter:
+          type: number
+          description: network jitter, microseconds
+        maxJitter:
+          type: number
+          description: maximum network jitter, microseconds
+        delay:
+          type: number
+          description: network round trip time, microseconds
+        maxDelay:
+          type: number
+          description: maximum network round trip time, microseconds
+        availability:
+          type: number
+          description: network availability, percentage
+        dnsLookupTime:
+          type: number
+          description: DNS lookup, microseconds
+        maxDnsLookupTime:
+          type: number
+          description: maximum DNS lookup, microseconds
+        tcpHandshakeTime:
+          type: number
+          description: TCP handshake, microseconds
+        maxTcpHandshakeTime:
+          type: number
+          description: maximum TCP handshake, microseconds
+        sslHandshakeTime:
+          type: number
+          description: SSL handshake, microseconds
+        maxSslHandshakeTime:
+          type: number
+          description: maximum SSL handshake, microseconds
+        waitTime:
+          type: number
+          description: wait time, microseconds
+        maxWaitTime:
+          type: number
+          description: maximum wait time, microseconds
+        timeToFirstByte:
+          type: number
+          description: time to first byte, microseconds
+        maxTimeToFirstByte:
+          type: number
+          description: maximum time to first byte, microseconds
+        dataTransferTime:
+          type: number
+          description: data transfer time, microseconds
+        maxDataTransferTime:
+          type: number
+          description: maximum data transfer time, microseconds
+        throughput:
+          type: number
+          description: data throughput
+        maxThroughput:
+          type: number
+          description: maximum data throughput
+        totalTime:
+          type: number
+          description: total time, microseconds
+      additionalProperties: false
+    MetricSummary:
+      title: MetricSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        average:
+          $ref: '#/components/schemas/Metric'
+      required:
+      - id
+      additionalProperties: false
+    MetricSummaryCollection:
+      title: MetricSummaryCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricSummary'
+      additionalProperties: false
+    MetricSeries:
+      title: MetricSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
+      required:
+      - id
+      additionalProperties: false
+    MetricSeriesCollection:
+      title: MetricSeriesCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricSeries'
+      additionalProperties: false
+    Traffic:
+      title: Traffic
+      type: object
+      properties:
+        sample:
+          type: number
+        bytesSent:
+          type: number
+          description: number of bytes sent
+        bytesReceived:
+          type: number
+          description: number of bytes received
+        packetsSent:
+          type: number
+          description: number of packets sent
+        packetsReceived:
+          type: number
+          description: number of packets received
+      additionalProperties: false
+    TrafficSeries:
+      title: TrafficSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/Traffic'
+      required:
+      - id
+      additionalProperties: false
+    TrafficSummary:
+      title: TrafficSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        average:
+          $ref: '#/components/schemas/Traffic'
+      required:
+      - id
+      additionalProperties: false
+    TrafficSeriesCollection:
+      title: TrafficSeriesCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrafficSeries'
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+      additionalProperties: false
+    TrafficSummaryCollection:
+      title: TrafficSummaryCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrafficSummary'
+      additionalProperties: false
+    RouteHop:
+      title: RouteHop
+      type: object
+      properties:
+        address:
+          type: string
+          description: hop IPv4 address
+        hop:
+          type: number
+          description: hop index e.g first hop is 1
+        rdns:
+          type: string
+          description: hop hostname
+        country:
+          type: string
+          description: hop country code e.g KR
+        city:
+          type: string
+          description: hop city e.g Incheon
+        asn:
+          type: number
+          description: hop ASN
+        asnName:
+          type: string
+          description: hop ASN ORG
+        loss:
+          type: number
+          description: hop ICMP loss
+        sent:
+          type: number
+          description: 'ICMP packets sent '
+        rttAvg:
+          type: number
+          description: average round trip time, microseconds
+        jitterAvg:
+          type: number
+          description: average jitter, microseconds
+        dscp:
+          type: number
+          description: DSCP
+        mpls:
+          type: string
+          description: MPLS
+      required:
+      - address
+      - hop
+      - rdns
+      - country
+      - city
+      - asn
+      - asnName
+      - loss
+      - sent
+      - rttAvg
+      - jitterAvg
+      - dscp
+      - mpls
+      additionalProperties: false
+    Path:
+      title: Path
+      type: object
+      properties:
+        id:
+          type: object
+        endpoint:
+          type: string
+          description: endpoint uuid
+        targetAddress:
+          type: string
+          description: target IPv4 address
+        target:
+          type: string
+          description: target
+        tunnelIpv4:
+          type: string
+          description: tunnel IPv4 address
+        hops:
+          type: array
+          items:
+            $ref: '#/components/schemas/RouteHop'
+      required:
+      - id
+      - endpoint
+      - targetAddress
+      - target
+      - tunnelIpv4
+      additionalProperties: false
+    Route:
+      title: Route
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        vpnUnderlayPaths:
+          type: array
+          items:
+            $ref: '#/components/schemas/Path'
+        vpnOverlayPaths:
+          type: array
+          items:
+            $ref: '#/components/schemas/Path'
+      additionalProperties: false
+    ZoomParticipantScore:
+      title: ZoomParticipantScore
+      type: object
+      properties:
+        sample:
+          type: number
+        score:
+          type: number
+        minScore:
+          type: number
+      additionalProperties: false
+    ZoomParticipantScoreEntityCounts:
+      title: ZoomParticipantScoreEntityCounts
+      type: object
+      properties:
+        meetingUuid:
+          type: number
+        email:
+          type: number
+      additionalProperties: false
+    ZoomParticipantScoreSeries:
+      title: ZoomParticipantScoreSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParticipantScore'
+        seriesEntityCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParticipantScoreEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    ZoomParticipantScoreSummary:
+      title: ZoomParticipantScoreSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        average:
+          $ref: '#/components/schemas/ZoomParticipantScore'
+        entityCounts:
+          $ref: '#/components/schemas/ZoomParticipantScoreEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    ZoomParticipantScoreSeriesCollection:
+      title: ZoomParticipantScoreSeriesCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParticipantScoreSeries'
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+      additionalProperties: false
+    ZoomParticipantScoreSummaryCollection:
+      title: ZoomParticipantScoreSummaryCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomParticipantScoreSummary'
+      additionalProperties: false
+    ZoomParticipantScoreDistribution:
+      title: ZoomParticipantScoreDistribution
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        classifier:
+          type: string
+        entityCounts:
+          $ref: '#/components/schemas/ZoomParticipantScoreEntityCounts'
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+      additionalProperties: false
+    ZoomParticipant:
+      title: ZoomParticipant
+      type: object
+      properties:
+        meetingUuid:
+          type: string
+          description: meeting UUID (hex representation of base64 encoded binary field)
+            e.g. be16a46bf68f44ddacd8cb671e5faa84
+        email:
+          type: string
+          description: participant email address
+        recordId:
+          type: string
+          description: participant record id
+        accountId:
+          type: string
+          description: participant account id
+        duration:
+          type: number
+          description: meeting duration, seconds
+        startTime:
+          type: string
+          description: meeting start time, timestamp
+        timezone:
+          type: string
+          description: meeting timezone
+        topic:
+          type: string
+          description: meeting topic
+        meetingId:
+          type: string
+          description: meeting ID
+        userId:
+          type: string
+          description: user ID
+        userName:
+          type: string
+          description: user name
+        joinTime:
+          type: string
+          description: user join time, timestamp
+        leaveTime:
+          type: string
+          description: user leave time, timestamp
+        actualDuration:
+          type: number
+          description: actual meeting duration, seconds
+        meetingHostId:
+          type: string
+          description: meeting host ID
+        eventTimeEpoch:
+          type: number
+        eventTime:
+          type: number
+        pcName:
+          type: string
+          description: computer name
+        macAddress:
+          type: string
+          description: computer MAC address
+        domain:
+          type: string
+          description: domain name
+        harddiskId:
+          type: string
+          description: computer disk name
+        destinationIpPort:
+          type: string
+          description: destination IP port
+        destinationIpDomain:
+          type: string
+          description: destination IP domain
+        dataCenter:
+          type: string
+          description: data center
+        networkType:
+          type: string
+          description: network type e.g Wired, Other
+        location:
+          type: string
+          description: computer location e.g. Sydney(AU)
+        microphone:
+          type: string
+          description: 'microphone e.g. Microphone Array (Realtek(R) Audio) '
+        signalingInternalIpAddress:
+          type: string
+          description: signaling internal IP address
+        version:
+          type: string
+          description: software version e.g. 5.13.3.11494
+        device:
+          type: string
+          description: computer type e.g. Windoze, Mac
+        signalingInternalIpPort:
+          type: string
+          description: signaling internal IP port
+        asInternalIpAddress:
+          type: string
+          description: as internal IP address
+        asInternalIpPort:
+          type: string
+          description: as internal IP port
+        speaker:
+          type: string
+          description: speaker e.g. Speakers (Realtek(R) Audio)
+        videoInternalIpAddress:
+          type: string
+          description: video internal IP address
+        videoInternalIpPort:
+          type: string
+          description: video internal IP port
+        audioInternalIpPort:
+          type: string
+          description: audio internal IP port
+        audioInternalIpAddress:
+          type: string
+          description: audio internal IP address
+        camera:
+          type: string
+          description: camera e.g. HD User Facing
+        tenantId:
+          type: string
+          description: tenant ID
+        subTenantId:
+          type: string
+          description: subtenant ID
+        tenantServiceGroup:
+          type: string
+          description: tenant service group
+        agentUuid:
+          type: string
+          description: user agent UUID
+        score:
+          type: number
+          description: meeting score
+      required:
+      - meetingUuid
+      - email
+      additionalProperties: false
+    ZoomQosMetric:
+      title: ZoomQosMetric
+      type: object
+      properties:
+        sample:
+          type: number
+          description: sample time (Unix timestamp)
+        bitrateKbps:
+          type: number
+          description: bitrate, kbps
+        latency:
+          type: number
+          description: packet latency, milliseconds
+        avgLossPercentage:
+          type: number
+          description: average packet loss, percent
+        maxLossPercentage:
+          type: number
+          description: max packet loss, percent
+        jitter:
+          type: number
+          description: packet jitter (variation), milliseconds
+        resolution:
+          type: number
+          description: camera pixels
+        frameRateFps:
+          type: number
+          description: frame rate, frames per second
+        zoomMinCpuUsagePercentage:
+          type: number
+          description: minimum CPU usage
+        zoomAvgCpuUsagePercentage:
+          type: number
+          description: average CPU usage
+        zoomMaxCpuUsagePercentage:
+          type: number
+          description: maximum CPU usage
+        systemMaxCpuUsagePercentage:
+          type: number
+          description: system maximum CPU usage
+        score:
+          type: number
+          description: score, 0 - 100
+        rootCause1:
+          type: number
+          description: root cause 1 - high CPU usage
+        rootCause2:
+          type: number
+          description: root cause 2 - high RAM usage
+        rootCause3:
+          type: number
+          description: root cause 3 - poor wifi signal
+        rootCause4:
+          type: number
+          description: root cause 4 - high network latency
+        rootCause5:
+          type: number
+          description: root cause 5 - high network jitter
+        rootCause6:
+          type: number
+          description: root cause 6 - high network loss
+        rootCause7:
+          type: number
+        rootCause8:
+          type: number
+        rootCause9:
+          type: number
+        rootCause10:
+          type: number
+          description: root cause 10 - global protect disconnect/connect
+        rootCause11:
+          type: number
+          description: root cause 11 - high internet latency
+        rootCause12:
+          type: number
+          description: root cause 12 - high internet jitter
+        rootCause13:
+          type: number
+          description: root cause 13 - high internet loss
+        latitude:
+          type: number
+          description: computer latitude
+        longitude:
+          type: number
+          description: computer longitude
+      additionalProperties: false
+    ZoomQosEntityCounts:
+      title: ZoomQosEntityCounts
+      type: object
+      properties:
+        meetingUuid:
+          type: number
+          description: count of distinct meeting UUID
+        userId:
+          type: number
+          description: count of distinct user ID
+        email:
+          type: number
+          description: count of distinct email
+        qosType:
+          type: number
+          description: count of distinct QOS type
+        qosClass:
+          type: number
+          description: count of distinct QOS class
+        qosEventTime:
+          type: number
+          description: count of distinct QOS event time (minutes)
+        city:
+          type: number
+          description: count of distinct city name
+        country:
+          type: number
+          description: count of distinct country name
+      additionalProperties: false
+    ZoomQosMetricSummary:
+      title: ZoomQosMetricSummary
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        average:
+          $ref: '#/components/schemas/ZoomQosMetric'
+        entityCounts:
+          $ref: '#/components/schemas/ZoomQosEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    ZoomQosMetricSeries:
+      title: ZoomQosMetricSeries
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomQosMetric'
+        seriesEntityCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomQosEntityCounts'
+      required:
+      - id
+      additionalProperties: false
+    ZoomQosMetricDistribution:
+      title: ZoomQosMetricDistribution
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        id:
+          type: string
+        classifier:
+          type: string
+          description: score classifier e.g. poor:[0 - 30],fair:[30 - 70],good:[70
+            - 100]
+        entityCounts:
+          $ref: '#/components/schemas/ZoomQosEntityCounts'
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+      additionalProperties: false
+    ZoomQosMetricSummaryCollection:
+      title: ZoomQosMetricSummaryCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomQosMetricSummary'
+      additionalProperties: false
+    ZoomQosMetricSeriesCollection:
+      title: ZoomQosMetricSeriesCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomQosMetricSeries'
+        samplePeriod:
+          type: number
+          description: sample period in seconds
+      additionalProperties: false
+    ZoomQosMetricDistributionCollection:
+      title: ZoomQosMetricDistributionCollection
+      type: object
+      properties:
+        startTime:
+          type: number
+          description: sample start time (Unix timestamp)
+        endTime:
+          type: number
+          description: sample end time (Unix timestamp)
+        endpointType:
+          type: string
+          description: 'endpoint type : muAgent, muProbe, rnAgent, rnProbe'
+        tenantServiceGroup:
+          type: string
+          description: array of tenant service groups
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        rowCount:
+          type: number
+        classifier:
+          type: string
+        entityCounts:
+          $ref: '#/components/schemas/ZoomQosEntityCounts'
+        collection:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoomQosMetricDistribution'
+      additionalProperties: false
+    RumMetricSummary:
+      title: RumMetricSummary
+      type: object
+      properties:
+        metric_name:
+          type: string
+          description: Name of the metric
+        value:
+          type: number
+          format: double
+          description: Metric value
+        unit:
+          type: string
+          description: Unit of measurement
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp in seconds (unix epoch)
+        entity:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Entity type
+            name:
+              type: string
+              description: Entity name
+        aggregation:
+          type: string
+          enum:
+          - avg
+          - sum
+          - min
+          - max
+          - count
+          description: Aggregation method used
+      additionalProperties: false
+    RumMetricSeries:
+      title: RumMetricSeries
+      type: object
+      properties:
+        metric_name:
+          type: string
+          description: Name of the metric
+        unit:
+          type: string
+          description: Unit of measurement
+        entity:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Entity type
+            name:
+              type: string
+              description: Entity name
+        data_points:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                format: int64
+                description: Timestamp in seconds (unix epoch)
+              value:
+                type: number
+                format: double
+                description: Metric value at this timestamp
+        aggregation:
+          type: string
+          enum:
+          - avg
+          - sum
+          - min
+          - max
+          - count
+          description: Aggregation method used
+      additionalProperties: false
+    RumMetricDistribution:
+      title: RumMetricDistribution
+      type: object
+      properties:
+        metric_name:
+          type: string
+          description: Name of the metric
+        unit:
+          type: string
+          description: Unit of measurement
+        entity:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Entity type
+            name:
+              type: string
+              description: Entity name
+        buckets:
+          type: array
+          items:
+            type: object
+            properties:
+              range_start:
+                type: number
+                format: double
+                description: Start of the bucket range
+              range_end:
+                type: number
+                format: double
+                description: End of the bucket range
+              count:
+                type: integer
+                description: Number of samples in this bucket
+              percentage:
+                type: number
+                format: double
+                description: Percentage of total samples
+        total_samples:
+          type: integer
+          description: Total number of samples
+      additionalProperties: false
+    RumMetricSummaryCollection:
+      title: RumMetricSummaryCollection
+      type: object
+      properties:
+        metric_name:
+          type: string
+          description: Name of the metric
+        unit:
+          type: string
+          description: Unit of measurement
+        group_by:
+          type: string
+          description: Grouping entity
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RumMetricSummary'
+        total_count:
+          type: integer
+          description: Total number of results
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Results per page
+            total_pages:
+              type: integer
+              description: Total number of pages
+      additionalProperties: false
+    RumMetricSeriesCollection:
+      title: RumMetricSeriesCollection
+      type: object
+      properties:
+        metric_name:
+          type: string
+          description: Name of the metric
+        unit:
+          type: string
+          description: Unit of measurement
+        group_by:
+          type: string
+          description: Grouping entity
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RumMetricSeries'
+        total_count:
+          type: integer
+          description: Total number of results
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Results per page
+            total_pages:
+              type: integer
+              description: Total number of pages
+      additionalProperties: false
+    RumScoreSummary:
+      title: RumScoreSummary
+      type: object
+      properties:
+        score_type:
+          type: string
+          enum:
+          - application
+          - endpoint
+          - user
+          - device
+          - network
+          description: Type of score
+        score_value:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: Score value (0-100)
+        score_rating:
+          type: string
+          enum:
+          - excellent
+          - good
+          - fair
+          - poor
+          description: Qualitative rating based on score
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp in seconds (unix epoch)
+        entity:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Entity type
+            name:
+              type: string
+              description: Entity name
+            id:
+              type: string
+              description: Entity identifier
+        aggregation:
+          type: string
+          enum:
+          - avg
+          - min
+          - max
+          description: Aggregation method used
+      additionalProperties: false
+    RumScoreSeries:
+      title: RumScoreSeries
+      type: object
+      properties:
+        score_type:
+          type: string
+          enum:
+          - application
+          - endpoint
+          - user
+          - device
+          - network
+          description: Type of score
+        entity:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Entity type
+            name:
+              type: string
+              description: Entity name
+            id:
+              type: string
+              description: Entity identifier
+        data_points:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                format: int64
+                description: Timestamp in seconds (unix epoch)
+              score_value:
+                type: number
+                format: double
+                minimum: 0
+                maximum: 100
+                description: Score value at this timestamp (0-100)
+              score_rating:
+                type: string
+                enum:
+                - excellent
+                - good
+                - fair
+                - poor
+                description: Qualitative rating
+        aggregation:
+          type: string
+          enum:
+          - avg
+          - min
+          - max
+          description: Aggregation method used
+      additionalProperties: false
+    RumScoreDistributionCollection:
+      title: RumScoreDistributionCollection
+      type: object
+      properties:
+        score_type:
+          type: string
+          enum:
+          - application
+          - endpoint
+          - user
+          - device
+          - network
+          description: Type of score
+        distribution_by:
+          type: string
+          description: Entity type for distribution
+        buckets:
+          type: array
+          items:
+            type: object
+            properties:
+              rating:
+                type: string
+                enum:
+                - excellent
+                - good
+                - fair
+                - poor
+                description: Score rating category
+              score_range_start:
+                type: number
+                format: double
+                description: Start of score range
+              score_range_end:
+                type: number
+                format: double
+                description: End of score range
+              count:
+                type: integer
+                description: Number of entities in this bucket
+              percentage:
+                type: number
+                format: double
+                description: Percentage of total entities
+              entities:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Entity name
+                    score:
+                      type: number
+                      format: double
+                      description: Entity score
+        total_entities:
+          type: integer
+          description: Total number of entities
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp in seconds (unix epoch)
+      additionalProperties: false
+    RumScoreSummaryCollection:
+      title: RumScoreSummaryCollection
+      type: object
+      properties:
+        score_type:
+          type: string
+          enum:
+          - application
+          - endpoint
+          - user
+          - device
+          - network
+          description: Type of score
+        group_by:
+          type: string
+          description: Grouping entity
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RumScoreSummary'
+        total_count:
+          type: integer
+          description: Total number of results
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Results per page
+            total_pages:
+              type: integer
+              description: Total number of pages
+            sort_by:
+              type: string
+              description: Field used for sorting
+            sort_order:
+              type: string
+              enum:
+              - asc
+              - desc
+              description: Sort order
+      additionalProperties: false
+    RumScoreSeriesCollection:
+      title: RumScoreSeriesCollection
+      type: object
+      properties:
+        score_type:
+          type: string
+          enum:
+          - application
+          - endpoint
+          - user
+          - device
+          - network
+          description: Type of score
+        group_by:
+          type: string
+          description: Grouping entity
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RumScoreSeries'
+        total_count:
+          type: integer
+          description: Total number of results
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: Current page number
+            limit:
+              type: integer
+              description: Results per page
+            total_pages:
+              type: integer
+              description: Total number of pages
+            sort_by:
+              type: string
+              description: Field used for sorting
+            sort_order:
+              type: string
+              enum:
+              - asc
+              - desc
+              description: Sort order
+      additionalProperties: false
+security:
+- jwt: []
+ExternalTags: {}

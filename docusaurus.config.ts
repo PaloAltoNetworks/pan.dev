@@ -519,7 +519,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/adem/autonomous-dem-api",
+                      to: "access/api/adem/introduction",
                       label: "Autonomous DEM",
                       icon: "api-doc",
                     },
@@ -892,7 +892,7 @@ const config = {
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           insights: {
             specPath: "openapi-specs/access/insights/3.0",
