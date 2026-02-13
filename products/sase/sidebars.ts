@@ -299,10 +299,37 @@ module.exports = {
     "sase/api/mt-notifications/notifications-api",
     require("./api/mt-notifications/sidebar"),
   ],
-  sasemtinterconnect: [
-    "sase/api/mt-interconnect/mt-interconnect",
-    require("./api/mt-interconnect/sidebar"),
+  
+  // UNIFIED SP INTERCONNECT SIDEBAR
+  spinterconnect: [
+    // 1. Root Introduction (Must exist at: sase/api/mt-interconnect/introduction.md)
+    "sase/api/mt-interconnect/introduction", 
+    
+    // 2. Manage Category
+    {
+      type: "category",
+      label: "Manage",
+      collapsed: false,
+      items: [
+        // Ensure the ID in manage-introduction.md is exactly "manage-introduction"
+        "sase/api/mt-interconnect/Manage/manage-introduction",
+        ...require("./api/mt-interconnect/Manage/sidebar"),
+      ],
+    },
+    
+    // 3. Monitor Category
+    {
+      type: "category",
+      label: "Monitor",
+      collapsed: false,
+      items: [
+        // Ensure the ID in monitor-introduction.md is exactly "monitor-introduction"
+        "sase/api/mt-interconnect/Monitor/monitor-introduction",
+        ...require("./api/mt-interconnect/Monitor/sidebar"),
+      ],
+    },
   ],
+
   manageservices: [
     "sase/api/manage-services-5g/introduction",
     "sase/api/manage-services-5g/overview",

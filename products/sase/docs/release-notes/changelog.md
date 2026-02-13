@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| February 12, 2026     | Backbone and Connection APIs are now deprecated and have been replaced by the [Service Provider (SP) Interconnect](/sase/api/mt-interconnect/introduction/).
 | Oct 8, 2025     | Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).
 | July 1, 2025     | Added [Identity Security Posture Management APIs](/sase/api/identity-sspm/).
 | June 24, 2025     | Added Plugin API to [SaaS Security Posture Management APIs](/sase/api/sspm/).
