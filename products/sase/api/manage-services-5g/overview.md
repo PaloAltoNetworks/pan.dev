@@ -1,5 +1,5 @@
 ---
-id: overview_5g
+id: overview
 title: Overview of SASE 5G Manage Service
 sidebar_label: Overview
 keywords:

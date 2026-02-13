@@ -331,9 +331,13 @@ module.exports = {
   ],
 
   manageservices: [
-    "sase/api/manage-services-5g/introduction_5g",
-    "sase/api/manage-services-5g/overview_5g",
+    "sase/api/manage-services-5g/introduction",
+    "sase/api/manage-services-5g/overview",
     require("./api/manage-services-5g/sidebar"),
+  ],
+  monitorservices: [
+    "sase/api/monitor-services-5g/introduction-monitor",
+    require("./api/monitor-services-5g/sidebar"),
   ],
   configorch: [
     "sase/api/config-orch/introduction",
