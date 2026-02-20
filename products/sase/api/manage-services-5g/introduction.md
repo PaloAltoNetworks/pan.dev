@@ -1,8 +1,7 @@
 ---
-id: introduction_5g
+id: introduction
 title: Introduction to SASE 5G Manage Service
 sidebar_label: SASE 5G Manage Service APIs
-slug: /sase/api/manage-services-5g
 keywords:
   - SASE
   - Reference

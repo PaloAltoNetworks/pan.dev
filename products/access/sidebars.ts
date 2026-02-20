@@ -62,5 +62,8 @@ module.exports = {
     "access/api/prisma-access-config/config-api",
     require("./api/prisma-access-config/sidebar"),
   ],
-  adem: [require("./api/adem/sidebar")],
+  adem: [
+    "access/api/adem/introduction",
+    require("./api/adem/sidebar"),
+  ],
 };

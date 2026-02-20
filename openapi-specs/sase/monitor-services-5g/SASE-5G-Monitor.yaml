@@ -1,0 +1,916 @@
+openapi: 3.0.2
+info:
+  title: SASE 5G Monitor Service API
+  version: '1.0'
+  description: "The SASE 5G Monitoring Service provides real-time visibility and technical\
+    \ telemetry \nfor enterprise 5G infrastructure within the Strata Cloud Manager\
+    \ (SCM) ecosystem. \nTechnical leads and network analysts utilize these APIs to\
+    \ track subscriber scaling, \nmonitor regional registration trends, and audit\
+    \ network throughput performance.\n\nBy leveraging these endpoints, organizations\
+    \ maintain a continuous feedback loop on \nUser Equipment (UE) activity and regional\
+    \ interconnect health. The service enables \nproactive troubleshooting through\
+    \ incident severity tracking and API performance \nmonitoring, ensuring that global\
+    \ 5G connectivity meets strict service level objectives \nwhile identifying unauthorized\
+    \ traffic or signaling gaps. This spec was created on February 13, 2026. \xA9\
+    \ 2026 Palo Alto Networks, Inc."
+paths:
+  /mt/monitor/5g/tenants:
+    get:
+      tags:
+      - Total Tenants
+      summary: Fetch Tenant Totals
+      description: "Returns the aggregate count of onboarded tenants across the 5G\
+        \ service \ninfrastructure. Monitoring teams call this during system audits\
+        \ to verify \nthe scale of the multi-tenant environment within the management\
+        \ plane."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  total_tenants: 8
+                header:
+                  createdAt: '2025-12-17T01:28:33Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gTenants
+  /mt/monitor/5g/ueIp/registered:
+    get:
+      tags:
+      - Registered UE Mappings
+      summary: Count Registered Devices
+      description: "Provides the current number of registered User Equipment (UE)\
+        \ device \nmappings within the 5G network. Network operators perform this\
+        \ check to \nassess active device density and ensure session registration\
+        \ alignment \nacross all 5G nodes."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  registered_device: 6
+                header:
+                  createdAt: '2025-12-17T02:03:07Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gUeipRegistered
+  /mt/monitor/5g/ueIp/region:
+    get:
+      tags:
+      - UE IP Region
+      summary: List Active Regions
+      description: "Lists all compute regions currently hosting registered 5G User\
+        \ Equipment. \nInfrastructure architects query this during regional performance\
+        \ analysis \nto determine where subscriber traffic is geographically concentrated."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - compute_region: us-west2
+                header:
+                  createdAt: '2025-12-17T02:06:52Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gUeipRegion
+  /mt/monitor/5g/ueIp/registered/trend:
+    post:
+      tags:
+      - 5G Registered Trend
+      summary: Analyze Registration Trends
+      description: "Generates a time-series report of subscriber registration activities\
+        \ over \na specific time window. Engineers utilize these trends during capacity\
+        \ \nplanning to identify peak usage intervals and regional registration spikes\
+        \ \nwithin the management plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrendRequest'
+            example:
+              properties:
+              - property: imei
+                function: count
+                alias: registered_count
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+                - property: compute_region
+                  operator: in
+                  values:
+                  - us-central1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - event_time: 1765324800000
+                  registered_count: 4
+                - event_time: 1765411200000
+                  registered_count: 4
+                header:
+                  createdAt: '2025-12-17T02:05:29Z'
+                  clientRequestId: null
+                  dataCount: 7
+                  status:
+                    subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gUeipRegisteredTrend
+  /mt/monitor/5g/ueIp/deregistered/trend:
+    post:
+      tags:
+      - 5G Deregistered Trend
+      summary: Track Deregistration Trends
+      description: "Monitors the frequency and volume of User Equipment session terminations\
+        \ \nover time. Security analysts use this telemetry to detect anomalous \n\
+        disconnect patterns or regional connectivity drops during active \nmonitoring\
+        \ windows."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrendRequest'
+            example:
+              properties:
+              - property: imei
+                function: count
+                alias: deregistered_count
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+                - property: compute_region
+                  operator: in
+                  values:
+                  - us-central1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - event_time: 1765324800000
+                  deregistered_count: 3
+                - event_time: 1765411200000
+                  deregistered_count: 3
+                header:
+                  createdAt: '2025-12-17T02:05:42Z'
+                  clientRequestId: null
+                  dataCount: 7
+                  status:
+                    subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gUeipDeregisteredTrend
+  /mt/monitor/5g/ueIp/count:
+    post:
+      tags:
+      - Added and Cleared Mappings
+      summary: Audit Mapping Changes
+      description: "Calculates the number of newly added and cleared User Equipment\
+        \ IP Address \nmappings for a designated period. System administrators trigger\
+        \ this \naudit to track device churn and verify lifecycle transitions within\
+        \ \nthe 5G management plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CountFilterRequest'
+            example:
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  add_count: 28
+                  delete_count: 19
+                header:
+                  createdAt: '2025-12-17T02:07:14Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gUeipCount
+  /mt/monitor/5g/unknownIp/region:
+    get:
+      tags:
+      - Unknown IP  Regions
+      summary: Identify Unknown Regions
+      description: "Returns a list of regions where IP Address addresses not explicitly\
+        \ mapped to \nknown User Equipment have been detected. Security teams check\
+        \ these \nlocations to investigate potential unauthorized traffic or misconfigured\
+        \ \n5G signaling paths."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - compute_region: us-west2
+                header:
+                  createdAt: '2025-12-17T02:04:26Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gUnknownipRegion
+  /mt/monitor/5g/unknownIp/trend:
+    post:
+      tags:
+      - 5G Unknown IPs Trend
+      summary: Monitor Unknown Trends
+      description: "Tracks the volume of unknown IP Address address detections over\
+        \ a historical \ntime range. Network engineers monitor these trends to troubleshoot\
+        \ \ndiscovery gaps and improve the accuracy of subscriber mapping across \n\
+        regional interconnects."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrendRequest'
+            example:
+              properties:
+              - property: ip_address
+                function: distinct_count
+                alias: count
+              - property: compute_region
+                alias: region
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+                - property: compute_region
+                  operator: in
+                  values:
+                  - us-central1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - region: us-central1
+                  event_time: 1765324800000
+                  count: 13
+                - region: us-central1
+                  event_time: 1765411200000
+                  count: 7
+                header:
+                  createdAt: '2025-12-17T02:05:04Z'
+                  clientRequestId: null
+                  dataCount: 8
+                  status:
+                    subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gUnknownipTrend
+  /mt/monitor/5g/mapping/activeUEs:
+    get:
+      tags:
+      - Active Mappings
+      summary: Check Active Mappings
+      description: "Displays the total number of User Equipment mappings currently\
+        \ in an \nactive state. Monitoring dashboards use this metric to provide a\
+        \ \nreal-time snapshot of 5G session health and operational throughput \n\
+        readiness."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  active_mappings: 4
+                header:
+                  createdAt: '2025-12-17T02:05:18Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gMappingActiveues
+  /mt/monitor/5g/mapping/configuredUEs:
+    get:
+      tags:
+      - Configured UE Mappings
+      summary: Verify Configured Mappings
+      description: "Returns the count of User Equipment mappings manually provisioned\
+        \ by \nadministrators. Operational leads compare this value against active\
+        \ \nregistrations to verify onboarding success and subscriber provisioning\
+        \ \naccuracy."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  configured_ue_count: 94
+                header:
+                  createdAt: '2025-12-17T02:07:37Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gMappingConfiguredues
+  /mt/monitor/5g/mapping/unknownUEs:
+    get:
+      tags:
+      - Unknown UE Mappings
+      summary: Detect Unconfigured Subscribers
+      description: "Reports the count of User Equipment that successfully registered\
+        \ via \nRadius or Application Programming Interface but lack a predefined\
+        \ configuration. Analysts review \nthese mappings to bridge gaps between dynamic\
+        \ 5G sessions and static \nmanagement records."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  unknown_mappings: 1
+                header:
+                  createdAt: '2025-12-17T02:07:45Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gMappingUnknownues
+  /mt/monitor/5g/mapping/region:
+    get:
+      tags:
+      - Mappings Region
+      summary: Get 5G Mapping Regions
+      description: Returns the list of regions where mappings exist.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - us-west2
+                - us-central1
+                header:
+                  createdAt: '2025-12-17T02:10:45Z'
+                  clientRequestId: null
+                  dataCount: 2
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gMappingRegion
+  /mt/monitor/5g/mapping:
+    post:
+      tags:
+      - UE Mappings
+      summary: Search Subscriber Details
+      description: "Provides a comprehensive search interface for User Equipment mappings\
+        \ \nusing IMSI, IMEI, or IP Address address identifiers. Developers integrate\
+        \ this \nto enable granular drill-downs into subscriber metadata, tenant \n\
+        provisioning status, and group associations."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MappingRequest'
+            examples:
+              Paginated List:
+                value:
+                  pageSize: 100
+                  pageNum: 0
+              Paginated List With Tenant Filter:
+                value:
+                  pageSize: 100
+                  pageNum: 0
+                  tenant:
+                  - '1459340040'
+                  - '1635727460'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Single Mapping:
+                  value:
+                    data:
+                      mappings:
+                      - apn: demo.com
+                        createTime: 1737113951692
+                        groups: new_grp
+                        imei: '000000000000000'
+                        imsi: '500012222222222'
+                        tenantProvisioned: Inactive
+                        tsgId: '1131085573'
+                      totalCount: 1
+                    header:
+                      createdAt: '2025-12-17T02:07:58Z'
+                      clientRequestId: null
+                      dataCount: 1
+                      status:
+                        subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gMapping
+  /mt/monitor/5g/proxy:
+    get:
+      tags:
+      - Total Proxies
+      summary: Count Active Proxies
+      description: "Returns the total number of proxy servers configured to handle\
+        \ 5G \ncontrol plane traffic. Administrators audit this count during \ninfrastructure\
+        \ maintenance to ensure all intended signaling gateways \nare recognized by\
+        \ the monitoring service."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  count: 5
+                header:
+                  createdAt: '2025-12-17T02:05:51Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gProxy
+  /mt/monitor/5g/incidents/count:
+    post:
+      tags:
+      - Incidents by Severity
+      summary: Categorize Incident Severities
+      description: "Aggregates active 5G service incidents based on critical, warning,\
+        \ or \ninformational severity levels. NOC engineers use this data during \n\
+        incident response windows to prioritize remediation efforts across \nthe global\
+        \ 5G fabric."
+      parameters:
+      - name: agg_by
+        in: query
+        schema:
+          type: string
+          enum:
+          - tenant
+        description: Aggregation parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentsCountRequest'
+            example:
+              properties:
+              - property: total_count
+              - property: critical_count
+              - property: warning_count
+              filter:
+                rules:
+                - property: raised_time
+                  operator: last_n_days
+                  values:
+                  - 7
+                - property: status
+                  operator: equals
+                  values:
+                  - Raised
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - total_count: 680
+                  critical_count: 340
+                  warning_count: 0
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gIncidentsCount
+  /mt/monitor/5g/api/stats:
+    post:
+      tags:
+      - API Stats
+      summary: Monitor Application Programming Interface Performance
+      description: "Returns success and failure statistics for 5G management Application\
+        \ Programming Interface calls made \nthrough the SCM interface. Technical\
+        \ teams monitor these stats to \nensure high availability and detect potential\
+        \ integration issues \nbetween 5G cores and the management plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CountFilterRequest'
+            example:
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  total_count: 0
+                  success_count: 0
+                  failure_count: 0
+                header:
+                  createdAt: '2025-12-17T02:06:39Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gApiStats
+  /mt/monitor/5g/interconnect/details:
+    get:
+      tags:
+      - 5G Network Interconnects and Bandwidth
+      summary: Inspect Interconnect Health
+      description: "Provides a detailed overview of 5G network interconnects, including\
+        \ \ntotal bandwidth and regional VLAN status. Network engineers utilize \n\
+        this check to verify that regional data paths remain \"up\" and meet \nthroughput\
+        \ capacity requirements."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - bandwidth: 200
+                  regions:
+                  - us-east1
+                  - us-west2
+                  - us-central1
+                  vlanStatus:
+                    down: 0
+                    total: 8
+                    up: 8
+                header:
+                  createdAt: '2025-12-17T02:07:25Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gInterconnectDetails
+  /mt/monitor/5g/interconnect/throughput:
+    post:
+      tags:
+      - Throughput Trend
+      summary: Analyze Throughput Performance
+      description: "Generates egress and ingress throughput metrics for 5G interconnects\
+        \ \nover a requested interval. Analysts monitor these throughput levels \n\
+        to detect congestion points and optimize traffic flow across the \nregional\
+        \ security perimeter."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThroughputRequest'
+            example:
+              properties:
+              - property: egress_throughput
+              - property: ingress_throughput
+              - property: event_time
+              - property: region
+              filter:
+                operator: AND
+                rules:
+                - property: event_time
+                  operator: last_n_days
+                  values:
+                  - 7
+                - property: region
+                  operator: equals
+                  values:
+                  - us-central1
+              histogram:
+                property: event_time
+                range: day
+                enableEmptyInterval: false
+                value: '1'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                - egress_throughput: 0.002508770165798529
+                  ingress_throughput: 0.003023766583801299
+                  event_time: 1765324800000
+                  region: us-central1
+        '400':
+          description: Bad Request
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: PostMtMonitor5gInterconnectThroughput
+  /mt/monitor/5g/users:
+    get:
+      tags:
+      - Total Number of Configured Users
+      summary: Fetch User Totals
+      description: "Reports the total number of users configured within the 5G monitoring\
+        \ \ndomain. Management teams use this count for license auditing and \nto\
+        \ track the growth of the subscriber base across the multi-tenant \nenvironment."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                data:
+                  total_users: 5000
+                header:
+                  createdAt: '2025-12-17T02:08:46Z'
+                  clientRequestId: null
+                  dataCount: 1
+                  status:
+                    subCode: 200
+        '401':
+          description: Permission Denied
+        '500':
+          description: Server Error
+      operationId: GetMtMonitor5gUsers
+servers:
+- url: https://stratacloudmanager.paloaltonetworks.com
+security:
+- BearerAuth: []
+components:
+  schemas:
+    TrendRequest:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            type: object
+            properties:
+              property:
+                type: string
+              function:
+                type: string
+              alias:
+                type: string
+        filter:
+          type: object
+          properties:
+            operator:
+              type: string
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  operator:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: object
+        histogram:
+          type: object
+          properties:
+            property:
+              type: string
+            range:
+              type: string
+            enableEmptyInterval:
+              type: boolean
+            value:
+              type: string
+    CountFilterRequest:
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            operator:
+              type: string
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  operator:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: object
+    MappingRequest:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          format: int32
+        pageNum:
+          type: integer
+          format: int32
+        searchKey:
+          type: string
+        region:
+          type: string
+        tenant:
+          type: array
+          items:
+            type: string
+    IncidentsCountRequest:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            type: object
+            properties:
+              property:
+                type: string
+        filter:
+          type: object
+          properties:
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  operator:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: object
+    ThroughputRequest:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            type: object
+            properties:
+              property:
+                type: string
+        filter:
+          type: object
+          properties:
+            operator:
+              type: string
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  operator:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: object
+        histogram:
+          type: object
+          properties:
+            property:
+              type: string
+            range:
+              type: string
+            enableEmptyInterval:
+              type: boolean
+            value:
+              type: string
+ExternalTags: {}
