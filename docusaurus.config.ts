@@ -494,13 +494,18 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/mt-interconnect",
-                      label: "Multitenant Interconnect",
+                      to: "sase/api/mt-interconnect/introduction",
+                      label: "Service Provider Interconnect",
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/manage-services-5g",
+                      to: "sase/api/manage-services-5g/introduction",
                       label: "SASE 5G Manage Services",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/monitor-services-5g/introduction-monitor",
+                      label: "SASE 5G Monitor Services",
                       icon: "api-doc",
                     },
                     {
@@ -519,7 +524,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "access/api/adem/autonomous-dem-api",
+                      to: "access/api/adem/introduction",
                       label: "Autonomous DEM",
                       icon: "api-doc",
                     },
@@ -892,7 +897,7 @@ const config = {
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           insights: {
             specPath: "openapi-specs/access/insights/3.0",
@@ -926,14 +931,24 @@ const config = {
             outputDir: "products/sase/api/mt-notifications",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
           },
-          mtinterconnect: {
-            specPath: "openapi-specs/sase/mt-interconnect",
-            outputDir: "products/sase/api/mt-interconnect",
+          ManageInterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect/Manage",
+            outputDir: "products/sase/api/mt-interconnect/Manage",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          MonitorInterconnect: {
+            specPath: "openapi-specs/sase/mt-interconnect/Monitor",
+            outputDir: "products/sase/api/mt-interconnect/Monitor",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           manageservices: {
             specPath: "openapi-specs/sase/manage-services-5g",
             outputDir: "products/sase/api/manage-services-5g",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          monitorservices: {
+            specPath: "openapi-specs/sase/monitor-services-5g",
+            outputDir: "products/sase/api/monitor-services-5g",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           configorch: {
