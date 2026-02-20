@@ -187,7 +187,7 @@ export default function SCMLandingPage() {
         ],
         Incidents: [
           {
-            to: "scm/api/config/Incidents/incident-scm.md",
+            to: "scm/api/config/incidents/incident-scm",
             label: "Incidents",
             icon: "api-doc",
           },
