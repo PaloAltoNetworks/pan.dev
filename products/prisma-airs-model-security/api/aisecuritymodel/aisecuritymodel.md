@@ -1,7 +1,8 @@
 ---
-id: aims-introduction
+id: aisecuritymodel
 title: "Prisma AIRS AI Model Security Introduction"
 sidebar_label: "Introduction"
+slug: /prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel
 keywords:
   - Prisma AIRS API
   - Reference

@@ -216,7 +216,7 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "prisma-airs-model-security/api/aisecuritymodel/aims-introduction",
+                      to: "prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel",
                       label: "Prisma AIRS AI Model Security",
                       icon: "api-doc",
                     },
