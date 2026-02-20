@@ -185,6 +185,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        Incidents: [
+          {
+            to: "scm/api/config/Incidents/incident-scm.md",
+            label: "Incidents",
+            icon: "api-doc",
+          },
+        ],
         "Other Configuration": [
           {
             to: "/access/api/browser-mgmt/browser-mgmt-api",
@@ -251,11 +258,6 @@ export default function SCMLandingPage() {
         {
           to: "access/api/insights",
           label: "Prisma Access Insights",
-          icon: "api-doc",
-        },
-        {
-          to: "sase/api/incident-scm",
-          label: "Unified Incident Framework APIs",
           icon: "api-doc",
         },
       ],

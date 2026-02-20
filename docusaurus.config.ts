@@ -489,11 +489,6 @@ const config = {
                       icon: "api-doc",
                     },
                     {
-                      to: "sase/api/incident-scm",
-                      label: "Unified Incident Framework APIs",
-                      icon: "api-doc",
-                    },
-                    {
                       to: "sase/api/mt-notifications",
                       label: "Multitenant Notifications",
                       icon: "api-doc",
@@ -997,8 +992,8 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           incidentscm: {
-            specPath: "openapi-specs/sase/incident-scm",
-            outputDir: "products/sase/api/incident-scm",
+            specPath: "openapi-specs/scm/config/incidents",
+            outputDir: "products/scm/api/config/incidents/incident-scm",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {

@@ -3,7 +3,9 @@ id: incident-scm
 title: Unified Incident Framework APIs
 sidebar_label: Incident Framework APIs
 keywords:
-  - SASE
+  - Strata Cloud Manager
+  - Configuration
+  - Objects
   - Reference
   - API
 ---

@@ -330,8 +330,4 @@ module.exports = {
     "sase/api/tenancy/tenancy-api",
     require("./api/tenancy/sidebar"),
   ],
-  saseincident: [
-    "sase/api/incident-scm/incident-scm",
-    require("./api/incident-scm/sidebar"),
-  ],
 };
