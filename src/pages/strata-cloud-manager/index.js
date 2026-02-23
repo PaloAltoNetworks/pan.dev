@@ -185,6 +185,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        Incidents: [
+          {
+            to: "scm/api/config/incidents/incident-scm",
+            label: "Incidents",
+            icon: "api-doc",
+          },
+        ],
         "Other Configuration": [
           {
             to: "/access/api/browser-mgmt/browser-mgmt-api",

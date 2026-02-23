@@ -1006,6 +1006,11 @@ const config = {
             outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          incidentscm: {
+            specPath: "openapi-specs/scm/config/incidents",
+            outputDir: "products/scm/api/config/incidents",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
@@ -1197,14 +1202,14 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-00/",
           },
-           compute_3401: {
+          compute_3401: {
             specPath: "openapi-specs/compute/34-01",
             outputDir: "products/compute/api/34-01",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-01/",
           },
-           compute_3402: {
+          compute_3402: {
             specPath: "openapi-specs/compute/34-02",
             outputDir: "products/compute/api/34-02",
             showExtensions: true,

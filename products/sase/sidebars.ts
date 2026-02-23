@@ -361,5 +361,4 @@ module.exports = {
     "sase/api/tenancy/tenancy-api",
     require("./api/tenancy/sidebar"),
   ],
-  
 };

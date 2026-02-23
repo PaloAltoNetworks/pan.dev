@@ -12,6 +12,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| February 23rd, 2026    | Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/).
 | January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).
 | October 21, 2025     | Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/).
 | June 27, 2025     | Added [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/).
