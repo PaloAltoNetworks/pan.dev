@@ -1008,7 +1008,7 @@ const config = {
           },
           incidentscm: {
             specPath: "openapi-specs/scm/config/incidents",
-            outputDir: "products/scm/api/config/incidents/incident-scm",
+            outputDir: "products/scm/api/config/incidents",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           sdwan: {
