@@ -12,16 +12,12 @@ keywords:
 
 # Prisma AIRS AI Model Security API Reference
 
-Prisma AIRS AI Model Security allows customers to scan AI models using custom security configurations known as **Security Groups**. This API enables programmatic scanning, result retrieval, and configuration from CI/CD environments or custom workloads.
-
----
+Prisma AIRS AI Model Security is a product that allows customers to scan any top of AI model using custom security configurations known as **security groups.** Model Security’s public API is documented to enable customers to submit scans, retrieve results, and configure their security groups programmatically from their CI environments or other custom workloads.
 
 ## Quick Start
-- **Base URL:** `https://api.sase.paloaltonetworks.com/aims`
-- **Authentication:** OAuth2 Bearer Token
-  - Header: `Authorization: Bearer YOUR_TOKEN_HERE`
+- **Base URL:** All interactions with the Prisma AIRS AI Model Security APIs must be directed at the following base URL to be routed appropriately. The base URL for AI Model Security is:`https://api.sase.paloaltonetworks.com/aims`
 
----
+- **Authentication:** All Model Security APIs require OAuth2 bearer tokens for proper authentication. The format of the bearer token follows the standard authorization header: `Authorization: Bearer YOUR_TOKEN_HERE`. For instructions on how to obtain an OAuth 2.0 token, see the [Access Tokens ](https://pan.dev/scm/docs/access-tokens/)section.
 
 ## API Architecture
 The API is divided into two distinct planes:

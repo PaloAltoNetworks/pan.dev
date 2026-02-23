@@ -10,35 +10,26 @@ module.exports = {
       id: "prisma-airs-model-security/api/aisecuritymodel/errorcodes",
     }, 
     
-    // 3. Management API Category
+    // 3. Management API Category (Folder only, no intro doc)
     {
       label: "Management Plane API",
       type: "category",
       collapsed: false,
       items: [
-        {
-          type: "doc",
-          id: "prisma-airs-model-security/api/aisecuritymodel/management/introduction-management",
-        },
-        // FIX: Add the spread operator (...) 
-        ...require("./api/aisecuritymodel/management/sidebar"),
+        // CRITICAL FIX: .default is required so the build doesn't crash
+        ...require("./api/aisecuritymodel/management/sidebar").default,
       ],
     },
 
-    // 4. DataPlane API Category
+    // 4. DataPlane API Category (Folder only, no intro doc)
     {
       label: "Data Plane API",
       type: "category",
       collapsed: false,
       items: [
-        {
-          type: "doc",
-          id: "prisma-airs-model-security/api/aisecuritymodel/dataplane/introduction-dataplane",
-        },
-        // FIX: Add the spread operator (...)
-        ...require("./api/aisecuritymodel/dataplane/sidebar"),
+        // CRITICAL FIX: .default is required so the build doesn't crash
+        ...require("./api/aisecuritymodel/dataplane/sidebar").default,
       ],
     },
-  
-]
+  ]
 };
