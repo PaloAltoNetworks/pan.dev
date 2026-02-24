@@ -215,6 +215,11 @@ const config = {
                       label: "Prisma AIRS AI Red Teaming",
                       icon: "api-doc",
                     },
+                    {
+                      to: "prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel",
+                      label: "Prisma AIRS AI Model Security",
+                      icon: "api-doc",
+                    },
                   ],
           
                 },
@@ -1066,6 +1071,20 @@ const config = {
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
+           //Prisma AIRS Model Security Management
+          aimodelsecurity: {
+            specPath: "openapi-specs/prisma-airs-model-security/management",
+            outputDir: "products/prisma-airs-model-security/api/aisecuritymodel/management",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+           //Prisma AIRS Model Security DataPlane
+          aimsdataplane: {
+            specPath: "openapi-specs/prisma-airs-model-security/dataplane",
+            outputDir: "products/prisma-airs-model-security/api/aisecuritymodel/dataplane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
           //Prisma AIRS RedTeam-management as config
           redteammgmt: {
             specPath: "openapi-specs/prisma-airs-redteam/management",
@@ -1207,14 +1226,14 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-00/",
           },
-           compute_3401: {
+          compute_3401: {
             specPath: "openapi-specs/compute/34-01",
             outputDir: "products/compute/api/34-01",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-01/",
           },
-           compute_3402: {
+          compute_3402: {
             specPath: "openapi-specs/compute/34-02",
             outputDir: "products/compute/api/34-02",
             showExtensions: true,
