@@ -361,5 +361,9 @@ module.exports = {
     "sase/api/tenancy/tenancy-api",
     require("./api/tenancy/sidebar"),
   ],
+  pabmsp: [
+    "sase/api/pab-msp/pab-msp-api",
+    require("./api/pab-msp/sidebar"),
+  ],
   
 };

@@ -1,0 +1,1227 @@
+openapi: 3.1.0
+info:
+  title: Prisma Browser for MSP API
+  version: '1.0'
+  description: "The Prisma Browser for MSP API provides a suite of endpoints to automate\
+    \ the management of security services for the SMB market. \nThis API allows developers\
+    \ to programmatically create and configure new tenants, manage license allocation,\
+    \ and retrieve detailed security reports on blocked malware, \nmalicious websites,\
+    \ and unauthorized extensions. By using these services, MSPs can integrate multi-tenant\
+    \ visibility and lifecycle management directly into their \nown dashboards or\
+    \ third-party platforms like ServiceNow. This Open API spec file was created on\
+    \ February 23, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is\
+    \ a registered trademark of Palo Alto Networks. A list of our trademarks can be\
+    \ found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+components:
+  schemas:
+    CSVFieldDelimiter:
+      type: string
+      enum:
+      - comma
+      - tab
+      - semi_colon
+    CompressionType:
+      type: string
+      enum:
+      - none
+      - gzip
+      - snappy
+    CreateTenantRequest:
+      type: object
+      required:
+      - root_tsg_id
+      - tenant_name
+      - serial_number
+      - region
+      - user_quantity
+      - identity_provider_type
+      description: Request payload for creating a new PAB tenant
+      properties:
+        root_tsg_id:
+          type: string
+          minLength: 1
+          examples:
+          - '1868805847'
+          description: Root Tenant Service Group ID under which the new tenant will
+            be created
+        tenant_name:
+          type: string
+          minLength: 1
+          examples:
+          - test_tenant_1
+          description: Name of the tenant to be created
+        tenant_vertical:
+          type: string
+          examples:
+          - High Tech
+          description: Vertical or industry type for the tenant
+        serial_number:
+          type: string
+          minLength: 1
+          examples:
+          - SN12345678
+          description: Serial number for the tenant deployment
+        region:
+          type: string
+          minLength: 1
+          examples:
+          - us
+          description: 'SLS region where the tenant will be deployed. Valid values:
+            us, eu, jp, uk, in, sg, ca, id, au, de'
+        user_quantity:
+          type: integer
+          format: int32
+          examples:
+          - 3
+          description: Number of user licenses to allocate to this tenant
+          minimum: 1
+        identity_provider_type:
+          type: string
+          minLength: 1
+          examples:
+          - MSP IDP
+          description: 'Type of identity provider to use for authentication. Valid
+            values: ''MSP IDP'', ''Tenant IDP'''
+        directory:
+          type: string
+          examples:
+          - pab_standalone_test_directory
+          description: Directory name for user authentication (required when using
+            MSP IDP)
+        auth_profile_id:
+          type: string
+          examples:
+          - test_profile
+          description: Authentication profile ID to use for the tenant
+        user_groups:
+          type: array
+          examples:
+          - - Everyone
+          items:
+            type: string
+          description: Array of user group names to be assigned to the tenant
+    DataResourceQuery:
+      type: object
+      required:
+      - filter
+      - properties
+      description: Data resource query request
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Filter Condition
+        histogram:
+          $ref: '#/components/schemas/HistogramCondition'
+          type: object
+          description: Histogram Condition
+        addOnFilter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Add on data Filter Condition. (The existing property will be
+            replaced)
+        addOnInfo:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          description: Add-on information, typically used in query preprocessing
+        count:
+          type: integer
+          format: int32
+          examples:
+          - 3000
+          description: 'Maximum number of records default: 10000'
+          maximum: 10000
+          minimum: 1
+        computeDataRowsProcessed:
+          type: boolean
+          description: Flag to indicate total rows processed for query
+        includeRecordNumber:
+          type: boolean
+          description: Flag to indicate add row number to response
+        properties:
+          type: array
+          examples:
+          - - property: property1
+            - function: sum
+              property: property2
+              sort:
+                order: desc
+                sequence: 1
+            - function: avg
+              property: property3
+              alias: average_property3
+          items:
+            $ref: '#/components/schemas/QueryProperty'
+          description: Resource properties
+    DataResourceQuery1:
+      type: object
+      required:
+      - filter
+      - properties
+      description: Data resource query request
+      properties:
+        filter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Filter Condition
+        histogram:
+          $ref: '#/components/schemas/HistogramCondition'
+          type: object
+          description: Histogram Condition
+        addOnFilter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Add on data Filter Condition. (The existing property will be
+            replaced)
+        addOnInfo:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          description: Add-on information, typically used in query preprocessing
+        count:
+          type: integer
+          format: int32
+          examples:
+          - 3000
+          description: 'Maximum number of records default: 10000'
+          maximum: 10000
+          minimum: 1
+        computeDataRowsProcessed:
+          type: boolean
+          description: Flag to indicate total rows processed for query
+        includeRecordNumber:
+          type: boolean
+          description: Flag to indicate add row number to response
+        properties:
+          type: array
+          examples:
+          - - property: property1
+            - function: sum
+              property: property2
+              sort:
+                order: desc
+                sequence: 1
+            - function: avg
+              property: property3
+              alias: average_property3
+          items:
+            $ref: '#/components/schemas/QueryProperty'
+          description: Resource properties
+        exportFormat:
+          $ref: '#/components/schemas/ExportFormat'
+          type: string
+          description: Export format options
+        compression:
+          $ref: '#/components/schemas/CompressionType'
+          type: string
+          description: Export compression options
+        csvFieldDelimiter:
+          $ref: '#/components/schemas/CSVFieldDelimiter'
+          type: string
+          description: CSV Field delimiter
+    DataResourceQuery2:
+      type: object
+      required:
+      - properties
+      - filter
+      description: Data resource query request
+      properties:
+        properties:
+          type: array
+          examples:
+          - - property: property1
+            - function: sum
+              property: property2
+              sort:
+                order: desc
+                sequence: 1
+            - function: avg
+              property: property3
+              alias: average_property3
+          items:
+            $ref: '#/components/schemas/QueryProperty'
+          description: Resource properties
+        filter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Filter Condition
+        histogram:
+          $ref: '#/components/schemas/HistogramCondition'
+          type: object
+          description: Histogram Condition
+        addOnFilter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Add on data Filter Condition. (The existing property will be
+            replaced)
+        addOnInfo:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          description: Add-on information, typically used in query preprocessing
+        count:
+          type: integer
+          format: int32
+          examples:
+          - 3000
+          description: 'Maximum number of records default: 10000'
+          maximum: 10000
+          minimum: 1
+        computeDataRowsProcessed:
+          type: boolean
+          description: Flag to indicate total rows processed for query
+        includeRecordNumber:
+          type: boolean
+          description: Flag to indicate add row number to response
+        exportFormat:
+          $ref: '#/components/schemas/ExportFormat'
+          type: string
+          description: Export format options
+        compression:
+          $ref: '#/components/schemas/CompressionType'
+          type: string
+          description: Export compression options
+        csvFieldDelimiter:
+          $ref: '#/components/schemas/CSVFieldDelimiter'
+          type: string
+          description: CSV Field delimiter
+    DataResourceQuery3:
+      type: object
+      required:
+      - properties
+      - filter
+      description: Data resource query request
+      properties:
+        properties:
+          type: array
+          examples:
+          - - property: property1
+            - function: sum
+              property: property2
+              sort:
+                order: desc
+                sequence: 1
+            - function: avg
+              property: property3
+              alias: average_property3
+          items:
+            $ref: '#/components/schemas/QueryProperty'
+          description: Resource properties
+        filter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Filter Condition
+        histogram:
+          $ref: '#/components/schemas/HistogramCondition'
+          type: object
+          description: Histogram Condition
+        addOnFilter:
+          $ref: '#/components/schemas/FilterCondition'
+          type: object
+          description: Add on data Filter Condition. (The existing property will be
+            replaced)
+        addOnInfo:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          description: Add-on information, typically used in query preprocessing
+        count:
+          type: integer
+          format: int32
+          examples:
+          - 3000
+          description: 'Maximum number of records default: 10000'
+          maximum: 10000
+          minimum: 1
+        computeDataRowsProcessed:
+          type: boolean
+          description: Flag to indicate total rows processed for query
+        includeRecordNumber:
+          type: boolean
+          description: Flag to indicate add row number to response
+    ExportFormat:
+      type: string
+      enum:
+      - csv
+      - avro
+      - json
+      - default_json
+    FilterCondition:
+      type: object
+      properties:
+        operator:
+          $ref: '#/components/schemas/Operator'
+          type: string
+          examples:
+          - AND
+          description: Query operator
+          default: AND
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueryRule'
+    Function:
+      type: string
+      enum:
+      - sum
+      - min
+      - max
+      - avg
+      - count
+      - distinct_count
+      - distinct
+      - select
+      - to_json_string
+      - percentile
+    Function1:
+      type: string
+      enum:
+      - round
+      - trunc
+      - ceil
+      - floor
+    HistogramCondition:
+      type: object
+      required:
+      - property
+      - range
+      - subRange
+      properties:
+        property:
+          type: string
+          examples:
+          - property1
+          description: Property
+        alias:
+          type: string
+          examples:
+          - property1_alias
+          description: Property Alias
+        range:
+          $ref: '#/components/schemas/Range'
+          type: string
+          examples:
+          - hour
+          description: Histogram Range
+        value:
+          type: integer
+          format: int32
+          examples:
+          - 1
+          description: Histogram range value
+        subRange:
+          $ref: '#/components/schemas/Range'
+          type: string
+          examples:
+          - hour
+          description: Histogram Sub Range
+        subValue:
+          type: integer
+          format: int32
+          examples:
+          - 1
+          description: Histogram sub range value
+        enableEmptyInterval:
+          type: boolean
+          examples:
+          - true
+          description: Enable filling empty record for intervals with no data
+        sort:
+          $ref: '#/components/schemas/SortCondition'
+          type: object
+          examples:
+          - order: desc
+            sequence: 1
+          description: Sort Condition (optional)
+    NumberFormat:
+      type: object
+      properties:
+        function:
+          $ref: '#/components/schemas/Function1'
+        value:
+          type: integer
+          format: int32
+    Operator:
+      type: string
+      enum:
+      - OR
+      - AND
+    Operator1:
+      type: string
+      enum:
+      - equals
+      - not_equals
+      - is_null
+      - is_not_null
+      - in
+      - not_in
+      - gt
+      - lt
+      - between
+      - like
+      - not_like
+      - starts_with
+      - ends_with
+      - contains
+      - not_starts_with
+      - not_ends_with
+      - not_contains
+      - gte
+      - lte
+      - lessThan
+      - truncated_last_n_days
+      - truncated_last_n_hours
+      - truncated_last_n_minutes
+      - truncated_previous_n_days
+      - truncated_previous_n_hours
+      - truncated_previous_n_minutes
+      - previous_n_days
+      - previous_n_hours
+      - previous_n_minutes
+      - last_n_days
+      - last_n_hours
+      - last_n_minutes
+    Order:
+      type: string
+      enum:
+      - asc
+      - desc
+      - ASC
+      - DESC
+    Percentile:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int32
+    QueryProperty:
+      type: object
+      required:
+      - property
+      properties:
+        function:
+          $ref: '#/components/schemas/Function'
+          type: string
+          examples:
+          - count
+          description: Aggregation function (Applicable only to metric properties)
+        property:
+          type: string
+          examples:
+          - property1
+          description: Property
+        alias:
+          type: string
+          examples:
+          - my_property1_name
+          description: Property Alias (Name to include in response)
+        percentile:
+          $ref: '#/components/schemas/Percentile'
+          type: object
+          examples:
+          - 50, 95th percentile
+          description: Value to be used for percentile function
+        sort:
+          $ref: '#/components/schemas/SortCondition'
+          type: object
+          examples:
+          - order: desc
+            sequence: 1
+          description: Sort Condition (optional)
+        format:
+          $ref: '#/components/schemas/NumberFormat'
+          type: object
+          examples:
+          - function: round
+            value: 1
+          description: Number Format function (optional)
+        percentileValue:
+          type: integer
+          format: int32
+    QueryRule:
+      type: object
+      required:
+      - property
+      - operator
+      - values
+      - escapeValue
+      - concat
+      - concatProperty
+      properties:
+        property:
+          type: string
+          examples:
+          - property1
+          description: Resource Property
+        operator:
+          $ref: '#/components/schemas/Operator1'
+          type: string
+          examples:
+          - in
+          description: Operator
+        values:
+          type: array
+          examples:
+          - - value1
+            - value2
+          items: {}
+          description: Operator
+        subQuery:
+          $ref: '#/components/schemas/SubQuery'
+          type: object
+          examples:
+          - type: local
+            value: sub_query1
+          description: Subquery (optional)
+        escapeValue:
+          type: boolean
+          examples:
+          - true
+          description: Enable character escaping for value
+        concat:
+          type: boolean
+          examples:
+          - true
+          description: Concat multiple properties
+        concatProperty:
+          type: array
+          examples:
+          - - property2
+            - property3
+          uniqueItems: true
+          items:
+            type: string
+          description: Resource Property
+        format:
+          $ref: '#/components/schemas/NumberFormat'
+          type: object
+          examples:
+          - function: round
+            value: 1
+          description: Number Format function (optional)
+    Range:
+      type: string
+      enum:
+      - minute
+      - hour
+      - day
+      - week
+      - month
+      - year
+    RegionRequest:
+      type: object
+      required:
+      - region
+      examples:
+      - region: americas
+      description: Request payload for region-based operations
+      properties:
+        region:
+          type: string
+          minLength: 1
+          examples:
+          - americas
+          description: 'SLS region identifier. Valid values: americas (us), europe
+            (eu), jp, uk, in, sg, ca, id, au, de'
+    ReportRequest:
+      type: object
+      required:
+      - tsg_id
+      examples:
+      - tsg_id: '1615680886'
+      description: Request payload for report operations
+      properties:
+        tsg_id:
+          type: string
+          minLength: 1
+          examples:
+          - '1615680886'
+          description: Tenant Service Group ID for which to retrieve report data
+    SortCondition:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        sequence:
+          type: integer
+          format: int32
+    SubQuery:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SubQueryType'
+        name:
+          type: string
+    SubQueryType:
+      type: string
+      enum:
+      - local
+      - pre_defined
+    UserGroupRequest:
+      type: object
+      required:
+      - directory_name
+      examples:
+      - directory_name: pab_test_directory
+      description: Request payload for retrieving user groups from a directory
+      properties:
+        directory_name:
+          type: string
+          minLength: 1
+          examples:
+          - pab_test_directory
+          description: Name of the directory from which to retrieve user groups
+  securitySchemes:
+    authKey: {}
+ExternalTags: {}
+paths:
+  /mt/pab/report/count:
+    post:
+      summary: Get Report Event
+      description: Retrieves the total count of security events for the specified
+        tenant.
+      operationId: PostMtPabReportCount
+      responses:
+        '200':
+          description: Successfully retrieved report count
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get report count for tenant 1615680886
+                value:
+                  tsg_id: '1615680886'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/extension_blocked:
+    post:
+      summary: Get blocked extension reports
+      description: Retrieves reports of browser extensions that were blocked for the
+        specified tenant.
+      operationId: PostMtPabReportExtension_blocked
+      responses:
+        '200':
+          description: Successfully retrieved blocked extension reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get blocked extension report for tenant 1297178607
+                value:
+                  tsg_id: '1297178607'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/extension_category:
+    post:
+      summary: Get extension category reports
+      description: Retrieves browser extension reports categorized by type for the
+        specified tenant.
+      operationId: PostMtPabReportExtension_category
+      responses:
+        '200':
+          description: Successfully retrieved extension category reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get extension category report for tenant 1297178607
+                value:
+                  tsg_id: '1297178607'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/malicious_website:
+    post:
+      summary: Get malicious website reports
+      description: Retrieves reports of malicious websites detected for the specified
+        tenant.
+      operationId: PostMtPabReportMalicious_website
+      responses:
+        '200':
+          description: Successfully retrieved malicious website reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get malicious website report for tenant 1297178607
+                value:
+                  tsg_id: '1297178607'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/malware_blocked:
+    post:
+      summary: Get blocked malware reports
+      description: Retrieves reports of malware that was blocked for the specified
+        tenant.
+      operationId: PostMtPabReportMalware_blocked
+      responses:
+        '200':
+          description: Successfully retrieved blocked malware reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get blocked malware report for tenant 1742569585
+                value:
+                  tsg_id: '1742569585'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/malware_website:
+    post:
+      summary: Get malware website reports
+      description: Retrieves reports of websites identified as malware sources for
+        the specified tenant.
+      operationId: PostMtPabReportMalware_website
+      responses:
+        '200':
+          description: Successfully retrieved malware website reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get malware website report for tenant 1615680886
+                value:
+                  tsg_id: '1615680886'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/website_blocked:
+    post:
+      summary: Get blocked website reports
+      description: Retrieves reports of websites that were blocked for the specified
+        tenant.
+      operationId: PostMtPabReportWebsite_blocked
+      responses:
+        '200':
+          description: Successfully retrieved blocked website reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get blocked website report for tenant 1742569585
+                value:
+                  tsg_id: '1742569585'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/report/website_category:
+    post:
+      summary: Get website category reports
+      description: Retrieves website access reports categorized by website type for
+        the specified tenant.
+      operationId: PostMtPabReportWebsite_category
+      responses:
+        '200':
+          description: Successfully retrieved website category reports
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Tenant not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Report API
+      requestBody:
+        description: Tenant Service Group ID for the report request
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get website category report for tenant 1821219322
+                value:
+                  tsg_id: '1821219322'
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/summary:
+    post:
+      summary: Get summary count of configured users
+      description: Retrieves the total count of configured users for the specified
+        region.
+      operationId: PostMtPabSummary
+      responses:
+        '200':
+          description: Successfully retrieved summary count
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Region not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Summary API
+      requestBody:
+        description: Region information for the summary request
+        content:
+          application/json:
+            examples:
+              Americas Region:
+                description: Request summary for Americas region
+                value:
+                  region: americas
+              US Region:
+                description: Request summary for US region
+                value:
+                  region: us
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/summary/cie:
+    post:
+      summary: Get Cloud Identity Engine summary
+      description: Retrieves Cloud Identity Engine (CIE) summary data for the specified
+        region.
+      operationId: PostMtPabSummaryCie
+      responses:
+        '200':
+          description: Successfully retrieved CIE summary
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Region not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Summary API
+      requestBody:
+        description: Region information for the CIE summary request
+        content:
+          application/json:
+            examples:
+              Americas Region:
+                description: Request CIE summary for Americas region
+                value:
+                  region: americas
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/summary/tenants:
+    post:
+      summary: Get tenant summary data
+      description: Retrieves summary information for all tenants in the specified
+        region.
+      operationId: PostMtPabSummaryTenants
+      responses:
+        '200':
+          description: Successfully retrieved tenant summary
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Region not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Summary API
+      requestBody:
+        description: Region information for the tenant summary request
+        content:
+          application/json:
+            examples:
+              US Region:
+                description: Request tenant summary for US region
+                value:
+                  region: us
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/tenant:
+    post:
+      summary: Create a new tenant
+      description: Creates a new tenant with the specified configuration including
+        region, identity provider, and user groups.
+      operationId: PostMtPabTenant
+      responses:
+        '200':
+          description: Tenant created successfully
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload or validation failed
+        '404':
+          description: Required resource not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      requestBody:
+        description: Tenant creation request payload with all required configuration
+          details
+        content:
+          application/json:
+            examples:
+              MSP IDP Tenant:
+                description: Create a tenant using MSP Identity Provider
+                value:
+                  tenant_vertical: High Tech
+                  auth_profile_id: test_profile
+                  directory: pab_standalone_test_directory
+                  identity_provider_type: MSP IDP
+                  region: us
+                  root_tsg_id: '1868805847'
+                  tenant_name: test_tenant_1
+                  serial_number: SN12345678
+                  user_groups:
+                  - Everyone
+                  user_quantity: 3
+            schema:
+              $ref: '#/components/schemas/CreateTenantRequest'
+        required: true
+      security:
+      - authKey: []
+  /mt/pab/tenant/auth_profile:
+    get:
+      summary: Get authentication profiles
+      description: Retrieves all available authentication profiles for the tenant
+        service group.
+      operationId: GetMtPabTenantAuth_profile
+      responses:
+        '200':
+          description: Successfully retrieved authentication profiles
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request
+        '404':
+          description: Authentication profiles not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      security:
+      - authKey: []
+  /mt/pab/tenant/directories:
+    get:
+      summary: Get available directories
+      description: Retrieves a list of all available directories for the tenant service
+        group.
+      operationId: GetMtPabTenantDirectories
+      responses:
+        '200':
+          description: Successfully retrieved directories
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request
+        '404':
+          description: Directories not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      security:
+      - authKey: []
+  /mt/pab/tenant/licenses:
+    get:
+      summary: Get license utilization information
+      description: Retrieves current license utilization metrics and availability
+        for the tenant service group.
+      operationId: GetMtPabTenantLicenses
+      responses:
+        '200':
+          description: Successfully retrieved license utilization
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request
+        '404':
+          description: License information not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      security:
+      - authKey: []
+  /mt/pab/tenant/region:
+    get:
+      summary: Get available regions
+      description: Retrieves a list of all available regions for tenant deployment.
+      operationId: GetMtPabTenantRegion
+      responses:
+        '200':
+          description: Successfully retrieved regions
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request
+        '404':
+          description: Regions not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      security:
+      - authKey: []
+  /mt/pab/tenant/user_group:
+    post:
+      summary: Get user groups for a directory
+      description: Retrieves all user groups associated with the specified directory
+        name.
+      operationId: PostMtPabTenantUser_group
+      responses:
+        '200':
+          description: Successfully retrieved user groups
+          content:
+            application/json: {}
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Directory not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Tenant API
+      requestBody:
+        description: Directory name for which to retrieve user groups
+        content:
+          application/json:
+            examples:
+              Example Request:
+                description: Get user groups for the specified directory
+                value:
+                  directory_name: pab_test_directory
+            schema:
+              $ref: '#/components/schemas/UserGroupRequest'
+        required: true
+      security:
+      - authKey: []
