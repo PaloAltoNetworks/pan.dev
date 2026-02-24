@@ -504,6 +504,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/pab-msp/pab-msp-api",
+                      label: "Prisma Browser for MSPs",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "sase/api/manage-services-5g/introduction",
                       label: "SASE 5G Manage Services",
                       icon: "api-doc",
@@ -944,6 +949,11 @@ const config = {
           MonitorInterconnect: {
             specPath: "openapi-specs/sase/mt-interconnect/Monitor",
             outputDir: "products/sase/api/mt-interconnect/Monitor",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          pabmsp: {
+            specPath: "openapi-specs/sase/pab-msp",
+            outputDir: "products/sase/api/pab-msp",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           manageservices: {
