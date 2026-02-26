@@ -1,0 +1,245 @@
+components:
+  schemas:
+    BaseInsightsResponse:
+      properties:
+        end_time:
+          format: date
+          type: string
+        site:
+          description: Site
+          type: string
+        start_time:
+          format: date
+          type: string
+        waninterface:
+          description: Waninterface
+          type: string
+    Error:
+      properties:
+        _error:
+          items:
+            $ref: '#/components/schemas/ErrorResponse'
+          type: array
+    ErrorResponse:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Insights:
+      properties:
+        end_time:
+          format: date
+          type: string
+        name:
+          description: Name
+          type: string
+        site:
+          description: Site
+          type: string
+        start_time:
+          format: date
+          type: string
+        waninterface:
+          description: Waninterface
+          type: string
+    InsightsFilter:
+      properties:
+        end_time:
+          format: date
+          type: string
+        name:
+          description: 'Name: Required(error = REQUIRED_PROPERTY: Schema check failed
+            - {} is a required property) Pattern(error = INVALID_FILTER: Schema check
+            failed - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        site:
+          description: 'Site: Required(error = REQUIRED_PROPERTY: Schema check failed
+            - {} is a required property) Pattern(error = INVALID_FILTER: Schema check
+            failed - Invalid value for param {}, regexp = ^[0-9]{1,20}$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+        waninterface:
+          description: 'Waninterface: Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) Pattern(error = INVALID_FILTER: Schema
+            check failed - Invalid value for param {}, regexp = ^[0-9]{1,20}$) '
+          type: string
+      required:
+      - end_time
+      - start_time
+      - name
+      - waninterface
+      - site
+    InsightsListFilter:
+      properties:
+        site:
+          description: 'Site: Size(max = 1, error = ONLY_ONE_SITE_ID_SUPPORTED: Only
+            one site id is supported, min = 0) NotNull(error = REQUIRED_PROPERTY:
+            Schema check failed - {} is a required property) '
+          items:
+            description: Site
+            type: string
+          type: array
+        waninterface:
+          description: 'Waninterface: NotNull(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          items:
+            description: Waninterface
+            type: string
+          type: array
+      required:
+      - waninterface
+      - site
+    InsightsListQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/InsightsListFilter'
+          description: 'Filter: Valid Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+        start_time:
+          format: date
+          type: string
+      required:
+      - filter
+      - end_time
+      - start_time
+    InsightsListResponse:
+      properties:
+        end_time:
+          format: date
+          type: string
+        insights:
+          description: Insights
+          items:
+            $ref: '#/components/schemas/Insights'
+          type: array
+        start_time:
+          format: date
+          type: string
+    InsightsQuery:
+      properties:
+        filter:
+          $ref: '#/components/schemas/InsightsFilter'
+          description: 'Filter: Valid Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+      required:
+      - filter
+info:
+  contact: {}
+  description: APIs to retrieve monitoring insights, analytics, and distribution metrics
+    for SD-WAN environments.
+  title: Insights and Monitoring
+  version: Latest
+openapi: 3.0.0
+paths:
+  /v2.0/api/tenants/{tenant_id}/monitor/insights:
+    post:
+      description: Get insights information
+      operationId: post-v2.0-api-tenants-tenant_id-monitor-insights
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsightsQuery'
+        description: Request body for insights list
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseInsightsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: LENGTH_EXCEEDED
+                  - code: ATTRIBUTE_REQUIRED
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: FUTURE_TIME_ERROR
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_REPORTS_REQUEST_BODY
+                  - code: INVALID_FILTER
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Insights API (v2.0)
+      tags:
+      - Insights and Monitoring
+  /v2.0/api/tenants/{tenant_id}/monitor/insightslist:
+    post:
+      description: Get available insights
+      operationId: post-v2.0-api-tenants-tenant_id-monitor-insightslist
+      parameters:
+      - description: Tenant Id
+        in: path
+        name: tenant_id
+        required: true
+        schema:
+          description: Tenant Id
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsightsListQuery'
+        description: Request body for insights list
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightsListResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: REQUIRED_PROPERTY
+                  - code: LENGTH_EXCEEDED
+                  - code: ATTRIBUTE_REQUIRED
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: FUTURE_TIME_ERROR
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_REPORTS_REQUEST_BODY
+                  - code: INVALID_FILTER
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Insights List API (v2.0)
+      tags:
+      - Insights and Monitoring
+servers:
+- url: https://api.us.cloudgenix.com
+tags:
+- name: Insights and Monitoring
