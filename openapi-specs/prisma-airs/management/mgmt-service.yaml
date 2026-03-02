@@ -1,0 +1,1615 @@
+openapi: 3.0.3
+info:
+  title: Prisma AIRS API Management service
+  description: OpenAPI Specification for Prisma AIRS AI Runtime API Management Service
+  version: 0.0.0
+  contact:
+    name: Palo Alto Networks
+    url: https://www.paloaltonetworks.com
+    email: support@paloaltonetworks.com
+servers:
+  - url: "https://api.sase.paloaltonetworks.com/aisec"
+    description: Prisma AIRS API service URL
+tags:
+  - name: API key
+    description: Operations related to API key management
+  - name: AI Sec Profile
+    description: Operations related to AI security profile management
+  - name: DLP Profiles
+    description: Operations related to DLP profile management
+  - name: Deployment Profiles
+    description: Operations related to deployment profile management
+  - name: Customer App
+    description: Operations related to customer application management
+  - name: Oauth
+    description: Operations related to OAuth tokens
+  - name: Custom Topic
+    description: Operations related to custom topic management
+paths:
+  /v1/mgmt/apikey:
+    post:
+      summary: Create New API Key
+      description: Post a new API key
+      tags:
+        - API key
+      security:
+        - Auth: []
+      operationId: CreateNewAPIKey
+      requestBody:
+        description: API key creation request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/APIKeyCreationObject"
+      responses:
+        "200":
+          description: Successfully created a new API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIKeyObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/apikeys:
+    get:
+      summary: Get All API Keys
+      description: Get all API keys and their metadata for the auth token's TSG
+      tags:
+        - API key
+      operationId: GetAllAPIKeysForTsgId
+      parameters:
+        - name: offset
+          in: query
+          description: The offset at which to start fetching more records
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: The number of records to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successfully returned metadata for a given API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedAPIKeyObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/apikey/delete/{api_key_name}:
+    delete:
+      summary: Delete an API Key
+      description: Delete a given API key and its associated customer app
+      tags:
+        - API key
+      security:
+        - Auth: []
+      operationId: DeleteAPIKey
+      parameters:
+        - name: api_key_name
+          in: path
+          description: API key Name to delete
+          required: true
+          schema:
+            type: string
+        - name: updated_by
+          in: query
+          description: The email address of the person who performed the deletion
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a given API key and associated customer app
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: API key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/apikey/regenerate/{api_key_id}:
+    post:
+      summary: Regenerate an API Key
+      description: Regenerate an API key with the given uuid of apikey
+      tags:
+        - API key
+      security:
+        - Auth: []
+      operationId: RegenerateAPIKeyById
+      requestBody:
+        description: "Request to regenerate an API key with the given uuid and optional rotation time interval and unit"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rotation_time_interval:
+                  type: integer
+                  format: int32
+                rotation_time_unit:
+                  type: string
+                updated_by:
+                  type: string
+              required:
+                - rotation_time_interval
+                - rotation_time_unit
+      parameters:
+        - name: api_key_id
+          in: path
+          description: API key uuid to regenerate
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully regenerated API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIKeyObject"
+        "404":
+          description: API key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/profile:
+    post:
+      summary: Create A New AI Security Profile
+      description: Post a new AI Sec Profile
+      tags:
+        - AI Sec Profile
+      security:
+        - Auth: []
+      operationId: CreateNewAIProfile
+      requestBody:
+        description: AI Sec Profile creation request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIProfileObject"
+      responses:
+        "200":
+          description: Successfully created a new AI Sec Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIProfileObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/profile/{profile_id}:
+    delete:
+      summary: Delete An AI Security Profile
+      description: Delete a given AI Sec Profile
+      tags:
+        - AI Sec Profile
+      security:
+        - Auth: []
+      operationId: DeleteAIProfile
+      parameters:
+        - name: profile_id
+          in: path
+          description: AI Sec ProfileId to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a given AI Sec Profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "409":
+          description: conflict occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteAIProfileResponse"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/profile/uuid/{profile_id}:
+    put:
+      summary: Modify AI Security Profile Details
+      description: Update metadata for a given AI Sec Profile Id.
+      tags:
+        - AI Sec Profile
+      security:
+        - Auth: []
+      operationId: UpdateProfileByProfileId
+      parameters:
+        - name: profile_id
+          in: path
+          description: encoded AI Sec Profile Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: AI SEC profile object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIProfileObject"
+      responses:
+        "200":
+          description: Successfully updated metadata for a given AI Sec Profile Id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIProfileObject"
+        "404":
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/profiles:
+    get:
+      summary: Get All AI Profiles
+      description: Get all AI Sec Profiles and their metadata for for the auth token's TSG
+      tags:
+        - AI Sec Profile
+      operationId: GetAllAIProfilesForTsgId
+      parameters:
+        - name: offset
+          in: query
+          description: The offset at which to start fetching more records
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: The number of records to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: latest
+          in: query
+          description: Get only the latest AI Sec Profiles for a given TSG ID
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Successfully returned metadata for all AI Sec Profiles for a given CspId and TsgId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedAIProfileObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/profile/{profile_id}/force:
+    delete:
+      summary: Force Delete AI Profile
+      description: Force delete a given AI Sec Profile, bypassing any safety checks
+      tags:
+        - AI Sec Profile
+      operationId: ForceDeleteAIProfile
+      parameters:
+        - name: profile_id
+          in: path
+          description: ProfileId to force delete
+          required: true
+          schema:
+            type: string
+        - name: updated_by
+          in: query
+          description: User performing the force deletion
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully force deleted the AI Sec Profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/dlpprofiles:
+    get:
+      summary: Get All DLP Profiles
+      description: Get all DLP Profiles and their metadata for a TSG ID
+      tags:
+        - DLP Profiles
+      security:
+        - Auth: []
+      operationId: GetAllDlpProfilesByTsgId
+      responses:
+        "200":
+          description: Successfully returned metadata for all DLP Profiles for a given TsgId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayDlpProfileObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/deploymentprofiles:
+    get:
+      summary: Get All Deployment Profiles
+      description: Get all Deployment Profiles for a given TSG ID.
+      tags:
+        - Deployment Profiles
+      security:
+        - Auth: []
+      operationId: GetDeploymentProfilesByTsgId
+      parameters:
+        - name: unactivated
+          in: query
+          description: Get available and unactivated Deployment Profiles. Also include previously activated DP that do not have any associated apps or api keys.
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successfully returned Deployment Profiles for TSG Id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentProfilesObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/customerapp:
+    get:
+      summary: Get Customer Application Details
+      description: Get the customer app details for a given TSG ID and app name
+      tags:
+        - Customer App
+      security:
+        - Auth: []
+      operationId: GetCustomerApp
+      parameters:
+        - name: app_name
+          in: query
+          description: The customer app name for which to fetch details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully returned metadata for a Customer App
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerAppObject"
+        "404":
+          description: Customer app not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete Customer App
+      description: Delete a customer app for the specified TSG ID and app name
+      tags:
+        - Customer App
+      operationId: DeleteCustomerApp
+      parameters:
+        - name: app_name
+          in: query
+          description: The customer app name for which to delete
+          required: true
+          schema:
+            type: string
+        - name: updated_by
+          in: query
+          description: The email address of the user who is deleting the Customer App
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully deleted Customer App
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerAppObject"
+        "404":
+          description: Customer app not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      summary: Update Customer App
+      description: Update Customer App information for a given TSG ID and App name
+      tags:
+        - Customer App
+      operationId: updateCustomerAppById
+      parameters:
+        - name: customer_app_id
+          in: query
+          description: The uuid of the Customer App to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: CustomerApp object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerAppObject"
+      responses:
+        200:
+          description: Successfully updated Customer App
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerAppObject"
+        "404":
+          description: Customer app not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/customerapps:
+    get:
+      summary: Get All Customer Apps
+      description: Get all Customer Apps and their metadata for the auth token's TSG
+      tags:
+        - Customer App
+      operationId: GetAllCustomerAppsForTsgID
+      parameters:
+        - name: offset
+          in: query
+          description: The offset at which to start fetching more records
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: The number of records to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successfully returned metadata for all Customer Apps for a given TSG ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCustomerAppObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/topic:
+    post:
+      summary: Create New Custom Topic
+      description: Post a new Custom Topic
+      tags:
+        - Custom Topic
+      security:
+        - Auth: []
+      operationId: CreateNewCustomTopic
+      requestBody:
+        description: Custom Topic creation request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomTopicObject"
+      responses:
+        "200":
+          description: Successfully created a new Custom Topic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomTopicObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/topic/{topic_id}:
+    delete:
+      summary: Delete a Custom Topic
+      description: Delete a given Custom Topic
+      tags:
+        - Custom Topic
+      security:
+        - Auth: []
+      operationId: DeleteCustomTopic
+      parameters:
+        - name: topic_id
+          in: path
+          description: Custom TopicId to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a given Custom Topic
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "409":
+          description: conflict occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteCustomTopicResponse"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/mgmt/topic/{topic_id}/force:
+    delete:
+      summary: Force Delete a Custom Topic
+      description: Force delete a given Custom Topic, bypassing any safety checks
+      tags:
+        - Custom Topic
+      security:
+        - Auth: []
+      operationId: ForceDeleteCustomTopic
+      parameters:
+        - name: topic_id
+          in: path
+          description: Custom TopicId to force delete
+          required: true
+          schema:
+            type: string
+        - name: updated_by
+          in: query
+          description: User performing the force deletion
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully force deleted the Custom Topic
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Topic not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/topic/uuid/{topic_id}:
+    put:
+      summary: Modify Custom Topic Details
+      description: Update metadata for a given Custom Topic Id.
+      tags:
+        - Custom Topic
+      security:
+        - Auth: []
+      operationId: UpdateTopicByTopicId
+      parameters:
+        - name: topic_id
+          in: path
+          description: encoded Custom Topic Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Custom Topic object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomTopicObject"
+      responses:
+        "200":
+          description: Successfully updated metadata for a given Custom Topic Id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomTopicObject"
+        "404":
+          description: Topic not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/topics:
+    get:
+      summary: Get All Custom Topics
+      description: Get all Custom Topics and their metadata for the auth token's TSG
+      tags:
+        - Custom Topic
+      operationId: GetAllCustomTopicsForTsgId
+      parameters:
+        - name: offset
+          in: query
+          description: The offset at which to start fetching more records
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: The number of records to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Successfully returned metadata for all Custom Topics for a given CspId and TsgId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCustomTopicObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/oauth/invalidateToken:
+    post:
+      summary: Invalidate OAuth Token
+      description: Invalidate oauth2.0 token
+      tags:
+        - Oauth
+      security:
+        - Auth: []
+      operationId: InvalidateApigeeOauthToken
+      parameters:
+        - name: token
+          in: query
+          description: the oauth token to invalidate
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: ClientId and Customer App Name object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientIdAndCustomerApp"
+      responses:
+        "200":
+          description: Successfully invalidated oauth2.0 token
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/mgmt/oauth/client_credential/accesstoken:
+    post:
+      summary: Get OAuth Token
+      description: Get oauth2.0 token for a given set of client credentials
+      tags:
+        - Oauth
+      security:
+        - Auth: []
+      operationId: GetApigeeOauthToken
+      parameters:
+        - name: tokenTtlInterval
+          in: query
+          description: The token time-to-live (TTL) interval (1h, 3h, 24h, 1 day, 7 days, 30 days) in the OAuth token request
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: tokenTtlUnit
+          in: query
+          description: The token time-to-live (TTL) unit (hours) in the OAuth token request
+          required: false
+          schema:
+            type: string
+      requestBody:
+        description: ClientId and Customer App Name object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientIdAndCustomerApp"
+      responses:
+        "200":
+          description:
+            Successfully returned Oauth2 token for a given set of client credentials for a given TSG ID.
+            Default duration is 24 hour.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Oauth2TokenObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    Auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    APIKeyObject:
+      type: object
+      description: API Key Object Structure
+      properties:
+        api_key_id:
+          type: string
+          description: API Key Id Value
+        api_key_last8:
+          type: string
+          description: Last eight Characters of api key
+        api_key_name:
+          type: string
+          description: API Key Name
+        auth_code:
+          type: string
+          description: Auth Code Associated with deployment profile
+        csp_id:
+          type: string
+          description: Customer Service Portal ID
+        tsg_id:
+          type: string
+          description: Tenant Service group ID
+        expiration:
+          type: string
+          format: date-time
+          description: Api Key Expiration Time Stamp
+        revoked:
+          type: boolean
+          description: Indicates if the API Key has been revoked
+        revoke_reason:
+          type: string
+          description: If API Key is Revoked, captures the reason for revocation
+        cust_app:
+          type: string
+          description: Customer app associated with the API Key
+        cust_env:
+          type: string
+          description: Environment refers to customer app environment like production, staging, etc
+        cust_ai_agent_framework:
+          type: string
+          description: Customer App AI Agent Framework
+        cust_cloud_provider:
+          type: string
+          description: Cloud provide refers to the customer's APPs LLM model cloud provider
+        created_by:
+          type: string
+          description: Email of the user that created the API Key
+        updated_by:
+          type: string
+          description: Email of the user that updated the API Key
+        last_modified_ts:
+          type: string
+          format: date-time
+          description: Api key last modified Time Stamp
+        rotation_time_interval:
+          type: integer
+          format: int32
+          description: Api Key Rotation time interval
+        rotation_time_unit:
+          type: string
+          description: Api Key Rotation time unit
+        dp_name:
+          type: string
+          description: Deployment Profile Name
+        status:
+          type: string
+          description: Api key status
+        api_key:
+          type: string
+          description: Api key Value
+        lic_expiration:
+          type: string
+          format: date-time
+          description: License Expiration Time stamp
+        avg_text_records:
+          type: integer
+          format: int32
+          description: Text Records
+        creation_ts:
+          type: string
+          format: date-time
+          description: API Key creation timestamp
+        customer_appId:
+          type: string
+          description: Customer appId associated with the key
+      required:
+        - api_key_id
+        - api_key_last8
+        - auth_code
+        - expiration
+        - revoked
+    APIKeyCreationObject:
+      type: object
+      properties:
+        dp_name:
+          type: string
+          description: Deployment Profile Name
+        auth_code:
+          type: string
+          description: Auth Code Associated with deployment profile
+        cust_app:
+          type: string
+          description: Customer app under deployment profile
+        cust_env:
+          type: string
+          description: Environment refers to customer app environment like production, staging, etc
+        cust_cloud_provider:
+          type: string
+          description: Cloud provide refers to the customer's APPs LLM model cloud provider
+        cust_ai_agent_framework:
+          type: string
+          description: Customer App AI Agent Framework
+        revoked:
+          type: boolean
+          description: Revoke the current API key
+        created_by:
+          type: string
+          description: Api Key Created Time Stamp
+        api_key_name:
+          type: string
+          description: Api Key Name
+        rotation_time_interval:
+          type: integer
+          format: int32
+          description: Api Key Rotation time interval
+        rotation_time_unit:
+          type: string
+          description: Api Key Rotation time unit
+      required:
+        - auth_code
+        - revoked
+        - cust_app
+        - created_by
+        - api_key_name
+        - rotation_time_interval
+        - rotation_time_unit
+
+    PaginatedAPIKeyObject:
+      type: object
+      properties:
+        api_keys:
+          type: array
+          items:
+            $ref: "#/components/schemas/APIKeyObject"
+            description: Type of object in the array.
+        next_offset:
+          type: integer
+          format: int32
+          description: Next offset from which to fetch the records
+    AIProfileObject:
+      type: object
+      properties:
+        profile_id:
+          type: string
+          description: Unique identifier for the profile.
+        profile_name:
+          type: string
+          description: Name of the profile.
+        revision:
+          type: integer
+          format: int32
+          description: AI Profile Revision
+        active:
+          type: boolean
+          description: Indicates if AI profile is active
+        policy:
+          type: object
+          properties:
+            dlp-data-profiles:
+              type: array
+              items:
+                $ref: "#/components/schemas/DLPDataProfileObject"
+            ai-security-profiles:
+              type: array
+              items:
+                $ref: "#/components/schemas/AiSecurityProfileObject"
+        created_by:
+          type: string
+          description: Email of the user who created the Profile
+        updated_by:
+          type: string
+          description: Email of the user who updated the Profile
+        last_modified_ts:
+          type: string
+          format: date-time
+          description: Profile Last Modified Time Stamp
+      required:
+        - profile_name
+        - revision
+        - policy
+    AiSecurityProfileObject:
+      type: object
+      properties:
+        model-type:
+          type: string
+          description: AI LLM model type
+        content-type:
+          type: string
+          description: Content for AI profile
+        model-configuration:
+          type: object
+          description: AI LLM model configuration
+          properties:
+            mask-data-in-storage:
+              type: boolean
+              description: Boolean flag to determine whether data is masked in storage
+            latency:
+              $ref: "#/components/schemas/LatencyObject"
+              description: Latency configuration for AI profile
+            data-protection:
+              $ref: "#/components/schemas/DataProtectionObject"
+              description: Data protection configuration for AI profile
+            app-protection:
+              $ref: "#/components/schemas/AppProtectionObject"
+              description: App protection configuration for AI profile
+            model-protection:
+              $ref: "#/components/schemas/ModelProtectionObject"
+              description: Model protection configuration for AI profile
+            agent-protection:
+              $ref: "#/components/schemas/AgentProtectionObject"
+              description: Agent protection configuration for AI profile
+    DLPDataProfileObject:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the DLP data profile
+        uuid:
+          type: string
+          description: Unique identifier for the DLP data profile
+        id:
+          type: string
+          description: DLP data profile id
+        version:
+          type: string
+          description: DLP version
+        rule1:
+          type: object
+          description: First DLP data profile rule configuration
+          properties:
+            action:
+              type: string
+              description: Action to be taken for the first DLP data profile rule
+        rule2:
+          type: object
+          description: Second DLP data profile rule configuration
+          properties:
+            action:
+              type: string
+              description: Action to be taken for the second DLP data profile rule
+        log-severity:
+          type: string
+          description: Severity level for data leak detection logging
+        non-file-based:
+          type: string
+          description: Non-file based data leak detection configuration
+        file-based:
+          type: string
+          description: File-based data leak detection configuration
+      required:
+        - name
+        - uuid
+    ModelProtectionObject:
+      type: array
+      items:
+        type: object
+        description: Model protection configuration details
+        properties:
+          name:
+            type: string
+            description: Name of the model protection configuration
+          action:
+            type: string
+            description: Action to be taken for model protection
+          toxic-category-list:
+            type: array
+            description: List of per-category configurations for toxic content
+            items:
+              $ref: "#/components/schemas/ToxicCategoryConfig"
+          topic-list:
+            type: array
+            description: List of topics for model protection configuration
+          items:
+            $ref: "#/components/schemas/TopicArray"
+      required:
+        - name
+        - action
+    DataProtectionObject:
+      type: object
+      properties:
+        data-leak-detection:
+          type: object
+          properties:
+            member:
+              type: array
+              items:
+                type: object
+                properties:
+                  text:
+                    type: string
+                  id:
+                    type: string
+                  version:
+                    type: string
+                required:
+                  - text
+            action:
+              type: string
+              description: Action to be taken for data leak detection
+            mask-data-inline:
+              type: boolean
+              description: Boolean flag to determine whether data is masked inline
+          required:
+            - member
+            - action
+
+    AppProtectionObject:
+      type: object
+      properties:
+        alert-url-category:
+          type: object
+          description: URL categories for raising alerts
+          properties:
+            member:
+              type: array
+              items:
+                type: string
+        block-url-category:
+          type: object
+          description: URL categories to be blocked
+          properties:
+            member:
+              type: array
+              items:
+                type: string
+        allow-url-category:
+          type: object
+          description: URL categories to be allowed
+          properties:
+            member:
+              type: array
+              items:
+                type: string
+    AgentProtectionObject:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Name of agent protection configuration
+          action:
+            type: string
+            description: Action to be taken for agent protection configuration
+        required:
+          - name
+          - action
+    LatencyObject:
+      type: object
+      properties:
+        inline-timeout-action:
+          type: string
+          description: Action to be taken when inline timeout occurs
+        max-inline-latency:
+          type: integer
+          format: int32
+          description: Maximum allowed inline latency in seconds
+    TopicObject:
+      type: object
+      properties:
+        topic_name:
+          type: string
+          description: Name of the topic for topic guardrail configuration
+        topic_id:
+          type: string
+          description: Unique identifier for the topic
+        revision:
+          type: integer
+          format: int64
+          description: Revision number for the topic
+      required:
+        - topic_name
+        - topic_id
+        - revision
+    TopicArray:
+      type: object
+      description: Topic Array for Topic Guardrail
+      properties:
+        action:
+          type: string
+          description: Action to be taken for topic guardrails configuration
+        topic:
+          type: array
+          description: Custom Topic array
+          items:
+            $ref: "#/components/schemas/TopicObject"
+      required:
+        - action
+        - topic
+
+    ToxicCategoryConfig:
+      type: object
+      description: Per-category configuration for toxic content
+      properties:
+        category:
+          type: string
+          description: Toxic content category name (e.g., hate, sexual-content, cybercrime)
+        action:
+          type: string
+          description: Action configuration for this category (e.g., "high:block,moderate:allow")
+      required:
+        - category
+        - action
+
+    PaginatedAIProfileObject:
+      type: object
+      properties:
+        ai_profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIProfileObject"
+        next_offset:
+          type: integer
+          format: int32
+    ArrayDlpProfileObject:
+      type: object
+      properties:
+        dlp_profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/DLPDataProfileObject"
+
+    DeploymentProfilesObject:
+      type: object
+      properties:
+        deployment_profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeploymentProfileEntryObject"
+        status:
+          type: string
+      required:
+        - deployment_profiles
+        - status
+    DeploymentProfileEntryObject:
+      type: object
+      properties:
+        dp_name:
+          type: string
+        auth_code:
+          type: string
+        tsg_id:
+          type: string
+        status:
+          type: string
+        expiration_date:
+          type: string
+        ave_text_records:
+          type: integer
+          format: int32
+      required:
+        - dp_name
+        - auth_code
+    CustomerAppObject:
+      type: object
+      properties:
+        customer_appId:
+          type: string
+          description: Customer Application ID
+        tsg_id:
+          type: string
+          description: Tenant Service Group ID for Customer App
+        app_name:
+          type: string
+          description: Customer Application Name
+        model_name:
+          type: string
+          description: AI Model Name for Customer App
+        cloud_provider:
+          type: string
+          description: Cloud Provider Name for Customer App
+        environment:
+          type: string
+          description: Cloud Provider Name for Customer App
+        status:
+          type: string
+          description: Indicates Customer App Status whether completed or pending
+        created_by:
+          type: string
+          description: Customer App timestamp
+        updated_by:
+          type: string
+          description: Customer App timestamp
+        ai_agent_framework:
+          type: string
+          description: Framework associated for AI Agent
+      required:
+        - app_name
+        - cloud_provider
+        - environment
+
+    PaginatedCustomerAppObject:
+      type: object
+      properties:
+        customer_apps:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomerAppObjectWithAPIKeyAndDP"
+        next_offset:
+          type: integer
+          format: int32
+
+    CustomerAppObjectWithAPIKeyAndDP:
+      type: object
+      properties:
+        customer_appId:
+          type: string
+        tsg_id:
+          type: string
+          description: Tenant Service Group ID
+        app_name:
+          type: string
+        model_name:
+          type: string
+        cloud_provider:
+          type: string
+        environment:
+          type: string
+        ai_agent_framework:
+          type: string
+        api_keys_dp_info:
+          type: array
+          items:
+            $ref: "#/components/schemas/APIKeyDPInfo"
+      required:
+        - tsg_id
+        - customer_appId
+        - app_name
+        - cloud_provider
+        - environment
+
+    APIKeyDPInfo:
+      type: object
+      properties:
+        api_key_name:
+          type: string
+        dp_name:
+          type: string
+        auth_code:
+          type: string
+      required:
+        - api_key_name
+        - dp_name
+        - auth_code
+
+    ClientIdAndCustomerApp:
+      type: object
+      properties:
+        client_id:
+          type: string
+        customer_app:
+          type: string
+      required:
+        - client_id
+        - customer_app
+    Oauth2TokenObject:
+      type: object
+      properties:
+        token_type:
+          type: string
+        issued_at:
+          type: string
+        client_id:
+          type: string
+        access_token:
+          type: string
+        expires_in:
+          type: string
+        status:
+          type: string
+      required:
+        - access_token
+    Error:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          format: int32
+        error_message:
+          type: string
+      required:
+        - status_code
+        - error_message
+    CustomTopicObject:
+      type: object
+      properties:
+        topic_id:
+          type: string
+          description: Unique identifier for the custom topic
+        topic_name:
+          type: string
+          description: Name of the custom topic
+        revision:
+          type: integer
+          format: int64
+          description: Revision number of the custom topic
+        active:
+          type: boolean
+          description: Indicates whether the custom topic is currently active or disabled
+        description:
+          type: string
+          description: Detailed explanation or purpose of the custom topic
+        examples:
+          type: array
+          description: List of example usages or scenarios for the custom topic
+          items:
+            type: string
+        created_by:
+          type: string
+          description: Email address of the user who created the custom topic
+        updated_by:
+          type: string
+          description: Email address of the user who last modified the custom topic
+        last_modified_ts:
+          type: string
+          format: date-time
+          description: Timestamp of when the custom topic was last modified
+        created_ts:
+          type: string
+          format: date-time
+          description: Timestamp of when the custom topic was created
+      required:
+        - topic_name
+        - revision
+        - description
+        - examples
+    PaginatedCustomTopicObject:
+      type: object
+      properties:
+        custom_topics:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomTopicObject"
+        next_offset:
+          type: integer
+          format: int32
+    DeleteCustomTopicResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        payload:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProfilePayload"
+          minItems: 0
+    ProfilePayload:
+      type: object
+      properties:
+        profile_id:
+          type: string
+        profile_name:
+          type: string
+        revision:
+          type: integer
+          format: int64
+    DeleteAIProfileResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        payload:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyPayload"
+          minItems: 0
+    PolicyPayload:
+      type: object
+      properties:
+        policy_id:
+          type: string
+        policy_name:
+          type: string
+        priority:
+          type: integer
+          format: int64
