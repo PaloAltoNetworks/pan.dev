@@ -1263,13 +1263,6 @@ const config = {
     ],
     tailwindPlugin,
   ],
-  stylesheets: [
-    {
-      href: "https://use.fontawesome.com/releases/v6.2.0/css/all.css",
-      type: "text/css",
-      rel: "stylesheet",
-    },
-  ],
   onDuplicateRoutes: "warn",
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
