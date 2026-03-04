@@ -1268,6 +1268,8 @@ const config = {
       href: "https://use.fontawesome.com/releases/v6.2.0/css/all.css",
       type: "text/css",
       rel: "stylesheet",
+      integrity: "sha384-SOnAn/m2fVJCwnbEYgD4xzrPtvsXdElhOVvR8ND1YjB5nhGNwwf7nBQlhfAwHAZC",
+      crossorigin: "anonymous",
     },
   ],
   onDuplicateRoutes: "warn",
