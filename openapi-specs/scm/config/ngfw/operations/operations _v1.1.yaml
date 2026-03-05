@@ -3,7 +3,7 @@ info:
   version: 2.0.0
   title: Operations and Troubleshooting
   description: |
-    These APIs can be used to retrieve operational data on your devices, for troubleshooting purposes.
+    These APIs can be used to retrieve operational data on your devices, for management and troubleshooting purposes.
   termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
   contact:
     email: support@paloaltonetworks.com
@@ -22,6 +22,235 @@ tags:
     description: Job status and result retrieval for asynchronous operations
 
 paths:
+  /local-config/versions:
+    get:
+      tags:
+        - Device Operations
+      summary: List local configuration versions for a device
+      description: |
+        Retrieves the version history of local configurations for a specified device.
+
+        **Purpose:**
+        - Track configuration changes pushed to devices
+        - View version history with timestamps
+        - Identify current and previous configuration versions
+
+      operationId: getLocalConfigVersions
+      parameters:
+        - name: device
+          in: query
+          description: |
+            The serial number of the device for which to retrieve configuration versions.
+
+            **Format:** Typically 14-15 digit device serial number
+
+            **Example:** `007951000123456`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+
+      responses:
+        '200':
+          description: |
+            Success - Returns array of local configuration versions.
+
+            **Notes:**
+            - Empty array `[]` is returned if no versions exist
+            - Empty array `[]` is returned if device doesn't exist
+            - Versions typically ordered by timestamp
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/local_config_version'
+              examples:
+                with_versions:
+                  summary: Device with configuration versions
+                  value:
+                    - id: 1
+                      serial: '007951000123456'
+                      local_version: '1.0.0'
+                      timestamp: '2025-01-15T10:30:00Z'
+                      xfmed_version: '1.0.0-transformed'
+                    - id: 2
+                      serial: '007951000123456'
+                      local_version: '0.9.0'
+                      timestamp: '2025-01-14T09:20:00Z'
+                      xfmed_version: '0.9.0-transformed'
+                no_versions:
+                  summary: Device with no versions (or non-existent device)
+                  value: []
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /local-config/download:
+    get:
+      tags:
+        - Device Operations
+      summary: Download local configuration file
+      description: |
+        Downloads a specific local configuration file for a device.
+
+        **Purpose:**
+        - Retrieve the actual XML configuration file pushed to a device
+        - Download configuration for backup or review purposes
+        - Access specific configuration versions from history
+
+        **Process:**
+        - Queries the database for the specified device and version
+        - Retrieves the base64-encoded configuration
+        - Decodes and returns it as an XML file download
+        - File is downloaded with name: `local-config-{device}-{version}.xml`
+
+      operationId: downloadLocalConfig
+      parameters:
+        - name: device
+          in: query
+          description: |
+            The serial number of the device for which to download the configuration.
+
+            **Format:** Typically 14-15 digit device serial number
+
+            **Example:** `007951000123456`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+        - name: version
+          in: query
+          description: |
+            The configuration version ID to download.
+
+            **Source:** Use the `id` field from `/local-config/versions` response
+
+            **Example:** `1`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+          example: '1'
+
+      responses:
+        '200':
+          description: |
+            Success - Configuration file downloaded successfully.
+
+            **Response Type:** Binary file download (XML)
+            **Content-Type:** `application/octet-stream`
+            **Filename:** `local-config-{device}-{version}.xml`
+          headers:
+            Content-Disposition:
+              description: Attachment header specifying the downloaded filename
+              schema:
+                type: string
+                example: 'attachment; filename=local-config-007951000123456-1.xml'
+            Content-Type:
+              description: MIME type of the downloaded file
+              schema:
+                type: string
+                example: 'application/octet-stream'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: |
+                  XML configuration file content.
+
+                  The file contains the device's local configuration in XML format,
+                  retrieved from the database and decoded from base64 encoding.
+        '400':
+          description: |
+            Bad Request - Missing required query parameters.
+
+            **Common Causes:**
+            - Missing `device` parameter
+            - Missing `version` parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                missing_device:
+                  summary: Missing device parameter
+                  value:
+                    error: 'device query parameter is required'
+                missing_version:
+                  summary: Missing version parameter
+                  value:
+                    error: 'version query parameter is required'
+        '404':
+          description: |
+            Not Found - Configuration not found for the specified device and version.
+
+            **Common Causes:**
+            - Invalid version ID for the device
+            - Device configuration has been deleted
+            - Database record doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: 'configuration not found'
+        '500':
+          description: |
+            Internal Server Error - Database query error, parsing error, or decoding error.
+
+            **Common Causes:**
+            - Database connectivity issues
+            - Invalid JSON response from database service
+            - Missing `local_cfg` field in database response
+            - Invalid base64 encoding in stored configuration
+            - Failed to decode base64 content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                database_error:
+                  summary: Database query error
+                  value:
+                    error: 'database query error'
+                parse_error:
+                  summary: Failed to parse database response
+                  value:
+                    error: 'failed to parse response'
+                missing_field:
+                  summary: Missing local_cfg field
+                  value:
+                    error: 'local_cfg field not found in response'
+                decode_error:
+                  summary: Failed to decode configuration
+                  value:
+                    error: 'failed to decode configuration'
+        default:
+          $ref: '#/components/responses/default_errors'
   /route-table:
     get:
       summary: Retrieve route table from a device
@@ -38,7 +267,7 @@ paths:
           schema:
             type: string
             pattern: '^[0-9]{14,15}$'
-          example: "007951000123456"
+          example: '007951000123456'
       responses:
         '200':
           description: |
@@ -61,12 +290,12 @@ paths:
                       - Use this ID with `GET /jobs/{job_id}` to poll for job completion
                       - Job typically completes within 5-30 seconds
                       - Job results will contain the routing table data from the device
-                    example: "550e8400-e29b-41d4-a716-446655440000"
+                    example: '550e8400-e29b-41d4-a716-446655440000'
               examples:
                 success:
                   summary: Successful job creation
                   value:
-                    job_id: "550e8400-e29b-41d4-a716-446655440000"
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -94,7 +323,7 @@ paths:
           schema:
             type: string
             format: uuid
-          example: "ce727d2e-f22b-4c0b-824f-37aa2a4ca360"
+          example: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
       responses:
         '200':
           description: |
@@ -108,50 +337,50 @@ paths:
                 complete_routing_job:
                   summary: Completed routing table job
                   value:
-                    jobId: "ce727d2e-f22b-4c0b-824f-37aa2a4ca360"
+                    jobId: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
                     progress: 100
-                    state: "complete"
+                    state: 'complete'
                     request:
-                      command: "show-advanced-routing-route"
+                      command: 'show-advanced-routing-route'
                       devices:
-                        - "012345678901234"
+                        - '012345678901234'
                     results:
-                      - device: "012345678901234"
-                        state: "complete"
-                        created_ts: "2026-03-02 19:00:04"
-                        updated_ts: "2026-03-02 19:00:04"
+                      - device: '012345678901234'
+                        state: 'complete'
+                        created_ts: '2026-03-02 19:00:04'
+                        updated_ts: '2026-03-02 19:00:04'
                         details:
-                          msg: "Command completed successfully."
+                          msg: 'Command completed successfully.'
                           result:
                             router_global:
-                              "3.3.3.3/32":
-                                - prefix: "3.3.3.3/32"
+                              '3.3.3.3/32':
+                                - prefix: '3.3.3.3/32'
                                   prefixLen: 32
-                                  protocol: "connected"
+                                  protocol: 'connected'
                                   distance: 0
                                   metric: 0
                                   installed: true
                                   selected: true
                                   destSelected: true
-                                  uptime: "06w0d07h"
+                                  uptime: '06w0d07h'
                                   nexthopGroupId: 6
                                   nexthops:
-                                    - interfaceName: "vlan.1"
+                                    - interfaceName: 'vlan.1'
                                       interfaceIndex: 256
                                       active: true
                                       fib: true
                                       directlyConnected: true
-                                      flags: "A "
+                                      flags: 'A '
                 in_progress_job:
                   summary: Job in progress
                   value:
-                    jobId: "ce727d2e-f22b-4c0b-824f-37aa2a4ca360"
+                    jobId: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
                     progress: 50
-                    state: "in_progress"
+                    state: 'in_progress'
                     request:
-                      command: "show-advanced-routing-route"
+                      command: 'show-advanced-routing-route'
                       devices:
-                        - "012345678901234"
+                        - '012345678901234'
                     results: []
         '401':
           $ref: '#/components/responses/auth_errors'
@@ -174,7 +403,7 @@ components:
         Tenant Service Group (TSG) ID.  The resulting JWT access token should 
         be attached to all API calls as a `Bearer` token in the `Authorization` 
         header (ex. `Authorization: Bearer tokenstring`).
-      flows: 
+      flows:
         clientCredentials:
           tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
           scopes: {}
@@ -398,178 +627,178 @@ components:
       summary: Not Authenticated
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: Not Authenticated
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_401_panui_auth_invalid_credential:
       summary: Invalid Credential
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: Invalid Credential
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_401_panui_auth_key_too_long:
       summary: Key Too Long
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: Key Too Long
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_401_panui_auth_key_expired:
       summary: Key Expired
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: Key Expired
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_401_panui_auth_need_password_change:
       summary: Need Password Change
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: The password needs to be changed.
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_403_panui_auth_unauthorized:
       summary: Unauthorized
       value:
         _errors:
-          - code: "E007"
+          - code: 'E007'
             message: Unauthorized
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_501_panui_restapi_version_not_supported:
       summary: Version Not Supported
       value:
         _errors:
-          - code: "E012"
+          - code: 'E012'
             message: Version Not Supported
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_501_panui_restapi_method_not_supported:
       summary: Method Not Supported
       value:
         _errors:
-          - code: "E012"
+          - code: 'E012'
             message: Method Not Supported
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_restapi_input_format_mismatch:
       summary: Input Format Mismatch
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: 'Input Format Mismatch: input-format=json'
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_restapi_output_format_mismatch:
       summary: Output Format Mismatch
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: 'Output Format Mismatch: output-format=json Accept=xml'
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_restapi_missing_query_parameter:
       summary: Missing Query Parameter
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: 'Missing Query Parameter: name'
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_restapi_invalid_query_parameter:
       summary: Invalid Query Parameter
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: 'Invalid Query Parameter: location=invalid'
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_restapi_missing_body:
       summary: Missing Body
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: Missing Body
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_405_panui_restapi_action_not_supported:
       summary: Action Not Supported
       value:
         _errors:
-          - code: "E012"
+          - code: 'E012'
             message: 'Action Not Supported: move'
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_mgmt_bad_xpath:
       summary: Bad XPath
       value:
         _errors:
-          - code: "E013"
+          - code: 'E013'
             message: Bad XPath
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_404_panui_mgmt_object_not_present:
       summary: Object Not Present
       value:
         _errors:
-          - code: "E005"
+          - code: 'E005'
             message: Object Not Present
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_409_panui_mgmt_object_not_unique:
       summary: Object Not Unique
       value:
         _errors:
-          - code: "E016"
+          - code: 'E016'
             message: Object Not Unique
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_409_panui_mgmt_name_not_unique:
       summary: Name Not Unique
       value:
         _errors:
-          - code: "E006"
+          - code: 'E006'
             message: Name Not Unique
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_409_panui_mgmt_reference_not_zero:
       summary: Reference Not Zero
       value:
         _errors:
-          - code: "E009"
+          - code: 'E009'
             message: Reference Not Zero
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_mgmt_invalid_object:
       summary: Invalid Object
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: Invalid Object
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_mgmt_invalid_command:
       summary: Invalid Command
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: Invalid Command
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_400_panui_mgmt_malformed_command:
       summary: Malformed Command
       value:
         _errors:
-          - code: "E003"
+          - code: 'E003'
             message: Malformed Command
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
     json_504_panui_mgmt_session_timeout:
       summary: Session Timeout
       value:
@@ -577,7 +806,7 @@ components:
           - code: '4'
             message: Session Timeout
             details: {}
-        _request_id: "abcd-1234"
+        _request_id: 'abcd-1234'
   schemas:
     job_status:
       type: object
@@ -592,7 +821,7 @@ components:
           type: string
           format: uuid
           description: Unique identifier for the job.
-          example: "ce727d2e-f22b-4c0b-824f-37aa2a4ca360"
+          example: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
         progress:
           type: integer
           minimum: 0
@@ -607,7 +836,7 @@ components:
             - in_progress
             - complete
             - failed
-          example: "complete"
+          example: 'complete'
         request:
           type: object
           description: The original request that initiated the job.
@@ -618,7 +847,7 @@ components:
             command:
               type: string
               description: The command that was executed.
-              example: "show-advanced-routing-route"
+              example: 'show-advanced-routing-route'
             devices:
               type: array
               description: List of device serial numbers for which the command was executed.
@@ -626,7 +855,7 @@ components:
                 type: string
                 pattern: '^[0-9]{14,15}$'
               example:
-                - "012345678901234"
+                - '012345678901234'
         results:
           type: array
           description: Array of results from each device. The structure of the result data varies based on the job type.
@@ -645,7 +874,7 @@ components:
           type: string
           pattern: '^[0-9]{14,15}$'
           description: The serial number of the device.
-          example: "012345678901234"
+          example: '012345678901234'
         state:
           type: string
           description: The state of the job for this specific device.
@@ -654,15 +883,15 @@ components:
             - in_progress
             - complete
             - failed
-          example: "complete"
+          example: 'complete'
         created_ts:
           type: string
           description: Timestamp when the job was created.
-          example: "2026-03-02 19:00:04"
+          example: '2026-03-02 19:00:04'
         updated_ts:
           type: string
           description: Timestamp when the job was last updated.
-          example: "2026-03-02 19:00:04"
+          example: '2026-03-02 19:00:04'
         details:
           type: object
           description: Detailed results from the command execution. The structure varies based on the command type.
@@ -673,7 +902,7 @@ components:
             msg:
               type: string
               description: Status message from the command execution.
-              example: "Command completed successfully."
+              example: 'Command completed successfully.'
             result:
               type: object
               description: The actual result data from the command. Structure varies by command type and may contain routing tables, device information, or other operational data.
@@ -703,6 +932,62 @@ components:
             - type: object
         help:
           type: string
+    local_config_version:
+      type: object
+      required:
+        - id
+        - serial
+        - local_version
+        - timestamp
+        - xfmed_version
+      properties:
+        id:
+          type: integer
+          description: |
+            Unique identifier for this configuration version entry in the database.
+          example: 1
+        serial:
+          type: string
+          description: |
+            Device serial number (14-15 digits).
+
+            Identifies which device this configuration version belongs to.
+          pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+        local_version:
+          type: string
+          description: |
+            Local configuration version identifier.
+
+            **Format:** Version string (typically semantic versioning)
+            **Purpose:** Identifies the original configuration version
+          example: '1.0.0'
+        timestamp:
+          type: string
+          format: date-time
+          description: |
+            When this configuration version was created or pushed to the device.
+
+            **Format:** ISO 8601 date-time (UTC)
+            **Source:** Database `ts` field
+          example: '2025-01-15T10:30:00Z'
+        xfmed_version:
+          type: string
+          description: |
+            Transformed configuration version identifier.
+
+            **Purpose:** Version identifier after transformation/processing
+            **Use Case:** Tracking configuration pipeline transformations
+          example: '1.0.0-transformed'
+        md5:
+          type: string
+          description: |
+            MD5 hash of the configuration (optional).
+
+            **Note:** Currently not populated in responses
+            **Purpose:** Configuration integrity verification
+          example: 'abc123def456'
+
 security:
   - scmToken: []
 x-internal: false
