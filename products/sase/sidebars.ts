@@ -342,6 +342,7 @@ module.exports = {
   configorch: [
     "sase/api/config-orch/introduction",
     "sase/api/config-orch/api-workflow",
+    "sase/api/config-orch/site-license-workflow",
     require("./api/config-orch/sidebar"),
   ],
   securityposture: [
