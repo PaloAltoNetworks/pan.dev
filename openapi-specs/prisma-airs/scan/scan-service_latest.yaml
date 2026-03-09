@@ -1,7 +1,9 @@
 openapi: 3.0.3
 info:
   contact:
-    email: https://www.paloaltonetworks.com/company/contact-support
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: "https://support.paloaltonetworks.com"
   title: Prisma AIRS AI Runtime API Intercept
   description:
     "This Open API spec file represents the APIs available for the Prisma AIRS AI Runtime: API Intercept.\n
@@ -13,8 +15,8 @@ info:
     A list of our trademarks can be found at https://www.paloaltonetworks.com/company/trademarks.html. \
     All other marks mentioned herein may be trademarks of their respective companies.\n"
   license:
-    name: Palo Alto Networks EULA
-    url: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+    name: MIT
+    url: https://opensource.org/license/mit
   version: 0.0.0
 
 servers:
@@ -145,7 +147,7 @@ paths:
       parameters:
         - name: scan_ids
           in: query
-          description: Scan Ids for Results
+          description: Scan IDs for results.
           required: true
           allowEmptyValue: false
           schema:
@@ -193,7 +195,7 @@ paths:
 
   /v1/scan/reports:
     get:
-      summary: Retrieve Threat Scan Reports by Report IDs
+      summary: Retrieve Threat Scan Reports
       description: Get the threat scan reports for a given list of report_ids
       security:
         - x-pan-token: []
@@ -203,7 +205,7 @@ paths:
       parameters:
         - name: report_ids
           in: query
-          description: Report Ids for results
+          description: Report IDs for results.
           required: true
           allowEmptyValue: false
           schema:
@@ -272,26 +274,7 @@ components:
           description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
           type: array
           items:
-            type: object
-            properties:
-              prompt:
-                type: string
-                description: The prompt content that you want to scan
-              response:
-                type: string
-                description: The response content that you want to scan
-              code_prompt:
-                type: string
-                description: Code snippet extracted from Prompt content that you want to scan
-              code_response:
-                type: string
-                description: Code snippet extracted from Response content that you want to scan
-              context:
-                type: string
-                description: The data context for contextual grounding
-              tool_event:
-                $ref: "#/components/schemas/ToolEvent"
-                description:  Tool or function call event details
+            $ref: "#/components/schemas/ScanContent"
       required:
         - contents
         - ai_profile
@@ -306,6 +289,27 @@ components:
         profile_name:
           description: Name of the profile. If not provided, then profile_id is required.
           type: string
+
+    ScanContent:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The prompt content that you want to scan
+        response:
+          type: string
+          description: The response content that you want to scan
+        code_prompt:
+          type: string
+          description: Code snippet extracted from Prompt content that you want to scan
+        code_response:
+          type: string
+          description: Code snippet extracted from Response content that you want to scan
+        context:
+          type: string
+          description: The data context for contextual grounding
+        tool_event:
+          $ref: "#/components/schemas/ToolEvent"
 
     Metadata:
       type: object
@@ -528,12 +532,25 @@ components:
       properties:
         topic_guardrails_details:
           $ref: "#/components/schemas/TopicGuardRails"
+        toxic_content_details:
+          $ref: "#/components/schemas/ToxicContentDetails"
 
     ResponseDetectionDetails:
       type: object
       properties:
         topic_guardrails_details:
           $ref: "#/components/schemas/TopicGuardRails"
+        toxic_content_details:
+          $ref: "#/components/schemas/ToxicContentDetails"
+
+    ToxicContentDetails:
+      type: object
+      properties:
+        toxic_categories:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of topics that is detected
 
     ToolDetectionDetails:
       type: object
@@ -630,7 +647,7 @@ components:
           $ref: "#/components/schemas/ToolDetectionFlags"
         threats:
           type: array
-          items: {type: string}
+          items: { type: string }
           example: ["credential leakage", "context poisoning"]
 
     ToolDetectionFlags:
@@ -682,7 +699,7 @@ components:
           $ref: "#/components/schemas/ToolDetectionFlags"
         threats:
           type: array
-          items: {type: string}
+          items: { type: string }
           example: ["credential leakage", "context poisoning"]
         details:
           $ref: "#/components/schemas/ToolDetectionDetails"
@@ -824,10 +841,16 @@ components:
           $ref: "#/components/schemas/UrlFilterReportObject"
         dlp_report:
           $ref: "#/components/schemas/DlpReportObject"
+        dlp_snippets:
+          $ref: "#/components/schemas/DlpSnippetObject"
         dbs_report:
           $ref: "#/components/schemas/DbsReportObject"
+        dbs_snippets:
+          $ref: "#/components/schemas/Snippets"
         tc_report:
           $ref: "#/components/schemas/TcReportObject"
+        tc_snippets:
+          $ref: "#/components/schemas/Snippets"
         mc_report:
           $ref: "#/components/schemas/McReportObject"
         agent_report:
@@ -836,6 +859,10 @@ components:
           $ref: "#/components/schemas/TgReportObject"
         cg_report:
           $ref: "#/components/schemas/CgReportObject"
+        pi_report:
+          $ref: "#/components/schemas/PiReportObject"
+        pi_snippets:
+          $ref: "#/components/schemas/Snippets"
 
     DbsReportObject:
       type: array
@@ -864,6 +891,11 @@ components:
         verdict:
           type: string
           description: Detection service verdict such as "malicious" or "benign"
+        toxic_categories:
+          type: array
+          items:
+            type: string
+          description: Indicates the list of topics that is detected
 
     McReportObject:
       type: object
@@ -965,6 +997,47 @@ components:
           description: Categories associated with the URL
           items:
             type: string
+
+    Snippets:
+      type: array
+      maxItems: 10
+      description: Up to 10 content snippets; each item must be <= 1000 characters.
+      items:
+        type: string
+        maxLength: 1000
+
+    PiReportObject:
+      type: object
+      properties:
+        verdict:
+          type: string
+          description: Detection service verdict such as "malicious" or "benign"
+
+    DlpSnippetMeta:
+      type: object
+      properties:
+        data_pattern:
+          description: "pattern_id (DLP response snippets map key)"
+          type: string
+        confidence_level:
+          type: string
+          enum: [low, medium, high]
+        data_pattern_type:
+          description: "proximity keyword (first one if any)"
+          type: string
+        occurrence:
+          type: integer
+          format: int64
+      required: [data_pattern, confidence_level, occurrence]
+
+    DlpSnippetObject:
+      type: object
+      properties:
+        meta:
+          $ref: "#/components/schemas/DlpSnippetMeta"
+        snippets:
+          $ref: "#/components/schemas/Snippets"
+      required: [meta, snippets]
 
     DlpReportObject:
       type: object
@@ -1311,132 +1384,3 @@ components:
             tr_id: "2082"
           scan_id: "a43e8177-9776-465b-8ef3-a95c5a9607f8"
           status: "complete"
-    ExampleToolsListScan:
-      summary: Example sync scan response for MCP tools/list method
-      value:
-        source: "AI-Runtime-MCP-Server"
-        report_id: "R8d3f7a2e-1234-4b5c-9e8f-a1b2c3d4e5f6"
-        scan_id: "8d3f7a2e-1234-4b5c-9e8f-a1b2c3d4e5f6"
-        tr_id: "txn-5001"
-        session_id: "session-abc123"
-        profile_id: "7b4a9de9-09e9-4ce5-b090-7f99fdffc9a5"
-        profile_name: "mcp-security-profile"
-        category: "benign"
-        action: "allow"
-        tool_detected:
-          verdict: "benign"
-          metadata:
-            ecosystem: "mcp"
-            method: "tools/list"
-            server_name: "file-system-mcp-server"
-          summary:
-            detections:
-              injection: false
-              url_cats: false
-              dlp: false
-              db_security: false
-              toxic_content: false
-              malicious_code: false
-              agent: false
-              topic_violation: false
-            threats: []
-          output_detected:
-            detection_entries:
-              - tool_invoked: "read_file"
-                detections:
-                  injection: false
-                  url_cats: false
-                  dlp: false
-                  db_security: false
-                  toxic_content: false
-                  malicious_code: false
-                  agent: false
-                  topic_violation: false
-                threats: []
-              - tool_invoked: "write_file"
-                detections:
-                  injection: false
-                  url_cats: false
-                  dlp: false
-                  db_security: false
-                  toxic_content: false
-                  malicious_code: false
-                  agent: false
-                  topic_violation: false
-                threats: []
-        created_at: "2025-04-17T10:15:20Z"
-        completed_at: "2025-04-17T10:15:21Z"
-    ExampleToolsCallScan:
-      summary: Example sync scan response for MCP tools/call method with detected threats
-      value:
-        source: "AI-Runtime-MCP-Server"
-        report_id: "R9e4f8b3f-2345-5c6d-af9g-b2c3d4e5f6g7"
-        scan_id: "9e4f8b3f-2345-5c6d-af9g-b2c3d4e5f6g7"
-        tr_id: "txn-5002"
-        session_id: "session-xyz789"
-        profile_id: "7b4a9de9-09e9-4ce5-b090-7f99fdffc9a5"
-        profile_name: "mcp-security-profile"
-        category: "malicious"
-        action: "block"
-        tool_detected:
-          verdict: "malicious"
-          metadata:
-            ecosystem: "mcp"
-            method: "tools/call"
-            server_name: "database-mcp-server"
-            tool_invoked: "execute_query"
-          summary:
-            detections:
-              injection: true
-              url_cats: false
-              dlp: true
-              db_security: false
-              toxic_content: false
-              malicious_code: false
-              agent: false
-              topic_violation: false
-            threats:
-              - "credential leakage"
-          input_detected:
-            detection_entries:
-              - tool_invoked: "execute_query"
-                detections:
-                  injection: true
-                  url_cats: false
-                  dlp: false
-                  db_security: false
-                  toxic_content: false
-                  malicious_code: false
-                  agent: false
-                  topic_violation: false
-                threats:
-                details:
-                  topic_guardrails_details:
-                    allowed_topics: []
-                    blocked_topics: []
-          output_detected:
-            detection_entries:
-              - tool_invoked: "execute_query"
-                detections:
-                  injection: false
-                  url_cats: false
-                  dlp: true
-                  db_security: false
-                  toxic_content: false
-                  malicious_code: false
-                  agent: false
-                  topic_violation: false
-                threats:
-                  - "credential leakage"
-                details:
-                  topic_guardrails_details:
-                    allowed_topics: []
-                    blocked_topics: []
-                masked_data:
-                  data: "SELECT * FROM users WHERE password='***REDACTED***'"
-                  pattern_detections:
-                    - pattern: "password"
-                      locations:
-                        - [35, 54]
-        created_at: "2025-04-17T10:20:30Z"
-        completed_at: "2025-04-17T10:20:32Z"
