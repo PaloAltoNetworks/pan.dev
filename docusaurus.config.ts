@@ -215,6 +215,11 @@ const config = {
                       label: "Prisma AIRS AI Red Teaming",
                       icon: "api-doc",
                     },
+                    {
+                      to: "prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel",
+                      label: "Prisma AIRS AI Model Security",
+                      icon: "api-doc",
+                    },
                   ],
           
                 },
@@ -496,6 +501,11 @@ const config = {
                     {
                       to: "sase/api/mt-interconnect/introduction",
                       label: "Service Provider Interconnect",
+                      icon: "api-doc",
+                    },
+                    {
+                      to: "sase/api/pab-msp/pab-msp-api",
+                      label: "Prisma Browser for MSPs",
                       icon: "api-doc",
                     },
                     {
@@ -946,6 +956,11 @@ const config = {
             outputDir: "products/sase/api/mt-interconnect/Monitor",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          pabmsp: {
+            specPath: "openapi-specs/sase/pab-msp",
+            outputDir: "products/sase/api/pab-msp",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           manageservices: {
             specPath: "openapi-specs/sase/manage-services-5g",
             outputDir: "products/sase/api/manage-services-5g",
@@ -1058,6 +1073,20 @@ const config = {
           aiintegration: {
             specPath: "openapi-specs/prisma-airs-redteam/data-plane",
             outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+           //Prisma AIRS Model Security Management
+          aimodelsecurity: {
+            specPath: "openapi-specs/prisma-airs-model-security/management",
+            outputDir: "products/prisma-airs-model-security/api/aisecuritymodel/management",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+           //Prisma AIRS Model Security DataPlane
+          aimsdataplane: {
+            specPath: "openapi-specs/prisma-airs-model-security/dataplane",
+            outputDir: "products/prisma-airs-model-security/api/aisecuritymodel/dataplane",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
@@ -1202,14 +1231,14 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-00/",
           },
-           compute_3401: {
+          compute_3401: {
             specPath: "openapi-specs/compute/34-01",
             outputDir: "products/compute/api/34-01",
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-01/",
           },
-           compute_3402: {
+          compute_3402: {
             specPath: "openapi-specs/compute/34-02",
             outputDir: "products/compute/api/34-02",
             showExtensions: true,
@@ -1244,6 +1273,8 @@ const config = {
       href: "https://use.fontawesome.com/releases/v6.2.0/css/all.css",
       type: "text/css",
       rel: "stylesheet",
+      integrity: "sha384-SOnAn/m2fVJCwnbEYgD4xzrPtvsXdElhOVvR8ND1YjB5nhGNwwf7nBQlhfAwHAZC",
+      crossorigin: "anonymous",
     },
   ],
   onDuplicateRoutes: "warn",
