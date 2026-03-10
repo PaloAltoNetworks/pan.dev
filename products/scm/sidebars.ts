@@ -338,17 +338,6 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Incidents",
-          items: [
-            {
-              type: "doc",
-              id: "scm/api/config/incidents/incident-scm",
-            },
-            require("./api/config/incidents/sidebar"),
-          ],
-        },
-        {
-          type: "category",
           label: "Security Services",
           items: [
             {
@@ -358,6 +347,17 @@ module.exports = {
             require("./api/config/cloudngfw/security/sidebar"),
           ],
         },
+      ],
+    },
+    {
+      type: "category",
+      label: "Incidents",
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/incidents/incident-scm",
+        },
+        require("./api/config/incidents/sidebar"),
       ],
     },
   ],
