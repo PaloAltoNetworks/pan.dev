@@ -285,6 +285,18 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Posture Management",
+      collapsed: true,
+      items: [
+            {
+              type: "doc",
+              id: "scm/api/config/posture-management/introduction",
+            },
+            require("./api/config/posture-management/sidebar"),
+          ],
+    },
+    {
+      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [

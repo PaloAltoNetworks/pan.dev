@@ -185,6 +185,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        "Posture Management": [
+          {
+            to: "scm/api/config/posture-management/introduction",
+            label: "Posture Management",
+            icon: "api-doc",
+          },
+        ],
         "Other Configuration": [
           {
             to: "/access/api/browser-mgmt/browser-mgmt-api",
