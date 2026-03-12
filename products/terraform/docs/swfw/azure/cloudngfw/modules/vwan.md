@@ -377,6 +377,8 @@ Each object represents one Connection and supports the following properties:
 - `name`                      - (`string`, required) the name of the Connection, must be unique within the Virtual Hub.
 - `connection_type`           - (`string`, required) the type of Connection, use `Vnet` for Virtual Network connections.
 - `remote_virtual_network_id` - (`string`, optional) the resource ID of a remote Virtual Network.
+- `internet_security_enabled` - (`bool`, optional) the parameter that enables internet-bound traffic from the connected VNet 
+                                to be routed through the Virtual Hub for inspection by a Network Virtual Appliance (NVA).
 - `hub_key`                   - (`string`, required) the key referencing the Virtual Hub.
 - `vpn_site_key`              - (`string`, optional) the key referencing the VPN Site used in this Connection.
 - `vpn_link`                  - (`list`, optional, defaults to `[]`) list of VPN link configurations, each object supports the
@@ -428,6 +430,7 @@ map(object({
     connection_type           = string
     hub_key                   = string
     remote_virtual_network_id = optional(string)
+    internet_security_enabled = optional(bool)
     vpn_site_key              = optional(string)
     vpn_link = optional(list(object({
       vpn_link_name                  = string
