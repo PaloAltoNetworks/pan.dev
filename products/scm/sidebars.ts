@@ -285,6 +285,33 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Posture Management", // Level 1: Posture
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/posture-management/introduction",
+        },
+        {
+          type: "category",
+          label: "Checks", // Level 2: Checks
+          collapsed: true,
+          items: [
+            {
+              type: "category",
+              label: "Reports", // Level 3: Reports
+              collapsed: true,
+              items: [
+                // Level 4: The actual spec file (via your generated sidebar)
+                require("./api/config/posture-management/sidebar"),
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [
