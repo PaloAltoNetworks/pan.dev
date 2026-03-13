@@ -1,5 +1,57 @@
 components:
   schemas:
+    AggBandwidthUsage:
+      properties:
+        duration:
+          format: date
+          type: string
+        max_agg_bw:
+          description: Max Agg Bw
+          format: double
+          type: number
+        max_agg_bw_time:
+          format: date
+          type: string
+        site_id:
+          description: Site Id
+          type: string
+    AggBwStatsQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        interval:
+          description: 'Interval: NotNull(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          enum:
+          - 1month
+          type: string
+        metrics:
+          description: 'Metrics: NotEmpty(error = METRICS_EMPTY: Metrics list is required
+            and must contain at least one metric) '
+          items:
+            description: Metrics
+            enum:
+            - AggBandwidthUsage
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
     Aggregate:
       properties:
         data:
@@ -115,6 +167,70 @@ components:
       - statistic
       - unit
       - name
+    AggregateStatsFilter:
+      properties:
+        app:
+          description: 'App: Required(error = AGGREGATE_STATS_APP_ID_REQUIRED: App
+            id is required as part of filter) Size(max = 1, error = AGGREGATE_STATS_APP_LENGTH_EXCEEDED:
+            Please provide one app id, min = 0) '
+          items:
+            description: App
+            type: string
+          type: array
+        path:
+          description: Path
+          items:
+            description: Path
+            type: string
+          type: array
+        site:
+          description: 'Site: Required(error = AGGREGATE_STATS_QUERY_FILTER_SITE_ID_REQUIRED:
+            Site id is required as part of filter) Size(max = 10, error = AGGREGATE_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED:
+            Please provide max ten site id, min = 0) '
+          items:
+            description: Site
+            type: string
+          type: array
+      required:
+      - site
+      - app
+    AggregateStatsQuery:
+      properties:
+        aggregates:
+          description: 'Aggregates: Required(error = AGGREGATE_STATS_QUERY_AGGREGATES_REQUIRED:
+            Aggregates is required) '
+          items:
+            type: object
+          type: array
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AggregateStatsFilter'
+          description: 'Filter: Required(AGGREGATE_STATS_QUERY_FILTER_REQUIRED) Valid '
+        name:
+          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
+            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+      required:
+      - filter
+      - aggregates
+    AggregateStatsResponse:
+      properties:
+        aggregates:
+          description: Aggregates
+          items:
+            type: object
+          type: array
+        end_time:
+          format: date
+          type: string
+        start_time:
+          format: date
+          type: string
     AggregatesQueryResponse:
       properties:
         aggregates:
@@ -304,6 +420,42 @@ components:
         start_time:
           description: Start Time
           type: string
+    AppObjectStatsResponse:
+      properties:
+        data:
+          description: Data
+          items:
+            type: object
+          type: array
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AppStatsFilter'
+          description: Filter
+        object_type:
+          description: Object Type
+          enum:
+          - PeerStatistics
+          - IntfStatistics
+          - CellularModuleStatistics
+          - CellularAPNStatistics
+          - CellularAPNV6Statistics
+          - MulticastStatistics
+          - SecurityPolicyRule
+          - IntfPoEStatistics
+          - IntfLLDPStatistics
+          - IntfAAAStatistics
+          - IntfSTPStatistics
+          - STPStatistics
+          - PoEStatistics
+          - AppSummaryStats
+          - OSPFStatistics
+          - IntfLACPStatistics
+          type: string
+        start_time:
+          format: date
+          type: string
     AppStatsAggregate:
       properties:
         name:
@@ -424,6 +576,124 @@ components:
           type: string
       required:
       - aggregates
+    AppStatsCombinedMetrics:
+      properties:
+        app_failed_to_establish_sum:
+          description: App Failed To Establish Sum
+          format: double
+          type: number
+        app_id:
+          description: App Id
+          type: string
+        app_successful_connections_sum:
+          description: App Successful Connections Sum
+          format: double
+          type: number
+        app_successful_transactions_sum:
+          description: App Successful Transactions Sum
+          format: double
+          type: number
+        app_transaction_failures_sum:
+          description: App Transaction Failures Sum
+          format: double
+          type: number
+        bandwidth_usage_avg:
+          description: Bandwidth Usage Avg
+          format: double
+          type: number
+        bandwidth_usage_egress_avg:
+          description: Bandwidth Usage Egress Avg
+          format: double
+          type: number
+        bandwidth_usage_ingress_avg:
+          description: Bandwidth Usage Ingress Avg
+          format: double
+          type: number
+        duration:
+          format: date
+          type: string
+        path_type:
+          description: Path Type
+          type: string
+        sum_value_egress:
+          description: Sum Value Egress
+          format: double
+          type: number
+        sum_value_ingress:
+          description: Sum Value Ingress
+          format: double
+          type: number
+        tcp_flow_count_sum:
+          description: Tcp Flow Count Sum
+          format: double
+          type: number
+        udp_flow_count_sum:
+          description: Udp Flow Count Sum
+          format: double
+          type: number
+        wan_path_label:
+          description: Wan Path Label
+          type: string
+    AppStatsFilter:
+      properties:
+        health_score:
+          type: object
+    AppStatsQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AppStatsFilter'
+          description: Filter
+        interval:
+          description: 'Interval: NotNull(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        metrics:
+          description: 'Metrics: NotEmpty(error = METRICS_EMPTY: Metrics list is required
+            and must contain at least one metric) '
+          items:
+            description: Metrics
+            enum:
+            - TrafficVolume
+            - TrafficVolume_Ingress
+            - TrafficVolume_Egress
+            - AppSuccessfulConnections
+            - AppSuccessfulTransactions
+            - AppFailedToEstablish
+            - AppTransactionFailures
+            - BandwidthUsage
+            - BandwidthUsage_Ingress
+            - BandwidthUsage_Egress
+            - TCPFlowCount
+            - UDPFlowCount
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
     AppStatsSupportedAggregate:
       properties:
         description:
@@ -605,6 +875,80 @@ components:
           type: string
       required:
       - type
+    AppSummaryStatsFilter:
+      properties:
+        app:
+          description: App
+          items:
+            description: App
+            type: string
+          type: array
+        site:
+          description: Site
+          items:
+            description: Site
+            type: string
+          type: array
+    AppSummaryStatsQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/AppSummaryStatsFilter'
+          description: Filter
+        interval:
+          description: 'Interval: NotNull(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        metrics:
+          description: 'Metrics: NotEmpty(error = METRICS_EMPTY: Metrics list is required
+            and must contain at least one metric) '
+          items:
+            description: Metrics
+            enum:
+            - ApplicationHealthscore
+            - Unknown
+            type: string
+          type: array
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          enum:
+          - duration
+          - app
+          - path_type
+          - unknown
+          type: string
+      required:
+      - metrics
+      - interval
+      - end_time
+      - start_time
+    ApplicationHealthScore:
+      properties:
+        app_id:
+          description: App Id
+          type: string
+        application_healthscore_avg:
+          description: Application Healthscore Avg
+          format: double
+          type: number
+        duration:
+          format: date
+          type: string
+        site_id:
+          description: Site Id
+          type: string
     ApplicationQosAggregatesQuery:
       properties:
         aggregates:
@@ -823,6 +1167,89 @@ components:
           type: string
       required:
       - type
+    CapacityPredictionFilter:
+      properties:
+        direction:
+          description: Direction
+          enum:
+          - Ingress
+          - Egress
+          type: string
+        site:
+          description: Site
+          items:
+            description: Site
+            type: string
+          type: array
+        wn_path:
+          description: Wn Path
+          items:
+            description: Wn Path
+            type: string
+          type: array
+    CapacityPredictionQuery:
+      properties:
+        anomaly:
+          description: Anomaly
+          items:
+            $ref: '#/components/schemas/Forecast'
+          type: array
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/CapacityPredictionFilter'
+          description: Filter
+        forecast:
+          description: Forecast
+          items:
+            $ref: '#/components/schemas/Forecast'
+          type: array
+        forecast_basis:
+          description: Forecast Basis Types
+          items:
+            description: Forecast Basis Types
+            enum:
+            - CAPACITY_EXCEED_THRESHOLD
+            - ANOMALY
+            - CIRCUIT_CAPACITY_FORECAST
+            - CIRCUIT_UTILIZATION
+            - ANOMALY_SITE_CIRCUIT_DETAILS
+            type: string
+          type: array
+        forecast_date:
+          format: date
+          type: string
+        name:
+          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
+            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+        type:
+          description: Type
+          enum:
+          - SITE
+          - CIRCUIT
+          type: string
+    CapacityPredictionResponse:
+      properties:
+        anomaly:
+          description: Anomaly
+          type: object
+        end_time:
+          format: date
+          type: string
+        forecast:
+          description: Forecast
+          type: object
+        forecast_date:
+          format: date
+          type: string
+        start_time:
+          format: date
+          type: string
     CellularmetricsFilter:
       properties:
         apn:
@@ -995,6 +1422,74 @@ components:
           description: 'Value: JsonInclude(content = ALWAYS, contentFilter = classOf[Void],
             value = ALWAYS, valueFilter = classOf[Void]) '
           type: number
+    Distribution:
+      properties:
+        downlink:
+          description: Downlink
+          items:
+            $ref: '#/components/schemas/DistributionData'
+          type: array
+        latency:
+          description: Latency
+          items:
+            $ref: '#/components/schemas/DistributionData'
+          type: array
+        uplink:
+          description: Uplink
+          items:
+            $ref: '#/components/schemas/DistributionData'
+          type: array
+    DistributionData:
+      properties:
+        count:
+          description: Count
+          format: int64
+          type: integer
+        score:
+          description: Score
+          format: double
+          type: number
+    DistributionQuery:
+      properties:
+        aggregation:
+          description: Aggregation
+          enum:
+          - AVG
+          - MIN
+          - MAX
+          type: string
+        end_time:
+          format: date
+          type: string
+        interval:
+          description: Interval
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        metric_name:
+          description: Metric Name
+          type: string
+        name:
+          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
+            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        site_id:
+          description: 'Site Id: Pattern(error = INVALID_SITE_ID: Invalid Site id,
+            regexp = ^[0-9]{1,20}$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+    DistributionResponse:
+      properties:
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+          description: Distribution
     Error:
       properties:
         _error:
@@ -1408,6 +1903,196 @@ components:
         summary:
           description: Summary
           type: boolean
+    FolderScreen:
+      properties:
+        dest_page:
+          description: 'Dest Page: Min(error = INVALID_DEST_PAGE: Requested destination
+            page must be greater than or equal to 0, value = 0L) '
+          format: int32
+          type: integer
+        folder:
+          description: 'Folder: Pattern(error = INVALID_FOLDER: Requested folder is
+            not a valid, regexp = ^(([A-Za-z0-9_=\\-\\s\\+]+/)*[a-zA-Z0-9_=\\-\\s\\.\\+]*|/)$) '
+          type: string
+        id:
+          description: Id
+          type: string
+        limit:
+          description: 'Limit: Min(error = INVALID_LIMIT: Requested pagination limit
+            must be greater than or equal to 0, value = 0L) '
+          format: int32
+          type: integer
+    Forecast:
+      properties:
+        actual_forecast_date:
+          format: date-time
+          type: string
+        bw_site_anomaly:
+          description: Bw Site Anomaly
+          type: number
+        forecast_status:
+          description: Forecast Status
+          type: boolean
+        items:
+          description: Items
+          items:
+            $ref: '#/components/schemas/ForecastResult'
+          type: array
+        name:
+          description: Name
+          enum:
+          - CAPACITY_EXCEED_THRESHOLD
+          - ANOMALY
+          - CIRCUIT_CAPACITY_FORECAST
+          - CIRCUIT_UTILIZATION
+          - ANOMALY_SITE_CIRCUIT_DETAILS
+          type: string
+        type:
+          description: Type
+          enum:
+          - FORECAST_28_DAYS
+          - FORECAST_7_DAYS
+          - CIRCUIT_UTILIZATION_ANOMALY
+          type: string
+    ForecastResult:
+      properties:
+        direction:
+          type: object
+        site:
+          description: Site
+          type: string
+        wn_path:
+          description: Wn Path
+          type: string
+    HealthData:
+      properties:
+        fair:
+          description: Fair
+          type: object
+        good:
+          description: Good
+          type: object
+        others:
+          description: Others
+          type: object
+        poor:
+          description: Poor
+          type: object
+        total:
+          description: Total
+          type: number
+        type:
+          description: Type
+          type: string
+    HealthFilter:
+      properties:
+        application_health:
+          description: Application Health
+          items:
+            description: Application Health
+            enum:
+            - POOR
+            - FAIR
+            - GOOD
+            - OTHERS
+            - ALL
+            type: string
+          type: array
+        link_health:
+          description: Link Health
+          items:
+            description: Link Health
+            enum:
+            - POOR
+            - FAIR
+            - GOOD
+            - OTHERS
+            - ALL
+            type: string
+          type: array
+        site_health:
+          description: Site Health
+          items:
+            description: Site Health
+            enum:
+            - POOR
+            - FAIR
+            - GOOD
+            - OTHERS
+            - ALL
+            type: string
+          type: array
+    HealthScoreQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        filter:
+          $ref: '#/components/schemas/HealthFilter'
+          description: Filter
+        interval:
+          description: Interval
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        name:
+          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
+            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          enum:
+          - SUMMARY
+          - TIMESERIES
+          type: string
+    HealthScoreResponse:
+      properties:
+        data:
+          description: Data
+          items:
+            $ref: '#/components/schemas/HealthData'
+          type: array
+        end_time:
+          format: date
+          type: string
+        interval:
+          description: Interval
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        start_time:
+          format: date
+          type: string
+        view:
+          description: View
+          type: object
+    ListResponse:
+      properties:
+        count:
+          description: 'The actual count.
+
+            '
+          format: int32
+          type: integer
+        id:
+          description: 'The ID.
+
+            '
+          type: string
+      type: object
     LqmStatsAggregateHealthScoreRequest:
       properties:
         aggregation:
@@ -2689,6 +3374,36 @@ components:
           items:
             $ref: '#/components/schemas/MetricArray'
           type: array
+    ReportListItem:
+      properties:
+        id:
+          description: Id
+          type: string
+        modifiedTime:
+          description: ModifiedTime
+          format: int64
+          type: integer
+        name:
+          description: Name
+          type: string
+        path:
+          description: Path
+          type: string
+        size:
+          description: Size
+          format: int64
+          type: integer
+        type:
+          description: Type
+          type: string
+    ReportUrl:
+      properties:
+        download_url:
+          description: Download Url
+          type: string
+        id:
+          description: Id
+          type: string
     Series:
       properties:
         data:
@@ -2784,6 +3499,164 @@ components:
           items:
             $ref: '#/components/schemas/MetricArray'
           type: array
+    TopNComparator:
+      properties:
+        end_time:
+          format: date
+          type: string
+        measurement:
+          description: 'Measurement: Valid '
+          enum:
+          - value
+          - value_growth
+          - value_reduction
+          - percentage_growth
+          - percentage_reduction
+          type: string
+        start_time:
+          format: date
+          type: string
+    TopNGrowth:
+      properties:
+        compare:
+          $ref: '#/components/schemas/TopNComparator'
+          description: Compare
+        filter:
+          $ref: '#/components/schemas/TopNGrowthFilter'
+          description: 'Filter: Valid '
+        limit:
+          description: 'Limit: Min(error = INVALID_LIMIT: Limit should be between
+            1 and 10, value = 1L) Max(error = INVALID_LIMIT: Limit should be between
+            1 and 10, value = 10L) '
+          type: integer
+        metrics:
+          $ref: '#/components/schemas/Metrics'
+          description: 'Metrics: Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+        type:
+          description: 'Type: Required(error = REQUIRED_PROPERTY: Schema check failed
+            - {} is a required property) '
+          enum:
+          - app
+          - site
+          type: string
+      required:
+      - metrics
+      - type
+    TopNGrowthFilter:
+      properties:
+        app:
+          description: 'App: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
+            failed - {} is too long, min = 0) '
+          items:
+            description: App
+            type: string
+          type: array
+        direction:
+          description: Direction
+          items:
+            description: Direction
+            enum:
+            - Ingress
+            - Egress
+            type: string
+          type: array
+        element:
+          description: 'Element: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
+            failed - {} is too long, min = 0) '
+          items:
+            description: Element
+            type: string
+          type: array
+        path:
+          description: 'Path: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
+            failed - {} is too long, min = 0) '
+          items:
+            description: Path
+            type: string
+          type: array
+        path_type:
+          description: 'Path Type: Size(max = 10, error = PATH_TYPE_LIST_LENGTH_EXCEEDED:
+            Maximum number of allowed path_types is 10, min = 0) '
+          items:
+            description: Path Type
+            enum:
+            - public_direct
+            - public_vpn
+            - private_direct
+            - private_vpn
+            - unknown
+            - servicelink
+            type: string
+          type: array
+        site:
+          description: 'Site: Size(max = 10, error = LENGTH_EXCEEDED: Schema check
+            failed - {} is too long, min = 0) '
+          items:
+            description: Site
+            type: string
+          type: array
+        waninterface:
+          description: 'Waninterface: Size(max = 10, error = LENGTH_EXCEEDED: Schema
+            check failed - {} is too long, min = 0) '
+          items:
+            description: Waninterface
+            type: string
+          type: array
+    TopNGrowthQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        name:
+          description: 'Name: Pattern(error = INVALID_FILTER: Schema check failed
+            - Invalid value for param {}, regexp = ^[A-Za-z]+$) '
+          type: string
+        start_time:
+          format: date
+          type: string
+        top_n:
+          $ref: '#/components/schemas/TopNGrowth'
+          description: 'Top N: Required(error = REQUIRED_PROPERTY: Schema check failed
+            - {} is a required property) Valid '
+      required:
+      - top_n
+    TopNQuery:
+      properties:
+        end_time:
+          format: date
+          type: string
+        interval:
+          description: 'Interval: Required(error = REQUIRED_PROPERTY: Schema check
+            failed - {} is a required property) '
+          enum:
+          - 10sec
+          - 1min
+          - 5min
+          - 1hour
+          - 1day
+          - 1month
+          type: string
+        limit:
+          description: 'Limit: Required(error = REQUIRED_PROPERTY: Schema check failed
+            - {} is a required property) '
+          type: integer
+        start_time:
+          format: date
+          type: string
+        traffic_vol_end_time:
+          format: date
+          type: string
+        traffic_vol_start_time:
+          format: date
+          type: string
+      required:
+      - limit
+      - interval
+      - traffic_vol_end_time
+      - traffic_vol_start_time
+      - end_time
+      - start_time
     View:
       properties:
         individual:
@@ -3051,6 +3924,44 @@ paths:
       summary: Interface Stats (v2.0)
       tags:
       - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aggregatebandwidth/query:
+    post:
+      description: Fetches aggregate bandwidth statistics based on specified metrics
+        and grouping
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aggregatebandwidth-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggBwStatsQuery'
+        description: Filter and metrics for aggregate bandwidth stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggBandwidthUsage'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get aggregate bandwidth statistics (v2.0)
+      tags:
+      - Metrics
   /sdwan/monitor/v2.0/api/monitor/aggregates/application/qos:
     post:
       description: Provides a aggregated data for Application QOS stats
@@ -3175,6 +4086,367 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Query WAN Neighbor statistics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/aggregates:
+    get:
+      description: Get site or path level aggregated stats API v2.0
+      operationId: get-sdwan-monitor-v2.0-api-monitor-aiops-aggregates
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get site or path level aggregated statistics (v2.0)
+      tags:
+      - Metrics
+    post:
+      description: Query and get site or path level aggregated stats API v2.0
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-aggregates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregateStatsQuery'
+        description: Details of app object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_REQUIRED
+                  - code: AGGREGATE_STATS_APP_ID_REQUIRED
+                  - code: AGGREGATE_STATS_APP_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_APP_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: AGGREGATE_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_PATH_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_UNSUPPORTED
+                  - code: AGGREGATE_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: AGGREGATE_STATS_QUERY_FILTER_UNSUPPORTED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query and get site or path level aggregated statistics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/anomaly:
+    get:
+      description: 'Get circuit bandwidth anomaly for Version 2.0
+
+        '
+      operationId: get-sdwan-monitor-v2.0-api-monitor-aiops-anomaly
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get circuit bandwidth anomaly for Version 2.0 (v2.0)
+      tags:
+      - Metrics
+    post:
+      description: 'Get circuit bandwidth anomaly for site v2.0
+
+        Note
+
+        * Start and end time need to be specified in ISO8601 UTC format.
+
+        * Forecast basis need be to specified according to 2.0 specifications.
+
+        '
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-anomaly
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapacityPredictionQuery'
+        description: Query request for getting circuit bandwidth anomaly based on
+          anomaly basis
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionQuery'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: MAX_DATAPOINTS_END_TIME
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get circuit bandwidth anomaly (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/forecast:
+    get:
+      description: 'Returns capacity prediction schema for Version 2.0
+
+        '
+      operationId: get-sdwan-monitor-v2.0-api-monitor-aiops-forecast
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Returns capacity prediction schema for Version 2.0 (v2.0)
+      tags:
+      - Metrics
+    post:
+      description: 'Get capacity prediction for site v2.0
+
+        Note
+
+        * Start and end time need to be specified in ISO8601 UTC format.
+
+        * Forecast basis need be to specified according to 2.0 specifications.
+
+        * Type need to be specified according to the specifications.
+
+        '
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-forecast
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapacityPredictionQuery'
+        description: Query request for getting capacity prediction based on type and
+          forecast basis
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionQuery'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: MAX_DATAPOINTS_END_TIME
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Capacity Prediction (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/health:
+    get:
+      description: 'Get Healthscore parameters
+
+        '
+      operationId: get-sdwan-monitor-v2.0-api-monitor-aiops-health
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthScoreResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get Healthscore parameters (v2.0)
+      tags:
+      - Metrics
+    post:
+      description: 'Get health metrics for sites, links and applications.
+
+        * interval is required
+
+        * start_time is required
+
+        Note
+
+        * Start time need to be specified in ISO8601 UTC format.
+
+        * Metrics need to specified according to 2.0 specifications.
+
+        * Filters need to be specified according to the specifications.
+
+        '
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-health
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthScoreQuery'
+        description: Query request for getting healthscore metrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthScoreResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: METRIC_NOT_SUPPORTED
+                  - code: FUTURE_TIME_ERROR
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Healthscore metrics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/object_stats:
+    get:
+      description: Get app object stats API v2.0
+      operationId: get-sdwan-monitor-v2.0-api-monitor-aiops-object_stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppObjectStatsResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get App object statistics (v2.0)
+      tags:
+      - Metrics
+    post:
+      description: Query and get app object stats API v2.0
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-object_stats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectStatsQuery'
+        description: Details of app object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: FUTURE_TIME_ERROR
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query and get App object statistics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/aiops/topn:
+    post:
+      description: 'Get TopN sites or circuits based on growth.
+
+        Note
+
+        * Start and end time need to be specified in ISO8601 UTC format.
+
+        * Metrics need to specified according to 2.0 specifications.
+
+        * Filters need to be specified according to the specifications.
+
+        '
+      operationId: post-sdwan-monitor-v2.0-api-monitor-aiops-topn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopNGrowthQuery'
+        description: Query request for getting TopN Sites/Apps based on growth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopNGrowthQuery'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: METRIC_NOT_SUPPORTED
+                  - code: FUTURE_TIME_ERROR
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get TopN data with metrics output (v2.0)
       tags:
       - Metrics
   /sdwan/monitor/v2.0/api/monitor/app_acceleration:
@@ -3318,6 +4590,83 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Query Application users (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/applicationstats/query:
+    post:
+      description: Fetches various application statistics based on specified metrics
+        and filters
+      operationId: post-sdwan-monitor-v2.0-api-monitor-applicationstats-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppStatsQuery'
+        description: Filter and metrics for application stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppStatsCombinedMetrics'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_PATH
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get application statistics (v2.0)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.0/api/monitor/applicationsummary/query:
+    post:
+      description: Fetches application summary statistics based on specified metrics
+        and filters
+      operationId: post-sdwan-monitor-v2.0-api-monitor-applicationsummary-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppSummaryStatsQuery'
+        description: Filter and metrics for application summary stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationHealthScore'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: METRICS_EMPTY
+                  - code: INVALID_METRIC_NAME
+                  - code: INVALID_VIEW_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get application summary statistics (v2.0)
       tags:
       - Metrics
   /sdwan/monitor/v2.0/api/monitor/cellular_metrics:
@@ -3930,6 +5279,41 @@ paths:
       summary: Sys Point metrics (v2.0)
       tags:
       - Metrics
+  /sdwan/monitor/v2.0/api/monitor/topn_traffic_vol/query:
+    post:
+      description: Get top N traffic volume statistics for application stats dashboard
+      operationId: post-sdwan-monitor-v2.0-api-monitor-topn_traffic_vol-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopNQuery'
+        description: Filter for top N traffic volume stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppStatsCombinedMetrics'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: TRAFFIC_VOLUME_START_TIME_AFTER_END_TIME
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: REQUIRED_PROPERTY
+                  - code: INVALID_INTERVAL_PROPERTY
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Top N Traffic Volume Stats (v2.0)
+      tags:
+      - Metrics
   /sdwan/monitor/v2.1/api/monitor/aggregates/healthscore:
     post:
       description: HealthScore Aggregate categorized as poor, fair and good for MSP
@@ -3961,6 +5345,193 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Aggregate HealthScore (v2.1)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.1/api/monitor/aiops/aggregates:
+    get:
+      description: Get site or path level aggregated stats API v2.1
+      operationId: get-sdwan-monitor-v2.1-api-monitor-aiops-aggregates
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get site or path level aggregated statistics (v2.1)
+      tags:
+      - Metrics
+    post:
+      description: Query and get site or path level aggregated stats API v2.1
+      operationId: post-sdwan-monitor-v2.1-api-monitor-aiops-aggregates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AggregateStatsQuery'
+        description: Details of app object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregateStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_REQUIRED
+                  - code: AGGREGATE_STATS_APP_ID_REQUIRED
+                  - code: AGGREGATE_STATS_APP_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_APP_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: AGGREGATE_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: AGGREGATE_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_PATH_ID_INVALID_VALUE
+                  - code: AGGREGATE_STATS_QUERY_AGGREGATES_UNSUPPORTED
+                  - code: AGGREGATE_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: AGGREGATE_STATS_QUERY_FILTER_UNSUPPORTED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query and get site or path level aggregated statistics (v2.1)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.1/api/monitor/aiops/forecast:
+    get:
+      description: 'Get capacity forecast for Version 2.1
+
+        '
+      operationId: get-sdwan-monitor-v2.1-api-monitor-aiops-forecast
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get capacity forecast for Version 2.1 (v2.1)
+      tags:
+      - Metrics
+    post:
+      description: 'Get capacity prediction for site v2.1
+
+        Note
+
+        * Start and end time need to be specified in ISO8601 UTC format.
+
+        * Forecast basis need be to specified according to 2.0 specifications.
+
+        * Type need to be specified according to the specifications.
+
+        '
+      operationId: post-sdwan-monitor-v2.1-api-monitor-aiops-forecast
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapacityPredictionQuery'
+        description: Query request for getting capacity prediction based on type and
+          forecast basis
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapacityPredictionQuery'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: SCHEMA_MISMATCH
+                  - code: START_TIME_GREATER_THAN_END_TIME
+                  - code: MAX_DATAPOINTS_END_TIME
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Get Capacity Prediction (v2.1)
+      tags:
+      - Metrics
+  /sdwan/monitor/v2.1/api/monitor/aiops/object_stats:
+    get:
+      description: Get app object stats API v2.1
+      operationId: get-sdwan-monitor-v2.1-api-monitor-aiops-object_stats
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectStatsResponse'
+          description: Successful Operation
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal Server Error
+      summary: Get App object statistics (v2.1)
+      tags:
+      - Metrics
+    post:
+      description: Query and get app object stats API v2.1
+      operationId: post-sdwan-monitor-v2.1-api-monitor-aiops-object_stats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectStatsQuery'
+        description: Details of app object stats query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectStatsResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_REQUIRED
+                  - code: OBJECT_STATS_QUERY_FILTER_SITE_ID_REQUIRED
+                  - code: OBJECT_STATS_QUERY_OBJECT_TYPE_UNSUPPORTED
+                  - code: OBJECT_STATS_QUERY_OBJECT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_SITE_ID_INVALID_VALUE
+                  - code: OBJECT_STATS_QUERY_ELEMENT_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_SITE_LIST_LENGTH_EXCEEDED
+                  - code: OBJECT_STATS_QUERY_START_TIME_BEFORE_END_TIME
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: FUTURE_TIME_ERROR
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Query and get App object statistics (v2.1)
       tags:
       - Metrics
   /sdwan/monitor/v2.1/api/monitor/sys_metrics/topn:
@@ -4514,6 +6085,53 @@ paths:
       summary: Aggregate App stats (v3.0)
       tags:
       - Metrics
+  /sdwan/monitor/v3.0/api/monitor/distributions/{metric_name}:
+    post:
+      description: Get link quality point metrics distribution for LqmLatencyPointMetric,
+        LqmMosPointMetric, LqmPktLossPointMetric, and LqmJitterPointMetric.
+      operationId: post-sdwan-monitor-v3.0-api-monitor-distributions-metric_name
+      parameters:
+      - description: Metric name.
+        in: path
+        name: metric_name
+        required: true
+        schema:
+          description: Metric Name
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DistributionQuery'
+        description: Query request for getting lqm point metrics distribution
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DistributionResponse'
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: INVALID_REQUEST_ERROR_0001
+                  - code: EMPTY_REQ_BODY
+                  - code: METRIC_NOT_SUPPORTED
+                  - code: FUTURE_TIME_ERROR
+                  - code: INVALID_STATS_REQUEST_BODY
+                  - code: INVALID_INTERVAL_PROPERTY
+                  - code: INVALID_SITE_ID
+                  - code: INTERVAL_REQUIRED
+                  - code: DISTRIBUTION_START_TIME_REQUIRED
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: LQM Point Metrics Distribution (v3.0)
+      tags:
+      - Metrics
   /sdwan/monitor/v3.0/api/monitor/topn:
     post:
       description: Get Top N data
@@ -4677,6 +6295,102 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
       summary: Flows (v3.11)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/reports:
+    get:
+      description: Get report file
+      operationId: get-sdwan-v2.0-api-reports
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                format: binary
+                type: string
+          description: Successful Operation
+      summary: Get report file (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/reports/query:
+    post:
+      description: Get report file
+      operationId: post-sdwan-v2.0-api-reports-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderScreen'
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                format: binary
+                type: string
+          description: Successful Operation
+      summary: Get report file (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/reportsdir:
+    get:
+      description: Get files and folders in specified folder
+      operationId: get-sdwan-v2.0-api-reportsdir
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ReportListItem'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get files and folders in specified folder (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/reportsdir/query:
+    post:
+      description: Get files and folders in specified folder
+      operationId: post-sdwan-v2.0-api-reportsdir-query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderScreen'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/ReportListItem'
+                      type: array
+                  type: object
+          description: Successful Operation
+      summary: Get files and folders in specified folder (v2.0)
+      tags:
+      - Metrics
+  /sdwan/v2.0/api/reportsurl:
+    get:
+      description: Get download URL for report file
+      operationId: get-sdwan-v2.0-api-reportsurl
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportUrl'
+          description: Successful Operation
+      summary: Get download URL for report file (v2.0)
       tags:
       - Metrics
   /sdwan/v2.0/api/tenants/{esp_tenant_id}/monitor/aggregates/healthscore:
