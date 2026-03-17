@@ -285,6 +285,33 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Posture API", // Level 1: Posture
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/posture-management/introduction-posture",
+        },
+        {
+          type: "category",
+          label: "Checks", // Level 2: Checks
+          collapsed: true,
+          items: [
+            {
+              type: "category",
+              label: "Reports", // Level 3: Reports
+              collapsed: true,
+              items: [
+                // Level 4: The actual spec file (via your generated sidebar)
+                require("./api/config/posture-management/sidebar"),
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [
@@ -347,28 +374,6 @@ module.exports = {
             require("./api/config/cloudngfw/security/sidebar"),
           ],
         },
-      ],
-    },
-    {
-      type: "category",
-      label: "Posture API",
-      items: [
-        {
-          type: "doc",
-          id: "scm/api/config/posture-management/introduction-posture",
-        },
-        require("./api/config/posture-management/sidebar"),
-      ],
-    },
-    {
-      type: "category",
-      label: "Incidents",
-      items: [
-        {
-          type: "doc",
-          id: "scm/api/config/incidents/incident-scm",
-        },
-        require("./api/config/incidents/sidebar"),
       ],
     },
   ],
