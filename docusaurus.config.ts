@@ -908,6 +908,10 @@ const config = {
             specPath: "openapi-specs/scm/config/posture-management",
             outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag"},
+          "config-incidents": {
+            specPath: "openapi-specs/scm/config/incidents",
+            outputDir: "products/scm/api/config/incidents",
+            sidebarOptions: { groupPathsBy: "tag" },
           },
           adem: {
             specPath: "openapi-specs/access/adem",

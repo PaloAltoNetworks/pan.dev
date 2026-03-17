@@ -1,7 +1,7 @@
 ---
 id: api-workflow
 title: API Workflow 
-sidebar_label: API Workflow for Configuration Orchestration
+sidebar_label: Remote Networks Onboarding with Aggregate Bandwidth
 slug: /sase/api/api-workflow
 keywords:
   - SASE
