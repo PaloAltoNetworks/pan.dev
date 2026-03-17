@@ -1,0 +1,173 @@
+openapi: 3.0.3
+info:
+  title: Posture Check Upload Initiation API
+  version: '1.0'
+  description: "The Posture API provides the programmatic backbone for your security\
+    \ operations.\nBy delivering actionable intelligence and deep configuration insights,\
+    \ we empower \nyou to maintain a compliant, resilient infrastructure\u2014without\
+    \ the overhead. This Open API spec file was created on March 17, 2026. \xA9 2026\
+    \ Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo\
+    \ Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.strata.paloaltonetworks.com
+  description: Current
+- url: https://api.sase.paloaltonetworks.com
+  description: Legacy
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The error code representing a specific error condition.
+                example: API_I00035
+              message:
+                type: string
+                description: A brief description of the error condition.
+                example: Invalid Request Payload
+              details:
+                type: array
+                items:
+                  type: string
+                description: An explanation of the error condition.
+                example:
+                - 'Missing required header: x-tenant-id'
+              help:
+                type: string
+                format: uri
+                description: A URL link to documentation describing the error condition.
+                example: https://docs.example.com/errors#API_I00035
+        _request_id:
+          type: string
+          format: uuid
+          description: The request ID for troubleshooting purposes.
+          example: eb18eb0c-d5b7-43f3-9e38-38464ee11e2f
+ExternalTags:
+  Config File Upload:
+    title: Config File Upload
+    description: Config file upload for BPA result
+    tags:
+    - Config File Upload
+paths:
+  /posture/checks/v1/reports/config-file-upload:
+    post:
+      summary: Initiate a Configuration Upload
+      description: Generates a tracking Identifier and a presigned GCS Uniform Resource
+        Locator for file upload using device metadata.
+      operationId: initiateConfigUpload
+      responses:
+        '201':
+          description: Successfully initiated config upload.
+          headers:
+            Location:
+              description: URI of the created task resource.
+              schema:
+                type: string
+                format: uri
+                example: /posture/checks/reports/config-file-upload/550e8400-e29b-41d4-a716-446655440000/bpa-result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  upload_url:
+                    type: string
+                    format: uri
+                    description: Presigned GCS URL.
+        '400':
+          description: Bad request - missing required header or invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests - maximum limit of 5 active jobs reached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+      tags:
+      - Config File Upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - delete_after_processing
+              properties:
+                delete_after_processing:
+                  type: boolean
+                  description: If true, the uploaded data will be deleted immediately
+                    after processing completes.
+                  default: false
+                  example: false
+  /posture/checks/v1/reports/{id}/bpa-result:
+    get:
+      summary: Get BPA Processing Status
+      description: Returns the status (QUEUED, IN_PROGRESS, COMPLETED, FAILED) and
+        final result.
+      operationId: getBpaResult
+      responses:
+        '200':
+          description: Status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - QUEUED
+                    - IN_PROGRESS
+                    - COMPLETED
+                    - FAILED
+                    example: IN_PROGRESS
+                  message:
+                    type: string
+                    example: Analyzing security rules...
+                  result:
+                    type: object
+                    description: Populated only when status is COMPLETED.
+                    properties:
+                      report_url:
+                        type: string
+                        format: uri
+        '404':
+          description: Task ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: The task ID provided during initiation.
+      tags:
+      - Config File Upload

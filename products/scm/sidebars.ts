@@ -351,6 +351,17 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Posture API",
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/posture-management/introduction-posture",
+        },
+        require("./api/config/posture-management/sidebar"),
+      ],
+    },
+    {
+      type: "category",
       label: "Incidents",
       items: [
         {
