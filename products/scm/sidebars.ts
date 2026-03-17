@@ -285,12 +285,12 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Posture", // Level 1: Posture
+      label: "Posture API", // Level 1: Posture
       collapsed: true,
       items: [
         {
           type: "doc",
-          id: "scm/api/config/posture-management/introduction",
+          id: "scm/api/config/posture-management/introduction-posture",
         },
         {
           type: "category",

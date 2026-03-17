@@ -1,7 +1,7 @@
 ---
-id: introduction
-title: Posture APIs
-sidebar_label: Posture APIs
+id: introduction-posture
+title: Posture 
+sidebar_label: Posture 
 keywords:
   - Strata Cloud Manager
   - Configuration
