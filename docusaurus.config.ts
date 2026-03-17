@@ -1302,7 +1302,7 @@ async function createConfig() {
   let filters =
     process.env.PRODUCTS_INCLUDE && process.env.PRODUCTS_INCLUDE.split(",");
   if (filters) {
-    config.plugins[4][1]["include"] = docsPluginInclude(filters);
+    (config.plugins[4][1] as any)["include"] = docsPluginInclude(filters);
   }
   return config;
 }
