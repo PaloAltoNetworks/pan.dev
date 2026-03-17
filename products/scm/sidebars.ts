@@ -285,7 +285,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Posture Management", // Level 1: Posture
+      label: "Posture", // Level 1: Posture
       collapsed: true,
       items: [
         {
