@@ -12,6 +12,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| March 17th, 2026    | Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/).
 | March 11th, 2026    | Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/).
 | January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).
 | October 21, 2025     | Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/).
