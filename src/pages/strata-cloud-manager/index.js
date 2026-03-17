@@ -185,7 +185,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        Posture: [
+        "Posture": [
           {
             to: "scm/api/config/posture-management/introduction-posture",
             label: "Posture",
@@ -234,7 +234,7 @@ export default function SCMLandingPage() {
           },
         ],
       },
-    },
+    },  
     {
       label: "Monitoring",
       description: "",
