@@ -349,6 +349,17 @@ module.exports = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Incidents",
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/incidents/incident-scm",
+        },
+        require("./api/config/incidents/sidebar"),
+      ],
+    },
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
   scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
