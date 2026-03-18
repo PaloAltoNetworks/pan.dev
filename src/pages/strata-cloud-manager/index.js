@@ -185,17 +185,17 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        Incidents: [
-          {
-            to: "scm/api/config/incidents/incident-scm",
-            label: "Incidents API",
-            icon: "api-doc",
-          },
-        ],
         Posture: [
           {
             to: "scm/api/config/posture-management/introduction-posture",
             label: "Posture",
+            icon: "api-doc",
+          },
+        ],
+        Incidents: [
+          {
+            to: "scm/api/config/incidents/incident-scm",
+            label: "Incidents API",
             icon: "api-doc",
           },
         ],
