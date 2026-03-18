@@ -108,7 +108,6 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/sase/operations/operations-api",
             },
-      
             require("./api/config/sase/operations/sidebar"),
           ],
         },
@@ -285,7 +284,18 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Posture API", // Level 1: Posture
+      label: "Incidents API",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/incidents/incident-scm",
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Posture API",
       collapsed: true,
       items: [
         {
@@ -294,17 +304,14 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Checks", // Level 2: Checks
+          label: "Checks",
           collapsed: true,
           items: [
             {
               type: "category",
-              label: "Reports", // Level 3: Reports
+              label: "Reports",
               collapsed: true,
-              items: [
-                // Level 4: The actual spec file (via your generated sidebar)
-                require("./api/config/posture-management/sidebar"),
-              ],
+              items: [require("./api/config/posture-management/sidebar")],
             },
           ],
         },
