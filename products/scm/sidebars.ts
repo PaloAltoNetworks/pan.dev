@@ -291,6 +291,7 @@ module.exports = {
           type: "doc",
           id: "scm/api/config/incidents/incident-scm",
         },
+        require("./api/config/incidents/sidebar"),
       ],
     },
     {
