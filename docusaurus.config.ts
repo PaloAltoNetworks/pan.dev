@@ -907,6 +907,14 @@ const config = {
           "ngfw-operations": {
             specPath: "openapi-specs/scm/config/ngfw-operations",
             outputDir: "products/scm/api/config/ngfw-operations",
+          "config-incidents": {
+            specPath: "openapi-specs/scm/config/incidents",
+            outputDir: "products/scm/api/config/incidents",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "posturemanagement": {
+            specPath: "openapi-specs/scm/config/posture-management",
+            outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           adem: {

@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Best Practice Assessment (BPA) Config Upload API
+  version: '1.0'
+  description: "The Best Practice Assessment (BPA) Config Upload API provides a streamlined,\
+    \ \nprogrammatic way for organizations to audit their security posture. \nBy integrating\
+    \ this API into your workflow, you can automatically submit configuration files\
+    \ from \nPalo Alto Networks Panorama or Next-Generation Firewalls (NGFW) and receive\
+    \ a comprehensive assessment\nbased on industry-standard security benchmarks.\n\
+    The service parses your configuration, identifies potential security gaps, and\n\
+    returns a detailed JSON-formatted report. This allows your team to ingest data\
+    \ directly \ninto custom dashboards, SIEMs, or other automations.\n\nKey Features\
+    \ and Security\n\n    We understand that configuration files contain sensitive\
+    \ architectural data. \n    This API is built with a security-first architecture\
+    \ to ensure your data remains protected:\n    - Secure Transmission: All data\
+    \ is encrypted in transit using industry-standard TLS protocols.\n    - Privacy\
+    \ Control (Zero Persistence): The API includes an optional flag that instructs\
+    \ the service \n      to delete the configuration file immediately after the report\
+    \ is generated. \n      This ensures that none of your sensitive information is\
+    \ stored in the cloud environment.\n    - Actionable JSON Output: Instead of static\
+    \ PDFs, the API delivers structured data, \n      making it machine readable and\
+    \ easily processed.\n\nWorkflow Overview\n\n  1. Export: Generate a configuration\
+    \ file from your Panorama or NGFW.\n  2. Upload: Submit the file to the config\
+    \ upload endpoint via a secure POST request.\n  3. Process: The engine analyzes\
+    \ the configuration against hundreds of best-practice checks.\n  4. Retrieve:\
+    \ Receive the results instantly in a structured JSON schema.\n  5. Purge: (Optional)\
+    \ The service automatically deletes the source configuration file upon completion.\
+    \ This Open API spec file was created on March 18, 2026. \xA9 2026 Palo Alto Networks,\
+    \ Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks. A list\
+    \ of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.strata.paloaltonetworks.com
+  description: Current
+- url: https://api.sase.paloaltonetworks.com
+  description: Legacy
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The error code representing a specific error condition.
+                example: API_I00035
+              message:
+                type: string
+                description: A brief description of the error condition.
+                example: Invalid Request Payload
+              details:
+                type: array
+                items:
+                  type: string
+                description: An explanation of the error condition.
+                example:
+                - 'Missing required header: x-tenant-id'
+              help:
+                type: string
+                format: uri
+                description: A URL link to documentation describing the error condition.
+                example: https://docs.example.com/errors#API_I00035
+        _request_id:
+          type: string
+          format: uuid
+          description: The request ID for troubleshooting purposes.
+          example: eb18eb0c-d5b7-43f3-9e38-38464ee11e2f
+ExternalTags:
+  Config File Upload:
+    title: Config File Upload
+    description: Config file upload for BPA result
+    tags:
+    - Config File Upload
+paths:
+  /posture/checks/v1/reports/config-file-upload:
+    post:
+      summary: Initiate a Configuration Upload
+      description: Generates a tracking Identifier and a presigned GCS Uniform Resource
+        Locator for file upload using device metadata.
+      operationId: initiateConfigUpload
+      responses:
+        '201':
+          description: Successfully initiated config upload.
+          headers:
+            Location:
+              description: URI of the created task resource.
+              schema:
+                type: string
+                format: uri
+                example: /posture/checks/reports/config-file-upload/550e8400-e29b-41d4-a716-446655440000/bpa-result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  upload_url:
+                    type: string
+                    format: uri
+                    description: Presigned GCS URL.
+        '400':
+          description: Bad request - missing required header or invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests - maximum limit of 5 active jobs reached.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+      tags:
+      - Config File Upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - delete_after_processing
+              properties:
+                delete_after_processing:
+                  type: boolean
+                  description: If true, the uploaded data will be deleted immediately
+                    after processing completes.
+                  default: false
+                  example: false
+  /posture/checks/v1/reports/{id}/bpa-result:
+    get:
+      summary: Get BPA Processing Status
+      description: Returns the status (QUEUED, IN_PROGRESS, COMPLETED, FAILED) and
+        final result.
+      operationId: getBpaResult
+      responses:
+        '200':
+          description: Status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - QUEUED
+                    - IN_PROGRESS
+                    - COMPLETED
+                    - FAILED
+                    example: IN_PROGRESS
+                  message:
+                    type: string
+                    example: Analyzing security rules...
+                  result:
+                    type: object
+                    description: Populated only when status is COMPLETED.
+                    properties:
+                      report_url:
+                        type: string
+                        format: uri
+        '404':
+          description: Task ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: The task ID provided during initiation.
+      tags:
+      - Config File Upload

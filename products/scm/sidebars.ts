@@ -108,7 +108,6 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/sase/operations/operations-api",
             },
-      
             require("./api/config/sase/operations/sidebar"),
           ],
         },
@@ -279,6 +278,42 @@ module.exports = {
               id: "scm/api/config/ngfw/security/security-api-ngfw",
             },
             require("./api/config/ngfw/security/sidebar"),
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Incidents API",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/incidents/incident-scm",
+        },
+        require("./api/config/incidents/sidebar"),
+      ],
+    },
+    {
+      type: "category",
+      label: "Posture API",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/posture-management/introduction-posture",
+        },
+        {
+          type: "category",
+          label: "Checks",
+          collapsed: true,
+          items: [
+            {
+              type: "category",
+              label: "Reports",
+              collapsed: true,
+              items: [require("./api/config/posture-management/sidebar")],
+            },
           ],
         },
       ],
