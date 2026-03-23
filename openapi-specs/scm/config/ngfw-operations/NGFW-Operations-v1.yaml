@@ -1,0 +1,1430 @@
+openapi: 3.0.0
+info:
+  version: 2.0.0
+  title: Operations and Troubleshooting
+  description: |
+    These APIs can be used to retrieve operational data on your devices, for management and troubleshooting purposes.
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/operations/v1'
+    description: Current
+tags:
+  - name: Device Operations
+    description: Operations for device management and troubleshooting
+  - name: Jobs
+    description: Job status and result retrieval for asynchronous operations
+
+paths:
+  /local-config/versions:
+    get:
+      tags:
+        - Device Operations
+      summary: List local configuration versions for a device
+      description: |
+        Retrieves the version history of local configurations for a specified device.
+
+        **Purpose:**
+        - Track configuration changes pushed to devices
+        - View version history with timestamps
+        - Identify current and previous configuration versions
+
+      operationId: getLocalConfigVersions
+      parameters:
+        - name: device
+          in: query
+          description: |
+            The serial number of the device for which to retrieve configuration versions.
+
+            **Format:** Typically 14-15 digit device serial number
+
+            **Example:** `007951000123456`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+
+      responses:
+        '200':
+          description: |
+            Success - Returns array of local configuration versions.
+
+            **Notes:**
+            - Empty array `[]` is returned if no versions exist
+            - Empty array `[]` is returned if device doesn't exist
+            - Versions typically ordered by timestamp
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/local_config_version'
+              examples:
+                with_versions:
+                  summary: Device with configuration versions
+                  value:
+                    - id: 1
+                      serial: '007951000123456'
+                      local_version: '1.0.0'
+                      timestamp: '2025-01-15T10:30:00Z'
+                      xfmed_version: '1.0.0-transformed'
+                    - id: 2
+                      serial: '007951000123456'
+                      local_version: '0.9.0'
+                      timestamp: '2025-01-14T09:20:00Z'
+                      xfmed_version: '0.9.0-transformed'
+                no_versions:
+                  summary: Device with no versions (or non-existent device)
+                  value: []
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /local-config/download:
+    get:
+      tags:
+        - Device Operations
+      summary: Download local configuration file
+      description: |
+        Downloads a specific local configuration file for a device.
+
+        **Purpose:**
+        - Retrieve the actual XML configuration file pushed to a device
+        - Download configuration for backup or review purposes
+        - Access specific configuration versions from history
+
+        **Process:**
+        - Queries the database for the specified device and version
+        - Retrieves the base64-encoded configuration
+        - Decodes and returns it as an XML file download
+        - File is downloaded with name: `local-config-{device}-{version}.xml`
+
+      operationId: downloadLocalConfig
+      parameters:
+        - name: device
+          in: query
+          description: |
+            The serial number of the device for which to download the configuration.
+
+            **Format:** Typically 14-15 digit device serial number
+
+            **Example:** `007951000123456`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+        - name: version
+          in: query
+          description: |
+            The configuration version ID to download.
+
+            **Source:** Use the `id` field from `/local-config/versions` response
+
+            **Example:** `1`
+
+            **Required:** Yes
+          required: true
+          schema:
+            type: string
+          example: '1'
+
+      responses:
+        '200':
+          description: |
+            Success - Configuration file downloaded successfully.
+
+            **Response Type:** Binary file download (XML)
+            **Content-Type:** `application/octet-stream`
+            **Filename:** `local-config-{device}-{version}.xml`
+          headers:
+            Content-Disposition:
+              description: Attachment header specifying the downloaded filename
+              schema:
+                type: string
+                example: 'attachment; filename=local-config-007951000123456-1.xml'
+            Content-Type:
+              description: MIME type of the downloaded file
+              schema:
+                type: string
+                example: 'application/octet-stream'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: |
+                  XML configuration file content.
+
+                  The file contains the device's local configuration in XML format,
+                  retrieved from the database and decoded from base64 encoding.
+        '400':
+          description: |
+            Bad Request - Missing required query parameters.
+
+            **Common Causes:**
+            - Missing `device` parameter
+            - Missing `version` parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                missing_device:
+                  summary: Missing device parameter
+                  value:
+                    error: 'device query parameter is required'
+                missing_version:
+                  summary: Missing version parameter
+                  value:
+                    error: 'version query parameter is required'
+        '404':
+          description: |
+            Not Found - Configuration not found for the specified device and version.
+
+            **Common Causes:**
+            - Invalid version ID for the device
+            - Device configuration has been deleted
+            - Database record doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: 'configuration not found'
+        '500':
+          description: |
+            Internal Server Error - Database query error, parsing error, or decoding error.
+
+            **Common Causes:**
+            - Database connectivity issues
+            - Invalid JSON response from database service
+            - Missing `local_cfg` field in database response
+            - Invalid base64 encoding in stored configuration
+            - Failed to decode base64 content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                database_error:
+                  summary: Database query error
+                  value:
+                    error: 'database query error'
+                parse_error:
+                  summary: Failed to parse database response
+                  value:
+                    error: 'failed to parse response'
+                missing_field:
+                  summary: Missing local_cfg field
+                  value:
+                    error: 'local_cfg field not found in response'
+                decode_error:
+                  summary: Failed to decode configuration
+                  value:
+                    error: 'failed to decode configuration'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /jobs/route-table:
+    post:
+      summary: Initiate a job to retrieve route table from device(s)
+      description: |
+        Initiates an asynchronous job to retrieve the route table from one or more specified devices. It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: requestRouteTable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /jobs/dns-proxy:
+    post:
+      summary: Initiate a job to retrieve the dns proxy table from device(s)
+      description: |
+        Initiates an asynchronous job to retrieve the dns proxy table from one or more specified devices. It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: requestDnsProxy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /jobs/fib-table:
+    post:
+      summary: Initiate a job to retrieve FIB table from device(s)
+      description: |
+        Initiates an asynchronous job to retrieve the FIB (Forwarding Information Base) Table from one or more specified devices. It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: requestFIBTable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /jobs/logging-service-forwarding-status:
+    post:
+      summary: Initiate a job to request logging service forwarding status for device(s)
+      description: |
+        Initiates an asynchronous job to retrieve the logging service forwarding status for one or more specified devices. It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: requestLoggingServiceForwardingStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /jobs/device-interfaces:
+    post:
+      summary: Initiate a job to retrieve network interfaces from device(s)
+      description: |
+        Initiates an asynchronous job to retrieve the network interfaces from one or more specified devices. It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: requestDeviceInterfaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /jobs/bgp-policy-export:
+    post:
+      summary: Initiate a job for BGP Policy Export from device(s)
+      description: |
+        Initiates an asynchronous job for BGP Policy Export from device(s). It returns a job ID that can be used to poll for results using the jobs endpoint.
+      tags:
+        - Device Operations
+      operationId: bgpPolicyExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - devices
+              properties:
+                devices:
+                  type: array
+                  description: List of device serial numbers from which to retrieve the route table. Must contain between 1 and 5 unique device serial numbers.
+                  minItems: 1
+                  maxItems: 5
+                  uniqueItems: true
+                  items:
+                    type: string
+                    pattern: '^[0-9]{14,15}$'
+                    description: Device serial number.
+                  example:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+            examples:
+              single_device:
+                summary: Single device request
+                value:
+                  devices:
+                    - '007951000123456'
+              multiple_devices:
+                summary: Multiple devices request
+                value:
+                  devices:
+                    - '007951000123456'
+                    - '007951000123457'
+                    - '007951000123458'
+      responses:
+        '200':
+          description: |
+            Success - Job created successfully.
+            Use the returned `job_id` to poll for results using `GET /device/jobs/{job_id}`.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - job_id
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+                    description: |
+                      Unique identifier for the created routing table retrieval job.
+
+                      **Usage:**
+                      - Use this ID with `GET /device/jobs/{job_id}` to poll for job completion
+                      - Job typically completes within 5-30 seconds
+                      - Job results will contain the routing table data from the device(s)
+                    example: '550e8400-e29b-41d4-a716-446655440000'
+              examples:
+                success:
+                  summary: Successful job creation
+                  value:
+                    job_id: '550e8400-e29b-41d4-a716-446655440000'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /device/jobs/{id}:
+    get:
+      summary: Retrieve job status and results, running on a device
+      description: |
+        Retrieves the current status and results of an asynchronous device job. Poll this endpoint to check job completion and retrieve the results once the job state is complete.
+      tags:
+        - Jobs
+      operationId: getJobStatus
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the job to retrieve.
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
+      responses:
+        '200':
+          description: |
+            Success - Job details retrieved successfully.
+            The response includes job progress, state, request details, and results when available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job_status'
+              examples:
+                complete_routing_job:
+                  summary: Completed routing table job
+                  value:
+                    jobId: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
+                    progress: 100
+                    state: 'complete'
+                    request:
+                      command: 'show-advanced-routing-route'
+                      devices:
+                        - '012345678901234'
+                    results:
+                      - device: '012345678901234'
+                        state: 'complete'
+                        created_ts: '2026-03-02 19:00:04'
+                        updated_ts: '2026-03-02 19:00:04'
+                        details:
+                          msg: 'Command completed successfully.'
+                          result:
+                            router_global:
+                              '3.3.3.3/32':
+                                - prefix: '3.3.3.3/32'
+                                  prefixLen: 32
+                                  protocol: 'connected'
+                                  distance: 0
+                                  metric: 0
+                                  installed: true
+                                  selected: true
+                                  destSelected: true
+                                  uptime: '06w0d07h'
+                                  nexthopGroupId: 6
+                                  nexthops:
+                                    - interfaceName: 'vlan.1'
+                                      interfaceIndex: 256
+                                      active: true
+                                      fib: true
+                                      directlyConnected: true
+                                      flags: 'A '
+                in_progress_job:
+                  summary: Job in progress
+                  value:
+                    jobId: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
+                    progress: 50
+                    state: 'in_progress'
+                    request:
+                      command: 'show-advanced-routing-route'
+                      devices:
+                        - '012345678901234'
+                    results: []
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+components:
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the 
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`, 
+        `client_secret` values associated with an IAM service account along 
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the 
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should 
+        be attached to all API calls as a `Bearer` token in the `Authorization` 
+        header (ex. `Authorization: Bearer tokenstring`).
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
+          scopes: {}
+    scmToken:
+      type: http
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the 
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`, 
+        `client_secret` values associated with an IAM service account along 
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the 
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should 
+        be attached to all API calls as a `Bearer` token in the `Authorization` 
+        header (ex. `Authorization: Bearer tokenstring`).
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    uuid:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The UUID of the resource
+    pagination-optional:
+      name: pagination
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: The parameter to mention if the response should be paginated. By default, its set to false
+    name-optional:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: The name of the resource
+    limit-optional:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The maximum number of resources to return
+    offset-optional:
+      name: offset
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The offset into the list of resources returned
+    folder:
+      name: folder
+      in: query
+      required: false
+      schema:
+        type: string
+      description: |
+        The folder in which the resource is defined
+    snippet:
+      name: snippet
+      in: query
+      required: false
+      schema:
+        type: string
+      description: |
+        The snippet in which the resource is defined
+    device:
+      name: device
+      in: query
+      required: false
+      schema:
+        type: string
+      description: |
+        The device in which the resource is defined
+    trusted-tenant-type:
+      name: type
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - subscriber
+          - publisher
+      description: |
+        Specifies the type of the tenant that is trusted, either 'subscriber' or 'publisher'.
+    trust-ids:
+      name: trustids
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        Comma-separated list of trust IDs
+    snippet-id:
+      name: snippet-id
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        The ID of the snippet
+    recipient-tsgs:
+      name: tsgs
+      in: query
+      required: true
+      schema:
+        type: string
+      description: |
+        Comma-separated list of recipient TSG IDs
+  responses:
+    http_ok:
+      description: OK
+    http_created:
+      description: Created
+    auth_errors:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            auth_not_authenticated:
+              $ref: '#/components/examples/json_401_panui_auth_not_authenticated'
+            invalid_credential:
+              $ref: '#/components/examples/json_401_panui_auth_invalid_credential'
+            key_too_long:
+              $ref: '#/components/examples/json_401_panui_auth_key_too_long'
+            key_expired:
+              $ref: '#/components/examples/json_401_panui_auth_key_expired'
+            need_password_change:
+              $ref: '#/components/examples/json_401_panui_auth_need_password_change'
+    access_errors:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            auth_unauthorized:
+              $ref: '#/components/examples/json_403_panui_auth_unauthorized'
+    bad_request_errors_basic:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            input_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_input_format_mismatch'
+            output_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_output_format_mismatch'
+            missing_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_query_parameter'
+            invalid_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_invalid_query_parameter'
+    bad_request_errors_basic_with_body:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            input_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_input_format_mismatch'
+            output_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_output_format_mismatch'
+            missing_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_query_parameter'
+            invalid_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_invalid_query_parameter'
+            missing_body:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_body'
+            invalid_object:
+              $ref: '#/components/examples/json_400_panui_mgmt_invalid_object'
+    not_found:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            object_not_present:
+              $ref: '#/components/examples/json_404_panui_mgmt_object_not_present'
+    conflict_errors:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            object_not_unique:
+              $ref: '#/components/examples/json_409_panui_mgmt_object_not_unique'
+            name_not_unique:
+              $ref: '#/components/examples/json_409_panui_mgmt_name_not_unique'
+            reference_not_zero:
+              $ref: '#/components/examples/json_409_panui_mgmt_reference_not_zero'
+    default_errors:
+      description: General Errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            version_not_supported:
+              $ref: '#/components/examples/json_501_panui_restapi_version_not_supported'
+            method_not_allowed:
+              $ref: '#/components/examples/json_501_panui_restapi_method_not_supported'
+            action_not_supported:
+              $ref: '#/components/examples/json_405_panui_restapi_action_not_supported'
+            bad_xpath:
+              $ref: '#/components/examples/json_400_panui_mgmt_bad_xpath'
+            invalid_command:
+              $ref: '#/components/examples/json_400_panui_mgmt_invalid_command'
+            malformed_command:
+              $ref: '#/components/examples/json_400_panui_mgmt_malformed_command'
+            session_timeout:
+              $ref: '#/components/examples/json_504_panui_mgmt_session_timeout'
+  examples:
+    json_401_panui_auth_not_authenticated:
+      summary: Not Authenticated
+      value:
+        _errors:
+          - code: 'E016'
+            message: Not Authenticated
+            details: {}
+        _request_id: 'abcd-1234'
+    json_401_panui_auth_invalid_credential:
+      summary: Invalid Credential
+      value:
+        _errors:
+          - code: 'E016'
+            message: Invalid Credential
+            details: {}
+        _request_id: 'abcd-1234'
+    json_401_panui_auth_key_too_long:
+      summary: Key Too Long
+      value:
+        _errors:
+          - code: 'E016'
+            message: Key Too Long
+            details: {}
+        _request_id: 'abcd-1234'
+    json_401_panui_auth_key_expired:
+      summary: Key Expired
+      value:
+        _errors:
+          - code: 'E016'
+            message: Key Expired
+            details: {}
+        _request_id: 'abcd-1234'
+    json_401_panui_auth_need_password_change:
+      summary: Need Password Change
+      value:
+        _errors:
+          - code: 'E016'
+            message: The password needs to be changed.
+            details: {}
+        _request_id: 'abcd-1234'
+    json_403_panui_auth_unauthorized:
+      summary: Unauthorized
+      value:
+        _errors:
+          - code: 'E007'
+            message: Unauthorized
+            details: {}
+        _request_id: 'abcd-1234'
+    json_501_panui_restapi_version_not_supported:
+      summary: Version Not Supported
+      value:
+        _errors:
+          - code: 'E012'
+            message: Version Not Supported
+            details: {}
+        _request_id: 'abcd-1234'
+    json_501_panui_restapi_method_not_supported:
+      summary: Method Not Supported
+      value:
+        _errors:
+          - code: 'E012'
+            message: Method Not Supported
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_restapi_input_format_mismatch:
+      summary: Input Format Mismatch
+      value:
+        _errors:
+          - code: 'E003'
+            message: 'Input Format Mismatch: input-format=json'
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_restapi_output_format_mismatch:
+      summary: Output Format Mismatch
+      value:
+        _errors:
+          - code: 'E003'
+            message: 'Output Format Mismatch: output-format=json Accept=xml'
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_restapi_missing_query_parameter:
+      summary: Missing Query Parameter
+      value:
+        _errors:
+          - code: 'E003'
+            message: 'Missing Query Parameter: name'
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_restapi_invalid_query_parameter:
+      summary: Invalid Query Parameter
+      value:
+        _errors:
+          - code: 'E003'
+            message: 'Invalid Query Parameter: location=invalid'
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_restapi_missing_body:
+      summary: Missing Body
+      value:
+        _errors:
+          - code: 'E003'
+            message: Missing Body
+            details: {}
+        _request_id: 'abcd-1234'
+    json_405_panui_restapi_action_not_supported:
+      summary: Action Not Supported
+      value:
+        _errors:
+          - code: 'E012'
+            message: 'Action Not Supported: move'
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_mgmt_bad_xpath:
+      summary: Bad XPath
+      value:
+        _errors:
+          - code: 'E013'
+            message: Bad XPath
+            details: {}
+        _request_id: 'abcd-1234'
+    json_404_panui_mgmt_object_not_present:
+      summary: Object Not Present
+      value:
+        _errors:
+          - code: 'E005'
+            message: Object Not Present
+            details: {}
+        _request_id: 'abcd-1234'
+    json_409_panui_mgmt_object_not_unique:
+      summary: Object Not Unique
+      value:
+        _errors:
+          - code: 'E016'
+            message: Object Not Unique
+            details: {}
+        _request_id: 'abcd-1234'
+    json_409_panui_mgmt_name_not_unique:
+      summary: Name Not Unique
+      value:
+        _errors:
+          - code: 'E006'
+            message: Name Not Unique
+            details: {}
+        _request_id: 'abcd-1234'
+    json_409_panui_mgmt_reference_not_zero:
+      summary: Reference Not Zero
+      value:
+        _errors:
+          - code: 'E009'
+            message: Reference Not Zero
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_mgmt_invalid_object:
+      summary: Invalid Object
+      value:
+        _errors:
+          - code: 'E003'
+            message: Invalid Object
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_mgmt_invalid_command:
+      summary: Invalid Command
+      value:
+        _errors:
+          - code: 'E003'
+            message: Invalid Command
+            details: {}
+        _request_id: 'abcd-1234'
+    json_400_panui_mgmt_malformed_command:
+      summary: Malformed Command
+      value:
+        _errors:
+          - code: 'E003'
+            message: Malformed Command
+            details: {}
+        _request_id: 'abcd-1234'
+    json_504_panui_mgmt_session_timeout:
+      summary: Session Timeout
+      value:
+        _errors:
+          - code: '4'
+            message: Session Timeout
+            details: {}
+        _request_id: 'abcd-1234'
+  schemas:
+    job_status:
+      type: object
+      required:
+        - jobId
+        - progress
+        - state
+        - request
+        - results
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          description: Unique identifier for the job.
+          example: 'ab123c4d-e56f-7g8h-901i-23jk4l5mn678'
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Job completion percentage.
+          example: 100
+        state:
+          type: string
+          description: Current state of the job.
+          enum:
+            - pending
+            - in_progress
+            - complete
+            - failed
+          example: 'complete'
+        request:
+          type: object
+          description: The original request that initiated the job.
+          required:
+            - command
+            - devices
+          properties:
+            command:
+              type: string
+              description: The command that was executed.
+              example: 'show-advanced-routing-route'
+            devices:
+              type: array
+              description: List of device serial numbers for which the command was executed.
+              items:
+                type: string
+                pattern: '^[0-9]{14,15}$'
+              example:
+                - '012345678901234'
+        results:
+          type: array
+          description: Array of results from each device. The structure of the result data varies based on the job type.
+          items:
+            $ref: '#/components/schemas/job_result'
+    job_result:
+      type: object
+      required:
+        - device
+        - state
+        - created_ts
+        - updated_ts
+        - details
+      properties:
+        device:
+          type: string
+          pattern: '^[0-9]{14,15}$'
+          description: The serial number of the device.
+          example: '012345678901234'
+        state:
+          type: string
+          description: The state of the job for this specific device.
+          enum:
+            - pending
+            - in_progress
+            - complete
+            - failed
+          example: 'complete'
+        created_ts:
+          type: string
+          description: Timestamp when the job was created.
+          example: '2026-03-02 19:00:04'
+        updated_ts:
+          type: string
+          description: Timestamp when the job was last updated.
+          example: '2026-03-02 19:00:04'
+        details:
+          type: object
+          description: Detailed results from the command execution. The structure varies based on the command type.
+          required:
+            - msg
+            - result
+          properties:
+            msg:
+              type: string
+              description: Status message from the command execution.
+              example: 'Command completed successfully.'
+            result:
+              type: object
+              description: The actual result data from the command. Structure varies by command type and may contain routing tables, device information, or other operational data.
+              additionalProperties: true
+    generic_error:
+      type: object
+      properties:
+        _errors:
+          $ref: '#/components/schemas/error_detail_cause_infos'
+        _request_id:
+          type: string
+    error_detail_cause_infos:
+      type: array
+      items:
+        $ref: '#/components/schemas/error_detail_cause_info'
+    error_detail_cause_info:
+      title: Cause Info
+      type: object
+      properties:
+        'code':
+          type: string
+        message:
+          type: string
+        details:
+          oneOf:
+            - type: string
+            - type: object
+        help:
+          type: string
+    local_config_version:
+      type: object
+      required:
+        - id
+        - serial
+        - local_version
+        - timestamp
+        - xfmed_version
+      properties:
+        id:
+          type: integer
+          description: |
+            Unique identifier for this configuration version entry in the database.
+          example: 1
+        serial:
+          type: string
+          description: |
+            Device serial number (14-15 digits).
+
+            Identifies which device this configuration version belongs to.
+          pattern: '^[0-9]{14,15}$'
+          example: '007951000123456'
+        local_version:
+          type: string
+          description: |
+            Local configuration version identifier.
+
+            **Format:** Version string (typically semantic versioning)
+            **Purpose:** Identifies the original configuration version
+          example: '1.0.0'
+        timestamp:
+          type: string
+          format: date-time
+          description: |
+            When this configuration version was created or pushed to the device.
+
+            **Format:** ISO 8601 date-time (UTC)
+            **Source:** Database `ts` field
+          example: '2025-01-15T10:30:00Z'
+        xfmed_version:
+          type: string
+          description: |
+            Transformed configuration version identifier.
+
+            **Purpose:** Version identifier after transformation/processing
+            **Use Case:** Tracking configuration pipeline transformations
+          example: '1.0.0-transformed'
+        md5:
+          type: string
+          description: |
+            MD5 hash of the configuration (optional).
+
+            **Note:** Currently not populated in responses
+            **Purpose:** Configuration integrity verification
+          example: 'abc123def456'
+
+security:
+  - scmToken: []
+x-internal: false
