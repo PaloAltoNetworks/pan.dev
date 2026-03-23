@@ -1056,7 +1056,7 @@ __Returns__
 ### `FirewallProxy.get_dp_clock`
 
 ```python
-def get_dp_clock() -> dict
+def get_dp_clock() -> List[datetime]
 ```
 
 Get the clock information from data plane.
@@ -1066,7 +1066,9 @@ The actual API command is `show clock more`.
 __Returns__
 
 
-`datetime`: The clock information represented as a `datetime` object.
+`List[datetime]`: The clock information represented as a list of `datetime` object.
+    As devices can have multiple dataplanes, this function returns the time of each dataplane clock if they are
+    different.
 
 ### `FirewallProxy.get_certificates`
 
