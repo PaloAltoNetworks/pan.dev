@@ -2,7 +2,7 @@
 id: ngfw-operations-introduction
 title: NGFW Operations APIs
 sidebar_label: NGFW Operations APIs
-slug:slug: /scm/api/ngfw-operations
+slug: /scm/api/ngfw-operations
 keywords:
   - Strata Cloud Manager
   - Configuration
