@@ -347,6 +347,7 @@ module.exports = {
   configorch: [
     "sase/api/config-orch/introduction",
     "sase/api/config-orch/api-workflow",
+    "sase/api/config-orch/site-license-workflow",
     require("./api/config-orch/sidebar"),
   ],
   securityposture: [
@@ -365,6 +366,10 @@ module.exports = {
   sasetenancy: [
     "sase/api/tenancy/tenancy-api",
     require("./api/tenancy/sidebar"),
+  ],
+  pabmsp: [
+    "sase/api/pab-msp/pab-msp-api",
+    require("./api/pab-msp/sidebar"),
   ],
   
 };

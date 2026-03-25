@@ -72,12 +72,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/jobs'
+                $ref: '#/components/schemas/jobs-response'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -196,10 +191,18 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - type: array
+                type: object
+                properties:
+                  data:
+                    type: array
                     items:
                       $ref: '#/components/schemas/config-version'
+                  offset:
+                    type: integer
+                  limit:
+                    type: integer
+                  total:
+                    type: integer
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -249,7 +252,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/config-version'
+                type: array
+                items:
+                  $ref: '#/components/schemas/config-version'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -274,10 +279,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - type: array
-                    items:
-                      $ref: '#/components/schemas/running-versions'
+                $ref: '#/components/schemas/running-config-versions-response'
         '400':
           $ref: '#/components/responses/bad_request_errors_basic'
         '401':
@@ -317,7 +319,7 @@ components:
       description: The ID of the job
       required: true
       schema:
-        type: integer
+        type: string
     version:
       name: version
       in: path
@@ -686,6 +688,7 @@ components:
             - PEND
             - WAIT
             - CANCELLED
+            - TIMEOUT
           description: The result of the job
         start_ts:
           type: string
@@ -699,6 +702,7 @@ components:
             - PUSHSENT
             - PUSHFAIL
             - PUSHABORT
+            - PUSHTIMEOUT
           description: The current status of the job
         summary:
           type: string
@@ -739,7 +743,6 @@ components:
         - summary
         - type_str
         - uname
-        - description
     load-config:
       type: object
       properties:
@@ -789,11 +792,9 @@ components:
         - admin
         - scope
         - description
-        - swg_config
         - updated
         - created
         - deleted
-        - ngfw_scope
         - types
         - impacted_devices
         - edited_by
@@ -814,6 +815,28 @@ components:
         - device
         - version
         - date
+    jobs-response:
+      type: object
+      description: Response containing job data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/jobs'
+    running-config-versions-response:
+      type: object
+      description: Paginated response containing running configuration versions
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/running-versions'
+        offset:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
     generic_error:
       type: object
       properties:

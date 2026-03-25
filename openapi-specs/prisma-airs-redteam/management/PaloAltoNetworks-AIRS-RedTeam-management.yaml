@@ -1,10 +1,12 @@
 openapi: 3.1.0
 info:
-  title: Introduction to Management Plane API
-  version: 0.3.30
-  description: "This Open API spec file was created on January 07, 2026. \xA9 2026\
-    \ Palo Alto Networks, Inc.  Palo Alto Networks is a registered trademark of Palo\
-    \ Alto Networks. A list of our trademarks can be found at (https://www.paloaltonetworks.com/company/trademarks.html).\
+  title: Prisma AIRS Red Teaming Management API
+  version: 0.5.20
+  description: "Red Teaming Management API - Configure and manage security groups\
+    \ and rules for AI/ML model scanning. \xA9 2025 Palo Alto Networks, Inc This Open\
+    \ API spec file was created on February 25, 2026. \xA9 2026 Palo Alto Networks,\
+    \ Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks. A list\
+    \ of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 servers:
 - url: https://api.sase.paloaltonetworks.com/ai-red-teaming/mgmt-plane
@@ -22,6 +24,7 @@ components:
       enum:
       - PUBLIC
       - PRIVATE
+      - NETWORK_BROKER
       title: ApiEndpointType
       description: API endpoint accessibility type.
     AuthType:
@@ -149,7 +152,9 @@ components:
         Used in dashboard and other endpoints to provide counts grouped by a name
         field.
 
-        Frontend-friendly list format for easy iteration.'
+        Frontend-friendly list format for easy iteration.
+
+        '
     CustomPromptCreateRequestSchema:
       properties:
         prompt:
@@ -363,7 +368,7 @@ components:
           - type: 'null'
           title: Description
           description: Description of the custom prompt set
-          default: ''
+          default: null
         property_names:
           items:
             type: string
@@ -390,7 +395,9 @@ components:
       description: 'Schema for listing active custom prompt sets available for use.
 
 
-        Used by data plane to discover available prompt sets for job creation.'
+        Used by data plane to discover available prompt sets for job creation.
+
+        '
     CustomPromptSetListItemSchema:
       properties:
         uuid:
@@ -408,7 +415,7 @@ components:
           - type: 'null'
           title: Description
           description: Description of the prompt set
-          default: ''
+          default: null
         active:
           type: boolean
           title: Active
@@ -529,7 +536,9 @@ components:
 
         Contains minimal information needed for data plane to fetch
 
-        configurations from GCS using the GCS-first pattern.'
+        configurations from GCS using the GCS-first pattern.
+
+        '
     CustomPromptSetResponseSchema:
       properties:
         uuid:
@@ -547,7 +556,7 @@ components:
           - type: 'null'
           title: Description
           description: Description of the prompt set
-          default: ''
+          default: null
         active:
           type: boolean
           title: Active
@@ -701,7 +710,9 @@ components:
       description: 'Version information for a custom prompt set snapshot.
 
 
-        Provides metadata about a specific version without full configuration data.'
+        Provides metadata about a specific version without full configuration data.
+
+        '
     CustomPromptUpdateRequestSchema:
       properties:
         prompt:
@@ -750,7 +761,9 @@ components:
 
         Endpoint: GET /api/v1/dashboard/overview
 
-        Returns target counts by type in list format for easy frontend iteration.'
+        Returns target counts by type in list format for easy frontend iteration.
+
+        '
     DatabricksConnectionParams:
       properties:
         auth_type:
@@ -880,6 +893,75 @@ components:
       - model_name
       title: HuggingfaceConnectionRedactParams
       description: Connection parameters specific to huggingface targets
+    MultiTurnStatefulConfig:
+      properties:
+        type:
+          type: string
+          const: stateful
+          title: Type
+          default: stateful
+        response_id_field:
+          type: string
+          title: Response Id Field
+          description: JSON path to extract session ID from target response (e.g.,
+            'id' for OpenAI responses API)
+          examples:
+          - id
+          - conversation_id
+          - session.id
+        request_id_field:
+          type: string
+          title: Request Id Field
+          description: JSON path to inject session ID in next request (e.g., 'previous_response_id'
+            for OpenAI)
+          examples:
+          - previous_response_id
+          - conversation_id
+          - session_id
+      type: object
+      required:
+      - response_id_field
+      - request_id_field
+      title: MultiTurnStatefulConfig
+      description: 'Configuration for stateful multi-turn targets (session_supported=true).
+
+
+        Stateful targets maintain conversation state on the server side using session
+        IDs.
+
+        The session ID is extracted from responses and injected into subsequent requests.
+
+        '
+    MultiTurnStatelessConfig:
+      properties:
+        type:
+          type: string
+          const: stateless
+          title: Type
+          default: stateless
+        assistant_role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assistant Role
+          description: Role name for assistant messages in conversation history (e.g.,
+            'assistant', 'bot', 'model')
+          examples:
+          - assistant
+          - bot
+          - model
+          - ai
+      type: object
+      title: MultiTurnStatelessConfig
+      description: 'Configuration for stateless multi-turn targets (session_supported=false).
+
+
+        Stateless targets require the client to maintain and send conversation history.
+
+        The assistant_role specifies the role name used for assistant messages in
+        the history.
+
+        '
     OpenAIConnectionParams:
       properties:
         api_key:
@@ -922,6 +1004,20 @@ components:
       - model_name
       title: OpenAIConnectionRedactParams
       description: Connection parameters specific to OpenAI targets
+    OtherDetails:
+      properties:
+        items:
+          additionalProperties: true
+          type: object
+          title: Items
+      type: object
+      title: OtherDetails
+      description: 'Additional profiler discoveries. Read-only key-value pairs.
+
+
+        Examples: code_execution_capability, internet_access, etc.
+
+        '
     PaginationSchema:
       properties:
         total_items:
@@ -931,6 +1027,16 @@ components:
           title: Total Items
       type: object
       title: PaginationSchema
+    ProfilingStatus:
+      type: string
+      enum:
+      - INIT
+      - QUEUED
+      - IN_PROGRESS
+      - COMPLETED
+      - FAILED
+      title: ProfilingStatus
+      description: Status of target profiling workflow.
     PromptSetStatsSchema:
       properties:
         total_prompts:
@@ -1083,13 +1189,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1098,10 +1204,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1109,14 +1217,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1137,6 +1245,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
       type: object
       title: RestConnectionParamsBase
       description: Base connection parameters without generated fields.
@@ -1149,13 +1272,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1164,10 +1287,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1175,14 +1300,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1203,6 +1328,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
       type: object
       title: RestConnectionParamsBase
       description: Base connection parameters without generated fields.
@@ -1215,13 +1355,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1230,10 +1370,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1241,14 +1383,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1269,6 +1411,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
       type: object
       title: RestConnectionParamsRedactBase
     StreamingConnectionParamsBase-Input:
@@ -1280,13 +1437,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1295,10 +1452,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1306,14 +1465,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1334,6 +1493,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
         response_stop_key:
           type: string
           title: Response Stop Key
@@ -1355,13 +1529,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1370,10 +1544,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1381,14 +1557,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1409,6 +1585,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
         response_stop_key:
           type: string
           title: Response Stop Key
@@ -1430,13 +1621,13 @@ components:
           title: Api Endpoint
           description: API endpoint URL
           examples:
-          - https://api.openai.com/v1/chat/completions
+          - https://api.openai.com/v1/responses
         request_headers:
           additionalProperties: true
           type: object
           title: Request Headers
           description: Request headers
-          default: {}
+          default: null
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1445,10 +1636,12 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: {}
+          default: null
           examples:
-          - messages:
-            - content: '{INPUT}'
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
               role: user
             model: gpt-4.1-nano
         response_json:
@@ -1456,14 +1649,14 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: {}
+          default: null
           examples:
           - content: '{RESPONSE}'
         response_key:
           type: string
           title: Response Key
           description: Response key
-          default: ''
+          default: null
           examples:
           - content
         target_connection_config:
@@ -1484,6 +1677,21 @@ components:
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
             -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
         response_stop_key:
           type: string
           title: Response Stop Key
@@ -1495,6 +1703,101 @@ components:
       - response_stop_key
       - response_stop_value
       title: StreamingConnectionParamsRedactBase
+    TargetAdditionalContext:
+      properties:
+        base_model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Base Model
+          description: Base model name (e.g., GPT-4, Claude)
+        core_architecture:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Core Architecture
+          description: Core architecture details
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+          description: System prompt
+        languages_supported:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Languages Supported
+          description: Supported languages
+        banned_keywords:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Banned Keywords
+          description: Banned keywords/phrases
+        tools_accessible:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tools Accessible
+          description: Accessible tools/capabilities
+      type: object
+      title: TargetAdditionalContext
+      description: 'Additional context - used in create/update API requests and stored
+        in DB/GCS.
+
+
+        Single value fields are strings.
+
+        List fields are lists of strings.
+
+        '
+    TargetBackground:
+      properties:
+        industry:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Industry
+          description: Target's industry (e.g., Healthcare, Finance)
+        use_case:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Use Case
+          description: Primary use case (e.g., Customer Support, Code Assistant)
+        competitors:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Competitors
+          description: Known competitor products
+      type: object
+      title: TargetBackground
+      description: 'Target background - used in create/update API requests and stored
+        in DB/GCS.
+
+
+        Required fields for activation:
+
+        - industry (string, required)
+
+        - use_case (string, required)
+
+
+        Optional field:
+
+        - competitors (list of strings)
+
+        '
     TargetConnectionType:
       type: string
       enum:
@@ -1507,6 +1810,30 @@ components:
       - STREAMING
       title: TargetConnectionType
       description: Connection type/provider for the target.
+    TargetContextUpdateSchema:
+      properties:
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background: industry, use_case, competitors'
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: 'Additional context: base_model, system_prompt, languages,
+            etc.'
+      type: object
+      title: TargetContextUpdateSchema
+      description: 'Request schema for updating target profile (background + additional
+        context).
+
+
+        Used by PUT /{target_uuid}/profile endpoint.
+
+        User provides plain values which are saved directly to DB and GCS.
+
+        '
     TargetCreateRequestSchema:
       properties:
         connection_params:
@@ -1516,6 +1843,16 @@ components:
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID for routing requests. Required
+            when api_endpoint_type is NETWORK_BROKER.
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
         name:
           type: string
           title: Name
@@ -1528,7 +1865,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -1553,6 +1890,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -1573,14 +1911,23 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
           examples:
           - custom_key: custom_value
         target_metadata:
-          anyOf:
-          - $ref: '#/components/schemas/TargetMetadata'
-          - type: 'null'
+          $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background: industry, use_case, competitors'
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: 'Additional context: base_model, system_prompt, languages,
+            etc.'
       additionalProperties: false
       type: object
       required:
@@ -1609,7 +1956,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -1634,6 +1981,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -1654,7 +2002,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
           examples:
           - custom_key: custom_value
         status:
@@ -1674,6 +2022,14 @@ components:
           - type: 'null'
           title: Version
           description: Configuration version
+        secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Secret Version
+          description: Secret Manager version for connection_params. When present,
+            sensitive connection data is stored in Secret Manager. When None, connection_params
+            are stored in GCS (legacy).
         created_by_user_id:
           anyOf:
           - type: string
@@ -1726,6 +2082,20 @@ components:
       description: Schema returned by API for list target operations.
     TargetMetadata:
       properties:
+        multi_turn:
+          type: boolean
+          title: Multi Turn
+          description: Whether target supports multi-turn conversations (Probe 2 result)
+          default: false
+        multi_turn_error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Multi Turn Error Message
+          description: Concise error message if Probe 2 failed
+          examples:
+          - Session ID extraction failed
+          - Assistant role not configured
         rate_limit:
           anyOf:
           - type: integer
@@ -1806,25 +2176,40 @@ components:
           examples:
           - 'Invalid prompt: your prompt was flagged as potentially violating our
             usage policy. Please try again with a different prompt.'
+        probe_message:
+          type: string
+          title: Probe Message
+          default: Hello, this is a test message from the red team validation system.
+        request_timeout:
+          type: number
+          title: Request Timeout
+          description: Request timeout in seconds
+          default: 110
+          examples:
+          - 110
       type: object
       title: TargetMetadata
-      description: Metadata stored in the database for targets (non-sensitive configuration).
-    TargetRedactSchema:
+      description: Metadata stored in the database for targets (user-provided + computed
+        fields).
+    TargetProbeRequest:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsRedactBase'
-          - $ref: '#/components/schemas/StreamingConnectionParamsRedactBase'
+          - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
+          - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        tsg_id:
-          type: string
-          title: Tsg Id
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID for routing requests. Required
+            when api_endpoint_type is NETWORK_BROKER.
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
         name:
           type: string
           title: Name
@@ -1837,7 +2222,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -1862,6 +2247,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -1882,7 +2268,185 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
+          examples:
+          - custom_key: custom_value
+        target_metadata:
+          $ref: '#/components/schemas/TargetMetadata'
+          description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background: industry, use_case, competitors'
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: 'Additional context: base_model, system_prompt, languages,
+            etc.'
+        uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Uuid
+          description: Target UUID. If provided, will be returned in response.
+        probe_fields:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Probe Fields
+          description: 'Specific probes to run. If None, runs all probes. Valid: industry,
+            use_case, competitors, base_model, core_architecture, languages_supported,
+            tools_accessible, system_prompt, banned_keywords'
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: TargetProbeRequest
+      description: 'Request to run profiling probes on a target.
+
+
+        Inherits all target creation fields (connection params, metadata, etc.)
+
+        If probe_fields is None, runs all 9 probes. Otherwise runs only specified
+        probes.
+
+        '
+    TargetProfileResponse:
+      properties:
+        target_id:
+          type: string
+          format: uuid
+          title: Target Id
+        target_version:
+          type: integer
+          title: Target Version
+        status:
+          type: string
+          title: Status
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+        other_details:
+          anyOf:
+          - $ref: '#/components/schemas/OtherDetails'
+          - type: 'null'
+        ai_generated_fields:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Ai Generated Fields
+          description: Field names populated by AI profiler (e.g., competitors, base_model,
+            system_prompt)
+        profiling_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Profiling Status
+          description: Status of the profiling workflow
+      type: object
+      required:
+      - target_id
+      - target_version
+      - status
+      title: TargetProfileResponse
+      description: Combined response for profile view.
+    TargetRedactSchema:
+      properties:
+        connection_params:
+          anyOf:
+          - $ref: '#/components/schemas/RestConnectionParamsRedactBase'
+          - $ref: '#/components/schemas/StreamingConnectionParamsRedactBase'
+          - type: 'null'
+          title: Connection Params
+          description: API connection parameters (sensitive data masked for security)
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID for routing requests. Required
+            when api_endpoint_type is NETWORK_BROKER.
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        tsg_id:
+          type: string
+          title: Tsg Id
+        name:
+          type: string
+          title: Name
+          description: Target name
+          examples:
+          - GPT 4.1 Nano
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Optional target description
+          default: null
+          examples:
+          - AI model for testing
+        target_type:
+          anyOf:
+          - $ref: '#/components/schemas/TargetType'
+          - type: 'null'
+          description: Type of target
+        connection_type:
+          anyOf:
+          - $ref: '#/components/schemas/TargetConnectionType'
+          - type: 'null'
+          description: Connection type/provider for the target
+          examples:
+          - CUSTOM
+          - OPENAI
+          - BEDROCK
+        api_endpoint_type:
+          anyOf:
+          - $ref: '#/components/schemas/ApiEndpointType'
+          - type: 'null'
+          description: Accessibility type of the API endpoint
+          examples:
+          - PUBLIC
+          - PRIVATE
+          - NETWORK_BROKER
+        response_mode:
+          anyOf:
+          - $ref: '#/components/schemas/ResponseMode'
+          - type: 'null'
+          description: Response mode for API interactions
+          examples:
+          - REST
+          - STREAMING
+        session_supported:
+          type: boolean
+          title: Session Supported
+          description: Whether target supports session for multi-turn conversations
+          default: false
+        extra_info:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra Info
+          description: Additional configuration or metadata for the target
+          default: null
           examples:
           - custom_key: custom_value
         status:
@@ -1902,6 +2466,14 @@ components:
           - type: 'null'
           title: Version
           description: Configuration version reference for encrypted config
+        secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Secret Version
+          description: Secret Manager version for connection_params. When present,
+            sensitive connection data is stored in Secret Manager. When None, connection_params
+            are stored in GCS (legacy).
         created_by_user_id:
           anyOf:
           - type: string
@@ -1927,10 +2499,23 @@ components:
           title: Updated At
           description: Last update timestamp
         target_metadata:
-          anyOf:
-          - $ref: '#/components/schemas/TargetMetadata'
-          - type: 'null'
+          $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background info: industry, use_case, competitors'
+        profiling_status:
+          anyOf:
+          - $ref: '#/components/schemas/ProfilingStatus'
+          - type: 'null'
+          description: Status of the profiling workflow
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: Additional context with source tracking (user + profiler)
       type: object
       required:
       - uuid
@@ -1964,7 +2549,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -1989,6 +2574,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -2009,7 +2595,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
           examples:
           - custom_key: custom_value
         status:
@@ -2029,6 +2615,14 @@ components:
           - type: 'null'
           title: Version
           description: Configuration version
+        secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Secret Version
+          description: Secret Manager version for connection_params. When present,
+            sensitive connection data is stored in Secret Manager. When None, connection_params
+            are stored in GCS (legacy).
         created_by_user_id:
           anyOf:
           - type: string
@@ -2054,10 +2648,23 @@ components:
           title: Updated At
           description: Last update timestamp
         target_metadata:
-          anyOf:
-          - $ref: '#/components/schemas/TargetMetadata'
-          - type: 'null'
+          $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background info: industry, use_case, competitors'
+        profiling_status:
+          anyOf:
+          - $ref: '#/components/schemas/ProfilingStatus'
+          - type: 'null'
+          description: Status of the profiling workflow
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: Additional context with source tracking (user + profiler)
       type: object
       required:
       - uuid
@@ -2078,6 +2685,16 @@ components:
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID for routing requests. Required
+            when api_endpoint_type is NETWORK_BROKER.
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
         uuid:
           type: string
           format: uuid
@@ -2097,7 +2714,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -2122,6 +2739,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -2142,7 +2760,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
           examples:
           - custom_key: custom_value
         status:
@@ -2162,6 +2780,14 @@ components:
           - type: 'null'
           title: Version
           description: Configuration version reference for encrypted config
+        secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Secret Version
+          description: Secret Manager version for connection_params. When present,
+            sensitive connection data is stored in Secret Manager. When None, connection_params
+            are stored in GCS (legacy).
         created_by_user_id:
           anyOf:
           - type: string
@@ -2187,10 +2813,23 @@ components:
           title: Updated At
           description: Last update timestamp
         target_metadata:
-          anyOf:
-          - $ref: '#/components/schemas/TargetMetadata'
-          - type: 'null'
+          $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background info: industry, use_case, competitors'
+        profiling_status:
+          anyOf:
+          - $ref: '#/components/schemas/ProfilingStatus'
+          - type: 'null'
+          description: Status of the profiling workflow
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: Additional context with source tracking (user + profiler)
       type: object
       required:
       - uuid
@@ -2202,12 +2841,28 @@ components:
       - created_at
       - updated_at
       title: TargetSchema
-      description: Target Get Schema
+      description: 'Target Get Schema with profiling fields.
+
+
+        Inherits from TargetDetailSchema which includes:
+
+        - target_background: industry, use_case, competitors
+
+        - profiling_status: INIT, QUEUED, IN_PROGRESS, COMPLETED, FAILED
+
+        - additional_context: merged user + profiler values with source tracking
+
+        '
     TargetStatus:
       type: string
       enum:
       - DRAFT
+      - VALIDATING
+      - VALIDATED
       - ACTIVE
+      - INACTIVE
+      - FAILED
+      - PENDING_AUTH
       title: TargetStatus
       description: Status enumeration for scan targets.
     TargetType:
@@ -2227,6 +2882,16 @@ components:
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID for routing requests. Required
+            when api_endpoint_type is NETWORK_BROKER.
+          examples:
+          - 550e8400-e29b-41d4-a716-446655440000
         name:
           type: string
           title: Name
@@ -2239,7 +2904,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: ''
+          default: null
           examples:
           - AI model for testing
         target_type:
@@ -2264,6 +2929,7 @@ components:
           examples:
           - PUBLIC
           - PRIVATE
+          - NETWORK_BROKER
         response_mode:
           anyOf:
           - $ref: '#/components/schemas/ResponseMode'
@@ -2284,14 +2950,23 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: {}
+          default: null
           examples:
           - custom_key: custom_value
         target_metadata:
-          anyOf:
-          - $ref: '#/components/schemas/TargetMetadata'
-          - type: 'null'
+          $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        target_background:
+          anyOf:
+          - $ref: '#/components/schemas/TargetBackground'
+          - type: 'null'
+          description: 'Target background: industry, use_case, competitors'
+        additional_context:
+          anyOf:
+          - $ref: '#/components/schemas/TargetAdditionalContext'
+          - type: 'null'
+          description: 'Additional context: base_model, system_prompt, languages,
+            etc.'
       additionalProperties: false
       type: object
       required:
@@ -2348,13 +3023,13 @@ paths:
         Interface endpoint.
       operationId: readiness_ready_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 title: Response Readiness Ready Get
-        '401':
+        401:
           description: Unauthorized
           content:
             application/json:
@@ -2370,7 +3045,7 @@ paths:
         Interface endpoint.
       operationId: liveness_liveness_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
@@ -2379,7 +3054,7 @@ paths:
                   type: boolean
                 type: object
                 title: Response Liveness Liveness Get
-        '401':
+        401:
           description: Unauthorized
           content:
             application/json:
@@ -2390,17 +3065,17 @@ paths:
       - HealthChecks
   /v1/target:
     post:
-      summary: Create a new scan target
+      summary: Create target
       description: Create a new scan target.
       operationId: create_target_v1_target_post
       responses:
-        '201':
+        201:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TargetResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2426,17 +3101,17 @@ paths:
             schema:
               $ref: '#/components/schemas/TargetCreateRequestSchema'
     get:
-      summary: List all scan targets
+      summary: List targets
       description: List all scan targets with pagination and filtering support.
       operationId: list_targets_v1_target_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TargetListSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2503,13 +3178,13 @@ paths:
         details and masked connection parameters.
       operationId: get_target_v1_target__target_uuid__get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TargetRedactSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2526,18 +3201,18 @@ paths:
       tags:
       - Target
     put:
-      summary: Update a target with optional validation
+      summary: Update target
       description: Update an existing target with new configuration and optional validation
         control.
       operationId: update_target_v1_target__target_uuid__put
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TargetSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2569,13 +3244,13 @@ paths:
             schema:
               $ref: '#/components/schemas/TargetUpdateRequestSchema'
     delete:
-      summary: Delete a target
+      summary: Delete target
       description: Permanently delete a target and its encrypted configuration data.
       operationId: delete_target_v1_target__target_uuid__delete
       responses:
-        '204':
+        204:
           description: Successful Response
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2591,19 +3266,110 @@ paths:
           title: Target Uuid
       tags:
       - Target
+  /v1/target/{target_uuid}/profile:
+    put:
+      summary: Update target profile
+      description: Update target background and additional context fields without
+        connection validation.
+      operationId: update_target_profile_v1_target__target_uuid__profile_put
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TargetSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters:
+      - name: target_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Target Uuid
+      tags:
+      - Target
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TargetContextUpdateSchema'
+    get:
+      summary: Get profiling results
+      description: Get profiling results including merged user and profiler data.
+      operationId: get_profiling_results_v1_target__target_uuid__profile_get
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TargetProfileResponse'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters:
+      - name: target_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Target Uuid
+      tags:
+      - Target
+  /v1/target/probe:
+    post:
+      summary: Run profiling probes on target
+      description: Send profiling questions to a target using provided connection
+        parameters. Returns TargetResponseSchema with target_background and additional_context
+        populated from probe responses.
+      operationId: run_target_probes_v1_target_probe_post
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TargetResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters: []
+      tags:
+      - Target
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TargetProbeRequest'
+        required: true
   /v1/custom-attack/custom-prompt-set:
     post:
       summary: Create a new custom prompt set
       description: Create a new custom prompt set.
       operationId: create_prompt_set_v1_custom_attack_custom_prompt_set_post
       responses:
-        '201':
+        201:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2620,17 +3386,17 @@ paths:
         required: true
   /v1/custom-attack/list-custom-prompt-sets:
     get:
-      summary: List all custom prompt sets
+      summary: List custom prompt sets
       description: List all custom prompt sets with pagination and filtering support.
       operationId: list_prompt_sets_v1_custom_attack_list_custom_prompt_sets_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetListSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2709,13 +3475,13 @@ paths:
         properties.
       operationId: get_prompt_set_v1_custom_attack_custom_prompt_set__prompt_set_uuid__get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2732,17 +3498,17 @@ paths:
       tags:
       - CustomAttack
     put:
-      summary: Update an existing prompt set
+      summary: Update prompt set
       description: Update prompt set details including name, description, and properties.
       operationId: update_prompt_set_v1_custom_attack_custom_prompt_set__prompt_set_uuid__put
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2770,13 +3536,13 @@ paths:
       description: Archive or unarchive a prompt set to manage its lifecycle.
       operationId: archive_prompt_set_v1_custom_attack_custom_prompt_set__prompt_set_uuid__archive_put
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2800,17 +3566,17 @@ paths:
               $ref: '#/components/schemas/CustomPromptSetArchiveRequestSchema'
   /v1/custom-attack/custom-prompt-set/custom-prompt:
     post:
-      summary: Create prompt
+      summary: Create prompt in a prompt set
       description: Create a new prompt in a prompt set.
       operationId: create_prompt_v1_custom_attack_custom_prompt_set_custom_prompt_post
       responses:
-        '201':
+        201:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2832,13 +3598,13 @@ paths:
         filtering.
       operationId: list_prompts_in_set_v1_custom_attack_custom_prompt_set__prompt_set_uuid__list_custom_prompts_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptListSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2907,17 +3673,17 @@ paths:
       - CustomAttack
   /v1/custom-attack/custom-prompt-set/{prompt_set_uuid}/custom-prompt/{prompt_uuid}:
     get:
-      summary: Get a specific prompt by UUID
+      summary: Get prompt details
       description: Get a specific prompt by UUID.
       operationId: get_prompt_v1_custom_attack_custom_prompt_set__prompt_set_uuid__custom_prompt__prompt_uuid__get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2941,17 +3707,17 @@ paths:
       tags:
       - CustomAttack
     put:
-      summary: Update an existing prompt
+      summary: Update prompt
       description: Update an existing prompt.
       operationId: update_prompt_v1_custom_attack_custom_prompt_set__prompt_set_uuid__custom_prompt__prompt_uuid__put
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -2981,13 +3747,13 @@ paths:
             schema:
               $ref: '#/components/schemas/CustomPromptUpdateRequestSchema'
     delete:
-      summary: Delete a prompt
+      summary: Delete prompt
       description: Delete a prompt.
       operationId: delete_prompt_v1_custom_attack_custom_prompt_set__prompt_set_uuid__custom_prompt__prompt_uuid__delete
       responses:
-        '204':
+        204:
           description: Successful Response
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3012,17 +3778,17 @@ paths:
       - CustomAttack
   /v1/custom-attack/property-names:
     get:
-      summary: Get all available property names
+      summary: Get property names
       description: Get all available property names for use in prompt sets.
       operationId: get_property_names_v1_custom_attack_property_names_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PropertyNamesListResponseSchema'
-        '401':
+        401:
           description: Unauthorized
           content:
             application/json:
@@ -3032,17 +3798,17 @@ paths:
       tags:
       - CustomAttack
     post:
-      summary: Create a new property name
+      summary: Create property name
       description: Create a new property name that can be used in prompt sets.
       operationId: create_property_name_v1_custom_attack_property_names_post
       responses:
-        '201':
+        201:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PropertyNamesListResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3059,17 +3825,17 @@ paths:
         required: true
   /v1/custom-attack/property-values/{property_name}:
     get:
-      summary: Get property values
+      summary: Get property name
       description: Get all available values for a specific property name.
       operationId: get_property_values_v1_custom_attack_property_values__property_name__get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PropertyValuesResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3086,17 +3852,17 @@ paths:
       - CustomAttack
   /v1/custom-attack/property-values:
     post:
-      summary: Create a new property value
+      summary: Create property value
       description: Create a new value for an existing property name.
       operationId: create_property_value_v1_custom_attack_property_values_post
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BaseResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3116,13 +3882,13 @@ paths:
       description: Get values for multiple property names in a single request.
       operationId: get_property_values_multiple_v1_custom_attack_property_values_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PropertyValuesMultipleResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3141,18 +3907,18 @@ paths:
       - CustomAttack
   /v1/custom-attack/upload-custom-prompts-csv:
     post:
-      summary: Upload CSV file with custom prompts
+      summary: Upload custom prompts
       description: Upload a CSV file containing custom prompts with properties for
         a specific prompt set.
       operationId: upload_prompts_csv_v1_custom_attack_upload_custom_prompts_csv_post
       responses:
-        '201':
+        201:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/BaseResponseSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3178,16 +3944,16 @@ paths:
               $ref: '#/components/schemas/Body_upload_prompts_csv_v1_custom_attack_upload_custom_prompts_csv_post'
   /v1/custom-attack/download-template/{prompt_set_uuid}:
     get:
-      summary: Download CSV template
+      summary: Download template for a prompt set
       description: Download a CSV template with columns for the prompt set's properties.
       operationId: download_template_v1_custom_attack_download_template__prompt_set_uuid__get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3210,13 +3976,13 @@ paths:
         Returns only sets with snapshots.
       operationId: list_active_prompt_sets_v1_custom_attack_active_custom_prompt_sets_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetListActiveSchema'
-        '401':
+        401:
           description: Unauthorized
           content:
             application/json:
@@ -3232,13 +3998,13 @@ paths:
         version.
       operationId: resolve_prompt_set_reference_v1_custom_attack_custom_prompt_set__prompt_set_uuid__reference_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetReferenceSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3260,13 +4026,13 @@ paths:
       description: Get detailed version information for a specific prompt set version.
       operationId: get_prompt_set_version_info_v1_custom_attack_custom_prompt_set__prompt_set_uuid__version_info_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomPromptSetVersionInfoSchema'
-        '422':
+        422:
           description: Validation Error
           content:
             application/json:
@@ -3294,17 +4060,17 @@ paths:
       - CustomAttack
   /v1/dashboard/overview:
     get:
-      summary: Get dashboard overview
+      summary: Get dashboard
       description: Returns target counts by type for dashboard display.
       operationId: get_overview_v1_dashboard_overview_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DashboardOverviewResponseSchema'
-        '401':
+        401:
           description: Unauthorized
           content:
             application/json:
