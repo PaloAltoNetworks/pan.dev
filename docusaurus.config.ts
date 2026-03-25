@@ -509,6 +509,11 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/monitoring_service",
+                      label: "SASE 5G Manage Service",
+                      icon: "api-doc",
+                    },
+                    {
                       to: "/sase/api/introduction",
                       label: "Prisma Access Configuration Orchestration",
                       icon: "api-doc",
@@ -949,6 +954,11 @@ const config = {
           monitorservices: {
             specPath: "openapi-specs/sase/monitor-services-5g",
             outputDir: "products/sase/api/monitor-services-5g",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          monitoringservice: {
+            specPath: "openapi-specs/sase/monitoring_service",
+            outputDir: "products/sase/api/monitoring_service",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           configorch: {

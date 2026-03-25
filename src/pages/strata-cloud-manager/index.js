@@ -219,6 +219,8 @@ export default function SCMLandingPage() {
           {
             label: "CIE Directory Sync Service",
             to: "scm/api/config/ciedss/ciedss",
+            label: "Snippet Sharing",
+            to: "scm/api/config/snippet-sharing",
             icon: "api-doc",
           },
         ],

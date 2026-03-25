@@ -339,6 +339,11 @@ module.exports = {
     "sase/api/monitor-services-5g/introduction-monitor",
     require("./api/monitor-services-5g/sidebar"),
   ],
+  monitoringservice: [
+    "sase/api/monitoring_service/introduction_5g",
+    "sase/api/monitoring_service/overview_5g",
+    require("./api/monitoring_service/sidebar"),
+  ],
   configorch: [
     "sase/api/config-orch/introduction",
     "sase/api/config-orch/api-workflow",
