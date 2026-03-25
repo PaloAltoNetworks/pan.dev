@@ -284,6 +284,18 @@ module.exports = {
     },
     {
       type: "category",
+      label: "NGTS Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/ngts/ngts-api",
+        },
+        require("./api/config/ngts/sidebar"),
+      ],
+    },
+    {
+      type: "category",
       label: "Incidents API",
       collapsed: true,
       items: [
