@@ -1,0 +1,553 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    DictionaryMetaDataDTO:
+      description: Dictionary metadata including keyword count and file info
+      properties:
+        number_of_keywords:
+          format: int32
+          type: integer
+        original_file_name:
+          type: string
+        original_file_size_in_byte:
+          format: int64
+          type: integer
+      type: object
+    DictionaryPatchRequest:
+      description: Request payload for partially updating a dictionary (JSON Merge
+        Patch)
+      properties:
+        category:
+          $ref: '#/components/schemas/JsonNullableString'
+        description:
+          $ref: '#/components/schemas/JsonNullableString'
+        is_case_sensitive:
+          $ref: '#/components/schemas/JsonNullableBoolean'
+        name:
+          $ref: '#/components/schemas/JsonNullableString'
+        original_file_name:
+          $ref: '#/components/schemas/JsonNullableString'
+        region_name:
+          $ref: '#/components/schemas/JsonNullableString'
+      required:
+      - category
+      - name
+      - original_file_name
+      type: object
+    DictionaryRequest:
+      description: Request payload for creating or updating a dictionary (use as the
+        'json' part in multipart/form-data)
+      properties:
+        category:
+          description: Category for grouping (e.g. PII, Finance)
+          enum:
+          - Academic
+          - Confidential
+          - Employment
+          - Financial
+          - Government
+          - Healthcare
+          - Legal
+          - Marketing
+          - Source Code
+          type: string
+        description:
+          description: Optional human-readable description
+          type: string
+        is_case_sensitive:
+          description: Whether keyword matching is case-sensitive
+          type: boolean
+        name:
+          description: Display name of the dictionary
+          type: string
+        original_file_name:
+          description: Original file name of the uploaded keyword file
+          type: string
+        region_name:
+          description: Optional region name for region-specific dictionaries
+          type: string
+        type:
+          enum:
+          - predefined
+          - custom
+          type: string
+      required:
+      - category
+      - name
+      - original_file_name
+      - region_name
+      type: object
+    DictionaryResponse:
+      description: Dictionary resource returned by the API
+      properties:
+        attributes:
+          description: Additional resource attributes
+          items:
+            $ref: '#/components/schemas/ResourceModelExtension'
+          type: array
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        category:
+          description: Category for grouping
+          type: string
+        description:
+          description: Optional human-readable description
+          type: string
+        detection_sub_technique:
+          description: Detection sub-technique
+          enum:
+          - dnn
+          - gamma
+          - ml_gateway
+          - encoding
+          - password_protected
+          - encryption
+          - compression
+          - threshold
+          type: string
+        detection_technique:
+          description: Detection technique used
+          enum:
+          - edm
+          - document_fingerprint
+          - trainable_classifier
+          - ml_document
+          - regex
+          - weighted_regex
+          - ml
+          - titus_tag
+          - wildfire
+          - file_property
+          - dictionary
+          - pab
+          - document_classifier
+          type: string
+        dictionary_metadata:
+          $ref: '#/components/schemas/DictionaryMetaDataDTO'
+        id:
+          description: Unique identifier of the dictionary
+          type: string
+        is_case_sensitive:
+          description: Whether keyword matching is case-sensitive
+          type: boolean
+        is_parent_managed:
+          description: Whether the dictionary is managed by a parent tenant
+          type: boolean
+        keywords:
+          description: List of keywords (included when keywords=true query param is
+            set)
+          items:
+            description: List of keywords (included when keywords=true query param
+              is set)
+            type: string
+          type: array
+        name:
+          description: Display name of the dictionary
+          type: string
+        region_name:
+          description: Optional region name
+          type: string
+        tags:
+          $ref: '#/components/schemas/DictionaryTags'
+        type:
+          description: Dictionary type (always custom for user-created dictionaries)
+          enum:
+          - predefined
+          - custom
+          type: string
+      type: object
+    DictionaryTags:
+      description: Metadata tags
+      properties:
+        classification:
+          items:
+            enum:
+            - pab
+            - endpoint
+            type: string
+          type: array
+      type: object
+    JsonNullableBoolean:
+      description: New enabled state
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableString:
+      description: New description (set to null to clear)
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    PageDictionaryResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DictionaryResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    Pageable:
+      properties:
+        page:
+          format: int32
+          minimum: 0
+          type: integer
+        size:
+          format: int32
+          minimum: 1
+          type: integer
+        sort:
+          items:
+            type: string
+          type: array
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    ResourceModelExtension:
+      description: Additional resource attributes
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Create and manage custom dictionaries for data pattern matching and\
+    \ detection. Build domain-specific \ndictionaries to enhance detection accuracy\
+    \ for industry-specific sensitive information.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Dictionaries API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/dictionaries:
+    get:
+      description: Returns a paginated list of dictionaries for the authenticated
+        tenant.
+      operationId: get-v2-api-dictionaries
+      parameters:
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      - in: query
+        name: pageable
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      - description: If true, include keywords list in response
+        in: query
+        name: keywords
+        schema:
+          default: false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDictionaryResponse'
+          description: Paginated list of dictionaries
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List Dictionaries
+      tags:
+      - Dictionaries
+    post:
+      description: Creates a dictionary by uploading a file (multipart/form-data).
+      operationId: post-v2-api-dictionaries
+      parameters:
+      - in: query
+        name: keywords
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  format: binary
+                  type: string
+                json:
+                  $ref: '#/components/schemas/DictionaryRequest'
+              required:
+              - file
+              - json
+              type: object
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryResponse'
+          description: Dictionary created
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Create Dictionary
+      tags:
+      - Dictionaries
+  /v2/api/dictionaries/{resourceId}:
+    delete:
+      description: Deletes a dictionary by its ID.
+      operationId: delete-v2-api-dictionaries-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      responses:
+        '204':
+          description: Dictionary deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Dictionary not found
+      security:
+      - Bearer: []
+      summary: Delete Dictionary
+      tags:
+      - Dictionaries
+    get:
+      description: Retrieves a single dictionary by its ID.
+      operationId: get-v2-api-dictionaries-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      - description: If true, include keywords list in response
+        in: query
+        name: keywords
+        schema:
+          default: false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryResponse'
+          description: Dictionary found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Dictionary not found
+      security:
+      - Bearer: []
+      summary: Get Dictionary
+      tags:
+      - Dictionaries
+    patch:
+      description: Partially updates an existing dictionary using JSON Merge Patch
+        semantics.
+      operationId: patch-v2-api-dictionaries-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/DictionaryPatchRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryResponse'
+          description: Dictionary updated
+        '400':
+          description: Invalid patch payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Dictionary not found
+      security:
+      - Bearer: []
+      summary: Patch Dictionary
+      tags:
+      - Dictionaries
+    put:
+      description: Replaces an existing dictionary by uploading a new file (multipart/form-data).
+      operationId: put-v2-api-dictionaries-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: keywords
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  format: binary
+                  type: string
+                json:
+                  $ref: '#/components/schemas/DictionaryRequest'
+              required:
+              - file
+              - json
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryResponse'
+          description: Dictionary updated
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryResponse'
+          description: No Content
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Dictionary not found
+      security:
+      - Bearer: []
+      summary: Update Dictionary
+      tags:
+      - Dictionaries
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: Dictionaries

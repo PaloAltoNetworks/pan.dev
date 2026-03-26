@@ -1,0 +1,530 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    DocMetadataDTO:
+      description: Technique-specific metadata (fingerprint or classifier details)
+      type: object
+    DocumentTypePatchRequest:
+      description: Request payload for partially updating a document type (JSON Merge
+        Patch)
+      properties:
+        category:
+          $ref: '#/components/schemas/JsonNullableString'
+        description:
+          $ref: '#/components/schemas/JsonNullableString'
+        detection_technique:
+          $ref: '#/components/schemas/JsonNullableDetectionTechnique'
+        l1_category_id:
+          $ref: '#/components/schemas/JsonNullableInteger'
+        l2_category_id:
+          $ref: '#/components/schemas/JsonNullableInteger'
+        name:
+          $ref: '#/components/schemas/JsonNullableString'
+        original_file_name:
+          $ref: '#/components/schemas/JsonNullableString'
+      required:
+      - category
+      - detection_technique
+      - name
+      - original_file_name
+      type: object
+    DocumentTypeRequest:
+      description: Request payload for creating or updating a document type (use as
+        the 'json' part in multipart/form-data)
+      properties:
+        category:
+          description: Category for grouping
+          enum:
+          - Academic
+          - Confidential
+          - Employment
+          - Financial
+          - Government
+          - Healthcare
+          - Legal
+          - Marketing
+          - Source Code
+          type: string
+        description:
+          description: Optional human-readable description
+          type: string
+        detection_technique:
+          description: 'Detection technique: document_fingerprint or trainable_classifier'
+          enum:
+          - edm
+          - document_fingerprint
+          - trainable_classifier
+          - ml_document
+          - regex
+          - weighted_regex
+          - ml
+          - titus_tag
+          - wildfire
+          - file_property
+          - dictionary
+          - pab
+          - document_classifier
+          type: string
+        l1_category_id:
+          description: L1 category ID for hierarchical classification
+          format: int32
+          type: integer
+        l2_category_id:
+          description: L2 category ID for hierarchical classification
+          format: int32
+          type: integer
+        name:
+          description: Display name of the document type
+          type: string
+        original_file_name:
+          description: Original file name of the uploaded training file
+          type: string
+      required:
+      - category
+      - detection_technique
+      - name
+      - original_file_name
+      type: object
+    DocumentTypeResponse:
+      description: Document type resource returned by the API
+      properties:
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        category:
+          description: Category for grouping
+          type: string
+        description:
+          description: Optional human-readable description
+          type: string
+        detection_sub_technique:
+          description: Detection sub-technique
+          enum:
+          - dnn
+          - gamma
+          - ml_gateway
+          - encoding
+          - password_protected
+          - encryption
+          - compression
+          - threshold
+          type: string
+        detection_technique:
+          description: Detection technique used
+          enum:
+          - edm
+          - document_fingerprint
+          - trainable_classifier
+          - ml_document
+          - regex
+          - weighted_regex
+          - ml
+          - titus_tag
+          - wildfire
+          - file_property
+          - dictionary
+          - pab
+          - document_classifier
+          type: string
+        id:
+          description: Unique identifier of the document type
+          type: string
+        license_type:
+          description: License type associated with this document type
+          enum:
+          - standard
+          - enterprise
+          - essentials
+          type: string
+        metadata:
+          $ref: '#/components/schemas/DocMetadataDTO'
+        name:
+          description: Display name of the document type
+          type: string
+        status:
+          description: Configuration and training status
+          enum:
+          - completed
+          - failed
+          - inProgress
+          - available
+          type: string
+        supported_confidence_levels:
+          description: List of confidence levels supported
+          items:
+            description: List of confidence levels supported
+            enum:
+            - low
+            - medium
+            - high
+            type: string
+          type: array
+        type:
+          description: Document type classification
+          enum:
+          - custom
+          - predefined
+          type: string
+        version:
+          description: Version number, incremented on each update
+          format: int32
+          type: integer
+      type: object
+    JsonNullableDetectionTechnique:
+      description: New detection technique
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableInteger:
+      description: New priority order
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableString:
+      description: New description (set to null to clear)
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    PageDocumentTypeResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DocumentTypeResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    Pageable:
+      properties:
+        page:
+          format: int32
+          minimum: 0
+          type: integer
+        size:
+          format: int32
+          minimum: 1
+          type: integer
+        sort:
+          items:
+            type: string
+          type: array
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Manage document type classifications for enhanced document scanning\
+    \ and categorization. Define custom \ndocument types to improve detection accuracy\
+    \ and enable type-specific DLP policies.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Document Types API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/document-types:
+    get:
+      description: Returns a paginated list of document types for the authenticated
+        tenant.
+      operationId: get-v2-api-document-types
+      parameters:
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      - in: query
+        name: pageable
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDocumentTypeResponse'
+          description: Paginated list of document types
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List Document Types
+      tags:
+      - Document Types
+    post:
+      description: Creates a document type by uploading training files (multipart/form-data).
+      operationId: post-v2-api-document-types
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  format: binary
+                  type: string
+                json:
+                  $ref: '#/components/schemas/DocumentTypeRequest'
+                negative:
+                  format: binary
+                  type: string
+                positive:
+                  format: binary
+                  type: string
+              required:
+              - json
+              type: object
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTypeResponse'
+          description: Document type created
+        '400':
+          description: Invalid request payload or missing required files
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Create Document Type
+      tags:
+      - Document Types
+  /v2/api/document-types/{resourceId}:
+    delete:
+      description: Deletes a document type by its ID.
+      operationId: delete-v2-api-document-types-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      responses:
+        '204':
+          description: Document type deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Document type not found
+      security:
+      - Bearer: []
+      summary: Delete Document Type
+      tags:
+      - Document Types
+    get:
+      description: Retrieves a single document type by its ID.
+      operationId: get-v2-api-document-types-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTypeResponse'
+          description: Document type found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Document type not found
+      security:
+      - Bearer: []
+      summary: Get Document Type
+      tags:
+      - Document Types
+    patch:
+      description: Partially updates an existing document type using JSON Merge Patch
+        semantics.
+      operationId: patch-v2-api-document-types-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/DocumentTypePatchRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTypeResponse'
+          description: Document type updated
+        '400':
+          description: Invalid patch payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Document type not found
+      security:
+      - Bearer: []
+      summary: Patch Document Type
+      tags:
+      - Document Types
+    put:
+      description: Fully replaces an existing document type with the provided payload.
+      operationId: put-v2-api-document-types-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentTypeRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTypeResponse'
+          description: Document type updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Document type not found
+      security:
+      - Bearer: []
+      summary: Update Document Type
+      tags:
+      - Document Types
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: Document Types

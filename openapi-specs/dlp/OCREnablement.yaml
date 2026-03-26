@@ -1,0 +1,169 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    OcrEnablementRequest:
+      description: Request payload for updating OCR enablement settings
+      properties:
+        ocr_enablement:
+          description: OCR enablement state
+          enum:
+          - REQUESTED
+          - ENABLED
+          - DISABLED
+          type: string
+        target_service_name:
+          description: Target service to apply the OCR setting to
+          enum:
+          - gpcs
+          - aperture
+          - redlock
+          - prisma-cloud
+          - prisma-saas
+          - prisma-access
+          - ngfw
+          - dlp
+          - email-dlp
+          - cortex-xdr
+          - endpoint-dlp
+          - prisma-access-browser
+          type: string
+      required:
+      - ocr_enablement
+      - target_service_name
+      type: object
+    OcrEnablementResponse:
+      description: OCR enablement configuration for a service
+      properties:
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        ocr_enablement:
+          description: Current OCR enablement state
+          enum:
+          - REQUESTED
+          - ENABLED
+          - DISABLED
+          type: string
+        ocr_enablement_banner:
+          description: Whether the OCR enablement banner is shown to users
+          type: boolean
+        service_name:
+          description: Service this configuration applies to
+          enum:
+          - gpcs
+          - aperture
+          - redlock
+          - prisma-cloud
+          - prisma-saas
+          - prisma-access
+          - ngfw
+          - dlp
+          - email-dlp
+          - cortex-xdr
+          - endpoint-dlp
+          - prisma-access-browser
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Optical Character Recognition (OCR) enablement APIs for enhanced document\
+    \ scanning and text extraction \ncapabilities. Enable OCR processing to detect\
+    \ sensitive information in scanned documents and images.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: OCR Enablement API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/ocr:
+    get:
+      description: Retrieves OCR enablement settings for the authenticated tenant,
+        optionally filtered by target service.
+      operationId: get-v2-api-ocr
+      parameters:
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      - description: Filter results to a specific service name
+        in: query
+        name: target-service-name
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OcrEnablementResponse'
+          description: OCR enablement settings found
+        '400':
+          description: Invalid target-service-name
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Get OCR Enablement
+      tags:
+      - OCR Enablement
+    put:
+      description: Updates the OCR enablement setting for a specific service.
+      operationId: put-v2-api-ocr
+      parameters:
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OcrEnablementRequest'
+        required: true
+      responses:
+        '204':
+          description: OCR enablement updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Update OCR Enablement
+      tags:
+      - OCR Enablement
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: OCR Enablement

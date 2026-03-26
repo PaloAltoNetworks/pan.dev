@@ -1,0 +1,263 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    EdmDatasetResponse:
+      description: EDM dataset resource returned by the API
+      properties:
+        active_fields:
+          description: Set of currently active fields in the dataset
+          items:
+            $ref: '#/components/schemas/EdmField'
+          type: array
+          uniqueItems: true
+        all_fields:
+          description: Set of all fields defined in the dataset
+          items:
+            $ref: '#/components/schemas/EdmField'
+          type: array
+          uniqueItems: true
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        id:
+          description: Unique identifier of the EDM dataset
+          type: string
+        index_status:
+          description: Current indexing status of the dataset
+          enum:
+          - failed
+          - queued
+          - success
+          type: string
+        name:
+          description: Display name of the EDM dataset
+          type: string
+        region_name:
+          description: Region where the dataset is stored
+          type: string
+        tenant_id:
+          description: Tenant identifier that owns this dataset
+          type: string
+      type: object
+    EdmField:
+      description: A field definition within an EDM dataset
+      properties:
+        id:
+          description: Unique identifier of the field
+          type: string
+        name:
+          description: Field name as defined in the dataset
+          type: string
+        type:
+          description: Data type of the field (e.g. string, number)
+          type: string
+      type: object
+    PageEdmDatasetResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/EdmDatasetResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    Pageable:
+      properties:
+        page:
+          format: int32
+          minimum: 0
+          type: integer
+        size:
+          format: int32
+          minimum: 1
+          type: integer
+        sort:
+          items:
+            type: string
+          type: array
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Manage Exact Data Matching (EDM) datasets for precise detection of\
+    \ sensitive content. Upload and maintain \nEDM datasets containing specific sensitive\
+    \ data such as customer lists, employee records, or financial data.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: EDM Datasets API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/edm-datasets:
+    get:
+      description: Returns a paginated list of EDM datasets for the authenticated
+        tenant.
+      operationId: get-v2-api-edm-datasets
+      parameters:
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      - in: query
+        name: pageable
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEdmDatasetResponse'
+          description: Paginated list of EDM datasets
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List EDM Datasets
+      tags:
+      - EDM Datasets
+  /v2/api/edm-datasets/{resourceId}:
+    delete:
+      description: Deletes an EDM dataset by its ID.
+      operationId: delete-v2-api-edm-datasets-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      responses:
+        '204':
+          description: EDM dataset deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: EDM dataset not found
+      security:
+      - Bearer: []
+      summary: Delete EDM Dataset
+      tags:
+      - EDM Datasets
+    get:
+      description: Retrieves a single EDM dataset by its ID.
+      operationId: get-v2-api-edm-datasets-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: reqParams
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdmDatasetResponse'
+          description: EDM dataset found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: EDM dataset not found
+      security:
+      - Bearer: []
+      summary: Get EDM Dataset
+      tags:
+      - EDM Datasets
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: EDM Datasets
