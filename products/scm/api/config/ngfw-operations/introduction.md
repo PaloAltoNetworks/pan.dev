@@ -1,5 +1,5 @@
 ---
-id: ngfw-operations-introduction
+id: introduction
 title: NGFW Operations APIs
 sidebar_label: NGFW Operations APIs
 keywords:

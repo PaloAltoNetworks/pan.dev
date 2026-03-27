@@ -187,7 +187,7 @@ export default function SCMLandingPage() {
         ],
         "NGFW Operations": [
           {
-            to: "scm/api/config/ngfw-operations/ngfw-operations-introduction",
+            to: "scm/api/config/ngfw-operations/introduction",
             label: "NGFW Operations",
             icon: "api-doc",
           },

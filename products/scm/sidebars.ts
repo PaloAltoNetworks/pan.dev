@@ -325,7 +325,7 @@ module.exports = {
       items: [
             {
               type: "doc",
-              id: "scm/api/config/ngfw-operations/ngfw-operations-introduction",
+              id: "scm/api/config/ngfw-operations/introduction",
             },
             require("./api/config/ngfw-operations/sidebar"),
           ],
