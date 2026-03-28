@@ -384,6 +384,18 @@ module.exports = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "NGFW Operations",
+      collapsed: true,
+      items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw-operations/ngfw-operations-introduction",
+            },
+            require("./api/config/ngfw-operations/sidebar"),
+          ],
+        },
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
   scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
