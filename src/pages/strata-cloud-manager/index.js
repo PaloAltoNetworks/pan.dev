@@ -254,7 +254,7 @@ export default function SCMLandingPage() {
     },
     {
       label: "Monitoring",
-      description: "Monitoring",
+      description: "",
       docs: [
         {
           to: "sase/api/mt-monitor",
