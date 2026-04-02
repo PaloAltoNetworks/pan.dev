@@ -31,9 +31,15 @@ The REST API follows best practices in API design. For example, it uses JSON for
 - Searching NGTS to understand what certificates have been issued by your organization.
 - Extracting data for custom reports based on certificate data and summary information to help track key and certificate management policy compliance.
 
-## What about my API key?
+## Authentication
 
-The API endpoint pages let you enter your API key and run API calls directly. Simply enter your API key in the **Authentication** box for any call.
+The NGTS APIs use OAuth 2.0 Client Credentials flow for authentication. To get started:
+
+1. Create a [Tenant Service Group (TSG)](/scm/docs/tenant-service-groups) and a [service account](/scm/docs/service-accounts) with the appropriate roles.
+2. Use the service account's **Client ID** and **Client Secret** to [request an access token](/scm/docs/access-tokens).
+3. Include the token as a `Bearer` token in the `Authorization` header of every API call.
+
+The API endpoint pages let you authorize and run API calls directly from the docs.
 
 ## Base URL
 
