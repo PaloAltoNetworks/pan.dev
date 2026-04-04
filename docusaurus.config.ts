@@ -904,6 +904,9 @@ const config = {
             outputDir: "products/scm/api/config/cloudngfw/security",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "ngfw-operations": {
+            specPath: "openapi-specs/scm/config/ngfw-operations",
+            outputDir: "products/scm/api/config/ngfw-operations",
           "config-incidents": {
             specPath: "openapi-specs/scm/config/incidents",
             outputDir: "products/scm/api/config/incidents",
