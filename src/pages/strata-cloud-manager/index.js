@@ -185,10 +185,10 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        "NGFW Operations": [
+        "NGTS Configuration": [
           {
-            to: "scm/api/config/ngfw-operations/introduction",
-            label: "NGFW Operations",
+            to: "scm/api/config/ngts/ngts-api",
+            label: "NGTS API",
             icon: "api-doc",
           },
         ],
