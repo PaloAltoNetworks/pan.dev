@@ -27,12 +27,20 @@ jobs:
             exit 0
           fi
 
-          if [[ "$HEAD_REPO" == "$BASE_REPO" ]]; then
+          if [[ "$HEAD_REPO" != "$BASE_REPO" ]]; then
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/PaloAltoNetworks/members/$PR_AUTHOR")
+          if [[ "$status" == "204" ]]; then
             echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
           else
             echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
           fi
         env:
+          GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           BASE_REPO: ${{ github.repository }}
@@ -108,7 +116,6 @@ jobs:
     runs-on: pan-dev-runner-xl
     permissions:
       contents: read
-    environment: default
 
     steps:
       - name: Checkout repository
