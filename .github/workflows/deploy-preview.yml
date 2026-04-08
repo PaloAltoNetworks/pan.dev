@@ -14,29 +14,28 @@ jobs:
     outputs:
       is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
     steps:
-      - name: Check if actor is org member
+      - name: Check if PR head is trusted
         id: is-org-member
         run: |
-          if [[ "$GH_ACTOR" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
+          if [[ "$PR_AUTHOR" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
             echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          if [ "$GH_ACTOR" = "dependabot[bot]" ]; then
+          if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
             echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" \
-            "https://api.github.com/orgs/PaloAltoNetworks/members/$GH_ACTOR")
-          if [ "$status" = "204" ]; then
+          if [[ "$HEAD_REPO" == "$BASE_REPO" ]]; then
             echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
           else
             echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
           fi
         env:
-          GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
-          GH_ACTOR: ${{ github.actor }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
 
   analyze:
     if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'true'
@@ -57,6 +56,7 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v3
@@ -87,6 +87,7 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v3
@@ -114,6 +115,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
@@ -185,7 +187,7 @@ jobs:
       # needed for fetching Hashicorp blog feed
       - name: Cache Playwright
         id: playwright-cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             ~/.cache/ms-playwright
@@ -210,8 +212,9 @@ jobs:
             echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
             exit 1
           fi
-      
+
           echo "Build directory found at: $BUILD_DIR"
+          rm -f build.zip
           zip -r build.zip "$BUILD_DIR"
 
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -233,6 +236,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+        with:
+          persist-credentials: false
 
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
@@ -246,7 +251,7 @@ jobs:
 
       - name: Unzip build artifact
         run: |
-          unzip build.zip
+          unzip -n build.zip 'build/*' 'websites/pan-dev/build/*'
           if [ -d "build" ]; then
             DEPLOY_DIR="."
           elif [ -d "websites/pan-dev/build" ]; then
@@ -271,10 +276,6 @@ jobs:
           creds=$(cat "${{ steps.auth.outputs.credentials_file_path }}")
           echo "::add-mask::$creds"
           echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: build
 
       - name: Deploy to Firebase
         id: deploy_preview
