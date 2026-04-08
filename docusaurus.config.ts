@@ -914,6 +914,11 @@ const config = {
             outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "ngfwoperation": {
+            specPath: "openapi-specs/scm/config/ngfw-operations",
+            outputDir: "products/scm/api/config/ngfw-operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
