@@ -1,0 +1,1 @@
+Adds a CLI scan result

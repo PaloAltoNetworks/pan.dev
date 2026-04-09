@@ -1,0 +1,1 @@
+Returns a list of mirrored VMs for which the firewall policy rule applies to.
