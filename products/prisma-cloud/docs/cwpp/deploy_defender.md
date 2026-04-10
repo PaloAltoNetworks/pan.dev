@@ -44,7 +44,7 @@ Use this deployment when you want to secure all tasks (apps) or workloads in a c
 1. Download the App Embedded Defender bundle by using the [App Embedded Defender](https://pan.dev/prisma-cloud/api/cwpp/get-images-twistlock-defender-app-embedded-tar-gz) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
 
     ```bash
-    $ curl -sSL -k --header "authorization: Bearer <key>" https://<CONSOLE>/api/v<VERSION>/images/twistlock_defender_app_embedded.tar.gz -O
+    $ curl -sSL --header "authorization: Bearer <key>" https://<CONSOLE>/api/v<VERSION>/images/twistlock_defender_app_embedded.tar.gz -O
     ```
 
 2. Set the following environment variables:
@@ -75,7 +75,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 - Generate a protected task definition using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-json/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint:
 
   ```bash
-    $ curl -k \
+    $ curl \
      -u <USER> \
      -H 'Content-Type: application/json' \
      -X POST \
@@ -90,7 +90,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 - Generate a protected template using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-json/)![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -106,7 +106,7 @@ Use this cURL sample request to protect a Amazon ECS Fargate task definition in 
 - Generate a protected template using the [Defender Fargate](https://pan.dev/prisma-cloud/api/cwpp/post-defenders-fargate-yaml/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/yaml' \
     -X POST \
@@ -130,7 +130,7 @@ Use this deployment when you want to secure applications (or tasks) in docker ma
 3. Generate the docker file.
 
     ```bash
-    $ curl -k \
+    $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -157,7 +157,7 @@ Use this deployment to embed Defender to AWS Lambda Layers so that all serverles
     Specify the function name, runtime, and region in the following API cURL request:
 
     ```bash
-    $ curl -sSL -k --header "authorization: Bearer <API Key>" -X POST https://<CONSOLE>/api/v<VERSION>/images/twistlock_defender_layer.zip -o twistlock_defender_layer.zip -d "{\"runtime\":\"nodejs14.x\",\"provider\":\"aws\"}"
+    $ curl -sSL --header "authorization: Bearer <API Key>" -X POST https://<CONSOLE>/api/v<VERSION>/images/twistlock_defender_layer.zip -o twistlock_defender_layer.zip -d "{\"runtime\":\"nodejs14.x\",\"provider\":\"aws\"}"
     ```
 
 
@@ -182,7 +182,7 @@ Use this deployment to embed Defender to secure each AWS Lambda function.
     Self-hosted (AWS) sample cURL Request:
 
     ```bash
-    $ curl -k \
+    $ curl \
     -u <USER> \
     -H 'Content-Type: application/octet-stream' \
     -o serverless_bundle.zip \
@@ -246,7 +246,7 @@ Use this deployment to embed Defender to secure each Azure serverless function.
     SaaS (Azure) sample cURL Request:
     
     ```bash
-    $ curl -sSL -k --header "authorization: Bearer <key>" -X POST https://<CONSOLE>/api/v<VERSION>/defenders/serverless/bundle -o twistlock_serverless_defender.zip -d "{\"runtime\":\"dotnet3\",\"provider\":\"azure\"}"
+    $ curl -sSL --header "authorization: Bearer <key>" -X POST https://<CONSOLE>/api/v<VERSION>/defenders/serverless/bundle -o twistlock_serverless_defender.zip -d "{\"runtime\":\"dotnet3\",\"provider\":\"azure\"}"
     ```
 
 2. Unzip the bundle in your function’s root directory.
