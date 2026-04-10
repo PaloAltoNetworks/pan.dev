@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Best Practice Assessment (BPA) Config Upload API
-  version: '1.0'
+  version: 1.1.0
   description: "The Best Practice Assessment (BPA) Config Upload API provides a streamlined,\
     \ \nprogrammatic way for organizations to audit their security posture. \nBy integrating\
     \ this API into your workflow, you can automatically submit configuration files\
@@ -25,14 +25,14 @@ info:
     \ the configuration against hundreds of best-practice checks.\n  4. Retrieve:\
     \ Receive the results instantly in a structured JSON schema.\n  5. Purge: (Optional)\
     \ The service automatically deletes the source configuration file upon completion.\
-    \ This Open API spec file was created on April 07, 2026. \xA9 2026 Palo Alto Networks,\
+    \ This Open API spec file was created on April 10, 2026. \xA9 2026 Palo Alto Networks,\
     \ Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks. A list\
     \ of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 servers:
-- url: https://api.strata.paloaltonetworks.com/config/deployment/v1
+- url: https://api.strata.paloaltonetworks.com
   description: Current
-- url: https://api.sase.paloaltonetworks.com/sse/config/v1
+- url: https://api.sase.paloaltonetworks.com
   description: Legacy
 components:
   schemas:
@@ -382,13 +382,24 @@ ExternalTags:
     description: Config file upload for BPA result
     tags:
     - Config File Upload
+  Custom Posture Checks:
+    title: Custom Posture Checks
+    description: Operations for managing custom posture checks including CRUD and
+      batch operations.
+    tags:
+    - Custom Posture Checks
 paths:
   /posture/checks/v1/reports/config-file-upload:
     post:
       summary: Initiate a Configuration Upload
-      description: Generates a tracking Identifier and a presigned GCS Uniform Resource
-        Locator for file upload using device metadata.
-      operationId: initiateConfigUpload
+      description: "Generates a tracking Identifier and a presigned GCS Uniform Resource\
+        \ Locator for file upload using device metadata.\n\n## Using the Signed Uniform\
+        \ Resource Locator\n\nAfter receiving the `upload_url` in the response, upload\
+        \ your Configuration file using a PUT request:\n\n```bash\ncurl -X PUT \"\
+        <upload_url>\" \\\n  -H \"Content-Type: plain/text\" \\\n  -H \"Content-Encoding:\
+        \ gzip\" \\\n  --data-binary @/path/to/your/Configuration.xml\n```\n\n**Required\
+        \ headers:**\n- `Content-Type: plain/text`\n- `Content-Encoding: gzip`."
+      operationId: InitiateConfigUpload
       responses:
         '201':
           description: Successfully initiated config upload.
@@ -453,7 +464,7 @@ paths:
       summary: Get BPA Processing Status
       description: Returns the status (QUEUED, IN_PROGRESS, COMPLETED, FAILED) and
         final result.
-      operationId: getBpaResult
+      operationId: GetBpaResultByID
       responses:
         '200':
           description: Status retrieved successfully.
@@ -502,7 +513,7 @@ paths:
     get:
       summary: List Posture Checks
       description: Returns a paginated list of posture checks (both custom and predefined).
-      operationId: listPostureChecks
+      operationId: ListPostureChecks
       responses:
         '200':
           description: List of posture checks.
@@ -570,11 +581,11 @@ paths:
           default: 0
         description: Number of results to skip for pagination.
       tags:
-      - untagged
+      - Custom Posture Checks
     post:
       summary: Create Posture Check
       description: Creates a new custom posture check. Requires SCM Pro license.
-      operationId: createPostureCheck
+      operationId: CreatePostureChecks
       responses:
         '201':
           description: Posture check created successfully.
@@ -602,7 +613,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       parameters: []
       tags:
-      - untagged
+      - Custom Posture Checks
       requestBody:
         required: true
         content:
@@ -613,7 +624,7 @@ paths:
     get:
       summary: Get Posture Check
       description: Returns a specific posture check by Identifier.
-      operationId: getPostureCheck
+      operationId: GetPostureChecksByID
       responses:
         '200':
           description: Posture check details.
@@ -641,11 +652,11 @@ paths:
         required: true
         description: The posture check ID.
       tags:
-      - untagged
+      - Custom Posture Checks
     put:
       summary: Update Posture Check
       description: Updates an existing custom posture check. Requires SCM Pro license.
-      operationId: updatePostureCheck
+      operationId: UpdatePostureChecksByID
       responses:
         '200':
           description: Posture check updated successfully.
@@ -685,7 +696,7 @@ paths:
         required: true
         description: The posture check ID.
       tags:
-      - untagged
+      - Custom Posture Checks
       requestBody:
         required: true
         content:
@@ -695,7 +706,7 @@ paths:
     delete:
       summary: Delete Posture Check
       description: Deletes a custom posture check. Requires SCM Pro license.
-      operationId: deletePostureCheck
+      operationId: DeletePostureChecksByID
       responses:
         '204':
           description: Posture check deleted successfully.
@@ -725,13 +736,13 @@ paths:
         required: true
         description: The posture check ID.
       tags:
-      - untagged
+      - Custom Posture Checks
   /posture/checks/v1/{id}:clone:
     post:
       summary: Clone Posture Check
       description: Creates a copy of an existing posture check with a new Identifier.
         Requires SCM Pro license.
-      operationId: clonePostureCheck
+      operationId: ClonePostureChecksByID
       responses:
         '201':
           description: Posture check cloned successfully.
@@ -771,7 +782,7 @@ paths:
         required: true
         description: The posture check ID to clone.
       tags:
-      - untagged
+      - Custom Posture Checks
       requestBody:
         required: false
         content:
@@ -784,7 +795,7 @@ paths:
       description: Creates or updates multiple posture checks in a single call. Objects
         with an existing Identifier will be updated, new objects will be created.
         Requires SCM Pro license.
-      operationId: batchUpsertPostureChecks
+      operationId: BatchUpsertPostureChecks
       responses:
         '200':
           description: Batch upsert completed.
@@ -812,7 +823,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       parameters: []
       tags:
-      - untagged
+      - Custom Posture Checks
       requestBody:
         required: true
         content:
@@ -824,7 +835,7 @@ paths:
       summary: Batch Delete Posture Checks
       description: Deletes multiple posture checks in a single call. Requires SCM
         Pro license.
-      operationId: batchDeletePostureChecks
+      operationId: BatchDeletePostureChecks
       responses:
         '200':
           description: Batch delete completed.
@@ -852,7 +863,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       parameters: []
       tags:
-      - untagged
+      - Custom Posture Checks
       requestBody:
         required: true
         content:
