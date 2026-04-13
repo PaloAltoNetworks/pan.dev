@@ -41,6 +41,21 @@ module.exports = {
         ],
       },
     
+    // 4. Network Broker API Category
+    {
+      label: "Network Broker API",
+      type: "category",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "prisma-airs-redteam/api/ai-integration/network-broker/networkbroker",
+        },
+        ...require("./api/ai-integration/network-broker/sidebar"),
+      ],
+    },  
+    
+
   ]
   
   };
