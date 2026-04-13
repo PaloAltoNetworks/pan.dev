@@ -1,0 +1,33 @@
+name: "Cleanup Preview"
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  cleanup:
+    if: github.repository == 'PaloAltoNetworks/pan.dev'
+    name: Delete preview channel
+    runs-on: ubuntu-latest
+    environment: preview
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Delete Firebase preview channel
+        run: |
+          curl -sf -X DELETE \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            "https://firebasehosting.googleapis.com/v1beta1/sites/pan-dev-f1b58/channels/pr${PR_NUMBER}" \
+            || echo "Channel pr${PR_NUMBER} not found or already deleted"
+        env:
+          PR_NUMBER: ${{ github.event.number }}
