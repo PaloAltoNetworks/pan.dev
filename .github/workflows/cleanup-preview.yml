@@ -11,6 +11,7 @@ jobs:
     if: github.repository == 'PaloAltoNetworks/pan.dev'
     name: Delete preview channel
     runs-on: ubuntu-latest
+    environment: preview
     permissions:
       id-token: write
 
@@ -23,6 +24,10 @@ jobs:
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
 
       - name: Delete Firebase preview channel
-        run: npx firebase-tools hosting:channel:delete "pr$PR_NUMBER" --site pan-dev-f1b58 --force
+        run: |
+          curl -sf -X DELETE \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            "https://firebasehosting.googleapis.com/v1beta1/sites/pan-dev-f1b58/channels/pr${PR_NUMBER}" \
+            || echo "Channel pr${PR_NUMBER} not found or already deleted"
         env:
           PR_NUMBER: ${{ github.event.number }}
