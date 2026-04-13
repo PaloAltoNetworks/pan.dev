@@ -22,12 +22,19 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          export_environment_variables: false
 
       - name: Delete Firebase preview channel
         run: |
-          curl -sf -X DELETE \
+          HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-            "https://firebasehosting.googleapis.com/v1beta1/sites/pan-dev-f1b58/channels/pr${PR_NUMBER}" \
-            || echo "Channel pr${PR_NUMBER} not found or already deleted"
+            "https://firebasehosting.googleapis.com/v1beta1/sites/${FIREBASE_SITE}/channels/pr${PR_NUMBER}")
+          case "$HTTP_CODE" in
+            200) echo "Deleted preview channel pr${PR_NUMBER}" ;;
+            404) echo "Channel pr${PR_NUMBER} not found or already deleted" ;;
+            *)   echo "::error::Failed to delete channel pr${PR_NUMBER} (HTTP ${HTTP_CODE})"; exit 1 ;;
+          esac
         env:
           PR_NUMBER: ${{ github.event.number }}
+          FIREBASE_SITE: ${{ secrets.FIREBASE_SITE }}
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
