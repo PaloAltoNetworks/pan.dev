@@ -34,3 +34,4 @@ In these cases, support is available to you for registered devices with active s
 ## Official Sources & Policies
 
 Unless explicitly tagged, all projects or work posted in our GitHub repository (at https://github.com/PaloAltoNetworks) or sites other than our official Downloads page on https://support.paloaltonetworks.com are provided under the best-effort policy.
+
