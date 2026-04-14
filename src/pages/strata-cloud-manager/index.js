@@ -192,6 +192,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        "NGTS Configuration": [
+          {
+            to: "scm/api/config/ngts/ngts-api",
+            label: "NGTS API",
+            icon: "api-doc",
+          },
+        ],
         Posture: [
           {
             to: "scm/api/config/posture-management/introduction-posture",

@@ -1031,6 +1031,11 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ngts: {
+            specPath: "openapi-specs/scm/config/ngts/tlsprotect-cloud.json",
+            outputDir: "products/scm/api/config/ngts",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           ciedss: {
             specPath: "openapi-specs/scm/config/ciedss",
             outputDir: "products/scm/api/config/ciedss",
