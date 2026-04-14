@@ -4,6 +4,12 @@ on:
   pull_request_target:
     branches: [ master ]
 
+permissions: {}
+
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   precheck:
     if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' }}
@@ -14,28 +20,36 @@ jobs:
     outputs:
       is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
     steps:
-      - name: Check if actor is org member
+      - name: Check if PR head is trusted
         id: is-org-member
         run: |
-          if [[ "${{ github.actor }}" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
+          if [[ "$PR_AUTHOR" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
             echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          if [ "${{ github.actor }}" = "dependabot[bot]" ]; then
+          if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$HEAD_REPO" != "$BASE_REPO" ]]; then
             echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" \
-            https://api.github.com/orgs/PaloAltoNetworks/members/${{ github.actor }})
-          if [ "$status" = "204" ]; then
+            "https://api.github.com/orgs/PaloAltoNetworks/members/$PR_AUTHOR")
+          if [[ "$status" == "204" ]]; then
             echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
           else
             echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
 
   analyze:
     if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'true'
@@ -53,18 +67,19 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v3
+      uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
       with:
         languages: ${{ matrix.language }}
         queries: security-extended
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v3
+      uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
 
   analyze_unsafe:
     if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'false'
@@ -83,18 +98,19 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v3
+      uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
       with:
         languages: ${{ matrix.language }}
         queries: security-extended
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v3
+      uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
 
   build:
     name: Build
@@ -109,12 +125,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: '20'
           cache: 'yarn'
@@ -124,7 +141,7 @@ jobs:
         run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
 
       - name: Install dependencies
-        run: yarn --prefer-offline --ignore-scripts
+        run: yarn --prefer-offline --frozen-lockfile --ignore-scripts
 
       - name: Include netsec
         if: contains(github.event.pull_request.labels.*.name, 'netsec')
@@ -183,13 +200,11 @@ jobs:
       # needed for fetching Hashicorp blog feed
       - name: Cache Playwright
         id: playwright-cache
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: |
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
 
       - name: Install Playwright
         if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -199,6 +214,12 @@ jobs:
 
       - name: Build site
         run: FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github
+
+      - name: Verify build did not modify critical files
+        run: |
+          git diff --exit-code -- \
+            firebase.json .firebaserc package.json yarn.lock docusaurus.config.ts \
+            'scripts/**' '.github/**' 'src/theme/**' 'plugin-sitemap-coveo/**'
 
       - name: Zip build directory
         run: |
@@ -210,8 +231,9 @@ jobs:
             echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
             exit 1
           fi
-      
+
           echo "Build directory found at: $BUILD_DIR"
+          rm -f build.zip
           zip -r build.zip "$BUILD_DIR"
 
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -224,6 +246,7 @@ jobs:
     needs: build
     if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' && !failure() && !cancelled() }}
     runs-on: pan-dev-runner-lg
+    environment: preview
     permissions:
       contents: read
       pull-requests: write
@@ -232,10 +255,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: '20'
           cache: 'yarn'
@@ -246,7 +271,7 @@ jobs:
 
       - name: Unzip build artifact
         run: |
-          unzip build.zip
+          unzip -n build.zip 'build/*' || unzip -n build.zip 'websites/pan-dev/build/*'
           if [ -d "build" ]; then
             DEPLOY_DIR="."
           elif [ -d "websites/pan-dev/build" ]; then
@@ -260,10 +285,16 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          export_environment_variables: false
+
+      - name: Mask sensitive values in logs
+        run: |
+          echo "::add-mask::${{ steps.auth.outputs.credentials_file_path }}"
+          echo "::add-mask::${{ secrets.GCP_PROJECT_NUMBER }}"
 
       - name: Read GCP credentials
         id: creds
@@ -272,17 +303,13 @@ jobs:
           echo "::add-mask::$creds"
           echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: build
-
       - name: Deploy to Firebase
         id: deploy_preview
         uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0.10.0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
-          projectId: pan-dev-f1b58
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           expires: 7d
           channelId: 'pr${{ github.event.number }}'
           totalPreviewChannelLimit: 25
