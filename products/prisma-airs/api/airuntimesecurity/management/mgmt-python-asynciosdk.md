@@ -171,26 +171,6 @@ async def fetch_all_resources():
 asyncio.run(fetch_all_resources())
 ```
 
-## Available Resources
-
-The SDK provides access to the following resources through the `MgmtClientAsync`:
-
-| Resource | Access Method | Description |
-|----------|---------------|-------------|
-| **API Keys** | `client.api_keys` | Create, retrieve, regenerate, and delete API keys |
-| **AI Security Profiles** | `client.ai_sec_profiles` | Manage AI security profiles and policies |
-| **Custom Topics** | `client.custom_topics` | Create and manage custom security topics |
-| **Customer Applications** | `client.customer_apps` | Manage customer applications |
-| **DLP Profiles** | `client.dlp_profiles` | Retrieve DLP (Data Loss Prevention) profiles |
-| **Deployment Profiles** | `client.deployment_profiles` | Retrieve deployment configurations |
-| **OAuth Tokens** | `client.oauth` | Generate OAuth2 tokens for applications |
-
-All resources provide:
-- Automatic OAuth2 token management with refresh
-- Exponential backoff retry logic (1s, 2s, 4s, 8s...)
-- Type-safe request/response models
-- Comprehensive error handling
-
 ## API Coverage
 
 ### API Keys Management
@@ -240,3 +220,643 @@ All resources provide:
 | Operation | Method | API Endpoint |
 |-----------|--------|--------------|
 | Generate OAuth Token | `get_oauth_token()` | `POST /v1/oauth/token` |
+
+## AI Security Profiles Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Create New AI Security Profile
+
+Create a new AI security profile with comprehensive policy configuration.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def create_ai_profile():
+    async with MgmtClientAsync() as client:
+        # Define AI security profile policy (using dictionary format)
+        policy = {
+            "dlp-data-profiles": [],
+            "ai-security-profiles": [
+                {
+                    "model-type": "default",
+                    "model-configuration": {
+                        "latency": {
+                            "inline-timeout-action": "block",
+                            "max-inline-latency": 20
+                        },
+                        "data-protection": {
+                            "data-leak-detection": {
+                                "member": [
+                                    {"text": "Sensitive Content", "id": "", "version": "2"}
+                                ],
+                                "action": "block"
+                            }
+                        },
+                        "app-protection": {
+                            "default-url-category": {"member": ["malicious"]},
+                            "url-detected-action": "allow"
+                        },
+                        "model-protection": [
+                            {"name": "prompt-injection", "action": "allow"},
+                            {"name": "jailbreak", "action": "block"}
+                        ]
+                    }
+                }
+            ]
+        }
+
+        # Alternatively, create policy using SDK model objects (typed approach)
+        from airs_api_mgmt.sdk.models import (
+            AIProfileObjectPolicy,
+            AiSecurityProfileObject,
+            AiSecurityProfileObjectModelConfiguration,
+            LatencyObject,
+            DataProtectionObject,
+            DataProtectionObjectDataLeakDetection,
+            DataProtectionObjectDataLeakDetectionMemberInner,
+            AppProtectionObject,
+            AppProtectionObjectDefaultUrlCategory,
+            ModelProtectionObjectInner
+        )
+
+        policy_typed = AIProfileObjectPolicy(
+            dlp_data_profiles=[],
+            ai_security_profiles=[
+                AiSecurityProfileObject(
+                    model_type="default",
+                    content_type="text",
+                    model_configuration=AiSecurityProfileObjectModelConfiguration(
+                        latency=LatencyObject(
+                            inline_timeout_action="block",
+                            max_inline_latency=20
+                        ),
+                        data_protection=DataProtectionObject(
+                            data_leak_detection=DataProtectionObjectDataLeakDetection(
+                                member=[
+                                    DataProtectionObjectDataLeakDetectionMemberInner(
+                                        text="Sensitive Content",
+                                        id="",
+                                        version="2"
+                                    )
+                                ],
+                                action="block"
+                            )
+                        ),
+                        app_protection=AppProtectionObject(
+                            default_url_category=AppProtectionObjectDefaultUrlCategory(
+                                member=["malicious"]
+                            ),
+                            url_detected_action="allow"
+                        ),
+                        model_protection=[
+                            ModelProtectionObjectInner(name="prompt-injection", action="allow"),
+                            ModelProtectionObjectInner(name="jailbreak", action="block")
+                        ]
+                    )
+                )
+            ]
+        )
+
+        # Create new AI security profile (works with both dictionary or typed policy)
+        create_response = await client.ai_sec_profiles.create_new_ai_profile(
+            profile_name="production-security-profile",
+            revision=1,
+            policy=policy,  # or use policy_typed for typed approach
+            created_by="user@example.com"
+        )
+
+        print(f"Profile ID: {create_response}")
+
+asyncio.run(create_ai_profile())
+```
+
+Parameters:
+
+* `profile_name` (str, required): Name of the AI security profile
+* `revision` (int, required): Revision number
+* `policy` (dict | AIProfileObjectPolicy, required): Policy configuration object (can be dict or typed model object)
+* `profile_id` (str, optional): Custom profile UUID
+* `created_by` (str, optional): Email of user creating the profile
+* `updated_by` (str, optional): Email of user updating the profile
+* `last_modified_ts` (datetime, optional): Last modification timestamp
+
+### Retrieve AI Security Profiles (with pagination)
+
+Retrieve all AI security profiles with pagination support.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def get_all_ai_profiles():
+    async with MgmtClientAsync() as client:
+        profiles_response = await client.ai_sec_profiles.get_all_ai_profiles(offset=0, limit=25)
+
+        print(f"AI Security Profiles Response: {profiles_response}")
+
+asyncio.run(get_all_ai_profiles())
+```
+
+Parameters:
+
+* `offset` (int, optional): Starting position for pagination (default: 0)
+* `limit` (int, optional): Maximum number of profiles to retrieve (default: 100)
+
+### Update AI Security Profile
+
+Update an existing AI security profile by its ID.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def update_ai_profile():
+    async with MgmtClientAsync() as client:
+        updated_policy = {
+            "dlp-data-profiles": [],
+            "ai-security-profiles": [
+                {
+                    "model-type": "default",
+                    "model-configuration": {
+                        "latency": {
+                            "inline-timeout-action": "allow",
+                            "max-inline-latency": 30
+                        },
+                        "data-protection": {
+                            "data-leak-detection": {
+                                "member": [
+                                    {"text": "PII Data", "id": "", "version": "2"}
+                                ],
+                                "action": "block"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+
+        update_response = await client.ai_sec_profiles.update_ai_profile(
+            profile_id="your_profile_uuid",
+            profile_name="production-security-profile-v2",
+            revision=2,
+            policy=updated_policy,
+            updated_by="user@example.com"
+        )
+
+        print(f"Updated Profile: {update_response.profile_name}")
+        print(f"New Revision: {update_response.revision}")
+
+asyncio.run(update_ai_profile())
+```
+
+Parameters:
+
+* `profile_id` (str, required): UUID of the profile to update
+* `profile_name` (str, required): Updated profile name
+* `revision` (int, required): New revision number
+* `policy` (dict, required): Updated policy configuration
+* `created_by` (str, optional): Original creator email
+* `updated_by` (str, optional): Email of user updating the profile
+* `last_modified_ts` (datetime, optional): Last modification timestamp
+
+### Delete AI Security Profile
+
+Delete an AI security profile by its ID.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def delete_ai_profile():
+    async with MgmtClientAsync() as client:
+        delete_response = await client.ai_sec_profiles.delete_ai_profile(
+            profile_id="your_profile_uuid"
+        )
+
+        print(f"Deletion response: {delete_response}")
+
+asyncio.run(delete_ai_profile())
+```
+
+Parameters:
+
+* `profile_id` (str, required): UUID of the profile to delete
+
+### Force Delete AI Security Profile
+
+Force delete an AI security profile, bypassing validation checks.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def force_delete_ai_profile():
+    async with MgmtClientAsync() as client:
+        force_delete_response = await client.ai_sec_profiles.force_delete_ai_profile(
+            profile_id="your_profile_uuid",
+            updated_by="user@example.com"
+        )
+
+        print(f"Force deletion response: {force_delete_response}")
+
+asyncio.run(force_delete_ai_profile())
+```
+
+Parameters:
+
+* `profile_id` (str, required): UUID of the profile to force delete
+* `updated_by` (str, required): Email of user performing the deletion
+
+## Custom Topics Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Create New Custom Topic
+
+Create a new custom topic for data classification.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def create_custom_topic():
+    async with MgmtClientAsync() as client:
+        create_response = await client.custom_topics.create_new_custom_topic(
+            topic_name="financial-data",
+            description="Detection of financial and banking information",
+            examples=[
+                "Credit card numbers",
+                "Bank account details",
+                "Social security numbers",
+                "Tax identification numbers"
+            ],
+            revision=1,
+            created_by="user@example.com"
+        )
+
+        print(f"Topic ID: {create_response}")
+
+asyncio.run(create_custom_topic())
+```
+
+Parameters:
+
+* `topic_name` (str, required): Name of the custom topic
+* `description` (str, required): Detailed explanation of the topic
+* `examples` (list[str], required): List of example usages
+* `revision` (int, required): Revision number
+* `topic_id` (str, optional): Custom topic UUID
+* `created_by` (str, optional): Email of user creating the topic
+* `updated_by` (str, optional): Email of user updating the topic
+* `last_modified_ts` (datetime, optional): Last modification timestamp
+* `created_ts` (datetime, optional): Creation timestamp
+
+### Retrieve All Custom Topics (with pagination)
+
+Retrieve all custom topics with pagination support.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def retrieve_custom_topics():
+    async with MgmtClientAsync() as client:
+        topics_response = await client.custom_topics.get_all_custom_topics(
+            offset=0,
+            limit=50
+        )
+
+        print(f"Custom Topics Response: {topics_response}")
+
+asyncio.run(retrieve_custom_topics())
+```
+
+Parameters:
+
+* `offset` (int, optional): Starting position for pagination (default: 0)
+* `limit` (int, optional): Maximum number of topics to retrieve (default: 100)
+
+### Modify Custom Topic Details
+
+Modify an existing custom topic with updated details.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def modify_custom_topic():
+    async with MgmtClientAsync() as client:
+        modify_response = await client.custom_topics.modify_custom_topic_details(
+            topic_id="your_topic_uuid",
+            topic_name="financial-data-updated",
+            description="Updated detection of financial and personal information",
+            examples=[
+                "Credit card numbers",
+                "Bank account details",
+                "Social security numbers",
+                "Tax identification numbers",
+                "IBAN numbers"
+            ],
+            revision=2,
+            updated_by="user@example.com"
+        )
+
+        print(f"Modified Topic: {modify_response}")
+
+asyncio.run(modify_custom_topic())
+```
+
+Parameters:
+
+* `topic_id` (str, required): UUID of the topic to modify
+* `topic_name` (str, required): Updated topic name
+* `description` (str, required): Updated description
+* `examples` (list[str], required): Updated list of examples
+* `revision` (int, required): New revision number
+* `created_by` (str, optional): Original creator email
+* `updated_by` (str, optional): Email of user modifying the topic
+* `last_modified_ts` (datetime, optional): Last modification timestamp
+* `created_ts` (datetime, optional): Creation timestamp
+
+### Delete Custom Topic
+
+Delete a custom topic by its ID.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def delete_custom_topic():
+    async with MgmtClientAsync() as client:
+        delete_response = await client.custom_topics.delete_custom_topic(
+            topic_id="your_topic_uuid"
+        )
+
+        print(f"Deletion response: {delete_response}")
+
+asyncio.run(delete_custom_topic())
+```
+
+Parameters:
+
+* `topic_id` (str, required): UUID of the topic to delete
+
+### Force Delete Custom Topic
+
+Force delete a custom topic, bypassing validation checks.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def force_delete_custom_topic():
+    async with MgmtClientAsync() as client:
+        force_delete_response = await client.custom_topics.force_delete_custom_topic(
+            topic_id="your_topic_uuid",
+            updated_by="user@example.com"
+        )
+
+        print(f"Force deletion response: {force_delete_response}")
+
+asyncio.run(force_delete_custom_topic())
+```
+
+Parameters:
+
+* `topic_id` (str, required): UUID of the topic to force delete
+* `updated_by` (str, required): Email of user performing the deletion
+
+## Customer Applications Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Retrieve All Customer Applications (with pagination)
+
+Retrieve all customer applications with pagination support.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def retrieve_customer_apps():
+    async with MgmtClientAsync() as client:
+        apps_response = await client.customer_apps.get_all_customer_apps(
+            offset=0,
+            limit=25
+        )
+
+        print(f"Customer Applications Response: {apps_response}")
+
+asyncio.run(retrieve_customer_apps())
+```
+
+Parameters:
+
+* `offset` (int, optional): Starting position for pagination (default: 0)
+* `limit` (int, optional): Maximum number of apps to retrieve (default: 100)
+
+### Update Customer Application
+
+Update a customer application with new settings.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def update_customer_app():
+    async with MgmtClientAsync() as client:
+        update_response = await client.customer_apps.update_customer_app(
+            customer_app_id="your_app_uuid",
+            app_name="my-updated-application",
+            cloud_provider="AWS",
+            environment="production",
+            model_name="gpt-4",
+            status="completed",
+            updated_by="user@example.com",
+            ai_agent_framework="langchain"
+        )
+
+        print(f"Updated App: {update_response}")
+
+asyncio.run(update_customer_app())
+```
+
+Parameters:
+
+* `customer_app_id` (str, required): UUID of the customer application
+* `app_name` (str, required): Updated application name
+* `cloud_provider` (str, required): Cloud provider ("AWS", "Azure", "GCP")
+* `environment` (str, required): Environment ("production", "staging", "development")
+* `model_name` (str, optional): AI model name
+* `status` (str, optional): Application status ("completed", "pending")
+* `updated_by` (str, optional): Email of user updating the app
+* `ai_agent_framework` (str, optional): AI agent framework name
+
+### Delete Customer Application
+
+Delete a customer application by its name.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def delete_customer_app():
+    async with MgmtClientAsync() as client:
+        delete_response = await client.customer_apps.delete_customer_app(
+            app_name="my-application",
+            updated_by="user@example.com"
+        )
+
+        print(f"Deletion response: {delete_response}")
+
+asyncio.run(delete_customer_app())
+```
+
+Parameters:
+
+* `app_name` (str, required): Name of the application to delete
+* `updated_by` (str, required): Email of user performing the deletion
+
+## DLP Profiles Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Retrieve All DLP Profiles
+
+Retrieve all DLP (Data Loss Prevention) profiles.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def retrieve_dlp_profiles():
+    async with MgmtClientAsync() as client:
+        # Retrieve all DLP profiles
+        dlp_profiles = await client.dlp_profiles.get_all_dlp_profiles()
+
+        print(f"DLP Profiles: {dlp_profiles}")
+
+asyncio.run(retrieve_dlp_profiles())
+```
+
+Parameters: None
+
+## Deployment Profiles Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Retrieve All Deployment Profiles
+
+Retrieve all deployment profiles.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def retrieve_deployment_profiles():
+    async with MgmtClientAsync() as client:
+        # Retrieve all deployment profiles
+        deployment_profiles = await client.deployment_profiles.get_all_deployment_profiles()
+
+        print(f"Deployment Profiles: {deployment_profiles}")
+
+asyncio.run(retrieve_deployment_profiles())
+```
+
+Parameters:
+
+* `unactivated` (bool, optional): Get only unactivated deployment profiles (default: None)
+
+### Retrieve Unactivated Deployment Profiles
+
+Retrieve only unactivated deployment profiles (includes available and previously activated profiles without associated apps or API keys).
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def retrieve_unactivated_profiles():
+    async with MgmtClientAsync() as client:
+        # Retrieve only unactivated deployment profiles
+        unactivated_profiles = await client.deployment_profiles.get_all_deployment_profiles(
+            unactivated=True
+        )
+
+        print(f"Unactivated Deployment Profiles: {unactivated_profiles}")
+
+asyncio.run(retrieve_unactivated_profiles())
+```
+
+Parameters:
+
+* `unactivated` (bool, required): Set to True to retrieve only unactivated profiles
+
+## OAuth Token Management
+
+API Reference: [https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/](https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanagementapi/)
+
+### Generate OAuth2 Token
+
+Generate an OAuth2 access token for an Apigee application.
+
+Asynchronous Example:
+
+```python
+import asyncio
+from airs_api_mgmt import MgmtClientAsync
+
+async def generate_oauth_token():
+    async with MgmtClientAsync() as client:
+        # Generate OAuth2 token for an Apigee application
+        oauth_response = await client.oauth.get_oauth_token(
+            client_id="your_apigee_client_id",
+            customer_app="my-customer-app",
+            token_ttl_interval=24,
+            token_ttl_unit="hours"
+        )
+
+        print(f"OAuth Token: {oauth_response}")
+
+asyncio.run(generate_oauth_token())
+```
+
+Parameters:
+
+* `client_id` (str, required): Client ID for the OAuth application
+* `customer_app` (str, required): Customer application name
+* `token_ttl_interval` (int, required): Time-to-live interval for the token
+* `token_ttl_unit` (str, required): Time unit ("seconds", "minutes", "hours", "days")
