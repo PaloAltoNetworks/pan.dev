@@ -1036,6 +1036,11 @@ const config = {
             outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          cdug: {
+            specPath: "openapi-specs/scm/config/cdug",
+            outputDir: "products/scm/api/config/ciedss/cdug",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
