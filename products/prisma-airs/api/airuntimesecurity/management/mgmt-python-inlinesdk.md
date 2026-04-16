@@ -20,7 +20,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Create New API Key
 
-Create a new API key for your customer application with specified rotation settings.
+[Create a new API key](https://pan.dev/prisma-airs/api/airuntimesecurity/management/create-new-api-key/) for your customer application with specified rotation settings.
 
 **Synchronous Example:**
 
@@ -63,7 +63,7 @@ print(f"API Key ID: {response}")
 
 ### Retrieve API Keys (with pagination)
 
-Retrieve all API keys.
+[Retrieve all API keys.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-all-api-keys-for-tsg-id/)
 
 **Synchronous Example:**
 
@@ -84,7 +84,7 @@ print(f"API Keys Response: {api_keys_response}")
 
 ### Regenerate API Key
 
-Regenerate an existing API key with new rotation settings.
+[Regenerate an existing API key with new rotation settings.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/regenerate-api-key-by-id/)
 
 **Synchronous Example:**
 
@@ -112,7 +112,7 @@ print(f"New API Key Secret: {regenerate_response}")
 
 ### Delete API Key
 
-Delete an API key by its name.
+[Delete an API key by its name.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/delete-api-key/)
 
 **Synchronous Example:**
 
@@ -140,7 +140,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Create New AI Security Profile
 
-Create a new AI security profile with comprehensive policy configuration.
+[Create a new AI security profile with comprehensive policy configuration.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/create-new-ai-profile/)
 
 **Synchronous Example:**
 
@@ -203,7 +203,7 @@ print(f"Profile ID: {create_response}")
 
 ### Retrieve AI Security Profiles (with pagination)
 
-Retrieve all AI security profiles with pagination support.
+[Retrieve all AI security profiles with pagination support.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-all-ai-profiles-for-tsg-id/)
 
 **Synchronous Example:**
 
@@ -224,7 +224,7 @@ print(f"AI Security Profiles Response: {profiles_response}")
 
 ### Update AI Security Profile
 
-Update an existing AI security profile by its ID.
+[Update an existing AI security profile by its ID.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/update-profile-by-profile-id/)
 
 **Synchronous Example:**
 
@@ -272,7 +272,7 @@ print(f"Updated Profile: {update_response}")
 
 ### Delete AI Security Profile
 
-Delete an AI security profile by its ID.
+[Delete an AI security profile by its ID.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/delete-ai-profile/)
 
 **Synchronous Example:**
 
@@ -294,7 +294,7 @@ print(f"Deletion response: {delete_response}")
 
 ### Force Delete AI Security Profile
 
-Force delete an AI security profile, bypassing validation checks.
+[Force delete an AI security profile, bypassing validation checks.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/force-delete-ai-profile/)
 
 **Synchronous Example:**
 
@@ -322,7 +322,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Create New Custom Topic
 
-Create a new custom topic for data classification.
+[Create a new custom topic for data classification.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/create-new-custom-topic/)
 
 **Synchronous Example:**
 
@@ -361,7 +361,7 @@ print(f"Topic ID: {create_response}")
 
 ### Retrieve All Custom Topics (with pagination)
 
-Retrieve all custom topics with pagination support.
+[Retrieve all custom topics with pagination support.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-all-custom-topics-for-tsg-id/)
 
 **Synchronous Example:**
 
@@ -385,7 +385,7 @@ print(f"Custom Topics Response: {topics_response}")
 
 ### Modify Custom Topic Details
 
-Modify an existing custom topic with updated details.
+[Modify an existing custom topic with updated details.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/update-topic-by-topic-id/)
 
 **Synchronous Example:**
 
@@ -426,7 +426,7 @@ print(f"Modified Topic: {modify_response}")
 
 ### Delete Custom Topic
 
-Delete a custom topic by its ID.
+[Delete a custom topic by its ID.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/delete-custom-topic/)
 
 **Synchronous Example:**
 
@@ -448,7 +448,7 @@ print(f"Deletion response: {delete_response}")
 
 ### Force Delete Custom Topic
 
-Force delete a custom topic, bypassing validation checks.
+[Force delete a custom topic, bypassing validation checks.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/force-delete-custom-topic/)
 
 **Synchronous Example:**
 
@@ -476,7 +476,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Retrieve All Customer Applications (with pagination)
 
-Retrieve all customer applications with pagination support.
+[Retrieve all customer applications with pagination support.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-all-customer-apps-for-tsg-id/)
 
 **Synchronous Example:**
 
@@ -500,7 +500,7 @@ print(f"Customer Applications Response: {apps_response}")
 
 ### Update Customer Application
 
-Update a customer application with new settings.
+[Update a customer application with new settings.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/update-customer-app-by-id/)
 
 **Synchronous Example:**
 
@@ -536,7 +536,7 @@ print(f"Updated App: {update_response}")
 
 ### Delete Customer Application
 
-Delete a customer application by its name.
+[Delete a customer application by its name.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/delete-customer-app/)
 
 **Synchronous Example:**
 
@@ -564,7 +564,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Retrieve All DLP Profiles
 
-Retrieve all DLP (Data Loss Prevention) profiles.
+[Retrieve all DLP (Data Loss Prevention) profiles.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-all-dlp-profiles-by-tsg-id/)
 
 **Synchronous Example:**
 
@@ -587,7 +587,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Retrieve All Deployment Profiles
 
-Retrieve all deployment profiles.
+[Retrieve all deployment profiles.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-deployment-profiles-by-tsg-id/)
 
 **Synchronous Example:**
 
@@ -633,7 +633,7 @@ API Reference: https://pan.dev/prisma-airs/api/airuntimesecurity/prismaairsmanag
 
 ### Generate OAuth2 Token
 
-Generate an OAuth2 access token for an Apigee application.
+[Generate an OAuth2 access token for an Apigee application.](https://pan.dev/prisma-airs/api/airuntimesecurity/management/get-apigee-oauth-token/)
 
 **Synchronous Example:**
 
@@ -658,56 +658,6 @@ print(f"OAuth Token: {oauth_response}")
 - `customer_app` (str, required): Customer application name
 - `token_ttl_interval` (int, required): Time-to-live interval for the token
 - `token_ttl_unit` (str, required): Time unit ("seconds", "minutes", "hours", "days")
-
-## API Coverage
-
-### API Keys Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Create API Key | `create_new_api_key()` | `POST /v1/mgmt/api-key` |
-| Retrieve API Keys | `get_all_api_keys()` | `GET /v1/mgmt/api-key` |
-| Regenerate API Key | `regenerate_api_key()` | `POST /v1/mgmt/api-key/{apiKeyId}/regenerate` |
-| Delete API Key | `delete_api_key()` | `DELETE /v1/mgmt/api-key` |
-
-### AI Security Profiles Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Create AI Profile | `create_new_ai_profile()` | `POST /v1/mgmt/ai-sec-profile` |
-| Retrieve AI Profiles | `get_all_ai_profiles()` | `GET /v1/mgmt/ai-sec-profile` |
-| Update AI Profile | `update_ai_profile()` | `PUT /v1/mgmt/ai-sec-profile/{profileId}` |
-| Delete AI Profile | `delete_ai_profile()` | `DELETE /v1/mgmt/ai-sec-profile/{profileId}` |
-| Force Delete AI Profile | `force_delete_ai_profile()` | `DELETE /v1/mgmt/ai-sec-profile/{profileId}/force` |
-
-### Custom Topics Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Create Custom Topic | `create_new_custom_topic()` | `POST /v1/mgmt/custom-topic` |
-| Retrieve Custom Topics | `get_all_custom_topics()` | `GET /v1/mgmt/custom-topic` |
-| Modify Custom Topic | `modify_custom_topic_details()` | `PUT /v1/mgmt/custom-topic/{topicId}` |
-| Delete Custom Topic | `delete_custom_topic()` | `DELETE /v1/mgmt/custom-topic/{topicId}` |
-| Force Delete Custom Topic | `force_delete_custom_topic()` | `DELETE /v1/mgmt/custom-topic/{topicId}/force` |
-
-### Customer Applications Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Retrieve Customer Apps | `get_all_customer_apps()` | `GET /v1/mgmt/customer-app` |
-| Update Customer App | `update_customer_app()` | `PUT /v1/mgmt/customer-app/{customerAppId}` |
-| Delete Customer App | `delete_customer_app()` | `DELETE /v1/mgmt/customer-app` |
-
-### DLP Profiles Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Retrieve DLP Profiles | `get_all_dlp_profiles()` | `GET /v1/mgmt/dlp-profile` |
-
-### Deployment Profiles Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Retrieve Deployment Profiles | `get_all_deployment_profiles()` | `GET /v1/mgmt/deployment-profile` |
-
-### OAuth Token Management
-| Operation | Method | API Endpoint |
-|-----------|--------|--------------|
-| Generate OAuth Token | `get_oauth_token()` | `POST /v1/oauth/token` |
 
 ## AI Security Profiles Management
 
