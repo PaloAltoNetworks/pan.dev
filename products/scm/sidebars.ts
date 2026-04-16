@@ -124,6 +124,14 @@ module.exports = {
               id: "scm/api/config/sase/setup/snippet-sharing",
             },
             require("./api/config/sase/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/sase/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -223,6 +231,14 @@ module.exports = {
               id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
             require("./api/config/ngfw/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/ngfw/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -359,6 +375,14 @@ module.exports = {
               id: "scm/api/config/cloudngfw/setup/snippet-sharing",
             },
             require("./api/config/cloudngfw/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/cloudngfw/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
