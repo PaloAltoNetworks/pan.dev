@@ -1086,6 +1086,13 @@ const config = {
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },
+          //Prisma AIRS Network Broker
+          airsnetworkbroker: {
+            specPath: "openapi-specs/prisma-airs-redteam/network-broker",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/network-broker",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
            //Prisma AIRS Model Security Management
           aimodelsecurity: {
             specPath: "openapi-specs/prisma-airs-model-security/management",

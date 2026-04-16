@@ -125,6 +125,12 @@ jobs:
           with:
             workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
             service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+            export_environment_variables: false
+
+        - name: Mask sensitive values in logs
+          run: |
+            echo "::add-mask::${{ steps.auth.outputs.credentials_file_path }}"
+            echo "::add-mask::${{ secrets.GCP_PROJECT_NUMBER }}"
 
         - name: Read GCP credentials
           id: creds
@@ -139,7 +145,8 @@ jobs:
           with:
             repoToken: '${{ secrets.GITHUB_TOKEN }}'
             firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
-            projectId: pan-dev-f1b58
+            projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
             channelId: live
           env:
             FIREBASE_CLI_PREVIEWS: hostingchannels
+            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
