@@ -7,7 +7,7 @@ For more information, refer to [Learning mode](https://docs.prismacloud.io/en/cl
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k -G \
+$ curl -G \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

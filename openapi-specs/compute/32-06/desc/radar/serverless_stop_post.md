@@ -1,7 +1,7 @@
 Stops an in-progress serverless scan.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

@@ -5,7 +5,7 @@ Updates all the custom vulnerabilities and associated rules simultaneously for h
 Refer to the following cURL command that updates a vulnerability for a library named `internal-lib`, and specifies that its versions `1.1` to `1.8` are known to be vulnerable.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \
@@ -37,7 +37,7 @@ We suggest you maintain your custom vulnerabilities using the following steps:
 	**Note:** You will need `jq` to execute this command.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      https://<CONSOLE>/api/v<VERSION>/feeds/custom/custom-vulnerabilities \
      | jq '.' > custom_vulnerability_rules.json
@@ -66,7 +66,7 @@ We suggest you maintain your custom vulnerabilities using the following steps:
 3. Update the rules by pushing the new JSON payload. **Note:** Do not forget to specify the `@` symbol.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -X PUT \
      -H "Content-Type:application/json" \
@@ -77,7 +77,7 @@ We suggest you maintain your custom vulnerabilities using the following steps:
 4. Run the cURL command for the `GET /api/vVERSION/feeds/custom/custom-vulnerabilities` endpoint and you can see that the previously installed rules are now overwritten with your new rules.
 
 	```bash
-	$ curl -k \
+	$ curl \
 	  -u <USER> \
 	  -H 'Content-Type: application/json' \
 	  -X GET \

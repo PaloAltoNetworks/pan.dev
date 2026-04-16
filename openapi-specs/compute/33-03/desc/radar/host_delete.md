@@ -1,7 +1,7 @@
 Deletes a learned connection between two apps in CNNF for hosts.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

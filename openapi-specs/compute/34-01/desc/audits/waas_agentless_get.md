@@ -7,7 +7,7 @@ Retrieves all agentless Web-Application and API Security (WAAS) audit events.
 Refer to the following example cURL command that retrieves all agentless WAAS audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

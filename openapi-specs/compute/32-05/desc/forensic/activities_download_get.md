@@ -3,7 +3,7 @@ Downloads all host activities that can be found on *Monitor > Events > Host Acti
 Use the query parameters to filter what data is returned.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

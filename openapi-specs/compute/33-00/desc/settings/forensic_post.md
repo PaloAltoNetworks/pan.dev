@@ -3,7 +3,7 @@ Configures the forensics system.
 The following example curl command allocates 100 MB of local disk space for container forensic data and 10 MB for host forensics data.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

@@ -5,7 +5,7 @@ Deletes a given backup by name.
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PATCH \

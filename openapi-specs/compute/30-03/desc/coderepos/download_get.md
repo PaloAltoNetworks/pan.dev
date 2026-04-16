@@ -7,7 +7,7 @@ This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > Code re
 The following cURL command generates a CSV file containing the reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

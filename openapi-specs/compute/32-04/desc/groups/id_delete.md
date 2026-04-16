@@ -13,7 +13,7 @@ To invoke this endpoint in the Console UI:
 The following cURL command deletes a collection with the name `{id}`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

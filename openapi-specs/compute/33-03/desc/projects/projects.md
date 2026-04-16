@@ -20,7 +20,7 @@ If `project` is not specified, it is set to `Central+Console`.
 For example, to retrieve the compliance policies for a tenant project named `mobile_payments_division`, use the following curl command:
 
 ```
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

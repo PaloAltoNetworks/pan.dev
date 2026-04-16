@@ -3,7 +3,7 @@ This endpoint lists the incident categories found in your environment.
 The following example lists incident filters.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   https://console:8083/api/v1/audits/incidents/filters
 ```

@@ -7,7 +7,7 @@ You can get an incident ID from the list of incidents using the endpoint GET /ap
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PATCH \

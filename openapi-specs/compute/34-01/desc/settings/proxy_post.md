@@ -7,7 +7,7 @@ For more information, see [Proxy Settings](https://docs.paloaltonetworks.com/pri
 Refer to the following example cURL request that specifies the proxy to use to access the Internet:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
