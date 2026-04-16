@@ -21,7 +21,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 
 const config = {
   future: {
-    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
     v4: true
   },
   title: "Develop with Palo Alto Networks",
@@ -1088,6 +1088,13 @@ const config = {
           aiintegration: {
             specPath: "openapi-specs/prisma-airs-redteam/data-plane",
             outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          //Prisma AIRS Network Broker
+          airsnetworkbroker: {
+            specPath: "openapi-specs/prisma-airs-redteam/network-broker",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/network-broker",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },

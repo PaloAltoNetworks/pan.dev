@@ -3,15 +3,15 @@ info:
   title: Prisma Browser Management Console Public API
   version: 1.0.0
   description: "This Open API spec file represents the APIs available for Palo Alto\
-    \ Networks Prisma Browser Management APIs. These APIs are available for all Prisma\
-    \ Browser tenants to scale and automate their processes related to the browser.\
-    \ \nAll of the functionality exposed by these APIs can also be performed using\
-    \ the [Prisma Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
-    These APIs use the common SASE authentication mechanism and base URL. See the\
+    \ Networks Prisma Browser Management APIs. \nThese APIs are available for all\
+    \ Prisma Browser tenants to scale and automate their processes related to the\
+    \ browser. \nAll of the functionality exposed by these APIs can also be performed\
+    \ using the \n[Prisma Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
+    These APIs use the common SASE authentication mechanism and base URL. \nSee the\
     \ [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted/) guide for\
-    \ more information. This Open API spec file was created on February 17, 2026.\
-    \ \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
-    \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ more information. This Open API spec file was created on April 14, 2026. \xA9\
+    \ 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of\
+    \ Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 security:
 - BearerAuth: []
@@ -127,6 +127,23 @@ components:
         message:
           type: string
           example: Users resumed successfully
+    UserForceReauthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Force re-authentication initiated for 2 users
+    DeviceForceReauthResponse:
+      type: object
+      properties:
+        forcedReauthDeviceIds:
+          type: array
+          items:
+            type: string
+          description: List of device IDs that were force re-authenticated
+        message:
+          type: string
+          example: Force re-authentication initiated for 2 devices
     Order:
       type: string
       description: The sort order
@@ -2356,8 +2373,9 @@ ExternalTags: {}
 paths:
   /seb-api/v1/users:
     get:
-      summary: Get Users List
-      description: Retrieve a list of [users](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-users).
+      summary: Returns a list of users
+      description: Retrieve the users details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Users
       responses:
         '200':
@@ -2451,8 +2469,9 @@ paths:
       - Users
   /seb-api/v1/users/{id}:
     get:
-      summary: Users List by ID
-      description: Retrieve users list by [ID](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-users).
+      summary: Returns a user by ID
+      description: Retrieve the {id} details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Usersbyid
       responses:
         '200':
@@ -2474,7 +2493,7 @@ paths:
       - Users
   /seb-api/v1/users/suspend:
     post:
-      summary: Suspend Users
+      summary: Suspend users
       description: Suspend one or more users by changing their status to suspended.
         Suspended users will lose access to the browser from all of their known or
         future devices, except from their Prisma Browser Extension and mobile devices.
@@ -2519,7 +2538,7 @@ paths:
               $ref: '#/components/schemas/UserStatusChangeRequest'
   /seb-api/v1/users/resume:
     post:
-      summary: Resume Suspended Users
+      summary: Resume suspended users
       description: Resume one or more suspended users by changing their status to
         active. Resumed users will regain access to the browser from all of their
         known or future devices.
@@ -2562,10 +2581,56 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserStatusChangeRequest'
+  /seb-api/v1/users/force-reauth:
+    post:
+      summary: Force re-authentication for users
+      description: Force re-authentication on all active devices for one or more users.
+        Upon execution, targeted users will be required to re-authenticate to the
+        browser on all of their devices.
+      operationId: PostSeb-apiV1UsersForce-reauth
+      responses:
+        '200':
+          description: Force re-authentication initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserForceReauthResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more users not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserStatusChangeRequest'
   /seb-api/v1/devices:
     get:
-      summary: List Devices
-      description: Retrieve list of [devices](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-devices).
+      summary: Returns a list of devices
+      description: Retrieve the devices details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Devices
       responses:
         '200':
@@ -2685,8 +2750,9 @@ paths:
       - Devices
   /seb-api/v1/devices/{id}:
     get:
-      summary: Devices by ID
-      description: Retrieve devices by [ID](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-devices).
+      summary: Returns a device by ID
+      description: Retrieve the {id} details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Devicesbyid
       responses:
         '200':
@@ -2925,12 +2991,55 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DeviceStatusChangeRequest'
+  /seb-api/v1/devices/force-reauth:
+    post:
+      summary: Force re-authentication for devices
+      description: Force re-authentication on one or more specific devices. Upon execution,
+        targeted devices will require their user to re-authenticate to the browser.
+      operationId: PostSeb-apiV1DevicesForce-reauth
+      responses:
+        '200':
+          description: Force re-authentication initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceForceReauthResponse'
+        '400':
+          description: Bad request - invalid input or too many devices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: One or more devices not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatusChangeRequest'
   /seb-api/v1/device-groups:
     get:
-      summary: List Device Groups
-      description: "Retrieves a paginated list of device groups based on provided\
-        \ search criteria. \nSupports filtering by name, platform, creation time,\
-        \ and update time."
+      summary: Returns a list of device groups
+      description: Retrieve the device groups details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Device-groups
       responses:
         '200':
@@ -3041,12 +3150,11 @@ paths:
           default: draft
           pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
-      - DeviceGroups
+      - Device Groups
     post:
-      summary: Create Device Group
-      description: "Creates a new device group using the attributes provided in the\
-        \ request body. \nValidates the input payload and returns the unique identifier\
-        \ of the newly generated resource."
+      summary: Create a new device group
+      description: Create the device groups details through this Application Programming
+        Interface endpoint.
       operationId: PostSeb-apiV1Device-groups
       responses:
         '201':
@@ -3083,7 +3191,7 @@ paths:
           description: Internal server error
       parameters: []
       tags:
-      - DeviceGroups
+      - Device Groups
       requestBody:
         required: true
         content:
@@ -3092,9 +3200,9 @@ paths:
               $ref: '#/components/schemas/DeviceGroupRequest'
   /seb-api/v1/device-groups/{device-group-id}:
     get:
-      summary: Get Device Group By ID
-      description: Retrieves the full configuration details of a specific device group
-        identified by its unique ID.
+      summary: Returns a device group by ID
+      description: Retrieve the {device group id} details through this Application
+        Programming Interface endpoint.
       operationId: GetSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -3135,12 +3243,11 @@ paths:
           default: draft
           pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
-      - DeviceGroups
+      - Device Groups
     put:
-      summary: Replace Device Group
-      description: "Replaces the entire configuration of an existing device group.\
-        \ \nOverwrites all current attributes with the provided values and resets\
-        \ any omitted attributes to their default or disabled state."
+      summary: Replace entire device group
+      description: Replaces the entire device group - missing attributes are disabled,
+        provided attributes are set as specified.
       operationId: PutSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -3176,7 +3283,7 @@ paths:
         schema:
           type: string
       tags:
-      - DeviceGroups
+      - Device Groups
       requestBody:
         required: true
         content:
@@ -3184,10 +3291,9 @@ paths:
             schema:
               $ref: '#/components/schemas/DeviceGroupRequest'
     patch:
-      summary: Update Device Group
-      description: "Updates specific attributes of an existing device group. \nModifies\
-        \ only the fields provided in the request body while retaining the current\
-        \ values for any unspecified attributes."
+      summary: Partially update device group
+      description: Partially updates the device group - provided attributes are set
+        as specified, others remain unchanged.
       operationId: PatchSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '200':
@@ -3223,7 +3329,7 @@ paths:
         schema:
           type: string
       tags:
-      - DeviceGroups
+      - Device Groups
       requestBody:
         required: true
         content:
@@ -3231,9 +3337,9 @@ paths:
             schema:
               $ref: '#/components/schemas/DeviceGroupPatchRequest'
     delete:
-      summary: Delete Device Group
-      description: Permanently removes the specified device group from the system.
-        This action cannot be undone.
+      summary: Deletes a device group
+      description: Delete the {device group id} details through this Application Programming
+        Interface endpoint.
       operationId: DeleteSeb-apiV1Device-groupsbydevice-group-id
       responses:
         '204':
@@ -3261,7 +3367,65 @@ paths:
         schema:
           type: string
       tags:
-      - DeviceGroups
+      - Device Groups
+  /seb-api/v1/configuration-management/draft/publish:
+    post:
+      summary: Publish Draft
+      description: Create the publish details through this Application Programming
+        Interface endpoint.
+      operationId: PostSeb-apiV1Configuration-managementDraftPublish
+      responses:
+        '201':
+          description: Active version was created successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Draft contains no changes, No Active version was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: info message
+                    example: No pending changes found in the current draft
+        '500':
+          description: Internal server error
+        '501':
+          description: Draft Mode is not supported
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: info message
+                    example: Draft mode is not supported
+      parameters: []
+      tags:
+      - Configuration Management
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: Provide description to describe this version
+                  maxLength: 255
   /seb-api/v1/user-groups:
     get:
       summary: Returns a list of user groups
@@ -3310,10 +3474,11 @@ paths:
         schema:
           type: string
       tags:
-      - UserGroups
+      - User Groups
     post:
-      summary: New User Group
-      description: Creates a new user group.
+      summary: Creates a new user group
+      description: Create the user groups details through this Application Programming
+        Interface endpoint.
       operationId: PostSeb-apiV1User-groups
       responses:
         '201':
@@ -3341,7 +3506,7 @@ paths:
           description: Internal server error
       parameters: []
       tags:
-      - UserGroups
+      - User Groups
       requestBody:
         required: true
         content:
@@ -3362,8 +3527,9 @@ paths:
               - userIds
   /seb-api/v1/user-groups/{id}:
     get:
-      summary: Single User group by ID
-      description: Get a single user group by ID.
+      summary: Returns a single user group by ID
+      description: Retrieve the {id} details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1User-groupsbyid
       responses:
         '200':
@@ -3395,10 +3561,11 @@ paths:
         schema:
           type: string
       tags:
-      - UserGroups
+      - User Groups
     put:
-      summary: Update User Group
-      description: Updates a user group.
+      summary: Updates a user group
+      description: Update the {id} details through this Application Programming Interface
+        endpoint.
       operationId: PutSeb-apiV1User-groupsbyid
       responses:
         '200':
@@ -3434,7 +3601,7 @@ paths:
         schema:
           type: string
       tags:
-      - UserGroups
+      - User Groups
       requestBody:
         required: true
         content:
@@ -3463,8 +3630,9 @@ paths:
               required:
               - users
     delete:
-      summary: Delete User Group
-      description: Deletes an user group.
+      summary: Deletes a user group
+      description: Delete the {id} details through this Application Programming Interface
+        endpoint.
       operationId: DeleteSeb-apiV1User-groupsbyid
       responses:
         '200':
@@ -3500,11 +3668,12 @@ paths:
         schema:
           type: string
       tags:
-      - UserGroups
+      - User Groups
   /seb-api/v1/applications:
     get:
-      summary: List Applications
-      description: Get list of [applications](https://docs.paloaltonetworks.com/prisma-access-browser/administration/manage-prisma-access-browser-applications).
+      summary: Returns a list of applications
+      description: Retrieve the applications details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1Applications
       responses:
         '200':
@@ -3548,8 +3717,9 @@ paths:
       - Applications
   /seb-api/v1/applications/plugins:
     get:
-      summary: List Application Plugins
-      description: Get a list of application plugins.
+      summary: Returns a list of application plugins
+      description: Retrieve the plugins details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsPlugins
       responses:
         '200':
@@ -3581,8 +3751,9 @@ paths:
       - Applications
   /seb-api/v1/applications/{id}/plugins:
     get:
-      summary: Plugin with ID
-      description: Returns the plugin associated with the application ID.
+      summary: Returns the plugin associated with the application ID
+      description: Retrieve the plugins details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsBy_idPlugins
       responses:
         '200':
@@ -3616,8 +3787,9 @@ paths:
       tags:
       - Applications
     post:
-      summary: Create plugin
-      description: Creates a new plugin associated with the application ID.
+      summary: Creates a new plugin associated with the application ID
+      description: Create the plugins details through this Application Programming
+        Interface endpoint.
       operationId: PostSeb-apiV1ApplicationsBy_idPlugins
       responses:
         '201':
@@ -3666,8 +3838,9 @@ paths:
               required:
               - plugin
     put:
-      summary: Update Plugin
-      description: Updates the plugin associated with the application ID.
+      summary: Updates the plugin associated with the application ID
+      description: Update the plugins details through this Application Programming
+        Interface endpoint.
       operationId: PutSeb-apiV1ApplicationsBy_idPlugins
       responses:
         '200':
@@ -3716,8 +3889,9 @@ paths:
               required:
               - plugin
     delete:
-      summary: Delete Plugin
-      description: Deletes the plugin associated with the application ID.
+      summary: Deletes the plugin associated with the application ID
+      description: Delete the plugins details through this Application Programming
+        Interface endpoint.
       operationId: DeleteSeb-apiV1ApplicationsBy_idPlugins
       responses:
         '200':
@@ -3756,9 +3930,9 @@ paths:
       - Applications
   /seb-api/v1/user-requests:
     get:
-      summary: List user requests
-      description: Retrieves a list of user requests based on optional filtering,
-        sorting, and pagination parameters.
+      summary: Returns a list of user requests
+      description: Retrieve the user requests details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1User-requests
       responses:
         '200':
@@ -3861,12 +4035,12 @@ paths:
         schema:
           $ref: '#/components/schemas/Order'
       tags:
-      - UserRequests
+      - User Requests
   /seb-api/v1/user-requests/{id}:
     get:
-      summary: Get request details by ID
-      description: Retrieves the full details for a single user request identified
-        by its unique ID.
+      summary: Returns a request by ID
+      description: Retrieve the {id} details through this Application Programming
+        Interface endpoint.
       operationId: GetSeb-apiV1User-requestsbyid
       responses:
         '200':
@@ -3885,11 +4059,12 @@ paths:
         schema:
           type: string
       tags:
-      - UserRequests
+      - User Requests
   /seb-api/v1/user-requests/{id}/action:
     post:
-      summary: Act on request
-      description: Submits an action (e.g., approve, decline) on a specific user request.
+      summary: Act upon a user request
+      description: Create the action details through this Application Programming
+        Interface endpoint.
       operationId: PostSeb-apiV1User-requestsBy_idAction
       responses:
         '200':
@@ -3918,7 +4093,7 @@ paths:
         schema:
           type: string
       tags:
-      - UserRequests
+      - User Requests
       requestBody:
         required: true
         content:
@@ -3927,8 +4102,9 @@ paths:
               $ref: '#/components/schemas/RequestAction'
   /seb-api/v1/user-requests/{id}/revoke:
     post:
-      summary: Revoke approved request
-      description: Revokes a previously approved user request.
+      summary: Revoke already approved request
+      description: Create the revoke details through this Application Programming
+        Interface endpoint.
       operationId: PostSeb-apiV1User-requestsBy_idRevoke
       responses:
         '200':
@@ -3957,7 +4133,7 @@ paths:
         schema:
           type: string
       tags:
-      - UserRequests
+      - User Requests
       requestBody:
         required: true
         content:
