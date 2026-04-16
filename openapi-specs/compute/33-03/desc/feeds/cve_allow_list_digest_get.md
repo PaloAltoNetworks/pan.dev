@@ -5,7 +5,7 @@ Retrieves the digest string for the Common Vulnerabilities and Exposures (CVE) a
 The following cURL command retrieves the digest for the configured CVE allow list.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

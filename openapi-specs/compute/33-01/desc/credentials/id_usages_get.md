@@ -12,7 +12,7 @@ To invoke this endpoint in the Console UI:
 Refer to the following cURL command that retrieves all usages for a credential:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

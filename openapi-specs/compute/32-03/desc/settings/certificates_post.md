@@ -9,7 +9,7 @@ For more information, see [Certificates](https://docs.paloaltonetworks.com/prism
 Refer to the following example cURL request that uses basic auth to set the validity period for client certificates to seven days:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -w "\nResponse code: %{http_code}\n" \

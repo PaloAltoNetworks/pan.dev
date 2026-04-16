@@ -5,7 +5,7 @@ Returns the the Prisma Cloud Compute Defender in as a layer that can be used in 
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -X GET \
   -u <USER> \
   -H "Content-Type: application/octet-stream" \

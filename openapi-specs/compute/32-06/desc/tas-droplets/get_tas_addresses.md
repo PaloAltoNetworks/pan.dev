@@ -9,7 +9,7 @@ You get an HTTP error response 429 if the limit exceeds.
 The following cURL command retrieves the Cloud Controller Addresses of scanned TAS droplets.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

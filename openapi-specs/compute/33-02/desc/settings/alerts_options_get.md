@@ -3,7 +3,7 @@ This endpoint will return the alert profile configuration options that can be fo
 The following example curl command uses basic auth to retrieve all alert profile configuration options:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

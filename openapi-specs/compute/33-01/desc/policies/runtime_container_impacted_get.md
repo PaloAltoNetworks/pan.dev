@@ -6,7 +6,7 @@ In the Console UI, you can see how it works by going to the **Defend > Runtime >
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -16,7 +16,7 @@ $ curl -k \
 For additional help with your `ruleName`:
 
 ```bash
-$ curl -k -G \
+$ curl -G \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

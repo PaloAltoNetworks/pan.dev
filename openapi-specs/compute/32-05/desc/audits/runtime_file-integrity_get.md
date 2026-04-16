@@ -5,7 +5,7 @@ Retrieves all audit events for file-integrity checks that are configured under h
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

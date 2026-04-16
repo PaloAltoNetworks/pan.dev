@@ -5,7 +5,7 @@ Returns the trusted registries, repositories, and images.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \                                                                     
+$ curl \                                                                     
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

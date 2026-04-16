@@ -3,7 +3,7 @@ This endpoint will trigger a Kubernetes scan.
 The following example curl command uses basic auth to initiate this scan:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

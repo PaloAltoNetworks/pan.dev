@@ -10,7 +10,7 @@ This is the `PROFILE_ID`.
 The following example command uses curl and basic auth to specify the learning mode for a profile.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

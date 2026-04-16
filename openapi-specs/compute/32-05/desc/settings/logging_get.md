@@ -5,7 +5,7 @@ Returns the logging settings.
 Refer to the following example cURL request that uses basic auth to retrieve your logging details.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

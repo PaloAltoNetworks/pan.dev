@@ -5,7 +5,7 @@ Retrieves the details and state of all runtime models.
 Refer to the following example cURL command that lists all runtime models in a system:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
