@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "@docusaurus/Link";
+import terraformVersions from "../../data/terraform-versions.json";
 // Terraform Landing Page Constants Template
 // Usage: Define your constants with their respective data for each component and import them into your desired landing page within src/pages. Follow terraform.js for reference to how each constant can be used as props within their respective components.
 
@@ -88,7 +89,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
   providerCards: [
     {
       title: "PAN-OS",
-      latestTag: "v1.11.1",
+      latestTag: terraformVersions.providers.panos,
       description:
         "Define and manage your network security configuration as code, including Panorama, PA-Series, VM-Series and CN-Series.",
       cta: {
@@ -108,7 +109,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Cloud NGFW",
-      latestTag: "v2.0.1",
+      latestTag: terraformVersions.providers.cloudngfwaws,
       description:
         "Deploy and manage NGFW functionality, delivered as a cloud-native service within your public cloud tenants, using Terraform.",
       cta: {
@@ -128,7 +129,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud",
-      latestTag: "v1.3.2",
+      latestTag: terraformVersions.providers.prismacloud,
       description:
         "Configure your cloud-native security with Prisma Cloud using Terraform, facilitating automated cloud security operations.",
       cta: {
@@ -148,7 +149,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Prisma Cloud Compute",
-      latestTag: "v0.7.0",
+      latestTag: terraformVersions.providers.prismacloudcompute,
       description:
         "Define your cloud workload protection suing Terraform, to protect your host, container and serverless deployments in any cloud.",
       cta: {
@@ -168,7 +169,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
     },
     {
       title: "Bridgecrew",
-      latestTag: "v0.3.7",
+      latestTag: terraformVersions.providers.bridgecrew,
       description:
         "Automate your security engineering by identifying and remediating misconfigurations and vulnerabilities, across code, secrets and images, all defined with Terraform.",
       cta: {
@@ -274,8 +275,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       {
         tabLabel: "AWS",
         title: "Terraform Reusable Modules for VM-Series on AWS",
-        link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest",
-        latestTag: "v0.4.1",
+        link: "https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/aws/latest",
+        latestTag: terraformVersions.modules["swfw-modules/aws"],
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
@@ -304,8 +305,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       {
         tabLabel: "GCP",
         title: "Terraform Reusable Modules for VM-Series on GCP",
-        link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/google/latest",
-        latestTag: "v0.5.0",
+        link: "https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/google/latest",
+        latestTag: terraformVersions.modules["swfw-modules/google"],
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
@@ -334,8 +335,8 @@ export const TERRAFORM_MODULES_CONTENT = {
       {
         tabLabel: "Azure",
         title: "Terraform Reusable Modules for VM-Series on Azure",
-        link: "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest",
-        latestTag: "v0.5.1",
+        link: "https://registry.terraform.io/modules/PaloAltoNetworks/swfw-modules/azurerm/latest",
+        latestTag: terraformVersions.modules["swfw-modules/azurerm"],
         description: (
           <p>
             A set of modules for using Palo Alto Networks VM-Series firewalls to
@@ -367,7 +368,7 @@ export const TERRAFORM_MODULES_CONTENT = {
         tabLabel: "Static Address Groups",
         title: "Consul-Terraform-Sync Modules for PAN-OS",
         link: "https://registry.terraform.io/modules/PaloAltoNetworks/ag-dag-nia/panos/latest",
-        latestTag: "v0.1.0",
+        latestTag: terraformVersions.modules["ag-dag-nia/panos"],
         description: (
           <p>
             This Terraform module allows users to support Dynamic Firewalling by
@@ -401,7 +402,7 @@ export const TERRAFORM_MODULES_CONTENT = {
         tabLabel: "Dynamic Address Groups",
         title: "Consul-Terraform-Sync Modules for PAN-OS",
         link: "https://registry.terraform.io/modules/PaloAltoNetworks/dag-nia/panos/latest",
-        latestTag: "v0.2.0",
+        latestTag: terraformVersions.modules["dag-nia/panos"],
         description: (
           <p>
             This Terraform module allows users to support Dynamic Firewalling by
