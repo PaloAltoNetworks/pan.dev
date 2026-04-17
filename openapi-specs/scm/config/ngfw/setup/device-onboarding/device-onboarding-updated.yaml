@@ -72,52 +72,9 @@ paths:
                     format: uuid
                     description: Unique request identifier for troubleshooting
         '400':
-          description: Validation failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/api_response'
-              examples:
-                duplicateName:
-                  summary: Duplicate site name
-                  value:
-                    status: "error"
-                    error: "Validation failed for 1 site(s)"
-                    data:
-                      - name: "Test Site"
-                        validation_errors:
-                          - message: "Site with name 'Test Site' already exists"
-                patternValidationFailed:
-                  summary: Property pattern validation failed
-                  value:
-                    status: "error"
-                    error: "Validation failed for 1 site(s)"
-                    data:
-                      - name: "branch-office"
-                        validation_errors:
-                          - message: "Property validation failed"
-                        property_errors:
-                          email: "value 'invalid-email' does not match required pattern"
+          $ref: '#/components/responses/BadRequest'
         '409':
-          description: Site creation validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     get:
@@ -189,9 +146,9 @@ paths:
     get:
       tags:
         - Sites
-      summary: Get site by ID
+      summary: Get a site
       description: Retrieves a single site by UUID with its claims and resolution history
-      operationId: getSite
+      operationId: getSiteByID
       parameters:
         - $ref: '#/components/parameters/site_id'
       responses:
@@ -225,11 +182,11 @@ paths:
     put:
       tags:
         - Sites
-      summary: Update site
+      summary: Update a site
       description: |
         Updates a site's name, site group, or property values. Site must be unclaimed
         to be updated.
-      operationId: updateSite
+      operationId: updateSiteByID
       parameters:
         - $ref: '#/components/parameters/site_id'
       requestBody:
@@ -265,32 +222,16 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Site update validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Sites
-      summary: Delete site
+      summary: Delete a site
       description: |
         Deletes a site by ID. Site must be unclaimed unless force=true is specified.
-      operationId: deleteSite
+      operationId: deleteSiteByID
       parameters:
         - $ref: '#/components/parameters/site_id'
         - name: force
@@ -326,37 +267,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Site deletion validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /properties:
     post:
       tags:
         - Properties
-      summary: Create property
+      summary: Create a property
       description: |
-        Creates a new property schema definition with type and optional constraints.
+        Creates a new property definition with type and optional constraints.
 
         Supported types and their constraints:
         - integer: min, max
-        - string: max_len, pattern (regex)
-        - ip-address: (no constraints)
+        - string: max_len
 
         Note: Property names cannot start with the reserved prefix '_sys_'
       operationId: createProperty
@@ -399,23 +323,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
-          description: Property creation validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     get:
@@ -423,7 +331,7 @@ paths:
         - Properties
       summary: List properties
       description: |
-        Retrieves all property schemas with optional filtering by type.
+        Retrieves all properties with optional filtering by type.
       operationId: listProperties
       parameters:
         - name: type
@@ -431,7 +339,7 @@ paths:
           description: Filter properties by type
           schema:
             type: string
-            enum: [integer, string, ip-address]
+            enum: [integer, string]
       responses:
         '200':
           description: Properties retrieved successfully
@@ -464,8 +372,8 @@ paths:
     get:
       tags:
         - Properties
-      summary: Get property by ID
-      description: Retrieves a property schema by UUID
+      summary: Get a property
+      description: Retrieves a property by UUID
       operationId: getPropertyByID
       parameters:
         - $ref: '#/components/parameters/property_id'
@@ -485,7 +393,7 @@ paths:
                     description: Response status indicator
                   data:
                     $ref: '#/components/schemas/property'
-                    description: Property schema details
+                    description: Property details
                   message:
                     type: string
                     description: Human-readable message
@@ -500,15 +408,14 @@ paths:
     put:
       tags:
         - Properties
-      summary: Update property
+      summary: Update a property
       description: |
-        Updates a property schema. Validates that changes don't break existing site values
+        Updates a property. Validates that changes don't break existing site values
         or onboarding rule references.
 
         Supported constraints by type:
         - integer: min, max
-        - string: max_len, pattern (regex)
-        - ip-address: (no constraints)
+        - string: max_len
 
         Note: Property names cannot start with the reserved prefix '_sys_'
       operationId: updatePropertyByID
@@ -547,29 +454,13 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Property update validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Properties
-      summary: Delete property
+      summary: Delete a property
       description: |
         Deletes a property by ID. Property must not be in use by any sites or onboarding rules.
       operationId: deletePropertyByID
@@ -602,30 +493,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Property deletion validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /onboarding-rules:
     post:
       tags:
         - Onboarding Rules
-      summary: Create onboarding rule
+      summary: Create an onboarding rule
       description: |
         Creates a new onboarding rule with match criteria, actions, and variable resolution.
       operationId: createOnboardingRule
@@ -668,23 +543,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
-          description: Onboarding rule creation validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     get:
@@ -692,8 +551,7 @@ paths:
         - Onboarding Rules
       summary: List onboarding rules
       description: |
-        Retrieves all onboarding rules ordered by priority. May include migration
-        from config service based on X-Source-Service header.
+        Retrieves all onboarding rules ordered by priority.
       operationId: listOnboardingRules
       responses:
         '200':
@@ -734,11 +592,11 @@ paths:
     post:
       tags:
         - Onboarding Rules
-      summary: Move onboarding rule
+      summary: Move an onboarding rule
       description: |
         Changes the priority order of an onboarding rule. The rule can be moved to top, bottom,
         or before/after another rule.
-      operationId: moveOnboardingRule
+      operationId: moveOnboardingRuleByID
       parameters:
         - $ref: '#/components/parameters/onboarding_rule_id'
       requestBody:
@@ -753,7 +611,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api_response'
+                type: object
+                required:
+                  - status
+                  - message
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  message:
+                    type: string
+                    description: Human-readable message
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -764,7 +633,7 @@ paths:
     get:
       tags:
         - Onboarding Rules
-      summary: Get onboarding rule by ID
+      summary: Get an onboarding rule
       description: Retrieves an onboarding rule by UUID
       operationId: getOnboardingRuleByID
       parameters:
@@ -803,7 +672,7 @@ paths:
     put:
       tags:
         - Onboarding Rules
-      summary: Update onboarding rule
+      summary: Update an onboarding rule
       description: Updates an existing onboarding rule
       operationId: updateOnboardingRuleByID
       parameters:
@@ -843,29 +712,13 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Onboarding rule update validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Onboarding Rules
-      summary: Delete onboarding rule
+      summary: Delete an onboarding rule
       description: Deletes an onboarding rule by ID
       operationId: deleteOnboardingRuleByID
       parameters:
@@ -897,30 +750,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Onboarding rule deletion validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /site-groups:
     post:
       tags:
         - Site Groups
-      summary: Create site group
+      summary: Create a site group
       description: |
         Creates a new site group with optional property list. The property list defines
         which properties are available for sites in this site group and which properties
@@ -965,23 +802,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
-          description: Site group creation validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     get:
@@ -1022,7 +843,7 @@ paths:
     get:
       tags:
         - Site Groups
-      summary: Get site group by ID
+      summary: Get a site group
       description: Retrieves a site group by UUID
       operationId: getSiteGroupByID
       parameters:
@@ -1058,7 +879,7 @@ paths:
     put:
       tags:
         - Site Groups
-      summary: Update site group
+      summary: Update a site group
       description: |
         Updates a site group's name, description, or property list.
 
@@ -1103,29 +924,13 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Site group update validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags:
         - Site Groups
-      summary: Delete site group
+      summary: Delete a site group
       description: |
         Deletes a site group by ID. Site group must not be in use by any sites or onboarding rules.
       operationId: deleteSiteGroupByID
@@ -1158,23 +963,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Site group deletion validation failed
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - error
-                properties:
-                  status:
-                    type: string
-                    enum: [error]
-                  data:
-                    $ref: '#/components/schemas/resource_validation_result'
-                  error:
-                    type: string
-                    description: Error message
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
@@ -1245,100 +1034,74 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/api_response'
-          example:
-            status: "error"
-            error: "Bad Request"
-            message: "The request was invalid or malformed"
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/resource_validation_result'
+              error:
+                type: string
+                description: Error message
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/resource_validation_result'
+              error:
+                type: string
+                description: Error message
     NotFound:
       description: Not Found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/api_response'
-          example:
-            status: "error"
-            error: "Not Found"
-            message: "The requested resource was not found"
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              error:
+                type: string
+                description: Error message
     InternalServerError:
       description: Internal Server Error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/api_response'
-          example:
-            status: "error"
-            error: "Internal Server Error"
-            message: "An unexpected error occurred"
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              error:
+                type: string
+                description: Error message
   schemas:
-    api_response:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          type: string
-          enum: [success, error]
-          description: Response status indicator
-        data:
-          description: Response payload (structure varies by endpoint)
-        message:
-          type: string
-          description: Human-readable message
-        error:
-          type: string
-          description: Simple error message (present when status is error)
-        errors:
-          type: array
-          description: Array of detailed error objects (for structured error reporting)
-          items:
-            $ref: '#/components/schemas/error_detail'
-        request_id:
-          type: string
-          format: uuid
-          description: Unique request identifier for troubleshooting and support
-          example: "550e8400-e29b-41d4-a716-446655440000"
-        offset:
-          type: integer
-          description: The offset into the total number of objects (for paginated responses)
-          example: 0
-        limit:
-          type: integer
-          description: The maximum number of objects to return (for paginated responses)
-          example: 200
-        total:
-          type: integer
-          description: The total number of objects (for paginated responses)
-          example: 1
-        metadata:
-          type: object
-          description: Additional metadata (optional)
-          additionalProperties: true
-    error_detail:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code for programmatic handling
-          example: "SITE_MGR_001"
-        message:
-          type: string
-          description: Brief human-readable error message
-          example: "Validation failed"
-        details:
-          type: array
-          items:
-            type: string
-          description: Detailed error information and context
-          example: ["Site with name 'Test Site' already exists"]
-        help:
-          type: string
-          format: uri
-          description: URL to error documentation
-          example: "https://docs.paloaltonetworks.com/site-manager/errors#SITE_MGR_001"
     resource_validation_error:
       type: object
       required:
@@ -1534,7 +1297,7 @@ components:
           description: Property name (unique within tenant)
         type:
           type: string
-          enum: [integer, string, ip-address]
+          enum: [integer, string]
           description: Property data type
         constraints:
           $ref: '#/components/schemas/property_constraints'
@@ -1560,10 +1323,6 @@ components:
           type: string
           description: Maximum length (required for string type, must be 1-1024 inclusive)
           example: "255"
-        pattern:
-          type: string
-          description: Regular expression pattern for validation (for string type)
-          example: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
 
     create_property_request:
       type: object
@@ -1575,7 +1334,7 @@ components:
           type: string
         type:
           type: string
-          enum: [integer, string, ip-address]
+          enum: [integer, string]
         constraints:
           $ref: '#/components/schemas/property_constraints'
 
@@ -1586,7 +1345,7 @@ components:
           type: string
         type:
           type: string
-          enum: [integer, string, ip-address]
+          enum: [integer, string]
         constraints:
           $ref: '#/components/schemas/property_constraints'
 
@@ -1626,11 +1385,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/variable'
-        ha_enabled:
-          type: boolean
-        extensions:
-          type: object
-          additionalProperties: true
         created_at:
           type: string
           format: date-time
@@ -1718,12 +1472,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/variable'
-        ha_enabled:
-          type: boolean
-          default: false
-        extensions:
-          type: object
-          additionalProperties: true
 
     update_onboarding_rule_request:
       type: object
@@ -1758,11 +1506,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/variable'
-        ha_enabled:
-          type: boolean
-        extensions:
-          type: object
-          additionalProperties: true
 
     move_onboarding_rule_request:
       type: object
@@ -1812,11 +1555,6 @@ components:
           items:
             $ref: '#/components/schemas/resolved_variable'
           description: Variables resolved to their actual values
-        ha_enabled:
-          type: boolean
-        extensions:
-          type: object
-          additionalProperties: true
         resolution_errors:
           type: array
           items:
@@ -1840,12 +1578,6 @@ components:
           description: Variable type
         value:
           description: Resolved value (type varies)
-
-
-
-    # ========================================================================
-    # SITE GROUP SCHEMAS
-    # ========================================================================
 
     site_group:
       type: object
