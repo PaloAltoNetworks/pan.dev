@@ -844,11 +844,6 @@ const config = {
             outputDir: "products/scm/api/config/sase/network configurations",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          "config-ngfw-operations": {
-            specPath: "openapi-specs/scm/config/ngfw/operations",
-            outputDir: "products/scm/api/config/ngfw/operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           "config-ngfw-setup": {
             specPath: "openapi-specs/scm/config/ngfw/setup",
             outputDir: "products/scm/api/config/ngfw/setup",
@@ -912,11 +907,6 @@ const config = {
           "posturemanagement": {
             specPath: "openapi-specs/scm/config/posture-management",
             outputDir: "products/scm/api/config/posture-management",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          "ngfwoperation": {
-            specPath: "openapi-specs/scm/config/ngfw-operations",
-            outputDir: "products/scm/api/config/ngfw-operations",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           adem: {
