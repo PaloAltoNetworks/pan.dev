@@ -123,7 +123,7 @@ All configuration parameters:
 | PANW\_CLIENT\_SECRET | str | None | OAuth2 client secret |
 | PANW\_BASE\_URL | str | [https://api.sase.paloaltonetworks.com/aisec](https://api.sase.paloaltonetworks.com/aisec) | Management API endpoint |
 | PANW\_TOKEN\_BASE\_URL | str | [https://auth.apps.paloaltonetworks.com/am/oauth2/access_token](https://auth.apps.paloaltonetworks.com/am/oauth2/access_token) | OAuth2 token endpoint |
-| \- | int | 3 | Max retries with exponential backoff |
+| `num_retries`\- | int | 3 | Max retries with exponential backoff |
 
 # Example: SDK Configuration 
 
