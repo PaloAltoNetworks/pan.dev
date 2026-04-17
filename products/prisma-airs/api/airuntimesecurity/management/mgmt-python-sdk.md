@@ -79,7 +79,7 @@ Both clients accept the following optional parameters:
  - **client_id:** Your OAuth2 client ID (service account email)
  - **client_secret:** Your OAuth2 client secret
  - **base_url:** Management API endpoint (default: https://api.sase.paloaltonetworks.com/aisec)
- - **token_base_url:** OAuth2 token endpoint (default: https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token)
+ - **token_base_url:** OAuth2 token endpoint (default: https://auth.apps.paloaltonetworks.com/am/oauth2/access_token)
  - **num_retries:** Maximum number of retries with exponential backoff (default: 3)
 
 You must provide OAuth2 client credentials (client_id + client_secret) for authentication.
@@ -97,7 +97,7 @@ export PANW_CLIENT_SECRET="your_client_secret"
 
 # Optional configuration (override defaults)
 export PANW_BASE_URL="https://api.sase.paloaltonetworks.com/aisec"
-export PANW_TOKEN_BASE_URL="https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token"
+export PANW_TOKEN_BASE_URL="https://auth.apps.paloaltonetworks.com/am/oauth2/access_token"
 ```
 
 2. Specify credentials in MgmtClient() initialization:
@@ -109,7 +109,7 @@ client = MgmtClient(
     client_id="your_client_id",
     client_secret="your_client_secret",
     base_url="https://api.sase.paloaltonetworks.com/aisec",  # Optional
-    token_base_url="https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token"  # Optional
+    token_base_url="https://auth.apps.paloaltonetworks.com/am/oauth2/access_token"  # Optional
 )
 ```
 
@@ -121,9 +121,6 @@ All configuration parameters:
 | :---- | :---- | :---- | :---- |
 | PANW\_CLIENT\_ID | str | None | OAuth2 service account client ID |
 | PANW\_CLIENT\_SECRET | str | None | OAuth2 client secret |
-| PANW\_BASE\_URL | str | [https://api.sase](https://api.sase/). paloaltonetworks.com/aisec | Management API endpoint |
-| PANW\_TOKEN\_BASE\_URL | str | [https://auth.appsvc](https://auth.appsvc/). paloaltonetworks.com/auth/v1/oauth2/access\_token | OAuth2 token endpoint |
-| \- | int | 3 | Max retries with exponential backoff |
 | PANW\_BASE\_URL | str | [https://api.sase.paloaltonetworks.com/aisec](https://api.sase.paloaltonetworks.com/aisec) | Management API endpoint |
 | PANW\_TOKEN\_BASE\_URL | str | [https://auth.apps.paloaltonetworks.com/am/oauth2/access_token](https://auth.apps.paloaltonetworks.com/am/oauth2/access_token) | OAuth2 token endpoint |
 | \- | int | 3 | Max retries with exponential backoff |
@@ -139,7 +136,7 @@ client = MgmtClient(
     client_id="your_client_id",
     client_secret="your_client_secret",
     base_url="https://api.sase.paloaltonetworks.com/aisec",
-    token_base_url="https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token"
+    token_base_url="https://auth.apps.paloaltonetworks.com/am/oauth2/access_token"
 )
 ```
 **Using Environment Variables**
@@ -154,7 +151,7 @@ from airs_api_mgmt import MgmtClient
 
 # Optional (override defaults):
 # export PANW_BASE_URL="https://api.sase.paloaltonetworks.com/aisec"
-# export PANW_TOKEN_BASE_URL="https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token"
+# export PANW_TOKEN_BASE_URL="https://auth.apps.paloaltonetworks.com/am/oauth2/access_token"
 
 # Initialize with defaults (uses environment variables)
 client = MgmtClient()
