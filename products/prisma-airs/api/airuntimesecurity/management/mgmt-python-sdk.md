@@ -117,16 +117,16 @@ client = MgmtClient(
 
 All configuration parameters:
 
-| Parameter | Type | Default | Environment Variable | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **client_id** | str | None | PANW_CLIENT_ID | OAuth2 service account client ID |
-| **client_secret** | str | None | PANW_CLIENT_SECRET | OAuth2 client secret |
-| **base_url** | str | https://api.sase.<br>paloaltonetworks.com/aisec | PANW_BASE_URL | Management API endpoint |
-| **token_base_url** | str | https://auth.appsvc.<br>paloaltonetworks.com/auth/v1/oauth2/access_token | PANW_TOKEN_BASE_URL | OAuth2 token endpoint |
-| **num_retries** | int | 3 | - | Max retries with exponential backoff |
-| **base_url** | str | https://api.sase.paloaltonetworks.com/aisec | PANW_BASE_URL | Management API endpoint |
-| **token_base_url** | str | https://auth.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token | PANW_TOKEN_BASE_URL | OAuth2 token endpoint |
-| **num_retries** | int | 3 | - | Max retries with exponential backoff |
+| Environment Variable | Type | Default | Description |
+| :---- | :---- | :---- | :---- |
+| PANW\_CLIENT\_ID | str | None | OAuth2 service account client ID |
+| PANW\_CLIENT\_SECRET | str | None | OAuth2 client secret |
+| PANW\_BASE\_URL | str | [https://api.sase](https://api.sase/). paloaltonetworks.com/aisec | Management API endpoint |
+| PANW\_TOKEN\_BASE\_URL | str | [https://auth.appsvc](https://auth.appsvc/). paloaltonetworks.com/auth/v1/oauth2/access\_token | OAuth2 token endpoint |
+| \- | int | 3 | Max retries with exponential backoff |
+| PANW\_BASE\_URL | str | [https://api.sase.paloaltonetworks.com/aisec](https://api.sase.paloaltonetworks.com/aisec) | Management API endpoint |
+| PANW\_TOKEN\_BASE\_URL | str | [https://auth.apps.paloaltonetworks.com/am/oauth2/access_token](https://auth.apps.paloaltonetworks.com/am/oauth2/access_token) | OAuth2 token endpoint |
+| \- | int | 3 | Max retries with exponential backoff |
 
 # Example: SDK Configuration 
 
