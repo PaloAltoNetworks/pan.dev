@@ -5,7 +5,7 @@ Retrieves a list of Defender hostnames that can be used as the `{id}` query para
 Refer to the following example cURL command that retrieves a list of all Defenders:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -15,7 +15,7 @@ $ curl -k \
 Refer to the following example cURL command that retrieves a list of connected Defenders using a query parameter and a specified boolean value in lower case:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -25,7 +25,7 @@ $ curl -k \
 Refer to the following example cURL command that retrieves a list of disconnected Defenders using a query parameter and a specified boolean value in lower case:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -37,7 +37,7 @@ The endpoint enlists all the connected and disconnected Defenders if do not spec
 Refer to the following example cURL command that retrieves a list of Defenders by type:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -12,7 +12,7 @@ To invoke this endpoint in the Console UI:
 Refer to the following example cURL command that creates a new group named `my-group`:
 
 ```bash
-$ curl -k \
+$ curl \
   -X POST \
   -u <USER> \
   -H 'Content-Type: application/json' \

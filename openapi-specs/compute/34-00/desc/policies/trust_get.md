@@ -1,7 +1,7 @@
 Retrieves the list of rules that make up your trusted images policy.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

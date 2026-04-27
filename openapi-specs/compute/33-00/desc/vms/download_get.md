@@ -9,7 +9,7 @@ Returns all VM image scan reports in CSV format.
 Refer to the following example cURL command that retrieves all VM image scan reports and saves the results in a CSV file called `vm_images_scan.csv`:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

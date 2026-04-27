@@ -3,7 +3,7 @@ This endpoint will allow for updating settings for PCF (Pivotal Cloud Foundry) B
 The following example curl command uses basic auth to set up a PCF Blobstore scanner that scans the last `5` droplets for every droplet in the PCF Blobstore:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

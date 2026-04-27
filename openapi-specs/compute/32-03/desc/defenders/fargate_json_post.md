@@ -8,7 +8,7 @@ Refer to the following example cURL command:
 Unprotected task definition in `unprotected.json`
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
@@ -23,7 +23,7 @@ Refer to the following example cURL command that accepts the task definition in 
 Unprotected task definition in `unprotected.json`
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

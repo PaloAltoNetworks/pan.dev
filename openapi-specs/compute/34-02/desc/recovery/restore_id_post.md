@@ -5,7 +5,7 @@ Restores Prisma Cloud Compute from the given backup.
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

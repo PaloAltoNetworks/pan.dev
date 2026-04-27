@@ -8,7 +8,7 @@ The procedure to add, edit, or remove rules is:
   The following curl command uses basic auth to retrieve a list of all rules, pretty-print the JSON response, and save the results to a file.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      https://<CONSOLE>:8083/api/v1/policies/firewall/app/rasp \
      | jq '.' > app_firewall_rules.json
@@ -22,7 +22,7 @@ The procedure to add, edit, or remove rules is:
    Do not forget to specify the `@` symbol.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -X PUT \
      -H "Content-Type:application/json" \

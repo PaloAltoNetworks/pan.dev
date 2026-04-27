@@ -3,7 +3,7 @@ This endpoint will return any SCAP datastreams uploaded to the console. This end
 The following is an example curl command that uses basic auth to retrieve any uploaded datastreams configured for SCAP scanning:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

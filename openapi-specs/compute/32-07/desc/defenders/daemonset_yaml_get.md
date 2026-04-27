@@ -10,7 +10,7 @@ It can be a DNS name or IP address.
 `<HOSTNAME>` is a single list item from the `/api/v1/defenders/names` endpoint.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X GET \
   'https://<CONSOLE>:8083/api/v1/defenders/daemonset.yaml?consoleaddr=<HOSTNAME>&listener=none&namespace=twistlock&orchestration=kubernetes'

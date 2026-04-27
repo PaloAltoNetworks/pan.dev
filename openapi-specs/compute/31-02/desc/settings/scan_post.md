@@ -9,7 +9,7 @@ Refer to the following example cURL request that configures the following scan i
 * Scan images, containers, and hosts once per day.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

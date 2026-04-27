@@ -3,7 +3,7 @@ Update an existing alert profile created in the system.
 The following example curl command uses basic auth to add a Jira Alert profile:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

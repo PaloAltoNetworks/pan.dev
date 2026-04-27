@@ -4,7 +4,7 @@ Projects are enabled when an instance of Console is designated as master.
 The following example curl command retrieves the state of the Projects feature from Console.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -16,7 +16,7 @@ All API calls must be proxied through Central Console, where the request is auto
 To retrieve the Projects settings from a supervisor Console, append the `project` query parameter to your request.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

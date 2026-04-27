@@ -1,7 +1,7 @@
 Returns CSV data describing all RASP Defender runtime events.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

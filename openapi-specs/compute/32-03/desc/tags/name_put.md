@@ -9,7 +9,7 @@ You must define all parameters in your PUT request.
 Refer to the following example cURL command that updates the parameters in a tag named `my_tag`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

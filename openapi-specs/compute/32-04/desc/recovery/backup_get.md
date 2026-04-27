@@ -3,7 +3,7 @@ Returns a list of available backups.
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

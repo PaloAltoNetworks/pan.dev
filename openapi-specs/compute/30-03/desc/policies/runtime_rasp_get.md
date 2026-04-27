@@ -1,7 +1,7 @@
 Retrieves the list of rules that make up your RASP runtime policy.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

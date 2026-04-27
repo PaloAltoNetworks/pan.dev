@@ -16,7 +16,7 @@ Consider the following available options to retrieve when you use the `fields` q
 Refer to the following cURL command that generates a CSV file containing the scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -27,7 +27,7 @@ $ curl -k \
 Refer to the following example cURL command that might be useful for developers:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

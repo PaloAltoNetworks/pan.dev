@@ -7,7 +7,7 @@ Returns the host Web-Application and API Security (WAAS) audit events data in CS
 Refer to the following example cURL command that downloads the host WAAS audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

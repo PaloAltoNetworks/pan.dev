@@ -1,7 +1,7 @@
 The following curl command uses basic auth to retrieve a list of all Serverless resources that monitored by Prisma Cloud Compute, and save the results to a CSV file:
 
 ```bash
-$ curl -k \
+$ curl \
   -X POST \
   -H "Content-Type: application/octet-stream" \
   -u <USER> \

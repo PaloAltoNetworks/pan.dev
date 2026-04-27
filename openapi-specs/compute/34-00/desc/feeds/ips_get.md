@@ -5,7 +5,7 @@ Retrieves the customized list of block-listed suspicious or high-risk IP address
 The following cURL command retrieves the list of globally block-listed suspicious or high-risk IP addresses.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
