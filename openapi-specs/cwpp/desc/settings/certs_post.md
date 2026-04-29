@@ -12,7 +12,7 @@ For more information, see [Certificates](https://docs.paloaltonetworks.com/prism
 Refer to the following example cURL request that uses basic auth to add `node-01.example.com` to the `subjectAltName` field in the certificate:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -w "\nResponse code: %{http_code}\n" \

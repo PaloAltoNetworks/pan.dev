@@ -38,7 +38,7 @@ The updated role must contain the "user" permission with read-write access. This
 The following example curl command uses basic auth to update the role:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

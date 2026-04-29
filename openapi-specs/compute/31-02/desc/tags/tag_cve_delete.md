@@ -6,7 +6,7 @@ When you delete a tag, the tag is deleted from a wider scope. All the packages a
 Refer to the following example cURL command that removes the tag named `ignored` from the CVE `CVE-2017-15088`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

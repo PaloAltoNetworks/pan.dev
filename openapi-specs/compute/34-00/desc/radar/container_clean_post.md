@@ -1,7 +1,7 @@
 Cleans the container runtime profiles and Radar entities.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

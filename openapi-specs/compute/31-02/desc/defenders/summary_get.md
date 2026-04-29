@@ -6,7 +6,7 @@ Lists the number of Defenders in each defender category.
 Refer to the following example cURL command that retrieves a summary of Defenders:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

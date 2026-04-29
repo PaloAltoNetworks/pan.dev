@@ -35,7 +35,7 @@ Refer to the following available options for the `fields` query parameters:
 Refer to the following cURL command that retrieves all host scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

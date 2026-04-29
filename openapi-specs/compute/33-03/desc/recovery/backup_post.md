@@ -3,7 +3,7 @@ Creates a backup named `backup_name` by invoking the MongoDB dump process.
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

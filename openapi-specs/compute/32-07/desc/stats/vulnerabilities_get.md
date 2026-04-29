@@ -19,7 +19,7 @@ Consider the following observations:
 Refer to the following example cURL command that retrieves a summary count of the CVEs and detailed descriptions for each CVE:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

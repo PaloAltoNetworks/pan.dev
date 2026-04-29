@@ -3,7 +3,7 @@ Returns a historical list of per-day statistics for the resources protected by P
 The following example command uses curl and basic auth to retrieve the daily stats:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

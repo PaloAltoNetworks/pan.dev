@@ -10,7 +10,7 @@ This endpoint maps to the table in **Monitor > Vulnerabilities > VMware Tanzu bl
 The following cURL command retrieves all TAS droplets.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -12,7 +12,7 @@ Retrieves the server certificate bundle from Prisma Cloud Compute that contains 
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -H 'Content-Type: application/json' \
   -u <USER> \
   -X GET \

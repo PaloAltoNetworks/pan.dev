@@ -3,7 +3,7 @@ This endpoint will download the list of configured cloud controller addresses co
 The following example curl command retrieves the list of addresses and outputs it to a file call `PCF_blobstores.csv`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

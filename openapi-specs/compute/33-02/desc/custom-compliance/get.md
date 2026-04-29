@@ -7,7 +7,7 @@ This endpoint maps to **Defend > Compliance > Custom** in the Console UI.
 Refer to the following example curl command that gets the list of custom compliance checks:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

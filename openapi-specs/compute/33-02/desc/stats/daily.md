@@ -3,7 +3,7 @@ Returns daily statistics about the resources protected by Prisma Cloud Compute, 
 The following example command that uses curl and basic auth to retrieve daily stats:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

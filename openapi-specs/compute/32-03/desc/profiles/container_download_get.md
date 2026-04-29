@@ -6,7 +6,7 @@ Retrieves the details and state of all runtime models in CSV format.
 Refer to the following example cURL command that downloads a complete list in CSV format:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -41,7 +41,7 @@ module.exports = {
     
     // SDKs (implementation details)
     {
-      label: "Python SDK",
+      label: "AI Runtime Security Python SDK",
       type: "category",
       collapsed: false,
       items: [
@@ -56,6 +56,27 @@ module.exports = {
         {
           type: "doc",
           id: "prisma-airs/api/airuntimesecurity/pythonsdkasynciousage",
+        },
+      ],      
+    },
+
+    // SDKs (implementation details)
+    {
+      label: "Management API Python SDK",
+      type: "category",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/management/mgmt-python-sdk",
+        },
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/management/mgmt-python-inlinesdk",
+        },
+        {
+          type: "doc",
+          id: "prisma-airs/api/airuntimesecurity/management/mgmt-python-asynciosdk",
         },
       ],      
     },

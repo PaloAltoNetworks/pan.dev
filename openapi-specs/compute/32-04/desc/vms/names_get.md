@@ -6,7 +6,7 @@ Returns an array of strings containing VM image names.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -X GET \
   -u <USER> \
   -H 'Content-Type: application/json' \

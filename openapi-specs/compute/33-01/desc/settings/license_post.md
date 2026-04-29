@@ -8,7 +8,7 @@ For more information, see [Licensing](https://docs.paloaltonetworks.com/prisma/p
 Refer to the following example cURL request that uses basic auth to set your license:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
