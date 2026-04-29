@@ -19,7 +19,7 @@ Consider the following available options to retrieve when you use the `fields` q
 Refer to the following cURL command that retrieves a compact scan report for all images:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -29,7 +29,7 @@ $ curl -k \
 Refer to the following cURL command that retrieves a compact scan report for an Ubuntu image:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -40,7 +40,7 @@ The name query is synonymous with the filter images text field in the Console UI
 Refer to the following cURL command that retrieves the scan report for an image with the matching SHA-256 hash:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

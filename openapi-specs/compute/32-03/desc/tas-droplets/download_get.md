@@ -7,7 +7,7 @@ This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > VMware 
 The following cURL command downloads all TAS droplets to a CSV file called `tas_droplets.csv`:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

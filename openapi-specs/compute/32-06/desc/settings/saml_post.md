@@ -7,7 +7,7 @@ For more information, see [Okta via SAML 2.0](https://docs.paloaltonetworks.com/
 Refer to the following example cURL request that uses the basic auth to set up and enable the SAML integration with Prisma Cloud Compute:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

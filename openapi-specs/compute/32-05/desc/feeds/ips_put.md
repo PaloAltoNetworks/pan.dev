@@ -7,7 +7,7 @@ Bans a custom list of suspicious or high-risk IP addresses.
 The following cURL command installs a custom list of banned suspicious or high-risk IP addresses.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

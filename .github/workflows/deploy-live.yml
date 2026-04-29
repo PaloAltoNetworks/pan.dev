@@ -4,19 +4,29 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
-  
+
+permissions: {}
+
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
 jobs:
    build:
-      if: github.repository_owner == 'PaloAltoNetworks'
+      if: github.repository_owner == 'PaloAltoNetworks' && github.ref == 'refs/heads/master'
       name: Build
       runs-on: pan-dev-runner-xl
+      permissions:
+        contents: read
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          with:
+            persist-credentials: false
 
         - name: Setup node
-          uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
+          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
           with:
             node-version: '20'
             cache: 'yarn'
@@ -42,27 +52,40 @@ jobs:
         #       pandev-live
 
         - name: Install dependencies
-          run: yarn --prefer-offline
+          run: yarn --prefer-offline --frozen-lockfile --ignore-scripts
 
         # needed for fetching Hashicorp blog feed
+        - name: Cache Playwright
+          id: playwright-cache
+          uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+          with:
+            path: |
+              ~/.cache/ms-playwright
+            key: ${{ runner.os }}-playwright-master-${{ hashFiles('package.json') }}
+            restore-keys: |
+              ${{ runner.os }}-playwright-master-
+
         - name: Install Playwright
+          if: steps.playwright-cache.outputs.cache-hit != 'true'
           run: |
             npx playwright install chromium
             npx playwright install-deps chromium
 
-        - name: Cache Playwright
-          uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
-          with:
-            path: |
-              ~/.cache/ms-playwright
-            key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
-            restore-keys: |
-              ${{ runner.os }}-playwright-
-
         - name: Build site
-          run: REACT_APP_ERROR_REPORTER_APIKEY=${{ secrets.ERROR_REPORTER_APIKEY }} REACT_APP_FIREBASE_APIKEY=${{ secrets.FIREBASE_APIKEY }} REACT_APP_RECAPTCHA_APIKEY=${{ secrets.RECAPTCHA_APIKEY }} FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github && zip -r build.zip build
+          run: |
+            FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github
+            rm -f build.zip
+            zip -r build.zip build
+          env:
+            REACT_APP_ERROR_REPORTER_APIKEY: ${{ secrets.ERROR_REPORTER_APIKEY }}
 
-        - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        - name: Verify build did not modify critical files
+          run: |
+            git diff --exit-code -- \
+              firebase.json .firebaserc package.json yarn.lock docusaurus.config.ts \
+              'scripts/**' '.github/**' 'src/theme/**' 'plugin-sitemap-coveo/**'
+
+        - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
           with:
             name: build
             path: build.zip
@@ -70,48 +93,60 @@ jobs:
    deploy:
       name: Deploy
       needs: build
+      if: github.repository_owner == 'PaloAltoNetworks' && github.ref == 'refs/heads/master'
       runs-on: pan-dev-runner-lg
+      environment: production
       permissions:
+        contents: read
         id-token: write
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-        
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          with:
+            persist-credentials: false
+
         - name: Setup node
-          uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
+          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
           with:
             node-version: '20'
             cache: 'yarn'
 
-        - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
+        - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
           with:
             name: build
 
         - name: Unzip build artifact
-          run: unzip build.zip
+          run: unzip -n build.zip 'build/*'
 
         - name: Authenticate to Google Cloud
           id: auth
-          uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5
+          uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
           with:
             workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
             service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+            export_environment_variables: false
 
-        - name: Export Google Cloud Credentials
-          run: echo "GCP_SA_KEY=$(cat ${{ steps.auth.outputs.credentials_file_path }})" >> $GITHUB_ENV
+        - name: Mask sensitive values in logs
+          run: |
+            echo "::add-mask::${{ steps.auth.outputs.credentials_file_path }}"
+            echo "::add-mask::${{ secrets.GCP_PROJECT_NUMBER }}"
 
-        - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
-          with:
-            name: build
+        - name: Read GCP credentials
+          id: creds
+          run: |
+            creds=$(cat "${{ steps.auth.outputs.credentials_file_path }}")
+            echo "::add-mask::$creds"
+            echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
 
         - name: Deploy to Firebase
           id: deploy_live
           uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0.10.0
           with:
             repoToken: '${{ secrets.GITHUB_TOKEN }}'
-            firebaseServiceAccount: "${{ env.GCP_SA_KEY }}"
-            projectId: pan-dev-f1b58
+            firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
+            projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
             channelId: live
           env:
             FIREBASE_CLI_PREVIEWS: hostingchannels
+            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

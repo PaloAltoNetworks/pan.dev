@@ -6,7 +6,7 @@ Specify trusted images using either the image name or layers properties.
 Refer to the following example cURL command that uses basic auth to specify that the Ubuntu 16.04 image on Docker Hub is a trusted image:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \
@@ -19,7 +19,7 @@ To edit a trust group based on image base layers, use PUT to specify a list of S
 Refer to the following example that specifies the Ubuntu 16.04 image is a trusted base OS.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

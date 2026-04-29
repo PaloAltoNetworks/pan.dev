@@ -3,7 +3,7 @@ This endpoint will return a list in JSON format of the roles can be found under 
 The following example curl command uses basic auth to return:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

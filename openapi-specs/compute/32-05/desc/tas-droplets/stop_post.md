@@ -5,7 +5,7 @@ Stops the ongoing scan of TAS Droplets.
 Refer to the following cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

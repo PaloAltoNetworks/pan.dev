@@ -7,7 +7,7 @@ Globally allow-lists a set of Common Vulnerabilities and Exposures (CVE).
 The following cURL command installs a global CVE allow-list.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

@@ -10,7 +10,7 @@ This endpoint maps to **Monitor > Vulnerabilities > Functions > Scanned function
 Refer to the following example cURL command that retrieves the scan reports for serverless functions:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

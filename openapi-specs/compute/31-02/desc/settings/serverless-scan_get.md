@@ -8,7 +8,7 @@ This endpoint maps to the **Function scope** table data in the **Defend > Vulner
 Refer to the following example cURL command that retrieves a list of serverless scan scopes:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -5,7 +5,7 @@ The hostname can be returned from the endpoint `/defenders/names`
 The following example curl command uses basic auth to download the logs:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

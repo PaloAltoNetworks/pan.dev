@@ -3,7 +3,7 @@ Retrieves the list of Jenkins projects that have been scanned by the Jenkins plu
 The following example curl command uses basic auth to retrieve the list of Jenkins project names:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

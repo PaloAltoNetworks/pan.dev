@@ -11,7 +11,7 @@ This endpoint maps to the table in **Monitor > Compliance > Compliance explorer*
 Refer to the following example cURL command that retrieves compliance statistics:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

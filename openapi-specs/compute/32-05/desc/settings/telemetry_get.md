@@ -7,7 +7,7 @@ For more information, see [telemetry](https://docs.paloaltonetworks.com/prisma/p
 Refer to the following example cURL request that retrieves the settings if telemetry is enabled or not:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
