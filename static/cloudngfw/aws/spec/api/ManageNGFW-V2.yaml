@@ -385,6 +385,119 @@ components:
       - FirewallName
       - RuleStackName
       type: object
+    v1.CreateFirewallAPIInput:
+      properties:
+        AccountId:
+          maxLength: 12
+          minLength: 12
+          type: string
+        Description:
+          type: string
+        EgressNAT:
+          $ref: '#/components/schemas/model.EgressNATConfig'
+        EndpointMode:
+          enum:
+          - ServiceManaged
+          - CustomerManaged
+          type: string
+        FirewallName:
+          type: string
+        GlobalRuleStackName:
+          maxLength: 128
+          minLength: 1
+          type: string
+        LinkId:
+          type: string
+        MultiVpcEnable:
+          type: boolean
+        RuleStackName:
+          maxLength: 128
+          minLength: 1
+          type: string
+        SubnetMappings:
+          items:
+            $ref: '#/components/schemas/model.SubnetMapping'
+          type: array
+        Tags:
+          items:
+            $ref: '#/components/schemas/model.TagEntry'
+          maxItems: 50
+          type: array
+        VpcId:
+          type: string
+      required:
+      - AccountId
+      - EndpointMode
+      - FirewallName
+      - SubnetMappings
+      - VpcId
+      type: object
+    v1.CreateFirewallAPIOutput:
+      properties:
+        Response:
+          $ref: '#/components/schemas/v1.CreateFirewallAPIResponse'
+        ResponseStatus:
+          $ref: '#/components/schemas/response.ResponseStatus'
+      type: object
+    v1.CreateFirewallAPIResponse:
+      properties:
+        AccountId:
+          maxLength: 12
+          minLength: 12
+          type: string
+        Description:
+          type: string
+        EgressNAT:
+          $ref: '#/components/schemas/model.EgressNATConfig'
+        EndpointMode:
+          enum:
+          - ServiceManaged
+          - CustomerManaged
+          type: string
+        FirewallName:
+          type: string
+        GlobalRuleStackName:
+          maxLength: 128
+          minLength: 1
+          type: string
+        LinkId:
+          type: string
+        LinkStatus:
+          type: string
+        MultiVpcEnable:
+          type: boolean
+        PrivateAccess:
+          $ref: '#/components/schemas/model.PrivateAccessConfig'
+        RuleStackName:
+          maxLength: 128
+          minLength: 1
+          type: string
+        SecurityZones:
+          items:
+            $ref: '#/components/schemas/model.EndpointConfig'
+          type: array
+        SubnetMappings:
+          items:
+            $ref: '#/components/schemas/model.SubnetMapping'
+          type: array
+        Tags:
+          items:
+            $ref: '#/components/schemas/model.TagEntry'
+          maxItems: 50
+          type: array
+        UpdateToken:
+          type: string
+        UserID:
+          $ref: '#/components/schemas/model.UserIDConfig'
+        VpcId:
+          type: string
+      required:
+      - AccountId
+      - EndpointMode
+      - FirewallName
+      - SubnetMappings
+      - VpcId
+      type: object
     v1.DeleteFirewallAPIOutput:
       properties:
         Response:
@@ -448,6 +561,13 @@ components:
         UserID:
           $ref: '#/components/schemas/v2.UserIDRequest'
       type: object
+    v1.FirewallInfo:
+      properties:
+        AccountId:
+          type: string
+        FirewallName:
+          type: string
+      type: object
     v1.FirewallResource:
       properties:
         AccountId:
@@ -500,6 +620,26 @@ components:
         UserID:
           $ref: '#/components/schemas/model.UserIDConfig'
         VpcId:
+          type: string
+      type: object
+    v1.ListFirewallsAPIOutput:
+      properties:
+        Response:
+          $ref: '#/components/schemas/v1.ListFirewallsResponse'
+        ResponseStatus:
+          $ref: '#/components/schemas/response.ResponseStatus'
+      type: object
+    v1.ListFirewallsResponse:
+      properties:
+        Firewalls:
+          items:
+            $ref: '#/components/schemas/v1.FirewallInfo'
+          type: array
+        FirewallsDescribe:
+          items:
+            $ref: '#/components/schemas/v1.ReadFirewallResponse'
+          type: array
+        NextToken:
           type: string
       type: object
     v1.ListTagsAPIInput:
@@ -1891,10 +2031,8 @@ paths:
       - ManageNGFW-V2
   /v2/ngfirewalls:
     get:
-      description: 'List all Cloud NGFW resources in your account using V2 API.
-
-        '
-      operationId: get-v2-ngfirewalls
+      description: List V1 firewalls
+      operationId: get-v2-ngfirewalls-v2
       parameters:
       - description: FW region
         in: query
@@ -1952,14 +2090,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/v2.ListFirewallsAPIOutput'
           description: Bad Request
-      summary: List all Cloud NGFW resources in your account using V2 API.
+      summary: List V1 firewalls
       tags:
       - ManageNGFW-V2
     post:
-      description: 'Create a new Cloud NGFW resource using V2 API.
-
-        '
-      operationId: post-v2-ngfirewalls
+      description: Create V1 firewalls
+      operationId: post-v2-ngfirewalls-v2
       parameters:
       - description: FW region
         in: query
@@ -1998,7 +2134,102 @@ paths:
               schema:
                 $ref: '#/components/schemas/v2.CreateFirewallAPIOutput'
           description: Bad Request
-      summary: Create a new Cloud NGFW resource using V2 API.
+      summary: Create V1 firewalls
+      tags:
+      - ManageNGFW-V2
+  /v2/ngfirewalls/:
+    get:
+      description: v1 list firewalls
+      operationId: get-v2-ngfirewalls-v1
+      parameters:
+      - description: FW region
+        in: query
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: v1 route
+        in: query
+        name: v1route
+        required: true
+        schema:
+          type: string
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: x-api-key
+        in: header
+        name: x-api-key
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.ListFirewallsAPIOutput'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.ListFirewallsAPIOutput'
+          description: Bad Request
+      summary: v1 list firewalls
+      tags:
+      - ManageNGFW-V2
+    post:
+      description: v1 create ngfirewall
+      operationId: post-v2-ngfirewalls-v1
+      parameters:
+      - description: FW region
+        in: query
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: v1 route
+        in: query
+        name: v1route
+        required: true
+        schema:
+          type: boolean
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+      - description: x-api-key
+        in: header
+        name: x-api-key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1.CreateFirewallAPIInput'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.CreateFirewallAPIOutput'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.CreateFirewallAPIOutput'
+          description: Bad Request
+      summary: v1 create ngfirewall
       tags:
       - ManageNGFW-V2
   /v2/ngfirewalls/{firewall_id}:
