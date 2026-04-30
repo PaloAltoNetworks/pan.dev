@@ -4,7 +4,7 @@ Projects are enabled when an instance of Console is designated as master.
 The following example curl command designates `<CONSOLE>` as master.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

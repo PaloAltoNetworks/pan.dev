@@ -7,7 +7,7 @@ This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > Images 
 The following cURL command retrieves and saves your Jenkins and twistcli scan reports to a CSV file called `scans_report.csv`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -21,7 +21,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 
 const config = {
   future: {
-    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
     v4: true
   },
   title: "Develop with Palo Alto Networks",
@@ -904,6 +904,16 @@ const config = {
             outputDir: "products/scm/api/config/cloudngfw/security",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-incidents": {
+            specPath: "openapi-specs/scm/config/incidents",
+            outputDir: "products/scm/api/config/incidents",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "posturemanagement": {
+            specPath: "openapi-specs/scm/config/posture-management",
+            outputDir: "products/scm/api/config/posture-management",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
@@ -1068,6 +1078,13 @@ const config = {
           aiintegration: {
             specPath: "openapi-specs/prisma-airs-redteam/data-plane",
             outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          //Prisma AIRS Network Broker
+          airsnetworkbroker: {
+            specPath: "openapi-specs/prisma-airs-redteam/network-broker",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/network-broker",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },

@@ -3,7 +3,7 @@ This endpoint will kick off a scan of the any PCF Blobstores you have configured
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

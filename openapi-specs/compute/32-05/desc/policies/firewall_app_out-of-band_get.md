@@ -8,7 +8,7 @@ This endpoint maps to **Defend > WAAS > Out of band** in the Console UI.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

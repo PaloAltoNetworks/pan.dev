@@ -7,7 +7,7 @@ Returns the audit events data that occur in an integrated Kubernetes cluster tha
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

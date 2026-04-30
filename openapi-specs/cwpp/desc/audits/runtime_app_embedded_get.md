@@ -5,7 +5,7 @@ Retrieves all app-embedded runtime audit events.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

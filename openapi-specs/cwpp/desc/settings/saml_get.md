@@ -5,7 +5,7 @@ Returns the configured SAML settings that is used to authenticate to the Prisma 
 Refer to the following example cURL request:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

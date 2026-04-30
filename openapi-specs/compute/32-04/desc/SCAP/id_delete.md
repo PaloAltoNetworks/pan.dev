@@ -3,7 +3,7 @@ This endpoint will delete any SCAP datastreams uploaded to the console. You can 
 The following is an example curl command that uses basic auth to delete an uploaded datastreams configured for SCAP scanning:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

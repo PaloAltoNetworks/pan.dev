@@ -9,7 +9,7 @@ This endpoint maps to the CSV hyperlink in **Monitor > Vulnerabilities > Hosts >
 Refer to the following example cURL command that downloads all host scan reports to a CSV file called `hosts_report.csv`:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET -o hosts_report.csv \
