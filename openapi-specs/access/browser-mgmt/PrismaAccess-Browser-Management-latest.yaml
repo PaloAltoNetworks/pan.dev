@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Prisma Browser Management Console Public API
   version: 1.0.0
-  description: "This Open API spec file was created on May 04, 2026. \xA9 2026 Palo\
+  description: "This Open API spec file was created on May 05, 2026. \xA9 2026 Palo\
     \ Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto\
     \ Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
@@ -4496,7 +4496,7 @@ paths:
       - User Groups
   /seb-api/v1/applications:
     get:
-      summary: Returns a list of applications
+      summary: List all applications
       description: Fetches all application objects, with support for filtering and
         pagination.
       operationId: GetSeb-apiV1Applications
@@ -4595,9 +4595,88 @@ paths:
           pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
       - Applications
+  /seb-api/v1/applications/{id}:
+    get:
+      summary: Get an application by ID
+      description: Fetches a specific application object identified by its unique
+        ID.
+      operationId: GetSeb-apiV1Applicationsbyid
+      responses:
+        '200':
+          description: An Application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationItem'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      tags:
+      - Applications
+    delete:
+      summary: Delete an application by ID
+      description: Permanently removes a specific application identified by its ID.
+      operationId: DeleteSeb-apiV1Applicationsbyid
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      tags:
+      - Applications
   /seb-api/v1/applications/type/{type}:
     get:
-      summary: Returns a list of applications
+      summary: List applications by type
       description: Fetches application objects belonging to a specific type.
       operationId: GetSeb-apiV1ApplicationsTypebytype
       responses:
@@ -4694,7 +4773,7 @@ paths:
       tags:
       - Applications
     post:
-      summary: Creates an application
+      summary: Create a typed application
       description: Adds a new application of the specified type to the management
         console. **Uniform Resource Locator Limit:** For custom, private, and non-web
         applications, there is a tenant-wide limit of 15,000 URLs combined. Exceeding
@@ -4755,193 +4834,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateOrReplaceAppInput'
-  /seb-api/v1/applications/{id}:
-    get:
-      summary: Returns an application
-      description: Fetches a specific application object identified by its unique
-        ID.
-      operationId: GetSeb-apiV1Applicationsbyid
-      responses:
-        '200':
-          description: An Application
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApplicationItem'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '404':
-          description: Resource Not found
-        '500':
-          description: Internal server error
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
-        description: Application ID.
-      - name: configurationVersion
-        in: query
-        description: Configuration version to retrieve (draft, active, or version
-          number)
-        required: false
-        schema:
-          type: string
-          default: draft
-          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
-      tags:
-      - Applications
-    delete:
-      summary: Deletes an application
-      description: Permanently removes a specific application identified by its ID.
-      operationId: DeleteSeb-apiV1Applicationsbyid
-      responses:
-        '204':
-          description: Deleted successfully
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '404':
-          description: Resource Not found
-        '500':
-          description: Internal server error
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
-        description: Application ID.
-      tags:
-      - Applications
-  /seb-api/v1/applications/bulk-delete:
-    post:
-      summary: Delete multiple applications atomically
-      description: Permanently removes multiple applications identified by their IDs
-        in a single atomic operation.
-      operationId: PostSeb-apiV1ApplicationsBulk-delete
-      responses:
-        '204':
-          description: Deleted successfully
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '404':
-          description: Resource Not found
-        '500':
-          description: Internal server error
-      parameters: []
-      tags:
-      - Applications
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                appIds:
-                  type: array
-                  items:
-                    type: string
-                    pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
-                  description: Array of application IDs to be deleted
-                  minItems: 1
-                  maxItems: 2000
-              required:
-              - appIds
-  /seb-api/v1/applications/bulk-create/{type}:
-    post:
-      summary: Creates multiple applications
-      description: Adds multiple new applications of the specified type to the management
-        console in a single operation. **Uniform Resource Locator Limit:** For custom,
-        private, and non-web applications, there is a tenant-wide limit of 15,000
-        URLs combined. Exceeding this limit returns a 400 Bad Request error.
-      operationId: bulkCreateApplications
-      responses:
-        '201':
-          description: Created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BulkCreatedResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '409':
-          description: Conflict - resource already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-      parameters:
-      - in: path
-        name: type
-        required: true
-        schema:
-          type: string
-          enum:
-          - custom
-          - private
-          - non-web
-          - catalog
-          - localdesktopcustom
-      tags:
-      - Applications
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CreateOrReplaceAppInput'
-              maxItems: 1000
-              minItems: 1
   /seb-api/v1/applications/type/{type}/{id}:
     get:
-      summary: Returns an application
+      summary: Get a typed application by ID
       description: Fetches a specific application object belonging to the specified
         type.
       operationId: GetSeb-apiV1ApplicationsTypeBy_typebyid
@@ -4997,51 +4892,8 @@ paths:
           pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
       - Applications
-    delete:
-      summary: Deletes an application
-      description: Removes an application of the specified type from the system.
-      operationId: DeleteSeb-apiV1ApplicationsTypeBy_typebyid
-      responses:
-        '204':
-          description: Deleted successfully
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '404':
-          description: Resource Not found
-        '500':
-          description: Internal server error
-      parameters:
-      - in: path
-        name: type
-        required: true
-        schema:
-          type: string
-          enum:
-          - custom
-          - private
-          - non-web
-          - catalog
-          - localdesktopcustom
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
-        description: Application ID.
-      tags:
-      - Applications
     patch:
-      summary: Updates an application
+      summary: Update a typed application
       description: Partially updates an application - provided attributes are set
         as specified, others remain unchanged. **Uniform Resource Locator Limit:**
         For custom, private, and non-web applications, there is a tenant-wide limit
@@ -5111,9 +4963,181 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchAppInput'
+    delete:
+      summary: Delete a typed application
+      description: Removes an application of the specified type from the system.
+      operationId: DeleteSeb-apiV1ApplicationsTypeBy_typebyid
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      tags:
+      - Applications
+  /seb-api/v1/applications/categories:
+    get:
+      summary: List application categories
+      description: Retrieve the categories details through this Application Programming
+        Interface endpoint.
+      operationId: GetSeb-apiV1ApplicationsCategories
+      responses:
+        '200':
+          description: A list of the available application categories
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Applications
+  /seb-api/v1/applications/bulk-create/{type}:
+    post:
+      summary: Bulk create typed applications
+      description: Adds multiple new applications of the specified type to the management
+        console in a single operation. **Uniform Resource Locator Limit:** For custom,
+        private, and non-web applications, there is a tenant-wide limit of 15,000
+        URLs combined. Exceeding this limit returns a 400 Bad Request error.
+      operationId: bulkCreateApplications
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateOrReplaceAppInput'
+              maxItems: 1000
+              minItems: 1
+  /seb-api/v1/applications/bulk-delete:
+    post:
+      summary: Bulk delete applications
+      description: Permanently removes multiple applications identified by their IDs
+        in a single atomic operation.
+      operationId: PostSeb-apiV1ApplicationsBulk-delete
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appIds:
+                  type: array
+                  items:
+                    type: string
+                    pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+                  description: Array of application IDs to be deleted
+                  minItems: 1
+                  maxItems: 2000
+              required:
+              - appIds
   /seb-api/v1/application-groups:
     get:
-      summary: Returns a list of application groups
+      summary: List all application groups
       description: Fetches all application groups with support for name-based filtering
         and sorting.
       operationId: GetSeb-apiV1Application-groups
@@ -5194,7 +5218,7 @@ paths:
       tags:
       - Application Groups
     post:
-      summary: Creates an application group
+      summary: Create an application group
       description: Defines a new group and associates it with a list of application
         IDs.
       operationId: PostSeb-apiV1Application-groups
@@ -5244,7 +5268,7 @@ paths:
               $ref: '#/components/schemas/CreateOrReplaceAppGroupInput'
   /seb-api/v1/application-groups/{id}:
     get:
-      summary: Returns an application group
+      summary: Get an application group by ID
       description: Fetches a single application group by its unique ID.
       operationId: GetSeb-apiV1Application-groupsbyid
       responses:
@@ -5288,40 +5312,8 @@ paths:
           pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
       tags:
       - Application Groups
-    delete:
-      summary: Deletes an application group
-      description: Permanently removes an application group identified by its ID.
-      operationId: DeleteSeb-apiV1Application-groupsbyid
-      responses:
-        '204':
-          description: Deleted successfully
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errorResponse:
-                    $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-        '404':
-          description: Resource Not found
-        '500':
-          description: Internal server error
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          pattern: ^0AG[0-9A-HJKMNP-TV-Z]{26}$
-        description: Application Group ID.
-      tags:
-      - Application Groups
     patch:
-      summary: Updates an application group
+      summary: Update an application group
       description: Partially updates an application group - provided attributes are
         set as specified, others remain unchanged.
       operationId: PatchSeb-apiV1Application-groupsbyid
@@ -5378,33 +5370,41 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchAppGroupInput'
-  /seb-api/v1/applications/categories:
-    get:
-      summary: Returns a list of available application categories
-      description: Retrieve the categories details through this Application Programming
-        Interface endpoint.
-      operationId: GetSeb-apiV1ApplicationsCategories
+    delete:
+      summary: Delete an application group
+      description: Permanently removes an application group identified by its ID.
+      operationId: DeleteSeb-apiV1Application-groupsbyid
       responses:
-        '200':
-          description: A list of the available application categories
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
+                type: object
                 properties:
-                  data:
-                    type: array
-                    items:
-                      type: string
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden
+        '404':
+          description: Resource Not found
         '500':
           description: Internal server error
-      parameters: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AG[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application Group ID.
       tags:
-      - Applications
+      - Application Groups
   /seb-api/v1/applications/plugins:
     get:
-      summary: Returns a list of application plugins
+      summary: List all application plugins
       description: Retrieve the plugins details through this Application Programming
         Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsPlugins
@@ -5438,7 +5438,7 @@ paths:
       - Plugins
   /seb-api/v1/applications/{id}/plugins:
     get:
-      summary: Returns the plugin associated with the application ID
+      summary: Get a plugin by application ID
       description: Retrieve the plugins details through this Application Programming
         Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsBy_idPlugins
@@ -5474,7 +5474,7 @@ paths:
       tags:
       - Plugins
     post:
-      summary: Creates a new plugin associated with the application ID
+      summary: Create a plugin for an application
       description: Create the plugins details through this Application Programming
         Interface endpoint.
       operationId: PostSeb-apiV1ApplicationsBy_idPlugins
@@ -5525,7 +5525,7 @@ paths:
               required:
               - plugin
     put:
-      summary: Updates the plugin associated with the application ID
+      summary: Update a plugin for an application
       description: Update the plugins details through this Application Programming
         Interface endpoint.
       operationId: PutSeb-apiV1ApplicationsBy_idPlugins
@@ -5576,7 +5576,7 @@ paths:
               required:
               - plugin
     delete:
-      summary: Deletes the plugin associated with the application ID
+      summary: Delete a plugin for an application
       description: Delete the plugins details through this Application Programming
         Interface endpoint.
       operationId: DeleteSeb-apiV1ApplicationsBy_idPlugins
