@@ -8,7 +8,7 @@ This endpoint maps to **Defend > Runtime > Host policy** in the Console UI.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -17,7 +17,7 @@ Construct the full webhook using the publicly accessible DNS name or IP address,
 The following cURL command retrieves all the registries to scan and the URL suffix for the registry's webhook URL suffix.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

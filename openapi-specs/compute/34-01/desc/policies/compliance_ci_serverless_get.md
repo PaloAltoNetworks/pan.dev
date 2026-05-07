@@ -8,7 +8,7 @@ This endpoint maps to the policy table in **Defend > Compliance > Functions > CI
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

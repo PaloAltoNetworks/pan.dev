@@ -6,7 +6,7 @@ Defenders use these names to connect to Console.
 Refer to the following example cURL request that uses basic auth to retrieve the SANs in Console's cert:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

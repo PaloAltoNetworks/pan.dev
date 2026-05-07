@@ -8,7 +8,7 @@ This endpoint maps to the policy table in **Defend > Compliance > Hosts > VM ima
 The following cURL command retrieves all rules in the policy.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -4,7 +4,7 @@ After first installing Console, the first thing you must do is create an admin a
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

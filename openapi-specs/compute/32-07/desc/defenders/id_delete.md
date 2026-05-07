@@ -12,7 +12,7 @@ To invoke this endpoint in the Console UI:
 The following cURL command deletes an existing Defender on a host.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

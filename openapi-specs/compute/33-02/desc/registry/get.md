@@ -21,7 +21,7 @@ Consider the following available options to retrieve when you use the `fields` q
 Refer to the following cURL command that retrieves a scan report for all images in the registry:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -33,7 +33,7 @@ The compact query can be used to get a general overview of the number of Vulnera
 Refer to the following cURL command that retrieves a compact scan report for the Ubuntu image in the registry:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -44,7 +44,7 @@ The name query is synonymous with the filter registry text field in the Console 
 Refer to the following cURL that retrieves the scan report for the image in the registry with the matching **sha256** hash:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -54,7 +54,7 @@ $ curl -k \
 Refer to the following cURL command that retrieves the images in the first 10 registries:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
