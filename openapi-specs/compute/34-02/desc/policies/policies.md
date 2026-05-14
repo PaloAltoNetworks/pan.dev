@@ -21,7 +21,7 @@ To add, edit, or remove vulnerability rules from a policy:
   For example, the following cURL command uses basic auth to retrieve a list of all image vulnerability rules, pretty-prints the JSON response, and saves the results to a `vulnerability_rules.json` file.
 
    ```bash
-   $ curl -k \
+   $ curl \
      -u <USER> \
      https://<CONSOLE>/api/v1/policies/runtime/host \
      | jq '.' > vulnerability_rules.json
@@ -36,7 +36,7 @@ To add, edit, or remove vulnerability rules from a policy:
    **Note:** Remember to specify the `@` symbol.
 
    ```bash
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -X PUT \
      -H "Content-Type:application/json" \
@@ -107,7 +107,7 @@ Use the `PUT` method to delete all rules by submitting an empty JSON object.
 For example, to delete all host runtime rules:
 
 ```
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

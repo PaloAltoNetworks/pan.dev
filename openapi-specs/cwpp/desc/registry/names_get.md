@@ -7,7 +7,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 Refer to the following example cURL command that retrieves a list of image names from your scanned registry images:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

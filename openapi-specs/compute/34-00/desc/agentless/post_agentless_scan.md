@@ -9,7 +9,7 @@ Make sure that you download (use the agentless/templates API) and apply the perm
 Refer to the following example cURL command:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

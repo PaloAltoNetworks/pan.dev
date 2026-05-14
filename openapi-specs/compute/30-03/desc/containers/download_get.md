@@ -9,7 +9,7 @@ You can download the container scan reports in CSV format in Console under **Mon
 Refer to the following example cURL command that generates a CSV file containing the scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

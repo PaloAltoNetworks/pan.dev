@@ -31,7 +31,7 @@ Add the supported cloud accounts (AWS, Azure, GCP, and OCI) in Prisma Cloud Comp
 Refer to the following example cURL command:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

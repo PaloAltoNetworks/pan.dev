@@ -8,7 +8,7 @@ You can use tags as policy exceptions or assign them to vulnerabilities for acti
 Refer to the following example cURL command that creates a tag named "my-tag":
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

@@ -1,7 +1,7 @@
 Deletes all RASP Defender runtime audits.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

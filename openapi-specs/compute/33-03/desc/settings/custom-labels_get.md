@@ -5,7 +5,7 @@ Returns the list of alert labels configured in Prisma Cloud Compute.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

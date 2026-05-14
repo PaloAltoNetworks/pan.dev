@@ -7,7 +7,7 @@ For more information, see [Logon Settings](https://docs.paloaltonetworks.com/pri
 Refer to the following example cURL request that uses basic auth to set the timeout to 900 seconds (15 minutes):
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -w "\nResponse code: %{http_code}\n" \

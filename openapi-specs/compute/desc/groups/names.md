@@ -7,7 +7,7 @@ This endpoint maps to the table data on the **Manage > Authentication > Groups**
 Refer to the following example cURL command that retrieves all the system groups:
 
 ```bash
-$ curl -k \
+$ curl \
   -X GET \
   -u <USER> \
   -H 'Content-Type: application/json' \

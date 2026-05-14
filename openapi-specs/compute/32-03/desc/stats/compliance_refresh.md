@@ -5,7 +5,7 @@ The response will return exactly what the /statistics/compliance endpoint return
 The following example command that uses curl and basic auth to refresh compliance statistics:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

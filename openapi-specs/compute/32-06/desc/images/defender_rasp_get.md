@@ -3,7 +3,7 @@ Returns the the Prisma Cloud Compute Defender as the RASP Defender
 A curl command to access this endpoint may resemble the following code snippet:
 
 ```bash
-$ curl -k \
+$ curl \
   -X GET \
   -u <USER> \
   -H "Content-Type: application/octet-stream" \

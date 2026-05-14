@@ -4,10 +4,16 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
-  
+
+permissions: {}
+
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
 jobs:
    build:
-      if: github.repository_owner == 'PaloAltoNetworks'
+      if: github.repository_owner == 'PaloAltoNetworks' && github.ref == 'refs/heads/master'
       name: Build
       runs-on: pan-dev-runner-xl
       permissions:
@@ -15,10 +21,12 @@ jobs:
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          with:
+            persist-credentials: false
 
         - name: Setup node
-          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
+          uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
           with:
             node-version: '20'
             cache: 'yarn'
@@ -44,18 +52,18 @@ jobs:
         #       pandev-live
 
         - name: Install dependencies
-          run: yarn --prefer-offline
+          run: yarn --prefer-offline --frozen-lockfile --ignore-scripts
 
         # needed for fetching Hashicorp blog feed
         - name: Cache Playwright
           id: playwright-cache
-          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+          uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
           with:
             path: |
               ~/.cache/ms-playwright
-            key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
+            key: ${{ runner.os }}-playwright-master-${{ hashFiles('package.json') }}
             restore-keys: |
-              ${{ runner.os }}-playwright-
+              ${{ runner.os }}-playwright-master-
 
         - name: Install Playwright
           if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -64,9 +72,20 @@ jobs:
             npx playwright install-deps chromium
 
         - name: Build site
-          run: REACT_APP_ERROR_REPORTER_APIKEY=${{ secrets.ERROR_REPORTER_APIKEY }} REACT_APP_FIREBASE_APIKEY=${{ secrets.FIREBASE_APIKEY }} REACT_APP_RECAPTCHA_APIKEY=${{ secrets.RECAPTCHA_APIKEY }} FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github && zip -r build.zip build
+          run: |
+            FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github
+            rm -f build.zip
+            zip -r build.zip build
+          env:
+            REACT_APP_ERROR_REPORTER_APIKEY: ${{ secrets.ERROR_REPORTER_APIKEY }}
 
-        - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        - name: Verify build did not modify critical files
+          run: |
+            git diff --exit-code -- \
+              firebase.json .firebaserc package.json yarn.lock docusaurus.config.ts \
+              'scripts/**' '.github/**' 'src/theme/**' 'plugin-sitemap-coveo/**'
+
+        - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
           with:
             name: build
             path: build.zip
@@ -74,33 +93,44 @@ jobs:
    deploy:
       name: Deploy
       needs: build
+      if: github.repository_owner == 'PaloAltoNetworks' && github.ref == 'refs/heads/master'
       runs-on: pan-dev-runner-lg
+      environment: production
       permissions:
+        contents: read
         id-token: write
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-        
+          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          with:
+            persist-credentials: false
+
         - name: Setup node
-          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
+          uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
           with:
             node-version: '20'
             cache: 'yarn'
 
-        - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
+        - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
           with:
             name: build
 
         - name: Unzip build artifact
-          run: unzip build.zip
+          run: unzip -n build.zip 'build/*'
 
         - name: Authenticate to Google Cloud
           id: auth
-          uses: google-github-actions/auth@b7593ed2efd1c1617e1b0254da33b86225adb2a5
+          uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
           with:
             workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
             service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+            export_environment_variables: false
+
+        - name: Mask sensitive values in logs
+          run: |
+            echo "::add-mask::${{ steps.auth.outputs.credentials_file_path }}"
+            echo "::add-mask::${{ secrets.GCP_PROJECT_NUMBER }}"
 
         - name: Read GCP credentials
           id: creds
@@ -109,17 +139,14 @@ jobs:
             echo "::add-mask::$creds"
             echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
 
-        - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
-          with:
-            name: build
-
         - name: Deploy to Firebase
           id: deploy_live
           uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0.10.0
           with:
             repoToken: '${{ secrets.GITHUB_TOKEN }}'
             firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
-            projectId: pan-dev-f1b58
+            projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
             channelId: live
           env:
             FIREBASE_CLI_PREVIEWS: hostingchannels
+            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
