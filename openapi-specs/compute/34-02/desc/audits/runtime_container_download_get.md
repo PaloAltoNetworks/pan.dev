@@ -6,7 +6,7 @@ Returns the container audit events data in CSV format when a runtime sensor such
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X GET \
   -o <runtime_container_audits.csv> \

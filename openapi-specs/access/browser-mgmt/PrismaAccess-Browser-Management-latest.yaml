@@ -2,16 +2,9 @@ openapi: 3.0.0
 info:
   title: Prisma Browser Management Console Public API
   version: 1.0.0
-  description: "This Open API spec file represents the APIs available for Palo Alto\
-    \ Networks Prisma Browser Management APIs. \nThese APIs are available for all\
-    \ Prisma Browser tenants to scale and automate their processes related to the\
-    \ browser. \nAll of the functionality exposed by these APIs can also be performed\
-    \ using the \n[Prisma Browser User Interface](https://docs.paloaltonetworks.com/prisma-access-browser).\n\
-    These APIs use the common SASE authentication mechanism and base URL. \nSee the\
-    \ [Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted/) guide for\
-    \ more information. This Open API spec file was created on April 14, 2026. \xA9\
-    \ 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark of\
-    \ Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+  description: "This Open API spec file was created on May 06, 2026. \xA9 2026 Palo\
+    \ Alto Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto\
+    \ Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 security:
 - BearerAuth: []
@@ -1157,73 +1150,738 @@ components:
           description: When paginating forwards, the cursor to continue.
       required:
       - hasNextPage
-    ApplicationResponse:
+    AddRemoveApps:
+      type: object
+      properties:
+        add:
+          type: array
+          items:
+            type: string
+            pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+          maxItems: 2000
+        remove:
+          type: array
+          items:
+            type: string
+            pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+          maxItems: 2000
+    AddRemoveUrls:
+      type: object
+      description: Add or remove URLs from an application. The total URL count after
+        modification cannot exceed 100.
+      properties:
+        add:
+          type: array
+          items:
+            $ref: '#/components/schemas/UrlInput'
+          maxItems: 100
+        remove:
+          type: array
+          items:
+            $ref: '#/components/schemas/UrlInput'
+    ApplicationGroup:
       type: object
       properties:
         id:
           type: string
           format: string
           description: Unique identifier
-        appId:
-          type: integer
+        name:
+          type: string
+          format: string
+          description: Name of the application group
+        description:
+          type: string
+          format: string
+          description: Description of the application group
+        applications:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: string
+                description: Unique identifier
+              name:
+                type: string
+                format: string
+                description: Name of the application
+              type:
+                type: string
+                description: The type of the application
+                enum:
+                - catalog
+                - custom
+                - private
+                - non-web
+                - user-non-web
+                - pra
+                - desktop
+            required:
+            - id
+            - name
+            - type
+          description: IDs of the group members
+        metadata:
+          $ref: '#/components/schemas/metadata'
+      required:
+      - id
+      - createTime
+      - lastUpdatedTime
+      - name
+      - metadata
+    ApplicationItem:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/CustomApplication'
+      - $ref: '#/components/schemas/PrivateApplication'
+      - $ref: '#/components/schemas/NonWebApplication'
+      - $ref: '#/components/schemas/CatalogApplication'
+      - $ref: '#/components/schemas/LocalDesktopApplication'
+      discriminator:
+        propertyName: type
+        mapping:
+          custom: '#/components/schemas/CustomApplication'
+          private: '#/components/schemas/PrivateApplication'
+          non-web: '#/components/schemas/NonWebApplication'
+          catalog: '#/components/schemas/CatalogApplication'
+          localdesktopcustom: '#/components/schemas/LocalDesktopApplication'
+    ApplicationTypeInput:
+      type: string
+      enum:
+      - custom
+      - private
+      - non-web
+      - localdesktopcustom
+    BaseApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+          description: Unique identifier
         name:
           type: string
           format: string
           description: Name of the application
-        urls:
-          type: array
-          description: Url Pattenrs for the application
-          items:
-            type: string
+        description:
+          type: string
+          format: string
+          description: Description of the application
+        type:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
         category:
           type: string
           format: string
-        reputation:
-          type: integer
-        resetPasswordUrl:
-          type: string
-          format: string
-        type:
-          type: string
-          format: string
-        primaryUrl:
-          type: string
-          format: string
-        routeToPrisma:
-          type: boolean
+        metadata:
+          $ref: '#/components/schemas/metadata'
       required:
       - id
-      - createTime
-      - updateTime
+      - name
+      - type
+      - metadata
+    BaseApplicationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application
+        description:
+          type: string
+          format: string
+          description: Description of the application
+          maxLength: 2500
+        type:
+          $ref: '#/components/schemas/ApplicationTypeInput'
+      required:
       - name
       - urls
-    PluginResponse:
+      - type
+    BaseApplicationWithUrls:
+      description: Base Application with URLs (for URL-based application types)
+      allOf:
+      - $ref: '#/components/schemas/BaseApplication'
+      - type: object
+        properties:
+          urls:
+            type: array
+            description: URL patterns for the application
+            items:
+              type: string
+        required:
+        - urls
+    BasePatchApplicationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application
+        description:
+          type: string
+          format: string
+          description: Description of the application
+          maxLength: 2500
+        type:
+          $ref: '#/components/schemas/ApplicationTypeInput'
+      required:
+      - type
+    BulkCreatedItem:
       type: object
       properties:
         id:
           type: string
-          format: string
-          description: Unique identifier
-        createTime:
+          description: The ID of the newly created resource
+        name:
           type: string
-          format: date-time
-          description: Creation time of the plugin
-        updateTime:
-          type: string
-          format: date-time
-          description: Last update time of the plugin
-        plugin:
-          $ref: '#/components/schemas/Plugin'
-        applicationId:
-          type: string
-          description: Application ID of the application the plugin is associated
-            to
+          description: The name of the newly created resource
       required:
       - id
-      - createTime
-      - updateTime
-      - plugin
-      - applicationId
+      - name
+    BulkCreatedResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/BulkCreatedItem'
+    CatalogApplication:
+      description: Catalog Application
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationWithUrls'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Discriminator field, must be 'catalog'.
+            enum:
+            - catalog
+          catalog_name:
+            type: string
+            description: The name in the application catalog
+          catalog_attributes:
+            $ref: '#/components/schemas/CatalogAttributes'
+    CatalogAttributes:
+      description: Catalog application attributes sourced from the Universal Application
+        Directory (UAD)
+      type: object
+      properties:
+        spoof_risk_level:
+          type: string
+          nullable: true
+        disaster_recovery:
+          type: boolean
+          nullable: true
+        encryption_in_transit:
+          type: boolean
+          nullable: true
+        native_data_classification:
+          type: boolean
+          nullable: true
+        audit_log:
+          type: boolean
+          nullable: true
+        data_retention:
+          type: string
+          nullable: true
+        file_content_sharing:
+          type: boolean
+          nullable: true
+        session_timeout:
+          type: string
+          nullable: true
+        encryption_at_rest:
+          type: boolean
+          nullable: true
+        encryption_strength_at_rest:
+          type: string
+          nullable: true
+        protected_from_downgrade_attacks:
+          type: boolean
+          nullable: true
+        privacy_policy:
+          type: boolean
+          nullable: true
+        data_ownership:
+          type: string
+          nullable: true
+        third_party_data_sharing:
+          type: boolean
+          nullable: true
+        http_security_headers:
+          type: string
+          nullable: true
+        terms_and_conditions:
+          type: boolean
+          nullable: true
+        iso_9000:
+          type: boolean
+          nullable: true
+        iso_9001:
+          type: boolean
+          nullable: true
+        iso_27001:
+          type: boolean
+          nullable: true
+        iso_27002:
+          type: boolean
+          nullable: true
+        iso_27017:
+          type: boolean
+          nullable: true
+        iso_27018:
+          type: boolean
+          nullable: true
+        soc1:
+          type: boolean
+          nullable: true
+        soc2:
+          type: boolean
+          nullable: true
+        pci:
+          type: boolean
+          nullable: true
+        hipaa:
+          type: boolean
+          nullable: true
+        gdpr:
+          type: boolean
+          nullable: true
+        ferpa:
+          type: boolean
+          nullable: true
+        coppa:
+          type: boolean
+          nullable: true
+        finra:
+          type: boolean
+          nullable: true
+        ffiec:
+          type: boolean
+          nullable: true
+        glba:
+          type: boolean
+          nullable: true
+        gapp:
+          type: boolean
+          nullable: true
+        itar:
+          type: boolean
+          nullable: true
+        hitrust_csf:
+          type: boolean
+          nullable: true
+        trustarc:
+          type: boolean
+          nullable: true
+        fedramp:
+          type: boolean
+          nullable: true
+        c5:
+          type: boolean
+          nullable: true
+        ssae18:
+          type: boolean
+          nullable: true
+        nist_sp_80053:
+          type: boolean
+          nullable: true
+        fisma:
+          type: boolean
+          nullable: true
+        privacy_mark_japan:
+          type: boolean
+          nullable: true
+        privacy_shield:
+          type: boolean
+          nullable: true
+        safe_harbor:
+          type: boolean
+          nullable: true
+        cobit:
+          type: boolean
+          nullable: true
+        csa_star:
+          type: boolean
+          nullable: true
+        jericho_forum_comm:
+          type: boolean
+          nullable: true
+        sox:
+          type: boolean
+          nullable: true
+        cjis:
+          type: boolean
+          nullable: true
+        isae_3402:
+          type: boolean
+          nullable: true
+        input_data_types:
+          type: array
+          nullable: true
+          items:
+            type: string
+        output_data_types:
+          type: array
+          nullable: true
+          items:
+            type: string
+        consumption_modes:
+          type: array
+          nullable: true
+          items:
+            type: string
+        genai_types:
+          type: array
+          nullable: true
+          items:
+            type: string
+        data_used_in_models:
+          type: string
+          nullable: true
+        allows_fine_tuning:
+          type: boolean
+          nullable: true
+        has_marketplace:
+          type: boolean
+          nullable: true
+        input_monitoring_and_review:
+          type: string
+          nullable: true
+        security_guardrails:
+          type: array
+          nullable: true
+          items:
+            type: string
+        copyright_indemnity:
+          type: string
+          nullable: true
+        rbac:
+          type: boolean
+          nullable: true
+        mfa:
+          type: boolean
+          nullable: true
+        password_policy:
+          type: boolean
+          nullable: true
+        ip_based_restrictions:
+          type: boolean
+          nullable: true
+        saml:
+          type: boolean
+          nullable: true
+        quantum_readiness:
+          type: boolean
+          nullable: true
+        pqc_method:
+          type: array
+          nullable: true
+          items:
+            type: string
+    CreateOrReplaceAppGroupInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application group
+        description:
+          type: string
+          format: string
+          description: Description of the application group
+        applications:
+          type: array
+          items:
+            type: string
+            pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+          minItems: 0
+          maxItems: 2000
+          description: List of member application IDs
+      required:
+      - name
+    CreateOrReplaceAppInput:
+      oneOf:
+      - $ref: '#/components/schemas/CustomApplicationInput'
+      - $ref: '#/components/schemas/PrivateApplicationInput'
+      - $ref: '#/components/schemas/NonWebApplicationInput'
+      - $ref: '#/components/schemas/LocalDesktopApplicationInput'
+      discriminator:
+        propertyName: type
+        mapping:
+          custom: '#/components/schemas/CustomApplicationInput'
+          private: '#/components/schemas/PrivateApplicationInput'
+          non-web: '#/components/schemas/NonWebApplicationInput'
+          localdesktopcustom: '#/components/schemas/LocalDesktopApplicationInput'
+    CustomApplication:
+      description: Custom Application
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationWithUrls'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Discriminator field, must be 'custom'.
+            enum:
+            - custom
+    CustomApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationInput'
+      - type: object
+        properties:
+          urls:
+            $ref: '#/components/schemas/UrlsInput'
+          type:
+            $ref: '#/components/schemas/CustomTypeInput'
+          category:
+            type: string
+            format: string
+    CustomPatchApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BasePatchApplicationInput'
+      - type: object
+        properties:
+          urls:
+            $ref: '#/components/schemas/PatchUrls'
+          type:
+            $ref: '#/components/schemas/CustomTypeInput'
+          category:
+            type: string
+            format: string
+    CustomTypeInput:
+      type: string
+      description: Discriminator field, must be 'custom'.
+      enum:
+      - custom
+    LocalDesktopAppExecutableInput:
+      type: object
+      properties:
+        originalFileName:
+          type: string
+          description: The original executable file name
+      required:
+      - originalFileName
+    LocalDesktopAppExecutablesInput:
+      type: object
+      properties:
+        data:
+          type: array
+          description: List of executables for the local desktop application
+          items:
+            $ref: '#/components/schemas/LocalDesktopAppExecutableInput'
+          minItems: 1
+      required:
+      - data
+    LocalDesktopApplication:
+      description: Local Desktop Application
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseApplication'
+      - type: object
+        properties:
+          executables:
+            type: object
+            description: Local Desktop Application Executables
+            properties:
+              data:
+                type: array
+                description: List of executables for the local desktop application
+                items:
+                  type: object
+                  description: Local Desktop Application Executable
+                  properties:
+                    originalFileName:
+                      type: string
+                      description: The original executable file name
+                  required:
+                  - originalFileName
+            required:
+            - data
+          type:
+            type: string
+            description: Discriminator field, must be 'localdesktopcustom'.
+            enum:
+            - localdesktopcustom
+        required:
+        - executables
+    LocalDesktopApplicationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application
+        description:
+          type: string
+          format: string
+          description: Description of the application
+          maxLength: 2500
+        type:
+          $ref: '#/components/schemas/LocalDesktopTypeInput'
+        executables:
+          $ref: '#/components/schemas/LocalDesktopAppExecutablesInput'
+        category:
+          type: string
+          format: string
+      required:
+      - name
+      - type
+      - executables
+    LocalDesktopPatchApplicationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application
+        description:
+          type: string
+          format: string
+          description: Description of the application
+          maxLength: 2500
+        type:
+          $ref: '#/components/schemas/LocalDesktopTypeInput'
+        executables:
+          $ref: '#/components/schemas/LocalDesktopAppExecutablesInput'
+        category:
+          type: string
+          format: string
+      required:
+      - type
+    LocalDesktopTypeInput:
+      type: string
+      description: Discriminator field, must be 'localdesktopcustom'.
+      enum:
+      - localdesktopcustom
+    MetadataConfigurationVersion:
+      type: object
+      nullable: true
+      description: Configuration version information
+      required:
+      - id
+      - status
+      - number
+      properties:
+        id:
+          type: string
+          description: Configuration version identifier
+          minLength: 29
+          maxLength: 29
+          pattern: ^0[A-Z]{2}[0-9A-Z]{26}$
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          - draft
+          description: Configuration version status
+        number:
+          type: integer
+          format: int32
+          description: Configuration version number
+    NonWebApplication:
+      description: Non-Web Application
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationWithUrls'
+      - type: object
+        properties:
+          protocol:
+            type: string
+            format: string
+          port:
+            type: string
+          routeToPrisma:
+            type: boolean
+          type:
+            type: string
+            description: Discriminator field, must be 'non-web'.
+            enum:
+            - non-web
+    NonWebApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationInput'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/NonwebTypeInput'
+          address:
+            type: string
+            format: string
+          protocol:
+            type: string
+            format: string
+          port:
+            type: string
+          routeToPrisma:
+            type: boolean
+        required:
+        - protocol
+        - port
+        - address
+    NonWebPatchApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BasePatchApplicationInput'
+      - type: object
+        properties:
+          type:
+            $ref: '#/components/schemas/NonwebTypeInput'
+          address:
+            type: string
+            format: string
+          protocol:
+            type: string
+            format: string
+          port:
+            type: string
+          routeToPrisma:
+            type: boolean
+        required:
+        - type
+    NonwebTypeInput:
+      type: string
+      description: Discriminator field, must be 'non-web'.
+      enum:
+      - non-web
+    PatchAppGroupInput:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the application group
+        description:
+          type: string
+          format: string
+          description: Description of the application group
+        applications:
+          oneOf:
+          - $ref: '#/components/schemas/AddRemoveApps'
+          - $ref: '#/components/schemas/ReplaceApps'
+    PatchAppInput:
+      oneOf:
+      - $ref: '#/components/schemas/CustomPatchApplicationInput'
+      - $ref: '#/components/schemas/PrivatePatchApplicationInput'
+      - $ref: '#/components/schemas/NonWebPatchApplicationInput'
+      - $ref: '#/components/schemas/LocalDesktopPatchApplicationInput'
+      discriminator:
+        propertyName: type
+        mapping:
+          custom: '#/components/schemas/CustomPatchApplicationInput'
+          private: '#/components/schemas/PrivatePatchApplicationInput'
+          non-web: '#/components/schemas/NonWebPatchApplicationInput'
+          localdesktopcustom: '#/components/schemas/LocalDesktopPatchApplicationInput'
+    PatchUrls:
+      oneOf:
+      - $ref: '#/components/schemas/UrlsInput'
+      - $ref: '#/components/schemas/AddRemoveUrls'
     Plugin:
       type: object
       properties:
@@ -1239,6 +1897,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PluginElement'
+    PluginElement:
+      type: object
+      properties:
+        elementType:
+          type: string
+          enum:
+          - excludeAccountShield
+          - includeAccountShield
+        urlPattern:
+          type: string
+        selectors:
+          type: array
+          items:
+            type: string
+      required:
+      - elementType
+      - selectors
     PluginEvent:
       type: object
       properties:
@@ -1294,23 +1969,156 @@ components:
           type: string
         loginPageUrl:
           type: string
-    PluginElement:
+    PluginResponse:
       type: object
       properties:
-        elementType:
+        id:
           type: string
-          enum:
-          - excludeAccountShield
-          - includeAccountShield
-        urlPattern:
+          format: string
+          description: Unique identifier
+        createTime:
           type: string
-        selectors:
-          type: array
-          items:
-            type: string
+          format: date-time
+          description: Creation time of the plugin
+        updateTime:
+          type: string
+          format: date-time
+          description: Last update time of the plugin
+        plugin:
+          $ref: '#/components/schemas/Plugin'
+        applicationId:
+          type: string
+          description: Application ID of the application the plugin is associated
+            to
       required:
-      - elementType
-      - selectors
+      - id
+      - createTime
+      - updateTime
+      - plugin
+      - applicationId
+    PrivateApplication:
+      description: Private Application
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationWithUrls'
+      - type: object
+        properties:
+          primaryUrl:
+            type: string
+            format: string
+          routeToPrisma:
+            type: boolean
+          type:
+            type: string
+            description: Discriminator field, must be 'private'.
+            enum:
+            - private
+    PrivateApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BaseApplicationInput'
+      - type: object
+        properties:
+          urls:
+            $ref: '#/components/schemas/UrlsInput'
+          type:
+            $ref: '#/components/schemas/PrivateTypeInput'
+          primaryUrl:
+            type: string
+            format: string
+          routeToPrisma:
+            type: boolean
+          category:
+            type: string
+            format: string
+        required:
+        - primaryUrl
+        - routeToPrisma
+        - type
+    PrivatePatchApplicationInput:
+      allOf:
+      - $ref: '#/components/schemas/BasePatchApplicationInput'
+      - type: object
+        properties:
+          urls:
+            $ref: '#/components/schemas/PatchUrls'
+          type:
+            $ref: '#/components/schemas/PrivateTypeInput'
+          primaryUrl:
+            type: string
+            format: string
+          routeToPrisma:
+            type: boolean
+          category:
+            type: string
+            format: string
+        required:
+        - type
+    PrivateTypeInput:
+      type: string
+      description: Discriminator field, must be 'private'.
+      enum:
+      - private
+    ReplaceApps:
+      type: array
+      items:
+        type: string
+        pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+      maxItems: 2000
+    ResponseMetadata:
+      type: object
+      description: Response-level metadata
+      properties:
+        configurationVersion:
+          $ref: '#/components/schemas/MetadataConfigurationVersion'
+    UrlInput:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL pattern expression
+        strict_mode:
+          type: boolean
+          default: false
+          description: "If `true`, the URL is saved exactly as entered. \nIf `false`\
+            \ (default), the system automatically normalizes the URL based on the\
+            \ App Type:\n\n**Custom Apps:**\n* **Protocol:** Defaults to `*://` if\
+            \ omitted.\n* **Subdomain:** Defaults to `www` logic (hidden).\n* **Path:**\
+            \ Appends `/*` if no path is specified.\n\n**Private Apps:**\n* **Protocol:**\
+            \ Defaults to `https://`. Wildcards (`*`) are **NOT** allowed.\n* **Subdomain:**\
+            \ No automatic `www` handling; `www` is treated as a unique prefix.\n\
+            * **Domain:** Supports IPv4 and Port numbers (e.g., `:8080`).\n* **Path:**\
+            \ Automatically adds a trailing `*` to all paths.\n"
+      required:
+      - url
+    UrlsInput:
+      type: array
+      description: URL patterns for the application. Maximum 100 URLs allowed.
+      items:
+        $ref: '#/components/schemas/UrlInput'
+      maxItems: 100
+      minItems: 1
+    metadata:
+      type: object
+      properties:
+        createdTime:
+          type: string
+          format: date-time
+          description: Creation time
+        lastUpdatedTime:
+          type: string
+          format: date-time
+          description: Last update time
+        createdBy:
+          type: string
+          description: Created by user
+        lastUpdatedBy:
+          type: string
+          description: Updated by user
+        configurationVersion:
+          $ref: '#/components/schemas/MetadataConfigurationVersion'
+      required:
+      - createdTime
+      - lastUpdatedTime
     DeviceGroupPlatform:
       type: string
       description: Device group platform
@@ -2369,7 +3177,24 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: Enter your JWT Bearer token to authorize.
-ExternalTags: {}
+ExternalTags:
+  Applications:
+    title: Applications
+    description: Create, list, update, and delete browser applications and related
+      catalog data.
+    tags:
+    - Applications
+  Application Groups:
+    title: Application Groups
+    description: Create, list, update, and delete application groups and their member
+      applications.
+    tags:
+    - Application Groups
+  Plugins:
+    title: Plugins
+    description: List and manage application plugins.
+    tags:
+    - Plugins
 paths:
   /seb-api/v1/users:
     get:
@@ -3671,9 +4496,9 @@ paths:
       - User Groups
   /seb-api/v1/applications:
     get:
-      summary: Returns a list of applications
-      description: Retrieve the applications details through this Application Programming
-        Interface endpoint.
+      summary: List all applications
+      description: Fetches all application objects, with support for filtering and
+        pagination.
       operationId: GetSeb-apiV1Applications
       responses:
         '200':
@@ -3681,12 +4506,194 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 properties:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ApplicationResponse'
+                      $ref: '#/components/schemas/ApplicationItem'
+                  metadata:
+                    $ref: '#/components/schemas/ResponseMetadata'
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+        required: false
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Optional name to search in applications
+        required: false
+      - in: query
+        name: url
+        schema:
+          type: string
+        description: Optional URL to search in applications
+        required: false
+      - name: limit
+        in: query
+        description: Maximum number of applications to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: sort
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - application.id
+          - application.name
+          - application.create_time
+          - application.update_time
+      - name: order
+        in: query
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      tags:
+      - Applications
+  /seb-api/v1/applications/{id}:
+    get:
+      summary: Get an application by ID
+      description: Fetches a specific application object identified by its unique
+        ID.
+      operationId: GetSeb-apiV1Applicationsbyid
+      responses:
+        '200':
+          description: An Application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationItem'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      tags:
+      - Applications
+    delete:
+      summary: Delete an application by ID
+      description: Permanently removes a specific application identified by its ID.
+      operationId: DeleteSeb-apiV1Applicationsbyid
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      tags:
+      - Applications
+  /seb-api/v1/applications/type/{type}:
+    get:
+      summary: List applications by type
+      description: Fetches application objects belonging to a specific type.
+      operationId: GetSeb-apiV1ApplicationsTypebytype
+      responses:
+        '200':
+          description: A list of all application objects
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApplicationItem'
+                  metadata:
+                    $ref: '#/components/schemas/ResponseMetadata'
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
         '400':
           description: Bad request
           content:
@@ -3701,23 +4708,703 @@ paths:
         '500':
           description: Internal server error
       parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
       - in: query
         name: name
         schema:
           type: string
-        description: Optional name string to search in applications
+        description: Optional name to search in applications
         required: false
       - in: query
         name: url
         schema:
           type: string
-        description: Optional url string to search in applications
+        description: Optional URL to search in applications
         required: false
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      - name: cursor
+        in: query
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of applications to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - in: query
+        name: sort
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - application.id
+          - application.name
+          - application.create_time
+          - application.update_time
+      - name: order
+        in: query
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
       tags:
       - Applications
+    post:
+      summary: Create an application
+      description: Adds a new application of the specified type to the management
+        console. **Uniform Resource Locator Limit:** For custom, private, and non-web
+        applications, there is a tenant-wide limit of 15,000 URLs combined. Exceeding
+        this limit returns a 400 Bad Request error.
+      operationId: PostSeb-apiV1ApplicationsTypebytype
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created resource
+                required:
+                - id
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrReplaceAppInput'
+  /seb-api/v1/applications/type/{type}/{id}:
+    get:
+      summary: Get an application by ID by type
+      description: Fetches a specific application object belonging to the specified
+        type.
+      operationId: GetSeb-apiV1ApplicationsTypeBy_typebyid
+      responses:
+        '200':
+          description: An Application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationItem'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      tags:
+      - Applications
+    patch:
+      summary: Update an application
+      description: Partially updates an application - provided attributes are set
+        as specified, others remain unchanged. **Uniform Resource Locator Limit:**
+        For custom, private, and non-web applications, there is a tenant-wide limit
+        of 15,000 URLs combined. Exceeding this limit returns a 400 Bad Request error.
+      operationId: PatchSeb-apiV1ApplicationsTypeBy_typebyid
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the updated resource
+                required:
+                - id
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchAppInput'
+    delete:
+      summary: Delete an application by type
+      description: Removes an application of the specified type from the system.
+      operationId: DeleteSeb-apiV1ApplicationsTypeBy_typebyid
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application ID.
+      tags:
+      - Applications
+  /seb-api/v1/applications/categories:
+    get:
+      summary: List application categories
+      description: Retrieve the categories details through this Application Programming
+        Interface endpoint.
+      operationId: GetSeb-apiV1ApplicationsCategories
+      responses:
+        '200':
+          description: A list of the available application categories
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Applications
+  /seb-api/v1/applications/bulk-create/{type}:
+    post:
+      summary: Bulk create applications
+      description: Adds multiple new applications of the specified type to the management
+        console in a single operation. **Uniform Resource Locator Limit:** For custom,
+        private, and non-web applications, there is a tenant-wide limit of 15,000
+        URLs combined. Exceeding this limit returns a 400 Bad Request error.
+      operationId: bulkCreateApplications
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - custom
+          - private
+          - non-web
+          - catalog
+          - localdesktopcustom
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateOrReplaceAppInput'
+              maxItems: 1000
+              minItems: 1
+  /seb-api/v1/applications/bulk-delete:
+    post:
+      summary: Bulk delete applications
+      description: Permanently removes multiple applications identified by their IDs
+        in a single atomic operation.
+      operationId: PostSeb-apiV1ApplicationsBulk-delete
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appIds:
+                  type: array
+                  items:
+                    type: string
+                    pattern: ^0AP[0-9A-HJKMNP-TV-Z]{26}$
+                  description: Array of application IDs to be deleted
+                  minItems: 1
+                  maxItems: 2000
+              required:
+              - appIds
+  /seb-api/v1/application-groups:
+    get:
+      summary: List all application groups
+      description: Fetches all application groups with support for name-based filtering
+        and sorting.
+      operationId: GetSeb-apiV1Application-groups
+      responses:
+        '200':
+          description: A list of application group objects
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApplicationGroup'
+                  metadata:
+                    $ref: '#/components/schemas/ResponseMetadata'
+                  pageInfo:
+                    $ref: '#/components/schemas/PageInfo'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      parameters:
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Optional name string to search in application groups
+        required: false
+      - in: query
+        name: cursor
+        description: An optional opaque string that defines from where to start listing
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        description: Number of application groups to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - in: query
+        name: sort
+        description: The field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - application_group.id
+          - application_group.name
+          - application_group.create_time
+          - application_group.update_time
+      - in: query
+        name: order
+        description: The sort order
+        required: false
+        schema:
+          $ref: '#/components/schemas/Order'
+      tags:
+      - Application Groups
+    post:
+      summary: Create an application group
+      description: Defines a new group and associates it with a list of application
+        IDs.
+      operationId: PostSeb-apiV1Application-groups
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the newly created resource
+                required:
+                - id
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters: []
+      tags:
+      - Application Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrReplaceAppGroupInput'
+  /seb-api/v1/application-groups/{id}:
+    get:
+      summary: Get an application group by ID
+      description: Fetches a single application group by its unique ID.
+      operationId: GetSeb-apiV1Application-groupsbyid
+      responses:
+        '200':
+          description: An Application Group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationGroup'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Application Group Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AG[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application Group ID.
+      - name: configurationVersion
+        in: query
+        description: Configuration version to retrieve (draft, active, or version
+          number)
+        required: false
+        schema:
+          type: string
+          default: draft
+          pattern: ^([dD]raft|[aA]ctive|[1-9][0-9]{0,9}|0CV[0-9A-Z]{26})$
+      tags:
+      - Application Groups
+    patch:
+      summary: Update an application group
+      description: Partially updates an application group - provided attributes are
+        set as specified, others remain unchanged.
+      operationId: PatchSeb-apiV1Application-groupsbyid
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the updated resource
+                required:
+                - id
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '409':
+          description: Conflict - resource already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AG[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application Group ID.
+      tags:
+      - Application Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchAppGroupInput'
+    delete:
+      summary: Delete an application group
+      description: Permanently removes an application group identified by its ID.
+      operationId: DeleteSeb-apiV1Application-groupsbyid
+      responses:
+        '204':
+          description: Deleted successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorResponse:
+                    $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Resource Not found
+        '500':
+          description: Internal server error
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^0AG[0-9A-HJKMNP-TV-Z]{26}$
+        description: Application Group ID.
+      tags:
+      - Application Groups
   /seb-api/v1/applications/plugins:
     get:
-      summary: Returns a list of application plugins
+      summary: List all application plugins
       description: Retrieve the plugins details through this Application Programming
         Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsPlugins
@@ -3748,10 +5435,10 @@ paths:
           description: Internal server error
       parameters: []
       tags:
-      - Applications
+      - Plugins
   /seb-api/v1/applications/{id}/plugins:
     get:
-      summary: Returns the plugin associated with the application ID
+      summary: Get a plugin by application ID
       description: Retrieve the plugins details through this Application Programming
         Interface endpoint.
       operationId: GetSeb-apiV1ApplicationsBy_idPlugins
@@ -3785,9 +5472,9 @@ paths:
         schema:
           type: string
       tags:
-      - Applications
+      - Plugins
     post:
-      summary: Creates a new plugin associated with the application ID
+      summary: Create a plugin for an application
       description: Create the plugins details through this Application Programming
         Interface endpoint.
       operationId: PostSeb-apiV1ApplicationsBy_idPlugins
@@ -3825,7 +5512,7 @@ paths:
         schema:
           type: string
       tags:
-      - Applications
+      - Plugins
       requestBody:
         required: true
         content:
@@ -3838,7 +5525,7 @@ paths:
               required:
               - plugin
     put:
-      summary: Updates the plugin associated with the application ID
+      summary: Update a plugin for an application
       description: Update the plugins details through this Application Programming
         Interface endpoint.
       operationId: PutSeb-apiV1ApplicationsBy_idPlugins
@@ -3876,7 +5563,7 @@ paths:
         schema:
           type: string
       tags:
-      - Applications
+      - Plugins
       requestBody:
         required: true
         content:
@@ -3889,7 +5576,7 @@ paths:
               required:
               - plugin
     delete:
-      summary: Deletes the plugin associated with the application ID
+      summary: Delete a plugin for an application
       description: Delete the plugins details through this Application Programming
         Interface endpoint.
       operationId: DeleteSeb-apiV1ApplicationsBy_idPlugins
@@ -3927,7 +5614,7 @@ paths:
         schema:
           type: string
       tags:
-      - Applications
+      - Plugins
   /seb-api/v1/user-requests:
     get:
       summary: Returns a list of user requests

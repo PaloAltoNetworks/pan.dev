@@ -5,7 +5,7 @@ Deletes a custom rule.
 Refer to the following example cURL command that deletes a custom rule:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

@@ -1,7 +1,7 @@
 Returns an array of strings containing all of the labels.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

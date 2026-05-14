@@ -8,7 +8,7 @@ Refer to the following example cURL command that accepts the task definition in 
 Unprotected task definition in `unprotected.yaml`
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/yaml' \
   -X POST \

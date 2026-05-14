@@ -5,7 +5,7 @@ Returns the details about the installed license.
 Refer to the following example cURL request that retrieves the license details.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

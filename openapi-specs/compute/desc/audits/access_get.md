@@ -8,7 +8,7 @@ You can configure Prisma Cloud Compute to log and aggregate events such as sudo 
 Refer to the following example cURL command that gives a list of all access audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

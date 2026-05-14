@@ -5,7 +5,7 @@ Retrieves the digest string for the list of suspicious or high risk IP endpoints
 The following cURL command retrieves the digest for the banned suspicious or high-risk IP addresses.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -12,7 +12,7 @@ Use the following mandatory query parameters to fetch results:
 Refer to the following example cURL command that retrieves the serverless WAAS audit events for a :
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

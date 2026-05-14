@@ -7,7 +7,7 @@ For more information, see [Active Directory](https://docs.paloaltonetworks.com/p
 Refer to the following example cURL command that enables the LDAP integration and specifies the parameters required to integrate with an Active Directory service.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

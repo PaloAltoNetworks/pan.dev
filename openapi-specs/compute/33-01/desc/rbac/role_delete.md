@@ -4,7 +4,7 @@ System roles and roles assigned to users/groups cannot be deleted.
 The following example curl command uses basic auth to delete role:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

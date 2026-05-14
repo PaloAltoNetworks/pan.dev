@@ -320,18 +320,6 @@ module.exports = {
     },
     {
       type: "category",
-      label: "NGFW Operations",
-      collapsed: true,
-      items: [
-            {
-              type: "doc",
-              id: "scm/api/config/ngfw-operations/introduction",
-            },
-            require("./api/config/ngfw-operations/sidebar"),
-          ],
-        },
-    {
-      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [

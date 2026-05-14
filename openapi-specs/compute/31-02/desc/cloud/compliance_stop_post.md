@@ -2,7 +2,7 @@ Terminates a cloud compliance scan that's in progress..
 
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

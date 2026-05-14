@@ -5,7 +5,7 @@ It identifies the cluster's API server, user, and credentials.
 Use the various request parameters to control the properties of the deployed DaemonSet.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

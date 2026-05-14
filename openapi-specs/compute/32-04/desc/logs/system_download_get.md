@@ -4,7 +4,7 @@ This endpoint will return the system debug logs with `tar.gz` file extension.
 The following example curl command uses basic auth to download the logs:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
