@@ -9,7 +9,7 @@ keywords:
   - API
 ---
 
-All APIs in this documentation can also be called via the Model Security Python SDK and CLI. These packages are auto-generated to support all API routes and parameters that our backend supports. To install the SDK and CLI, see [Install AI Model Security](../../../getting-started/install-ai-model-security.md).
+All APIs in this documentation can also be called via the Model Security Python SDK and CLI. These packages are auto-generated to support all API routes and parameters that our backend supports. To install the SDK and CLI, see [Install AI Model Security](https://docs.paloaltonetworks.com/ai-runtime-security/ai-model-security/model-security-to-secure-your-ai-models/get-started-with-ai-model-security/install-ai-model-security).
 
 The auto-generated SDK & CLI functions are all named based on the API route they call. For example, consider the List Scans API. Using the Python SDK, if you wanted to list scans that have occurred since January 1, 2025, filtering for Hugging Face and S3 source types, and only blocked outcomes, you could use the `list_scans` function as so:
 
@@ -53,4 +53,4 @@ model-security list-scans --help
 
 ## Additional Features
 
-The only API that has additional features beyond the API parameters is the scan API. For complete documentation on how to submit a scan, see [Scanning Models](../../../scanning-models.md).
+The only API that has additional features beyond the API parameters is the scan API. For complete documentation on how to submit a scan, see [Scanning Models](https://docs.paloaltonetworks.com/ai-runtime-security/ai-model-security/model-security-to-secure-your-ai-models/get-started-with-ai-model-security/scanning-models).
