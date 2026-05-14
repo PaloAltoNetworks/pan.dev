@@ -2,7 +2,7 @@ Download all cloud scan data in CSV format.
 
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

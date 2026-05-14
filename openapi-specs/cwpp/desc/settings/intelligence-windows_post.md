@@ -3,7 +3,7 @@ This endpoint will enable or disable the Windows Intelligence Service from **Man
 The following example curl command uses basic auth to enable online updates of Windows vulnerabilities from the intelligence stream:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

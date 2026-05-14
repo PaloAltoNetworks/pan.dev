@@ -10,7 +10,7 @@ This endpoint maps to the table in **Monitor > Vulnerabilities > Hosts > VM imag
 Refer to the following example cURL command that retrieves all VM image scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

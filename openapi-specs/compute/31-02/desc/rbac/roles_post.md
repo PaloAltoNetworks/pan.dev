@@ -37,7 +37,7 @@ The added role must contain the "user" permission with read-write access. This p
 The following example curl command uses basic auth to create the role:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

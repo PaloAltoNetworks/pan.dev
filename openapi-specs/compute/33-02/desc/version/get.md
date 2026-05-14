@@ -5,7 +5,7 @@ Retrieves the version number for Console.
 The following cURL command retrieves the version number for Console.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

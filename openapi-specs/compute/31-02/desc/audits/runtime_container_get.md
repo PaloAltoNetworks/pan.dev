@@ -7,7 +7,7 @@ Retrieves all container audit events when a runtime sensor such as process, netw
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

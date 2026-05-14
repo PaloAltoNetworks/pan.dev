@@ -1,7 +1,7 @@
 Returns the namespaces from the container view on the Radar page.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -6,7 +6,7 @@ A null response indicates that the CVE is not in our database.
 The following example curl command queries the Prisma Cloud Compute database for `CVE-2018-1102`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

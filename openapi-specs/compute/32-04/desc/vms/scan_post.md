@@ -5,7 +5,7 @@ Re-scans all VM images immediately. This endpoint returns the time that the scan
 Refer to the following example cURL command that forces Prisma Cloud to re-scan all VM images:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   H 'Content-Type: application/json' \
   -X POST \

@@ -8,7 +8,7 @@ This endpoint maps to **Defend > WAAS > Container** in the Console UI.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   'https://<CONSOLE>/api/v<VERSION>/policies/firewall/app/container'

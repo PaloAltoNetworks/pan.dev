@@ -5,7 +5,7 @@ Returns the discovered cloud VM instances.
 Refer to the following example cURL command that retrieves all the discovered cloud VM instances:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
