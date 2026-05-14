@@ -230,6 +230,10 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/device-onboarding/site-management",
+            },
             require("./api/config/ngfw/setup/sidebar"),
             {
               "type": "category",
