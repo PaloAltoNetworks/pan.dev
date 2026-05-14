@@ -235,6 +235,11 @@ export default function SCMLandingPage() {
             to: "scm/api/config/ciedss/ciedss",
             icon: "api-doc",
           },
+          {
+            label: "Cloud Dynamic User Groups",
+            to: "scm/api/config/ciedss/cdug/cdug-introduction",
+            icon: "api-doc",
+          },
         ],
       },
     },
