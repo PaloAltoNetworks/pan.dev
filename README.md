@@ -67,8 +67,6 @@ The `master` branch is linked to a Firebase site and will auto-deploy when chang
 
 Build/deploy previews will be automatically generated for pull requests into the `master` branch. Build/deploy previews can be used to review changes to determine if they are ready to be merged into `master`.
 
-smile more :)
-
 ### Support
 
 See [SUPPORT.md](https://github.com/PaloAltoNetworks/pan.dev/blob/master/SUPPORT.md).
