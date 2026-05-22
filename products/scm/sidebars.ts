@@ -307,12 +307,7 @@ module.exports = {
           type: "category",
           label: "Checks",
           collapsed: true,
-          items: [
-            {
-              type: "doc",
-              items: [require("./api/config/posture-management/sidebar")],
-            },
-          ],
+          items: [require("./api/config/posture-management/sidebar")],
         },
       ],
     },
