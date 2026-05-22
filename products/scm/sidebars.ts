@@ -320,6 +320,19 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Advanced DNS Security Resolver API",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          label: "Introduction",
+          id: "scm/api/config/adnsr/introduction-adnsr",
+        },
+        require("./api/config/adnsr/sidebar"),
+      ],
+    },
+    {
+      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [

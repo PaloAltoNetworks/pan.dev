@@ -12,6 +12,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| May 27th, 2026    | Added [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr)                                                                                                                                                                        |
 | March 17th, 2026    | Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/).
 | March 11th, 2026    | Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/).
 | January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).
