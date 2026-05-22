@@ -309,9 +309,7 @@ module.exports = {
           collapsed: true,
           items: [
             {
-              type: "category",
-              label: "Reports",
-              collapsed: true,
+              type: "doc",
               items: [require("./api/config/posture-management/sidebar")],
             },
           ],
