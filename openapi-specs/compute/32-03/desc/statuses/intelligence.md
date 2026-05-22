@@ -3,7 +3,7 @@ Returns the connection status of the intelligence stream and the last intelligen
 The following is an example curl using basic auth to find the intelligence stream status:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

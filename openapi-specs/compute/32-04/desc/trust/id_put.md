@@ -9,7 +9,7 @@ For more information about handles, see the `_id` in the response body for the G
 The following example curl command uses basic auth to modify the image property for an existing trusted image entry, where the handle for the entry is `docker-ubuntu-group`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

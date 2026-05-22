@@ -4,7 +4,7 @@ The following example curl command uses basic auth to delete the current audits:
 
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

@@ -3,7 +3,7 @@ This endpoint will return settings for PCF (Pivotal Cloud Foundry)Blobstore scan
 The following example curl command uses basic auth to retrieve the current PCF Blobstore scanning settings:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

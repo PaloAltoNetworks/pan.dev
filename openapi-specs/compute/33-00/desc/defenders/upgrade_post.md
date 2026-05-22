@@ -9,7 +9,7 @@ To upgrade Serverless and Fargate Defenders, re-embed them.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

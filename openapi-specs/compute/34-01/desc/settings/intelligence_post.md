@@ -7,7 +7,7 @@ For more information, see [Intelligence Stream](https://docs.paloaltonetworks.co
 Refer to the following example cURL command that uses basic auth to configure settings of your Intelligence Stream.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

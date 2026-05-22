@@ -7,7 +7,7 @@ This endpoint maps to **Manage > Authentication > Users** in the Console UI.
 The following cURL command retrieves all users.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

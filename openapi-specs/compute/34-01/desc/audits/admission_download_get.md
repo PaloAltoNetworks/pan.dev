@@ -4,7 +4,7 @@ Returns the access admission events data in CSV format that were alerted or bloc
 Refer to the following example cURL command that downloads the admission audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

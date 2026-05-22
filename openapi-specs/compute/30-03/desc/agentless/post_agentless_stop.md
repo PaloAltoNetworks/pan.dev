@@ -5,7 +5,7 @@ Stops an ongoing scan on hosts or containers for vulnerabilities and compliance.
 Refer to the following example cURL command:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

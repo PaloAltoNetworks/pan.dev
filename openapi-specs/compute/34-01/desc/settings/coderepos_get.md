@@ -20,7 +20,7 @@ Construct the full webhook using Console's publicly accessible DNS name or IP ad
 Refer to the following example cURL command that retrieves all code repositories to scan, as well as the webhook URL suffix:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

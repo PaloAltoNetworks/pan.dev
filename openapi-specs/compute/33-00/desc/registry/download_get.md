@@ -9,7 +9,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 Refer to the following cURL command that generates a CSV file containing the scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

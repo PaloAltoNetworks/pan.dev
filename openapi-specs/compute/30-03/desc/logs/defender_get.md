@@ -7,7 +7,7 @@ Note that you must quote the URL when running the following command.
 Otherwise the shell misinterprets the ampersand (`&`) as the end of the command, and puts the curl command in the background.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

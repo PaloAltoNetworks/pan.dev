@@ -7,7 +7,7 @@ For more information about handles, see the `_id` key in the response body for t
 The following example curl command uses basic auth to specify that the Ubuntu 16.04 image on Docker Hub is a trusted image.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
@@ -19,7 +19,7 @@ To create a trust group based on image base layers, POST a list of SHA256 hashes
 The following example specifies the Ubuntu 16.04 image is a trusted base OS.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

@@ -5,7 +5,7 @@ Deletes a tag from the system.
 Refer to the following example cURL command that deletes a tag named *my tag*:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

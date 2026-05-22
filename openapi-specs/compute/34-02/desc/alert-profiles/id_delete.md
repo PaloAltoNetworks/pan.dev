@@ -5,7 +5,7 @@ This method has no response data.
 The following example curl command deletes an existing alert profile named `PROFILE-NAME`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

@@ -3,7 +3,7 @@ Retrieves the latest Console log messages.
 The following example curl command retrieves the 10 latest Console log messages:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -3,7 +3,7 @@ This endpoint will return configured secret store already configured in the cons
 The following example curl command retrieves any configured secret stores, as well as the refresh period in hours:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

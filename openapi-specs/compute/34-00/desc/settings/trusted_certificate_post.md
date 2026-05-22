@@ -11,7 +11,7 @@ For more information, see the `/settings/trusted-certificates` endpoint.
 Refer to the following example cURL request that uses basic auth to add a certificate to the list:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -w "\nResponse code: %{http_code}\n" \

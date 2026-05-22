@@ -3,7 +3,7 @@ You must specify a `credentialID`, of type `kubeconfig`, which identifies your c
 Credentials are managed in Console's credentials store (`/api/v1/credentials`).
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -12,7 +12,6 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| March 27th, 2026    | Added [NGFW Operations APIs](/scm/api/config/ngfw-operations/introduction/).
 | March 17th, 2026    | Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/).
 | March 11th, 2026    | Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/).
 | January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).

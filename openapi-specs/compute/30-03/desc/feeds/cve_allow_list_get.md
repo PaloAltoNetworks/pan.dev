@@ -5,7 +5,7 @@ Retrieves the globally allow-listed Common Vulnerabilities and Exposures (CVE).
 The following cURL command retrieves the globally allow-listed CVEs.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -41,6 +41,21 @@ module.exports = {
         ],
       },
     
+    // 4. Network Channel API Category
+    {
+      label: "Network Channel API",
+      type: "category",
+      collapsed: false,
+      items: [
+        {
+          type: "doc",
+          id: "prisma-airs-redteam/api/ai-integration/network-broker/networkchannel",
+        },
+        ...require("./api/ai-integration/network-broker/sidebar"),
+      ],
+    },  
+    
+
   ]
   
   };

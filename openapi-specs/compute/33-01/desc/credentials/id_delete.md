@@ -14,7 +14,7 @@ To invoke this endpoint in the Prisma Cloud Compute user interface:
 Refer to the following example cURL command that deletes an existing credential:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

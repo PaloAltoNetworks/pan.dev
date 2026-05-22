@@ -9,7 +9,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 The following cURL command retrieves and saves your Jenkins and twistcli scan reports to a CSV file called `scans_report.csv`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

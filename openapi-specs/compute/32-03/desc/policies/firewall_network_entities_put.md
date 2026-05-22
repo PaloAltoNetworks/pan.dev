@@ -3,7 +3,7 @@ Updates the list of CNNF network objects.
 The following example curl command updates the network objects.  There is an example of all three types (images,subnets, and applications ):
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

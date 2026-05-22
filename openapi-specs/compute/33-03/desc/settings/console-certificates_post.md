@@ -9,7 +9,7 @@ For the custom TLS certificate for securing browser access, this file must be in
 Refer to the following example cURL request that uses basic auth and configures the custom certificate to use for securing browser access to the console:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

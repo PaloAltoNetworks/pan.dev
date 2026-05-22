@@ -1,7 +1,7 @@
 Returns the state of the trusted images model.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

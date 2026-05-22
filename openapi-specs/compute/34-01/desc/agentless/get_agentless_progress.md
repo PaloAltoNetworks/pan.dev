@@ -5,7 +5,7 @@ Shows the progress of an ongoing scan on hosts or containers for vulnerabilities
 Refer to the following example cURL command:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

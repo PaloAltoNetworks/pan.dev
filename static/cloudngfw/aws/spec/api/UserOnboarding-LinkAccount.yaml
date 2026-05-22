@@ -1,0 +1,184 @@
+components:
+  schemas:
+    DescribeLinkAccountRequest:
+      additionalProperties: false
+      properties: {}
+      title: DescribeLinkAccountRequest
+      type: object
+    DescribeLinkAccountResponse:
+      additionalProperties: false
+      properties:
+        Response:
+          $ref: '#/components/schemas/DescribeLinkAccountResponse.ResponseData'
+        ResponseStatus:
+          $ref: '#/components/schemas/DescribeLinkAccountResponse.Result'
+      title: DescribeLinkAccountResponse
+      type: object
+    DescribeLinkAccountResponse.AccountTableEntryStatus:
+      description: An enumeration.
+      enum:
+      - Success
+      - Pending
+      - Deleting
+      - OffBoarding
+      - DeleteFailed
+      title: AccountTableEntryStatus
+      type: string
+    DescribeLinkAccountResponse.ResponseData:
+      additionalProperties: false
+      properties:
+        AccountId:
+          maxLength: 12
+          pattern: ^$|^[0-9]+$
+          title: Accountid
+          type: string
+        CloudFormationTemplateURL:
+          title: Cloudformationtemplateurl
+          type: string
+        ExternalId:
+          title: Externalid
+          type: string
+        OnboardingStatus:
+          allOf:
+            $ref: '#/components/schemas/DescribeLinkAccountResponse.AccountTableEntryStatus'
+          default: Pending
+        ServiceAccountId:
+          maxLength: 12
+          pattern: ^$|^[0-9]+$
+          title: Serviceaccountid
+          type: string
+        SnsTopicArn:
+          title: Snstopicarn
+          type: string
+      title: ResponseData
+      type: object
+    DescribeLinkAccountResponse.Result:
+      additionalProperties: false
+      properties:
+        ErrorCode:
+          default: 0
+          title: Errorcode
+          type: integer
+        Reason:
+          title: Reason
+          type: string
+      title: Result
+      type: object
+    ListLinkAccountsRequest:
+      additionalProperties: false
+      properties: {}
+      title: ListLinkAccountsRequest
+      type: object
+    ListLinkAccountsResponse:
+      additionalProperties: false
+      properties:
+        Response:
+          $ref: '#/components/schemas/ListLinkAccountsResponse.ResponseData'
+        ResponseStatus:
+          $ref: '#/components/schemas/ListLinkAccountsResponse.Result'
+      title: ListLinkAccountsResponse
+      type: object
+    ListLinkAccountsResponse.ResponseData:
+      additionalProperties: false
+      properties:
+        AccountIds:
+          items:
+            maxLength: 12
+            pattern: ^$|^[0-9]+$
+            type: string
+          title: Accountids
+          type: array
+      title: ResponseData
+      type: object
+    ListLinkAccountsResponse.Result:
+      additionalProperties: false
+      properties:
+        ErrorCode:
+          default: 0
+          title: Errorcode
+          type: integer
+        Reason:
+          title: Reason
+          type: string
+      title: Result
+      type: object
+info:
+  contact: {}
+  description: "Cloud NGFW requires you to onboard an AWS account to create and manage\
+    \ the resources required by Cloud NGFW. The Cloud NGFW service uses a CloudFormation\
+    \ template (CFT) stack to create these roles needed for Cloud NGFW to access resources\
+    \ in your AWS environment.  \n\nA link account is an unverified account used to\
+    \ onboard an AWS account to a cloud NGFW service based on your input. A link account\
+    \ is required to run the CFT.  \n\n>**Note:** You can add only one link account\
+    \ per subscription.\n\n### Permission Policies\n\n| Action                   |\
+    \ Local Firewall Administrator  | Local Rulestack Administrator | Global Rulestack\
+    \ Administrator |\n| ------------------------ | :---------------------------:\
+    \ | :---------------------------: | :----------------------------: | \n| Create\
+    \ Link Account      | &#9744;                       | &#9744;                \
+    \       | &#9744;                        | \n| Delete Link Account      | &#9744;\
+    \                       | &#9744;                       | &#9744;            \
+    \            |                        \n| Describe Link Account    | **&#9745;**\
+    \                   | **&#9745;**                   | **&#9745;**            \
+    \        | \n| List Link Account        | **&#9745;**                   | **&#9745;**\
+    \                   | **&#9745;**                    |\n"
+  title: User Onboarding using Link Account
+  version: 1.0.0
+openapi: 3.0.3
+paths:
+  /v1/mgmt/linkaccounts:
+    get:
+      description: 'List all accounts linked with the an admin account.
+
+        '
+      operationId: get-v1-mgmt-linkaccounts
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListLinkAccountsRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLinkAccountsResponse'
+          description: OK
+      summary: List all accounts linked with the an admin account.
+      tags:
+      - UserOnboarding-LinkAccount
+  /v1/mgmt/linkaccounts/{accountid}:
+    get:
+      description: 'View the details of the account IDs associated with the admin
+        account.
+
+        '
+      operationId: get-v1-mgmt-linkaccounts-accountid
+      parameters:
+      - description: 'The unique ID of the account.
+
+          '
+        in: path
+        name: accountid
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DescribeLinkAccountRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescribeLinkAccountResponse'
+          description: OK
+      summary: Get View the details of the account IDs associated with the admin account.
+      tags:
+      - UserOnboarding-LinkAccount
+servers:
+- url: https://api.us-east-1.aws.cloudngfw.paloaltonetworks.com
+tags:
+- name: UserOnboarding-LinkAccount

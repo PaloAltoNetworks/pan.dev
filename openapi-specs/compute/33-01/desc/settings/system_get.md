@@ -3,7 +3,7 @@ This endpoint will return all system settings in JSON format.
 The following example curl command does exactly that:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

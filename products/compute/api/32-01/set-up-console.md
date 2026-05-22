@@ -18,7 +18,7 @@ To do this, use the [Signup](/compute/api/post-signup/) ![alt text](/icons/api-i
 The following example curl command creates the initial admin user named butterbean.
 
 ```bash
-$ curl -k \
+$ curl \
   -H 'Content-Type: application/json' \
   -X POST \
   -d '{"username": "butterbean", "password": "<PASSWORD>"}' \

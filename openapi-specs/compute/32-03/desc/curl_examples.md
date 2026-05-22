@@ -6,7 +6,7 @@ The cURL can be modified to use any of the following:
 For example, replace `<ACCESS_TOKEN>` with the token from the `/api/v1/authenticate` endpoint.
 
 ```bash
-$ curl -k \
+$ curl \
 -H 'Authorization: Bearer <ACCESS_TOKEN>' \
 -X POST \
 https://<CONSOLE>/api/v1/<ENDPOINT_PATH>
@@ -17,7 +17,7 @@ https://<CONSOLE>/api/v1/<ENDPOINT_PATH>
 For example, replace `<USER>` with the username string and `<PASSWORD>` with the password string.
 
 ```bash
-$ curl -k \
+$ curl \
 -u <USER> \
 -p <PASSWORD> \
 -X POST \
@@ -29,7 +29,7 @@ https://<CONSOLE>/api/v1/<ENDPOINT_PATH>
 For example, replace `<USER>` with the username string.
 
 ```bash
-$ curl -k \
+$ curl \
 -u <USER> \
 -X POST \
 https://<CONSOLE>/api/v1/<ENDPOINT_PATH>

@@ -1,7 +1,7 @@
 Retrieves the settings for the forensics system.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

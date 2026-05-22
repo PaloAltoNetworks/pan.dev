@@ -5,7 +5,7 @@ Retrieves the app-embedded observations.
 Refer to the following example cURL command that lists all the app-embedded runtime:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

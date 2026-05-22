@@ -4,7 +4,7 @@ Returns a list of os and images from page monitor/runtime/container-models in Co
 Example curl command:
 
 ```bash
-$ curl -k -G \
+$ curl -G \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

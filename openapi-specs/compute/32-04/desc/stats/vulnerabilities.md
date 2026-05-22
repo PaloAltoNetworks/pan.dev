@@ -5,7 +5,7 @@ For the current day, the response will also include descriptions of the CVEs cur
 The following example command that uses curl and basic auth to retrieve vulnerability statistics:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

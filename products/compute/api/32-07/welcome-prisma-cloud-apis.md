@@ -63,7 +63,7 @@ The cURL command can be modified to use any of the following:
 For example, replace `<ACCESS_TOKEN>` with the token from the [Authenticate](/prisma-cloud/api/cwpp/post-authenticate/) ![alt text](/icons/api-icon-pan-dev.svg) endpoint.
 
 ```bash
-$ curl -k \
+$ curl \
 -H 'Authorization: Bearer <ACCESS_TOKEN>' \
 -X POST \
 https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
@@ -74,7 +74,7 @@ https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
 For example, replace `<USER>` with the username string and `<PASSWORD>` with the password string.
 
 ```bash
-$ curl -k \
+$ curl \
 -u <USER> \
 -p <PASSWORD> \
 -X POST \
@@ -86,7 +86,7 @@ https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>
 For example, replace `<USER>` with the username string.
 
 ```bash
-$ curl -k \
+$ curl \
 -u <USER> \
 -X POST \
 https://<CONSOLE>/api/vVERSION/<ENDPOINT_PATH>

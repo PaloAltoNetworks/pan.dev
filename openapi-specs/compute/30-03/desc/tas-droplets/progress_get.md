@@ -5,7 +5,7 @@ Returns the details of the TAS Droplets ongoing scan.
 Refer to the following cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

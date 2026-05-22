@@ -5,7 +5,7 @@ Renews an old (unexpired) access token and returns a new token.
 The following cURL command retrieves a new access token using an old access token.
 
 ```bash
-$ curl -k \
+$ curl \
   -H "Authorization: Bearer <OLD_ACCESS_TOKEN>" \
    https://<CONSOLE>/api/v1/authenticate/renew
 ```

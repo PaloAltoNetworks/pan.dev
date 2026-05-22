@@ -6,7 +6,7 @@ Returns all app-embedded WAAS audit events for the specified query parameters.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

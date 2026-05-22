@@ -7,7 +7,7 @@ This endpoint maps to the table in **Manage > Collections and Tags > Collections
 Refer to the following example cURL command that returns a list of collections:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

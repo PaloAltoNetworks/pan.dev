@@ -10,7 +10,7 @@ This endpoint maps to **Monitor > Vulnerabilities > Images > CI** in the Console
 Refer to the following example cURL command that retrieves the scan reports for all images scanned using the Jenkins CI plugin or the twistcli tool:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -22,7 +22,7 @@ To get the report of a specific scan, add query parameters to narrow the scope o
 The following cURL command retrieves the scan report for an image with a SHA256 ID of `sha256:f756e84300d8e53006090573dd33abe5b8cfac3e42d104fc4be37f435fe512f3`.
  
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

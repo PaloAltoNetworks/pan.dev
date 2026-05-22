@@ -7,7 +7,7 @@ This endpoint maps to the **Linux platform** hyperlink in **Manage > System > Ut
 Refer to the following example cURL command that downloads and saves the “twistcli” binary executable to your HOME directory:
 
 ```bash
-$ curl -k \
+$ curl \
  -u <USER> \
  -H 'Content-Type: application/json' \
  -X GET -o <FILE NAME> \

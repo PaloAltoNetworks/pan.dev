@@ -17,7 +17,7 @@ For information on scan result, see [Get Registry Scan Report](https://prisma.pa
 Refer to the following example cURL command that forces Prisma Cloud Compute to rescan all registry images:
  
 ```bash
-$ curl -k \
+$ curl \
  -u <USER> \
  -H 'Content-Type: application/json' \
  -X POST \
@@ -27,7 +27,7 @@ $ curl -k \
 Refer to the following example cURL command that forces Prisma Cloud Compute to re-scan a specific image:
  
 ```bash
-$ curl -k \
+$ curl \
  -u <USER> \
  -H 'Content-Type: application/json' \
  -X POST \
@@ -52,7 +52,7 @@ For information on scan result, see [Get Registry Scan Report](https://pan.dev/p
 Refer to the following example cURL command to trigger an on-demand scan for an image:
  
 ```bash
-$ curl -k \
+$ curl \
  -u <USER> \
  -H 'Content-Type: application/json' \
  -X POST \

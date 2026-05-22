@@ -12,7 +12,7 @@ To see where Console invokes this endpoint:
 The following cURL command returns a list of containers captured by `<RULE_NAME>`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X GET \
   'https://<CONSOLE>/api/v<VERSION>/policies/compliance/container/impacted?ruleName=<RULE_NAME>'

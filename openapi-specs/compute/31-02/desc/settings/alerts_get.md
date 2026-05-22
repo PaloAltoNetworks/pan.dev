@@ -1,7 +1,7 @@
 Retrieves a list of your alert settings.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

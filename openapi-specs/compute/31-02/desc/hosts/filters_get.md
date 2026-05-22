@@ -3,7 +3,7 @@ Returns host filters such as distribution and host name.
 A curl command to access this endpoint may resemble the following code snippet:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

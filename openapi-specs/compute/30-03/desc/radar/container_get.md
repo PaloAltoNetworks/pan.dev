@@ -1,7 +1,7 @@
 Returns data from Console's Radar page (container view).
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

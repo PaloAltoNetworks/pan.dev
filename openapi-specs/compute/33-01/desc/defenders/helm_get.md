@@ -13,7 +13,7 @@ It can be a DNS name or IP address.
 `<HOSTNAME>` is a single list item from the `/api/v<VERSION>/defenders/names` endpoint.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X GET \
   -o twistlock-defender-helm.tar.gz \

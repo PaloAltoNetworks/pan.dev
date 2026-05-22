@@ -22,7 +22,6 @@ The API uses standard RESTful principles to execute four core operational groups
 
 1.  **Policy Management (Applications & Subnets):** Manage access rules for private applications and IP subnets. You use these operations to create, list, update, and delete connection policies for Fully Qualified Domain Names (**FQDNs**) and IP subnets, ensuring granular control over network access.
 2.  **Connector and Group Management:** Manage the deployment lifecycle of the physical/virtual ZTNA connectors. You use these operations to organize connectors into logical **Connector Groups**, handle configuration updates, and manage scheduled software upgrades.
-3.  **Cloud Account Discovery (CAD):** Manage the integration and feature state of associated cloud accounts. You use these endpoints to validate cloud roles and enable or disable target discovery features.
 4.  **Diagnostics and Maintenance:** Remotely initiate and retrieve diagnostic information for connector instances. This includes operations to manage packet captures (**PCAPs**), generate tech support files, and toggle the connector's operational (quiesce) state for maintenance.
 
 ---

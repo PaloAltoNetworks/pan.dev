@@ -15,7 +15,7 @@ Consider the following observations:
 Refer to the following example cURL command that downloads a list of impacted resources for `CVE-2015-0313` in a CSV format:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

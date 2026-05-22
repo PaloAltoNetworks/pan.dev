@@ -1,7 +1,7 @@
 This endpoint will return the latest version of the product.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

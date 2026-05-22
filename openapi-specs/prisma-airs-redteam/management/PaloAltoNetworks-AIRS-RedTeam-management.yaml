@@ -1,12 +1,12 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
-  title: Prisma AIRS Red Teaming Management API
-  version: 0.5.20
+  title: Prisma Access Browser Management Console Public API
+  version: 0.5.48
   description: "Red Teaming Management API - Configure and manage security groups\
     \ and rules for AI/ML model scanning. \xA9 2025 Palo Alto Networks, Inc This Open\
-    \ API spec file was created on February 25, 2026. \xA9 2026 Palo Alto Networks,\
-    \ Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks. A list\
-    \ of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ API spec file was created on April 13, 2026. \xA9 2026 Palo Alto Networks, Inc.\
+    \ Palo Alto Networks is a registered trademark of Palo Alto Networks. A list of\
+    \ our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
 servers:
 - url: https://api.sase.paloaltonetworks.com/ai-red-teaming/mgmt-plane
@@ -27,12 +27,6 @@ components:
       - NETWORK_BROKER
       title: ApiEndpointType
       description: API endpoint accessibility type.
-    AuthType:
-      type: string
-      enum:
-      - OAUTH
-      - ACCESS_TOKEN
-      title: AuthType
     BaseResponseSchema:
       properties:
         message:
@@ -50,6 +44,50 @@ components:
       title: BaseResponseSchema
       description: Standard response schema for simple operations like create, update,
         delete.
+    BasicAuthAuthConfig:
+      properties:
+        basic_auth_location:
+          $ref: '#/components/schemas/BasicAuthLocation'
+          description: 'Where credentials are sent: HEADER or PAYLOAD'
+          default: HEADER
+        basic_auth_header:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Basic Auth Header
+          description: 'Auth header as {name: value} dict (required when location=HEADER)'
+          examples:
+          - Authorization: Basic dXNlcjpwYXNz
+      type: object
+      title: BasicAuthAuthConfig
+      description: "Basic Auth credentials \u2014 header or payload location."
+    BasicAuthAuthConfigRedact:
+      properties:
+        basic_auth_location:
+          $ref: '#/components/schemas/BasicAuthLocation'
+          description: 'Where credentials are sent: HEADER or PAYLOAD'
+          default: HEADER
+        basic_auth_header:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Basic Auth Header
+          description: 'Auth header as {name: value} dict (required when location=HEADER)'
+          examples:
+          - Authorization: Basic dXNlcjpwYXNz
+      type: object
+      title: BasicAuthAuthConfigRedact
+    BasicAuthLocation:
+      type: string
+      enum:
+      - HEADER
+      - PAYLOAD
+      title: BasicAuthLocation
+      description: Where Basic Auth credentials are sent.
     BedrockAccessConnectionParams:
       properties:
         access_id:
@@ -767,7 +805,7 @@ components:
     DatabricksConnectionParams:
       properties:
         auth_type:
-          $ref: '#/components/schemas/AuthType'
+          $ref: '#/components/schemas/red_team_shared__schemas__databricks__AuthType'
           description: Auth type
         access_token:
           anyOf:
@@ -804,7 +842,7 @@ components:
     DatabricksConnectionRedactParams:
       properties:
         auth_type:
-          $ref: '#/components/schemas/AuthType'
+          $ref: '#/components/schemas/red_team_shared__schemas__databricks__AuthType'
           description: Auth type
         access_token:
           anyOf:
@@ -851,6 +889,37 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    HeadersAuthConfig:
+      properties:
+        auth_header:
+          additionalProperties:
+            type: string
+          type: object
+          title: Auth Header
+          description: 'Auth header as {name: value} dict'
+          examples:
+          - Authorization: Bearer sk-xxxxxxxxxxxx
+          - x-api-key: my-api-key
+      type: object
+      required:
+      - auth_header
+      title: HeadersAuthConfig
+      description: Static header injection (API keys, bearer tokens).
+    HeadersAuthConfigRedact:
+      properties:
+        auth_header:
+          additionalProperties:
+            type: string
+          type: object
+          title: Auth Header
+          description: 'Auth header as {name: value} dict'
+          examples:
+          - Authorization: Bearer sk-xxxxxxxxxxxx
+          - x-api-key: my-api-key
+      type: object
+      required:
+      - auth_header
+      title: HeadersAuthConfigRedact
     HuggingfaceConnectionParams:
       properties:
         api_key:
@@ -962,6 +1031,113 @@ components:
         the history.
 
         '
+    OAuth2AuthConfig:
+      properties:
+        oauth2_token_url:
+          type: string
+          title: Oauth2 Token Url
+          description: OAuth2 token endpoint URL
+          examples:
+          - https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token
+        oauth2_expiry_minutes:
+          type: integer
+          minimum: 0.0
+          title: Oauth2 Expiry Minutes
+          description: Token validity in minutes. System refreshes at expiry - 1 min.
+          default: 60
+        oauth2_headers:
+          additionalProperties: true
+          type: object
+          title: Oauth2 Headers
+          description: HTTP headers for the token request
+          examples:
+          - Authorization: Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=
+            Content-Type: application/x-www-form-urlencoded
+        oauth2_body_params:
+          additionalProperties: true
+          type: object
+          title: Oauth2 Body Params
+          description: Body parameters for the token request (nested JSON dict)
+          examples:
+          - client_id: my-client-id
+            client_secret: my-client-secret
+            grant_type: client_credentials
+            scope: api-access
+        oauth2_token_response_key:
+          type: string
+          title: Oauth2 Token Response Key
+          description: Dot-notation path to token in response JSON
+          default: access_token
+          examples:
+          - access_token
+          - data.credentials.access_token
+        oauth2_inject_header:
+          additionalProperties:
+            type: string
+          type: object
+          title: Oauth2 Inject Header
+          description: Header template with {TOKEN} placeholder
+          examples:
+          - Authorization: Bearer {TOKEN}
+      type: object
+      required:
+      - oauth2_token_url
+      - oauth2_inject_header
+      title: OAuth2AuthConfig
+      description: OAuth2 client credentials with proactive token refresh.
+    OAuth2AuthConfigRedact:
+      properties:
+        oauth2_token_url:
+          type: string
+          title: Oauth2 Token Url
+          description: OAuth2 token endpoint URL
+          examples:
+          - https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token
+        oauth2_expiry_minutes:
+          type: integer
+          minimum: 0.0
+          title: Oauth2 Expiry Minutes
+          description: Token validity in minutes. System refreshes at expiry - 1 min.
+          default: 60
+        oauth2_headers:
+          additionalProperties: true
+          type: object
+          title: Oauth2 Headers
+          description: HTTP headers for the token request
+          examples:
+          - Authorization: Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=
+            Content-Type: application/x-www-form-urlencoded
+        oauth2_body_params:
+          additionalProperties: true
+          type: object
+          title: Oauth2 Body Params
+          description: Body parameters for the token request (nested JSON dict)
+          examples:
+          - client_id: my-client-id
+            client_secret: my-client-secret
+            grant_type: client_credentials
+            scope: api-access
+        oauth2_token_response_key:
+          type: string
+          title: Oauth2 Token Response Key
+          description: Dot-notation path to token in response JSON
+          default: access_token
+          examples:
+          - access_token
+          - data.credentials.access_token
+        oauth2_inject_header:
+          additionalProperties:
+            type: string
+          type: object
+          title: Oauth2 Inject Header
+          description: Header template with {TOKEN} placeholder
+          examples:
+          - Authorization: Bearer {TOKEN}
+      type: object
+      required:
+      - oauth2_token_url
+      - oauth2_inject_header
+      title: OAuth2AuthConfigRedact
     OpenAIConnectionParams:
       properties:
         api_key:
@@ -1178,6 +1354,7 @@ components:
       enum:
       - REST
       - STREAMING
+      - WEBSOCKET
       title: ResponseMode
       description: Response mode for target interactions.
     RestConnectionParamsBase-Input:
@@ -1195,7 +1372,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1204,7 +1381,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1217,7 +1394,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1278,7 +1455,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1287,7 +1464,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1300,7 +1477,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1361,7 +1538,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1370,7 +1547,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1383,7 +1560,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1443,7 +1620,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1452,7 +1629,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1465,7 +1642,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1535,7 +1712,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1544,7 +1721,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1557,7 +1734,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1627,7 +1804,7 @@ components:
           type: object
           title: Request Headers
           description: Request headers
-          default: null
+          default: {}
           examples:
           - Authorization: Bearer sk-xxx
             Content-Type: application/json
@@ -1636,7 +1813,7 @@ components:
           type: object
           title: Request Json
           description: Request JSON
-          default: null
+          default: {}
           examples:
           - input:
             - content:
@@ -1649,7 +1826,7 @@ components:
           type: object
           title: Response Json
           description: Response JSON
-          default: null
+          default: {}
           examples:
           - content: '{RESPONSE}'
         response_key:
@@ -1758,6 +1935,70 @@ components:
         List fields are lists of strings.
 
         '
+    TargetAuthValidationRequestSchema:
+      properties:
+        auth_type:
+          $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          description: Authentication method type
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfig'
+          - $ref: '#/components/schemas/BasicAuthAuthConfig'
+          - $ref: '#/components/schemas/OAuth2AuthConfig'
+          title: Auth Config
+          description: Authentication configuration to validate
+        target_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Target Id
+          description: Existing target UUID. When provided and auth_config contains
+            redacted values, actual credentials are fetched from secrets manager.
+        network_broker_channel_uuid:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: Network broker channel UUID. When provided, OAuth2 token requests
+            are routed via network broker.
+      type: object
+      required:
+      - auth_type
+      - auth_config
+      title: TargetAuthValidationRequestSchema
+      description: Request schema to validate target authentication configuration.
+    TargetAuthValidationResponseSchema:
+      properties:
+        validated:
+          type: boolean
+          title: Validated
+          description: Whether auth validation passed
+        token_preview:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token Preview
+          description: First 20 chars of token (OAuth2 only)
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
+          description: Token expiry from response (OAuth2 only)
+      type: object
+      required:
+      - validated
+      title: TargetAuthValidationResponseSchema
+      description: 'Response schema from target authentication validation.
+
+
+        On failure, the service raises airs_common exceptions (ValidationError,
+
+        AuthError, etc.) which are converted to HTTP error responses by middleware.
+
+        '
     TargetBackground:
       properties:
         industry:
@@ -1808,6 +2049,7 @@ components:
       - CUSTOM
       - REST
       - STREAMING
+      - WEBSOCKET
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetContextUpdateSchema:
@@ -1838,11 +2080,21 @@ components:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
-          - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+          - oneOf:
+            - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfig'
+          - $ref: '#/components/schemas/BasicAuthAuthConfig'
+          - $ref: '#/components/schemas/OAuth2AuthConfig'
+          - type: 'null'
+          title: Auth Config
+          description: Authentication configuration (resolved based on auth_type)
         network_broker_channel_uuid:
           anyOf:
           - type: string
@@ -1899,6 +2151,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -1911,7 +2173,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         target_metadata:
@@ -1990,6 +2252,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2002,7 +2274,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         status:
@@ -2195,11 +2467,21 @@ components:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
-          - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+          - oneOf:
+            - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfig'
+          - $ref: '#/components/schemas/BasicAuthAuthConfig'
+          - $ref: '#/components/schemas/OAuth2AuthConfig'
+          - type: 'null'
+          title: Auth Config
+          description: Authentication configuration (resolved based on auth_type)
         network_broker_channel_uuid:
           anyOf:
           - type: string
@@ -2256,6 +2538,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2268,7 +2560,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         target_metadata:
@@ -2366,11 +2658,21 @@ components:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsRedactBase'
-          - $ref: '#/components/schemas/StreamingConnectionParamsRedactBase'
+          - oneOf:
+            - $ref: '#/components/schemas/WebSocketConnectionParamsRedactBase'
+            - $ref: '#/components/schemas/StreamingConnectionParamsRedactBase'
+            - $ref: '#/components/schemas/RestConnectionParamsRedactBase'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfigRedact'
+          - $ref: '#/components/schemas/BasicAuthAuthConfigRedact'
+          - $ref: '#/components/schemas/OAuth2AuthConfigRedact'
+          - type: 'null'
+          title: Auth Config
+          description: Authentication configuration (sensitive data masked for security)
         network_broker_channel_uuid:
           anyOf:
           - type: string
@@ -2434,6 +2736,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2446,7 +2758,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         status:
@@ -2583,6 +2895,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2595,7 +2917,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         status:
@@ -2680,11 +3002,21 @@ components:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsBase-Output'
-          - $ref: '#/components/schemas/StreamingConnectionParamsBase-Output'
+          - oneOf:
+            - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Output'
+            - $ref: '#/components/schemas/StreamingConnectionParamsBase-Output'
+            - $ref: '#/components/schemas/RestConnectionParamsBase-Output'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfig'
+          - $ref: '#/components/schemas/BasicAuthAuthConfig'
+          - $ref: '#/components/schemas/OAuth2AuthConfig'
+          - type: 'null'
+          title: Auth Config
+          description: Authentication configuration (resolved based on auth_type)
         network_broker_channel_uuid:
           anyOf:
           - type: string
@@ -2748,6 +3080,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2760,7 +3102,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         status:
@@ -2877,11 +3219,21 @@ components:
       properties:
         connection_params:
           anyOf:
-          - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
-          - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+          - oneOf:
+            - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
+            - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
+        auth_config:
+          anyOf:
+          - $ref: '#/components/schemas/HeadersAuthConfig'
+          - $ref: '#/components/schemas/BasicAuthAuthConfig'
+          - $ref: '#/components/schemas/OAuth2AuthConfig'
+          - type: 'null'
+          title: Auth Config
+          description: Authentication configuration (resolved based on auth_type)
         network_broker_channel_uuid:
           anyOf:
           - type: string
@@ -2938,6 +3290,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/red_team_shared__schemas__auth_config__AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -2950,7 +3312,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         target_metadata:
@@ -2994,6 +3356,299 @@ components:
       - msg
       - type
       title: ValidationError
+    WebSocketConnectionParamsBase-Input:
+      properties:
+        api_endpoint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Endpoint
+          description: API endpoint URL
+          examples:
+          - https://api.openai.com/v1/responses
+        request_headers:
+          additionalProperties: true
+          type: object
+          title: Request Headers
+          description: Request headers
+          default: {}
+          examples:
+          - Authorization: Bearer sk-xxx
+            Content-Type: application/json
+        request_json:
+          additionalProperties: true
+          type: object
+          title: Request Json
+          description: Request JSON
+          default: {}
+          examples:
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
+              role: user
+            model: gpt-4.1-nano
+        response_json:
+          additionalProperties: true
+          type: object
+          title: Response Json
+          description: Response JSON
+          default: {}
+          examples:
+          - content: '{RESPONSE}'
+        response_key:
+          type: string
+          title: Response Key
+          description: Response key
+          default: null
+          examples:
+          - content
+        target_connection_config:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAIConnectionParams'
+          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
+          - $ref: '#/components/schemas/DatabricksConnectionParams'
+          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
+          - type: 'null'
+          title: Target Connection Config
+          description: Target Connection config of type openai/huggingface ..
+        curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Curl
+          description: Generated cURL command ready to use (redacted for security)
+          examples:
+          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
+            -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
+        ws_response_timeout:
+          type: number
+          title: Ws Response Timeout
+          description: Timeout in seconds for waiting for a WebSocket response message
+          default: 110.0
+          examples:
+          - 60.0
+          - 110.0
+      type: object
+      title: WebSocketConnectionParamsBase
+      description: Connection parameters for WebSocket targets.
+    WebSocketConnectionParamsBase-Output:
+      properties:
+        api_endpoint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Endpoint
+          description: API endpoint URL
+          examples:
+          - https://api.openai.com/v1/responses
+        request_headers:
+          additionalProperties: true
+          type: object
+          title: Request Headers
+          description: Request headers
+          default: {}
+          examples:
+          - Authorization: Bearer sk-xxx
+            Content-Type: application/json
+        request_json:
+          additionalProperties: true
+          type: object
+          title: Request Json
+          description: Request JSON
+          default: {}
+          examples:
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
+              role: user
+            model: gpt-4.1-nano
+        response_json:
+          additionalProperties: true
+          type: object
+          title: Response Json
+          description: Response JSON
+          default: {}
+          examples:
+          - content: '{RESPONSE}'
+        response_key:
+          type: string
+          title: Response Key
+          description: Response key
+          default: null
+          examples:
+          - content
+        target_connection_config:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAIConnectionParams'
+          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
+          - $ref: '#/components/schemas/DatabricksConnectionParams'
+          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
+          - type: 'null'
+          title: Target Connection Config
+          description: Target Connection config of type openai/huggingface ..
+        curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Curl
+          description: Generated cURL command ready to use (redacted for security)
+          examples:
+          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
+            -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
+        ws_response_timeout:
+          type: number
+          title: Ws Response Timeout
+          description: Timeout in seconds for waiting for a WebSocket response message
+          default: 110.0
+          examples:
+          - 60.0
+          - 110.0
+      type: object
+      title: WebSocketConnectionParamsBase
+      description: Connection parameters for WebSocket targets.
+    WebSocketConnectionParamsRedactBase:
+      properties:
+        api_endpoint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Endpoint
+          description: API endpoint URL
+          examples:
+          - https://api.openai.com/v1/responses
+        request_headers:
+          additionalProperties: true
+          type: object
+          title: Request Headers
+          description: Request headers
+          default: {}
+          examples:
+          - Authorization: Bearer sk-xxx
+            Content-Type: application/json
+        request_json:
+          additionalProperties: true
+          type: object
+          title: Request Json
+          description: Request JSON
+          default: {}
+          examples:
+          - input:
+            - content:
+              - text: '{INPUT}'
+                type: input_text
+              role: user
+            model: gpt-4.1-nano
+        response_json:
+          additionalProperties: true
+          type: object
+          title: Response Json
+          description: Response JSON
+          default: {}
+          examples:
+          - content: '{RESPONSE}'
+        response_key:
+          type: string
+          title: Response Key
+          description: Response key
+          default: null
+          examples:
+          - content
+        target_connection_config:
+          anyOf:
+          - $ref: '#/components/schemas/OpenAIConnectionRedactParams'
+          - $ref: '#/components/schemas/HuggingfaceConnectionRedactParams'
+          - $ref: '#/components/schemas/DatabricksConnectionRedactParams'
+          - $ref: '#/components/schemas/BedrockAccessConnectionRedactParams'
+          - type: 'null'
+          title: Target Connection Config
+          description: Target Connection config of type openai/huggingface ..
+        curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Curl
+          description: Generated cURL command ready to use (redacted for security)
+          examples:
+          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json"
+            -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        multi_turn_config:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
+            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            discriminator:
+              propertyName: type
+              mapping:
+                stateful: '#/components/schemas/MultiTurnStatefulConfig'
+                stateless: '#/components/schemas/MultiTurnStatelessConfig'
+          - type: 'null'
+          title: Multi Turn Config
+          description: Multi turn config for stateful or stateless target
+          examples:
+          - 'assistant_role: assistant'
+        ws_response_timeout:
+          type: number
+          title: Ws Response Timeout
+          description: Timeout in seconds for waiting for a WebSocket response message
+          default: 110.0
+          examples:
+          - 60.0
+          - 110.0
+      type: object
+      title: WebSocketConnectionParamsRedactBase
+      description: "Redacted connection parameters for WebSocket targets.\n\nMRO:\
+        \ WebSocketConnectionParamsRedactBase \u2192 RestConnectionParamsRedactBase\n\
+        \     \u2192 WebSocketConnectionParamsBase \u2192 RestConnectionParamsBase.\n\
+        Both RestConnectionParamsRedactBase and WebSocketConnectionParamsBase inherit\n\
+        from RestConnectionParamsBase (diamond). Pydantic v2 deduplicates field validators\n\
+        by name, so WebSocketConnectionParamsBase.validate_url (ws/wss) overrides\n\
+        RestConnectionParamsBase.validate_url (http/https) \u2014 ws:// URLs are accepted.\n"
+    red_team_shared__schemas__auth_config__AuthType:
+      type: string
+      enum:
+      - HEADERS
+      - BASIC_AUTH
+      - OAUTH2
+      title: AuthType
+      description: Authentication method for target API access.
+    red_team_shared__schemas__databricks__AuthType:
+      type: string
+      enum:
+      - OAUTH
+      - ACCESS_TOKEN
+      title: AuthType
 ExternalTags:
   CustomAttack:
     title: CustomAttack
@@ -3005,64 +3660,12 @@ ExternalTags:
     description: Operations for retrieving dashboard overview and statistics.
     tags:
     - Dashboard
-  HealthChecks:
-    title: HealthChecks
-    description: Operations related to health checks of the management plane service.
-    tags:
-    - HealthChecks
   Target:
     title: Target
     description: Operations for managing scan targets (create, update, delete, list).
     tags:
     - Target
 paths:
-  /ready:
-    get:
-      summary: Readiness
-      description: Retrieve the ready details through this Application Programming
-        Interface endpoint.
-      operationId: readiness_ready_get
-      responses:
-        200:
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                title: Response Readiness Ready Get
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      parameters: []
-      tags:
-      - HealthChecks
-  /liveness:
-    get:
-      summary: Liveness
-      description: Retrieve the liveness details through this Application Programming
-        Interface endpoint.
-      operationId: liveness_liveness_get
-      responses:
-        200:
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                additionalProperties:
-                  type: boolean
-                type: object
-                title: Response Liveness Liveness Get
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      parameters: []
-      tags:
-      - HealthChecks
   /v1/target:
     post:
       summary: Create target
@@ -3356,6 +3959,34 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TargetProbeRequest'
+        required: true
+  /v1/target/validate-auth:
+    post:
+      summary: Validate authentication configuration
+      description: Validate OAuth2 credentials by fetching a test token. For HEADERS
+        and BASIC_AUTH, validates field presence only.
+      operationId: validate_auth_v1_target_validate_auth_post
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TargetAuthValidationResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters: []
+      tags:
+      - Target
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TargetAuthValidationRequestSchema'
         required: true
   /v1/custom-attack/custom-prompt-set:
     post:
@@ -4060,7 +4691,7 @@ paths:
       - CustomAttack
   /v1/dashboard/overview:
     get:
-      summary: Get dashboard
+      summary: Get dashboard overview
       description: Returns target counts by type for dashboard display.
       operationId: get_overview_v1_dashboard_overview_get
       responses:

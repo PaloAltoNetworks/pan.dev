@@ -1,7 +1,7 @@
 Returns the current learned connections from CNNF (for containers) in JSON format.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

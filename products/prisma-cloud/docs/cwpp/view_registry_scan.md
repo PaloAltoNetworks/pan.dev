@@ -59,7 +59,7 @@ Add the registry entries to set up the scan by using the [POST, registry setting
 
 **cURL Request**
   ```bash
-  curl -k \
+  curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -143,7 +143,7 @@ Check the status of a regular registry scan with [GET, registry status](/prisma-
 
 **cURL Request**
   ```bash
-  curl -k \
+  curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X GET \
@@ -167,7 +167,7 @@ Retrieve the registry scan reports with [GET, download registry scan results](/p
 
 **Response**
   ```bash
-  curl -k \
+  curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X GET \

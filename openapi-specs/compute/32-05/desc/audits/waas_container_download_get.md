@@ -6,7 +6,7 @@ Returns the container Web-Application and API Security (WAAS) audit events data 
 Refer to the following example cURL command that downloads the WAAS container audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

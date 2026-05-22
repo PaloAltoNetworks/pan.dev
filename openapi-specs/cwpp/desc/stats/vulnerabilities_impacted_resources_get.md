@@ -18,7 +18,7 @@ Consider the following observations:
 Refer to the following example cURL command that retrieves a list of impacted resources for `CVE-2022-28391`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -95,7 +95,7 @@ Refer to the following example JSON response that shows the risk tree for the im
 Refer to the following example cURL command that retrieves a the impacted registry images `CVE-2015-0313` by using an optional query parameter `resourceType`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -108,7 +108,7 @@ $ curl -k \
 Refer to the following example cURL command that retrieves a paginated list of impacted resources for `CVE-2015-0313` by using optional query parameters `limit` and `offset`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

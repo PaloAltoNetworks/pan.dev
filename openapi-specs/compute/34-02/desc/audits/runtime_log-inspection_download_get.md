@@ -5,7 +5,7 @@ Returns the audit events data in CSV format for log inspection checks that are c
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

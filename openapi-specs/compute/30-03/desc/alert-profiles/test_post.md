@@ -3,7 +3,7 @@ Sends a test alert to verify successful configuration of the alert profile setti
 The following example curl command uses basic auth to send test alert for an email alert profile:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

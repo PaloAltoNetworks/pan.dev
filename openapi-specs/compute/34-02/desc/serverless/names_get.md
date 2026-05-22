@@ -5,7 +5,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 The following curl command uses basic auth to retrieve a list of names of all Serverless resources monitored by Prisma Cloud Compute:
 
 ```bash
-$ curl -k \
+$ curl \
   -X GET \
   -H "Content-Type: application/json" \
   -u <USER> \

@@ -9,7 +9,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 The following cURL command retrieves a list of all serverless resources monitored by Prisma Cloud Compute and saves the results in a CSV file called `serverless.csv`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X GET \
   'https://<CONSOLE>/api/v<VERSION>/serverless/download' \

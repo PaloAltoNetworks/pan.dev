@@ -9,7 +9,7 @@ This endpoint maps to the **CSV** hyperlink in **Monitor > Runtime > Incident ex
 The following cURL command downloads all incidents and saves the result in a CSV file called `incidents.csv`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

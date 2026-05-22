@@ -21,7 +21,7 @@ if (process.env.CI_MERGE_REQUEST_IID) {
 
 const config = {
   future: {
-    experimental_faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
+    faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
     v4: true
   },
   title: "Develop with Palo Alto Networks",
@@ -914,11 +914,6 @@ const config = {
             outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          "ngfwoperation": {
-            specPath: "openapi-specs/scm/config/ngfw-operations",
-            outputDir: "products/scm/api/config/ngfw-operations",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
@@ -1036,6 +1031,11 @@ const config = {
             outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          cdug: {
+            specPath: "openapi-specs/scm/config/cdug",
+            outputDir: "products/scm/api/config/ciedss/cdug",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
@@ -1083,6 +1083,13 @@ const config = {
           aiintegration: {
             specPath: "openapi-specs/prisma-airs-redteam/data-plane",
             outputDir: "products/prisma-airs-redteam/api/ai-integration/data-plane",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+          },
+          //Prisma AIRS Network Broker
+          airsnetworkbroker: {
+            specPath: "openapi-specs/prisma-airs-redteam/network-broker",
+            outputDir: "products/prisma-airs-redteam/api/ai-integration/network-broker",
             proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
           },

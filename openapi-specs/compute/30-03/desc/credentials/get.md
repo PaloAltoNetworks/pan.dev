@@ -6,7 +6,7 @@ This endpoint maps to **Manage > Authentication > Credentials store** in the Con
 Refer to the following example cURL command that retrieves all credentials:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

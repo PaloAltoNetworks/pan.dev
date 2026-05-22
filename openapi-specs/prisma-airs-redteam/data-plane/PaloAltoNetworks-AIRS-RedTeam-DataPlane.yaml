@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: Prisma AIRS Red Teaming Dataplane API
-  version: 0.5.20
+  version: 0.5.52
   description: "Red Teaming Data Plane API - Data processing and scanning services\
     \ for AI/ML model security. \xA9 2025 Palo Alto Networks, Inc This Open API spec\
-    \ file was created on February 25, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo\
+    \ file was created on April 14, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo\
     \ Alto Networks is a registered trademark of Palo Alto Networks. A list of our\
     \ trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
@@ -83,8 +83,8 @@ components:
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Attack Success Rate (0-100)
@@ -131,7 +131,7 @@ components:
           title: Compliance Frameworks
         outputs:
           items:
-            $ref: '#/components/schemas/AttackOutputSchema'
+            $ref: '#/components/schemas/AttackOutputResponseSchema'
           type: array
           title: Outputs
           description: Outputs for attacks
@@ -229,8 +229,8 @@ components:
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Attack Success Rate (0-100)
@@ -340,8 +340,8 @@ components:
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Attack Success Rate (0-100)
@@ -389,7 +389,7 @@ components:
         outputs:
           items:
             items:
-              $ref: '#/components/schemas/AttackMultiTurnOutputSchema'
+              $ref: '#/components/schemas/AttackMultiTurnOutputResponseSchema'
             type: array
           type: array
           title: Outputs
@@ -417,127 +417,12 @@ components:
       - compliance_frameworks
       - goal
       title: AttackMultiTurnDetailResponseSchema
-    AttackMultiTurnOutputSchema:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        tsg_id:
-          type: string
-          title: Tsg Id
-        attack_id:
-          type: string
-          format: uuid
-          title: Attack Id
-          description: Associated attack UUID
-        job_id:
-          type: string
-          format: uuid
-          title: Job Id
-          description: Associated job UUID
-        target_id:
-          type: string
-          format: uuid
-          title: Target Id
-          description: Target UUID
-        output:
-          type: string
-          title: Output
-          description: Attack output. String for single-turn, dict for multi-turn.
-        threat:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Threat
-          description: Threat detection result
-        marked_safe:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Marked Safe
-          description: Manual safety marking
-        prompt:
-          type: string
-          title: Prompt
-          description: User prompt for this turn
-        turn:
-          type: integer
-          title: Turn
-          description: Current turn number in multi-turn conversation
-        generation:
-          type: integer
-          title: Generation
-          description: Generation/conversation number (1-based) for grouping multi-turn
-            outputs
-          default: 1
-        multi_turn:
-          type: boolean
-          title: Multi Turn
-          description: Multi-turn conversation flag
-          default: true
+    AttackMultiTurnOutputResponseSchema:
+      additionalProperties: true
       type: object
-      required:
-      - uuid
-      - tsg_id
-      - attack_id
-      - job_id
-      - target_id
-      - output
-      - prompt
-      - turn
-      title: AttackMultiTurnOutputSchema
-      description: Schema for multi-turn attack outputs.
-    AttackOutputSchema:
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          title: Uuid
-        tsg_id:
-          type: string
-          title: Tsg Id
-        attack_id:
-          type: string
-          format: uuid
-          title: Attack Id
-          description: Associated attack UUID
-        job_id:
-          type: string
-          format: uuid
-          title: Job Id
-          description: Associated job UUID
-        target_id:
-          type: string
-          format: uuid
-          title: Target Id
-          description: Target UUID
-        output:
-          type: string
-          title: Output
-          description: Attack output. String for single-turn, dict for multi-turn.
-        threat:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Threat
-          description: Threat detection result
-        marked_safe:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Marked Safe
-          description: Manual safety marking
+    AttackOutputResponseSchema:
+      additionalProperties: true
       type: object
-      required:
-      - uuid
-      - tsg_id
-      - attack_id
-      - job_id
-      - target_id
-      - output
-      title: AttackOutputSchema
-      description: Schema for attack output responses.
     AttackStatus:
       type: string
       enum:
@@ -554,6 +439,14 @@ components:
       - NORMAL
       - CUSTOM
       title: AttackType
+    AuthType:
+      type: string
+      enum:
+      - HEADERS
+      - BASIC_AUTH
+      - OAUTH2
+      title: AuthType
+      description: Authentication method for target API access.
     BrandSubCategory:
       type: string
       enum:
@@ -630,8 +523,8 @@ components:
           description: Statistics per subcategory (e.g., ADVERSARIAL_SUFFIX, BIAS)
         asr:
           type: number
-          maximum: 100
-          minimum: 0
+          maximum: 100.0
+          minimum: 0.0
           title: Asr
           description: Attack success rate percentage
         total_prompts:
@@ -663,6 +556,38 @@ components:
       - failed
       title: CategoryReportSchema
       description: Security or Safety risk overview widget data.
+    ClaraJobMetadata:
+      properties:
+        scan_name:
+          type: string
+          maxLength: 255
+          minLength: 3
+          title: Scan Name
+        categories:
+          additionalProperties:
+            items:
+              anyOf:
+              - $ref: '#/components/schemas/SecuritySubCategory'
+              - $ref: '#/components/schemas/SafetySubCategory'
+              - $ref: '#/components/schemas/BrandSubCategory'
+              - $ref: '#/components/schemas/ComplianceSubCategory'
+            type: array
+          propertyNames:
+            $ref: '#/components/schemas/Category'
+          type: object
+          title: Categories
+          description: "Auto-derived from uploaded prompt data \u2014 determines report\
+            \ sections"
+        language:
+          type: 'null'
+          title: Language
+          description: "Always None \u2014 CLARA is English-only"
+      type: object
+      required:
+      - scan_name
+      title: ClaraJobMetadata
+      description: "Metadata for CLARA scan jobs. Intentionally minimal \u2014\nno\
+        \ rate_limit/content_filter since CLARA doesn't execute attacks.\n"
     ComplianceReportSchema:
       properties:
         id:
@@ -823,7 +748,7 @@ components:
           description: Name of the item (e.g., target type, status)
         count:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Count
           description: Count of items
       type: object
@@ -972,7 +897,7 @@ components:
       - total_threats
       title: CustomAttacksListResponse
       description: Enhanced list response for custom attacks.
-    CustomJobMetadata:
+    CustomJobMetadata-Input:
       properties:
         rate_limit_enabled:
           type: boolean
@@ -1007,8 +932,8 @@ components:
         content_filter_error_code:
           anyOf:
           - type: integer
-            maximum: 599
-            minimum: 400
+            maximum: 599.0
+            minimum: 400.0
           - type: 'null'
           title: Content Filter Error Code
           description: HTTP error code for content filter (400-599)
@@ -1024,6 +949,11 @@ components:
             type: object
           - type: 'null'
           title: Content Filter Error Json
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/LanguageOptionSchema'
+          - type: 'null'
+          description: Language for this scan. None = English.
         custom_prompt_sets:
           items:
             type: string
@@ -1037,6 +967,9 @@ components:
       - custom_prompt_sets
       title: CustomJobMetadata
       description: Enhanced metadata for custom attack jobs.
+    CustomJobMetadata-Output:
+      additionalProperties: true
+      type: object
     CustomTopicGuardrailsSchema:
       properties:
         action:
@@ -1061,7 +994,7 @@ components:
       - ALL
       title: DateRangeFilter
       description: Predefined date range filters for chart APIs.
-    DynamicJobMetadata:
+    DynamicJobMetadata-Input:
       properties:
         rate_limit_enabled:
           type: boolean
@@ -1096,8 +1029,8 @@ components:
         content_filter_error_code:
           anyOf:
           - type: integer
-            maximum: 599
-            minimum: 400
+            maximum: 599.0
+            minimum: 400.0
           - type: 'null'
           title: Content Filter Error Code
           description: HTTP error code for content filter (400-599)
@@ -1113,31 +1046,36 @@ components:
             type: object
           - type: 'null'
           title: Content Filter Error Json
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/LanguageOptionSchema'
+          - type: 'null'
+          description: Language for this scan. None = English.
         stream_breadth:
           type: integer
-          maximum: 20
-          minimum: 1
+          maximum: 20.0
+          minimum: 1.0
           title: Stream Breadth
           description: Number of parallel attack streams (1-20)
           default: 6
         stream_depth:
           type: integer
-          maximum: 20
-          minimum: 1
+          maximum: 20.0
+          minimum: 1.0
           title: Stream Depth
           description: Depth of each attack stream (1-20)
           default: 10
         max_tokens:
           type: integer
-          maximum: 4096
-          minimum: 128
+          maximum: 4096.0
+          minimum: 128.0
           title: Max Tokens
           description: Maximum tokens per response (128-4096)
           default: 256
         context_size:
           type: integer
-          maximum: 20
-          minimum: 1
+          maximum: 20.0
+          minimum: 1.0
           title: Context Size
           description: Context window size (1-20)
           default: 10
@@ -1168,29 +1106,32 @@ components:
       type: object
       title: DynamicJobMetadata
       description: Enhanced metadata for dynamic attack jobs with proper constraints.
+    DynamicJobMetadata-Output:
+      additionalProperties: true
+      type: object
     DynamicJobReportSchema:
       properties:
         total_goals:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Goals
           description: Total number of goals tested
           default: 0
         total_streams:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Streams
           description: Total number of attack streams
           default: 0
         total_threats:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Threats
           description: Total number of threats detected
           default: 0
         goals_achieved:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Goals Achieved
           description: Number of goals with at least one threat
           default: 0
@@ -1202,18 +1143,18 @@ components:
           description: LLM-generated executive summary for the dynamic job
         score:
           type: number
-          maximum: 100
-          minimum: 0
+          maximum: 100.0
+          minimum: 0.0
           title: Score
           description: Overall security score (0-100)
-          default: 0
+          default: 0.0
         asr:
           type: number
-          maximum: 100
-          minimum: 0
+          maximum: 100.0
+          minimum: 0.0
           title: Asr
           description: Attack Success Rate (0-100)
-          default: 0
+          default: 0.0
       type: object
       title: DynamicJobReportSchema
       description: Core metrics for report generation.
@@ -1221,25 +1162,25 @@ components:
       properties:
         total_goals:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Goals
           description: Total number of goals tested
           default: 0
         total_streams:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Streams
           description: Total number of attack streams
           default: 0
         total_threats:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Threats
           description: Total number of threats detected
           default: 0
         goals_achieved:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Goals Achieved
           description: Number of goals with at least one threat
           default: 0
@@ -1365,6 +1306,7 @@ components:
       - NETWORK
       - VALIDATION
       - NETWORK_CHANNEL
+      - TRANSLATION
       - UNKNOWN
       title: ErrorType
       description: Classification of error types.
@@ -1529,9 +1471,10 @@ components:
           description: Type of job to execute
         job_metadata:
           anyOf:
-          - $ref: '#/components/schemas/StaticJobMetadata'
-          - $ref: '#/components/schemas/DynamicJobMetadata'
-          - $ref: '#/components/schemas/CustomJobMetadata'
+          - $ref: '#/components/schemas/StaticJobMetadata-Input'
+          - $ref: '#/components/schemas/DynamicJobMetadata-Input'
+          - $ref: '#/components/schemas/CustomJobMetadata-Input'
+          - $ref: '#/components/schemas/ClaraJobMetadata'
           title: Job Metadata
           description: Job-specific metadata
         version:
@@ -1594,9 +1537,10 @@ components:
           description: Type of job to execute
         job_metadata:
           anyOf:
-          - $ref: '#/components/schemas/StaticJobMetadata'
-          - $ref: '#/components/schemas/DynamicJobMetadata'
-          - $ref: '#/components/schemas/CustomJobMetadata'
+          - $ref: '#/components/schemas/StaticJobMetadata-Output'
+          - $ref: '#/components/schemas/DynamicJobMetadata-Output'
+          - $ref: '#/components/schemas/CustomJobMetadata-Output'
+          - $ref: '#/components/schemas/ClaraJobMetadata'
           title: Job Metadata
           description: Job-specific metadata
         version:
@@ -1623,14 +1567,14 @@ components:
         total:
           anyOf:
           - type: integer
-            minimum: 0
+            minimum: 0.0
           - type: 'null'
           title: Total
           description: Total tasks in job
         completed:
           anyOf:
           - type: integer
-            minimum: 0
+            minimum: 0.0
           - type: 'null'
           title: Completed
           description: Completed tasks
@@ -1641,16 +1585,16 @@ components:
         score:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Score
           description: Overall job performance score (0-100)
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Updated Attack Success Rate (0-100)
@@ -1781,8 +1725,23 @@ components:
       - STATIC
       - DYNAMIC
       - CUSTOM
+      - CLARA
       title: JobType
       description: Type of job execution.
+    LanguageOptionSchema:
+      properties:
+        code:
+          type: string
+          title: Code
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - code
+      - name
+      title: LanguageOptionSchema
+      description: Language representation with code and display name.
     MaliciousCodeDetectionSchema:
       properties:
         action:
@@ -1902,8 +1861,8 @@ components:
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Attack Success Rate for this prompt (0-100)
@@ -2157,6 +2116,7 @@ components:
       enum:
       - REST
       - STREAMING
+      - WEBSOCKET
       title: ResponseMode
       description: Response mode for target interactions.
     RiskLevelSchema:
@@ -2166,7 +2126,7 @@ components:
           description: Risk rating level based on job score
         total:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total
           description: Total count for this risk rating level
         targets_by_type:
@@ -2242,30 +2202,16 @@ components:
       - SEXUAL
       - VIOLENT_CRIMES_WEAPONS
       title: SafetySubCategory
-    SensitiveDataProtectionSchema:
-      properties:
-        action:
-          $ref: '#/components/schemas/GuardrailAction'
-          description: 'Action to take: ''allow'', ''block'''
-          default: BLOCK
-        masking_sensitive_data:
-          type: boolean
-          title: Masking Sensitive Data
-          description: Whether to mask sensitive data in responses
-          default: true
-      type: object
-      title: SensitiveDataProtectionSchema
-      description: Guardrail configuration for sensitive data protection.
     ScanStatisticsResponseSchema:
       properties:
         total_scans:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Total Scans
           description: Total number of scans
         targets_scanned:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Targets Scanned
           description: Number of unique targets scanned
         targets_scanned_by_type:
@@ -2359,6 +2305,20 @@ components:
       - TOOL_LEAK
       - MALWARE_GENERATION
       title: SecuritySubCategory
+    SensitiveDataProtectionSchema:
+      properties:
+        action:
+          $ref: '#/components/schemas/GuardrailAction'
+          description: 'Action to take: ''allow'', ''block'''
+          default: BLOCK
+        masking_sensitive_data:
+          type: boolean
+          title: Masking Sensitive Data
+          description: Whether to mask sensitive data in responses
+          default: true
+      type: object
+      title: SensitiveDataProtectionSchema
+      description: Guardrail configuration for sensitive data protection.
     SentimentRequestSchema:
       properties:
         job_id:
@@ -2470,7 +2430,7 @@ components:
       - severity
       title: SeverityStatsSchema
       description: Breakdown for a single severity level.
-    StaticJobMetadata:
+    StaticJobMetadata-Input:
       properties:
         rate_limit_enabled:
           type: boolean
@@ -2505,8 +2465,8 @@ components:
         content_filter_error_code:
           anyOf:
           - type: integer
-            maximum: 599
-            minimum: 400
+            maximum: 599.0
+            minimum: 400.0
           - type: 'null'
           title: Content Filter Error Code
           description: HTTP error code for content filter (400-599)
@@ -2522,6 +2482,11 @@ components:
             type: object
           - type: 'null'
           title: Content Filter Error Json
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/LanguageOptionSchema'
+          - type: 'null'
+          description: Language for this scan. None = English.
         categories:
           additionalProperties:
             items:
@@ -2550,6 +2515,9 @@ components:
       - categories
       title: StaticJobMetadata
       description: Enhanced metadata for static attack jobs with validation.
+    StaticJobMetadata-Output:
+      additionalProperties: true
+      type: object
     StaticJobRemediationRecommendationSchema:
       properties:
         runtime_security_policy_configuration:
@@ -2635,16 +2603,16 @@ components:
         asr:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Asr
           description: Attack Success Rate percentage (0-100)
         score:
           anyOf:
           - type: number
-            maximum: 100
-            minimum: 0
+            maximum: 100.0
+            minimum: 0.0
           - type: 'null'
           title: Score
           description: Overall job performance score (0-100)
@@ -2696,7 +2664,7 @@ components:
       properties:
         output_completion_percentage:
           type: number
-          minimum: 0
+          minimum: 0.0
           title: Output Completion Percentage
           description: Percentage of attack outputs that completed successfully (0-100)
         partial_report_unlocked:
@@ -2856,7 +2824,7 @@ components:
           description: Goal identifier
         iteration:
           type: integer
-          minimum: 0
+          minimum: 0.0
           title: Iteration
           description: Iteration number
         prompt:
@@ -2889,8 +2857,8 @@ components:
         score:
           anyOf:
           - type: integer
-            maximum: 10
-            minimum: 0
+            maximum: 10.0
+            minimum: 0.0
           - type: 'null'
           title: Score
           description: Best judge score
@@ -3259,6 +3227,7 @@ components:
       - CUSTOM
       - REST
       - STREAMING
+      - WEBSOCKET
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetJobRequest:
@@ -3445,6 +3414,16 @@ components:
           examples:
           - REST
           - STREAMING
+          - WEBSOCKET
+        auth_type:
+          anyOf:
+          - $ref: '#/components/schemas/AuthType'
+          - type: 'null'
+          description: Authentication method for target API access
+          examples:
+          - HEADERS
+          - BASIC_AUTH
+          - OAUTH2
         session_supported:
           type: boolean
           title: Session Supported
@@ -3457,7 +3436,7 @@ components:
           - type: 'null'
           title: Extra Info
           description: Additional configuration or metadata for the target
-          default: null
+          default: {}
           examples:
           - custom_key: custom_value
         status:
@@ -3599,6 +3578,29 @@ components:
       - active
       title: TechniqueModel
       description: Pydantic model for technique data
+    TenantLanguagesResponseSchema:
+      properties:
+        multilingual_enabled:
+          type: boolean
+          title: Multilingual Enabled
+        supported_job_types:
+          items:
+            type: string
+          type: array
+          title: Supported Job Types
+        languages:
+          items:
+            $ref: '#/components/schemas/LanguageOptionSchema'
+          type: array
+          title: Languages
+      type: object
+      required:
+      - multilingual_enabled
+      - supported_job_types
+      - languages
+      title: TenantLanguagesResponseSchema
+      description: "Response for GET /v1/languages \u2014 tenant-facing scan page\
+        \ dropdown."
     ToxicContentGuardrailSchema:
       properties:
         moderate:
@@ -3644,90 +3646,48 @@ ExternalTags:
     description: Operations for custom attack configurations and prompts.
     tags:
     - CustomAttack
-  ErrorLogs:
-    title: ErrorLogs
-    description: Operations for retrieving and managing error logs.
-    tags:
-    - ErrorLogs
   Dashboard:
     title: Dashboard
     description: Operations for dashboard data and statistics.
     tags:
     - Dashboard
-  HealthChecks:
-    title: HealthChecks
-    description: Operations related to health checks of the data plane service.
+  ErrorLogs:
+    title: ErrorLogs
+    description: Operations for retrieving and managing error logs.
     tags:
-    - HealthChecks
+    - ErrorLogs
+  Languages:
+    title: Languages
+    description: Operations for language configuration and multilingual support.
+    tags:
+    - Languages
   Quota:
     title: Quota
     description: Operations for quota management and limits.
     tags:
     - Quota
-  Scan:
-    title: Scan
-    description: Operations for creating and managing scan jobs.
-    tags:
-    - Scan
   Report:
     title: Report
     description: Operations for generating and retrieving scan job reports for static
       and dynamic.
     tags:
     - Report
+  Scan:
+    title: Scan
+    description: Operations for creating and managing scan jobs.
+    tags:
+    - Scan
   Sentiment:
     title: Sentiment
     description: Operations for managing sentiment and scan report summaries.
     tags:
     - Sentiment
+  Templates:
+    title: Templates
+    description: Operations for managing scan templates and configurations.
+    tags:
+    - Templates
 paths:
-  /ready:
-    get:
-      summary: Readiness
-      description: Retrieve the ready details through this Application Programming
-        Interface endpoint.
-      operationId: readiness_ready_get
-      responses:
-        200:
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                title: Response Readiness Ready Get
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      parameters: []
-      tags:
-      - HealthChecks
-  /liveness:
-    get:
-      summary: Liveness
-      description: Retrieve the liveness details through this Application Programming
-        Interface endpoint.
-      operationId: liveness_liveness_get
-      responses:
-        200:
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                additionalProperties:
-                  type: boolean
-                type: object
-                title: Response Liveness Liveness Get
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      parameters: []
-      tags:
-      - HealthChecks
   /v1/scan:
     post:
       summary: Create scan
@@ -3918,6 +3878,29 @@ paths:
       parameters: []
       tags:
       - Categories
+  /v1/scan/scan-metadata:
+    get:
+      summary: Get scan target metadata
+      description: Get the metadata for scan targets.
+      operationId: get_scan_metadata_v1_scan_scan_metadata_get
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Scan Metadata V1 Scan Scan Metadata Get
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters: []
+      tags:
+      - Templates
   /v1/report/static/{job_id}/list-attacks:
     get:
       summary: List attacks for a scan
@@ -4094,19 +4077,19 @@ paths:
           title: Job Id
       tags:
       - Report
-  /v1/report/static/{job_id}/remediation:
+  /v1/report/static/{job_id}/runtime-policy-config:
     get:
-      summary: Get attack library scan remediation
-      description: Get other remediation measures for a static job.
-      operationId: get_static_remediations_v1_report_static__job_id__remediation_get
+      summary: Get attack library runtime security profile
+      description: Get Runtime security profile for a static job.
+      operationId: get_static_runtime_security_policy_config_v1_report_static__job_id__runtime_policy_config_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RemediationResponseSchema'
-        '422':
+                $ref: '#/components/schemas/RuntimeSecurityProfileResponseSchema'
+        422:
           description: Validation Error
           content:
             application/json:
@@ -4122,19 +4105,19 @@ paths:
           title: Job Id
       tags:
       - Report
-  /v1/report/static/{job_id}/runtime-policy-config:
+  /v1/report/static/{job_id}/remediation:
     get:
-      summary: Get attack library runtime security profile
-      description: Get Runtime security profile for a static job.
-      operationId: get_static_runtime_security_policy_config_v1_report_static__job_id__runtime_policy_config_get
+      summary: Get attack library scan remediation
+      description: Get other remediation measures for a static job.
+      operationId: get_static_remediations_v1_report_static__job_id__remediation_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RuntimeSecurityProfileResponseSchema'
-        '422':
+                $ref: '#/components/schemas/RemediationResponseSchema'
+        422:
           description: Validation Error
           content:
             application/json:
@@ -4178,19 +4161,19 @@ paths:
           title: Job Id
       tags:
       - Report
-  /v1/report/dynamic/{job_id}/remediation:
+  /v1/report/dynamic/{job_id}/runtime-policy-config:
     get:
-      summary: Get agent scan rememdiation
-      description: Get other remediation measures for a dynamic job.
-      operationId: get_dynamic_remediations_v1_report_dynamic__job_id__remediation_get
+      summary: Get agent scan runtime security profile
+      description: Get Runtime security profile for a dynamic job.
+      operationId: get_dynamic_runtime_security_policy_config_v1_report_dynamic__job_id__runtime_policy_config_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RemediationResponseSchema'
-        '422':
+                $ref: '#/components/schemas/RuntimeSecurityProfileResponseSchema'
+        422:
           description: Validation Error
           content:
             application/json:
@@ -4206,19 +4189,19 @@ paths:
           title: Job Id
       tags:
       - Report
-  /v1/report/dynamic/{job_id}/runtime-policy-config:
+  /v1/report/dynamic/{job_id}/remediation:
     get:
-      summary: Get agent scan runtime security profile
-      description: Get Runtime security profile for a dynamic job.
-      operationId: get_dynamic_runtime_security_policy_config_v1_report_dynamic__job_id__runtime_policy_config_get
+      summary: Get agent scan remediation
+      description: Get other remediation measures for a dynamic job.
+      operationId: get_dynamic_remediations_v1_report_dynamic__job_id__remediation_get
       responses:
-        '200':
+        200:
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RuntimeSecurityProfileResponseSchema'
-        '422':
+                $ref: '#/components/schemas/RemediationResponseSchema'
+        422:
           description: Validation Error
           content:
             application/json:
@@ -4677,7 +4660,7 @@ paths:
       - CustomAttack
   /v1/custom-attacks/report/{job_id}/prompt/{prompt_id}:
     get:
-      summary: Get prompt details
+      summary: Get prompt detail
       description: Get detailed information for a specific prompt.
       operationId: get_prompt_detail_v1_custom_attacks_report__job_id__prompt__prompt_id__get
       responses:
@@ -4912,6 +4895,27 @@ paths:
         description: Number of attacks to skip for pagination
       tags:
       - ErrorLogs
+  /v1/languages:
+    get:
+      summary: Get available languages for scan
+      description: Return allowed languages for the requesting tenant's scan page.
+      operationId: get_languages_v1_languages_get
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantLanguagesResponseSchema'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      parameters: []
+      tags:
+      - Languages
   /v1/dashboard/scan-statistics:
     get:
       summary: Get scan statistics and risk profile
@@ -5023,8 +5027,8 @@ paths:
         required: true
   /v1/sentiment/{job_id}:
     get:
-      summary: Get sentiment for a scan report
-      description: Guardrail configuration for toxic content with severity levels.
+      summary: Get sentiment for a scan
+      description: Get Sentiment status of a scan.
       operationId: get_job_sentiment_v1_sentiment__job_id__get
       responses:
         200:

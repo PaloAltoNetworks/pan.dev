@@ -127,7 +127,7 @@ To remove a registry from the list:
 To delete all entries, submit an empty `specifications` array. For example:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

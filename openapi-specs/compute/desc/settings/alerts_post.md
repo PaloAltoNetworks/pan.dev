@@ -3,7 +3,7 @@ Configure alerts.
 The following example curl command sets the aggregation period for alerts to one hour.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

@@ -4,7 +4,7 @@ Retrieves a list of all CNNS container and host rules.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

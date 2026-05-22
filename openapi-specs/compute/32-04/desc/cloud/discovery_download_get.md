@@ -5,7 +5,7 @@ Downloads all cloud scan data in a CSV file.
 Refer to the following cURL example command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

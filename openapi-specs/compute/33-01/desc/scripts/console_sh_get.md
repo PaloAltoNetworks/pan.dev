@@ -5,7 +5,7 @@ For more information about each supported role, see
 [User roles](https://docs.twistlock.com/docs/latest/access_control/user_roles.html).
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

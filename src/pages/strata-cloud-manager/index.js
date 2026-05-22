@@ -185,13 +185,6 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        "NGFW Operations": [
-          {
-            to: "scm/api/config/ngfw-operations/introduction",
-            label: "NGFW Operations",
-            icon: "api-doc",
-          },
-        ],
         Posture: [
           {
             to: "scm/api/config/posture-management/introduction-posture",
@@ -240,6 +233,11 @@ export default function SCMLandingPage() {
           {
             label: "CIE Directory Sync Service",
             to: "scm/api/config/ciedss/ciedss",
+            icon: "api-doc",
+          },
+          {
+            label: "Cloud Dynamic User Groups",
+            to: "scm/api/config/ciedss/cdug/cdug-introduction",
             icon: "api-doc",
           },
         ],

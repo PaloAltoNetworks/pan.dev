@@ -10,7 +10,7 @@ This endpoint maps to the **Code repositories** table in **Monitor > Vulnerabili
 The following cURL command retrieves all code repository scan reports.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

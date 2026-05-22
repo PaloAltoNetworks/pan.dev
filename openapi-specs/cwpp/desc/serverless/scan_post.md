@@ -5,7 +5,7 @@ Re-scan all serverless functions immediately.
 Refer to the following example cURL command that forces Prisma Cloud Compute to re-scan all serverless functions:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X POST \
   https://<CONSOLE>/api/v<VERSION>/serverless/scan

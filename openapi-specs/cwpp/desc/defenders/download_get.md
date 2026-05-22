@@ -8,7 +8,7 @@ Use the query parameters to filter what data is returned.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET -o <FILENAME> \

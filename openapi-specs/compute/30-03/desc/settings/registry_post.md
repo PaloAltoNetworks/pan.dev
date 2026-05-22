@@ -30,7 +30,7 @@ The API response returns an HTTP 400 error, if the number of registry specificat
 Refer to the following example cURL command that configures Prisma Cloud Compute to scan the Ubuntu 16.04 repository on Docker Hub:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
@@ -64,7 +64,7 @@ To add settings for a GitLab Container Registry, you must specify the following 
 Refer to the following example cURL command:
 
 ```bash
-curl -k \
+curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

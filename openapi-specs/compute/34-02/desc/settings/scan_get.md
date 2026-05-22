@@ -5,7 +5,7 @@ Returns the global settings for image, host, container, and registry scanning.
 Refer to the following example cURL request:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

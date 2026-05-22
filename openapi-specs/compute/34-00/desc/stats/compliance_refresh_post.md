@@ -7,7 +7,7 @@ This endpoint returns the same response as `/api/v<VERSION>/stats/compliance`, b
 Refer to the following example cURL command that refreshes compliance statistics for the current day:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

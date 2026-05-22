@@ -3,7 +3,7 @@ This endpoint will return any configured serverless function scanners found in *
 The following example curl command uses basic auth to retrieve serverless settings in an array, sorted by Cloud Provider:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

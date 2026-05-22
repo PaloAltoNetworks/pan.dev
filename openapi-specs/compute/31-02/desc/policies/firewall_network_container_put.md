@@ -9,7 +9,7 @@ The procedure to add, edit, or remove rules is:
   Refer to the following example cURL command that retrieves a list of all rules, pretty-print the JSON response, and save the results to a file:
 
    ```bash
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -X PUT \
      -H "Content-Type:application/json" \
@@ -26,7 +26,7 @@ The procedure to add, edit, or remove rules is:
    Do not forget to specify the `@` symbol.
 
    ```bash
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -X PUT \
      -H "Content-Type:application/json" \

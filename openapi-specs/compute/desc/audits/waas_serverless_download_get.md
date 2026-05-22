@@ -7,7 +7,7 @@ Returns the serverless function Web-Application and API Security (WAAS) audit ev
 Refer to the following example cURL command that downloads the serverless WAAS audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

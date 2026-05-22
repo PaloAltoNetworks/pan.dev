@@ -5,7 +5,7 @@ Stops current registry scan immediately.
 Refer to the following example cURL command that forces Prisma Cloud Compute to stop scanning all registry images:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

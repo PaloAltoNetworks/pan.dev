@@ -3,7 +3,7 @@ This endpoint will instruct the PFC Defenders to stop scanning.
 Example curl command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

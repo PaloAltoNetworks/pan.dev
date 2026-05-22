@@ -1185,7 +1185,7 @@ This method retrieves all jobs and their details, this means running, pending, f
 
 The actual API command is `show jobs all`.
 
-:::caution
+:::warning
 Job entries without a jod id is not returned in response. This is usually a 'Failed-Job' type of jobs.
 :::
 

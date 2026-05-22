@@ -11,7 +11,7 @@ Vulnerability rules can be created using the Prisma Cloud Compute.
 Refer to the following cURL command that retrieves a list of all the custom vulnerabilities and associated rules.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

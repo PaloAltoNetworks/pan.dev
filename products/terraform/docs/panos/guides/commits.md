@@ -47,7 +47,7 @@ no CLI arg present then no commit comment is given to PAN-OS.
 The authentication credentials can be given multiple ways, and if all are
 present then this is the order, from highest to lowest priority:
 
-:::caution
+:::warning
 Providing authentication credentials via CLI argument is insecure and
 is not recommended.
 :::

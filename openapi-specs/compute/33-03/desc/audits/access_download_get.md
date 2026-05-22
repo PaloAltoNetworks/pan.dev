@@ -3,7 +3,7 @@ Returns the docker access audit events data in CSV format that are logged and ag
 **Note**: You can download the access events from Console under **Monitor > Events > Docker audits > Download CSV**.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

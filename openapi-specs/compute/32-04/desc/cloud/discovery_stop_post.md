@@ -5,7 +5,7 @@ Terminates a cloud discovery scan that's in progress.
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

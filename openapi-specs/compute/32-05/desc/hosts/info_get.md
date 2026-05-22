@@ -3,7 +3,7 @@ Returns minimal information that includes hostname, distro, distro-release, coll
 A curl command to access this endpoint may resemble the following code snippet:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

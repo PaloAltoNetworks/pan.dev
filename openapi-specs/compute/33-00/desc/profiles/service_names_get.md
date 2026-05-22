@@ -3,7 +3,7 @@ Retrieves the name of all host service runtime models from within the app at **M
 The following example curl command uses basic auth to retrieve this data:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

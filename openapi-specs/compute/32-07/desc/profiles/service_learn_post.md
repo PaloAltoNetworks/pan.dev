@@ -3,7 +3,7 @@ Specify the learning mode for all host service profiles.
 The following example command uses curl and basic auth to specify the learning mode for all host service profiles.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

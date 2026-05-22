@@ -7,7 +7,7 @@ For more information, see [GitHub OAuth](https://docs.paloaltonetworks.com/prism
 Refer to the following example cURL response:
 
 ```bash
-curl -k \        
+curl \        
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

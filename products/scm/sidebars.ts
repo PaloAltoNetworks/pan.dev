@@ -320,18 +320,6 @@ module.exports = {
     },
     {
       type: "category",
-      label: "NGFW Operations",
-      collapsed: true,
-      items: [
-            {
-              type: "doc",
-              id: "scm/api/config/ngfw-operations/introduction",
-            },
-            require("./api/config/ngfw-operations/sidebar"),
-          ],
-        },
-    {
-      type: "category",
       label: "Cloud NGFW Configuration",
       collapsed: true,
       items: [
@@ -407,6 +395,10 @@ module.exports = {
     "scm/api/config/ciedss/ciedss",
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
+  ],
+  cdug: [
+    "scm/api/config/ciedss/cdug/cdug-introduction",
+    require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };

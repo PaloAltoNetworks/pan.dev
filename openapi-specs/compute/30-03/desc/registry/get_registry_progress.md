@@ -9,7 +9,7 @@ For a regular scan, use the API path only without any query parameters.
 Refer to the following example cURL request that retrieves the ongoing scan details for a regular registry scan:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -63,7 +63,7 @@ For an on-demand scan that is started using the `/registry/scan` endpoint with t
 Refer to the following example cURL request that retrieves the ongoing scan details for an on-demand registry scan that is started using the `/registry/scan` endpoint for the repository `alpine` with tag `3.16`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

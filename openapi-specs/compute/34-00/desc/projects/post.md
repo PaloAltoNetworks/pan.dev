@@ -3,7 +3,7 @@ Provisions a new project.
 The following example curl command provisions a new project named `my-project`.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
@@ -19,7 +19,7 @@ $ curl -k \
 If you have installed a new instance of Console, and you have already created an initial admin user for it, then you can specify the admin username name and password when you provision the project.
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

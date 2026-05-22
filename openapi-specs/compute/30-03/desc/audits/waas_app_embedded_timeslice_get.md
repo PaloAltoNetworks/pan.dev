@@ -12,7 +12,7 @@ Use the following mandatory query parameters to fetch results:
 Refer to the following example cURL command that retrieves the app-embedded WAAS audit buckets of five between 15 Nov. 2022 (15h:23m:57s) and 16 Nov. 2022 (15h:23m:57s):
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

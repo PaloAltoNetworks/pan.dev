@@ -8,7 +8,7 @@ The procedure to add, edit, or remove rules is:
   The following curl command uses basic auth to retrieve the rules, pretty-print the JSON response, and save the results to a file.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -H 'Content-Type: application/json' \
      -X GET
@@ -24,7 +24,7 @@ The procedure to add, edit, or remove rules is:
    Do not forget to specify the `@` symbol.
 
    ```
-   $ curl -k \
+   $ curl \
      -u <USER> \
      -H "Content-Type:application/json" \
      -X PUT \

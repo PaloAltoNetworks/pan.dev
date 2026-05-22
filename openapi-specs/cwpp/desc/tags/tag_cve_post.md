@@ -45,7 +45,7 @@ Consider the following scenarios for source and binary packages:
   Refer to the following example cURL command that tags `Ignored` to the CVE `CVE-2020-16156` on the source package `perl`:
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -72,7 +72,7 @@ Consider the following scenarios for source and binary packages:
   Refer to the following example cURL command that tags `Ignored` to the CVE `CVE-2021-20305` on the binary package `gnutls`:
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -98,7 +98,7 @@ Consider the following scenarios when you want to tag a vulnerability to all pac
   Refer to the following example cURL command that tags `Ignored` to the CVE `CVE-2020-16156`:
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -120,7 +120,7 @@ Consider the following scenarios when you want to tag a vulnerability to all pac
   Refer to the following example cURL command that tags `Ignored` to the CVE `CVE-2020-16156` on the resource type `image` and to all the packages and resources.
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \
@@ -140,7 +140,7 @@ Consider the following scenarios when you want to tag a vulnerability to all pac
   Refer to the following example cURL command that tags `Ignored` to the CVE `CVE-2020-16156` on the resource type `host`, resource `servo-vmware71`, and to all the packages.
 
   ```bash
-  $ curl -k \
+  $ curl \
     -u <USER> \
     -H 'Content-Type: application/json' \
     -X POST \

@@ -7,7 +7,7 @@ This endpoint maps to the UI Console page in **Manage > Defenders > Defenders**.
 Refer to the following example cURL command that retrieves all deployed Defenders.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

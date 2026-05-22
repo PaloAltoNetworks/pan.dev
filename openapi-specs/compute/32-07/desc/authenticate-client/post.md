@@ -8,7 +8,7 @@ This endpoint checks the supplied client certificate and authorizes the user bas
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -X POST \
   --cert <CERT.PEM> \
   https://<CONSOLE>/api/v<VERSION>/authenticate-client

@@ -17,7 +17,7 @@ To invoke this endpoint in the Console UI:
 The following cURL command deletes user `ID` from the system.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

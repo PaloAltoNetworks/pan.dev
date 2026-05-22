@@ -5,7 +5,7 @@ Creates a Helm deployment file that you can use to deploy Defenders to your clus
 Refer to the following example cURL command:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

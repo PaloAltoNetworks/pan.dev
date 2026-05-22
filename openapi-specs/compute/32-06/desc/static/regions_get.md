@@ -1,7 +1,7 @@
 Returns a list of regions used in cloud radar.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

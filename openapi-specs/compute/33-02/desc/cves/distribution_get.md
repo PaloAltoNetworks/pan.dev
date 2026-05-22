@@ -3,7 +3,7 @@ Retrieves CVEs from the vulnerability database grouped into distribution where y
 The following example curl command uses basic auth to retrieve this data:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

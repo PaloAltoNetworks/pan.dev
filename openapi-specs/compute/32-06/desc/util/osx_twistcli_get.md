@@ -7,7 +7,7 @@ This endpoint maps to the **MacOS platform** hyperlink in **Manage > System > Ut
 The following cURL command downloads the twistcli binary executable for MacOS platforms.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -L \
   -o twistcli \

@@ -7,7 +7,7 @@ This endpoint maps to the CSV hyperlink in **Monitor > Compliance > Images > Reg
 Refer to the following cURL command that generates a CSV file containing the scan reports:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

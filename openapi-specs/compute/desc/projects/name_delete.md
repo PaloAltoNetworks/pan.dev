@@ -6,7 +6,7 @@ The value for `<PROJECT_NAME>` can be retrieved from the `_id` field in the resp
 The DELETE method returns the decommissioned supervisor's admin username and password.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -X DELETE \
   https://<CONSOLE>:8083/api/v1/projects/<PROJECT_NAME>

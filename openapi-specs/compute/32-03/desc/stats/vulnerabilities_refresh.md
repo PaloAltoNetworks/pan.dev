@@ -5,7 +5,7 @@ The response will return exactly what the /statistics/vulnerabilities endpoint r
 The following example command that uses curl and basic auth to refresh vulnerability statistics:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

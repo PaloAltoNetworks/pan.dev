@@ -9,7 +9,7 @@ Gets the Cloud Controller Addresses of scanned Tanzu Application Service (TAS) d
 The following cURL command retrieves the Cloud Controller Addresses of scanned TAS droplets.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

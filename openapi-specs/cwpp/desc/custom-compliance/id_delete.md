@@ -7,7 +7,7 @@ This endpoint maps to **Defend > Compliance > Custom** in the Console UI.
 Refer to the following example cURL command that uses basic auth to delete the compliance check with id 9000:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

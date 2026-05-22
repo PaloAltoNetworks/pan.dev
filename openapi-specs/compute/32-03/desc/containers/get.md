@@ -16,7 +16,7 @@ Refer to the following available options for the `fields` query parameters:
 Refer to the following example cURL command that retrieves a scan report for all containers:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -26,7 +26,7 @@ $ curl -k \
 Refer to the following example cURL command that retrieves a scan report for a container with the collection `<COLLECTION ID>`:
 
 ```
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

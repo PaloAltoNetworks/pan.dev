@@ -5,7 +5,7 @@ Please note the data structure returned from endpoint /settings/secrets GET to s
 Refer to the following example curl command that adds a CyberArk secret store to the console with the appID set to `Prisma_Cloud_Compute_Console` and set the URL to `https://services-myca.twistlock.com:10882`:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

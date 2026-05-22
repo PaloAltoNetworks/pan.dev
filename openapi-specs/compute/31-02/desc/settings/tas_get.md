@@ -5,7 +5,7 @@ Retrieves Tanzu Application Service (TAS) settings.
 Refer to the following example cURL command that retrieves all TAS settings:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

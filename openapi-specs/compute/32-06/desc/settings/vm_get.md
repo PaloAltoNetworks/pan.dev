@@ -7,7 +7,7 @@ This endpoint maps to the **VM images scope** table data in the **Defend > Vulne
 Refer to the following example cURL command that retrieves all the scopes used for pattern matching on VM functions:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

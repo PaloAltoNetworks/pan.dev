@@ -1,7 +1,7 @@
 Returns a list of capabilities used in host models.  
 
 ```bash
-   $ curl -k \
+   $ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

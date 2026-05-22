@@ -4,7 +4,7 @@ Returns all activities that were alerted or blocked by Defender functioning as O
 Refer to the following example cURL command that gives a list of all admission audit events:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

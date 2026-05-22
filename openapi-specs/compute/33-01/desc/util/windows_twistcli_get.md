@@ -7,7 +7,7 @@ This endpoint maps to the **Windows platform** hyperlink in **Manage > System > 
 The following cURL command downloads the twistcli binary executable for Windows platforms.
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -L \
   -o twistcli.exe \

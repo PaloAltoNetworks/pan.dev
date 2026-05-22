@@ -5,7 +5,7 @@ _**Note:**_ The query parameters `issueType` is not supported for this API endpo
 A curl command to access this endpoint may resemble the following code snippet:
 
 ```bash
-$ curl -k \
+$ curl \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
