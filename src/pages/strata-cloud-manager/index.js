@@ -77,6 +77,38 @@ export default function SCMLandingPage() {
           label: "Subscription Service",
           icon: "api-doc",
         },
+        {
+          to: "scm/api/terraform/getting-started",
+          label: "Strata Cloud Manager Terrraform Provider",
+          icon: "api-doc",
+        },
+      ],
+    },
+    {
+      label: "Strata Cloud Manager Terraform Provider",
+      description: "",
+      docs: [
+        {
+          to: "scm/docs/terraform/getting-started",
+          label: "Strata Cloud Manager Terraform Provider",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/docs/terraform/import-scm-snippets-to-terraform",
+          label: "Import Strata Cloud Manager Snippets to Terraform",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/docs/terraform/strata-cloud-manager-terraform-provider-faqs",
+          label: "Strata Cloud Manager Terraform Provider FAQs",
+          icon: "api-doc",
+        },
+        {
+          to: "scm/docs/terraform/terraform-troubleshooting",
+          label:
+            "Strata Cloud Manager Terraform Provider Troubleshooting Guide",
+          icon: "api-doc",
+        },
       ],
     },
     {
