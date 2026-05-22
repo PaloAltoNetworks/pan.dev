@@ -915,7 +915,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-adnsr": {
-            specPath: "openapi-specs/scm/config/adnsr/adnsr",
+            specPath: "openapi-specs/scm/config/adnsr",
             outputDir: "products/scm/api/config/adnsr",
             sidebarOptions: { groupPathsBy: "tag" },
           },
