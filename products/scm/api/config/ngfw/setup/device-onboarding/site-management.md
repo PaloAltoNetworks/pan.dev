@@ -36,7 +36,7 @@ Onboarding rules define the automation logic for device provisioning, including 
 
 ## Site Groups APIs
 
-Site Groups are organizational containers that group related sites together and control how they participate in the onboarding workflow. Each site group can be configured to expose sites to ZTP-based onboarding, device onboarding, or both. Sites are assigned to a site group at creation time, and onboarding rules use the site group as part of their match criteria to determine which rule applies to a given device. The Site Groups APIs allow you to create, retrieve, update, and delete site group definitions.
+Site Groups are organizational containers that group related sites together and control how they participate in the onboarding workflow.Sites are assigned to a site group at creation time, and onboarding rules use the site group as part of their match criteria to determine which rule applies to a given device. The Site Groups APIs allow you to create, retrieve, update, and delete site group definitions.
 
 ## Variable Resolution Rules
 
