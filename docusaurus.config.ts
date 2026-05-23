@@ -814,6 +814,11 @@ const config = {
             outputDir: "products/scm/api/config/sase/setup",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-sase-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/sase/setup/device-onboarding",
+            outputDir: "products/scm/api/config/sase/setup/device-onboarding",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-sase-deployment": {
             specPath: "openapi-specs/scm/config/sase/deployment",
             outputDir: "products/scm/api/config/sase/deployment",
@@ -854,6 +859,11 @@ const config = {
             outputDir: "products/scm/api/config/ngfw/setup",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-ngfw-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/ngfw/setup/device-onboarding",
+            outputDir: "products/scm/api/config/ngfw/setup/device-onboarding",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-identity": {
             specPath: "openapi-specs/scm/config/ngfw/identity",
             outputDir: "products/scm/api/config/ngfw/identity",
@@ -887,6 +897,11 @@ const config = {
           "config-cloudngfw-setup": {
             specPath: "openapi-specs/scm/config/cloudngfw/setup",
             outputDir: "products/scm/api/config/cloudngfw/setup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cloudngfw-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/cloudngfw/setup/device-onboarding",
+            outputDir: "products/scm/api/config/cloudngfw/setup/device-onboarding",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-cloudngfw-identity": {
