@@ -192,17 +192,17 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        "Advanced DNS Security Resolver": [
-          {
-            to: "scm/api/config/adnsr/introduction-adnsr",
-            label: "Advanced DNS Security Resolver",
-            icon: "api-doc",
-          },
-        ],
         Incidents: [
           {
             to: "scm/api/config/incidents/incident-scm",
             label: "Incidents API",
+            icon: "api-doc",
+          },
+        ],
+        "Advanced DNS Security Resolver": [
+          {
+            to: "scm/api/config/adnsr/introduction-adnsr",
+            label: "Advanced DNS Security Resolver API",
             icon: "api-doc",
           },
         ],

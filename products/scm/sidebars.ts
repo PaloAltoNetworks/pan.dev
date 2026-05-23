@@ -124,14 +124,6 @@ module.exports = {
               id: "scm/api/config/sase/setup/snippet-sharing",
             },
             require("./api/config/sase/setup/sidebar"),
-            {
-              "type": "category",
-              "label": "Device Onboarding",
-              "collapsed": true,
-              "items": [
-                require("./api/config/sase/setup/device-onboarding/sidebar"),
-              ]
-            },
           ],
         },
         {
@@ -230,19 +222,7 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
-            {
-              type: "doc",
-              id: "scm/api/config/ngfw/setup/device-onboarding/site-management",
-            },
             require("./api/config/ngfw/setup/sidebar"),
-            {
-              "type": "category",
-              "label": "Device Onboarding",
-              "collapsed": true,
-              "items": [
-                require("./api/config/ngfw/setup/device-onboarding/sidebar"),
-              ]
-            },
           ],
         },
         {
@@ -327,13 +307,20 @@ module.exports = {
           type: "category",
           label: "Checks",
           collapsed: true,
-          items: [require("./api/config/posture-management/sidebar")],
+          items: [
+            {
+              type: "category",
+              label: "Reports",
+              collapsed: true,
+              items: [require("./api/config/posture-management/sidebar")],
+            },
+          ],
         },
       ],
     },
     {
       type: "category",
-      label: "Advanced DNS Security Resolver API",
+      label: "Advanced DNS Security Resolver Configuration",
       collapsed: true,
       items: [
         {
@@ -373,14 +360,6 @@ module.exports = {
               id: "scm/api/config/cloudngfw/setup/snippet-sharing",
             },
             require("./api/config/cloudngfw/setup/sidebar"),
-            {
-              "type": "category",
-              "label": "Device Onboarding",
-              "collapsed": true,
-              "items": [
-                require("./api/config/cloudngfw/setup/device-onboarding/sidebar"),
-              ]
-            },
           ],
         },
         {
