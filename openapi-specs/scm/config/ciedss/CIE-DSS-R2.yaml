@@ -5,11 +5,13 @@ info:
   description: "Use the CIE Directory Sync API to retrieve real-time user, group,\
     \ and domain information from your connected directories. \nThis guide provides\
     \ the details needed to integrate identity-aware context into your applications\
-    \ and security services. This Open API spec file was created on October 21, 2025.\
-    \ \xA9 2025 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
+    \ and security services. This Open API spec file was created on May 23, 2026.\
+    \ \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered trademark\
     \ of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
     \ All other marks mentioned herein may be trademarks of their respective companies."
   server: https://api.sase.paloaltonetworks.com
+servers:
+- url: https://api.sase.paloaltonetworks.com
 components:
   schemas:
     pagination_params:
@@ -18,7 +20,7 @@ components:
       properties:
         pageNum:
           type: integer
-          description: Page number to retrieve (starting from page 1).
+          description: Page number to retrieve (starting from page-1).
           example: 1
         pageSz:
           type: integer
@@ -484,16 +486,18 @@ components:
                       error-message:
                         type: string
                         example: Internal Server Error
-ExternalTags: {}
+ExternalTags:
+  Directory Sync Service:
+    title: Directory Sync Service
+    description: Directory Sync Service
+    tags:
+    - Directory Sync Service
 paths:
-  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/domains:
+  /cie/directory-sync/v1/domains:
     get:
-      summary: Domain Details
-      description: "Retrieves a list of all domains configured for a specific CIE\
-        \ tenant within the Directory Sync Service (DSS). \nThis operation returns\
-        \ details for each of the tenant's configured domains, including its current\
-        \ status, the timestamp of the last successful synchronization, and object\
-        \ counts (such as users and groups)."
+      summary: Fetch domains from the CIE Directory Sync Service
+      description: Retrieve list of all domains and details specific to each of these
+        domains that are configured in the CIE Directory Sync Service.
       responses:
         '200':
           description: List of all domain metadata
@@ -524,18 +528,26 @@ paths:
       parameters: []
       tags:
       - Directory Sync Service
-  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/cache-users:
+  /cie/directory-sync/v1/cache-users:
     post:
-      summary: User Information
-      description: "Provides user related information for a domain present in Specific\
-        \ CIE tenant.\nThis endpoint supports several use cases by using different\
-        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
-        \          \n          Use this endpoint to:\n            - **list_all_users_in_domain**:\
-        \ List all users within a specific domain.\n            - **list_specific_users**:\
-        \ Find specific users by filtering on attributes like name or email.\n   \
-        \         - **list_users_in_particular_group**: Get all users who are members\
-        \ of a specific group.\n            - **check_group_membership**: Check if\
-        \ a user is a member of a particular group."
+      summary: Fetch user information from the CIE Directory Sync Service across multiple
+        scenarios.
+      description: 'This endpoint retrieves user data from the CIE Directory Sync
+        Service for different scenarios/use-cases. Optional pagination parameters
+        can be used. Choose the payload schema that matches your use case:
+
+
+        - **list_all_users_in_domain**: Retrieve all users in a domain.
+
+        - **list_specific_users**: Retrieve specific users matching a name-based filter
+        in a domain. Supports filtering of users based on specific attributes and
+        values (similar to the WHERE clause in SQL).
+
+        - **list_users_in_particular_group**: Retrieve users belonging to a specified
+        group, filtered using the group-based filter
+
+        - **check_group_membership**: Check if a specific user belongs to a specified
+        group.'
       responses:
         '200':
           description: Returns an array of user objects matching the query.
@@ -602,17 +614,27 @@ paths:
               - $ref: '#/components/schemas/list_specific_users'
               - $ref: '#/components/schemas/list_users_in_particular_group'
               - $ref: '#/components/schemas/check_group_membership'
-  https://api.sase.paloaltonetworks.com/cie/directory-sync/v1/cache-groups:
+  /cie/directory-sync/v1/cache-groups:
     post:
-      summary: Group Information
-      description: "Provides group related information for a domain present in a specific\
-        \ CIE tenant. \nThis endpoint supports several use cases by using different\
-        \ request payloads. \nIt also supports pagination to manage large result sets.\n\
-        \nUse this endpoint to:\n- **list_all_groups_in_domain**: List all groups\
-        \ within a specific domain.\n- **list_specific_groups**: Find specific groups\
-        \ by filtering on attributes like name.\n- **list_groups_user_belongs_to**:\
-        \ Get all groups that a specific user belongs to.\n- **check_user_in_particular_group**:\
-        \ Check if a group contains a particular user."
+      summary: Fetch group information from the CIE Directory Sync Service across
+        multiple scenarios.
+      description: 'This endpoint retrieves group data from the CIE Directory Sync
+        Service under various conditions. Optional pagination parameters can be used.
+        Choose the payload schema that matches your use case:
+
+
+        - **list_all_groups_in_domain**: Retrieve all groups in a domain.
+
+        - **list_specific_groups**: Retrieve specific groups matching a name-based
+        filter. Supports filtering of groups based on specific attributes and values
+        (similar to the WHERE clause in SQL).
+
+        - **list_groups_user_belongs_to**: Retrieve all groups containing specific
+        users based on user-filter
+
+        - **check_user_in_particular_group**: Check if a specific group has a particular
+        user in it, filtered using attribute-based filter (to filter the user) and
+        group-based filter (to filter the group).'
       responses:
         '200':
           description: Returns an array of group objects matching the query.
@@ -678,3 +700,75 @@ paths:
               - $ref: '#/components/schemas/list_specific_groups'
               - $ref: '#/components/schemas/list_groups_user_belongs_to'
               - $ref: '#/components/schemas/check_user_in_particular_group'
+  /cie/directory-sync/v1/connection/update-secret:
+    post:
+      summary: Update directory connection client secret
+      description: 'Updates the client secret for an existing directory connection
+        using the Client Credential Flow (CCF) in the CIE Directory Sync Service.
+
+
+        The tenant is automatically identified from the JWT token in the request.'
+      responses:
+        '200':
+          description: Secret updated successfully
+          content:
+            application/json:
+              example:
+                success: true
+                result: true
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '404':
+          description: Directory not found
+          content:
+            application/json:
+              example:
+                success: true
+                result:
+                  error:
+                    error-message: Directory b7e3a1f4-2c9d-4e6b-8a05-d3f7c2e91b40
+                      not found
+        '421':
+          description: Invalid provider value
+          content:
+            application/json:
+              example:
+                success: true
+                result:
+                  error:
+                    error-message: 'provider must be one of: aad, aad_gov, aad_cn,
+                      okta'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Directory Sync Service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - directoryId
+              - provider
+              - client_secret
+              properties:
+                directoryId:
+                  type: string
+                  description: The unique identifier of the directory connection to
+                    update
+                  example: b7e3a1f4-2c9d-4e6b-8a05-d3f7c2e91b40
+                provider:
+                  type: string
+                  description: The directory provider type
+                  enum:
+                  - aad
+                  - aad_gov
+                  - aad_cn
+                  - okta
+                  example: aad
+                client_secret:
+                  type: string
+                  description: The new client secret to set for the directory connection
+                  example: my-new-client-secret
