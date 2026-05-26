@@ -97,6 +97,30 @@ module.exports = {
     },
     {
       type: "category",
+      label: "SCM Terraform",
+      collapsed: true,
+      items: [
+           {
+              type: "doc",
+              id: "scm/docs/terraform/getting-started",
+            },
+            {
+              type: "doc",
+              id: "scm/docs/terraform/import-scm-snippets-to-terraform",
+            },
+            {
+              type: "doc",
+              id: "scm/docs/terraform/strata-cloud-manager-terraform-provider-faqs",
+            },
+            {
+              type: "doc",
+              id: "scm/docs/terraform/terraform-troubleshooting",
+            },
+      ],
+    },  
+                 
+    {
+      type: "category",
       label: "SASE Configuration",
       collapsed: true,
       items: [

@@ -18,7 +18,7 @@ However, when an issue arises, it can be frustrating. This guide covers the most
 
 ### Problem
 
-![Image 1](../../../static/scm-terraform/terraform-troubleshooting-p1-img1.png)
+![Image 1](/scm-terraform/terraform-troubleshooting-p1-img1.png)
 
 Terraform fails immediately with an "Invalid client – Client Authentication Failed" error. This error occurs before any resource is created or modified, indicating that the provider can't establish an authenticated session with the Strata Cloud Manager API.
 
@@ -47,7 +47,7 @@ A successful response looks like:
 {"access_token":"eyJ...","token_type":"Bearer","expires_in":899}
 ```
 
-![Image 2](../../../static/scm-terraform/terraform-troubleshooting-p2-img2.png)
+![Image 2](/scm-terraform/terraform-troubleshooting-p2-img2.png)
 
 A failed response looks like:
 
@@ -67,15 +67,15 @@ If the curl request fails, it indicates an issue with the credentials—continue
 
    a. Select **Settings > Identity & Access > Service Accounts** in Strata Cloud Manager.
 
-![Image 3](../../../static/scm-terraform/terraform-troubleshooting-p3-img3.png)
+![Image 3](/scm-terraform/terraform-troubleshooting-p3-img3.png)
 
    b. Select the service account associated with your Client ID. Then, click **Next**.
 
    c. Click **Reset Client Secret**. Then, download and save the Client Credentials. Click **Next**.
 
-![Image 4](../../../static/scm-terraform/terraform-troubleshooting-p4-img4.png)
+![Image 4](/scm-terraform/terraform-troubleshooting-p4-img4.png)
 
-![Image 5](../../../static/scm-terraform/terraform-troubleshooting-p4-img5.png)
+![Image 5](/scm-terraform/terraform-troubleshooting-p4-img5.png)
 
    d. Click **Submit**.
 
@@ -83,9 +83,9 @@ If the curl request fails, it indicates an issue with the credentials—continue
 
    f. Update the credentials everywhere they are stored: Terraform variable files, your CI/CD secret store (Vault, AWS Secrets Manager, GitHub Actions secrets), and any other integrations that use the same service account.
 
-![Image 6](../../../static/scm-terraform/terraform-troubleshooting-p5-img6.png)
+![Image 6](/scm-terraform/terraform-troubleshooting-p5-img6.png)
 
-![Image 7](../../../static/scm-terraform/terraform-troubleshooting-p5-img7.png)
+![Image 7](/scm-terraform/terraform-troubleshooting-p5-img7.png)
 
 4. **Check Your Provider Block:** Verify your provider block contains all required authentication fields:
 
@@ -116,7 +116,7 @@ Terraform returns local validation errors such as:
 - "Missing required argument"
 - "An argument named 'X' is not expected here"
 
-![Image 8](../../../static/scm-terraform/terraform-troubleshooting-p6-img8.png)
+![Image 8](/scm-terraform/terraform-troubleshooting-p6-img8.png)
 
 - "Invalid value for 'X'"
 
@@ -135,9 +135,9 @@ These errors occur during the validation phase, before any API calls are made, a
 1. **Run a Local Validation Check:** Catch syntax and schema errors early by running `terraform validate`. This command checks your `.tf` files for structural validity and points out exactly which lines contain unrecognized arguments.
 2. **Verify Against the Official Schema:** Compare your failing resource block(s) against the Official Strata Cloud Manager Terraform Provider Documentation. Confirm all required attributes are present, data types are correct (for example, lists versus strings), and your spelling matches the documented examples exactly.
 
-![Image 9](../../../static/scm-terraform/terraform-troubleshooting-p7-img9.png)
+![Image 9](/scm-terraform/terraform-troubleshooting-p7-img9.png)
 
-![Image 10](../../../static/scm-terraform/terraform-troubleshooting-p7-img10.png)
+![Image 10](/scm-terraform/terraform-troubleshooting-p7-img10.png)
 
 3. **Check Your Provider Version:** If you are trying to use a newly released attribute, your local provider version might be outdated. Run `terraform version` to check your current setup, then compare it against the Strata Cloud Manager Terraform Registry to ensure that specific attribute is supported in your installed version.
 
@@ -151,9 +151,9 @@ Terraform fails during plan or apply with errors such as:
 - "Resource Listing Failed: API Request Failed"
 - "Resource Get Failed: API Request Failed"
 
-![Image 11](../../../static/scm-terraform/terraform-troubleshooting-p8-img11.png)
+![Image 11](/scm-terraform/terraform-troubleshooting-p8-img11.png)
 
-![Image 12](../../../static/scm-terraform/terraform-troubleshooting-p8-img12.png)
+![Image 12](/scm-terraform/terraform-troubleshooting-p8-img12.png)
 
 These errors mean the object was never present in Strata Cloud Manager to begin with, or the name in your configuration doesn't match what exists.
 
@@ -171,7 +171,7 @@ These errors mean the object was never present in Strata Cloud Manager to begin 
 2. **Create the Object if It Doesn't Exist:** If the object isn't present in Strata Cloud Manager, define it in your Terraform configuration and apply. If the missing object is a parent resource (such as a folder), ensure it is either:
    - Already created in Strata Cloud Manager, or
 
-![Image 13](../../../static/scm-terraform/terraform-troubleshooting-p9-img13.png)
+![Image 13](/scm-terraform/terraform-troubleshooting-p9-img13.png)
 
    - Defined in your configuration and properly referenced by dependent resources with implicit references. This ensures Terraform creates resources in the correct order.
 
@@ -219,9 +219,9 @@ This issue occurs when Terraform's state file no longer matches the actual state
    - **No Changes:** Your Terraform code already matches what exists.
    - **Differences Shown:** Your `.tf` file and the real Strata Cloud Manager object aren't aligned.
 
-![Image 14](../../../static/scm-terraform/terraform-troubleshooting-p11-img14.png)
+![Image 14](/scm-terraform/terraform-troubleshooting-p11-img14.png)
 
-![Image 15](../../../static/scm-terraform/terraform-troubleshooting-p11-img15.png)
+![Image 15](/scm-terraform/terraform-troubleshooting-p11-img15.png)
 
 If differences appear, update your `.tf` file so it matches the actual resource, then run `terraform apply` to ensure Terraform fully manages it going forward.
 

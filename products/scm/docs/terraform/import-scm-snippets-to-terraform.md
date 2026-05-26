@@ -8,7 +8,7 @@ keywords:
   - API
 ---
 
-![Image 1](../../../static/scm-terraform/import-scm-snippets-to-terraform-p1-img1.png)
+![Image 1](/scm-terraform/import-scm-snippets-to-terraform-p1-img1.png)
 
 ## Step 1: Create a Service Account
 
@@ -21,9 +21,9 @@ To create a service account:
 3. Choose **Service Account** as the Identity Type, complete the required fields, and then click **Next**.
 4. Download and save the Client Credentials. Click **Next**.
 
-![Image 2](../../../static/scm-terraform/import-scm-snippets-to-terraform-p2-img2.png)
+![Image 2](/scm-terraform/import-scm-snippets-to-terraform-p2-img2.png)
 
-![Image 3](../../../static/scm-terraform/import-scm-snippets-to-terraform-p2-img3.png)
+![Image 3](/scm-terraform/import-scm-snippets-to-terraform-p2-img3.png)
 
 5. Assign a role to your service account, ensuring you grant only the minimum permissions necessary for your needs. Then, click **Submit**.
 
@@ -32,9 +32,9 @@ To create a service account:
 1. Create a `provider.tf` file in your local project directory.
 2. Copy the Configuration Block from the Strata Cloud Manager Terraform Registry. This defines the provider source and version, while providing a placeholder for your connection details.
 
-![Image 4](../../../static/scm-terraform/import-scm-snippets-to-terraform-p3-img4.png)
+![Image 4](/scm-terraform/import-scm-snippets-to-terraform-p3-img4.png)
 
-![Image 5](../../../static/scm-terraform/import-scm-snippets-to-terraform-p3-img5.png)
+![Image 5](/scm-terraform/import-scm-snippets-to-terraform-p3-img5.png)
 
 3. Paste the block into your `provider.tf` file.
 
@@ -62,7 +62,7 @@ Once your provider is configured, save the file and run `terraform init` to init
 
 To import the snippet that was recently migrated from Panorama to Strata Cloud Manager into your Terraform state, you need its unique ID. You can retrieve this ID using two methods: natively through a Terraform data source, or by querying the API using Postman.
 
-![Image 6](../../../static/scm-terraform/import-scm-snippets-to-terraform-p4-img6.png)
+![Image 6](/scm-terraform/import-scm-snippets-to-terraform-p4-img6.png)
 
 ### Method A: Using a Terraform Data Source
 
@@ -72,18 +72,18 @@ Using a data source is the native way to fetch information about existing infras
 2. **Consult the Registry:** Search for the `scm_snippet_list` data source in the Official Terraform Registry.
 3. **Configure the Data Source:** Copy the data source block from the registry documentation and paste it into your `scm_snippet_list.tf` file. It includes the data source and an output block to display the retrieved data.
 
-![Image 7](../../../static/scm-terraform/import-scm-snippets-to-terraform-p5-img7.png)
+![Image 7](/scm-terraform/import-scm-snippets-to-terraform-p5-img7.png)
 
-![Image 8](../../../static/scm-terraform/import-scm-snippets-to-terraform-p5-img8.png)
+![Image 8](/scm-terraform/import-scm-snippets-to-terraform-p5-img8.png)
 
 > **Tip:** You can increase the `limit = 10` value if you have a large number of snippets and need to retrieve more results.
 
 4. **Execute the Code:** Run `terraform apply` to display the output.
 5. **Copy the ID:** Once the command completes, locate your target snippet within the output and copy the corresponding ID value.
 
-![Image 9](../../../static/scm-terraform/import-scm-snippets-to-terraform-p6-img9.png)
+![Image 9](/scm-terraform/import-scm-snippets-to-terraform-p6-img9.png)
 
-![Image 10](../../../static/scm-terraform/import-scm-snippets-to-terraform-p6-img10.png)
+![Image 10](/scm-terraform/import-scm-snippets-to-terraform-p6-img10.png)
 
 ### Method B: Using Postman
 
@@ -92,16 +92,16 @@ If you prefer to find the ID outside of Terraform, you can query the API directl
 1. **Create a New Request:** Open Postman and create a new HTTP request. Set the HTTP method to GET.
 2. **Enter the Endpoint:** In the URL field, enter the API endpoint used to list your snippets: `https://api.strata.paloaltonetworks.com/config/setup/v1/snippets`. You can find complete details on the List Snippets page on pan.dev.
 
-![Image 11](../../../static/scm-terraform/import-scm-snippets-to-terraform-p7-img11.png)
+![Image 11](/scm-terraform/import-scm-snippets-to-terraform-p7-img11.png)
 
-![Image 12](../../../static/scm-terraform/import-scm-snippets-to-terraform-p7-img12.png)
+![Image 12](/scm-terraform/import-scm-snippets-to-terraform-p7-img12.png)
 
 3. **Configure Authorization:** Select the **Authorization** tab and enter your Bearer Token to authenticate your request.
 4. **Send the Request:** Click **Send** to execute the API call.
 
-![Image 13](../../../static/scm-terraform/import-scm-snippets-to-terraform-p8-img13.png)
+![Image 13](/scm-terraform/import-scm-snippets-to-terraform-p8-img13.png)
 
-![Image 14](../../../static/scm-terraform/import-scm-snippets-to-terraform-p8-img14.png)
+![Image 14](/scm-terraform/import-scm-snippets-to-terraform-p8-img14.png)
 
 5. **Copy the ID:** In the response pane at the bottom, review the returned JSON payload. Locate your target snippet within the list and copy the corresponding ID value.
 
@@ -109,9 +109,9 @@ If you prefer to find the ID outside of Terraform, you can query the API directl
 
 1. **Prepare the Configuration:** Create an empty resource block in your `.tf` file to serve as a placeholder.
 
-![Image 15](../../../static/scm-terraform/import-scm-snippets-to-terraform-p9-img15.png)
+![Image 15](/scm-terraform/import-scm-snippets-to-terraform-p9-img15.png)
 
-![Image 16](../../../static/scm-terraform/import-scm-snippets-to-terraform-p9-img16.png)
+![Image 16](/scm-terraform/import-scm-snippets-to-terraform-p9-img16.png)
 
 2. **Execute Import Command:** Run `terraform import scm_snippet.[Resource Name] [Scope Name]:::[ID of Object]` to pull the existing snippet into your state.
 
@@ -142,7 +142,7 @@ TSG_ID        = "<YOUR_TSG_ID>"
 
 3. In your terminal, go to your Terraform project directory and run `python3 import_snippet_script.py`.
 
-![Image 17](../../../static/scm-terraform/import-scm-snippets-to-terraform-p10-img17.png)
+![Image 17](/scm-terraform/import-scm-snippets-to-terraform-p10-img17.png)
 
 ```python
 import os
