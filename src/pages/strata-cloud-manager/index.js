@@ -199,6 +199,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        "Advanced DNS Security Resolver": [
+          {
+            to: "scm/api/config/adnsr/introduction-adnsr",
+            label: "Advanced DNS Security Resolver API",
+            icon: "api-doc",
+          },
+        ],
         "Other Configuration": [
           {
             to: "/access/api/browser-mgmt/browser-mgmt-api",
