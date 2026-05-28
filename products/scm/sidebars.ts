@@ -312,12 +312,25 @@ module.exports = {
               type: "category",
               label: "Reports",
               collapsed: true,
-              items: [
-                require("./api/config/posture-management/sidebar")
+              items:
+                [require("./api/config/posture-management/sidebar")
               ],
             },
           ],
         },
+      ],
+    },
+    {
+      type: "category",
+      label: "Advanced DNS Security Resolver Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          label: "Introduction",
+          id: "scm/api/config/adnsr/introduction-adnsr",
+        },
+        require("./api/config/adnsr/sidebar"),
       ],
     },
     {

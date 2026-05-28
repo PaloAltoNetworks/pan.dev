@@ -934,6 +934,11 @@ const config = {
             outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-adnsr": {
+            specPath: "openapi-specs/scm/config/adnsr",
+            outputDir: "products/scm/api/config/adnsr",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           adem: {
             specPath: "openapi-specs/access/adem",
             outputDir: "products/access/api/adem",
