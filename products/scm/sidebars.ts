@@ -308,15 +308,9 @@ module.exports = {
           type: "category",
           label: "Checks",
           collapsed: true,
-          items: [
-            {
-              type: "category",
-              label: "Reports",
-              collapsed: true,
-              items:
-                [require("./api/config/posture-management/sidebar")
-              ],
-            },
+          items: 
+          [
+            require("./api/config/posture-management/sidebar")
           ],
         },
       ],
