@@ -120,6 +120,42 @@ module.exports = {
       ],
     },
   ],
+  
+  terraformscm: [
+    {
+      type: "category",
+      collapsed: false,
+      label: "Strata Cloud Manager Terraform",
+      items: [
+        "terraform/docs/scm/getting-started/introduction", 
+        {
+          type: "category",
+          collapsed: true,
+          label: "Troubleshooting",
+          items: [
+            "terraform/docs/scm/troubleshooting/strata-cloud-manager-terraform-provider-faqs",
+            "terraform/docs/scm/troubleshooting/terraform-troubleshooting"
+          ],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Reference",
+          items: ["terraform/docs/scm/reference/provider"],
+    },
+        {
+          type: "category",
+          collapsed: true,
+          label: "Code Samples",
+          items: [
+            "terraform/docs/scm/code-samples/import-scm-snippets-to-terraform",
+          ],
+        },
+        
+      ],
+    },
+  ],
+
   terraform_swfw_aws: [
     "terraform/docs/swfw/aws/vmseries/overview",
     {
