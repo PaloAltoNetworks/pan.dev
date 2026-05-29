@@ -77,6 +77,11 @@ export default function SCMLandingPage() {
           label: "Subscription Service",
           icon: "api-doc",
         },
+        {
+          to: "terraform/docs/scm/getting-started/introduction",
+          label: "Strata Cloud Manager Terraform Provider",
+          icon: "api-doc",
+        },
       ],
     },
     {
