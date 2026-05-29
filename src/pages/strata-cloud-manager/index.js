@@ -190,6 +190,13 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
+        "NGFW Operations": [
+          {
+            to: "scm/api/config/ngfw-operations/introduction",
+            label: "NGFW Operations",
+            icon: "api-doc",
+          },
+        ],
         Posture: [
           {
             to: "scm/api/config/posture-management/introduction-posture",
@@ -201,6 +208,13 @@ export default function SCMLandingPage() {
           {
             to: "scm/api/config/incidents/incident-scm",
             label: "Incidents API",
+            icon: "api-doc",
+          },
+        ],
+        "Advanced DNS Security Resolver": [
+          {
+            to: "scm/api/config/adnsr/introduction-adnsr",
+            label: "Advanced DNS Security Resolver API",
             icon: "api-doc",
           },
         ],
