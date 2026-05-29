@@ -107,6 +107,26 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       },
     },
     {
+      title: "Strata Cloud Manager",
+      latestTag: "v1.0.11", // Update to the current latest tag for SCM
+      description:
+        "Manage your Strata Cloud Manager configuration and centralized network security policies as code using Terraform.",
+      cta: {
+        type: "double",
+        content: [
+          {
+            link: "https://registry.terraform.io/providers/PaloAltoNetworks/scm/latest/docs",
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo",
+          },
+          {
+            link: "/terraform/docs/scm/getting-started/introduction", // Update if your internal doc path is different
+            text: "Docs",
+          },
+        ],
+      },
+    },
+    {
       title: "Cloud NGFW",
       latestTag: "v2.0.1",
       description:

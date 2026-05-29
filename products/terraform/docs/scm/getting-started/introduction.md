@@ -1,7 +1,8 @@
 ---
-id: getting-started
+id: introduction
 title: Getting Started with the Strata Cloud Manager Terraform Provider
 sidebar_label: Getting Started
+slug: /terraform/docs/scm/getting-started/introduction
 keywords:
   - Terraform
   - Provider
