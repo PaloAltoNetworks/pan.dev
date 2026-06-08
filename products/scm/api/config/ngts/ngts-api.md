@@ -24,11 +24,15 @@ The NGTS REST API provides programmatic access to functionality that is availabl
 
 The REST API follows best practices in API design. For example, it uses JSON for encapsulating objects returned by the API, proper HTTP request verbs and status codes, and comprehensive error messages in failed requests to aid developers in diagnosing issues.
 
+:::info
+
 ## NGTS-specific behavior
 
 The `application(s)` and `team(s)` resources do not apply to Next-Gen Trust Security (NGTS). These fields remain in the schemas in this section for backward compatibility with Venafi Control Plane SaaS, but in NGTS they are ignored on request and are not populated in responses. You can safely omit them from NGTS requests.
 
 The NGTS API uses `/serviceaccount` endpoints to manage what the NGTS UI calls **Built-in Accounts**. The feature was renamed in the UI to avoid confusion with Strata Cloud Manager Service Accounts, but the API endpoint paths and field names were not changed. When you see `serviceaccount` in the API, it refers to NGTS Built-in Accounts, not Strata Cloud Manager Service Accounts.
+
+:::
 
 ## Common use cases
 
