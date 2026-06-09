@@ -141,8 +141,14 @@ module.exports = {
           type: "category",
           collapsed: true,
           label: "Reference",
-          items: ["terraform/docs/scm/reference/provider"],
-    },
+          items: ["terraform/docs/scm/reference/reference"],
+        },
+        {
+          type: "category",
+          collapsed: true,
+          label: "How To Guides",
+          items: ["terraform/docs/scm/how-to-guide/videos"],
+        },
         {
           type: "category",
           collapsed: true,
