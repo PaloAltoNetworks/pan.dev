@@ -45,7 +45,7 @@ export default function Home() {
                             Full API documentation with endpoint details, request/response formats, authentication,
                             error codes, and code samples for the Certificate Manager SaaS API.
                         </p>
-                        <Link to="/api-endpoints" className={styles.cardButton}>
+                        <Link to="/scm/api/config/ngts/ngts-api/" className={styles.cardButton}>
                             View API Reference Docs
                         </Link>
                     </div>
