@@ -967,9 +967,20 @@ const config = {
             },
           },
           mtmonitor: {
-            specPath: "openapi-specs/sase/mt-monitor",
+            specPath: "openapi-specs/sase/mt-monitor/2.0",
             outputDir: "products/sase/api/mt-monitor",
             sidebarOptions: { groupPathsBy: "tag" },
+            version: "2.0",
+            label: "v2.0",
+            baseUrl: "/sase/api/mt-monitor/",
+            versions: {
+              "1.0": {
+                specPath: "openapi-specs/sase/mt-monitor/1.0",
+                outputDir: "products/sase/api/mt-monitor/1.0",
+                label: "v1.0",
+                baseUrl: "/sase/api/mt-monitor/1.0/",
+              },
+            },
           },
           mtnotifications: {
             specPath: "openapi-specs/sase/mt-notifications",
