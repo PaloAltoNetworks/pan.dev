@@ -1,0 +1,306 @@
+---
+id: firefly-config-yaml-reference
+title: "Local configuration reference"
+sidebar_label: "Local configuration reference"
+keywords:
+  - Machine Identity Management
+  - Workload Identity Manager
+---
+
+## Introduction
+
+In order for CyberArk *Workload Identity Manager* (formerly known as *Firefly*) to start it must be given a `config.yaml` file that provides it with settings that specify how it will behave.  
+
+### Operational Modes
+
+| Name | Description |
+|---|---|
+| Developer | An unmanaged and not-for-production mode that is well-suited for development and evaluation purposes.  **Developer Mode** offers the same deployment and client experience but is untrusted and insecure by design.<br/><br/>*Workload Identity Manager* **Developer Mode** is free to use and not accompanied by any support from CyberArk. |
+| SaaS Control Plane | A secure, production-ready mode that is managed by the [CyberArk Machine Identity Security](https://www.cyberark.com/products/machine-identity-security/) Control Plane.  **SaaS Control Plane Mode** allows security teams to be responsible for machine identity policies, distribute enterprise trust, and have visibility into *Workload Identity Manager* issuance activity while allowing platform engineers and developers to be responsible for *Workload Identity Manager* deployments and their availability to clients.<br/><br/>*Workload Identity Manager* **SaaS Control Plane Mode** is as an add-on to [CyberArk Certificate Manager](https://www.cyberark.com/products/certificate-manager/).  Click [here](https://www.cyberark.com/try-buy/workload-identity-manager-trial/) to sign-up for a free trial. |
+| Self-Hosted Control Plane | A secure, production-ready mode that is managed by the [CyberArk Machine Identity Security](https://www.cyberark.com/products/machine-identity-security/) Control Plane.  Like SaaS Control Plane Mode, **Self-Hosted Control Plane Mode** allows security teams to be responsible for machine identity policies and distribute enterprise trust while allowing platform engineers and developers to be responsible for *Workload Identity Manager* deployments and their availability to clients. This mode is intended for customers who have [CyberArk Certificate Manager, Self-Hosted](https://www.cyberark.com/products/certificate-manager/) (formerly known as Venafi TLS Protect DataCenter, and as Venafi Trust Protection Platform) and who are unable to benefit from the SaaS Control Plane.<br/><br/>*Workload Identity Manager* **Self-Hosted Control Plane Mode** is as an add-on to [CyberArk Certificate Manager](https://www.cyberark.com/products/certificate-manager/). |
+
+## Bootstrap Section
+
+*Workload Identity Manager* can obtain its CA certificate four ways, two that are production-ready and two that are not. **SaaS Control Plane Mode** (`vaas`) and **Self-Hosted Control Plane Mode** (`tpp`) support enterprise trusted certificates and governance by security teams.  **Developer Mode** can either generate an untrusted CA (`selfSigned`) or load an insecure CA from files (`file`).
+
+```yaml CA issued via SaaS Control Plane
+bootstrap:
+  vaas:
+    auth:
+      privateKeyFile: /etc/firefly/svc-acct.key
+      clientID: aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+    csr:
+      instanceNaming: My Enterprise Firefly
+    pkcs11:
+      clientLibraryPath: /path/to/hsm-client-pkcs11-lib.so
+    url: https://api.venafi.cloud
+```
+```yaml CA issued via Self-Hosted Control Plane
+bootstrap:
+  tpp:
+    configurationDN: \VED\Policy\Firefly\Configuration
+    connection:
+      inline:
+        url: https://tpp.example.com
+        accessToken:
+        - file:
+            path: /etc/firefly/tpp-creds.yaml
+            fields: [ "username", "password" ]
+        - tppOAuth:
+            authInputType: UsernamePassword
+            clientId: firefly
+#     reference:
+#       name: tpp-connection
+#       namespace: venafi
+    csr:
+      instanceNaming: My Enterprise Firefly
+    pkcs11:
+      clientLibraryPath: /path/to/hsm-client-pkcs11-lib.so
+```
+```yaml Self-Signed CA
+bootstrap:
+  selfSigned:
+    csr:
+      commonName: My Firefly
+      subject:
+        organizations:
+        - Example, Inc.
+      privateKey:
+        algorithm: ECDSA
+        size: 256
+      duration: 720h
+    trustRootDirectory: /etc/firefly/trust
+```
+```yaml CA from Certificate and Key files
+bootstrap:
+  file:
+    privateKeyFile: /etc/firefly/ca.key
+    certificateFile: /etc/firefly/ca.crt
+```
+
+<details>
+<summary>Parameter details for <i>CA issued via SaaS Control Plane</i></summary>
+
+| Parameter | Description |
+|-----------|-------------|
+| `auth` ||
+| <div style={{marginLeft: "10px"}}>`privateKeyFile`</div> | (Required) The full path within the *Workload Identity Manager* container to the file that contains the private key corresponding to the public key provided to the Control Plane for the service account. |
+| <div style={{marginLeft: "10px"}}>`clientID`</div> | (Required) The Client ID of the [service account](https://docs.venafi.cloud/firefly/service-accounts/) obtained from the Control Plane. |
+| `csr` ||
+| <div style={{marginLeft: "10px"}}>`instanceNaming`</div> | (Required) A name for the *Workload Identity Manager* instance (should be unique).  This, plus a suffix defined by the Control Plane SubCA provider, will be the common name of the *Workload Identity Manager* CA certificate.  Supports environment variable substitution using `{ENV_VAR_NAME}` syntax.  If the specified environment variable is set (has a value), that value will be substituted. |
+| `pkcs11` ||
+| <div style={{marginLeft: "10px"}}>`clientLibraryPath`</div> | The full path of the HSM client PKCS#11 library file Firefly will use when generating its key pair for signing certificates.  This requires the [firefly-pkcs11](https://dl.venafi.cloud/firefly/latest/firefly-pkcs11_linux_amd64.zip) binary.  It also requires that the [SubCA Provider](https://docs.venafi.cloud/firefly/sub-ca-providers/) of the [configuration](https://docs.venafi.cloud/firefly/configurations/) associated with the service account is set to "Require HSM" and that it specifies the Slot and PIN required for Firefly to access the HSM. |
+| `url` | The base URL of the Control Plane with which the *Workload Identity Manager* instance will interact.  Defaults to `https://api.venafi.cloud` (United States) if not specified.  Set to `https://api.venafi.eu` (European Union), `https://api.uk.venafi.cloud` (United Kingdom), or `https://api.au.venafi.cloud` (Australia) for tenants hosted in other regions. |
+</details>
+
+<details>
+<summary>Parameter details for <i>CA issued via Self-Hosted Control Plane</i></summary>
+
+| Parameter | Description |
+|-----------|-------------|
+| `configurationDN` | The distinguished name (DN) of the [Generic Credential object](https://docs.venafi.com/Docs/current/TopNav/Content/Credentials/t-credential-objects-creating.php) in the Control Plane that contains the security configuration for *Workload Identity Manager* to bootstrap. |
+| `connection` ||
+| <div style={{marginLeft: "10px"}}>`inline`</div> | (Required if `reference` is not specified) |
+| <div style={{marginLeft: "20px"}}>`accessToken`</div> ||
+| <div style={{marginLeft: "30px"}}>`file`</div> ||
+| <div style={{marginLeft: "40px"}}>`path`</div> | The full path to the YAML file containing the username/password the *Workload Identity Manager* instance will use to get an access token from the Control Plane. |
+| <div style={{marginLeft: "40px"}}>`fields`</div> | Value must be `[ "username", "password" ]` for username/password authentication. |
+| <div style={{marginLeft: "30px"}}>`tppOAuth`</div> ||
+| <div style={{marginLeft: "40px"}}>`authInputType`</div> | Value must be `UsernamePassword` for username/password authentication. |
+| <div style={{marginLeft: "40px"}}>`clientId`</div> | The Client ID of the [API integration](https://docs.venafi.com/Docs/current/TopNav/Content/API-ApplicationIntegration/c-APIAppIntegrations-about.php) obtained from the Control Plane. |
+| <div style={{marginLeft: "20px"}}>`url`</div> | The base URL of the Control Plane with which the *Workload Identity Manager* instance will interact. |
+| <div style={{marginLeft: "10px"}}>`reference`</div> | (Required if `inline` is not specified) |
+| <div style={{marginLeft: "20px"}}>`name`</div> | The name of the [VenafiConnection](https://docs.venafi.cloud/vaas/k8s-components/c-vc-overview/) Kubernetes resource the *Workload Identity Manager* pod will use to connect with the Control Plane. |
+| <div style={{marginLeft: "20px"}}>`namespace`</div> | The namespace in which the [VenafiConnection](https://docs.venafi.cloud/vaas/k8s-components/c-vc-overview/) Kubernetes resource resides. |
+| `csr` ||
+| <div style={{marginLeft: "10px"}}>`instanceNaming`</div> | (Required) A name for the *Workload Identity Manager* instance (should be unique).  This, plus a suffix defined by the Control Plane SubCA provider, will be the common name of the *Workload Identity Manager* CA certificate.  Supports environment variable substitution using `{ENV_VAR_NAME}` syntax.  If the specified environment variable is set (has a value), that value will be substituted. |
+| `pkcs11` ||
+| <div style={{marginLeft: "10px"}}>`clientLibraryPath`</div> | The full path of the HSM client PKCS#11 library file *Workload Identity Manager* will use when generating its key pair for signing certificates.  This requires the [firefly-pkcs11](https://dl.venafi.cloud/firefly/latest/firefly-pkcs11_linux_amd64.zip) binary.  It also requires that the [SubCA Provider](https://docs.venafi.cloud/firefly/sub-ca-providers/) of the [configuration](https://docs.venafi.cloud/firefly/configurations/) associated with the service account is set to "Require HSM" and that it specifies the Slot and PIN required for *Workload Identity Manager* to access the HSM. |
+</details>
+
+<details>
+<summary>Parameter details for <i>Self-Signed CA</i></summary>
+
+| Parameter | Description |
+|-----------|-------------|
+| `csr` ||
+| <div style={{marginLeft: "10px"}}>`commonName`</div> | (Required) The common name of the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "10px"}}>`subject`</div> ||
+| <div style={{marginLeft: "20px"}}>`organizations`</div> | One or more organization (O) values to appear in the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "20px"}}>`organizationalUnits`</div> | One or more organizational unit (OU) values to appear in the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "20px"}}>`localities`</div> | One or more locality/city (L) values to appear in the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "20px"}}>`provinces`</div> | One or more state/province (ST) values to appear in the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "20px"}}>`countries`</div> | One or more country (C) values to appear in the *Workload Identity Manager* CA certificate. |
+| <div style={{marginLeft: "10px"}}>`privateKey`</div> ||
+| <div style={{marginLeft: "20px"}}>`algorithm`</div> | Either "RSA" or "ECDSA" representing the algorithm for the keypair *Workload Identity Manager* will generate for its CA certificate. |
+| <div style={{marginLeft: "20px"}}>`size`</div> | One of the following: 2048, 3072, 4096, 256 (for EC_P256), 384 (for EC_P384), or 521 (for EC_P521). |
+| <div style={{marginLeft: "10px"}}>`duration`</div> | Validity of the *Workload Identity Manager* CA certificate expressed in hours (e.g., 90 day validity is "2160h"). |
+| `trustRootDirectory`| A writeable directory within the *Workload Identity Manager* container where it will create a file containing the root CA certificate it generates which can be used to enable trust for certificates it issues to clients. |
+</details>
+<details>
+<summary>Parameter details for <i>CA from Certificate and Private Key files</i></summary>
+
+| Parameter | Description |
+|-----------|-------------|
+| `file` ||
+| <div style={{marginLeft: "10px"}}>`privateKeyFile`</div> | (Required) The full path within the *Workload Identity Manager* container to the file that contains a pre-generated CA private key. |
+| <div style={{marginLeft: "10px"}}>`certificateFile`</div> | (Required) The full path within the *Workload Identity Manager* container to the file that contains a pre-generated CA certificate. |
+</details>
+
+## Signer Section
+
+The `signer` section must be included for **Developer Mode**. For either **Control Plane Mode**, `inMemory: true` is the required behavior. This means the CA signing key always resides in memory, is never swapped to disk, and only exists for the lifespan of the *Workload Identity Manager* instance unless *Workload Identity Manager* is configured to require an HSM. In that case, the signing key always resides in the HSM.
+
+```yaml
+signer:
+  inMemory: true
+```
+
+## Server Section
+
+The `server` section specifies which, if any, of the *Workload Identity Manager* application programming interfaces (APIs) are available for clients to request certificates.  These server interfaces include: `grpc` and `rest`.  Each TLS interface requires a listening `port` to be specified as well as either a `dnsName` or `ipAddress` for *Workload Identity Manager* to use when self-issuing server certificates for the interface.
+
+Logically at least one API should be specified in the `config.yaml` or the *Workload Identity Manager* cannot service any clients (unless *Workload Identity Manager* is only acting as a cert-manager issuer, see [Controller Section](#controller-section)).
+
+```yaml
+server:
+  grpc:
+    port: 8001
+    tls:
+      dnsNames:
+      - firefly.example.com
+      ipAddress: 10.20.30.40
+  rest:
+    port: 8002
+    tls:
+      dnsNames:
+      - firefly.example.com
+      ipAddress: 10.20.30.40
+```
+
+Additionally, for **Developer Mode** the `server` section must also specify how *Workload Identity Manager* will authenticate and authorize its clients.  Authentication can be either `oidc` or `jwks`.  Authorization specifies the `configuration` name that must be in the `venafi-firefly.configuration` [custom claim](/scm/api/config/mim/firefly/firefly-api-reference-clients#claims) of JWTs clients present to *Workload Identity Manager* when requesting a certificate.  For OIDC, you should be able to append *.well-known/openid-configuration* to the `baseUrl` and access the OIDC Discovery data for the Identity Provider (e.g., https://idp.example.com/.well-known/openid-configuration).
+
+```yaml OpenID Connect (OIDC)
+  authentication:
+    jwt:
+      oidc:
+        baseUrl: https://idp.example.com/
+        audience: api://firefly
+  authorization:
+    configuration: Demo Config
+```
+```yaml JSON Web Key Sets (JWKS)
+  authentication:
+    jwt:
+      jwks:
+        urls:
+        - https://idp.example.com/.well-known/jwks.json
+  authorization:
+    configuration: Demo Config
+```
+
+*Workload Identity Manager*'s gRPC and REST endpoints can be made available over _Unix Domain Sockets_ (UDS) instead of TCP by specifying a `socketPath` whose value represents the local socket "file" that *Workload Identity Manager* will create at startup.  UDS is intended for deployments where *Workload Identity Manager* shares a single pod with an application like [SPIRE](https://spiffe.io/docs/latest/spire-about/) so it shouldn't need network access to request certificates from it.  UDS is preferred over TCP in such cases for its performance and simplicity.
+
+```yaml
+server:
+  grpc:
+    uds:
+      socketPath: /opt/firefly/grpc.sock
+  rest:
+    uds:
+      socketPath: /opt/firefly/rest.sock
+```
+
+Implementing *Workload Identity Manager*'s default custom authorization claims can pose a challenge for some organizations and their IdPs.  In version 1.4.1, *Workload Identity Manager* added the option to specify aliases for the "venafi-firefly" claims in the `config.yaml` when running in **Developer Mode** (and [configuration](https://docs.venafi.cloud/firefly/configurations/) and `security.yaml` when running in **SaaS Control Plane Mode** and **Self-Hosted Control Plane Mode**, respectively).  In the following example, JWTs presented to *Workload Identity Manager* by API clients must have a `"role"` claim with a value of "Demo Config" and a `"groups"` claim with a value that specifies the policies for which the client is allowed to request certificates (for example, "Demo Policy" if you were using the example in the [Policies Section](#policies-section) below).
+
+```yaml
+  authorization:
+    configuration: Demo Config
+    customClaimsAliases:
+      venafi-firefly.configuration: role
+      venafi-firefly.allowedPolicies: groups
+      venafi-firefly.allowAllPolicies: notUsed
+```
+
+## Identity Documents Section
+
+*Workload Identity Manager* supports a special form of authentication based on *Instance Identity Documents* (IIDs).  When enabled, cloud workloads can request certificates using IIDs issued and signed by a public cloud provider without any other authentication.  When *Workload Identity Manager* receives such a request, it verifies the signature of the IID and, if valid, issues a policy compliant certificate (and private key) with the instance ID as the Common Name of the certificate.  In **Control Plane Mode**, *Workload Identity Manager* also verifies that the IID belongs to an approved AWS account, Azure subscription, or Google project and optionally that it is located in an approved geographic region (AWS and Google).
+
+When present, the `identityDocument` section must include `server` which specifies the `port` on which the IID REST service will listen as well as either a `dnsName` or `ipAddress` for *Workload Identity Manager* to use when self-issuing server certificates for the interface.
+
+```yaml
+identityDocument:
+  server:
+    port: 8004
+    tls:
+      dnsNames:
+      - firefly.example.com
+      ipAddress: 10.20.30.40
+```
+
+Additionally, for **Developer Mode** the `identityDocument` section must also specify the cloud providers for which *Workload Identity Manager* will accept IIDs in exchange for a certificate.  Amazon Web Services (`aws`), Microsoft Azure (`azure`), and Google Cloud (`google`) are currently supported.  `cloudProviders` must be omitted for **Control Plane Mode** because the [Control Plane](https://docs.venafi.cloud/firefly/overview/) and the configuration it provides dictates the whether any of the cloud providers are allowed.
+
+```yaml
+  cloudProviders:
+    aws:
+      enabled: true
+    azure:
+      enabled: true
+    google:
+      enabled: true
+```
+
+## Policies Section
+
+The `policies` section defines the policies for which *Workload Identity Manager* clients can request certificates.  At least one policy is required for **Developer Mode**.  
+
+When *Workload Identity Manager* runs in either **Control Plane Mode**, no policies are permitted in the `config.yaml` because policies are managed by and retrieved from the CyberArk Machine Identity Security Control Plane when *Workload Identity Manager* starts up.  Unlike locally defined policies of **Developer Mode**, policies managed by the [SaaS Control Plane](https://docs.venafi.cloud/firefly/policies/) and Self-Hosted Control Plane have rich support for constraining certificate Subject and Subject Alternative Names.
+
+```yaml
+policies:
+- name: Demo Policy
+  keyUsages: 
+  - digitalSignature
+  - keyEncipherment
+  extendedKeyUsages:
+  - SERVER_AUTH
+  - CLIENT_AUTH
+  keyAlgorithm:
+    allowedValues:
+    - RSA_2048
+    - EC_P256
+    defaultValue: EC_P256
+  validityPeriod: P7D
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `name` | (Required) The policy name a client can specify when requesting a certificate.  The policy name must also be in the `venafi-firefly.allowedPolicies` [custom claim](/scm/api/config/mim/firefly/firefly-api-reference-clients#claims) of JWTs clients present to *Workload Identity Manager* when requesting a certificate unless the `venafi-firefly.allowAllPolicies` claim is true. |
+| `keyUsages` | (Required) At least one of the following [Key Usage](https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.3) values.  These Key Usages will be present in any certificate issued using this policy: digitalSignature, contentCommitment, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign, cRLSign, encipherOnly, decipherOnly |
+| `extendedKeyUsages` | (Required) At least one of the following [Extended Key Usage](https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.12) values. These Extended Key Usages will be present in any certificate issued using this policy: SERVER_AUTH, CLIENT_AUTH, CODE_SIGNING, EMAIL_PROTECTION, IPSEC_ENDSYSTEM, IPSEC_TUNNEL, IPSEC_USER, TIME_STAMPING, OCSP_SIGNING |
+| `keyAlgorithm` ||
+| <div style={{marginLeft: "10px"}}>`allowedValues`</div> | (Required) At least one of the following key types: RSA_2048, RSA_3072, RSA_4096, EC_P256, EC_P384, EC_P521, EC_ED25519 |
+| <div style={{marginLeft: "10px"}}>`defaultValue`</div> | (Required) The key type that will be used when a client does not specify a key type in their request. |
+| `validityPeriod` | (Required) An [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) that specifies the maximum validity period a client can request and also the default validity period if they do not specify one in their request. |
+
+## Controller Section
+
+The `controller` section is used to launch *Workload Identity Manager* as a [cert-manager](https://cert-manager.io/) issuer for a Kubernetes cluster.
+
+```yaml
+controller:
+  kubeconfigFile: /etc/firefly/kubeconfig.yaml
+  leaderElectionNamespace: kube-system
+  cert-manager:
+    groupName: firefly.venafi.com
+    checkApproval: true
+    caRootChainPopulation: false
+```
+| Parameter | Description |
+|-----------|-------------|
+| `kubeConfigFile` | Required when *Workload Identity Manager* is not running in the same cluster as cert-manager.  Provides cluster details and credentials necessary for *Workload Identity Manager* to interact with cert-manager. |
+| `leaderElectionNamespace` | Namespace that will hold the leader election lease for the *Workload Identity Manager* replica group. |
+| `cert-manager` ||
+| <div style={{marginLeft: "10px"}}>`groupName`</div> | The name of the group to which the *Workload Identity Manager* [Issuer or Cluster Issuer](https://cert-manager.io/docs/concepts/issuer/) belongs and that `CertificateRequest` resources will reference. |
+| <div style={{marginLeft: "10px"}}>`checkApproval`</div> | Boolean indicating whether certificate requests will wait for [approval](https://cert-manager.io/docs/usage/certificaterequest/#approval) before being evaluated by *Workload Identity Manager*. |
+| <div style={{marginLeft: "10px"}}>`caRootChainPopulation`</div> | Boolean indicating whether to include the trust anchor (root CA) certificate in the `status.ca` field of the [CertificateRequest](https://cert-manager.io/docs/usage/certificaterequest/) resource. |
