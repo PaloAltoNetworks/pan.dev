@@ -1,0 +1,1 @@
+Defines a precise defense action for containers, hosts, Kubernetes audits, WAAS requests, and WAAS responses.
