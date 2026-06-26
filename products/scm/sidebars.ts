@@ -125,6 +125,14 @@ module.exports = {
               id: "scm/api/config/sase/setup/snippet-sharing",
             },
             require("./api/config/sase/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/sase/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -217,13 +225,21 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/ngfw/setup/setup-api-ngfw",
+              id: "scm/api/config/sase/setup/setup-api",
             },
             {
               type: "doc",
-              id: "scm/api/config/ngfw/setup/snippet-sharing",
+              id: "scm/api/config/sase/setup/snippet-sharing",
             },
-            require("./api/config/ngfw/setup/sidebar"),
+            require("./api/config/sase/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/sase/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -374,13 +390,21 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
+              id: "scm/api/config/sase/setup/setup-api",
             },
             {
               type: "doc",
-              id: "scm/api/config/cloudngfw/setup/snippet-sharing",
+              id: "scm/api/config/sase/setup/snippet-sharing",
             },
-            require("./api/config/cloudngfw/setup/sidebar"),
+            require("./api/config/sase/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/sase/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
