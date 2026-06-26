@@ -56,7 +56,7 @@ The API endpoint pages let you authorize and run API calls directly from the doc
 All API requests use the following base URL. HTTPS is required for all requests.
 
 ```
-https://api.strata.paloaltonetworks.com
+https://api.strata.paloaltonetworks.com/ngts
 ```
 
 ## JSON
