@@ -225,19 +225,23 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/sase/setup/setup-api",
+              id: "scm/api/config/ngfw/setup/setup-api-ngfw",
             },
             {
               type: "doc",
-              id: "scm/api/config/sase/setup/snippet-sharing",
+              id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
-            require("./api/config/sase/setup/sidebar"),
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/device-onboarding/site-management",
+            },
+            require("./api/config/ngfw/setup/sidebar"),
             {
               "type": "category",
               "label": "Device Onboarding",
               "collapsed": true,
               "items": [
-                require("./api/config/sase/setup/device-onboarding/sidebar"),
+                require("./api/config/ngfw/setup/device-onboarding/sidebar"),
               ]
             },
           ],
@@ -390,19 +394,19 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/sase/setup/setup-api",
+              id: "scm/api/config/cloudngfw/setup/setup-api-cloud-ngfw",
             },
             {
               type: "doc",
-              id: "scm/api/config/sase/setup/snippet-sharing",
+              id: "scm/api/config/cloudngfw/setup/snippet-sharing",
             },
-            require("./api/config/sase/setup/sidebar"),
+            require("./api/config/cloudngfw/setup/sidebar"),
             {
               "type": "category",
               "label": "Device Onboarding",
               "collapsed": true,
               "items": [
-                require("./api/config/sase/setup/device-onboarding/sidebar"),
+                require("./api/config/cloudngfw/setup/device-onboarding/sidebar"),
               ]
             },
           ],
