@@ -340,9 +340,20 @@ module.exports = {
           type: "category",
           label: "Checks",
           collapsed: true,
-          items: 
-          [
-            require("./api/config/posture-management/sidebar")
+          items: [
+            ...require("./api/config/posture-management/sidebar")
+          ],
+        },
+        {
+          type: "category",
+          label: "Compliance Frameworks",
+          collapsed: true,
+          link: {
+            type: 'generated-index',
+            title: 'Compliance Framework',
+          },
+          items: [
+          require("./api/config/posture-management/compliance-framework/sidebar"),
           ],
         },
       ],
