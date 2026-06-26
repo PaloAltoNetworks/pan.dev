@@ -1,15 +1,7 @@
 openapi: 3.0.3
 info:
   title: Compliance Center API
-  description: |
-    © 2026 Palo Alto Networks, Inc.
-
-    This API provides comprehensive compliance framework management for SASE Insights.
-
-    ## Features
-    - Compliance Framework definition management (create, update, delete, release)
-    - Framework analytics
-    - Benchmark monitoring and BPC (Best Practice Check) verdict tracking
+  description: Create and manage compliance frameworks with scoring and benchmark monitoring.
   version: 1.0.0
   termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
   contact:
@@ -20,10 +12,8 @@ info:
     name: MIT
     url: https://opensource.org/license/mit
 servers:
-  - url: 'https://api.strata.paloaltonetworks.com/config/deployment/v1'
+  - url: 'https://api.strata.paloaltonetworks.com/posture/compliance-frameworks/v1'
     description: Current
-  - url: 'https://api.sase.paloaltonetworks.com/sse/config/v1'
-    description: Legacy
 tags:
   - name: Compliance Frameworks
     description: Operations for managing compliance framework definitions including CRUD, clone, benchmark, and release operations.
@@ -33,11 +23,11 @@ tags:
     description: Monitoring and reporting for benchmarked compliance frameworks with BPC verdict tracking.
 
 security:
-  - TSGAuth: []
+  - BearerAuth: []
 
 paths:
   # ──── Compliance Framework Definition ────
-  /posture/compliance-frameworks/definition:
+  /definitions:
     get:
       tags:
         - Compliance Frameworks
@@ -45,7 +35,7 @@ paths:
       description: "Retrieve all compliance frameworks for the user's TSG"
       operationId: "getAllFrameworks"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
         - name: category
           in: query
@@ -257,7 +247,7 @@ paths:
       description: "Create a new compliance framework definition. The server will assign a unique id."
       operationId: "createFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -272,7 +262,7 @@ paths:
               description: "URI of the created framework"
               schema:
                 type: string
-                example: "/posture/compliance-frameworks/definition/PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+                example: "/definition/PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
           content:
             application/json:
               schema:
@@ -295,7 +285,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/definition/{cf-id}:
+  /definitions/{id}:
     get:
       tags:
         - Compliance Frameworks
@@ -308,9 +298,9 @@ paths:
         - **view_logo**: Returns the framework's logo
       operationId: "getLatestRevision"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -480,9 +470,9 @@ paths:
         Update a compliance framework definition. If an in-progress revision exists, it will be updated. If no in-progress revision exists and 'release=false', a new in-progress revision is created. If 'release=true', the framework is both updated and released in a single operation.
       operationId: "updateFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -536,9 +526,9 @@ paths:
       description: "Permanently delete a compliance framework and all its revisions"
       operationId: "deleteFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -557,7 +547,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/definition/{cf-id}:clone:
+  /definitions/{id}:clone:
     post:
       tags:
         - Compliance Frameworks
@@ -565,9 +555,9 @@ paths:
       description: "Clone the compliance framework to a new one in the user's TSG"
       operationId: "cloneFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -606,7 +596,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/definition/{cf-id}:benchmark:
+  /definitions/{id}:benchmark:
     post:
       tags:
         - Compliance Frameworks
@@ -614,9 +604,9 @@ paths:
       description: "Mark the compliance framework as a benchmark"
       operationId: "benchmarkFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -656,7 +646,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/definition/{cf-id}:un-benchmark:
+  /definitions/{id}:un-benchmark:
     post:
       tags:
         - Compliance Frameworks
@@ -664,9 +654,9 @@ paths:
       description: "Remove the benchmark designation from the compliance framework"
       operationId: "unBenchmarkFramework"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -707,7 +697,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # ──── Analytics ────
-  /posture/compliance-frameworks/summaries:
+  /summaries:
     get:
       tags:
         - Compliance Analytics
@@ -715,7 +705,7 @@ paths:
       description: "Retrieve summary view of compliance frameworks per current revision, grouped and filtered by product type"
       operationId: "getCFSummary"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
         - name: product
           in: query
@@ -755,7 +745,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/overall-compliance/{cf-id}:
+  /overall-compliance/{id}:
     get:
       tags:
         - Compliance Analytics
@@ -763,9 +753,9 @@ paths:
       description: "Retrieve overall compliance scores for a framework across different products and categories"
       operationId: "getOverallCompliance"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -930,7 +920,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/overall-compliance-timeline/{cf-id}:
+  /overall-compliance-timeline/{id}:
     get:
       tags:
         - Compliance Analytics
@@ -938,9 +928,9 @@ paths:
       description: "Retrieve compliance score timeline data over 30 days"
       operationId: "getConfigurationsAssessedTimeline"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -1117,7 +1107,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/configurations-assessed/{cf-id}:
+  /configurations-assessed/{id}:
     get:
       tags:
         - Compliance Analytics
@@ -1125,9 +1115,9 @@ paths:
       description: "Retrieve assessed configurations"
       operationId: "getConfigurationsAssessed"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -1182,7 +1172,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/compliance-controls/{cf-id}:
+  /compliance-controls/{id}:
     get:
       tags:
         - Compliance Analytics
@@ -1190,9 +1180,9 @@ paths:
       description: "Retrieve compliance controls for a framework"
       operationId: "getComplianceControls"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
-        - name: cf-id
+        - name: id
           in: path
           required: true
           schema:
@@ -1379,7 +1369,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # ──── Benchmark Monitoring ────
-  /posture/compliance-frameworks/benchmark-monitoring:
+  /benchmark-monitoring:
     post:
       tags:
         - Benchmark Monitoring
@@ -1387,7 +1377,7 @@ paths:
       description: "Retrieve compliance monitoring data for benchmarked frameworks with filtering and pagination"
       operationId: "getBenchmarkMonitoring"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -1610,7 +1600,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /posture/compliance-frameworks/benchmark-monitoring/download:
+  /benchmark-monitoring/download:
     post:
       tags:
         - Benchmark Monitoring
@@ -1618,7 +1608,7 @@ paths:
       description: "Download benchmark monitoring data in specified format (CSV, etc.)"
       operationId: "getBenchmarkMonitoringDownload"
       security:
-        - TSGAuth: []
+        - BearerAuth: []
       parameters:
         - name: offset
           in: query
@@ -1779,7 +1769,7 @@ paths:
 
 components:
   securitySchemes:
-    TSGAuth:
+    BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
