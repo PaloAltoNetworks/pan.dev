@@ -934,6 +934,11 @@ const config = {
             outputDir: "products/scm/api/config/posture-management",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "compliance-framework-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/compliance-framework",
+            outputDir: "products/scm/api/config/posture-management/compliance-framework",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-adnsr": {
             specPath: "openapi-specs/scm/config/adnsr",
             outputDir: "products/scm/api/config/adnsr",
