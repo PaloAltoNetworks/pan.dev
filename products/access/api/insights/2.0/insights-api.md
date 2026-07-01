@@ -17,7 +17,5 @@ customers, where the tenants have been onboarded by Palo Alto Networks using a T
 To validate your tenant ID go to the Prisma Access Hub, click on the Prisma Access Insights
 application name, and look in the **Manage Apps** section.
 
-To use 1.0 APIs, see [1.0 APIs](/access/api/insights/1.0).
-
 For information about access tokens and base URLs, please see
 [Get Started with Prisma Access 2.0 APIs](/access/docs/insights/getting_started-20).

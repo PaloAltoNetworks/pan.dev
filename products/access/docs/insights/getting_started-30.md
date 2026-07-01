@@ -5,6 +5,8 @@ description: Prisma Access Insights 3.0 API quick start
 sidebar_label: Get Started 3.0
 ---
 
+**Note**: Insights 1.0 is deprecated and removed. 
+
 Palo Alto Networks® Prisma Access Insights APIs allows you to continuously monitor the health and
 performance of your Prisma Access environment using Insights in the Prisma Access app.
 
