@@ -14,8 +14,8 @@ and [created a service account](/scm/docs/service-accounts) that has role-access
 When you did these things, you obtained:
 
 - A TSG ID, which you use to identify the scope of the access token.
-- A Client ID
-- A Client Secret
+- A Client ID 
+- A Client Secret 
 
 Using this information, you can use
 [POST /oauth2/access_token](/scm/api/auth/post-auth-v-1-oauth-2-access-token)
@@ -47,7 +47,7 @@ Access tokens have a lifespan of 15 minutes.
 If your access token is incorrect, the API request may not go through,
 and the resulting error indicates an invalid authorization code.
 
-You can check your access token's credentials by pasting the access token into https://jwt.io/ .
+You can check your access token's credentials by pasting the access token into https://jwt.io/.
 This decodes the token to determine whether the actual set of credentials matches the set of
 credentials present in the access token.
 
