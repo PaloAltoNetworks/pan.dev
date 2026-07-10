@@ -31,11 +31,12 @@ to create an access token. Be aware that:
 
 For example:
 
-    curl -L -X POST 'https://auth.apps.paloaltonetworks.com/auth/v1/oauth2/access_token' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Accept: application/json' \
-    -H 'Authorization: Basic PHVzZXJuYW1lPjo8cGFzc3dvcmQ+' \
-    -d ''
+    curl --location 'https://auth.apps.paloaltonetworks.com/auth/v1/oauth2/access_token' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'grant_type=client_credentials' \
+    --data-urlencode 'scope=tsg_id:<tsg_id_here>' \
+    --data-urlencode 'client_id=<client_id_here>' \
+    --data-urlencode 'client_secret=<client_secret_here>'
 
 **Note**: The service account that you use to authenticate this request must belong to the TSG that
 you identify on the `scope` field. See [Acess Token Scopes](/scm/docs/scope) for more information.
