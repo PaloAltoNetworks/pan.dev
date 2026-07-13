@@ -13,6 +13,7 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| June 3rd, 2026     | Removed Insights 1.0 as it is deprecated.
 | February 23, 2026     | Added new [Prisma Browser for MSP](/sase/api/pab-msp/pab-msp-api/).
 | February 12, 2026     | Backbone and Connection APIs are now deprecated and have been replaced by the [Service Provider (SP) Interconnect](/sase/api/mt-interconnect/introduction/).
 | Oct 8, 2025     | Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).

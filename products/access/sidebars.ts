@@ -5,21 +5,6 @@ const {
 } = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
 
 module.exports = {
-  saseinsightsv1: [
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionSelector(insightsVersions),
-      className: "version-button",
-    },
-    {
-      type: "html",
-      defaultStyle: true,
-      value: versionCrumb(`v1.0`),
-    },
-    "access/api/insights/1.0/insights-api",
-    require("./api/insights/1.0/sidebar"),
-  ],
   saseinsightsv2: [
     {
       type: "html",

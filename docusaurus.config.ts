@@ -590,11 +590,6 @@ const config = {
                   logoClass: "prisma",
                   docs: [
                     {
-                      label: "Get Started 1.0",
-                      to: "access/docs/insights/getting_started-10",
-                      icon: "doc",
-                    },
-                    {
                       label: "Get Started 2.0",
                       to: "access/docs/insights/getting_started-20",
                       icon: "doc",
@@ -611,11 +606,6 @@ const config = {
                     },
                   ],
                   apiDocs: [
-                    {
-                      to: "access/api/insights/1.0",
-                      label: "Prisma Access Insights 1.0",
-                      icon: "api-doc",
-                    },
                     {
                       to: "access/api/insights/2.0",
                       label: "Prisma Access Insights 2.0",
@@ -965,12 +955,6 @@ const config = {
                 outputDir: "products/access/api/insights/2.0",
                 label: "v2.0",
                 baseUrl: "/access/api/insights/2.0",
-              },
-              "1.0": {
-                specPath: "openapi-specs/access/insights/1.0",
-                outputDir: "products/access/api/insights/1.0",
-                label: "v1.0",
-                baseUrl: "/access/api/insights/1.0/",
               },
             },
           },
