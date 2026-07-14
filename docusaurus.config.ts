@@ -80,6 +80,14 @@ const config = {
         autoCollapseCategories: true,
       },
     },
+    api: {
+      schemaExpansion: {
+        enabled: true,
+        default: 0,
+        max: 4,
+        persist: true,
+      },
+    },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
