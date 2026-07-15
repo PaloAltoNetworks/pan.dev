@@ -12,8 +12,18 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| July 14th, 2026   | Added [Compliance Framework APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) to Posture API.
+| June 26th, 2026   | Added [Site Management APIs](/scm/api/config/ngfw/setup/device-onboarding/site-management/) to Device Onboarding.
+| June 24th, 2026   | Updated [Network Deployment APIs](/scm/api/config/sase/deployment/deployment-api/) with new endpoints.
+| June 3rd, 2026    | Updated [Objects APIs](/scm/api/config/sase/objects/objects-api/) with new object schemas for SASE, NGFW, and Cloud NGFW configurations.
+| June 1st, 2026    | Added [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) to SCM.
+| May 29th, 2026    | Added [SCM Terraform Provider](/terraform/docs/scm/getting-started/introduction/) documentation.
 | May 27th, 2026    | Added [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) 
 | May 27th, 2026    | Added [NGFW Operations APIs](/scm/api/config/ngfw-operations/introduction/).
+| May 23rd, 2026    | Updated [Security Services](/scm/api/config/sase/security/security-api/), [Network Services](/scm/api/config/ngfw/network/network-api/), and [NGFW Operations](/scm/api/config/ngfw-operations/introduction/) APIs.
+| April 15th, 2026  | Added [Cloud Dynamic User Groups (CDUG) APIs](/scm/api/config/ciedss/cdug/cdug-introduction/) to SCM.
+| April 8th, 2026   | Added HA Configurations to [Device Settings APIs](/scm/api/config/ngfw/device/device-api/).
+| March 25th, 2026  | Updated [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) and Security Services APIs.
 | March 17th, 2026    | Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/).
 | March 11th, 2026    | Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/).
 | January 29, 2026    | Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/).
