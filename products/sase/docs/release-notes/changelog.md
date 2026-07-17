@@ -13,6 +13,8 @@ keywords:
 
 | Date            | Description                                                                                                                                                                           |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| April 1st, 2026     | Updated [SASE 5G Monitoring APIs](/sase/api/mt-monitor/) with usage metric endpoints.
+| March 6th, 2026     | Added [Site Creation API Workflow](/sase/api/config-orch/site-license-workflow/) to Prisma Access Configuration Orchestration.
 | February 23, 2026     | Added new [Prisma Browser for MSP](/sase/api/pab-msp/pab-msp-api/).
 | February 12, 2026     | Backbone and Connection APIs are now deprecated and have been replaced by the [Service Provider (SP) Interconnect](/sase/api/mt-interconnect/introduction/).
 | Oct 8, 2025     | Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/).

@@ -5,24 +5,13 @@ sidebar_position: 5
 sidebar_label: Markdown Features
 ---
 
-Markdown is the same thing that allows you to style text in Slack, GitHub README's, and much more. Here we will see all the features of Markdown you can use in your docs.
-It can be helpful to look at other docs .md files to get ideas of how to author as well.
+Markdown is the same thing that allows you to style text in Slack, GitHub READMEs, and much more. Here we will see the Markdown features you can use in your docs. It can be helpful to look at other docs' `.md` / `.mdx` files to get ideas for how to author your own.
 
-### Standard Markdown
+## Standard Markdown
 
-All of the articles in this repository use Markdown and MDX. While a complete introduction (and listing of all the syntax) can be found [here](https://docs.gitlab.com/ee/user/markdown.html), let's cover some of the basics first.
-
-Recommended editors:
-
-You can write content using [GitHub-flavored Markdown syntax](https://github.github.com/gfm/).
-
-## Markdown Syntax
-
-To serve as an example page when styling markdown based Docusaurus sites.
+All of the articles in this repository use Markdown and MDX. You can write content using [GitHub Flavored Markdown syntax](https://github.github.com/gfm/); Docusaurus also supports its own [Markdown features](https://docusaurus.io/docs/markdown-features).
 
 ## Headers
-
-# H1 - Create the best documentation
 
 ## H2 - Create the best documentation
 
@@ -33,6 +22,10 @@ To serve as an example page when styling markdown based Docusaurus sites.
 ##### H5 - Create the best documentation
 
 ###### H6 - Create the best documentation
+
+:::tip
+Don't use `#` (H1) in a doc — the page's `title` frontmatter is already rendered as the H1.
+:::
 
 ---
 
@@ -89,17 +82,13 @@ Some text to show that the reference links can follow later.
 
 ## Images
 
-Here's our logo (hover to see the title text):
-
-Inline-style: ![alt text](https://github.com/adam-p/markdown-here/blob/master/src/common/images/icon48.png?raw=true "Logo Title Text 1")
+Inline-style: ![alt text](/img/PANW_Developers_Red_White.svg "Palo Alto Networks Developers")
 
 Reference-style: ![alt text][logo]
 
-[logo]: https://github.com/adam-p/markdown-here/blob/master/src/common/images/icon48.png?raw=true "Logo Title Text 2"
+[logo]: /img/PANW_Developers_Red_White.svg "Palo Alto Networks Developers"
 
-Images from any folder can be used by providing path to file. Path should be relative to markdown file.
-
-![img](../../static/img/PANW_Developers_Red_White.svg)
+Images placed in `static/img/` are served at `/img/…`. You can also reference images with a path relative to your Markdown file if they live alongside the doc.
 
 ---
 
@@ -164,7 +153,7 @@ Quote break.
   <dd>Is something people use sometimes.</dd>
 
   <dt>Markdown in HTML</dt>
-  <dd>Does *not* work **very** well. Use HTML <em>tags</em>.</dd>
+  <dd>Works fine inside <code>.mdx</code> files. In plain <code>.md</code>, prefer HTML <em>tags</em>.</dd>
 </dl>
 
 ---
@@ -193,15 +182,15 @@ This is a tip
 
 :::
 
-:::important
+:::info
 
-This is important
+This is info
 
 :::
 
-:::warning
+:::important
 
-This is a caution
+This is important
 
 :::
 
@@ -211,10 +200,16 @@ This is a warning
 
 :::
 
-### If you want to get more advanced, you can use MDX
+:::danger
+
+This is a danger callout — reserved for critical issues
+
+:::
+
+## If you want to get more advanced, you can use MDX
 
 :::info
-MDX syntax can be boiled down to being JSX in Markdown. It’s a superset of Markdown syntax that also supports importing, exporting, and JSX. If you're planning use MDX to author your content be sure to use the `.mdx` file extension when naming your file.
+MDX syntax can be boiled down to being JSX in Markdown. It's a superset of Markdown syntax that also supports importing, exporting, and JSX. If you're planning to use MDX to author your content, be sure to use the `.mdx` file extension when naming your file.
 :::
 
 [Getting started](https://mdxjs.com/getting-started) with MDX.

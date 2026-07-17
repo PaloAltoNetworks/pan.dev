@@ -340,9 +340,20 @@ module.exports = {
           type: "category",
           label: "Checks",
           collapsed: true,
-          items: 
-          [
-            require("./api/config/posture-management/sidebar")
+          items: [
+            ...require("./api/config/posture-management/sidebar")
+          ],
+        },
+        {
+          type: "category",
+          label: "Compliance Frameworks",
+          collapsed: true,
+          link: {
+            type: 'generated-index',
+            title: 'Compliance Framework',
+          },
+          items: [
+          require("./api/config/posture-management/compliance-framework/sidebar"),
           ],
         },
       ],
@@ -457,6 +468,10 @@ module.exports = {
     "scm/api/config/ciedss/ciedss",
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
+  ],
+  scmcdug: [
+    "scm/api/config/ciedss/cdug/cdug-introduction",
+    require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };
