@@ -1,0 +1,2191 @@
+openapi: 3.0.3
+info:
+  title: Compliance Center API
+  description: Create and manage compliance frameworks with scoring and benchmark monitoring.
+  version: 1.0.0
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/posture/compliance-frameworks/v1'
+    description: Current
+tags:
+  - name: Compliance Frameworks
+    description: Operations for managing compliance framework definitions including CRUD, clone, benchmark, and release operations.
+  - name: Compliance Analytics
+    description: Analytics and reporting for compliance frameworks including summaries, scores, and timelines.
+  - name: Benchmark Monitoring
+    description: Monitoring and reporting for benchmarked compliance frameworks with BPC verdict tracking.
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ──── Compliance Framework Definition ────
+  /definitions:
+    get:
+      tags:
+        - Compliance Frameworks
+      summary: List Compliance Frameworks
+      description: "Retrieve all compliance frameworks for the user's TSG"
+      operationId: "getAllFrameworks"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - PCF
+              - CCF
+              - all
+          description: "Filter by framework category PCF (Palo Alto Networks) or CCF (Custom)"
+          example: "PCF"
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - draft
+              - released
+          description: "Filter by framework status"
+          example: "released"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: "Array of compliance frameworks with full definitions"
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: "Compliance framework ID"
+                        name:
+                          type: string
+                          description: "Compliance framework name"
+                        description:
+                          type: string
+                          description: "Framework description"
+                        source_url:
+                          type: string
+                          description: "Source URL of the framework"
+                        source:
+                          type: string
+                          description: "Framework source/origin"
+                        category:
+                          type: string
+                          description: "Framework category"
+                          enum:
+                            - PCF
+                            - CCF
+                        status:
+                          type: string
+                          description: "Framework status"
+                          enum:
+                            - draft
+                            - released
+                        releasable:
+                          type: boolean
+                          description: "Whether the framework can be released"
+                        hierarchy_header:
+                          type: object
+                          description: "Hierarchy header metadata defining levels and groups"
+                          properties:
+                            levels:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  title:
+                                    type: string
+                                  name:
+                                    type: string
+                                  description:
+                                    type: string
+                            groups:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  group:
+                                    type: string
+                                  name:
+                                    type: string
+                                  description:
+                                    type: string
+                                  color:
+                                    type: string
+                        hierarchy_data:
+                          type: object
+                          description: "Hierarchical control structure"
+                          properties:
+                            children:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/ControlNode'
+                        logo:
+                          type: object
+                          description: "Framework logo image"
+                          properties:
+                            image:
+                              type: string
+                              description: "Base64 encoded image data"
+                            type:
+                              type: string
+                              description: "Image MIME type"
+                            name:
+                              type: string
+                              description: "Image filename"
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: "Creation timestamp"
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: "Last update timestamp"
+              example:
+                data:
+                  - id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+                    name: "CSCV8"
+                    description: "Center for Internet Security Controls Version 8"
+                    source_url: "https://www.cisecurity.org/controls/cis-controls-list"
+                    source: "CIS"
+                    category: "PCF"
+                    status: "released"
+                    releasable: true
+                    hierarchy_header:
+                      levels:
+                        - title: "Level1"
+                          name: "Control"
+                          description: "Top level security controls"
+                        - title: "Level2"
+                          name: "Sub Control"
+                          description: "Detailed implementation guidelines"
+                      groups:
+                        - group: "Group1"
+                          name: "IG1"
+                          description: "Implementation Group 1"
+                          color: "#530909"
+                        - group: "Group2"
+                          name: "IG2"
+                          description: "Implementation Group 2"
+                          color: "#064206"
+                    hierarchy_data:
+                      children:
+                        - name: "Inventory and Control of Hardware Assets"
+                          description: "Actively manage all hardware devices"
+                          children:
+                            - name: "1.1 Inventory of Hardware Assets"
+                              description: "Maintain an accurate and up-to-date inventory"
+                              groups_tagged: ["IG1", "IG2", "IG3"]
+                              tags: []
+                            - name: "1.4 Hardware Asset Configuration Management"
+                              description: "Manage hardware configurations"
+                              groups_tagged: ["IG1", "IG2", "IG3"]
+                              tags: []
+                    created_at: "2024-01-15T10:00:00Z"
+                    updated_at: "2024-01-15T10:00:00Z"
+                  - id: "CCF-8b2cf963-g6b5-51fe-a22b-99e65fcg9987"
+                    name: "Custom Security Framework"
+                    description: "Organization-specific security controls"
+                    source_url: "https://internal.example.com/security-framework"
+                    source: "Internal"
+                    category: "CCF"
+                    status: "draft"
+                    releasable: false
+                    hierarchy_header:
+                      levels:
+                        - title: "Level1"
+                          name: "Domain"
+                          description: "Security domains"
+                      groups: []
+                    hierarchy_data:
+                      children:
+                        - name: "Access Management"
+                          description: "Control user access to systems"
+                          children: []
+                    created_at: "2024-02-20T14:30:00Z"
+                    updated_at: "2024-02-20T14:30:00Z"
+        '400':
+          description: "Bad request - invalid query parameter"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00035"
+                    message: "Invalid query parameter"
+                    details: ["Invalid value for query parameter 'category'"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00035"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Compliance Frameworks
+      summary: Create Compliance Framework
+      description: "Create a new compliance framework definition. The server will assign a unique id."
+      operationId: "createFramework"
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceFrameworkRequest'
+      responses:
+        '201':
+          description: "Created successfully"
+          headers:
+            Location:
+              description: "URI of the created framework"
+              schema:
+                type: string
+                example: "/definition/PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceFrameworkRequest'
+        '400':
+          description: "Bad request - invalid request body or missing required fields"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid request body"
+                    details: ["Required field 'name' is missing or invalid in request body"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /definitions/{id}:
+    get:
+      tags:
+        - Compliance Frameworks
+      summary: Get Framework Revision
+      description: |
+        Retrieve details of a compliance framework based on the 'op' query parameter:
+        - **view_inprogress**: Returns the latest in-progress revision
+        - **view_inrelease**: Returns the currently released revision
+        - **view_aggregated**: Returns aggregated framework data
+        - **view_logo**: Returns the framework's logo
+      operationId: "getLatestRevision"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+        - name: op
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - view_inprogress
+              - view_inrelease
+              - view_aggregated
+              - view_logo
+          description: "Operation to perform"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    description: "Base64 encoded image data URI (for op=view_logo)"
+                  name:
+                    type: string
+                    description: "Compliance framework name (for op=view_aggregated)"
+                  hierarchy_data:
+                    type: object
+                    description: "Hierarchical framework structure (for op=view_aggregated)"
+              examples:
+                view_logo:
+                  summary: "Response when op=view_logo"
+                  value:
+                    image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAFfklEQVR4Ae2dgVHyTBCGl2/+ArQC/StQK1AqACtQK9AO0AqUCtQK1ArUCqQD6ECtIN89B6v5HITk9nIcTJ6ZHTAhIfeyt3e3uZwd+UFRFEfupees72xXWmA0s6tOpzMp7+joGyfclnsZOLuQlkXcyFTID/7wAs7Ee3a2Ly1VwBu7iPhntgHPa8WrDlqhmXSc9+2617G0hNDFAwfSEkofAduqG06PKlxIRnx8fMj9/b28vLzIaDTy2/b396Xf70uv15OtrS3JiiITnp+fCydS4QTiB51r7Ds9PfWfzYWVCvj29lZcXl4uFO03293d9ceOx+NilSQX8P39vbi5uSmOjo5qi/abca67uzt/7tQkE7BKFbXaKqp4owJaqqjVUlXx6AI2UUVzruLRBExRRXOs4mYB8bacRVtUxfFKKyYBiTHrJNo8owwWggXcBPHUqEWhBAlIy7ZOAi0zQlBoA6P5wFowTt0kdPwdQpCAr6+vsmlo4qIuQQK2fNMKaKQV0Eh0AUl43t7eimvVxLXWMhgMFn6ez9Ab4BjXufXvMddN8vvZ5kYO/ny6z2ox+U8ic319LW645N8jpgpxdXUldVHxeM2V6AKqeLRqCEjhEXEymdTuKpDGV/EeHx99dyPkOkJb2CpEF1B5enryhcaDENKNO+Xz89Nvqwr3QpSzs7MgAbkOrQVN0Ggjwi9/fHz89TdxrixKleMVYuVv5vKOXzE0NY23woxa8B7AE+vENDdG/RJRw8E840fB4xAytYiNVeEyVF8KRousIna7XR8Xl3FwcODFWXZL0yVN/f6LiwtvqUgiIGgcQkRtXRGnCvwA2CLwPjxxb29PUpJMQEBEvOT8/NyLWK5yNDDlRuLk5EQODw8rnZdzamyt4tUxSSogUL0oMAKV4xXxTrMiuq9uPEO8kP6mhegCqgcs6nIQ0/gccY3PUWg9rryvzjQOGqvyeapcRxSKALgxI2uUMK1ilClZQrXlm1ZAI62ARloBZ4TOOwwSMOf0UihJBdzZ2ZFNI9QpggTc3t6WTSPUKYIEjDnepOPMuFjTUgzzFN7rvnIWh9EMf5eNTLiFOmm2MkEjEQpCzLD28jX9PxwOvXFexGFczEiC4R2jC4zPkXEhqUBh+X6OUSzXwrmCJ68XgTCVTQw9f+bsLRrV6OTIefuYVcUUNcv3l42yhBLcjcEbLHC/A6/5LU3F2BaPJNNs/a5lmM5fBML0XTH86lW8CO/UKbq8MqdPj9VtarovxChLKKb5gZaLZkoZM6KqfNbFPF9IFRwB+ZswoBZ6HZTBgmkkQjUMhbtzBO6f55gXzLkvwt218j6qP9VcLRRzeCgMWAO5Tvx2rbH3Iq2yvLrY543tBHm247UicRsRS/UF8xxp62x8123xhdBYpjNfdQ7zz+0yq/4PDw9m8QgNVqJMMo/hCaswPNyKWUCq4LrO0o+BOZ2l92LXjWWzxipTRAAvtHRpUlss74NoTyoRT9ZFwBixT4n6rFxOz8el8D6IKiDdjdwblNhPb0Z/WpNOca7iuYajiE0jzwvnWJUtKatFNCJgbq0y19LUg9eNPbGeSzzkGpp8ar3xR/5XKSLfbU0WLKPxRSdWJSLfScKhaZKs2pFaxBSepyRb9sSadq9qfEcq8SDpwjuISA6uKfHoPqVeyWglSz/RoY0tXhOd5CqsbO2sWFUar0tZZX+y8tXbyIyECMkxMbMqoWSz/F1VIfG4HIRTshFQ4W4bd+XKYtIt4eZTTusGKqxgOZZMF9zWCUPZrVr5zYh7Ik+SKaZZU2kY4YFHMl2Eu6U+///pdDov7s1QWuoyZF39din4MP5dCn62sH5XWk+sAhp1//lnBGWK6dLwl86YCN165JSJTBvbx1nI++IvUfYsCxuwqCUAAAAASUVORK5CYII="
+                view_inprogress:
+                  summary: "Response when op=view_inprogress"
+                  value:
+                    name: "CSCV8"
+                    id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+                    category: "PCF"
+                    state: "released"
+                    releasable: true
+                    hierarchy_data:
+                      children:
+                        - name: "Inventory and Control of Hardware Assets"
+                          description: ""
+                          children:
+                            - name: "1.1 Inventory of Hardware Assets"
+                              description: ""
+                              groups_tagged: []
+                              tags: []
+                            - name: "1.4 Hardware Asset Configuration Management"
+                              description: ""
+                              groups_tagged: ["IG1", "IG2", "IG3"]
+                              tags: []
+                    hierarchy_header:
+                      levels:
+                        - title: "Level1"
+                          name: "Control"
+                          description: "Description of Level1 called Function"
+                        - title: "Level2"
+                          name: "Sub Control"
+                          description: ""
+                      groups:
+                        - group: "Group1"
+                          name: "IG1"
+                          description: "Description of implementation group"
+                          color: "#530909"
+                view_inrelease:
+                  summary: "Response when op=view_inrelease"
+                  value:
+                    name: "CSCV8"
+                    id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+                    category: "PCF"
+                    state: "released"
+                    releasable: true
+                    hierarchy_data:
+                      children:
+                        - name: "Inventory and Control of Hardware Assets"
+                          description: ""
+                          children:
+                            - name: "1.1 Inventory of Hardware Assets"
+                              description: ""
+                              groups_tagged: []
+                              tags: []
+                            - name: "1.4 Hardware Asset Configuration Management"
+                              description: ""
+                              groups_tagged: ["IG1", "IG2", "IG3"]
+                              tags: []
+                    hierarchy_header:
+                      levels:
+                        - title: "Level1"
+                          name: "Control"
+                          description: "Description of Level1 called Function"
+                        - title: "Level2"
+                          name: "Sub Control"
+                          description: ""
+                      groups:
+                        - group: "Group1"
+                          name: "IG1"
+                          description: "Description of implementation group"
+                          color: "#530909"
+                view_aggregated:
+                  summary: "Response when op=view_aggregated"
+                  value:
+                    name: "CSCV8"
+                    id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+                    category: "PCF"
+                    state: "released"
+                    releasable: true
+                    hierarchy_data:
+                      children:
+                        - name: "Inventory and Control of Hardware Assets"
+                          description: ""
+                          children:
+                            - name: "1.1 Inventory of Hardware Assets"
+                              description: ""
+                              groups_tagged: []
+                              tags: []
+                            - name: "1.4 Hardware Asset Configuration Management"
+                              description: ""
+                              groups_tagged: ["IG1", "IG2", "IG3"]
+                              tags: []
+                    hierarchy_header:
+                      levels:
+                        - title: "Level1"
+                          name: "Control"
+                          description: "Description of Level1 called Function"
+                        - title: "Level2"
+                          name: "Sub Control"
+                          description: ""
+                      groups:
+                        - group: "Group1"
+                          name: "IG1"
+                          description: "Description of implementation group"
+                          color: "#530909"
+        '400':
+          description: "Bad request - missing or invalid query parameter"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00035"
+                    message: "Invalid query parameter"
+                    details: ["Query parameter 'op' is required and must be one of: view_inprogress, view_inrelease, view_aggregated, view_logo"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00035"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - Compliance Frameworks
+      summary: Update Compliance Framework
+      description: |
+        Update a compliance framework definition. If an in-progress revision exists, it will be updated. If no in-progress revision exists and 'release=false', a new in-progress revision is created. If 'release=true', the framework is both updated and released in a single operation.
+      operationId: "updateFramework"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+        - name: release
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Whether to release the framework after update"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceFrameworkRequest'
+      responses:
+        '200':
+          description: "Successfully updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceFrameworkRequest'
+        '400':
+          description: "Bad request - invalid request body or validation error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid input"
+                    details: ["Invalid value for field 'status' in request body"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Compliance Frameworks
+      summary: Delete Compliance Framework
+      description: "Permanently delete a compliance framework and all its revisions"
+      operationId: "deleteFramework"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+      responses:
+        '204':
+          description: "Successfully deleted (no content)"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /definitions/{id}:clone:
+    post:
+      tags:
+        - Compliance Frameworks
+      summary: Clone Compliance Framework
+      description: "Clone the compliance framework to a new one in the user's TSG"
+      operationId: "cloneFramework"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID to clone"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+      responses:
+        '201':
+          description: "Framework cloned successfully"
+          headers:
+            Location:
+              description: "URI of the cloned framework"
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceFramework'
+        '400':
+          description: "Bad request - invalid framework ID or framework cannot be cloned"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid input"
+                    details: ["Framework ID format is invalid"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /definitions/{id}:benchmark:
+    post:
+      tags:
+        - Compliance Frameworks
+      summary: Benchmark Compliance Framework
+      description: "Mark the compliance framework as a benchmark"
+      operationId: "benchmarkFramework"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID to benchmark"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+      responses:
+        '200':
+          description: "Successfully benchmarked"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+              example:
+                status: "success"
+        '400':
+          description: "Bad request - framework cannot be benchmarked"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid operation"
+                    details: ["Framework is already benchmarked or cannot be benchmarked"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /definitions/{id}:un-benchmark:
+    post:
+      tags:
+        - Compliance Frameworks
+      summary: Remove Framework Benchmark
+      description: "Remove the benchmark designation from the compliance framework"
+      operationId: "unBenchmarkFramework"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID to un-benchmark"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+      responses:
+        '200':
+          description: "Successfully un-benchmarked"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+              example:
+                status: "success"
+        '400':
+          description: "Bad request - framework cannot be un-benchmarked"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid operation"
+                    details: ["Framework is not currently benchmarked"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ──── Analytics ────
+  /summaries:
+    get:
+      tags:
+        - Compliance Analytics
+      summary: List Framework Summaries
+      description: "Retrieve summary view of compliance frameworks per current revision, grouped and filtered by product type"
+      operationId: "getCFSummary"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: product
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - sase
+              - ngfw
+              - all
+          description: "Filter by product type. Available values: sase, ngfw, all"
+          example: "sase"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CFSummaryResponse'
+        '400':
+          description: "Bad request - invalid query parameter"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00035"
+                    message: "Invalid query parameter"
+                    details: ["Invalid value for query parameter 'product'"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00035"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /overall-compliance/{id}:
+    get:
+      tags:
+        - Compliance Analytics
+      summary: Get Framework Compliance Scores
+      description: "Retrieve overall compliance scores for a framework across different products and categories"
+      operationId: "getOverallCompliance"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: object
+                    description: "Product-specific compliance data"
+                    properties:
+                      all:
+                        type: object
+                        description: "Aggregated compliance across all products"
+                        properties:
+                          name:
+                            type: string
+                            example: "all"
+                          data_available:
+                            type: boolean
+                            description: "Whether compliance data is available for this product"
+                          compliance:
+                            type: object
+                            properties:
+                              overall_score:
+                                type: integer
+                                description: "Overall compliance score (0-100, -1 if not available)"
+                              industry_score:
+                                type: integer
+                                description: "Industry compliance score (0-100, -1 if not available)"
+                      ngfw:
+                        type: object
+                        description: "Next-Generation Firewall compliance data"
+                        properties:
+                          name:
+                            type: string
+                            example: "ngfw"
+                          data_available:
+                            type: boolean
+                            description: "Whether compliance data is available for this product"
+                          compliance:
+                            type: object
+                            properties:
+                              overall_score:
+                                type: integer
+                              industry_score:
+                                type: integer
+                          categories:
+                            type: array
+                            description: "Compliance scores by category"
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: "Category name"
+                                  enum: ["network", "infra", "security"]
+                                compliance:
+                                  type: object
+                                  properties:
+                                    overall_score:
+                                      type: integer
+                                    industry_score:
+                                      type: integer
+                      sase:
+                        type: object
+                        description: "SASE compliance data"
+                        properties:
+                          name:
+                            type: string
+                            example: "sase"
+                          data_available:
+                            type: boolean
+                            description: "Whether compliance data is available for this product"
+                          compliance:
+                            type: object
+                            properties:
+                              overall_score:
+                                type: integer
+                              industry_score:
+                                type: integer
+                          categories:
+                            type: array
+                            description: "Compliance scores by category"
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  enum: ["network", "infra", "security"]
+                                compliance:
+                                  type: object
+                                  properties:
+                                    overall_score:
+                                      type: integer
+                                    industry_score:
+                                      type: integer
+                  category:
+                    type: string
+                    description: "Framework category (PCF or CCF)"
+                    enum: ["PCF", "CCF"]
+              example:
+                products:
+                  all:
+                    name: "all"
+                    data_available: true
+                    compliance:
+                      overall_score: 83
+                      industry_score: 87
+                  ngfw:
+                    name: "ngfw"
+                    data_available: true
+                    compliance:
+                      overall_score: 83
+                      industry_score: 87
+                    categories:
+                      - name: "network"
+                        compliance:
+                          overall_score: 62
+                          industry_score: 87
+                      - name: "infra"
+                        compliance:
+                          overall_score: 66
+                          industry_score: 87
+                      - name: "security"
+                        compliance:
+                          overall_score: 87
+                          industry_score: 87
+                  sase:
+                    name: "sase"
+                    data_available: false
+                    compliance:
+                      overall_score: -1
+                      industry_score: -1
+                    categories:
+                      - name: "network"
+                        compliance:
+                          overall_score: -1
+                          industry_score: -1
+                      - name: "infra"
+                        compliance:
+                          overall_score: -1
+                          industry_score: -1
+                      - name: "security"
+                        compliance:
+                          overall_score: -1
+                          industry_score: -1
+                category: "PCF"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /overall-compliance-timeline/{id}:
+    get:
+      tags:
+        - Compliance Analytics
+      summary: Get Compliance Timeline
+      description: "Retrieve compliance score timeline data over 30 days"
+      operationId: "getConfigurationsAssessedTimeline"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+        - name: product
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - sase
+              - ngfw
+              - all
+          description: "Product filter"
+          example: "sase"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeline_30_days:
+                    type: array
+                    description: "Compliance scores over the last 30 days"
+                    items:
+                      type: object
+                      properties:
+                        ts:
+                          type: integer
+                          format: int64
+                          description: "Timestamp in microseconds (epoch)"
+                        compliance_score:
+                          type: integer
+                          description: "Compliance score (0-100)"
+                        data_available:
+                          type: boolean
+                          description: "Whether data is available for this timestamp"
+                  timeline_1_year:
+                    type: array
+                    description: "Compliance scores over the last year"
+                    items:
+                      type: object
+                      properties:
+                        ts:
+                          type: integer
+                          format: int64
+                          description: "Timestamp in microseconds (epoch)"
+                        compliance_score:
+                          type: integer
+                          description: "Compliance score (0-100)"
+                        data_available:
+                          type: boolean
+                          description: "Whether data is available for this timestamp"
+              example:
+                timeline_30_days:
+                  - ts: 1774051200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773964800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773878400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773792000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773705600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773532800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773446400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773360000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773273600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773187200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773100800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773014400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772928000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772841600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772755200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772668800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772582400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772496000000000
+                    compliance_score: 82
+                    data_available: true
+                timeline_1_year:
+                  - ts: 1774051200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773964800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773878400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773792000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773705600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773532800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773446400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773360000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773273600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773187200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773100800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1773014400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772928000000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772841600000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772755200000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772668800000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772582400000000
+                    compliance_score: 83
+                    data_available: true
+                  - ts: 1772496000000000
+                    compliance_score: 82
+                    data_available: true
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /configurations-assessed/{id}:
+    get:
+      tags:
+        - Compliance Analytics
+      summary: Get Assessed Configurations
+      description: "Retrieve assessed configurations"
+      operationId: "getConfigurationsAssessed"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+        - name: product
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - sase
+              - ngfw
+              - all
+          description: "Product filter"
+          example: "sase"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  configurations_assessed:
+                    type: object
+                    properties:
+                      checks:
+                        type: integer
+                        description: "Number of checks"
+                      assessments:
+                        type: integer
+                        description: "Number of assessments"
+                      s:
+                        type: integer
+                        description: "Total number of exceptions"
+                      expiring_exceptions:
+                        type: integer
+                        description: "Number of expiring exceptions"
+              example:
+                configurations_assessed:
+                  checks: 87
+                  assessments: 270
+                  total_exceptions: 29
+                  expiring_exceptions: 0
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /compliance-controls/{id}:
+    get:
+      tags:
+        - Compliance Analytics
+      summary: Get Compliance Controls
+      description: "Retrieve compliance controls for a framework"
+      operationId: "getComplianceControls"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Compliance framework ID"
+        - name: product
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - sase
+              - ngfw
+              - all
+          description: "Product filter"
+          example: "sase"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                    description: "Whether the response is empty"
+                  compliance_framework_metadata:
+                    type: object
+                    description: "Framework metadata"
+                    properties:
+                      id:
+                        type: string
+                        description: "Compliance framework ID"
+                      name:
+                        type: string
+                        description: "Compliance framework name"
+                      assessment_date:
+                        type: string
+                        format: date
+                        description: "Assessment date (YYYY-MM-DD)"
+                      framework_version:
+                        type: string
+                        description: "Framework version"
+                  compliance_framework_control_groups:
+                    type: array
+                    description: "Array of compliance control groups with statistics"
+                    items:
+                      type: object
+                      properties:
+                        control_name:
+                          type: string
+                          description: "Control name and identifier"
+                        data_available:
+                          type: boolean
+                          description: "Whether data is available for this control"
+                        all:
+                          type: object
+                          description: "Aggregated statistics across all products"
+                          properties:
+                            most_severe:
+                              type: object
+                              description: "Most severe finding category"
+                              properties:
+                                category:
+                                  type: integer
+                                  description: "Severity category (1-5)"
+                                category_name:
+                                  type: string
+                                  description: "Human-readable severity category name (1=Informational, 3=Warning, 5=Critical)"
+                                  enum:
+                                    - "Informational"
+                                    - "Warning"
+                                    - "Critical"
+                                count:
+                                  type: integer
+                                  description: "Count of findings in this category"
+                            failed:
+                              type: integer
+                              description: "Number of failed checks"
+                            passed:
+                              type: integer
+                              description: "Number of passed checks"
+                            overall_score:
+                              type: number
+                              format: float
+                              description: "Compliance percentage (0-100, -1 if not available)"
+                        group_stats:
+                          type: object
+                          description: "Group-specific statistics"
+                          additionalProperties: true
+              example:
+                empty: false
+                compliance_framework_metadata:
+                  id: "PCF-820bfe1c-0817-44e8-bf4f-375edf31a7e0"
+                  name: "NIST 800-53 r5"
+                  assessment_date: "2026-03-21"
+                  framework_version: "NIST 800-53 r5"
+                compliance_framework_control_groups:
+                  - control_name: "AC-1 : Policy and Procedures"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 1
+                        category_name: "Informational"
+                        count: 0
+                      failed: 0
+                      passed: 22
+                      overall_score: 100.0
+                    group_stats: {}
+                  - control_name: "AC-2 : Account Management"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 5
+                        category_name: "Critical"
+                        count: 6
+                      failed: 9
+                      passed: 40
+                      overall_score: 81.0
+                    group_stats: {}
+                  - control_name: "AC-3 : Access Enforcement"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 5
+                        category_name: "Critical"
+                        count: 7
+                      failed: 10
+                      passed: 15
+                      overall_score: 60.0
+                    group_stats: {}
+                  - control_name: "AC-4 : Information Flow Enforcement"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 3
+                        category_name: "Warning"
+                        count: 6
+                      failed: 11
+                      passed: 45
+                      overall_score: 80.0
+                    group_stats: {}
+                  - control_name: "AC-7 : Unsuccessful Logon Attempts"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 1
+                        category_name: "Informational"
+                        count: 1
+                      failed: 1
+                      passed: 0
+                      overall_score: 0.0
+                    group_stats: {}
+                  - control_name: "IA : Identification and Authentication"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 3
+                        category_name: "Warning"
+                        count: 3
+                      failed: 4
+                      passed: 0
+                      overall_score: 0.0
+                    group_stats: {}
+                  - control_name: "IR : Incident Response"
+                    data_available: true
+                    all:
+                      most_severe:
+                        category: 1
+                        category_name: "Informational"
+                        count: 0
+                      failed: 0
+                      passed: 7
+                      overall_score: 100.0
+                    group_stats: {}
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ──── Benchmark Monitoring ────
+  /benchmark-monitoring:
+    post:
+      tags:
+        - Benchmark Monitoring
+      summary: Get Benchmark Monitoring Data
+      description: "Retrieve compliance monitoring data for benchmarked frameworks with filtering and pagination"
+      operationId: "getBenchmarkMonitoring"
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: string
+                  description: "Product filter"
+                  enum:
+                    - sase
+                    - ngfw
+                    - all
+                bpc_status:
+                  type: array
+                  description: "BPC status filter"
+                  items:
+                    type: string
+                severity:
+                  type: array
+                  description: "Severity filter"
+                  items:
+                    type: string
+                bpc_id:
+                  type: array
+                  description: "BPC ID filter"
+                  items:
+                    type: string
+                object_type:
+                  type: array
+                  description: "Object type filter"
+                  items:
+                    type: string
+                object_id:
+                  type: array
+                  description: "Object ID filter"
+                  items:
+                    type: string
+                remediation_location:
+                  type: array
+                  description: "Remediation location filter"
+                  items:
+                    type: string
+                action:
+                  type: array
+                  description: "Action filter"
+                  items:
+                    type: string
+                device_type:
+                  type: array
+                  description: "Device type filter"
+                  items:
+                    type: string
+            example:
+              product: "ngfw"
+              bpc_status: []
+              severity: []
+              bpc_id: ["100", "102", "103", "104", "105", "107", "108", "109", "111", "117", "12", "121", "122", "123", "124", "125", "126", "127", "128", "129", "13", "130", "131", "132", "133", "134", "136", "138", "139", "141", "142", "143", "144", "145", "149", "150", "151", "154", "155", "157", "158", "159", "16", "164", "165", "17", "173", "174", "177", "178", "182", "183", "184", "185", "186", "187", "188", "189", "19", "190", "194", "196", "197", "199", "200", "203", "207", "208", "21", "211", "212", "215", "216", "217", "223", "224", "227", "228", "231", "233", "234", "241", "242", "243", "247", "249", "253", "259", "26", "260", "261", "262", "263", "264", "267", "268", "27", "271", "272", "273", "276", "277", "278", "279", "280", "281", "282", "283", "284", "285", "287", "288", "289", "292", "293", "294", "295", "296", "297", "298", "299", "3", "300", "301", "302", "303", "304", "305", "306", "307", "308", "311", "312", "317", "32", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "33", "330", "331", "332", "333", "339", "340", "341", "344", "345", "346", "347", "38", "4", "40", "41", "42", "43", "44", "45", "47", "49", "5", "51", "52", "53", "55", "57", "58", "6", "60", "63", "65", "67", "68", "69", "7", "71", "72", "74", "76", "77", "78", "79", "80", "86", "87", "89", "9", "90", "91", "92", "94", "95", "97", "98"]
+              object_type: []
+              object_id: []
+              remediation_location: []
+              action: []
+              device_type: ["ngfw"]
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device_serial:
+                    type: array
+                    items:
+                      type: string
+                  bpc_id:
+                    type: array
+                    items:
+                      type: string
+                  bpc_id_count:
+                    type: array
+                    items:
+                      type: integer
+                  manager:
+                    type: array
+                    items:
+                      type: string
+                  action:
+                    type: array
+                    items:
+                      type: string
+                  object_type:
+                    type: array
+                    items:
+                      type: string
+                  severity:
+                    type: array
+                    items:
+                      type: string
+                  location:
+                    type: array
+                    items:
+                      type: string
+                  remediation_location:
+                    type: array
+                    items:
+                      type: string
+                  object_id:
+                    type: array
+                    items:
+                      type: string
+                  pbpc_result_number:
+                    type: array
+                    items:
+                      type: string
+                  bpc_status:
+                    type: array
+                    items:
+                      type: string
+                  device_type:
+                    type: array
+                    items:
+                      type: string
+                  bpc_stats:
+                    type: object
+                    properties:
+                      controls:
+                        type: object
+                        properties:
+                          compliance_rate:
+                            type: integer
+                          data_available:
+                            type: boolean
+                            description: "Whether compliance data is available"
+                          failed_assessments:
+                            type: integer
+                          severity:
+                            type: object
+                            properties:
+                              critical:
+                                type: integer
+                              warning:
+                                type: integer
+                              informational:
+                                type: integer
+                              pass:
+                                type: integer
+                      exceptions:
+                        type: object
+                        properties:
+                          total_exceptions:
+                            type: integer
+                          expiring_exceptions:
+                            type: integer
+                          severity:
+                            type: object
+                            properties:
+                              critical:
+                                type: integer
+                              warning:
+                                type: integer
+                              informational:
+                                type: integer
+                  empty_filters:
+                    type: boolean
+                  update_time:
+                    type: integer
+                    format: int64
+              example:
+                device_serial: ["026101000023", "007951000388678", "007051000239252", "007051000239253", "007958000455738", "007951000388704"]
+                bpc_id: ["44", "45", "89", "47", "271", "272", "196", "273", "197", "111", "155", "159", "117", "90", "91", "92", "94", "51", "95", "52", "53", "97", "55", "12", "13", "57", "58", "19", "241", "121", "242", "122", "243", "200", "3", "4", "203", "5", "6", "249", "7", "128", "207", "9", "208", "60", "21", "253", "132", "177", "178", "212", "215", "259", "216", "217", "33", "38", "260", "261", "262", "263", "340", "264", "341", "100", "102", "223", "267", "344", "103", "345", "104", "346", "105", "347", "227", "107", "228", "108", "109", "40", "42", "86", "43", "87"]
+                bpc_id_count: [4, 3, 6, 3, 3, 3, 4, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 4, 4, 6, 6, 6, 5, 6, 6, 2, 6, 6, 6, 6, 6, 3, 28, 28, 6, 28, 28, 6, 28, 1, 4, 28, 28, 31, 6, 7, 1, 1, 1, 31, 6, 4, 6, 6, 3, 7, 4, 6, 6, 6, 4, 6, 4, 5, 6, 6, 17, 4, 6, 4, 6, 4, 6, 6, 4, 6, 12, 6, 6, 7, 3, 4, 4, 4]
+                manager: ["ngfw"]
+                action: ["", "alert", "block"]
+                object_type: ["device_setup_general", "authentication_sequences", "anti_spyware_profile", "certificate", "interface_management_profile", "device_setup_management_interface", "file_blocking_profile", "app_override", "device_setup_logging_reporting", "device_setup_authentication", "device_setup_secure_communication", "zone_protection_profile", "zone", "device_setup_telemetry", "log_forwarding_profile", "device_setup_services", "device_setup_wildfire", "security_rule", "security_rulebase", "device_setup_policy_rulebase", "url_filtering_profile", "decryption_rule", "antivirus_profile", "wildfire_analysis_profile", "log_settings_system", "decryption_profile", "device_setup_minimum_password_complexity", "device_setup_content_id", "vulnerability_protection_profile", "authentication_profiles", "device_setup_session"]
+                severity: ["Warning", "Informational", "Critical"]
+                location: ["", "shared", "vsys1", "predefined"]
+                remediation_location: ["tsgid:1001536090/Device:007951000388704/Device Setup Wildfire:Device Setup Wildfire/", "tsgid:1001536090/Device:007051000239253/Device Setup Management Interface:Device Setup Management Interface/", "NOT PROVIDED"]
+                object_id: ["to-dns-proxy-poc", "Untrust", "adns", "Trust-L3", "best-practice", "Device Setup Minimum Password Complexity", "APAC-Policy", "Log Settings System"]
+                pbpc_result_number: ["1768939214207450", "1768248135671578", "1771099216266731", "1769025625152288", "1768161788021773", "1769371209414697"]
+                bpc_status: ["exception", "fail", "pass"]
+                device_type: ["ngfw"]
+                bpc_stats:
+                  controls:
+                    compliance_rate: 57
+                    data_available: true
+                    failed_assessments: 248
+                    severity:
+                      critical: 65
+                      warning: 84
+                      informational: 99
+                      pass: 333
+                  exceptions:
+                    total_exceptions: 76
+                    expiring_exceptions: 0
+                    severity:
+                      critical: 52
+                      warning: 10
+                      informational: 14
+                empty_filters: false
+                update_time: 1771099212424
+        '400':
+          description: "Bad request - invalid filter criteria in request body"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid input"
+                    details: ["Invalid filter criteria or malformed request body"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /benchmark-monitoring/download:
+    post:
+      tags:
+        - Benchmark Monitoring
+      summary: Download Benchmark Data
+      description: "Download benchmark monitoring data in specified format (CSV, etc.)"
+      operationId: "getBenchmarkMonitoringDownload"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+            minimum: 0
+          description: "Number of records to skip for pagination"
+          example: 0
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+            minimum: 0
+          description: "Maximum number of records to return (0 for no limit)"
+          example: 100
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "csv"
+            enum:
+              - csv
+              - json
+          description: "Export format"
+          example: "csv"
+        - name: compression
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "no"
+            enum:
+              - "no"
+              - gzip
+              - zip
+          description: "Compression type"
+          example: "no"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: string
+                  description: "Product filter"
+                  enum:
+                    - sase
+                    - ngfw
+                    - all
+                bpc_status:
+                  type: array
+                  description: "BPC status filter"
+                  items:
+                    type: string
+                severity:
+                  type: array
+                  description: "Severity filter"
+                  items:
+                    type: string
+                bpc_id:
+                  type: array
+                  description: "BPC ID filter"
+                  items:
+                    type: string
+                object_type:
+                  type: array
+                  description: "Object type filter"
+                  items:
+                    type: string
+                object_id:
+                  type: array
+                  description: "Object ID filter"
+                  items:
+                    type: string
+                remediation_location:
+                  type: array
+                  description: "Remediation location filter"
+                  items:
+                    type: string
+                action:
+                  type: array
+                  description: "Action filter"
+                  items:
+                    type: string
+                device_type:
+                  type: array
+                  description: "Device type filter"
+                  items:
+                    type: string
+            example:
+              product: "ngfw"
+              bpc_status: []
+              severity: []
+              bpc_id: ["100", "102", "103", "104", "105", "107", "108", "109", "111", "117", "12", "121", "122", "123", "124", "125", "126", "127", "128", "129", "13", "130", "131", "132", "133", "134", "136", "138", "139", "141", "142", "143", "144", "145", "149", "150", "151", "154", "155", "157", "158", "159", "16", "164", "165", "17", "173", "174", "177", "178", "182", "183", "184", "185", "186", "187", "188", "189", "19", "190", "194", "196", "197", "199", "200", "203", "207", "208", "21", "211", "212", "215", "216", "217", "223", "224", "227", "228", "231", "233", "234", "241", "242", "243", "247", "249", "253", "259", "26", "260", "261", "262", "263", "264", "267", "268", "27", "271", "272", "273", "276", "277", "278", "279", "280", "281", "282", "283", "284", "285", "287", "288", "289", "292", "293", "294", "295", "296", "297", "298", "299", "3", "300", "301", "302", "303", "304", "305", "306", "307", "308", "311", "312", "317", "32", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "33", "330", "331", "332", "333", "339", "340", "341", "344", "345", "346", "347", "38", "4", "40", "41", "42", "43", "44", "45", "47", "49", "5", "51", "52", "53", "55", "57", "58", "6", "60", "63", "65", "67", "68", "69", "7", "71", "72", "74", "76", "77", "78", "79", "80", "86", "87", "89", "9", "90", "91", "92", "94", "95", "97", "98"]
+              object_type: []
+              object_id: []
+              remediation_location: []
+              action: []
+              device_type: ["ngfw"]
+      responses:
+        '200':
+          description: |
+            Success - Returns benchmark monitoring data in the requested format.
+
+            **CSV Format Columns:**
+            1. BPC Title - Description of the best practice check
+            2. Device Serial - Serial number of the device
+            3. Bpc Id - Best Practice Check ID
+            4. Product - Product type (ngfw, sase, all)
+            5. Object Type - Type of configuration object
+            6. Severity - Severity level (Critical, Warning, Informational)
+            7. Location - Configuration location context
+            8. Remediation Location - Full path to the remediation location
+            9. Object Id - Object identifier
+            10. Bpc Status - Status of the check (pass, fail, exception)
+            11. User Excluded - Whether the check was user-excluded (true/false)
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+                format: binary
+              example: |
+                BPC Title,Device Serial,Bpc Id,Product,Object Type,Severity,Location,Remediation Location,Object Id,Bpc Status,User Excluded
+                The Permitted IP Addresses list on the management interface of the firewall should be used to prevent access from unauthorized sources,007051000239252,100,ngfw,device_setup_management_interface,Informational,,tsgid:1001536090/Device:007051000239252/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,fail,false
+                Administrative management interface services should not allow unencrypted protocols like HTTP and Telnet,007051000239252,102,ngfw,device_setup_management_interface,Warning,,tsgid:1001536090/Device:007051000239252/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,pass,false
+        '400':
+          description: "Bad request - invalid format, compression type, or filter criteria"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                _errors:
+                  - code: "API_CF_E00001"
+                    message: "Invalid input"
+                    details: ["Invalid format or compression type specified"]
+                    help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+                _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Bearer token authentication using JWT"
+
+  schemas:
+    # ──── Request Schemas ────
+    ComplianceFrameworkRequest:
+      type: object
+      description: "Compliance framework create/update request"
+      properties:
+        name:
+          type: string
+          description: "Compliance framework name"
+        description:
+          type: string
+          description: "Framework description"
+        source_url:
+          type: string
+          description: "Source URL of the framework"
+        source:
+          type: string
+          description: "Framework source/origin"
+        category:
+          type: string
+          description: "Framework category (e.g., 'PCF', 'CCF')"
+          enum:
+            - PCF
+            - CCF
+        hierarchy_header:
+          type: object
+          description: "Hierarchy header metadata"
+          additionalProperties: true
+        hierarchy_data:
+          type: object
+          description: "Hierarchical control structure"
+          properties:
+            children:
+              type: array
+              description: "Array of control nodes"
+              items:
+                $ref: '#/components/schemas/ControlNode'
+        logo:
+          type: object
+          description: "Framework logo image"
+          properties:
+            image:
+              type: string
+              description: "Base64 encoded image data (e.g., 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...')"
+            type:
+              type: string
+              description: "Image MIME type (e.g., 'image/png', 'image/jpeg')"
+            name:
+              type: string
+              description: "Image filename (e.g., 'framework-logo.png')"
+      example:
+        name: "CIS Benchmark v1.4"
+        description: "Center for Internet Security Benchmark"
+        source_url: "https://www.cisecurity.org/benchmark/palo_alto_networks"
+        source: "CIS"
+        category: "PCF"
+        hierarchy_header:
+          version: "1.4"
+          release_date: "2024-01-15"
+        hierarchy_data:
+          children:
+            - name: "Access Control"
+              description: "Ensure proper access controls"
+              bpc_mapped: [1001, 1002]
+              children: []
+        logo:
+          image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+          type: "image/png"
+          name: "framework-logo.png"
+
+    ControlNode:
+      type: object
+      description: "Control node in the compliance framework hierarchy"
+      properties:
+        name:
+          type: string
+          description: "Control name"
+        description:
+          type: string
+          description: "Control description"
+        bpc_mapped:
+          type: array
+          description: "Array of BPC (Best Practice Check) IDs mapped to this control"
+          items:
+            type: integer
+        children:
+          type: array
+          description: "Nested child controls"
+          items:
+            $ref: '#/components/schemas/ControlNode'
+
+    # ──── Response Schemas ────
+    ComplianceFramework:
+      type: object
+      description: "Compliance framework resource"
+      properties:
+        id:
+          type: string
+          description: "Compliance framework ID"
+          example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+        name:
+          type: string
+          description: "Compliance framework name"
+        description:
+          type: string
+          description: "Framework description"
+        source_url:
+          type: string
+          description: "Source URL of the framework"
+        source:
+          type: string
+          description: "Framework source/origin"
+        category:
+          type: string
+          description: "Framework category"
+          enum:
+            - PCF
+            - CCF
+        hierarchy_header:
+          type: object
+          description: "Hierarchy header metadata"
+          additionalProperties: true
+        hierarchy_data:
+          type: object
+          description: "Hierarchical control structure"
+        logo:
+          type: object
+          description: "Framework logo image"
+          properties:
+            image:
+              type: string
+              description: "Base64 encoded image data"
+            type:
+              type: string
+              description: "Image MIME type"
+            name:
+              type: string
+              description: "Image filename"
+        created_at:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Last update timestamp"
+        status:
+          type: string
+          description: "Framework status"
+          enum:
+            - draft
+            - released
+      example:
+        id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+        name: "CIS Benchmark v1.4"
+        description: "Center for Internet Security Benchmark"
+        source_url: "https://www.cisecurity.org/benchmark/palo_alto_networks"
+        source: "CIS"
+        category: "PCF"
+        status: "released"
+        created_at: "2024-01-15T10:00:00Z"
+        updated_at: "2024-01-15T10:00:00Z"
+
+    CFSummaryResponse:
+      type: object
+      description: "Compliance framework summary response"
+      properties:
+        data:
+          type: array
+          description: "Array of compliance framework summaries"
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: "Compliance framework ID"
+                example: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+              category:
+                type: string
+                description: "Framework category (PCF or CCF)"
+                example: "PCF"
+              create_time:
+                type: integer
+                format: int64
+                description: "Framework creation timestamp (epoch milliseconds)"
+                example: 1758913230056
+              benchmark:
+                type: boolean
+                description: "Whether this framework is a benchmark"
+                example: true
+              benchmark_by:
+                type: string
+                description: "User who marked this framework as benchmark (only present if benchmark is true)"
+                example: "cchristiansen@paloaltonetworks.com"
+              benchmark_time:
+                type: integer
+                format: int64
+                description: "Timestamp when framework was marked as benchmark (epoch milliseconds, only present if benchmark is true)"
+                example: 1771871351110
+              revision_summary:
+                type: array
+                description: "Array of framework revisions"
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "Compliance framework name"
+                      example: "NIST CSF 2.0"
+                    source_url:
+                      type: string
+                      description: "Source URL of the framework"
+                      example: "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf"
+                    source:
+                      type: string
+                      description: "Framework source"
+                      example: "NIST"
+                    update_time:
+                      type: integer
+                      format: int64
+                      description: "Revision update timestamp (epoch milliseconds)"
+                      example: 1764789586408
+                    revision_id:
+                      type: string
+                      description: "Revision ID"
+                      example: "in_release"
+                    revision_name:
+                      type: string
+                      description: "Revision name"
+                      example: "Added logo"
+                    revision_number:
+                      type: string
+                      description: "Revision number"
+                      example: "Updated logo"
+                    description:
+                      type: string
+                      description: "Framework description"
+                      example: "NIST CSF 2.0 compliance refers to the guidelines and recommendations outlined in the National Institute of Standards and Technology Cybersecurity Framework (NIST CSF)"
+                    state:
+                      type: string
+                      description: "Revision state"
+                      enum:
+                        - draft
+                        - released
+                      example: "released"
+                    overall_score:
+                      type: integer
+                      description: "Overall compliance score (0-100, -1 if not available)"
+                      example: 82
+                    industry_score:
+                      type: integer
+                      description: "Industry compliance score (0-100, -1 if not available)"
+                      example: 80
+                    data_available:
+                      type: boolean
+                      description: "Whether compliance data is available (false when overall_score is -1)"
+                      example: true
+                    releasable:
+                      type: boolean
+                      description: "Whether this revision can be released"
+                      example: true
+                    updated_by:
+                      type: string
+                      description: "User who last updated this revision"
+                      example: "cchristiansen@paloaltonetworks.com"
+              logo:
+                type: object
+                description: "Framework logo information"
+                properties:
+                  image:
+                    type: string
+                    description: "Base64 encoded logo image data"
+                    example: "data:image/png;base64,iVBORw0KGg..."
+                  type:
+                    type: string
+                    description: "Image MIME type"
+                    example: "image/png"
+                  name:
+                    type: string
+                    description: "Image file name"
+                    example: "nist.png"
+      example:
+        data:
+          - id: "PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876"
+            category: "PCF"
+            create_time: 1758913230056
+            benchmark: true
+            benchmark_by: "cchristiansen@paloaltonetworks.com"
+            benchmark_time: 1771871351110
+            revision_summary:
+              - name: "NIST CSF 2.0"
+                source_url: "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf"
+                source: "NIST"
+                update_time: 1764789586408
+                revision_id: "in_release"
+                revision_name: "Added logo"
+                revision_number: "Updated logo"
+                description: "NIST CSF 2.0 compliance refers to the guidelines and recommendations outlined in the National Institute of Standards and Technology Cybersecurity Framework (NIST CSF)"
+                state: "released"
+                overall_score: 82
+                industry_score: 80
+                data_available: true
+                releasable: true
+                updated_by: "cchristiansen@paloaltonetworks.com"
+            logo:
+              image: "data:image/png;base64,iVBORw0KGg..."
+              type: "image/png"
+              name: "nist.png"
+
+    ErrorResponse:
+      type: object
+      description: "Standard error response format"
+      properties:
+        _errors:
+          type: array
+          description: "List of error details"
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          minItems: 1
+        _request_id:
+          type: string
+          description: "Unique request identifier for troubleshooting"
+          format: uuid
+          example: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+      required:
+        - _errors
+        - _request_id
+
+    ErrorDetail:
+      type: object
+      description: "Individual error information"
+      properties:
+        code:
+          type: string
+          description: "Machine-readable error code following format API_CF_{severity}{number}"
+          pattern: '^API_CF_[EWI][0-9]{5}'
+          example: "API_CF_E00001"
+        message:
+          type: string
+          description: "Human-readable error summary"
+          minLength: 1
+          example: "Invalid query parameter"
+        details:
+          type: array
+          description: "Detailed error explanations"
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+          example: ["Invalid value for parameter 'cf-id'"]
+        help:
+          type: string
+          description: "Documentation URL for error resolution"
+          format: uri
+          example: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+      required:
+        - code
+        - message
+  responses:
+    BadRequestError:
+      description: "Bad request - invalid parameters or request body"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            _errors:
+              - code: "API_CF_E00001"
+                message: "Invalid input"
+                details: ["Query parameter 'cf-id' is required"]
+                help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00001"
+            _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+
+    ForbiddenError:
+      description: "Forbidden - insufficient permissions"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            _errors:
+              - code: "API_CF_E00003"
+                message: "Access denied"
+                details: ["User does not have permission to access this resource"]
+                help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00003"
+            _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+
+    NotFoundError:
+      description: "Not found - resource does not exist"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            _errors:
+              - code: "API_CF_E00004"
+                message: "Resource not found"
+                details: ["Compliance framework 'PCF-7f1ae852-f5a4-40ed-911a-88d54ebf8876' not found"]
+                help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00004"
+            _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+
+    InternalServerError:
+      description: "Internal server error"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            _errors:
+              - code: "API_CF_E00500"
+                message: "Internal server error"
+                details: ["An unexpected error occurred while processing the request"]
+                help: "https://docs.paloaltonetworks.com/compliance-center/api/errors#API_CF_E00500"
+            _request_id: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"

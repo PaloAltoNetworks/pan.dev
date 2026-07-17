@@ -50,5 +50,7 @@ CIE operates on the Google Cloud Platform (GCP) and is designed for scalability 
 2.  **Data Processing**: The Directory Sync Service processes and normalizes the data.
 3.  **Data Consumption**: The CIE API exposes the processed data to consuming services, such as Prisma Access, Cortex XDR, and third-party applications.
 
+After connecting your directory to the Directory Sync Service, you can create [Cloud Dynamic User Groups (CDUGs)](/scm/api/config/ciedss/cdug/cdug-introduction.md) to enforce Security policy rules for users that share specific attribuites. These groups automatically update with changes to users and user information in the directory.
+
 These APIs use the [common authentication mechanism](/scm/docs/getstarted) for service access and authorization.
 
