@@ -947,6 +947,11 @@ const config = {
             outputDir: "products/scm/api/config/posture-management/compliance-framework",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-clean-up": {
+            specPath: "openapi-specs/scm/config/posture-management/config-clean-up",
+            outputDir: "products/scm/api/config/posture-management/config-clean-up",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-adnsr": {
             specPath: "openapi-specs/scm/config/adnsr",
             outputDir: "products/scm/api/config/adnsr",
