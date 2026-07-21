@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Prisma AIRS Red Teaming Management API
-  description: 'Red Teaming Management API - Configure and manage security groups and rules for AI/ML model scanning.'
-  version: 0.6.88
+  description: 'Red Teaming Management API - Configure and manage security groups and rules for AI/ML model scanning. © 2025 Palo Alto Networks, Inc'
+  version: 0.7.36
   termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
   license:
     name: MIT
@@ -17,6 +17,8 @@ security:
   - bearerAuth: []
 
 tags:
+ - name: Adapters
+   description: Operations for managing custom target adapters.
  - name: CustomAttack
    description: Operations for managing custom prompt sets, prompts, and properties.
  - name: Dashboard
@@ -27,6 +29,254 @@ tags:
    description: Operations for managing scan targets (create, update, delete, list).
 
 paths:
+  /v1/adapters:
+    post:
+      tags:
+      - Adapters
+      summary: Create a new adapter
+      operationId: create_adapter_v1_adapters_post
+      parameters:
+      -
+        name: validate
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: 'Run static validation on the script. When false, the adapter is saved as DRAFT; when true it is validated and set ACTIVE.'
+          default: true
+          title: Validate
+        description: 'Run static validation on the script. When false, the adapter is saved as DRAFT; when true it is validated and set ACTIVE.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTargetAdapterCreateRequestSchema'
+      responses:
+        201:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Adapters
+      summary: List all adapters
+      operationId: list_adapters_v1_adapters_get
+      parameters:
+      -
+        name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Skip
+        description: Number of records to skip
+      -
+        name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum records to return
+          default: 10
+          title: Limit
+        description: Maximum records to return
+      -
+        name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search adapter by name
+          title: Search
+        description: Search adapter by name
+      -
+        name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/CustomTargetAdapterStatus'
+          - type: 'null'
+          description: Filter adapters by status (DRAFT or ACTIVE)
+          title: Status
+        description: Filter adapters by status (DRAFT or ACTIVE)
+      -
+        name: include_target_count
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: Include the number of targets referencing each adapter. Heavier query — only enable when needed.
+          default: false
+          title: Include Target Count
+        description: Include the number of targets referencing each adapter. Heavier query — only enable when needed.
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterListSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/adapters/config:
+    get:
+      tags:
+      - Adapters
+      summary: Get adapter config defaults
+      operationId: get_adapter_config_v1_adapters_config_get
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterConfigResponseSchema'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/adapters/{adapter_uuid}:
+    get:
+      tags:
+      - Adapters
+      summary: Get adapter by UUID
+      operationId: get_adapter_v1_adapters__adapter_uuid__get
+      parameters:
+      -
+        name: adapter_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Adapter Uuid
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Adapters
+      summary: Update an adapter
+      operationId: update_adapter_v1_adapters__adapter_uuid__put
+      parameters:
+      -
+        name: adapter_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Adapter Uuid
+      -
+        name: validate
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: 'Run validation on the adapter. When false, the adapter is saved as DRAFT (save for later) without validation; when true it is validated and set ACTIVE.'
+          default: true
+          title: Validate
+        description: 'Run validation on the adapter. When false, the adapter is saved as DRAFT (save for later) without validation; when true it is validated and set ACTIVE.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTargetAdapterUpdateRequestSchema'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Adapters
+      summary: Delete an adapter
+      operationId: delete_adapter_v1_adapters__adapter_uuid__delete
+      parameters:
+      -
+        name: adapter_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Adapter Uuid
+      responses:
+        204:
+          description: Successful Response
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/adapters/validate:
+    post:
+      tags:
+      - Adapters
+      summary: Validate adapter script
+      operationId: validate_adapter_v1_adapters_validate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTargetAdapterValidateRequestSchema'
+        required: true
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTargetAdapterValidateResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/target:
     post:
       tags:
@@ -128,6 +378,19 @@ paths:
           description: Search target by name
           title: Search
         description: Search target by name
+      -
+        name: adapter_uuid
+        in: query
+        required: false
+        schema:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          description: Filter targets by the custom adapter they use
+          title: Adapter Uuid
+        description: Filter targets by the custom adapter they use
       responses:
         200:
           description: Successful Response
@@ -1232,6 +1495,65 @@ components:
         scheme: bearer
         bearerFormat: JWT
   schemas:
+    AdapterVarBase:
+      properties:
+        key:
+          type: string
+          maxLength: 255
+          title: Key
+          description: Variable key
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+          description: 'Variable value. On update, null means ''keep the existing value'' — used for unchanged secrets, whose values are never returned.'
+        type:
+          $ref: '#/components/schemas/AdapterVarType'
+          description: VAR (non-sensitive) or SECRET (sensitive)
+      type: object
+      required:
+      - key
+      - type
+      title: AdapterVarBase
+      description: A single adapter configuration variable (also the GSM-stored shape).
+    AdapterVarResponseSchema:
+      properties:
+        key:
+          type: string
+          maxLength: 255
+          title: Key
+          description: Variable key
+        value:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Value
+          description: 'Variable value. On update, null means ''keep the existing value'' — used for unchanged secrets, whose values are never returned.'
+        type:
+          $ref: '#/components/schemas/AdapterVarType'
+          description: VAR (non-sensitive) or SECRET (sensitive)
+        is_redacted:
+          type: boolean
+          title: Is Redacted
+          description: True when the value is hidden (secrets). Redacted values are returned as null.
+          default: false
+      type: object
+      required:
+      - key
+      - type
+      title: AdapterVarResponseSchema
+      description: |
+        A variable returned in adapter responses.
+        
+        Secrets are masked: value is returned as null with is_redacted=true.
+    AdapterVarType:
+      type: string
+      enum:
+      - VAR
+      - SECRET
+      title: AdapterVarType
+      description: Whether a configuration variable is a plain var or a sensitive secret.
     AiGeneratedItems:
       properties:
         languages_supported:
@@ -2136,6 +2458,318 @@ components:
       type: object
       title: CustomPromptUpdateRequestSchema
       description: Schema for updating a custom prompt.
+    CustomTargetAdapterConfigResponseSchema:
+      properties:
+        default_script_b64:
+          type: string
+          title: Default Script B64
+          description: Base64-encoded starter adapter script template for the editor.
+        default_test_prompt:
+          type: string
+          title: Default Test Prompt
+          description: Default prompt used to test the adapter.
+      type: object
+      required:
+      - default_script_b64
+      - default_test_prompt
+      title: CustomTargetAdapterConfigResponseSchema
+      description: |
+        Static/example values for the adapter authoring UI.
+        
+        Returned by GET /v1/adapters/config so the frontend can prefill the editor.
+    CustomTargetAdapterCreateRequestSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+          description: Adapter name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Adapter description
+        script_b64:
+          type: string
+          title: Script B64
+          description: Base64-encoded adapter script
+        network_broker_channel_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: NB channel UUID for this adapter. Optional while the adapter is a DRAFT (save for later); required to activate (validate=true).
+        variables:
+          items:
+            $ref: '#/components/schemas/AdapterVarBase'
+          type: array
+          title: Variables
+          description: Configuration variables and secrets for the adapter
+        prompt:
+          type: string
+          title: Prompt
+          description: Sample prompt used to exercise the adapter end-to-end during validation. Not stored on the adapter.
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - script_b64
+      - prompt
+      title: CustomTargetAdapterCreateRequestSchema
+      description: Customer input to create an adapter.
+    CustomTargetAdapterListItemSchema:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        name:
+          type: string
+          title: Name
+        status:
+          $ref: '#/components/schemas/CustomTargetAdapterStatus'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        created_by_user_id:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Created By User Id
+        target_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Target Count
+          description: Number of targets referencing this adapter. Only populated when include_target_count=true.
+      type: object
+      required:
+      - uuid
+      - name
+      - status
+      - created_at
+      - updated_at
+      title: CustomTargetAdapterListItemSchema
+    CustomTargetAdapterListSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        data:
+          items:
+            $ref: '#/components/schemas/CustomTargetAdapterListItemSchema'
+          type: array
+          title: Data
+          description: List of adapters
+      type: object
+      required:
+      - pagination
+      title: CustomTargetAdapterListSchema
+    CustomTargetAdapterSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+          description: Adapter name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Adapter description
+        script_b64:
+          type: string
+          title: Script B64
+          description: Base64-encoded adapter script
+        network_broker_channel_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: NB channel UUID for this adapter. Optional while the adapter is a DRAFT (save for later); required to activate (validate=true).
+        variables:
+          items:
+            $ref: '#/components/schemas/AdapterVarResponseSchema'
+          type: array
+          title: Variables
+          description: Configuration variables; secret values are redacted (null).
+        uuid:
+          type: string
+          format: uuid
+          title: Uuid
+        tsg_id:
+          type: string
+          title: Tsg Id
+        status:
+          $ref: '#/components/schemas/CustomTargetAdapterStatus'
+        created_at:
+          anyOf:
+          -
+            type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          -
+            type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        created_by_user_id:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Created By User Id
+        updated_by_user_id:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Updated By User Id
+        target_count:
+          type: integer
+          title: Target Count
+          description: Number of targets currently referencing this adapter.
+          default: 0
+      type: object
+      required:
+      - name
+      - script_b64
+      - uuid
+      - tsg_id
+      - status
+      title: CustomTargetAdapterSchema
+    CustomTargetAdapterStatus:
+      type: string
+      enum:
+      - DRAFT
+      - ACTIVE
+      title: CustomTargetAdapterStatus
+    CustomTargetAdapterUpdateRequestSchema:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+          description: Adapter name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Adapter description
+        script_b64:
+          type: string
+          title: Script B64
+          description: Base64-encoded adapter script
+        network_broker_channel_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Network Broker Channel Uuid
+          description: NB channel UUID for this adapter. Optional while the adapter is a DRAFT (save for later); required to activate (validate=true).
+        variables:
+          items:
+            $ref: '#/components/schemas/AdapterVarBase'
+          type: array
+          title: Variables
+          description: Configuration variables and secrets for the adapter
+        prompt:
+          type: string
+          title: Prompt
+          description: Sample prompt used to exercise the adapter end-to-end during validation. Not stored on the adapter.
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - script_b64
+      - prompt
+      title: CustomTargetAdapterUpdateRequestSchema
+      description: |
+        Update is a full replacement (PUT): all create fields are required.
+        
+        For ``variables`` the list defines the complete desired key set:
+        - value provided -> set/add the value
+        - value null     -> keep the existing value (unchanged secrets)
+        - key omitted    -> delete the variable
+    CustomTargetAdapterValidateRequestSchema:
+      properties:
+        script_b64:
+          type: string
+          title: Script B64
+          description: Base64-encoded adapter script
+        network_broker_channel_uuid:
+          type: string
+          format: uuid
+          title: Network Broker Channel Uuid
+          description: NB channel UUID
+        prompt:
+          type: string
+          title: Prompt
+          description: Sample prompt used to exercise the adapter end-to-end.
+        variables:
+          items:
+            $ref: '#/components/schemas/AdapterVarBase'
+          type: array
+          title: Variables
+          description: Configuration variables and secrets for the adapter
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: 'Existing adapter UUID. When provided and variables contain redacted placeholders (or null), the real values are resolved from the adapter''s stored secret before validation. Omit when validating a brand-new adapter.'
+      additionalProperties: false
+      type: object
+      required:
+      - script_b64
+      - network_broker_channel_uuid
+      - prompt
+      title: CustomTargetAdapterValidateRequestSchema
+    CustomTargetAdapterValidateResponseSchema:
+      properties:
+        validated:
+          type: boolean
+          title: Validated
+        stdout:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stdout
+        stderr:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stderr
+        traceback:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Traceback
+      type: object
+      required:
+      - validated
+      title: CustomTargetAdapterValidateResponseSchema
     DashboardOverviewResponseSchema:
       properties:
         total_targets:
@@ -2623,6 +3257,11 @@ components:
           - type: 'null'
           title: Multi Turn Config
           description: Multi-turn config for stateful or stateless target
+        multi_turn_supported:
+          type: boolean
+          title: Multi Turn Supported
+          description: 'Whether a native target that drives multi-turn internally supports it. Currently consumed only by custom target adapters, which have no multi_turn_config to infer it from; gates the multi-turn validation probe.'
+          default: false
       type: object
       title: NativeConnectionParamsBase
       description: |
@@ -2660,6 +3299,11 @@ components:
           - type: 'null'
           title: Multi Turn Config
           description: Multi-turn config for stateful or stateless target
+        multi_turn_supported:
+          type: boolean
+          title: Multi Turn Supported
+          description: 'Whether a native target that drives multi-turn internally supports it. Currently consumed only by custom target adapters, which have no multi_turn_config to infer it from; gates the multi-turn validation probe.'
+          default: false
       type: object
       title: NativeConnectionParamsBase
       description: |
@@ -2697,6 +3341,11 @@ components:
           - type: 'null'
           title: Multi Turn Config
           description: Multi-turn config for stateful or stateless target
+        multi_turn_supported:
+          type: boolean
+          title: Multi Turn Supported
+          description: 'Whether a native target that drives multi-turn internally supports it. Currently consumed only by custom target adapters, which have no multi_turn_config to infer it from; gates the multi-turn validation probe.'
+          default: false
       type: object
       title: NativeConnectionParamsRedactBase
       description: Redacted version of NativeConnectionParamsBase.
@@ -3819,6 +4468,7 @@ components:
       - WEBSOCKET
       - WEBSOCKET_STREAMING
       - MS_COPILOT_STUDIO
+      - CUSTOM_TARGET_ADAPTER
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetContextUpdateSchema:
@@ -3960,6 +4610,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
@@ -3981,6 +4639,15 @@ components:
           - type: 'null'
           title: Canonical Id
           description: Partner-supplied stable identifier (e.g. Discovery's id). Free-form opaque string; immutable once set.
+        adapter_variable_overrides:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/AdapterVarBase'
+            type: array
+          - type: 'null'
+          title: Adapter Variable Overrides
+          description: 'Target-level overrides for the adapter''s variables and secrets, by key. A value wins over the adapter''s base value; a null secret value keeps the existing override on update. Only valid when connection_type is CUSTOM_TARGET_ADAPTER.'
       additionalProperties: false
       type: object
       required:
@@ -4068,6 +4735,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         status:
           $ref: '#/components/schemas/TargetStatus'
           description: Target status
@@ -4381,6 +5056,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
@@ -4402,6 +5085,15 @@ components:
           - type: 'null'
           title: Canonical Id
           description: Partner-supplied stable identifier (e.g. Discovery's id). Free-form opaque string; immutable once set.
+        adapter_variable_overrides:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/AdapterVarBase'
+            type: array
+          - type: 'null'
+          title: Adapter Variable Overrides
+          description: 'Target-level overrides for the adapter''s variables and secrets, by key. A value wins over the adapter''s base value; a null secret value keeps the existing override on update. Only valid when connection_type is CUSTOM_TARGET_ADAPTER.'
         uuid:
           anyOf:
           -
@@ -4606,6 +5298,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         status:
           $ref: '#/components/schemas/TargetStatus'
           description: Target status
@@ -4669,6 +5369,12 @@ components:
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        adapter_secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Adapter Secret Version
+          description: 'Frozen Secret Manager version of the referenced adapter, pinned at scan (job) creation so an adapter edited mid-scan doesn''t change the script/secrets that scan uses. Server-managed; null for non-adapter targets.'
         target_background:
           anyOf:
           - $ref: '#/components/schemas/TargetBackground'
@@ -4685,6 +5391,15 @@ components:
           - $ref: '#/components/schemas/TargetAdditionalContext'
           - type: 'null'
           description: Additional context with source tracking (user + profiler)
+        adapter_variable_overrides:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/AdapterVarResponseSchema'
+            type: array
+          - type: 'null'
+          title: Adapter Variable Overrides
+          description: Target-level overrides for the adapter's variables (secret values masked). Only set for CUSTOM_TARGET_ADAPTER targets.
       type: object
       required:
       - uuid
@@ -4778,6 +5493,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         status:
           $ref: '#/components/schemas/TargetStatus'
           description: Target status
@@ -4841,6 +5564,12 @@ components:
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        adapter_secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Adapter Secret Version
+          description: 'Frozen Secret Manager version of the referenced adapter, pinned at scan (job) creation so an adapter edited mid-scan doesn''t change the script/secrets that scan uses. Server-managed; null for non-adapter targets.'
         target_background:
           anyOf:
           - $ref: '#/components/schemas/TargetBackground'
@@ -4995,6 +5724,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         status:
           $ref: '#/components/schemas/TargetStatus'
           description: Target status
@@ -5058,6 +5795,12 @@ components:
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        adapter_secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Adapter Secret Version
+          description: 'Frozen Secret Manager version of the referenced adapter, pinned at scan (job) creation so an adapter edited mid-scan doesn''t change the script/secrets that scan uses. Server-managed; null for non-adapter targets.'
         target_background:
           anyOf:
           - $ref: '#/components/schemas/TargetBackground'
@@ -5074,6 +5817,15 @@ components:
           - $ref: '#/components/schemas/TargetAdditionalContext'
           - type: 'null'
           description: Additional context with source tracking (user + profiler)
+        adapter_variable_overrides:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/AdapterVarBase'
+            type: array
+          - type: 'null'
+          title: Adapter Variable Overrides
+          description: Target-level overrides for the adapter's variables/secrets
       type: object
       required:
       - uuid
@@ -5252,6 +6004,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
@@ -5273,6 +6033,15 @@ components:
           - type: 'null'
           title: Canonical Id
           description: Partner-supplied stable identifier (e.g. Discovery's id). Free-form opaque string; immutable once set.
+        adapter_variable_overrides:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/AdapterVarBase'
+            type: array
+          - type: 'null'
+          title: Adapter Variable Overrides
+          description: 'Target-level overrides for the adapter''s variables and secrets, by key. A value wins over the adapter''s base value; a null secret value keeps the existing override on update. Only valid when connection_type is CUSTOM_TARGET_ADAPTER.'
       additionalProperties: false
       type: object
       required:
@@ -5624,6 +6393,7 @@ components:
       - HEADERS
       - BASIC_AUTH
       - OAUTH2
+      - CUSTOM_TARGET_ADAPTER
       title: AuthType
       description: Authentication method for target API access.
     red_team_shared__schemas__databricks__AuthType:
