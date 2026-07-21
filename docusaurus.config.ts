@@ -786,6 +786,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          security: {
+            specPath: "openapi-specs/scm/config/security",
+            outputDir: "products/scm/api/config/security",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
