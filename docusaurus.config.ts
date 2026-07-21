@@ -1324,6 +1324,10 @@ const config = {
       require.resolve("./docusaurus-plugin-gtm/index.js"),
       {
         gtm: "GTM-PLXD79N",
+        // Must match STORAGE_KEY in src/components/CookieConsent/consent.js —
+        // the head script reads this to replay a returning visitor's choice
+        // before GTM loads.
+        storageKey: "cookie-consent-preferences",
       },
     ],
     tailwindPlugin,
