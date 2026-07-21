@@ -474,4 +474,8 @@ module.exports = {
     require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
+  security: [
+    "scm/api/config/security/introduction",
+    ...require("./api/config/security/sidebar"),
+  ],
 };
