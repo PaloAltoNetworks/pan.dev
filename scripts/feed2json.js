@@ -7,6 +7,8 @@ const fs = require("fs");
 const https = require("https");
 const http = require("http");
 const zlib = require("zlib");
+const path = require("path");
+const crypto = require("crypto");
 const { URL } = require("url");
 const xml2js = require("xml2js");
 
@@ -421,10 +423,137 @@ async function parseRSS(source) {
   }
 }
 
+// ---------------- Localize feed images (build-time) ----------------
+// Medium feed content references images and a tracking pixel on medium.com
+// domains. BlogCard both scrapes content_html for a card image and injects it
+// via innerHTML, so those remote assets get requested by the browser and set
+// third-party cookies before consent. To avoid that, at build time we download
+// the hero image locally and strip all remote <img> tags (including the
+// medium.com/_/stat pixel) so the client never requests anything off-site.
+const IMG_DIR = path.join(__dirname, "..", "static", "img", "blog-feed");
+const IMG_PUBLIC_BASE = "/img/blog-feed";
+const STAT_PIXEL_RE = /medium\.com\/_\/stat/i;
+const EXT_BY_TYPE = {
+  "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+  "image/avif": ".avif",
+};
+
+function fetchImageBuffer(fileUrl, redirectsLeft = 5) {
+  return new Promise((resolve, reject) => {
+    let url;
+    try {
+      url = new URL(fileUrl);
+    } catch (e) {
+      return reject(e);
+    }
+    const client = url.protocol === "https:" ? https : http;
+    const req = client.get(
+      fileUrl,
+      {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; pan.dev-feed-image-fetch)",
+          Accept: "image/*,*/*",
+        },
+      },
+      (res) => {
+        const status = res.statusCode || 0;
+        if (status >= 300 && status < 400 && res.headers.location) {
+          res.resume();
+          if (redirectsLeft <= 0)
+            return reject(new Error("Too many redirects"));
+          const next = new URL(res.headers.location, fileUrl).toString();
+          return resolve(fetchImageBuffer(next, redirectsLeft - 1));
+        }
+        if (status !== 200) {
+          res.resume();
+          return reject(
+            new Error(`Image request failed with status ${status}`)
+          );
+        }
+        const chunks = [];
+        res.on("data", (c) => chunks.push(c));
+        res.on("end", () =>
+          resolve({
+            buffer: Buffer.concat(chunks),
+            contentType: (res.headers["content-type"] || "")
+              .split(";")[0]
+              .trim()
+              .toLowerCase(),
+          })
+        );
+        res.on("error", reject);
+      }
+    );
+    req.on("error", reject);
+    req.setTimeout(20000, () =>
+      req.destroy(new Error("Image request timed out"))
+    );
+  });
+}
+
+async function downloadImage(imageUrl) {
+  const { buffer, contentType } = await fetchImageBuffer(imageUrl);
+  const ext =
+    EXT_BY_TYPE[contentType] ||
+    path.extname(new URL(imageUrl).pathname) ||
+    ".jpg";
+  const name =
+    crypto.createHash("sha1").update(imageUrl).digest("hex").slice(0, 16) + ext;
+  fs.mkdirSync(IMG_DIR, { recursive: true });
+  fs.writeFileSync(path.join(IMG_DIR, name), buffer);
+  return `${IMG_PUBLIC_BASE}/${name}`;
+}
+
+function firstContentImage(html) {
+  const re = /<img[^>]+src="([^"]+)"/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const src = m[1];
+    if (STAT_PIXEL_RE.test(src)) continue;
+    if (/^https?:\/\//i.test(src)) return src;
+  }
+  return null;
+}
+
+function stripImages(html) {
+  return (html || "").replace(/<img[^>]*>/gi, "");
+}
+
+async function localizeFeedImages(feed) {
+  if (!feed || !Array.isArray(feed.items)) return feed;
+  for (const item of feed.items) {
+    const candidate =
+      item.thumbnail || firstContentImage(item.content_html || "");
+    if (
+      candidate &&
+      /^https?:\/\//i.test(candidate) &&
+      !STAT_PIXEL_RE.test(candidate)
+    ) {
+      try {
+        item.thumbnail = await downloadImage(candidate);
+      } catch (err) {
+        // Leave thumbnail unset so BlogCard falls back to the local stock image.
+        console.error(
+          `[feed] Failed to localize image ${candidate}: ${err.message}`
+        );
+      }
+    }
+    // Remove remote images (incl. the Medium stat pixel) so the client never
+    // requests them, regardless of consent.
+    item.content_html = stripImages(item.content_html || "");
+  }
+  return feed;
+}
+
 // ---------------- Example usage ----------------
 (async () => {
   const source = process.argv[2] || "example.xml";
   const jsonOutput = await parseRSS(source);
+  await localizeFeedImages(jsonOutput);
   console.log(JSON.stringify(jsonOutput, null, 2));
 })();
 

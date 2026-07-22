@@ -4,6 +4,8 @@ import StackdriverErrorReporter from "stackdriver-errors-js";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
+import CookieConsent from "@site/src/components/CookieConsent";
+
 // Error Reporter
 export default function Root({ children }) {
   const {
@@ -32,5 +34,10 @@ export default function Root({ children }) {
     };
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <CookieConsent />
+    </>
+  );
 }
