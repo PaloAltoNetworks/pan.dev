@@ -1,0 +1,831 @@
+---
+openapi: 3.1.0
+tags:
+  - name: Job Resource API
+    description: APIs for managing and tracking bulk configuration jobs
+  - name: Snippet Resource API
+    description: APIs for managing configuration snippets
+  - name: Tenant Resource API
+    description: APIs for managing tenant hierarchy and configuration
+  - name: Tenant Feature API
+    description: APIs for managing tenant feature enablement and status
+components:
+  securitySchemes:
+    authKey:
+      type: http
+      scheme: Bearer
+  schemas:
+    SnippetDetails:
+      type: object
+      properties:
+        name:
+          type: string
+    TenantBean:
+      type: object
+      required:
+        - tenantId
+      properties:
+        tenantId:
+          type: string
+    TenantFeatureBean:
+      type: object
+      required:
+        - tsgId
+      properties:
+        tsgId:
+          type: string
+    TenantSnippetAssociation:
+      type: object
+      required:
+        - snippet
+        - tenants
+      properties:
+        snippet:
+          $ref: "#/components/schemas/SnippetDetails"
+        tenants:
+          type: array
+          items:
+            type: string
+paths:
+  /mt/config/v1/jobs:
+    get:
+      summary: List bulk jobs
+      description: Retrieves a paginated list of bulk configuration jobs that have
+        been submitted to the system
+      tags:
+        - Job Resource API
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 100
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                List Jobs:
+                  value:
+                    data:
+                      - id: 08f085ef-03c9-4c59-8926-671edca14d4c
+                        initiatedBy: admin
+                        jobStatus: IN_PROGRESS
+                        jobType: ASSIGNED
+                        snippetsAssociated:
+                          - id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet1
+                            version: "1"
+                        startTs: 1655572263120
+                        totalChildJobs: 1
+                        totalFailedChildJobs: 0
+                        totalSuccessfulChildJobs: 0
+                    header:
+                      createdAt: 2022-09-13T00:19:51Z
+                      clientRequestId: fd1f4a09-7f44-41bb-a4d5-cabd1e4bcc08
+                      dataCount: 1
+                      status:
+                        subCode: 200
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/jobs/children:
+    get:
+      summary: List tenant jobs
+      description: Retrieves all child jobs that were executed for a specific tenant
+        across all parent jobs
+      tags:
+        - Job Resource API
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                List Child Jobs for a given Job:
+                  value:
+                    data:
+                      - id: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                        jobStatus:
+                          endTs: 1662490493000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1269138971"
+                        updatedTs: 1662500705348
+                      - id: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                        jobStatus:
+                          endTs: 1662500362000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1750393864"
+                        updatedTs: 1662500706641
+                    header:
+                      createdAt: 2022-09-06T22:01:44Z
+                      clientRequestId: 09baaec0-d660-4616-91bc-dbd5880cc78b
+                      dataCount: 2
+                      status:
+                        subCode: 200
+                List Child Jobs for a given Job with includeJobResponse enabled:
+                  value:
+                    data:
+                      - id: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                        jobStatus:
+                          endTs: 1662490493000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        response:
+                          Mobile Users:
+                            endTs: 1662490761000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                          Service Connections:
+                            endTs: 1662490760000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                          Remote Networks:
+                            endTs: 1662490756000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1269138971"
+                        updatedTs: 1662500705348
+                      - id: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                        jobStatus:
+                          endTs: 1662500362000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        response:
+                          Mobile Users:
+                            endTs: 1662500627000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                          Service Connections:
+                            endTs: 1662500627000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                          Remote Networks:
+                            endTs: 1662500622000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1750393864"
+                        updatedTs: 1662500706641
+                    header:
+                      createdAt: 2022-09-06T22:03:12Z
+                      clientRequestId: 16ec34a9-1f2d-40b2-9d3b-0acf3a863806
+                      dataCount: 2
+                      status:
+                        subCode: 200
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/jobs/{id}/children:
+    get:
+      summary: List child jobs
+      description: Retrieves a paginated list of child jobs associated with a specific
+        parent job
+      tags:
+        - Job Resource API
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: includeJobResponse
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 100
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                List Child Jobs for a given Job:
+                  value:
+                    data:
+                      - id: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                        jobStatus:
+                          endTs: 1662490493000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1269138971"
+                        updatedTs: 1662500705348
+                      - id: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                        jobStatus:
+                          endTs: 1662500362000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1750393864"
+                        updatedTs: 1662500706641
+                    header:
+                      createdAt: 2022-09-06T22:01:44Z
+                      clientRequestId: 09baaec0-d660-4616-91bc-dbd5880cc78b
+                      dataCount: 2
+                      status:
+                        subCode: 200
+                List Child Jobs for a given Job with includeJobResponse enabled:
+                  value:
+                    data:
+                      - id: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                        jobStatus:
+                          endTs: 1662490493000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        response:
+                          Mobile Users:
+                            endTs: 1662490761000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                          Service Connections:
+                            endTs: 1662490760000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                          Remote Networks:
+                            endTs: 1662490756000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: 6D4FBC45-27C6-451C-8C89-45A0629326AC
+                            startTs: 1662490493000
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1269138971"
+                        updatedTs: 1662500705348
+                      - id: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                        jobStatus:
+                          endTs: 1662500362000
+                          initiatedBy: admin
+                          state: ERROR
+                          startTs: 1655572263120
+                        parentJobId: 088FCEE5-4CEA-403C-AB09-BAB7546DB85D
+                        response:
+                          Mobile Users:
+                            endTs: 1662500627000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                          Service Connections:
+                            endTs: 1662500627000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                          Remote Networks:
+                            endTs: 1662500622000
+                            info:
+                              - Configuration Transformation Failed
+                            jobStatusId: DB773EB0-0E6F-465F-BDA3-A4FFFBAE704F
+                            startTs: 1662500361000
+                        snippetsAssociated:
+                          - folder: Prisma Access
+                            id: 671D812B-FA57-459B-B383-75E63E89518A
+                            name: GlobalSnippet
+                            version: v1
+                        tenantId: "1750393864"
+                        updatedTs: 1662500706641
+                    header:
+                      createdAt: 2022-09-06T22:03:12Z
+                      clientRequestId: 16ec34a9-1f2d-40b2-9d3b-0acf3a863806
+                      dataCount: 2
+                      status:
+                        subCode: 200
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/snippets:
+    get:
+      summary: List configuration snippets
+      description: Retrieves a list of configuration snippets that are available to
+        the authenticated user based on their tenant context and permissions
+      tags:
+        - Snippet Resource API
+      parameters:
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 100
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                List snippet to tenants:
+                  value:
+                    data:
+                      - folder: Shared
+                        id: D1E064CE-7017-4F57-ABA5-9BDF9843972F
+                        name: GlobalSnippet
+                        version:
+                          current: "1.0"
+                          latest: "2.0"
+                      - folder: Shared
+                        id: CC13AC64-1FC8-43A6-8B00-546886DC7F96
+                        name: FinanceSnippet
+                        version:
+                          current: "1.0"
+                          latest: "2.0"
+                      - folder: Shared
+                        id: 04CD7C5A-5BA1-4EDD-B2A7-133F6FD5FDBE
+                        name: EnggSnippet
+                        version:
+                          current: "1.0"
+                          latest: "2.0"
+                    pageNum: 0
+                    pageSize: 3
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/snippets/assign-and-push:
+    post:
+      summary: Assign and push
+      description: Assigns a configuration snippet to one or more target tenants and
+        immediately pushes the configuration changes to those tenants
+      tags:
+        - Snippet Resource API
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Assign Snippet to Tenants:
+                value:
+                  snippetId: snippet-123
+                  tenantIds:
+                    - tenant-1
+                    - tenant-2
+                    - tenant-3
+            schema:
+              $ref: "#/components/schemas/TenantSnippetAssociation"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Assign snippet to tenants and push:
+                  value:
+                    jobId: 15033562-0B4D-4549-8AA1-074FE3F60FF0
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/snippets/unassign-and-push:
+    post:
+      summary: Unassign and push
+      description: Removes a configuration snippet assignment from one or more target
+        tenants and immediately pushes the configuration removal to those tenants
+      tags:
+        - Snippet Resource API
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Unassign Snippet from Tenants:
+                value:
+                  snippetId: snippet-123
+                  tenantIds:
+                    - tenant-1
+                    - tenant-2
+                    - tenant-3
+            schema:
+              $ref: "#/components/schemas/TenantSnippetAssociation"
+        required: true
+      responses:
+        "200":
+          description: Snippet unassignment initiated successfully. Returns parent
+            job ID for tracking the bulk removal operation.
+          content:
+            application/json:
+              examples:
+                Unassign snippet to tenants and push:
+                  value:
+                    jobId: 15033562-0B4D-4549-8AA1-074FE3F60FF0
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/tenants:
+    get:
+      summary: List tenant details
+      description: "Retrieves a comprehensive list of all tenants accessible to the\
+        \ authenticated user, including their configuration state and hierarchy relationships"
+      tags:
+        - Tenant Resource API
+      parameters:
+        - name: hideParent
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get List of Tenants with Details:
+                  value:
+                    data:
+                      - configSyncStatus: OUT_OF_SYNC
+                        id: 64dbeba7-bfc3-451d-93a0-aa14107816df
+                        lastPushedTs: 1655572263120
+                        snippetsAssociated:
+                          - id: 5fed9517-77f6-4186-83d5-79831064b571
+                            name: msp_demo2
+                            version:
+                              current: "1.0"
+                              latest: "2.0"
+                        tenantId: "1750393864"
+                        updatedTs: 1662589310179
+                      - configSyncStatus: READY
+                        id: 2daaaf38-4e10-4ede-a0ee-4ccc6d361452
+                        lastPushedTs: 1655572263120
+                        snippetsAssociated:
+                          - id: 5fed9517-77f6-4186-83d5-79831064b571
+                            name: msp_demo2
+                            version:
+                              current: "1.0"
+                              latest: "2.0"
+                        tenantId: "1269138971"
+                        updatedTs: 1662589310179
+                      - configSyncStatus: UNASSIGNED
+                        id: 7ae5193c-5e87-404d-b08b-24c73542d563
+                        lastPushedTs: 0
+                        tenantId: "1034376033"
+                        updatedTs: 1662499784415
+                      - configSyncStatus: READY
+                        id: 24f4a439-94af-4190-9504-bba081a437e7
+                        lastPushedTs: 0
+                        snippetsAssociated:
+                          - id: 5fed9517-77f6-4186-83d5-79831064b571
+                            name: msp_demo2
+                            version:
+                              current: "1.0"
+                              latest: "2.0"
+                        tenantId: "1611363357"
+                        updatedTs: 1662589310180
+                      - configSyncStatus: UNASSIGNED
+                        id: ecde34bd-ec3a-4e26-97a8-2fc45abc62bd
+                        lastPushedTs: 0
+                        tenantId: "1442993037"
+                        updatedTs: 1662499784459
+                      - configSyncStatus: UNASSIGNED
+                        id: 3e17a6bd-7101-474e-9d2e-fbb92bdff06a
+                        lastPushedTs: 0
+                        tenantId: "1091039496"
+                        updatedTs: 1662499784480
+                      - configSyncStatus: READY
+                        id: 908c1fbf-427a-4fc1-be9c-951db7dbd5e0
+                        lastPushedTs: 0
+                        snippetsAssociated:
+                          - id: 03c3618d-b1c0-4a06-b7ca-e7069ed33832
+                            name: msp_demo3
+                            version:
+                              current: "1.0"
+                        tenantId: "1213310096"
+                        updatedTs: 1662590297303
+                      - configSyncStatus: UNASSIGNED
+                        id: 5bf31211-bc85-455c-9758-7ea52d0670d1
+                        lastPushedTs: 0
+                        tenantId: "1797990641"
+                        updatedTs: 1662499784519
+                    header:
+                      createdAt: 2022-09-08T19:01:47Z
+                      clientRequestId: e469143c-e85f-4bbe-b1fb-d76d00845af7
+                      dataCount: 8
+                      status:
+                        subCode: 200
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/tenants/feature/details:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantFeatureBean"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      security:
+        - authKey: []
+      summary: Get feature details
+      tags:
+        - Tenant Feature API
+  /mt/config/v1/tenants/feature/enable:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantFeatureBean"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      security:
+        - authKey: []
+      summary: Enable tenant feature
+      tags:
+        - Tenant Feature API
+  /mt/config/v1/tenants/feature/status:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantFeatureBean"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      security:
+        - authKey: []
+      summary: Update tenant status
+      tags:
+        - Tenant Feature API
+  /mt/config/v1/tenants/retry:
+    post:
+      summary: Retry failed job
+      description: Retries the most recent failed job execution for a specific tenant
+      tags:
+        - Tenant Resource API
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Retry Tenant Job:
+                value:
+                  tenantId: "12345"
+            schema:
+              $ref: "#/components/schemas/TenantBean"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Retry the last job on tenant:
+                  value:
+                    jobId: 15033562-0B4D-4549-8AA1-074FE3F60FF0
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+  /mt/config/v1/tenants/revert:
+    post:
+      summary: Revert tenant configuration
+      description: "Reverts a tenant's configuration to its previous known good state,\
+        \ effectively rolling back the most recent configuration change"
+      tags:
+        - Tenant Resource API
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Revert Tenant Configuration:
+                value:
+                  tenantId: "12345"
+            schema:
+              $ref: "#/components/schemas/TenantBean"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Revert Tenant to last known good state:
+                  value: "{\n\t\"msg\":\"Successfully reverted tenant\";\n}\n"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Data Not Found
+        "500":
+          description: Server Error
+      security:
+        - authKey: []
+info:
+  contact:
+    email: support@paloaltonetworks.com
+  description: "This Open API spec file represents the APIs available for\n[Palo Alto\
+    \ Networks Multitenant Bulk Configuration](https://pan.dev/sase/api/mt-bulk-config/)\
+    \ APIs.\n\nThese APIs enable Managed Security Service Providers (MSSPs) and large\
+    \ enterprises to push configuration snippets across multiple Prisma SASE tenants,\
+    \ track bulk deployment jobs, and manage tenant hierarchy from a single management\
+    \ point in Strata Cloud Manager.\n\nThese APIs use the common SASE authentication\
+    \ mechanism and base URL. See the\n[Prisma SASE API Get Started](https://pan.dev/sase/docs/getstarted)\
+    \ guide for more information.\n\n\xA9 2026 Palo Alto Networks, Inc. Palo Alto\
+    \ Networks is a registered trademark of Palo\nAlto Networks. A list of our trademarks\
+    \ can be found at\n\n[https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html)\n\
+    \nAll other marks mentioned herein may be trademarks of their respective companies.\n"
+  title: Multitenant Bulk Configuration APIs
+  version: "1.0"
+servers:
+  - url: https://stratacloudmanager.paloaltonetworks.com
