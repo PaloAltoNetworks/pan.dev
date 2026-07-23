@@ -726,6 +726,26 @@ const config = {
                 },
               ],
             },
+            {
+              label: "IDIRA",
+              to: "#",
+              colorclass: "idira",
+              description:
+                "Explore resources and community content for IDIRA",
+              products: [
+                {
+                  label: "Idira Resources",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Idira Marketplace",
+                      to: "https://marketplace.idira.pan.dev/",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
