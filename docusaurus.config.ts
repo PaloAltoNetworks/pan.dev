@@ -727,14 +727,14 @@ const config = {
               ],
             },
             {
-              label: "Idira",
+              label: "IDIRA",
               to: "#",
               colorclass: "idira",
               description:
                 "Explore resources and community content for IDIRA",
               products: [
                 {
-                  label: "Idira",
+                  label: "Idira Resources",
                   to: "#",
                   docs: [
                     {
