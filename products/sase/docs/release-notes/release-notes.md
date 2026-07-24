@@ -20,54 +20,165 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## April 2026
+
+**Product:** Prisma SASE — 5G Monitoring
+
+Updated the [SASE 5G Monitoring APIs](/sase/api/mt-monitor/) with usage metric endpoints. These new endpoints provide visibility into 5G usage metrics for monitored deployments.
+
+## March 2026
+
+**Product:** Prisma Access — Configuration Orchestration
+
+Added the [Site Creation API Workflow](/sase/api/config-orch/site-license-workflow/) to Prisma Access Configuration Orchestration. This workflow enables programmatic site creation and license management through the orchestration API.
+
+## February 2026
+
+**Product:** Prisma Access Browser for MSP
+
+Added new [Prisma Browser for MSP](/sase/api/pab-msp/pab-msp-api/) APIs. These APIs enable Managed Service Providers to manage Prisma Access Browser deployments across multiple tenants.
+
+---
+
+**Product:** Prisma SASE — Multitenant Interconnect
+
+Backbone and Connection APIs are now **deprecated** and have been replaced by the [Service Provider (SP) Interconnect](/sase/api/mt-interconnect/introduction/) APIs. Migrate existing integrations to the new SP Interconnect endpoints.
+
+## October 2025
+
+**Product:** Prisma SASE — 5G Manage Services
+
+Added new APIs to [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/). These additions expand the capabilities for managing 5G service configurations.
+
+## July 2025
+
+**Product:** Prisma SASE — Identity Security
+
+Added [Identity Security Posture Management APIs](/sase/api/identity-sspm/). These APIs allow you to assess and manage your identity security posture across the SASE platform.
+
+## June 2025
+
+**Product:** Prisma SASE — SaaS Security Posture Management
+
+Added Plugin API to [SaaS Security Posture Management APIs](/sase/api/sspm/). The plugin API extends SSPM capabilities for custom SaaS application integrations.
+
+## May 2025
+
+**Product:** Prisma SASE — 5G Manage Services
+
+Added [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/). These APIs provide management capabilities for 5G network services within the SASE platform.
+
+## April 2025
+
+**Product:** Prisma Access — Insights
+
+Added [Prisma Access Insights 3.0 APIs](/access/api/insights/). This major version update provides enhanced analytics and monitoring capabilities for Prisma Access deployments.
+
+## February 2025
+
+**Product:** Prisma Access — Configuration Orchestration
+
+Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/). These APIs enable orchestrated configuration management across Prisma Access deployments.
+
+## January 2025
+
+**Product:** Prisma SASE — SaaS Security Posture Management
+
+Added [SaaS Security Posture Management APIs](/sase/api/sspm/). Use these APIs to programmatically manage SaaS security posture policies, assessments, and remediation.
+
+## October 2024
+
+**Product:** Prisma Access Browser
+
+Added [Prisma Access Browser APIs](/access/api/browser-mgmt/). These APIs allow you to manage Prisma Access Browser configurations, policies, and deployments.
+
+---
+
+**Product:** Prisma SASE — Aggregate Monitoring
+
+Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/). New endpoints expand monitoring coverage for tenant resources and connectivity.
+
+## July 2024
+
+**Product:** Prisma SASE — Multitenant Interconnect
+
+Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/). These APIs allow you to manage interconnect configurations across multiple tenants in the SASE platform.
+
+## April 2024
+
+**Product:** Prisma SASE — Multitenant Notifications
+
+Added [Multitenant Notification APIs](/sase/api/mt-notifications/). Use these APIs to manage notification configurations and alert policies for multitenant SASE deployments.
+
 ## September 2023
+
+**Product:** Prisma Access — Autonomous DEM
 
 Added [Autonomous DEM](/access/api/adem/autonomous-dem-api/) APIs. Use the ADEM APIs to access the Autonomous Digital
 Experience Management summary, distribution and timeseries data, such as application score and agent
 scores.
 
-Added [examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/) 
-that correlate fields in response structures to the area in the UI which displays that data. 
+Added [examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/)
+that correlate fields in response structures to the area in the UI which displays that data.
 
-For more information on AI-Powered Autonomous DEM, see 
+For more information on AI-Powered Autonomous DEM, see
 [AI-Powered Autonomous DEM](https://docs.paloaltonetworks.com/autonomous-dem/administration).
+
+## May 2023
+
+**Product:** Prisma SASE — Identity and Access Management
+
+Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs. These endpoints enable fine-grained access control management for SASE tenants.
 
 ## April 2023
 
+**Product:** Prisma Access — ZTNA Connector
+
 Added [ZTNA Connector](/access/api/ztna/ztna-connector-apis/) APIs.
+
+**Product:** Prisma Access — Configuration
 
 Updated the [Prisma Access Configuration](/access/api/prisma-access-config/)
 APIs with a hotfix. The `region_ipv6` object is no longer part of the payload
 for [POST /sse/config/v1/mobile-agent/infrastructure-settings](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-infrastructure-settings/).
 
-
 Added a [usage note](/sase/docs/api-call/#unified-prisma-sd-wan-usage) for the Unified Prisma SD-WAN APIs.
 
 ## March 2023
 
+**Product:** Prisma Access — Configuration
+
 The Prisma Access Configuration APIs are updated with new APIs and changes to existing APIs.
 
-* [/sse/config/v1/authentication-profiles](/category/access/api/prisma-access-config/authentication-profiles/) now supports a cloud (CIE) authentication profile.
-* The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
-* [/sse/config/v1/enable](/access/api/prisma-access-config/post-sse-config-v-1-enable/) is added to
+- [/sse/config/v1/authentication-profiles](/category/access/api/prisma-access-config/authentication-profiles/) now supports a cloud (CIE) authentication profile.
+- The Traffic Steering APIs have been renamed [Traffic Steering Rules](/category/access/api/prisma-access-config/traffic-steering-rules/).
+- [/sse/config/v1/enable](/access/api/prisma-access-config/post-sse-config-v-1-enable/) is added to
   support API-based on-boarding of Prisma Access tenants. It creates the same default values as does
   the user interface when a new Prisma Access tenant is on-boarded.
-* [Local User Groups](/category/access/api/prisma-access-config/local-user-groups/) APIs are added.
-* [Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/) APIs are added.
-* APIs for BGP Routing are added to [Service Connections](/category/access/api/prisma-access-config/service-connections/).
-* [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/) now includes:
-  * [/sse/config/v1/mobile-agent/agent-versions](/access/api/prisma-access-config/get-sse-config-v-1-mobile-agent-agent-versions/) to retrieve available agent versions.
-  * [/sse/config/v1/mobile-agent/agent-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-agent-profiles/) to manage custom agent profiles.
-  * [/sse/config/v1/mobile-agent/tunnel-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-tunnel-profiles/) to manage custom tunnel profiles.
+- [Local User Groups](/category/access/api/prisma-access-config/local-user-groups/) APIs are added.
+- [Service Connection Groups](/category/access/api/prisma-access-config/service-connection-groups/) APIs are added.
+- APIs for BGP Routing are added to [Service Connections](/category/access/api/prisma-access-config/service-connections/).
+- [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/) now includes:
+  - [/sse/config/v1/mobile-agent/agent-versions](/access/api/prisma-access-config/get-sse-config-v-1-mobile-agent-agent-versions/) to retrieve available agent versions.
+  - [/sse/config/v1/mobile-agent/agent-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-agent-profiles/) to manage custom agent profiles.
+  - [/sse/config/v1/mobile-agent/tunnel-profiles](/access/api/prisma-access-config/post-sse-config-v-1-mobile-agent-tunnel-profiles/) to manage custom tunnel profiles.
 
+## December 2022
 
+**Product:** Prisma SASE — Subscription Service
+
+Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.
 
 ## November 2022
+
+**Product:** Prisma Access — Configuration
 
 Updated the Prisma Access Configuration API to include [Mobile Agent](/category/access/api/prisma-access-config/mobile-agent/)
 (Global Protect) endpoints.
 
 ## Late August 2022
+
+**Product:** Prisma SASE — Aggregate Monitoring
 
 Updates for the Aggregate Monitoring APIs:
 
@@ -88,6 +199,8 @@ Updates for the Aggregate Monitoring APIs:
 
 ## August 2022
 
+**Product:** Prisma SASE — Aggregate Monitoring, Prisma Access — Configuration
+
 - Update to the Aggregate Monitoring APIs, including:
 
   - Added the required `X-PANW-Region` header parameter.
@@ -107,6 +220,8 @@ Updates for the Aggregate Monitoring APIs:
 
 ## July 2022
 
+**Product:** Prisma SD-WAN, Prisma Access — Configuration, Prisma Access — Insights
+
 - First documentation release of the [Prisma SD-WAN APIs](/sdwan/docs/).
 - Added `shared-infrastructure-settings`, `internal-dns-servers`, and `service-connections`
   endpoints to the [Prisma Access Configuration APIs](/access/api/prisma-access-config/). These are
@@ -114,6 +229,8 @@ Updates for the Aggregate Monitoring APIs:
 - Removed the API Server Status APIs from [Prisma Access Insights](/category/access/api/insights/v-2-0/data-resource/) as they are not intended for customer consumption.
 
 ## April 2022
+
+**Product:** Prisma Access — Configuration
 
 The [Prisma Access configuration APIs](/access/api/prisma-access-config/)
 are updated with new URIs that begin with `/sse`. Where each API used to begin with `/config/v1`, now they begin
@@ -139,6 +256,8 @@ Throughout the entire service, APIs that retrieve or edit a resource by ID now n
 `folder` query parameter. See, for example [/sse/config/v1/addresses/{id}](/access/api/prisma-access-config/get-sse-config-v-1-addresses/).
 
 ## March 2022
+
+**Product:** Prisma SASE
 
 First public release of the Prisma SASE APIs. This release provides support for
 [tenant](/sase/docs/tenant-service-groups) and
