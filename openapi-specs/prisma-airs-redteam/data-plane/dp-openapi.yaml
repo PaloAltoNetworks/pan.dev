@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Prisma AIRS Red Teaming Dataplane API
-  description: 'Red Teaming Data Plane API - Data processing and scanning services for AI/ML model security.'
-  version: 0.6.88
+  description: 'Red Teaming Data Plane API - Data processing and scanning services for AI/ML model security. © 2025 Palo Alto Networks, Inc'
+  version: 0.7.75
   termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
   license:
     name: MIT
@@ -37,6 +37,8 @@ tags:
    description: Operations for managing sentiment and scan report summaries.
  - name: Templates
    description: Operations for managing scan templates and configurations.
+ - name: GoalCategories
+   description: Operations related to GoalCategories.
 
 paths:
   /v1/scan:
@@ -388,6 +390,17 @@ paths:
           description: 'Filter by status: SUCCESSFUL, FAILED, ERROR'
           title: Status
         description: 'Filter by status: SUCCESSFUL, FAILED, ERROR'
+      -
+        name: attack_modality
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/AttackModality'
+          - type: 'null'
+          description: 'Filter by attack modality: FILE (document attacks) or TEXT (text-only)'
+          title: Attack Modality
+        description: 'Filter by attack modality: FILE (document attacks) or TEXT (text-only)'
       responses:
         200:
           description: Successful Response
@@ -694,6 +707,17 @@ paths:
           description: Search string to filter goals
           title: Search
         description: Search string to filter goals
+      -
+        name: goal_category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/GoalCategory'
+          - type: 'null'
+          description: Filter by goal category
+          title: Goal Category
+        description: Filter by goal category
       responses:
         200:
           description: Successful Response
@@ -1370,6 +1394,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/goal-categories/{target_type}:
+    get:
+      tags:
+      - GoalCategories
+      summary: Get goal categories by target type
+      operationId: get_goal_categories_v1_goal_categories__target_type__get
+      parameters:
+      -
+        name: target_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Target Type
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalCategoryListResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/languages:
     get:
       tags:
@@ -1666,6 +1717,15 @@ components:
           - type: string
           - type: 'null'
           title: Goal
+        attack_modality:
+          $ref: '#/components/schemas/AttackModality'
+          description: 'FILE if the attack carries a document, else TEXT'
+          default: TEXT
+        file:
+          anyOf:
+          - $ref: '#/components/schemas/AttackFileSchema'
+          - type: 'null'
+          description: File-attack document (name + signed download URL + short type); null for text attacks
       type: object
       required:
       - uuid
@@ -1682,6 +1742,32 @@ components:
       - compliance_frameworks
       - goal
       title: AttackDetailResponseSchema
+    AttackFileSchema:
+      properties:
+        file_name:
+          type: string
+          title: File Name
+          description: Document filename (basename of the GCS object key)
+        signed_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Signed Url
+          description: Short-lived signed GCS download URL; null if the object could not be signed (e.g. missing signBlob permission).
+        file_type:
+          type: string
+          title: File Type
+          description: 'Short document type, e.g. PDF / DOCX / MD'
+      type: object
+      required:
+      - file_name
+      - file_type
+      title: AttackFileSchema
+      description: |
+        Structured file reference for a multimodal (document) attack in the report.
+
+        Exposed only on the attack **detail** response. The list response conveys type via
+        ``attack_modality`` (FILE/TEXT) and carries no file object.
     AttackListResponseSchema:
       properties:
         pagination:
@@ -1802,6 +1888,10 @@ components:
         sub_category_display_name:
           type: string
           title: Sub Category Display Name
+        attack_modality:
+          $ref: '#/components/schemas/AttackModality'
+          description: 'FILE if the attack carries a document, else TEXT'
+          default: TEXT
       type: object
       required:
       - uuid
@@ -1816,6 +1906,17 @@ components:
       - category_display_name
       - sub_category_display_name
       title: AttackListSchema
+    AttackModality:
+      type: string
+      enum:
+      - TEXT
+      - FILE
+      title: AttackModality
+      description: |
+        Per-attack delivery modality for report display + filtering.
+
+        FILE = the attack carries a document (file_url set); TEXT = text-only. This is
+        a per-row value (distinct from the scan-level include_file_attacks toggle).
     AttackMultiTurnDetailResponseSchema:
       properties:
         uuid:
@@ -1938,6 +2039,15 @@ components:
           - type: string
           - type: 'null'
           title: Goal
+        attack_modality:
+          $ref: '#/components/schemas/AttackModality'
+          description: 'FILE if the attack carries a document, else TEXT'
+          default: TEXT
+        file:
+          anyOf:
+          - $ref: '#/components/schemas/AttackFileSchema'
+          - type: 'null'
+          description: File-attack document (name + signed download URL + short type); null for text attacks
       type: object
       required:
       - uuid
@@ -2120,6 +2230,7 @@ components:
       - HEADERS
       - BASIC_AUTH
       - OAUTH2
+      - CUSTOM_TARGET_ADAPTER
       title: AuthType
       description: Authentication method for target API access.
     BrandSubCategory:
@@ -2433,7 +2544,7 @@ components:
       title: CountByNameSchema
       description: |
         Generic count schema with name field for extensible list structures.
-        
+
         Used in dashboard and other endpoints to provide counts grouped by a name field.
         Frontend-friendly list format for easy iteration.
     CountedQuotaEnum:
@@ -2789,6 +2900,15 @@ components:
           - type: 'null'
           title: System Prompt
           description: Custom system prompt
+        goal_categories:
+          anyOf:
+          -
+            items:
+              $ref: '#/components/schemas/GoalCategory'
+            type: array
+          - type: 'null'
+          title: Goal Categories
+          description: 'Selected goal categories for this scan. Valid values: GOAL_MANIPULATION, PRIVILEGE_MISUSE, TOOL_MISUSE, TOOL_CHAINING, TOXIC_CONTENT_GENERATION. Only used when goal_categories feature flag is enabled.'
       type: object
       title: DynamicJobMetadata
       description: Enhanced metadata for dynamic attack jobs with proper constraints.
@@ -2995,6 +3115,7 @@ components:
       - VALIDATION
       - NETWORK_CHANNEL
       - TRANSLATION
+      - CUSTOM_TARGET_ADAPTER
       - UNKNOWN
       title: ErrorType
       description: Classification of error types.
@@ -3006,6 +3127,53 @@ components:
       - ALL
       title: FileFormat
       description: File format options for report downloads.
+    GoalCategory:
+      type: string
+      enum:
+      - GOAL_MANIPULATION
+      - PRIVILEGE_MISUSE
+      - TOOL_MISUSE
+      - TOOL_CHAINING
+      - TOXIC_CONTENT_GENERATION
+      - CUSTOM
+      title: GoalCategory
+    GoalCategoryListResponseSchema:
+      properties:
+        target_type:
+          type: string
+          title: Target Type
+          description: Target type
+        categories:
+          items:
+            $ref: '#/components/schemas/GoalCategoryOptionSchema'
+          type: array
+          title: Categories
+          description: Valid goal categories for this target type with descriptions
+      type: object
+      required:
+      - target_type
+      - categories
+      title: GoalCategoryListResponseSchema
+    GoalCategoryOptionSchema:
+      properties:
+        category:
+          type: string
+          title: Category
+          description: Goal category enum value
+        display_name:
+          type: string
+          title: Display Name
+          description: Human-readable category name
+        description:
+          type: string
+          title: Description
+          description: What this category tests
+      type: object
+      required:
+      - category
+      - display_name
+      - description
+      title: GoalCategoryOptionSchema
     GoalListResponseSchema:
       properties:
         pagination:
@@ -3049,8 +3217,13 @@ components:
           default: false
         goal_type:
           $ref: '#/components/schemas/GoalType'
-          description: 'Goal type: BASE, TOOL_MISUSE, GOAL_MANIPULATION, PRIVILEGE_MISUSE'
+          description: 'Goal type: BASE, TOOL_MISUSE, GOAL_MANIPULATION, PRIVILEGE_MISUSE, TOOL_CHAINING'
           default: BASE
+        goal_category:
+          anyOf:
+          - $ref: '#/components/schemas/GoalCategory'
+          - type: 'null'
+          description: Goal category for customizable allocation and filtering
         uuid:
           type: string
           format: uuid
@@ -3137,8 +3310,13 @@ components:
           default: false
         goal_type:
           $ref: '#/components/schemas/GoalType'
-          description: 'Goal type: BASE, TOOL_MISUSE, GOAL_MANIPULATION, PRIVILEGE_MISUSE'
+          description: 'Goal type: BASE, TOOL_MISUSE, GOAL_MANIPULATION, PRIVILEGE_MISUSE, TOOL_CHAINING'
           default: BASE
+        goal_category:
+          anyOf:
+          - $ref: '#/components/schemas/GoalCategory'
+          - type: 'null'
+          description: Goal category for customizable allocation and filtering
         uuid:
           type: string
           format: uuid
@@ -3198,6 +3376,7 @@ components:
       - TOOL_MISUSE
       - GOAL_MANIPULATION
       - PRIVILEGE_MISUSE
+      - TOOL_CHAINING
       title: GoalType
     GoalTypeQueryParam:
       type: string
@@ -3951,10 +4130,10 @@ components:
     RiskRating:
       type: string
       enum:
-      - LOW
-      - MEDIUM
-      - HIGH
       - CRITICAL
+      - HIGH
+      - MEDIUM
+      - LOW
       title: RiskRating
       description: Risk rating levels with score ranges.
     RuntimeSecurityPolicySchema:
@@ -4047,7 +4226,7 @@ components:
       title: ScanStatisticsResponseSchema
       description: |
         Dashboard scan statistics response.
-        
+
         Endpoint: GET /api/v1/dashboard/scan-statistics
         Returns scan counts, target stats, and risk profile in list format.
     ScoreTrendResponseSchema:
@@ -4071,7 +4250,7 @@ components:
       title: ScoreTrendResponseSchema
       description: |
         Response for score trend chart API.
-        
+
         Endpoint: GET /api/v1/dashboard/score-trend
         Returns time-series risk scores grouped by job type for chart display.
     ScoreTrendSeriesSchema:
@@ -4315,6 +4494,11 @@ components:
             SECURITY:
             - ADVERSARIAL_SUFFIX
             - JAILBREAK
+        include_file_attacks:
+          type: boolean
+          title: Include File Attacks
+          description: 'Start-scan toggle: when true, include multimodal file (document) attacks alongside text for the selected categories — but only for targets whose validation probe found them file-capable. When false (default), the scan is text-only.'
+          default: false
       type: object
       required:
       - categories
@@ -4607,6 +4791,19 @@ components:
           type: array
           title: Iterations
           description: List of iterations
+        goal_category:
+          anyOf:
+          - $ref: '#/components/schemas/GoalCategory'
+          - type: 'null'
+          description: Goal category for filtering and allocation
+        goal_metadata:
+          anyOf:
+          -
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Goal Metadata
+          description: 'Per-goal metadata (e.g. TOOL_CHAINING tool_sequence, trigger_text, data_flow_narrative, success_markers)'
       type: object
       required:
       - uuid
@@ -5052,6 +5249,11 @@ components:
           title: Active
           description: Whether this subcategory is active
           default: true
+        file_supported:
+          type: boolean
+          title: File Supported
+          description: Whether this subcategory has multimodal file (document) attacks in the library — drives the file-upload icon in the scan wizard
+          default: false
       type: object
       required:
       - id
@@ -5092,6 +5294,11 @@ components:
           title: Active
           description: Whether this subcategory is active
           default: true
+        file_supported:
+          type: boolean
+          title: File Supported
+          description: Whether this subcategory has multimodal file (document) attacks in the library — drives the file-upload icon in the scan wizard
+          default: false
         successful:
           type: integer
           title: Successful
@@ -5165,7 +5372,7 @@ components:
       title: TargetAdditionalContext
       description: |
         Additional context - used in create/update API requests and stored in DB/GCS.
-        
+
         Single value fields are strings.
         List fields are lists of strings.
     TargetBackground:
@@ -5200,11 +5407,11 @@ components:
       title: TargetBackground
       description: |
         Target background - used in create/update API requests and stored in DB/GCS.
-        
+
         Required fields for activation:
         - industry (string, required)
         - use_case (string, required)
-        
+
         Optional field:
         - competitors (list of strings)
     TargetConnectionType:
@@ -5220,6 +5427,7 @@ components:
       - WEBSOCKET
       - WEBSOCKET_STREAMING
       - MS_COPILOT_STUDIO
+      - CUSTOM_TARGET_ADAPTER
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetJobRequest:
@@ -5256,6 +5464,20 @@ components:
           examples:
           - Session ID extraction failed
           - Assistant role not configured
+        supports_multimodal_files:
+          type: boolean
+          title: Supports Multimodal Files
+          description: 'Whether the target accepted a sample file attack at validation time (Probe 3). When False, scans against this target run text-only.'
+          default: false
+        supports_multimodal_files_error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Supports Multimodal Files Error Message
+          description: Concise error message if the multimodal file probe failed
+          examples:
+          - 'HTTP 400: target rejected file payload'
+          - File delivery not configured
         rate_limit:
           anyOf:
           - type: integer
@@ -5346,7 +5568,15 @@ components:
           - 110
       type: object
       title: TargetMetadata
-      description: Metadata stored in the database for targets (user-provided + computed fields).
+      description: |
+        Metadata stored in the database for targets (user-provided + computed fields).
+
+        Inherits the multimodal-capability fields from ``MultiModalResult`` and the
+        multi-turn fields from ``MultiTurnResult``. The base order
+        ``(MultiModalResult, MultiTurnResult)`` keeps the serialized field order
+        ``multi_turn, multi_turn_error_message, supports_multimodal_files,
+        supports_multimodal_files_error_message, rate_limit, …`` identical to before this
+        refactor — which preserves the Restate journal bytes for pre-V4 in-flight scans.
     TargetReferenceSchema:
       properties:
         uuid:
@@ -5368,7 +5598,7 @@ components:
           - type: 'null'
           title: Description
           description: Optional target description
-          default: 
+          default:
           examples:
           - AI model for testing
         target_type:
@@ -5428,6 +5658,14 @@ components:
           default: {}
           examples:
           - custom_key: custom_value
+        adapter_uuid:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Adapter Uuid
+          description: Custom adapter this target uses. Required when connection_type is CUSTOM_TARGET_ADAPTER; must be null for every other connection type.
         status:
           $ref: '#/components/schemas/TargetStatus'
           description: Target status
@@ -5491,6 +5729,12 @@ components:
         target_metadata:
           $ref: '#/components/schemas/TargetMetadata'
           description: Target metadata and configuration options
+        adapter_secret_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Adapter Secret Version
+          description: 'Frozen Secret Manager version of the referenced adapter, pinned at scan (job) creation so an adapter edited mid-scan doesn''t change the script/secrets that scan uses. Server-managed; null for non-adapter targets.'
         target_background:
           anyOf:
           - $ref: '#/components/schemas/TargetBackground'
