@@ -12,7 +12,6 @@ import {
 import Link from "@docusaurus/Link";
 import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
 import NavbarDocItems from "../NavbarDocItems";
-// Import main navbar item
 import NavbarItem from "@theme/NavbarItem";
 import "./DropdownNavbarItem.scss";
 

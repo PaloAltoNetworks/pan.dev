@@ -727,7 +727,7 @@ const config = {
               ],
             },
             {
-              label: "IDIRA",
+              label: "Idira",
               to: "#",
               colorclass: "idira",
               description:
