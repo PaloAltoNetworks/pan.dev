@@ -2610,6 +2610,24 @@ components:
           description: Total Count
           format: int64
           type: integer
+    SecurityZoneQueryFilterV2N1:
+      properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
+        description:
+          description: Description
+          type: string
+        id:
+          description: Id
+          type: string
+        name:
+          description: Name
+          type: string
+        tcp_allow_non_syn:
+          description: Tcp Allow Non Syn
+          type: boolean
     SecurityZoneQueryFilterV2N2:
       properties:
         _etag:
@@ -5523,8 +5541,16 @@ paths:
       - Security Policy
   /sdwan/v2.1/api/securityzones:
     get:
+      description: Get security zones
       operationId: get-sdwan-v2.1-api-securityzones
-      summary: getSecurityZones (v2.1)
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityZoneV2N1'
+          description: Successful Operation
+      summary: Get security zones (v2.1)
       tags:
       - Security Policy
     post:
@@ -5562,8 +5588,41 @@ paths:
       - Security Policy
   /sdwan/v2.1/api/securityzones/query:
     post:
+      description: Queries db for limit number of security zones that match query
+        params.
       operationId: post-sdwan-v2.1-api-securityzones-query
-      summary: querySecurityZones (v2.1)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecurityZoneQuery'
+        description: Query details for security zones
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ListQueryResponse'
+                - properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/SecurityZoneQueryFilterV2N1'
+                      type: array
+                  type: object
+          description: Successful Operation
+        '400':
+          content:
+            application/json:
+              example:
+                value:
+                  _error:
+                  - code: BAD_REQUEST
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+      summary: Queries db for limit number of security zones that match query params.
+        (v2.1)
       tags:
       - Security Policy
   /sdwan/v2.1/api/securityzones/{zone_id}:
