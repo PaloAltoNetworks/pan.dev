@@ -1410,6 +1410,55 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
+  '/ike-gateways:generate-ppk':
+    post:
+      tags:
+        - IKE Gateways
+      summary: Generate PPK Key
+      description: |
+        Generates a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784).
+        Returns a hex-encoded key suitable for use in IKE gateway PPK configuration.
+      operationId: GenerateIKEGatewayPPKKey
+      parameters:
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        description: PPK generation parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                length:
+                  type: integer
+                  description: Key length in characters (max 128). Default is 32.
+                  default: 32
+                  maximum: 128
+      responses:
+        '200':
+          description: Successfully generated PPK key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Hex-encoded PPK key
+                  length:
+                    type: integer
+                    description: Key length in bytes
+                  generated_at:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 timestamp when key was generated
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
   /ipsec-crypto-profiles:
     get:
       tags:
@@ -9024,6 +9073,52 @@ components:
           description: IKEv2 SA reauthentication interval equals authetication-multiple * rekey-lifetime; 0 means reauthentication disabled
           maximum: 50
           default: 0
+        ake:
+          type: object
+          description: |
+            RFC 9370 Additional Key Exchange (AKE) configuration for IKE.
+            Supports up to 7 rounds of additional key exchanges.
+            Each round can specify multiple algorithms in preference order.
+            Supported algorithms: ml-kem-512, ml-kem-768, ml-kem-1024, and DH groups.
+          properties:
+            enabled:
+              type: boolean
+              description: Enable additional key exchanges
+            ake_1:
+              type: array
+              items:
+                type: string
+              description: Round 1 algorithms (e.g., ["ml-kem-768", "group14"])
+            ake_2:
+              type: array
+              items:
+                type: string
+              description: Round 2 algorithms
+            ake_3:
+              type: array
+              items:
+                type: string
+              description: Round 3 algorithms
+            ake_4:
+              type: array
+              items:
+                type: string
+              description: Round 4 algorithms
+            ake_5:
+              type: array
+              items:
+                type: string
+              description: Round 5 algorithms
+            ake_6:
+              type: array
+              items:
+                type: string
+              description: Round 6 algorithms
+            ake_7:
+              type: array
+              items:
+                type: string
+              description: Round 7 algorithms
       required:
         - name
         - hash
@@ -9166,6 +9261,49 @@ components:
                   properties:
                     enable:
                       type: boolean
+                pq_ppk:
+                  type: object
+                  description: RFC 8784 Post-Quantum Pre-Shared Key (PPK) configuration
+                  properties:
+                    enabled:
+                      type: boolean
+                      description: Enable PPK for this IKE gateway
+                    negotiation_mode:
+                      type: string
+                      enum:
+                        - preferred
+                        - mandatory
+                      description: |
+                        PPK negotiation mode:
+                        - preferred: Fall back to normal IKEv2 if peer doesn't support PPK
+                        - mandatory: Abort negotiation if peer doesn't support PPK
+                    keys:
+                      type: array
+                      description: List of PPK keys
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            maxLength: 31
+                            description: PPK key identifier
+                          key:
+                            type: string
+                            maxLength: 128
+                            description: PPK secret value (hex-encoded)
+                          enabled:
+                            type: boolean
+                            description: Enable this PPK key
+                pq_kem:
+                  type: object
+                  description: RFC 9370 Post-Quantum Key Encapsulation Mechanism configuration
+                  properties:
+                    enable:
+                      type: boolean
+                      description: Enable PQ-KEM for this IKE gateway
+                    block_vulnerable_cipher:
+                      type: boolean
+                      description: Block connections that don't support PQ-KEM
             version:
               enum:
                 - ikev2-preferred
@@ -9349,6 +9487,35 @@ components:
                   description: specify lifesize in terabytes(TB)
                   minimum: 1
                   maximum: 65535
+        ake:
+          type: object
+          description: |
+            RFC 9370 Additional Key Exchange (AKE) configuration for IPSec/ESP.
+            Supports up to 7 rounds of additional key exchanges.
+            Unlike IKE, each round accepts only a single algorithm (not an array).
+            Supported algorithms: ml-kem-512, ml-kem-768, ml-kem-1024, and DH groups.
+          properties:
+            ake_1:
+              type: string
+              description: Round 1 algorithm (e.g., "ml-kem-768")
+            ake_2:
+              type: string
+              description: Round 2 algorithm
+            ake_3:
+              type: string
+              description: Round 3 algorithm
+            ake_4:
+              type: string
+              description: Round 4 algorithm
+            ake_5:
+              type: string
+              description: Round 5 algorithm
+            ake_6:
+              type: string
+              description: Round 6 algorithm
+            ake_7:
+              type: string
+              description: Round 7 algorithm
       required:
         - name
         - lifetime
@@ -10928,10 +11095,13 @@ components:
                   type: object
                   properties:
                     vlan_tag:
-                      description: VLAN tag
+                      description: VLAN tag. Mutually exclusive with vlan_object.
                       type: string
                       pattern: '^([1-9]\d{0,2}|[1-3]\d{3}|40[0-8]\d|409[0-6])$'
                       example: '123'
+                    vlan_object:
+                      description: VLAN object reference. Mutually exclusive with vlan_tag.
+                      type: string
                     lacp:
                       $ref: '#/components/schemas/lacp'
                     netflow_profile:
@@ -11316,9 +11486,12 @@ components:
                       description: Name of Netflow Profile to assign to Interface
                       type: string
                     vlan_tag:
-                      description: Assign interface to VLAN tag
+                      description: Assign interface to VLAN tag. Mutually exclusive with vlan_object.
                       type: string
                       pattern: '^([1-9]\d{0,2}|[1-3]\d{3}|40[0-8]\d|409[0-6])$'
+                    vlan_object:
+                      description: VLAN object reference. Mutually exclusive with vlan_tag.
+                      type: string
                     lldp:
                       description: LLDP Settings
                       type: object
@@ -11556,6 +11729,9 @@ components:
           description: VLAN tag
           type: string
           pattern: '^([1-9]\d{0,2}|[1-3]\d{3}|40[0-8]\d|409[0-6])$'
+        vlan_object:
+          description: VLAN object reference
+          type: string
         parent_interface:
           description: Parent interface
           type: string
@@ -11932,10 +12108,13 @@ components:
           description: Description
           type: string
         vlan_tag:
-          description: VLAN tag
+          description: VLAN tag. Mutually exclusive with vlan_object.
           type: string
           pattern: '^([1-9]\d{0,2}|[1-3]\d{3}|40[0-8]\d|409[0-6])$'
           example: '123'
+        vlan_object:
+          description: VLAN object reference. Mutually exclusive with vlan_tag.
+          type: string
         mtu:
           description: MTU
           type: integer
