@@ -806,6 +806,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          subscription_service: {
+            specPath: "openapi-specs/scm/config/cloudngfw/subscription_service",
+            outputDir: "products/scm/api/config/subscription_service",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
