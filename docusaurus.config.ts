@@ -806,9 +806,9 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
-          subscription_service: {
-            specPath: "openapi-specs/scm/config/subscription_service",
-            outputDir: "products/scm/api/config/subscription_service",
+          subscriptionservice: {
+            specPath: "openapi-specs/scm/config/subscription-service",
+            outputDir: "products/scm/api/config/subscription-service",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           auth: {

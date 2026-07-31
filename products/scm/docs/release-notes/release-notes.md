@@ -18,18 +18,18 @@ documentation, some of which have occurred in between API product releases.
 
 ## July 31st, 2026
 
-Subscription_Service API: 2 new endpoints available.
+Subscription Service API: 2 new endpoints available.
 
 ### New
 
 - **Fetch entitlement group details.** New `GET /asset/api/v1/entitlement-groups` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   GET api.strata.paloaltonetworks.com/asset/api/v1/entitlement-groups
   ```
 
 - **Get instance status.** New `GET /asset/api/v1/instances` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   GET api.strata.paloaltonetworks.com/asset/api/v1/instances
   ```
@@ -37,32 +37,45 @@ Subscription_Service API: 2 new endpoints available.
 ---
 ## July 31st, 2026
 
-Subscription_Service API: 4 new endpoints available.
+Subscription Service API: 4 new endpoints available.
 
 ### New
 
 - **Activate or amend license.** New `POST /activation/api/v1/activate` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   POST api.strata.paloaltonetworks.com/activation/api/v1/activate
   ```
 
 - **Offboard a product instance.** New `POST /activation/api/v1/offboard` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   POST api.strata.paloaltonetworks.com/activation/api/v1/offboard
   ```
 
 - **Validate offboard readiness.** New `GET /activation/api/v1/offboard/validation` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   GET api.strata.paloaltonetworks.com/activation/api/v1/offboard/validation
   ```
 
 - **Share an instance with target TSGs.** New `POST /activation/api/v1/shared-instances` endpoint now available.
-  [Subscription_Service API reference →](/scm/api/subscription_service)
+  [Subscription Service API reference →](/scm/api/subscription-service)
   ```
   POST api.strata.paloaltonetworks.com/activation/api/v1/shared-instances
+  ```
+
+---
+## July 24th, 2026
+
+Network API: 1 new endpoint available.
+
+### New
+
+- **Generate PPK Key.** New `POST /ike-gateways:generate-ppk` endpoint now available.
+  [Network API reference →](/scm/api/network)
+  ```
+  POST api.strata.paloaltonetworks.com/ike-gateways:generate-ppk
   ```
 
 ---
