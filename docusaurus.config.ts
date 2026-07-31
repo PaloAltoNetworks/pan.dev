@@ -807,7 +807,7 @@ const config = {
         docsPluginId: "default",
         config: {
           subscription_service: {
-            specPath: "openapi-specs/scm/config/cloudngfw/subscription_service",
+            specPath: "openapi-specs/scm/config/subscription_service",
             outputDir: "products/scm/api/config/subscription_service",
             sidebarOptions: { groupPathsBy: "tag" },
           },
