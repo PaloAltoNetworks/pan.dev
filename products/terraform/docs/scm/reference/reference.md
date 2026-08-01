@@ -1,5 +1,5 @@
 ---
-id: provider
+id: reference
 title: Terraform for Strata Cloud Manager
 sidebar_label: Provider Reference
 hide_title: true
