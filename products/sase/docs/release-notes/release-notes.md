@@ -20,6 +20,85 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## July 22nd, 2026
+
+Mt Bulk Config API: 12 new endpoints available.
+
+### New
+
+- **Retrieve Bulk Configuration Jobs.** New `GET /mt/config/v1/jobs` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  GET api.sase.paloaltonetworks.com/mt/config/v1/jobs
+  ```
+
+- **Retrieve All Child Jobs for a Specific Tenant.** New `GET /mt/config/v1/jobs/children` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  GET api.sase.paloaltonetworks.com/mt/config/v1/jobs/children
+  ```
+
+- **Retrieve Child Jobs for a Parent Job.** New `GET /mt/config/v1/jobs/{id}/children` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  GET api.sase.paloaltonetworks.com/mt/config/v1/jobs/{id}/children
+  ```
+
+- **Retrieve Available Configuration Snippets.** New `GET /mt/config/v1/snippets` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  GET api.sase.paloaltonetworks.com/mt/config/v1/snippets
+  ```
+
+- **Assign and Push Configuration Snippet to Tenants.** New `POST /mt/config/v1/snippets/assign-and-push` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/snippets/assign-and-push
+  ```
+
+- **Unassign and Remove Configuration Snippet from Tenants.** New `POST /mt/config/v1/snippets/unassign-and-push` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/snippets/unassign-and-push
+  ```
+
+- **Retrieve Tenant Hierarchy and Details.** New `GET /mt/config/v1/tenants` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  GET api.sase.paloaltonetworks.com/mt/config/v1/tenants
+  ```
+
+- **Get Tenant Feature Details.** New `POST /mt/config/v1/tenants/feature/details` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/tenants/feature/details
+  ```
+
+- **Enable Feature.** New `POST /mt/config/v1/tenants/feature/enable` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/tenants/feature/enable
+  ```
+
+- **Update Light Weight Tenant Status.** New `POST /mt/config/v1/tenants/feature/status` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/tenants/feature/status
+  ```
+
+- **Retry Last Failed Job on a Tenant.** New `POST /mt/config/v1/tenants/retry` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/tenants/retry
+  ```
+
+- **Revert Tenant Configuration to Previous Known Good State.** New `POST /mt/config/v1/tenants/revert` endpoint now available.
+  [Mt Bulk Config API reference →](/sase/api/mt-bulk-config)
+  ```
+  POST api.sase.paloaltonetworks.com/mt/config/v1/tenants/revert
+  ```
+
+---
 ## September 2023
 
 Added [Autonomous DEM](/access/api/adem/autonomous-dem-api/) APIs. Use the ADEM APIs to access the Autonomous Digital
