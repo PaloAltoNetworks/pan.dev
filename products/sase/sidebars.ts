@@ -1,3 +1,9 @@
+const sasemonitorVersions = require("./api/mt-monitor/versions.json");
+const {
+  versionSelector,
+  versionCrumb,
+} = require("docusaurus-plugin-openapi-docs/lib/sidebars/utils");
+
 module.exports = {
   sase_docs: [
     {
@@ -292,8 +298,34 @@ module.exports = {
   saseauth: ["sase/api/auth/auth-api", require("./api/auth/sidebar")],
   saseiam: ["sase/api/iam/iam-api", require("./api/iam/sidebar")],
   sasemonitor: [
-    "sase/api/mt-monitor/msp-api",
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionSelector(sasemonitorVersions),
+      className: "version-button",
+    },
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionCrumb(`v2.0`),
+    },
+    "sase/api/mt-monitor/agg-monitor-v2",
     require("./api/mt-monitor/sidebar"),
+  ],
+  sasemonitorv1: [
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionSelector(sasemonitorVersions),
+      className: "version-button",
+    },
+    {
+      type: "html",
+      defaultStyle: true,
+      value: versionCrumb(`v1.0`),
+    },
+    "sase/api/mt-monitor/1.0/msp-api",
+    require("./api/mt-monitor/1.0/sidebar"),
   ],
   sasemtnotify: [
     "sase/api/mt-notifications/notifications-api",
