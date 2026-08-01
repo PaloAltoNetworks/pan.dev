@@ -51,6 +51,11 @@ export default function SCMLandingPage() {
           to: "scm/docs/api-best-practices",
           icon: "doc",
         },
+        {
+          label: "Next-Gen Trust Security",
+          to: "/mim",
+          icon: "doc",
+        },
       ],
     },
     {
