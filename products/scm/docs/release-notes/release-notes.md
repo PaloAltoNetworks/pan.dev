@@ -16,6 +16,19 @@ documentation, some of which have occurred in between API product releases.
 
 * [November 2024](/scm/docs/release-notes/november2024/)
 
+## August 3rd, 2026
+
+Config Cleanup API: 1 new endpoint available.
+
+### New
+
+- **Get Zero-Hit Security Rules.** New `GET /zerohit-rules` endpoint now available.
+  [Config Cleanup API reference →](/scm/api/config-cleanup)
+  ```
+  GET api.strata.paloaltonetworks.com/zerohit-rules
+  ```
+
+---
 ## July 31st, 2026
 
 Posture Management API: 26 new, 10 removed endpoints. Updated from v1.0 to v1.1.0.

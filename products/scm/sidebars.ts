@@ -356,7 +356,20 @@ module.exports = {
           require("./api/config/posture-management/compliance-framework/sidebar"),
           ],
         },
-      ],
+      
+        {
+          type: "category",
+          label: "Cleanup",
+          collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/posture-management/config-cleanup/introduction",
+            },
+            require("./api/config/posture-management/config-cleanup/sidebar"),
+          ],
+        },
+],
     },
     {
       type: "category",
