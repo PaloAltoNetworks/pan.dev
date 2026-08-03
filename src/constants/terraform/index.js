@@ -170,7 +170,7 @@ export const TERRAFORM_PROVIDER_CONTENT = {
       title: "Prisma Cloud Compute",
       latestTag: "v0.7.0",
       description:
-        "Define your cloud workload protection suing Terraform, to protect your host, container and serverless deployments in any cloud.",
+        "Define your cloud workload protection using Terraform, to protect your host, container and serverless deployments in any cloud.",
       cta: {
         type: "double",
         content: [
@@ -201,6 +201,25 @@ export const TERRAFORM_PROVIDER_CONTENT = {
           },
           {
             link: "https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest/docs",
+            text: "Docs",
+          },
+        ],
+      },
+    },
+    {
+      title: "Idira Identity Security (idsec)",
+      description:
+        "Automate identity security operations using Terraform, including privileged access management, secrets management, and identity governance within the Idira Identity Security Platform.",
+      cta: {
+        type: "double",
+        content: [
+          {
+            link: "https://registry.terraform.io/providers/cyberark/idsec/latest",
+            logoSrc: "/img/product-landing/terraform/terraform-logo.png",
+            logoAlt: "Terraform Logo",
+          },
+          {
+            link: "https://registry.terraform.io/providers/cyberark/idsec/latest/docs",
             text: "Docs",
           },
         ],
