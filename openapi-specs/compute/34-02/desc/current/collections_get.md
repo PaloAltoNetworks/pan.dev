@@ -1,0 +1,1 @@
+Returns collections in the current project that the user has permission to access.

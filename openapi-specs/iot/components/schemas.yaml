@@ -69,6 +69,9 @@ schemas:
         description: 'An array of user-defined tags assigned to a device. Each item in the array consists of three attributes: tagType, tagValue, and tagId.'
         items:
           $ref: '#/schemas/TagDetails'
+      customAttributes:
+        type: array
+        description: 'An array of custom attributes. Only returning custom attribute with non-default values.'
 
   DeviceDetailPerIPResponse:
     type: object
@@ -145,6 +148,126 @@ schemas:
         description: An array containing device details
         items:
           $ref: '#/schemas/DeviceDetails'
+  
+  IoTDeviceInventoryV2Response:
+    type: object
+    properties:
+      total:
+        type: integer
+        description: The number of devices matching the request
+      devices:
+        type: array
+        description: An array containing device attributes as specified by projection parameter
+        items:
+          $ref: '#/schemas/DeviceDetailsV2'
+
+  DeviceSearchMultiInterfaceResponse:
+    type: object
+    description: Response containing both device and interface search results
+    properties:
+      devices:
+        type: object
+        description: Container for device search results
+        properties:
+          total:
+            type: integer
+            description: The number of devices matching the request
+          hits:
+            type: array
+            description: An array containing device or multi-interface device details
+            items:
+              $ref: '#/schemas/DeviceMultiInterfaceDetails'
+      interfaces:
+        type: object
+        description: Container for interface search results
+        properties:
+          total:
+            type: integer
+            description: The number of interfaces matching the request
+          hits:
+            type: array
+            description: An array containing multi-interface details
+            items:
+              $ref: '#/schemas/MultiInterfaceDetail'
+  
+  DeviceMultiInterfaceDetails:
+    type: object
+    properties:
+      deviceid:
+        type: string
+        description: The device ID, which IoT Security uses to identify and track a device (always included)
+      primaryDevice:
+        type: boolean
+        description: Indicates whether this interface is the primary device interface (true) or a secondary interface (false)
+      multiInterfaces:
+        type: array
+        description: The multi-interfaces that the primary device has
+        items:
+          $ref: '#/schemas/multiInterfaceWithinDevicesResp'
+      attr:
+        type: string
+        description: The user defined custom attributes associated with the device (always included)
+
+  multiInterfaceWithinDevicesResp:
+    type: object
+    properties:
+      deviceid:
+        type: string
+        description: The interface's id.
+      primaryDeviceid:
+        type: string
+        description: The primary device's ID for this interface
+      display_profile_type:
+        type: string
+        description: The type of device profile, such as IoT or Non_IoT.
+      display_profileid:
+        type: string
+        description: The profile to which the device belongs.
+      profile_category:
+        type: string
+        description: The category to which the device profile belongs
+  
+  MultiInterfaceDetail:
+    type: object
+    properties:
+      primaryDeviceMac:
+        type: string
+        description: The MAC address of the primary device
+      ip:
+        type: string
+        description: The IP address of multi-interface device
+      deviceid:
+        type: string
+        description: The interface's id.
+      MAC:
+        type: string
+        description: The interface's MAC address.
+      source:
+        type: string
+        description: The source of this interface data
+      primaryDeviceDetail:
+        type: object
+        description: Details about the primary device associated with this multi-interface device. It won't be returned unless 'reverseReference' api query parameter is set to yes.
+
+  AddingTagResponse:
+    type: object
+    properties:
+      api:
+        type: string
+        description: The current API URI
+      updateSuccess:
+        type: string
+        description: To indicate whether the adding operation is success or not
+
+  RemovingTagResponse:
+    type: object
+    properties:
+      api:
+        type: string
+        description: The current API URI
+      removeSuccess:
+        type: string
+        description: To indicate whether the removing operation is success or not
 
   IoTProfileMappingResponse:
     type: object
@@ -182,6 +305,95 @@ schemas:
         description: "An array of user-defined tags assigned to a device. Each item in the array consists of three attributes: tagType, tagValue, and tagId."
         items:
           $ref: '#/schemas/TagDetails'
+
+  SavedFilterListResponse:
+    type: object
+    properties:
+      filters:
+        type: array
+        description: "All the saved filters."
+        items:
+          $ref: '#/schemas/FilterDetails'
+
+  FilterDetails:
+    type: object
+    properties:
+      filterName:
+        type: string
+        description: "The name of the saved filter."
+      filterId:
+        type: string
+        description: "The unique id of the filter."
+      createdAt:
+        type: string
+        description: "The ISO timestamp of the filter created time."
+      filter: 
+        description: "The content of the saved filter." 
+
+  CustomAttributesListResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the api
+      fields:
+        type: array
+        description: An array containing details about the custom attributes
+        items:
+          $ref: '#/schemas/CustomAttributeDetails'
+
+  CustomAttributeDetails:
+    type: object
+    properties:
+      customAttributeName:
+        type: string
+        description: The name of the custom attribute
+      customAttributeId:
+        type: string
+        description: The unique id of the custom attribute
+      fieldName:
+        type: string
+        description: The name of the custom attribute that saved in the devices
+      defaultValue:
+        type: string
+        description: The default value of the custom attribute
+      docType:
+        type: string
+        descrition: The type of the custom attribute
+      systemAttrValueOptions:
+        type: array
+        description: The options for the system attribute value
+      ruleOrders:
+        type: array
+        description: The value and filter mapping for the custom attribute
+        items:
+          $ref: '#/schemas/RuleOrderDetail'
+  
+  RuleOrderDetail:
+    type: object
+    properties:
+      customAttributeValue:
+        type: string
+        description: The value of the custom attribute
+      filterId:
+        type: string
+        description: The filter Id
+      filter:
+        type: object
+        description: The filter name will be contained in this response
+      ruleId:
+        type: string
+        description: The unique identifier for the rule
+      
+  createCustomAttributeResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the api
+      success:
+        type: string
+        description: A flag indicating whether the operation was successful or not
 
   IoTSecurityAlertResponse:
     type: object
@@ -316,6 +528,16 @@ schemas:
       trafficRestricted:
         type: boolean
         description: Whether traffic restriction is being applied to a device (yes) or not (no)
+
+  DeviceDetailsV2:
+    type: object
+    properties:
+      deviceid:
+        type: string
+        description: The device ID, which IoT Security uses to identify and track a device (always included)
+      attr:
+        type: string
+        description: The user defined custom attributes associated with the device (always included)
 
 
   DeviceTags:
@@ -1069,13 +1291,19 @@ schemas:
               description: The name of the alert/vulnerability
             description:
               type: string
-              description: The descriptoin of this alert/vulnerability
+              description: The description of this alert/vulnerability
             source:
               type: string
               description: The source of this alert/vulnerability
             severity:
               type: string
               description: The severity of this alert/vulnerability
+            impact:
+              type: string
+              description: The impact description of this alert/vulnerability
+            display_severity:
+              type: string
+              description: The display severity of this alert/vulnerability (lowercase)
             type:
               type: string
               description: The type of the alert/vulnerability
@@ -1174,3 +1402,739 @@ schemas:
             deviceGroups:
               type: array
               description: (Panorama) List of device groups containing firewalls that enforce the policy rule
+
+  NetworkDiscoveryGraphNodeBulkUpdatePayloadSchema:
+    type: form-data
+    required:
+      - file
+    properties:
+      file:
+        type: file
+        description: node graph txt file
+
+  NetworkDiscoveryGraphNodeBulkUpdateResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API: “/network/ndNodeGraphBulkUpdate”'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API: “v4.0”'
+      message:
+        type: string
+        description: 'The message indicating success: “success”'
+      updatedNodeGraphs:
+        type: integer
+        description: 'The number of successfully inserted/updated node graphs'
+
+  NetworkDiscoveryL2L3BulkUpdatePayloadSchema:
+    type: form-data
+    required:
+      - file
+    properties:
+      file:
+        type: file
+        description: network discovery l2l3 txt file
+
+  NetworkDiscoveryL2L3BulkUpdateResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API: “/network/ndNodeL2L3BulkUpdate”'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API: “v4.0”'
+      message:
+        type: string
+        description: 'The message indicating success: “success”'
+      updatedInterface:
+        type: integer
+        description: 'The number of successfully inserted/updated interfaces'
+      updatedSubnet:
+        type: integer
+        description: 'The number of successfully inserted/updated subnets'
+      updatedDevice:
+        type: integer
+        description: 'The number of successfully inserted/updated devices'
+
+  NetworkDiscoveryEndpointBulkUpdatePayloadSchema:
+    type: form-data
+    required:
+      - file
+    properties:
+      file:
+        type: file
+        description: network discovery endpoint txt file
+
+  NetworkDiscoveryEndpointBulkUpdateResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API: “/network/ndNodeEndpointBulkUpdate'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API: “v4.0”'
+      message:
+        type: string
+        description: 'The message indicating success: “success”'
+      updatedNodeEndpoints:
+        type: integer
+        description: 'The number of successfully inserted/updated endpoints'
+
+  xsoarIntegrationResponse:
+    type: object
+    properties:
+      active_integrations:
+        type: array
+        description: The active integration list
+      max_integrations:
+        type: integer
+        description: The maximum allowed active integrations number based on the third-party license type
+
+  xsoarReportUploadResponse:
+    type: object
+    properties:
+      received:
+        type: string
+        description: To indicate whether the report is received from Xsoar server side or not
+      upload:
+        type: string
+        description: To indicate whether the report is uploaded and parsed by IoT side or not
+
+  xsoarProfileSyncResponse:
+    type: object
+    properties:
+      successCase:
+        type: string
+        description: To indicate if this is a success case or not
+      
+  updateSecurityRulesResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      message:
+        type: string
+        description: 'The message indicating success'
+      updatedSecurityRulesNum:
+        type: integer
+        description: 'The number of successfully updated rules'
+      upsertedSecurityRulesNum:
+        type: integer
+        description: 'The number of successfully inserted rules'
+
+  purgeRulesResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      message:
+        type: string
+        description: 'The message indicating success'
+      removedRules:
+        type: integer
+        description: 'The number of rules successfully removed'
+
+  thirdPartyScanResponse: 
+    type: object
+    properties:
+      api:
+        type: string
+        description: 'The path used to call the IoT Security API'
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      message:
+        type: string
+        description: 'The message indicating success'
+      removedRules:
+        type: integer
+        updatedDeviceNum: 'The number of CVE imported'
+
+  xsoarStatusResponse: 
+    type: object
+    properties:
+      received:
+        type: string
+        description: 'if IoT has received the integration information'
+
+  scanDetailsResponse: 
+    type: object
+    properties:
+      received:
+        type: string
+        description: 'if IoT has received the scanner list'
+
+  heartbeatResponse: 
+    type: object
+    properties:
+      success:
+        type: boolean
+        description: 'if IoT has received xsoar instance heartbeat'
+  
+  CreateSitePayloadSchema:
+    type: array
+    description: Array of site definitions to be created
+    items:
+      type: object
+      required:
+        - external_id
+      properties:
+        external_id:
+          type: string
+          description: Unique external identifier for the site
+        location:
+          type: string
+          description: Physical location of the site
+        subnetsList:
+          type: array
+          description: List of subnets associated with this site
+          items:
+            type: string
+            description: Subnet in CIDR notation
+        segmentList:
+          type: array
+          description: List of network segments within this site
+          items:
+            type: string
+            description: Network segment identifier
+        description:
+          type: string
+          description: Detailed description of the site
+    
+  CreateSiteResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'site'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+        example: 'OK'
+      added:
+        type: integer
+        description: 'The number of sites successfully inserted'
+        example: 2
+  
+  GetSiteResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v4.0'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'getSite'
+      list:
+        type: array
+        description: 'List of site definitions retrieved from IoT Security'
+        items:
+          type: object
+          properties:
+            external_id:
+              type: string
+              description: 'Unique external identifier for the site'
+              example: 'Example Site 1'
+            siteid:
+              type: string
+              description: 'Internal system identifier for the site'
+              example: '32'
+            location:
+              type: string
+              description: 'Physical location of the site'
+              example: 'Example Site Address'
+            description:
+              type: string
+              description: 'Detailed description of the site'
+              example: 'This is a test api body description'
+            subnetsList:
+              type: array
+              description: 'List of subnets associated with this site in CIDR notation'
+              example: ['0.0.0.0', '192.0.0.0']
+              items:
+                type: string
+            segmentIdsList:
+              type: array
+              description: 'List of network segments within this site'
+              items:
+                type: string
+  
+  UpdateSitePayloadSchema:
+    type: array
+    description: Array of site definitions to be updated
+    items:
+      type: object
+      required:
+        - external_id
+      properties:
+        external_id:
+          type: string
+          description: External identifier for the site
+        description:
+          type: string
+          description: Detailed description of the site
+        location:
+          type: string
+          description: Physical location of the site
+        subnetsList:
+          type: array
+          description: List of subnets associated with this site
+          items:
+            type: string
+            description: Subnet in CIDR notation
+        segmentList:
+          type: array
+          description: List of network segments within this site (optional - only provide if updating)
+          items:
+            type: string
+            description: Network segment identifier
+    
+  UpdateSiteResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+      updated:
+        type: integer
+        description: 'The number of sites successfully updated'
+  
+  DeleteSiteResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+      code:
+        type: integer
+        description: 'Status code indicating success (1) or failure (0)'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+  
+  CreateNetworkSegmentPayloadSchema:
+    type: array
+    description: Array of network segment definitions to be created
+    items:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the network segment
+        description:
+          type: string
+          description: Detailed description of the network segment
+        firewallsList:
+          type: array
+          description: List of firewall IDs associated with this network segment
+          items:
+            type: string
+            description: Firewall identifier
+        siteid:
+          type: string
+          description: ID of the site this network segment belongs to
+
+  CreateNetworkSegmentResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      message:
+        type: string
+        description: Status message indicating the result of the operation
+
+  GetNetworkSegmentResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+      method:
+        type: string
+        description: 'The HTTP method used for the request'
+      networkSegments:
+        type: array
+        description: 'List of network segment definitions retrieved from IoT Security'
+        items:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: 'Internal identifier for the network segment'
+            name:
+              type: string
+              description: 'Name of the network segment'
+            description:
+              type: string
+              description: 'Detailed description of the network segment'
+            firewallsList:
+              type: array
+              description: 'List of firewall IDs associated with this network segment'
+              items:
+                type: string
+            tenantid:
+              type: string
+              description: 'ID of the tenant that owns this network segment'
+            segmentId:
+              type: string
+              description: 'ID of the network segment'
+            siteid:
+              type: string
+              description: 'ID of the site this network segment belongs to'
+            siteCreation:
+              type: boolean
+              description: 'Whether the site was created along with the network segment'
+            firewall:
+              type: array
+              description: 'Detailed information about associated firewalls'
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date-time
+                    description: 'Date when the firewall was associated'
+                  applianceid:
+                    type: string
+                    description: 'ID of the firewall appliance'
+      total:
+        type: integer
+        description: 'Total number of network segments returned'
+
+  UpdateNetworkSegmentPayloadSchema:
+    type: array
+    description: 'Array containing a single network segment definition to be updated'
+    items:
+      type: object
+      required:
+        - segmentId
+      properties:
+        segmentId:
+          type: string
+          description: 'ID of the network segment to be updated'
+        name:
+          type: string
+          description: 'Name of the network segment'
+        description:
+          type: string
+          description: 'Detailed description of the network segment'
+        firewallsList:
+          type: array
+          description: 'List of firewall IDs associated with this network segment'
+          items:
+            type: string
+        siteid:
+          type: string
+          description: 'ID of the site this network segment belongs to'
+  
+  UpdateNetworkSegmentResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+  
+  DeleteNetworkSegmentPayloadSchema:
+    type: object
+    required:
+      - segmentIdsList
+    properties:
+      segmentIdsList:
+        type: array
+        description: 'Single element array containing Network Segment ID to be deleted'
+        items:
+          type: string
+  
+  DeleteNetworkSegmentResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+      method:
+        type: string
+        description: 'The HTTP method used for the request'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+
+  CreateSubnetPayloadSchema:
+    type: array
+    description: Array of subnet definitions to be created
+    items:
+      type: object
+      required:
+        - prefix
+      properties:
+        prefix:
+          type: string
+          description: IPv4 subnet prefix in CIDR notation
+        vlan:
+          type: string
+          description: VLAN ID associated with this subnet
+        description:
+          type: string
+          description: Detailed description of the subnet
+        static:
+          type: boolean
+          description: Whether this is a static subnet
+        monitored:
+          type: boolean
+          description: Whether this subnet is being monitored
+        name:
+          type: string
+          description: Name of the subnet
+        site:
+          type: string
+          description: >-
+            Name of the site to assign this subnet to. Site-based subnet assignment tenants
+            only (check the Sites page of the Device Security UI); mutually exclusive with
+            `shared_block`.
+        shared_block:
+          type: boolean
+          description: >-
+            Marks the subnet as a parent prefix whose IP space is reused across the tenant's
+            network segments. Site-based subnet assignment tenants only; mutually exclusive
+            with `site`.
+
+  CreateSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      status:
+        type: string
+        description: Status message indicating the result of the operation
+      added:
+        type: integer
+        description: The number of subnets successfully inserted
+
+  GetSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      total:
+        type: integer
+        description: Total number of subnets matching the query
+      subnets:
+        type: array
+        description: List of subnet definitions retrieved from IoT Security
+        items:
+          type: object
+          properties:
+            prefix:
+              type: string
+              description: IPv4 subnet prefix in CIDR notation
+            monitored:
+              type: boolean
+              description: Whether this subnet is being monitored
+            static:
+              type: boolean
+              description: Whether this is a static subnet
+            source:
+              type: string
+              description: Source of the subnet definition
+            integrationInstanceName:
+              type: string
+              description: Name of the integration instance that created this subnet
+            description:
+              type: string
+              description: Detailed description of the subnet
+            parent:
+              type: string
+              description: Parent network in CIDR notation
+            name:
+              type: string
+              description: Name of the subnet
+            type:
+              type: string
+              description: Type of network entity
+            siteid:
+              type: string
+              description: ID of the site this subnet belongs to
+
+  UpdateSubnetPayloadSchema:
+    type: array
+    description: Array of subnet definitions to be updated
+    items:
+      type: object
+      required:
+        - prefix
+      properties:
+        prefix:
+          type: string
+          description: IPv4 subnet prefix in CIDR notation
+        vlan:
+          type: string
+          description: VLAN ID associated with this subnet
+        description:
+          type: string
+          description: Detailed description of the subnet
+        static:
+          type: boolean
+          description: Whether this is a static subnet
+        monitored:
+          type: boolean
+          description: Whether this subnet is being monitored
+        name:
+          type: string
+          description: Name of the subnet
+        site:
+          type: string
+          description: >-
+            Name of the site to assign this subnet to. Site-based subnet assignment tenants
+            only (check the Sites page of the Device Security UI); mutually exclusive with
+            `shared_block`.
+        shared_block:
+          type: boolean
+          description: >-
+            Marks the subnet as a parent prefix whose IP space is reused across the tenant's
+            network segments. Site-based subnet assignment tenants only; mutually exclusive
+            with `site`.
+
+  UpdateSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      status:
+        type: string
+        description: Status message indicating the result of the operation
+      updated:
+        type: integer
+        description: The number of subnets successfully updated
+
+  DeleteSubnetPayloadSchema:
+    type: object
+    required:
+      - subnetPrefixList
+    properties:
+      subnetPrefixList:
+        type: array
+        description: List of subnet prefixes to be deleted (maximum 10)
+        items:
+          type: string
+          description: IPv4 subnet prefix in CIDR notation
+
+  DeleteSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      status:
+        type: string
+        description: Status message indicating the result of the operation
+      deletedSubnets:
+        type: array
+        description: List of subnet prefixes that were successfully deleted
+        items:
+          type: string
+          description: IPv4 subnet prefix in CIDR notation
+
+  TransferSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      status:
+        type: string
+        description: Status message indicating the result of the operation
+
+  RevertSubnetResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: The version of the IoT Security API
+      api:
+        type: string
+        description: The API endpoint that was called
+      status:
+        type: string
+        description: Status message indicating the result of the operation
+
+  DeviceAttributesResponse:
+    type: object
+    properties:
+      total:
+        type: integer
+        description: The total number of device attributes available
+      device_attributes:
+        type: array
+        description: An array containing device attribute field definitions
+        items:
+          type: object
+          properties:
+            field_name:
+              type: string
+              description: The internal field name (can be passed through the projection parameter of v2/device/list)
+            display_name:
+              type: string
+              description: The human-readable display name for the field

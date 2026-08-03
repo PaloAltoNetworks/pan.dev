@@ -1,6 +1,15 @@
 {
   "components": {
     "requestBodies": {
+      "BaseFilterModel": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BaseFilterModel"
+            }
+          }
+        }
+      },
       "FilterModel": {
         "content": {
           "application/json; charset=UTF-8": {
@@ -285,8 +294,11 @@
         },
         "type": "object"
       },
-      "FilterModel": {
+      "BaseFilterModel": {
         "description": "Model for Filter",
+        "discriminator": {
+          "propertyName": "type"
+        },
         "properties": {
           "detailed": {
             "description": "Detailed",
@@ -332,18 +344,34 @@
             },
             "type": "array"
           },
-          "timeRange": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TimeRangeConfigModel"
-              },
-              {
-                "description": "Time range"
-              }
-            ]
+          "type": {
+            "type":"string"
           }
         },
         "type": "object"
+      },
+      "FilterModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseFilterModel"
+          },
+          {
+            "description": "Model for Filter",
+            "properties": {
+              "timeRange": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TimeRangeConfigModel"
+                  },
+                  {
+                    "description": "Time range"
+                  }
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
       },
       "FilterSuggestion": {
         "description": "Model for FilterSuggestion",
@@ -635,7 +663,7 @@
           "operator": {
             "description": "Operator",
             "enum": [
-              "="
+              "tag:yaml.org,2002:value ="
             ],
             "type": "string"
           },
@@ -670,9 +698,6 @@
               }
             },
             "description": "success"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -740,9 +765,6 @@
               }
             },
             "description": "successful operation"
-          },
-          "500": {
-            "description": "failed_fetch_inventory_saved_filters"
           }
         },
         "security": [
@@ -772,9 +794,6 @@
             "description": "successful operation"
           },
           "400": {
-            "description": "failed_add_inventory_saved_filter"
-          },
-          "500": {
             "description": "failed_add_inventory_saved_filter"
           }
         },
@@ -814,9 +833,6 @@
               }
             },
             "description": "successful operation"
-          },
-          "500": {
-            "description": "failed_fetch_inventory_saved_filter"
           }
         },
         "security": [
@@ -858,9 +874,6 @@
           },
           "400": {
             "description": "failed_update_inventory_saved_filter"
-          },
-          "500": {
-            "description": "failed_update_inventory_saved_filter"
           }
         },
         "security": [
@@ -896,9 +909,6 @@
           },
           "403": {
             "description": "not_owner_or_same_role"
-          },
-          "500": {
-            "description": "failed_add_inventory_saved_filter"
           }
         },
         "security": [
@@ -914,7 +924,8 @@
     },
     "/v2/inventory": {
       "get": {
-        "description": "Returns asset inventory pass/fail data for the specified time period.  \r\n\r\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** query parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** query parameter:\n\n**groupBy**  | **groupedAggregates** Includes\n-------------| ------------------------------\nnot specified | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf you specify **groupBy** multiple times in a single request, then **groupedAggregates** will include multiple attributes.\nFor example, you can set the following in the URL: **groupBy=cloud.account&groupBy=cloud.service**. Doing so will have the same effect\nas specifying a comma-separated list of values for **groupBy**.\n",
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail data for the specified time period.\n:::info\n **Replacement  Endpoint: [Asset Inventory View V3 - GET](/prisma-cloud/api/cspm/asset-inventory-v-3)**\n:::\n\n \n:::note\nThis endpoint will only be able to access data from the past 1 year. This change is implemented to optimize system performance and reduce data storage requirements of deprecated endpoints.\n:::\n\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** query parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** query parameter:\n\n**groupBy**  | **groupedAggregates** Includes\n-------------| ------------------------------\nnot specified | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf you specify **groupBy** multiple times in a single request, then **groupedAggregates** will include multiple attributes.\nFor example, you can set the following in the URL: **groupBy=cloud.account&groupBy=cloud.service**. Doing so will have the same effect\nas specifying a comma-separated list of values for **groupBy**.\n",
         "operationId": "asset-inventory-v2",
         "parameters": [
           {
@@ -1085,9 +1096,6 @@
           },
           "404": {
             "description": "not_found"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -1101,7 +1109,8 @@
         ]
       },
       "post": {
-        "description": "Returns asset inventory pass/fail data for the specified time period.  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** request body parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** value:\n\n**groupBy**  | **groupedAggregates** Includes \n-------------| ------------------------------\n_not specified_ | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf **groupBy** includes multiple values, then **groupedAggregates** will include multiple attributes. \n",
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail data for the specified time period.\n:::info\n **Replacement  Endpoint: [Asset Inventory View V3 - POST](/prisma-cloud/api/cspm/post-method-for-asset-inventory-v-3)**\n:::\n\n:::note\nThis endpoint will only be able to access data from the past 1 year. This change is implemented to optimize system performance and reduce data storage requirements of deprecated endpoints.\n:::\n\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** request body parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** value:\n\n**groupBy**  | **groupedAggregates** Includes \n-------------| ------------------------------\n_not specified_ | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf **groupBy** includes multiple values, then **groupedAggregates** will include multiple attributes. \n",
         "operationId": "post-method-for-asset-inventory-v2",
         "requestBody": {
           "content": {
@@ -1125,9 +1134,6 @@
           },
           "404": {
             "description": "not_found"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -1143,7 +1149,8 @@
     },
     "/v2/inventory/trend": {
       "get": {
-        "description": "Returns asset inventory pass/fail trends for the specified time period.",
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail trends for the specified time period.\n:::info\n **Replacement  Endpoint: [Asset Inventory Trend View V3 - GET](/prisma-cloud/api/cspm/asset-inventory-trend-v-3)**\n:::\n\n:::note\nThis endpoint will only be able to access data from the past 1 year. This change is implemented to optimize system performance and reduce data storage requirements of deprecated endpoints.\n:::\n",
         "operationId": "asset-inventory-trend-v2",
         "parameters": [
           {
@@ -1312,9 +1319,6 @@
           },
           "404": {
             "description": "not_found"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -1328,7 +1332,8 @@
         ]
       },
       "post": {
-        "description": "Returns asset inventory pass/fail trends for the specified time period.  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n",
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail trends for the specified time period.\n:::info\n **Replacement  Endpoint: [Asset Inventory Trend View V3 - POST](/prisma-cloud/api/cspm/post-method-asset-inventory-trend-v-3)**\n:::\n\n  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n\n:::note\nThis endpoint will only be able to access data from the past 1 year. This change is implemented to optimize system performance and reduce data storage requirements of deprecated endpoints.\n:::\n",
         "operationId": "post-method-asset-inventory-trend-v2",
         "requestBody": {
           "content": {
@@ -1355,9 +1360,6 @@
           },
           "404": {
             "description": "not_found"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -1366,6 +1368,379 @@
           }
         ],
         "summary": "Asset Inventory Trend View V2 - POST",
+        "tags": [
+          "Asset Inventory"
+        ]
+      }
+    },
+    "/v3/inventory": {
+      "get": {
+        "description": "Returns asset inventory pass/fail data.  \r\n\r\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** query parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** query parameter:\n\n**groupBy**  | **groupedAggregates** Includes\n-------------| ------------------------------\nnot specified | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf you specify **groupBy** multiple times in a single request, then **groupedAggregates** will include multiple attributes.\nFor example, you can set the following in the URL: **groupBy=cloud.account&groupBy=cloud.service**. Doing so will have the same effect\nas specifying a comma-separated list of values for **groupBy**.\n",
+        "operationId": "asset-inventory-v3",
+        "parameters": [
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Account group",
+            "in": "query",
+            "name": "account.group",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud service",
+            "in": "query",
+            "name": "cloud.service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Resource type",
+            "in": "query",
+            "name": "resource.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated list of values by to group response items. Valid values are **cloud.type**, **cloud.account**, **cloud.region**, **cloud.service**, and/or **resource.type**. Default is **cloud.type**.",
+            "in": "query",
+            "name": "groupBy",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Whether or not the resources passed or failed the scan. **All** includes both scanned and unscanned resources.",
+            "in": "query",
+            "name": "scan.status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "all",
+                "passed",
+                "failed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance standard name",
+            "in": "query",
+            "name": "policy.complianceStandard",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy severity",
+            "in": "query",
+            "name": "asset.severity",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Vulnerability Severity",
+            "in": "query",
+            "name": "vulnerability.severity",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetInventorySnapshot"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "404": {
+            "description": "not_found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Asset Inventory View V3 - GET",
+        "tags": [
+          "Asset Inventory"
+        ]
+      },
+      "post": {
+        "description": "Returns asset inventory pass/fail data  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n\nThe response includes an attribute **groupedAggregates**, whose content depends on the **groupBy** request body parameter.\nThe following table shows the attributes that **groupedAggregates** will include for the specified **groupBy** value:\n\n**groupBy**  | **groupedAggregates** Includes \n-------------| ------------------------------\n_not specified_ | **cloudTypeName**\n**cloudType** | **cloudTypeName**\n**cloud.account** | **accountName**\n**cloud.region** | **regionName**, **cloudTypeName**\n**cloud.service** | **serviceName**, **cloudTypeName**\n**resource.type** | **resourceTypeName**, **cloudTypeName**\n\n\nIf **groupBy** includes multiple values, then **groupedAggregates** will include multiple attributes.\n",
+        "operationId": "post-method-for-asset-inventory-v3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetInventorySnapshot"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "404": {
+            "description": "not_found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Asset Inventory View V3 - POST",
+        "tags": [
+          "Asset Inventory"
+        ]
+      }
+    },
+    "/v3/inventory/trend": {
+      "get": {
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail trends.",
+        "operationId": "asset-inventory-trend-v3",
+        "parameters": [
+          {
+            "description": "Cloud account",
+            "in": "query",
+            "name": "cloud.account",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Account group",
+            "in": "query",
+            "name": "account.group",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud type",
+            "in": "query",
+            "name": "cloud.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud region",
+            "in": "query",
+            "name": "cloud.region",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cloud service",
+            "in": "query",
+            "name": "cloud.service",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Resource type",
+            "in": "query",
+            "name": "resource.type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Scan status",
+            "in": "query",
+            "name": "scan.status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance standard name",
+            "in": "query",
+            "name": "policy.complianceStandard",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance requirement name",
+            "in": "query",
+            "name": "policy.complianceRequirement",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy compliance section ID",
+            "in": "query",
+            "name": "policy.complianceSection",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Policy severity",
+            "in": "query",
+            "name": "asset.severity",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Vulnerability Severity",
+            "in": "query",
+            "name": "vulnerability.severity",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json; charset=UTF-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssetInventorySummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "400": {
+            "description": "bad_request"
+          },
+          "404": {
+            "description": "not_found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Asset Inventory Trend View V3 - GET",
+        "tags": [
+          "Asset Inventory"
+        ]
+      },
+      "post": {
+        "deprecated": true,
+        "description": "Returns asset inventory pass/fail trends.  \r\n\r\nYou can get a list of the valid names and values for the filters body parameter \nthrough [List Inventory Filters V2](/prisma-cloud/api/cspm/get-asset-inventory-v-2-dashboard-filter-options).\n",
+        "operationId": "post-method-asset-inventory-trend-v3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseFilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssetInventorySummary"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "success"
+          },
+          "404": {
+            "description": "not_found"
+          }
+        },
+        "security": [
+          {
+            "x-redlock-auth": []
+          }
+        ],
+        "summary": "Asset Inventory Trend View V3 - POST",
         "tags": [
           "Asset Inventory"
         ]

@@ -1,0 +1,553 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    DataPatternDetectionConfig:
+      description: Detection configuration specifying the technique and supported
+        confidence levels
+      properties:
+        supported_confidence_levels:
+          description: List of confidence levels supported by this pattern
+          items:
+            description: List of confidence levels supported by this pattern
+            enum:
+            - low
+            - medium
+            - high
+            type: string
+          type: array
+        technique:
+          description: Detection technique (e.g. regex, ml)
+          enum:
+          - edm
+          - document_fingerprint
+          - trainable_classifier
+          - ml_document
+          - regex
+          - weighted_regex
+          - ml
+          - titus_tag
+          - wildfire
+          - file_property
+          - dictionary
+          - pab
+          - document_classifier
+          type: string
+      required:
+      - technique
+      type: object
+    DataPatternMatchingRules:
+      description: Optional matching rules controlling how the data pattern detects
+        sensitive content
+      properties:
+        delimiter:
+          description: Delimiter character used to separate tokens
+          type: string
+        metadata_criteria:
+          description: Metadata criteria for additional filtering
+          items:
+            $ref: '#/components/schemas/MetadataCriterion'
+          type: array
+        proximity_distance:
+          description: Proximity distance for keyword matching (2-1000)
+          format: int32
+          maximum: 1000
+          minimum: 2
+          type: integer
+        proximity_keywords:
+          description: List of keywords that must appear within the proximity distance
+          items:
+            description: List of keywords that must appear within the proximity distance
+            type: string
+          type: array
+        regexes:
+          description: Weighted regular expressions used for detection
+          items:
+            $ref: '#/components/schemas/WeightedRegex'
+          type: array
+      type: object
+    DataPatternPatchRequest:
+      description: Request payload for partially updating a data pattern (JSON Merge
+        Patch)
+      properties:
+        description:
+          $ref: '#/components/schemas/JsonNullableString'
+        detection_config:
+          $ref: '#/components/schemas/JsonNullableDataPatternDetectionConfig'
+        matching_rules:
+          $ref: '#/components/schemas/JsonNullableDataPatternMatchingRules'
+        name:
+          $ref: '#/components/schemas/JsonNullableString'
+        tags:
+          $ref: '#/components/schemas/JsonNullableDataPatternTags'
+        type:
+          $ref: '#/components/schemas/JsonNullableDataPatternType'
+      required:
+      - detection_config
+      - name
+      - type
+      type: object
+    DataPatternRequest:
+      description: Request payload for creating or updating a data pattern
+      properties:
+        description:
+          description: Optional human-readable description
+          type: string
+        detection_config:
+          $ref: '#/components/schemas/DataPatternDetectionConfig'
+        matching_rules:
+          $ref: '#/components/schemas/DataPatternMatchingRules'
+        name:
+          description: Display name of the data pattern
+          example: SSN Pattern
+          maxLength: 64
+          minLength: 1
+          type: string
+        tags:
+          $ref: '#/components/schemas/DataPatternTags'
+        type:
+          description: Pattern type (e.g. regex, ml_based)
+          enum:
+          - predefined
+          - custom
+          - file_property
+          type: string
+      required:
+      - detection_config
+      - name
+      - type
+      type: object
+    DataPatternResponse:
+      description: Data pattern resource returned by the API
+      properties:
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        description:
+          description: Optional human-readable description
+          type: string
+        detection_config:
+          $ref: '#/components/schemas/DataPatternDetectionConfig'
+        id:
+          description: Unique identifier of the data pattern
+          type: string
+        is_parent_managed:
+          description: Whether the pattern is managed by a parent tenant
+          type: boolean
+        license_type:
+          description: License type associated with the pattern
+          enum:
+          - standard
+          - enterprise
+          - essentials
+          type: string
+        matching_rules:
+          $ref: '#/components/schemas/DataPatternMatchingRules'
+        name:
+          description: Display name of the data pattern
+          type: string
+        status:
+          description: Current lifecycle status of the pattern
+          enum:
+          - active
+          - disabled
+          - deleted
+          - deprecated
+          - silent
+          type: string
+        tags:
+          $ref: '#/components/schemas/DataPatternTags'
+        tenant_id:
+          description: Tenant identifier that owns this pattern
+          type: string
+        type:
+          description: Pattern type
+          enum:
+          - predefined
+          - custom
+          - file_property
+          type: string
+        version:
+          description: Version number, incremented on each update
+          format: int32
+          type: integer
+      type: object
+    DataPatternTags:
+      description: Metadata tags
+      properties:
+        classification:
+          items:
+            type: string
+          type: array
+        compliance:
+          items:
+            type: string
+          type: array
+        geography:
+          items:
+            type: string
+          type: array
+      type: object
+    JsonNullableDataPatternDetectionConfig:
+      description: New detection configuration
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableDataPatternMatchingRules:
+      description: New matching rules
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableDataPatternTags:
+      description: New metadata tags
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableDataPatternType:
+      description: New pattern type
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableString:
+      description: New description (set to null to clear)
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    MetadataCriterion:
+      description: Metadata criteria for additional filtering
+      properties:
+        comparisonOperatorType:
+          enum:
+          - less_than
+          - less_than_or_equal_to
+          - greater_than_or_equal_to
+          - greater_than
+          - equal_to
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+      type: object
+    PageDataPatternResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DataPatternResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+    WeightedRegex:
+      description: Weighted regular expressions used for detection
+      properties:
+        regex:
+          maxLength: 2147483647
+          minLength: 1
+          type: string
+        weight:
+          format: int32
+          type: integer
+      required:
+      - regex
+      - weight
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Manage data patterns used for detecting sensitive information such\
+    \ as PII, financial data, healthcare \ninformation, and custom patterns. Create,\
+    \ update, and configure detection patterns with various techniques \nincluding\
+    \ regex, machine learning, and exact data matching.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Data Patterns API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/data-patterns:
+    get:
+      description: Returns a paginated list of data patterns for the authenticated
+        tenant.
+      operationId: get-v2-api-data-patterns
+      parameters:
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default
+          sort order is ascending. Multiple sort criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDataPatternResponse'
+          description: Paginated list of data patterns
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List Data Patterns
+      tags:
+      - Data Patterns
+    post:
+      description: Creates a new custom data pattern for the authenticated tenant.
+      operationId: post-v2-api-data-patterns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataPatternRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPatternResponse'
+          description: Data pattern created
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Create Data Pattern
+      tags:
+      - Data Patterns
+  /v2/api/data-patterns/{resourceId}:
+    delete:
+      description: Soft-deletes (archives) a data pattern by its ID.
+      operationId: delete-v2-api-data-patterns-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Data pattern deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data pattern not found
+      security:
+      - Bearer: []
+      summary: Delete Data Pattern
+      tags:
+      - Data Patterns
+    get:
+      description: Retrieves a single data pattern by its ID.
+      operationId: get-v2-api-data-patterns-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPatternResponse'
+          description: Data pattern found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data pattern not found
+      security:
+      - Bearer: []
+      summary: Get Data Pattern
+      tags:
+      - Data Patterns
+    patch:
+      description: Partially updates an existing data pattern using JSON Merge Patch
+        semantics.
+      operationId: patch-v2-api-data-patterns-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/DataPatternPatchRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPatternResponse'
+          description: Data pattern updated
+        '400':
+          description: Invalid patch payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data pattern not found
+      security:
+      - Bearer: []
+      summary: Patch Data Pattern
+      tags:
+      - Data Patterns
+    put:
+      description: Fully replaces an existing data pattern with the provided payload.
+      operationId: put-v2-api-data-patterns-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataPatternRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPatternResponse'
+          description: Data pattern updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data pattern not found
+      security:
+      - Bearer: []
+      summary: Update Data Pattern
+      tags:
+      - Data Patterns
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: Data Patterns

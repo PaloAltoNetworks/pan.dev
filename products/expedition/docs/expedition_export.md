@@ -67,9 +67,7 @@ show config | display xml | no-more
 ```
 
 **2. Modify the configuration file**
-:::note
-For Import to Expedition 2.0 , you can import the original xml configuration directly , do not need to go through this step
-:::
+
 
 The file has to start with XML tag `<configuration>` without attributes and end with the closing
 `</configuration>` tag. Failure to remove the unneeded attributes is the leading cause of failure during the import into Expedition. The first line of the XML file should look like the following:
@@ -266,19 +264,6 @@ changeto system
 
 :::note
 The configuration is exported as a **.txt** file and is readable using any text editor.
-:::
-
-## SonicWall
-
-Issue below commands in CLI:
-
-```bash
-no cli pager session
-show current-config
-```
-
-:::note
-The configuration is exported as a **.txt** file, **.EXP** format is not supported.
 :::
 
 ## Forcepoint

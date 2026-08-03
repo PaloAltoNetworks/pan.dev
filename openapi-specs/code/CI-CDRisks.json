@@ -1,0 +1,499 @@
+{
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "securitySchemes": {
+      "CustomAuthorizer": {
+        "in": "header",
+        "name": "authorization",
+        "type": "apiKey",
+        "x-amazon-apigateway-authorizer": {
+          "authorizerResultTtlInSeconds": 0,
+          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-v2-authorizer-{UniqueTag}{Alias}/invocations",
+          "identitySource": "method.request.header.authorization",
+          "type": "request"
+        },
+        "x-amazon-apigateway-authtype": "custom"
+      }
+    },
+    "schemas": {
+      "AlertData": {
+        "additionalProperties": false,
+        "properties": {
+          "details": {
+            "description": "CI/CD Risk event details",
+            "type": "string"
+          },
+          "detectedOn": { "type": "string" },
+          "id": { "description": "CI/CD Risk event ID", "type": "string" },
+          "instanceId": {
+            "description": "CI/CD Risk instance ID",
+            "type": "string"
+          },
+          "lastCalculatedOn": {
+            "description": "Last calculation time",
+            "type": "string"
+          },
+          "repositoryId": {
+            "description": "VCS repository ID",
+            "type": "string"
+          },
+          "title": { "description": "CI/CD Risk event title", "type": "string" }
+        },
+        "required": [
+          "id",
+          "title",
+          "details",
+          "detectedOn",
+          "lastCalculatedOn"
+        ],
+        "type": "object"
+      },
+      "GetAlertsDataResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/AlertData" },
+            "type": "array"
+          },
+          "hasNext": { "type": "boolean" }
+        },
+        "required": ["data", "hasNext"],
+        "type": "object"
+      },
+      "GetRiskDetailsDataResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": { "$ref": "#/components/schemas/RiskDetails" }
+        },
+        "required": ["data"],
+        "type": "object"
+      },
+      "GetRisksDataResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/RiskData" },
+            "type": "array"
+          },
+          "hasNext": { "type": "boolean" }
+        },
+        "required": ["data", "hasNext"],
+        "type": "object"
+      },
+      "RiskData": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "description": "CI/CD Risk category",
+            "type": "string"
+          },
+          "fixedAlerts": {
+            "description": "Number of fixed events",
+            "format": "double",
+            "type": "number"
+          },
+          "lastAlertOn": {
+            "description": "Date and time of last alert",
+            "type": "string"
+          },
+          "name": { "description": "CI/CD Risk name", "type": "string" },
+          "openAlerts": {
+            "description": "Number of opened events",
+            "format": "double",
+            "type": "number"
+          },
+          "policyId": {
+            "description": "CI/CD Risk policy ID",
+            "type": "string"
+          },
+          "severity": {
+            "description": "CI/CD Risk severity",
+            "type": "string"
+          },
+          "status": { "description": "CI/CD Risk status", "type": "string" },
+          "system": { "description": "CI/CD Risk system", "type": "string" },
+          "totalAlerts": {
+            "description": "Number of total events",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "policyId",
+          "name",
+          "status",
+          "category",
+          "severity",
+          "system",
+          "openAlerts",
+          "fixedAlerts",
+          "totalAlerts",
+          "lastAlertOn"
+        ],
+        "type": "object"
+      },
+      "RiskDetails": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "description": "CI/CD Risk category",
+            "type": "string"
+          },
+          "description": {
+            "description": "CI/CD Risk description",
+            "type": "string"
+          },
+          "fixedAlerts": {
+            "description": "Number of fixed events",
+            "format": "double",
+            "type": "number"
+          },
+          "lastCalculatedOn": {
+            "description": "Last calculation time",
+            "type": "string"
+          },
+          "locationInDeliveryChain": {
+            "description": "Location in delivery chain",
+            "type": "string"
+          },
+          "name": { "description": "CI/CD Risk name", "type": "string" },
+          "openAlerts": {
+            "description": "Number of open events",
+            "format": "double",
+            "type": "number"
+          },
+          "policyId": {
+            "description": "CI/CD Risk policy ID",
+            "type": "string"
+          },
+          "severity": {
+            "description": "CI/CD Risk severity",
+            "type": "string"
+          },
+          "stepsToSolve": {
+            "description": "Description of steps to solve the risk",
+            "type": "string"
+          },
+          "suppressedAlerts": {
+            "description": "Number of suppressed events",
+            "format": "double",
+            "type": "number"
+          },
+          "system": { "description": "CI/CD Risk system", "type": "string" }
+        },
+        "required": [
+          "policyId",
+          "name",
+          "description",
+          "stepsToSolve",
+          "category",
+          "severity",
+          "system",
+          "openAlerts",
+          "suppressedAlerts",
+          "fixedAlerts",
+          "locationInDeliveryChain",
+          "lastCalculatedOn"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "The CI/CD endpoints are listed below.",
+    "title": "Prisma Cloud CI/CD API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/code/code/api/v1/pipeline-risks": {
+      "post": {
+        "operationId": "pipelineRisksGetAll",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "categories": {
+                    "description": "CI/CD Risks categories: [`ppe`, `identifyAccessManagement`, `thirdPartyServices`, `dependencyChains`, `credentialHygiene`, `pipelineBasedAccessControls`, `artifactIntegrityValidation`, `dataProtection`, `flowControlMechanism`, `systemConfiguration`, `loggingAndVisibility`]",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "endDate": { "type": "string" },
+                  "levels": {
+                    "description": "CI/CD Risk priority level: [`1`, `2`, `3`, `4`]",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "names": {
+                    "description": "CI/CD Risk name",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "repositoryIds": {
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "severities": {
+                    "description": "CI/CD Risk severity: [`info`, `low`, `medium`, `high`, `critical`]",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "startDate": { "type": "string" },
+                  "status": { "type": "string" },
+                  "systems": {
+                    "description": "CI/CD Systems [`crosssystem`, `github`, `gitlab`, `githubActions`, `gitlabCICD`, `bitbucket`, `jenkins`, `circleCI`]",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRisksDataResponse"
+                }
+              }
+            },
+            "description": "Get pipeline risks"
+          },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get All CI/CD Risks Summary",
+        "tags": ["CI-CD Risks"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/code/api/v1/pipeline-risks\"\n\npayload = {\n    \"categories\": [\"string\"],\n    \"endDate\": \"string\",\n    \"levels\": [\"string\"],\n    \"names\": [\"string\"],\n    \"repositoryIds\": [\"string\"],\n    \"severities\": [\"string\"],\n    \"startDate\": \"string\",\n    \"status\": \"string\",\n    \"systems\": [\"string\"]\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/code/api/v1/pipeline-risks \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"categories\":[\"string\"],\"endDate\":\"string\",\"levels\":[\"string\"],\"names\":[\"string\"],\"repositoryIds\":[\"string\"],\"severities\":[\"string\"],\"startDate\":\"string\",\"status\":\"string\",\"systems\":[\"string\"]}'"
+          }
+        ]
+      }
+    },
+    "/code/code/api/v1/pipeline-risks/{policyId}/alerts": {
+      "post": {
+        "description": "Get CI/CD risk events by status (open, suppressed, fixed)",
+        "operationId": "pipelineRisksGetAlertsByPolicy",
+        "parameters": [
+          {
+            "description": "- CI/CD Risk policy ID",
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": { "format": "int32", "minimum": 0, "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "endDate": { "type": "string" },
+                  "repositoryIds": {
+                    "items": { "type": "string" },
+                    "type": "array"
+                  },
+                  "startDate": { "type": "string" },
+                  "status": {
+                    "description": "CI/CD Riks status: [`open`, `suppressed`, `fixed`]",
+                    "type": "string"
+                  }
+                },
+                "required": ["status"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAlertsDataResponse"
+                }
+              }
+            },
+            "description": "Ok"
+          },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get CI/CD Risk Events",
+        "tags": ["CI-CD Risks"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/code/api/v1/pipeline-risks/{policyId}/alerts\"\n\nquerystring = {\"limit\":\"SOME_INTEGER_VALUE\",\"offset\":\"SOME_INTEGER_VALUE\"}\n\npayload = {\n    \"endDate\": \"string\",\n    \"repositoryIds\": [\"string\"],\n    \"startDate\": \"string\",\n    \"status\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url 'http://undefinedundefined/code/code/api/v1/pipeline-risks/{policyId}/alerts?limit=SOME_INTEGER_VALUE&offset=SOME_INTEGER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"endDate\":\"string\",\"repositoryIds\":[\"string\"],\"startDate\":\"string\",\"status\":\"string\"}'"
+          }
+        ]
+      }
+    },
+    "/code/code/api/v1/pipeline-risks/{policyId}/details": {
+      "get": {
+        "description": "Get CI/CD risk details by policy ID",
+        "operationId": "pipelineRisksGetDetailsByPolicyGet",
+        "parameters": [
+          {
+            "description": "- CI/CD Risk policy ID",
+            "in": "path",
+            "name": "policyId",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRiskDetailsDataResponse"
+                }
+              }
+            },
+            "description": "Ok"
+          },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get CI/CD Risk Details",
+        "tags": ["CI-CD Risks"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/code/api/v1/pipeline-risks/{policyId}/details\"\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url http://undefinedundefined/code/code/api/v1/pipeline-risks/{policyId}/details \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+          }
+        ]
+      }
+    },
+    "/code/code/api/v1/pipeline-risks/suppress": {
+      "put": {
+        "description": "Suppress CI/CD risk events by event ID",
+        "operationId": "pipelineRisksSuppressEvents",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "ids": {
+                    "description": "CI/CD risk event ID",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  }
+                },
+                "required": ["ids"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Suppress CI/CD Risk Events",
+        "tags": ["CI-CD Risks"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/code/api/v1/pipeline-risks/suppress\"\n\npayload = {\"ids\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request PUT \\\n  --url http://undefinedundefined/code/code/api/v1/pipeline-risks/suppress \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"ids\":[\"string\"]}'"
+          }
+        ]
+      }
+    },
+    "/code/code/api/v1/pipeline-risks/unsuppress": {
+      "put": {
+        "description": "Unsuppress CI/CD risk events by event ID",
+        "operationId": "pipelineRisksUnsuppressEvents",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "ids": {
+                    "description": "CI/CD risk event ID",
+                    "items": { "type": "string" },
+                    "type": "array"
+                  }
+                },
+                "required": ["ids"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Unsuppress CI/CD Risk Events",
+        "tags": ["CI-CD Risks"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/code/api/v1/pipeline-risks/unsuppress\"\n\npayload = {\"ids\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"PUT\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request PUT \\\n  --url http://undefinedundefined/code/code/api/v1/pipeline-risks/unsuppress \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"ids\":[\"string\"]}'"
+          }
+        ]
+      }
+    }
+  },
+  "servers": null,
+  "tags": [{ "name": "CI-CD Risks" }]
+}

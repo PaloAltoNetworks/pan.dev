@@ -2,15 +2,19 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: Data
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
-          description: 'The field value.
-
-            '
+          description: Field
+          type: string
+        name:
+          description: Name
           type: string
         operator:
-          description: 'The operator values.
-
-            '
+          description: Operator
           enum:
           - max
           - count
@@ -18,52 +22,54 @@ components:
           - avg
           - sum
           type: string
+        statistic:
+          description: Statistic
+          type: string
+        unit:
+          description: Unit
+          type: string
+    AggregateData:
+      properties:
+        value:
+          description: 'Value: JsonInclude(content = ALWAYS, contentFilter = classOf[Void],
+            value = ALWAYS, valueFilter = classOf[Void]) '
+          type: number
+        view:
+          type: object
     BulkResponse:
       properties:
         count:
-          description: 'The total number of responses.
+          description: 'The total number.
 
             '
           format: int32
           type: integer
         id:
-          description: 'The ID of the response.
+          description: 'The ID.
 
             '
           type: string
         type:
-          description: "The type of response. \n"
+          description: "The type. \n"
           type: string
     CollectorConfig:
       properties:
         host:
-          description: 'The IPv4 address or the FQDN Schema (domain name) of the IPFIX
-            collector.
-
-            '
+          description: Host
           type: string
         host_port:
-          description: 'The port number that matches the port on which the collector
-            is configured to receive IPFIX records.
-
-            '
+          description: Host Port
           format: int32
           type: integer
         ipfixcollectorcontext_id:
-          description: 'The ID of the IPFIX collector context. The device uses the
-            IP address of the interface to which the collector context is bound as
-            the source interface to export IPFIX flow records.
-
-            '
+          description: Ipfixcollectorcontext Id
           type: string
         max_message_size:
           description: Max Message Size
           format: int32
           type: integer
         protocol:
-          description: 'The protocol type of the collector''s config.
-
-            '
+          description: Protocol
           enum:
           - tcp
           - udp
@@ -82,62 +88,53 @@ components:
           type: string
     IPFixConfig:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         collector_config:
-          description: 'Collectors define the third-party applications which consume
-            the exported flow records. Maximum 4 collectors can be configured.
-
-            '
+          description: 'Collector Config: Valid Size(max = 4, error = IPFIX_CONFIG_INVALID_COLLECTOR_CONFIG:
+            Maximum 4 collectors can be configured, min = 1) '
           items:
             $ref: '#/components/schemas/CollectorConfig'
           type: array
         description:
-          description: 'The description of the IPFIX profile configuration.
-
-            '
+          description: 'Description: Size(max = 1024, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         export_cache_timeout:
-          description: 'Export Cache Timeout specifies the time for which the ION
-            device should cache a new flow record before exporting it. Value must
-            be within 10 and 600 seconds.The default value is 30 seconds.
-
-            '
+          description: 'Export Cache Timeout: Range(max = 600L, error = IPFIX_INVALID_EXPORT_CACHE_TIMEOUT:
+            Export cache timeout should be in range 10-600, min = 10L) '
           type: integer
         filters:
-          description: "The filters configured to select a subset of flows from all\
-            \ the observed flows to export to a collector. Maximum of 8 filters per\
-            \ IPFIX profile.  \n"
+          description: 'Filters: Valid Size(max = 8, error = IPFIX_FILTERS_MAX_SIZE:
+            Maximum 8 filters can be configured, min = 0) '
           items:
             $ref: '#/components/schemas/IPFixFilter'
           type: array
         id:
-          description: 'The ID.
-
-            '
+          description: Id
           type: string
         ipfixprofile_id:
-          description: 'The IPFIX profile configuration ID.
-
-            '
+          description: 'Ipfixprofile Id: NotNull(error = IPFIX_CONFIG_PROFILE_ID_REQUIRED:
+            IPFix profile id required) '
           type: string
         ipfixtemplate_id:
-          description: 'The IPFIX template ID.
-
-            '
+          description: Ipfixtemplate Id
           type: string
         name:
-          description: 'The IPFIX profile name.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         sampler:
           $ref: '#/components/schemas/IPFixSampler'
-          description: 'Subset of flows to export from all the observed flows. The
-            device forwards this subset to the filtering process to perform further
-            selection if filters are configured.
-
-            '
+          description: 'Sampler: Valid '
         tags:
-          description: "A information field that can be added to identify the IPFIX\
-            \ config. Maximum 10 unique tags of length 1024 each are allowed. \n"
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 1024, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -147,144 +144,118 @@ components:
       - name
     IPFixConfigQuery:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of IPFIX configs that match the query
-            parameters.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number IPFIX configs deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the IPFIX configs for the query.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "List the IPFIX configs by ID.    \n"
+          description: Id
           type: string
+        isReadPreferenceSecondary:
+          description: 'IsReadPreferenceSecondary: JsonIgnore(value = true) '
+          type: boolean
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_case_insensitive:
+          description: Sort Case Insensitive
           type: boolean
         sort_params:
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     IPFixConfigQueryFilter:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         collector_config:
-          description: 'Collectors define the third-party applications which consume
-            the exported flow records. Maximum 4 collectors can be configured.
-
-            '
+          description: 'Collector Config: Valid Size(max = 4, error = IPFIX_CONFIG_INVALID_COLLECTOR_CONFIG:
+            Maximum 4 collectors can be configured, min = 1) '
           items:
             $ref: '#/components/schemas/CollectorConfig'
           type: array
         description:
-          description: 'The description of the collector configuration.
-
-            '
+          description: 'Description: Size(max = 1024, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         element_id:
-          description: 'The element ID.
-
-            '
+          description: Element Id
           type: string
         export_cache_timeout:
-          description: 'Export Cache Timeout specifies the time for which the ION
-            device should cache a new flow record before exporting it. Value must
-            be within 10 and 600 seconds.The default value is 30 seconds.
-
-            '
+          description: 'Export Cache Timeout: Range(max = 600L, error = IPFIX_INVALID_EXPORT_CACHE_TIMEOUT:
+            Export cache timeout should be in range 10-600, min = 10L) '
           type: integer
         filters:
-          description: "The filters configured to select a subset of flows from all\
-            \ the observed flows to export to a collector. Maximum of 8 filters per\
-            \ IPFIX profile.  \n"
+          description: 'Filters: Valid Size(max = 8, error = IPFIX_FILTERS_MAX_SIZE:
+            Maximum 8 filters can be configured, min = 0) '
           items:
             $ref: '#/components/schemas/IPFixFilter'
           type: array
         id:
-          description: 'The ID of the collector configuration.
-
-            '
+          description: Id
           type: string
         ipfixprofile_id:
-          description: 'The IPFIX configuration profile ID.
-
-            '
+          description: 'Ipfixprofile Id: NotNull(error = IPFIX_CONFIG_PROFILE_ID_REQUIRED:
+            IPFix profile id required) '
           type: string
         ipfixtemplate_id:
-          description: 'The IPFIX template ID.
-
-            '
+          description: Ipfixtemplate Id
           type: string
         name:
-          description: 'The IPFIX profile name.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         sampler:
           $ref: '#/components/schemas/IPFixSampler'
-          description: 'Subset of flows to export from all the observed flows. The
-            device forwards this subset to the filtering process to perform further
-            selection if filters are configured.
-
-            '
+          description: 'Sampler: Valid '
         site_id:
-          description: 'The site ID.
-
-            '
+          description: 'Site Id: Digits(fraction = 0, integer = 50, SITEID_INVALID)
+            NotNull '
           type: string
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            config. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 1024, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -295,64 +266,53 @@ components:
       - name
     IPFixConfigScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         collector_config:
-          description: 'Collectors define the third-party applications which consume
-            the exported flow records. Maximum 4 collectors can be configured.
-
-            '
+          description: 'Collector Config: Valid Size(max = 4, error = IPFIX_CONFIG_INVALID_COLLECTOR_CONFIG:
+            Maximum 4 collectors can be configured, min = 1) '
           items:
             $ref: '#/components/schemas/CollectorConfig'
           type: array
         description:
-          description: 'The description of the IPFIX profile configuration.
-
-            '
+          description: 'Description: Size(max = 1024, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         export_cache_timeout:
-          description: 'Export Cache Timeout specifies the time for which the ION
-            device should cache a new flow record before exporting it. Value must
-            be within 10 and 600 seconds.The default value is 30 seconds.
-
-            '
+          description: 'Export Cache Timeout: Range(max = 600L, error = IPFIX_INVALID_EXPORT_CACHE_TIMEOUT:
+            Export cache timeout should be in range 10-600, min = 10L) '
           type: integer
         filters:
-          description: "The filters configured to select a subset of flows from all\
-            \ the observed flows to export to a collector. Maximum of 8 filters per\
-            \ IPFIX profile.  \n"
+          description: 'Filters: Valid Size(max = 8, error = IPFIX_FILTERS_MAX_SIZE:
+            Maximum 8 filters can be configured, min = 0) '
           items:
             $ref: '#/components/schemas/IPFixFilter'
           type: array
         id:
-          description: 'The ID.
-
-            '
+          description: Id
           type: string
         ipfixprofile_id:
-          description: 'The IPFIX profile configuration ID.
-
-            '
+          description: 'Ipfixprofile Id: NotNull(error = IPFIX_CONFIG_PROFILE_ID_REQUIRED:
+            IPFix profile id required) '
           type: string
         ipfixtemplate_id:
-          description: 'The IPFIX template ID.
-
-            '
+          description: Ipfixtemplate Id
           type: string
         name:
-          description: 'The IPFIX profile name.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         sampler:
           $ref: '#/components/schemas/IPFixSampler'
-          description: 'Subset of flows to export from all the observed flows. The
-            device forwards this subset to the filtering process to perform further
-            selection if filters are configured.
-
-            '
+          description: 'Sampler: Valid '
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            config. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 1024, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -362,166 +322,146 @@ components:
       - name
     IPFixContext:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX context config. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, IPFIX_CONTEXT_CONFIG_DESCRIPTION_INVALID,
+            min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX context config.
-
-            '
+          description: Id
           type: string
         name:
-          description: 'The name of the IPFIX context config. Max characters = 128.
-
-            '
+          description: 'Name: NotEmpty(IPFIX_CONTEXT_CONFIG_NAME_REQD) Size(max =
+            128, error = NAME_EXCEEDS_LIMIT: Name of the resource exceeds limit.,
+            min = 0) '
           type: string
       required:
       - name
     IPFixContextQuery:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of IPFIX config contexts that match the
-            query parameters.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number IPFIX config contexts deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the IPFIX config contexts for the query.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "Lists the IPFIX config context by ID.    \n"
+          description: Id
           type: string
+        isReadPreferenceSecondary:
+          description: 'IsReadPreferenceSecondary: JsonIgnore(value = true) '
+          type: boolean
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_case_insensitive:
+          description: Sort Case Insensitive
           type: boolean
         sort_params:
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     IPFixContextQueryFilter:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX context config. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, IPFIX_CONTEXT_CONFIG_DESCRIPTION_INVALID,
+            min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX context config.
-
-            '
+          description: Id
           type: string
         name:
-          description: 'The name of the IPFIX context config. Max characters = 128.
-
-            '
+          description: 'Name: NotEmpty(IPFIX_CONTEXT_CONFIG_NAME_REQD) Size(max =
+            128, error = NAME_EXCEEDS_LIMIT: Name of the resource exceeds limit.,
+            min = 0) '
           type: string
       required:
       - name
     IPFixContextScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX config. Max characters = 256.
-
-            '
+          description: 'Description: Size(max = 256, IPFIX_CONTEXT_CONFIG_DESCRIPTION_INVALID,
+            min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX config.
-
-            '
+          description: Id
           type: string
         name:
-          description: 'The name of the IPFIX config. Max characters = 128.
-
-            '
+          description: 'Name: NotEmpty(IPFIX_CONTEXT_CONFIG_NAME_REQD) Size(max =
+            128, error = NAME_EXCEEDS_LIMIT: Name of the resource exceeds limit.,
+            min = 0) '
           type: string
       required:
       - name
     IPFixFilter:
       properties:
         app_def_ids:
-          description: 'The IDs of the applications that filter flow records.
-
-            '
+          description: App Def Ids
           items:
             description: App Def Ids
             type: string
           type: array
         dst_ports:
-          description: 'The destination port ranges, if applicable, for TCP and UDP
-            protocols.
-
-            '
+          description: Dst Ports
           items:
             $ref: '#/components/schemas/Port'
           type: array
         dst_prefixes_id:
-          description: 'The destination prefix ID.
-
-            '
+          description: Dst Prefixes Id
           type: string
         ipfixfiltercontext_ids:
-          description: 'The ID of the IPFIX filter context that maps to an interface
-            on the ION device.
-
-            '
+          description: Ipfixfiltercontext Ids
           items:
             description: Ipfixfiltercontext Ids
             type: string
           type: array
         priority_traffic_types:
-          description: 'The types of priority traffic for the IPFIX config.
-
-            '
+          description: Priority Traffic Types
           items:
             description: Priority Traffic Types
             enum:
@@ -544,9 +484,7 @@ components:
             type: string
           type: array
         protocols:
-          description: 'The possible protocols types for the IPFIX config.
-
-            '
+          description: Protocols
           items:
             description: Protocols
             enum:
@@ -583,64 +521,56 @@ components:
             type: string
           type: array
         rtp_transport_type:
-          description: 'The value of the RTP transport identifier is Prisma SD-WAN
-            specific and is identified from the flow.
-
-            '
+          description: Rtp Transport Type
           enum:
           - audio
           - video
           type: string
         src_ports:
-          description: 'The source port for the flow.
-
-            '
+          description: Src Ports
           items:
             $ref: '#/components/schemas/Port'
           type: array
         src_prefixes_id:
-          description: 'The source prefix IDs.
-
-            '
+          description: Src Prefixes Id
           type: string
         wan_path_direction:
-          description: 'The diection of the WAN path.
-
-            '
+          description: Wan Path Direction
           enum:
           - lan_to_wan
           - wan_to_lan
           type: string
     IPFixGlobalPrefix:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX global prefix. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX global prefix.
-
-            '
+          description: Id
           type: string
         ipv4_prefixes:
-          description: 'The individual IP address or IP address subnets.
-
-            '
+          description: 'Ipv4 Prefixes: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = INVALID_PREFIX: Prefix is not valid OR not within the valid prefix
+            range., required = false, type = PREFIXCIDR_ALL) '
           items:
             description: Ipv4 Prefixes
             type: string
           type: array
         name:
-          description: 'The name of the IPFIX global prefix. Max characters = 128.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            global prefix. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -649,34 +579,35 @@ components:
       - name
     IPFixGlobalPrefixScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX global prefix. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX global prefix.
-
-            '
+          description: Id
           type: string
         ipv4_prefixes:
-          description: 'The individual IP address or IP address subnets.
-
-            '
+          description: 'Ipv4 Prefixes: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = INVALID_PREFIX: Prefix is not valid OR not within the valid prefix
+            range., required = false, type = PREFIXCIDR_ALL) '
           items:
             description: Ipv4 Prefixes
             type: string
           type: array
         name:
-          description: 'The name of the IPFIX global prefix. Max characters = 128.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            global prefix. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -685,24 +616,27 @@ components:
       - name
     IPFixLocalPrefix:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX local prefix. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX local prefix.
-
-            '
+          description: Id
           type: string
         name:
-          description: "The name of the IPFIX local prefix. Max characters = 128.\
-            \    \n"
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         tags:
-          description: "A information field that can be added to identify the IPFIX\
-            \ local prefix. Maximum 10 unique tags of length 1024 each are allowed.\
-            \ \n"
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -711,25 +645,27 @@ components:
       - name
     IPFixLocalPrefixScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The description of the IPFIX local prefix. Max characters
-            = 256.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         id:
-          description: 'The ID of the IPFIX local prefix.
-
-            '
+          description: Id
           type: string
         name:
-          description: "The name of the IPFIX local prefix. Max characters = 128.\
-            \    \n"
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            local prefix. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -738,60 +674,53 @@ components:
       - name
     IPFixProfile:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         collector_config:
-          description: 'Collectors define the third-party applications which consume
-            the exported flow records. Maximum 4 collectors can be configured.
-
-            '
+          description: 'Collector Config: Valid Size(max = 4, error = IPFIX_PROFILE_COLLECTOR_CONFIG_REQUIRED:
+            Minimum 1 and maximum 4 collectors can be configured, min = 1) NotNull(error
+            = IPFIX_PROFILE_COLLECTOR_CONFIG_REQUIRED: Minimum 1 and maximum 4 collectors
+            can be configured) '
           items:
             $ref: '#/components/schemas/CollectorConfig'
           type: array
         description:
-          description: 'The description of the IPFIX profile configuration.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         export_cache_timeout:
-          description: 'Export Cache Timeout specifies the time for which the ION
-            device should cache a new flow record before exporting it. Value must
-            be within 10 and 600 seconds.The default value is 30 seconds.
-
-            '
+          description: 'Export Cache Timeout: Range(max = 600L, error = IPFIX_INVALID_EXPORT_CACHE_TIMEOUT:
+            Export cache timeout should be in range 10-600, min = 10L) '
           format: int32
           type: integer
         filters:
-          description: "The filters configured to select a subset of flows from all\
-            \ the observed flows to export to a collector. Maximum of 8 filters per\
-            \ IPFIX profile.  \n"
+          description: 'Filters: Valid Size(max = 8, error = IPFIX_FILTERS_MAX_SIZE:
+            Maximum 8 filters can be configured, min = 0) '
           items:
             $ref: '#/components/schemas/IPFixFilter'
           type: array
         id:
-          description: 'The ID.
-
-            '
+          description: Id
           type: string
         ipfixtemplate_id:
-          description: 'The IPFIX template ID.
-
-            '
+          description: 'Ipfixtemplate Id: NotNull(error = IPFIX_PROFILE_TEMPLATE_ID_REQUIRED:
+            IPFix template id is required) '
           type: string
         name:
-          description: 'The IPFIX profile name.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         sampler:
           $ref: '#/components/schemas/IPFixSampler'
-          description: 'Subset of flows to export from all the observed flows. The
-            device forwards this subset to the filtering process to perform further
-            selection if filters are configured.
-
-            '
+          description: 'Sampler: Valid '
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            config. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -802,129 +731,111 @@ components:
       - name
     IPFixProfileQuery:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of IPFIX profiles that match the query
-            parameters.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number IPFIX profiles deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the IPFIX profiles for the query.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "Lists the IPFIX profiles by ID.    \n"
+          description: Id
           type: string
+        isReadPreferenceSecondary:
+          description: 'IsReadPreferenceSecondary: JsonIgnore(value = true) '
+          type: boolean
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_case_insensitive:
+          description: Sort Case Insensitive
           type: boolean
         sort_params:
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     IPFixProfileScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         collector_config:
-          description: 'Collectors define the third-party applications which consume
-            the exported flow records. Maximum 4 collectors can be configured.
-
-            '
+          description: 'Collector Config: Valid Size(max = 4, error = IPFIX_PROFILE_COLLECTOR_CONFIG_REQUIRED:
+            Minimum 1 and maximum 4 collectors can be configured, min = 1) NotNull(error
+            = IPFIX_PROFILE_COLLECTOR_CONFIG_REQUIRED: Minimum 1 and maximum 4 collectors
+            can be configured) '
           items:
             $ref: '#/components/schemas/CollectorConfig'
           type: array
         description:
-          description: 'The description of the IPFIX profile configuration.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         export_cache_timeout:
-          description: 'Export Cache Timeout specifies the time for which the ION
-            device should cache a new flow record before exporting it. Value must
-            be within 10 and 600 seconds.The default value is 30 seconds.
-
-            '
+          description: 'Export Cache Timeout: Range(max = 600L, error = IPFIX_INVALID_EXPORT_CACHE_TIMEOUT:
+            Export cache timeout should be in range 10-600, min = 10L) '
           format: int32
           type: integer
         filters:
-          description: "The filters configured to select a subset of flows from all\
-            \ the observed flows to export to a collector. Maximum of 8 filters per\
-            \ IPFIX profile.  \n"
+          description: 'Filters: Valid Size(max = 8, error = IPFIX_FILTERS_MAX_SIZE:
+            Maximum 8 filters can be configured, min = 0) '
           items:
             $ref: '#/components/schemas/IPFixFilter'
           type: array
         id:
-          description: 'The ID.
-
-            '
+          description: Id
           type: string
         ipfixtemplate_id:
-          description: 'The IPFIX template ID.
-
-            '
+          description: 'Ipfixtemplate Id: NotNull(error = IPFIX_PROFILE_TEMPLATE_ID_REQUIRED:
+            IPFix template id is required) '
           type: string
         name:
-          description: 'The IPFIX profile name.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         sampler:
           $ref: '#/components/schemas/IPFixSampler'
-          description: 'Subset of flows to export from all the observed flows. The
-            device forwards this subset to the filtering process to perform further
-            selection if filters are configured.
-
-            '
+          description: 'Sampler: Valid '
         tags:
-          description: "A information field that can be added to identify the IPFIX\
-            \ config. Maximum 10 unique tags of length 1024 each are allowed.    \
-            \     \n"
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -936,34 +847,28 @@ components:
     IPFixSampler:
       properties:
         algorithm:
-          description: 'A time-based algorithm to configure the duration for sampling.
-
-            '
+          description: Algorithm
           enum:
           - time_based
           - none
           type: string
         time_interval:
-          description: 'The length of the sampling interval during which flows are
-            selected. The default value is 5 ms.
-
-            '
+          description: Time Interval
           type: integer
         time_spacing:
-          description: 'The spacing between the end of one sampling interval and the
-            start of the next sampling interval. The default value is 5 ms.
-
-            '
+          description: Time Spacing
           type: integer
     IPFixTemplate:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The IPFIX profile description when creating an IPFIX template.
-
-            '
+          description: Description
+          type: string
         flow_fields:
-          description: "The information elements exported by default in the flow record.\
-            \  \n"
+          description: Flow Fields
           items:
             description: Flow Fields
             enum:
@@ -998,38 +903,24 @@ components:
             - MEDIA_MOS
             - TROUBLESHOOT_TCP
             - TROUBLESHOOT_DECISION_MAP
+            - VRF_NAME
             type: string
           type: array
         generate_biflow:
-          description: 'Generate flow report in both directions for a flow at an observation
-            point.
-
-            '
+          description: Generate Biflow
           type: boolean
         id:
-          description: 'The ID of the IPFIX local prefix.
-
-            '
+          description: Id
           type: string
         name:
-          description: 'The name of the IPFIX template. Max size = 128.
-
-            '
+          description: Name
           type: string
         option_export_timeout:
-          description: 'Indicates how often the device sends flow templates to a collector.
-            This is only applicable when the connection to a collector uses the UDP
-            protocol. The default value is 600 seconds.
-
-            '
+          description: Option Export Timeout
           format: int32
           type: integer
         options:
-          description: 'When selected, Options allows export of additional information
-            to the collector that would not be possible with Flow Fields alone. Maz
-            size = 8.
-
-            '
+          description: Options
           items:
             description: Options
             enum:
@@ -1041,33 +932,30 @@ components:
             type: string
           type: array
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            local prefix. Maximum 10 Unique tags of length 1024 each are allowed.
-
-            '
+          description: Tags
           items:
             description: Tags
             type: string
           type: array
         template_export_timeout:
-          description: "Indicates how often the device sends the option record information\
-            \ to a collector. This is only applicable when the connection to a collector\
-            \ uses the UDP protocol. The default value is 600 seconds. \n"
+          description: Template Export Timeout
           format: int32
           type: integer
-      required:
-      - options
-      - flow_fields
-      - name
     IPFixTemplateScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         description:
-          description: 'The IPFIX profile description when creating an IPFIX template.
-
-            '
+          description: 'Description: Size(max = 256, error = DESCRIPTION_EXCEEDS_LIMIT:
+            Description length exceeds limit, min = 0) '
+          type: string
         flow_fields:
-          description: "The information elements exported by default in the flow record.\
-            \  \n"
+          description: 'Flow Fields: NotNull(error = IPFIX_TEMPLATE_FLOW_FIELDS_REQD:
+            Please provide Flow fields) ListEnum(enumClass = classOf[IPFixFlowField],
+            length = 0, listMaxSize = 128, error = IPFIX_TEMPLATE_INVALID_FLOW_FIELDS:
+            Invalid flow fields, nullAllowed = false) '
           items:
             description: Flow Fields
             enum:
@@ -1102,38 +990,29 @@ components:
             - MEDIA_MOS
             - TROUBLESHOOT_TCP
             - TROUBLESHOOT_DECISION_MAP
+            - VRF_NAME
             type: string
           type: array
         generate_biflow:
-          description: 'Generate flow report in both directions for a flow at an observation
-            point.
-
-            '
+          description: Generate Biflow
           type: boolean
         id:
-          description: 'The ID of the IPFIX local prefix.
-
-            '
+          description: Id
           type: string
         name:
-          description: 'The name of the IPFIX template. Max size = 128.
-
-            '
+          description: 'Name: Required(error = NAME_REQD: Please provide resource
+            name.) Size(max = 128, error = NAME_EXCEEDS_LIMIT: Name of the resource
+            exceeds limit., min = 0) '
           type: string
         option_export_timeout:
-          description: 'Indicates how often the device sends flow templates to a collector.
-            This is only applicable when the connection to a collector uses the UDP
-            protocol. The default value is 600 seconds.
-
-            '
+          description: 'Option Export Timeout: Range(max = 86400L, error = IPFIX_TEMPLATE_INVALID_OPTION_EXPORT_TIMEOUT:
+            Option export timeout should be in range 10-86400, min = 10L) '
           format: int32
           type: integer
         options:
-          description: 'When selected, Options allows export of additional information
-            to the collector that would not be possible with Flow Fields alone. Maz
-            size = 8.
-
-            '
+          description: 'Options: ListEnum(enumClass = classOf[IPFixOption], length
+            = 0, listMaxSize = 8, error = IPFIX_TEMPLATE_INVALID_OPTIONS: Invalid
+            ipfix template options, nullAllowed = false) '
           items:
             description: Options
             enum:
@@ -1145,18 +1024,17 @@ components:
             type: string
           type: array
         tags:
-          description: 'A information field that can be added to identify the IPFIX
-            local prefix. Maximum 10 Unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
           type: array
         template_export_timeout:
-          description: "Indicates how often the device sends the option record information\
-            \ to a collector. This is only applicable when the connection to a collector\
-            \ uses the UDP protocol. The default value is 600 seconds. \n"
+          description: 'Template Export Timeout: Range(max = 86400L, error = IPFIX_TEMPLATE_INVALID_TEMPLATE_EXPORT_TIMEOUT:
+            Template export timeout should be in range 10-86400, min = 10L) '
           format: int32
           type: integer
       required:
@@ -1166,19 +1044,19 @@ components:
     ListQueryResponse:
       properties:
         count:
-          description: 'The count of the query list.
+          description: 'The actual count.
 
             '
           format: int32
           type: integer
         deleted_count:
-          description: 'The deleted number of queries.
+          description: 'The deleted number.
 
             '
           format: int64
           type: integer
         deleted_ids:
-          description: 'The deleted query IDs.
+          description: 'The deleted IDs.
 
             '
           items:
@@ -1199,7 +1077,7 @@ components:
             '
           type: object
         total_count:
-          description: 'Total number of queries.
+          description: 'Total number.
 
             '
           format: int64
@@ -1208,165 +1086,157 @@ components:
     Port:
       properties:
         end:
-          description: 'The end port range must be between 1 and 65535.
-
-            '
+          description: 'End: Range(max = 65535L, error = APPDEF_CONFIG_INVALID_PORT_RANGE:
+            Port number must be between 1 and 65535, min = 1L) '
           type: string
         start:
-          description: 'The start port range must be between 1 and 65535.
-
-            '
+          description: 'Start: Range(max = 65535L, error = APPDEF_CONFIG_INVALID_PORT_RANGE:
+            Port number must be between 1 and 65535, min = 1L) '
           type: string
     SiteIPFixPrefixAssociation:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         id:
-          description: 'The ID of the IPFIX prefix.
-
-            '
+          description: Id
           type: string
         ipv4_prefixes:
-          description: 'The individual IP address.
-
-            '
+          description: 'Ipv4 Prefixes: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = INVALID_IPV4_PREFIX: Invalid IPv4 Prefix., required = false, type
+            = APP_GATEWAYCIDR) '
           items:
             description: Ipv4 Prefixes
             type: string
           type: array
         prefix_id:
-          description: "The prefix ID that associates with a site.   \n"
+          description: Prefix Id
           type: string
         tags:
-          description: "A information field that can be added to identify the prefix.\
-            \ Maximum 10 unique tags of length 1024 each are allowed.      \n"
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
           type: array
     SiteIPFixPrefixAssociationScreen:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         id:
-          description: 'The ID of the IPFIX site prefix.
-
-            '
+          description: Id
           type: string
         ipv4_prefixes:
-          description: 'The individual IP address.
-
-            '
+          description: 'Ipv4 Prefixes: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = INVALID_IPV4_PREFIX: Invalid IPv4 Prefix., required = false, type
+            = APP_GATEWAYCIDR) '
           items:
             description: Ipv4 Prefixes
             type: string
           type: array
         prefix_id:
-          description: "The IP Prefix ID that associates with a site.   \n"
+          description: Prefix Id
           type: string
         tags:
-          description: 'An information field that can be added to identify the IPFIX
-            site prefix. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
           type: array
     SitePrefixAssociationQuery:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of prefix associations that match the
-            query parameters.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number of prefix associations deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the prefix associations for the query.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "Lists the prefix associations by ID.    \n"
+          description: Id
           type: string
+        isReadPreferenceSecondary:
+          description: 'IsReadPreferenceSecondary: JsonIgnore(value = true) '
+          type: boolean
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
+          type: boolean
+        sort_case_insensitive:
+          description: Sort Case Insensitive
           type: boolean
         sort_params:
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     SitePrefixAssociationQueryFilter:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         id:
-          description: 'The ID of the site prefix.
-
-            '
+          description: Id
           type: string
         ipv4_prefixes:
-          description: 'The individual IP address.
-
-            '
+          description: 'Ipv4 Prefixes: ListIPAddress(bcast = DENY, listMaxSize = 0,
+            error = INVALID_IPV4_PREFIX: Invalid IPv4 Prefix., required = false, type
+            = APP_GATEWAYCIDR) '
           items:
             description: Ipv4 Prefixes
             type: string
           type: array
         prefix_id:
-          description: "The IP Prefix ID that associates with a site.   \n"
+          description: Prefix Id
           type: string
         site_id:
-          description: 'The site ID binding the prefix.
-
-            '
+          description: Site Id
           type: string
         tags:
-          description: 'A information field that can be added to identify the site
-            prefix. Maximum 10 unique tags of length 1024 each are allowed.
-
-            '
+          description: 'Tags: ListString(allowDuplicate = false, allowEmpty = true,
+            allowNull = true, length = 128, listMaxSize = 10, error = INVALID_TAG:
+            Maximum 10 Unique tags of length 1024 each are allowed, noTrim = false,
+            regex = [^,\\s]+, required = false) '
           items:
             description: Tags
             type: string
@@ -1380,8 +1250,7 @@ openapi: 3.0.0
 paths:
   /sdwan/v2.0/api/ipfix/query:
     post:
-      description: Queries the DB for limit number of IPFIX configs that match the
-        query parameters.
+      description: Queries db for limit number of ipfix configs that match query params.
       operationId: post-sdwan-v2.0-api-ipfix-query
       requestBody:
         content:
@@ -1402,12 +1271,13 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Configs (v2.0)
+      summary: Queries db for limit number of ipfix configs that match query params.
+        (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixcollectorcontexts:
     get:
-      description: List all the IPFix collector contexts.
+      description: Get all IPFix collector context
       operationId: get-sdwan-v2.0-api-ipfixcollectorcontexts
       responses:
         '200':
@@ -1416,11 +1286,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixContext'
           description: Successful Operation
-      summary: Get IPFix Collector Context (v2.0)
+      summary: Get all IPFix collector context (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create a IPFix collector context.
+      description: Create a IPFix Collector context
       operationId: post-sdwan-v2.0-api-ipfixcollectorcontexts
       requestBody:
         content:
@@ -1448,13 +1318,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFix Collector Context (v2.0)
+      summary: Create a IPFix Collector context (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixcollectorcontexts/query:
     post:
-      description: Queries the DB for limit number of ipfix collector contexts that
-        match the query parameters.
+      description: Queries db for limit number of ipfix collector context that match
+        query
       operationId: post-sdwan-v2.0-api-ipfixcollectorcontexts-query
       requestBody:
         content:
@@ -1475,15 +1345,16 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Collector Contexts (v2.0)
+      summary: Queries db for limit number of ipfix collector context that match query
+        params. (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixcollectorcontexts/{context_id}:
     delete:
-      description: Delete a IPFix collector context.
+      description: Delete a IPFix collector context
       operationId: delete-sdwan-v2.0-api-ipfixcollectorcontexts-context_id
       parameters:
-      - description: ID of the IPFIX collector context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1509,14 +1380,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFix Collector Context (v2.0)
+      summary: Delete a IPFix collector context (v2.0)
       tags:
       - IPFIX
     get:
-      description: List an IPFix collector context.
+      description: Get IPFix collector context
       operationId: get-sdwan-v2.0-api-ipfixcollectorcontexts-context_id
       parameters:
-      - description: ID of the IPFIX collector context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1530,14 +1401,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixContext'
           description: Successful Operation
-      summary: Get IPFix Collector Context (v2.0)
+      summary: Get IPFix collector context (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX collector context.
+      description: Update a IPFix Collector context
       operationId: put-sdwan-v2.0-api-ipfixcollectorcontexts-context_id
       parameters:
-      - description: ID of the IPFIX collector context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1570,12 +1441,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Collector Context (v2.0)
+      summary: Update a IPFix Collector context (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixfiltercontexts:
     get:
-      description: List all the IPFIX filter contexts.
+      description: Get all IPFix filter context
       operationId: get-sdwan-v2.0-api-ipfixfiltercontexts
       responses:
         '200':
@@ -1584,11 +1455,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixContext'
           description: Successful Operation
-      summary: Get IPFIX Filter Context (v2.0)
+      summary: Get all IPFix filter context (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create a IPFIX filter context.
+      description: Create a IPFix Filter context
       operationId: post-sdwan-v2.0-api-ipfixfiltercontexts
       requestBody:
         content:
@@ -1616,13 +1487,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Filter Context (v2.0)
+      summary: Create a IPFix Filter context (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixfiltercontexts/query:
     post:
-      description: Queries the DB for limit number of IPFIX filter contexts that match
-        the query parameters.
+      description: Queries db for limit number of ipfix filter context that match
+        query
       operationId: post-sdwan-v2.0-api-ipfixfiltercontexts-query
       requestBody:
         content:
@@ -1643,15 +1514,16 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Filter Contexts (v2.0)
+      summary: Queries db for limit number of ipfix filter context that match query
+        params. (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixfiltercontexts/{context_id}:
     delete:
-      description: Delete an IPFIX filter context.
+      description: Delete a IPFix filter context
       operationId: delete-sdwan-v2.0-api-ipfixfiltercontexts-context_id
       parameters:
-      - description: ID of the IPFIX filter context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1677,14 +1549,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFIX Filter Context (v2.0)
+      summary: Delete a IPFix filter context (v2.0)
       tags:
       - IPFIX
     get:
-      description: List an IPFIX filter context.
+      description: Get IPFix filter context
       operationId: get-sdwan-v2.0-api-ipfixfiltercontexts-context_id
       parameters:
-      - description: ID of the IPFIX filter context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1698,14 +1570,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixContext'
           description: Successful Operation
-      summary: Get IPFIX Filter Context (v2.0)
+      summary: Get IPFix filter context (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX filter context.
+      description: Update a IPFix Filter context
       operationId: put-sdwan-v2.0-api-ipfixfiltercontexts-context_id
       parameters:
-      - description: ID of the IPFIX filter context.
+      - description: Context Id
         in: path
         name: context_id
         required: true
@@ -1738,12 +1610,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Filter Context (v2.0)
+      summary: Update a IPFix Filter context (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixglobalprefixes:
     get:
-      description: List all the global prefixes.
+      description: Get all IPFix global prefix
       operationId: get-sdwan-v2.0-api-ipfixglobalprefixes
       responses:
         '200':
@@ -1752,11 +1624,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixGlobalPrefix'
           description: Successful Operation
-      summary: Get IPFIX Global Prefix (v2.0)
+      summary: Get all IPFix global prefix (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create a IPFIX global prefix.
+      description: Create a IPFix Global prefix
       operationId: post-sdwan-v2.0-api-ipfixglobalprefixes
       requestBody:
         content:
@@ -1786,15 +1658,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Global Prefix (v2.0)
+      summary: Create a IPFix Global prefix (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixglobalprefixes/{prefix_id}:
     delete:
-      description: Delete an IPFix global prefix.
+      description: Delete a IPFix global prefix
       operationId: delete-sdwan-v2.0-api-ipfixglobalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX global prefix.
+      - description: Ipfix global prefix Id
         in: path
         name: prefix_id
         required: true
@@ -1820,14 +1692,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFIX Global Prefix (v2.0)
+      summary: Delete a IPFix global prefix (v2.0)
       tags:
       - IPFIX
     get:
-      description: Get an IPFix global prefix.
+      description: Get IPFix global prefix
       operationId: get-sdwan-v2.0-api-ipfixglobalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX global prefix.
+      - description: Ipfix global prefix Id
         in: path
         name: prefix_id
         required: true
@@ -1841,14 +1713,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixGlobalPrefix'
           description: Successful Operation
-      summary: Get IPFIX Global Prefix (v2.0)
+      summary: Get IPFix global prefix (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFix global prefix.
+      description: Update a IPFix Global prefix
       operationId: put-sdwan-v2.0-api-ipfixglobalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX global prefix.
+      - description: Ipfix global prefix Id
         in: path
         name: prefix_id
         required: true
@@ -1884,12 +1756,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Global Prefix (v2.0)
+      summary: Update a IPFix Global prefix (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixlocalprefixes:
     get:
-      description: List all the local prefixes.
+      description: Get all IPFix local prefix
       operationId: get-sdwan-v2.0-api-ipfixlocalprefixes
       responses:
         '200':
@@ -1898,11 +1770,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixLocalPrefix'
           description: Successful Operation
-      summary: Get IPFIX Local Prefix (v2.0)
+      summary: Get all IPFix local prefix (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create a IPFIX local prefix.
+      description: Create a IPFix local prefix
       operationId: post-sdwan-v2.0-api-ipfixlocalprefixes
       requestBody:
         content:
@@ -1931,13 +1803,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Local Prefix (v2.0)
+      summary: Create a IPFix local prefix (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixlocalprefixes/query:
     post:
-      description: Queries the DB for limit number of IPFIX site prefix associations
-        that match the query parameters.
+      description: Queries db for limit number of ipfix site prefix association that
+        match
       operationId: post-sdwan-v2.0-api-ipfixlocalprefixes-query
       requestBody:
         content:
@@ -1958,15 +1830,16 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Site Prefix Association (v2.0)
+      summary: Queries db for limit number of ipfix site prefix association that match
+        query (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixlocalprefixes/{prefix_id}:
     delete:
-      description: Delete an IPFIX local prefix.
+      description: Delete a IPFix local prefix
       operationId: delete-sdwan-v2.0-api-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX local prefix.
+      - description: Ipfix local prefix Id
         in: path
         name: prefix_id
         required: true
@@ -1992,14 +1865,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFIX Local Prefix (v2.0)
+      summary: Delete a IPFix local prefix (v2.0)
       tags:
       - IPFIX
     get:
-      description: Get an IPFIX local prefix.
+      description: Get IPFix local prefix
       operationId: get-sdwan-v2.0-api-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX local prefix.
+      - description: Ipfix local prefix Id
         in: path
         name: prefix_id
         required: true
@@ -2013,14 +1886,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixLocalPrefix'
           description: Successful Operation
-      summary: Get IPFIX Local Prefix (v2.0)
+      summary: Get IPFix local prefix (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX local prefix.
+      description: Update a IPFix local prefix
       operationId: put-sdwan-v2.0-api-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the IPFIX local prefix.
+      - description: Ipfix local prefix Id
         in: path
         name: prefix_id
         required: true
@@ -2055,12 +1928,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Local Prefix (v2.0)
+      summary: Update a IPFix local prefix (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixprofiles:
     get:
-      description: List all IPFix profiles.
+      description: Get all IPFix Profiles
       operationId: get-sdwan-v2.0-api-ipfixprofiles
       responses:
         '200':
@@ -2069,11 +1942,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixProfile'
           description: Successful Operation
-      summary: Get IPFIX Profiles (v2.0)
+      summary: Get all IPFix Profiles (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create an IPFIX profile.
+      description: Create a IPFix Profile
       operationId: post-sdwan-v2.0-api-ipfixprofiles
       requestBody:
         content:
@@ -2137,13 +2010,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Profile (v2.0)
+      summary: Create a IPFix Profile (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixprofiles/query:
     post:
-      description: Queries the DB for limit number of IPFIX profiles that match the
-        query parameters.
+      description: Queries db for limit number of ipfix profiles that match query
+        params.
       operationId: post-sdwan-v2.0-api-ipfixprofiles-query
       requestBody:
         content:
@@ -2164,15 +2037,16 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Profiles (v2.0)
+      summary: Queries db for limit number of ipfix profiles that match query params.
+        (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixprofiles/{profile_id}:
     delete:
-      description: Delete an IPFIX Profile.
+      description: Delete IPFix Profile
       operationId: delete-sdwan-v2.0-api-ipfixprofiles-profile_id
       parameters:
-      - description: ID of the IPFIX profile.
+      - description: Ipfix profile Id
         in: path
         name: profile_id
         required: true
@@ -2196,14 +2070,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFIX Profile (v2.0)
+      summary: Delete IPFix Profile (v2.0)
       tags:
       - IPFIX
     get:
-      description: List an IPFIX profile.
+      description: Get IPFix Profile
       operationId: get-sdwan-v2.0-api-ipfixprofiles-profile_id
       parameters:
-      - description: ID of the IPFIX profile.
+      - description: Ipfix profile Id
         in: path
         name: profile_id
         required: true
@@ -2217,14 +2091,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixProfile'
           description: Successful Operation
-      summary: Get IPFIX Profile(v2.0)
+      summary: Get IPFix Profile (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX profile.
+      description: Update a IPFix Profile
       operationId: put-sdwan-v2.0-api-ipfixprofiles-profile_id
       parameters:
-      - description: ID of the IPFIX profile.
+      - description: Ipfix profile Id
         in: path
         name: profile_id
         required: true
@@ -2293,12 +2167,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Profile(v2.0)
+      summary: Update a IPFix Profile (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixtemplates:
     get:
-      description: List all IPFix templates.
+      description: Get all IPFix templates
       operationId: get-sdwan-v2.0-api-ipfixtemplates
       responses:
         '200':
@@ -2307,17 +2181,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixTemplate'
           description: Successful Operation
-      summary: Get IPFIX Templates (v2.0)
+      summary: Get all IPFix templates (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create an IPFIX template.
+      description: Create a IPFix template
       operationId: post-sdwan-v2.0-api-ipfixtemplates
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IPFixTemplateScreen'
+              $ref: '#/components/schemas/IPFixTemplate'
       responses:
         '200':
           content:
@@ -2346,13 +2220,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Template (v2.0)
+      summary: Create a IPFix template (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixtemplates/query:
     post:
-      description: Queries the DB for limit number of IPFIX templates that match the
-        query parameters.
+      description: Queries db for limit number of ipfix templates that match query
+        params.
       operationId: post-sdwan-v2.0-api-ipfixtemplates-query
       requestBody:
         content:
@@ -2373,15 +2247,16 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Query DB for IPFIX Templates (v2.0)
+      summary: Queries db for limit number of ipfix templates that match query params.
+        (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/ipfixtemplates/{template_id}:
     delete:
-      description: Delete an IPFIX template.
+      description: Delete a IPFix template
       operationId: delete-sdwan-v2.0-api-ipfixtemplates-template_id
       parameters:
-      - description: ID of the IPFIX template.
+      - description: Ipfix template Id
         in: path
         name: template_id
         required: true
@@ -2406,14 +2281,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Delete IPFIX Template (v2.0)
+      summary: Delete a IPFix template (v2.0)
       tags:
       - IPFIX
     get:
-      description: List an IPFIX template.
+      description: Get IPFix template
       operationId: get-sdwan-v2.0-api-ipfixtemplates-template_id
       parameters:
-      - description: ID of the IPFIX template.
+      - description: Ipfix template Id
         in: path
         name: template_id
         required: true
@@ -2427,14 +2302,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixTemplate'
           description: Successful Operation
-      summary: Get IPFIX Template (v2.0)
+      summary: Get IPFix template (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX template.
+      description: Update a IPFix template
       operationId: put-sdwan-v2.0-api-ipfixtemplates-template_id
       parameters:
-      - description: ID of the IPFIX template.
+      - description: Ipfix template Id
         in: path
         name: template_id
         required: true
@@ -2445,7 +2320,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IPFixTemplateScreen'
+              $ref: '#/components/schemas/IPFixTemplate'
       responses:
         '200':
           content:
@@ -2475,22 +2350,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Template (v2.0)
+      summary: Update a IPFix template (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/sites/{site_id}/elements/{element_id}/ipfix:
     get:
-      description: List all IPFIX configs.
+      description: Get all IPFix config
       operationId: get-sdwan-v2.0-api-sites-site_id-elements-element_id-ipfix
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the element.
+      - description: Element Id
         in: path
         name: element_id
         required: true
@@ -2504,21 +2379,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixConfig'
           description: Successful Operation
-      summary: Get IPFIX Configs (v2.0)
+      summary: Get all IPFix config (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create an IPFIX config.
+      description: Create a IPFix Config
       operationId: post-sdwan-v2.0-api-sites-site_id-elements-element_id-ipfix
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the element.
+      - description: Element Id
         in: path
         name: element_id
         required: true
@@ -2590,29 +2465,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFIX Config (v2.0)
+      summary: Create a IPFix Config (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/sites/{site_id}/elements/{element_id}/ipfix/{ipfix_id}:
     delete:
-      description: Delete the IPFIX config.
+      description: Delete IPFix config
       operationId: delete-sdwan-v2.0-api-sites-site_id-elements-element_id-ipfix-ipfix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the element.
+      - description: Element Id
         in: path
         name: element_id
         required: true
         schema:
           description: Element Id
           type: string
-      - description: ID of the IPFIX.
+      - description: Ipfix Id
         in: path
         name: ipfix_id
         required: true
@@ -2626,28 +2501,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixConfig'
           description: Successful Operation
-      summary: Delete IPFIX Config (v2.0)
+      summary: Delete IPFix config (v2.0)
       tags:
       - IPFIX
     get:
-      description: List an IPFIX config.
+      description: Get IPFix config
       operationId: get-sdwan-v2.0-api-sites-site_id-elements-element_id-ipfix-ipfix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the element.
+      - description: Element Id
         in: path
         name: element_id
         required: true
         schema:
           description: Element Id
           type: string
-      - description: ID of the IPFIX.
+      - description: Ipfix Id
         in: path
         name: ipfix_id
         required: true
@@ -2661,28 +2536,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/IPFixConfig'
           description: Successful Operation
-      summary: Get IPFIX Config (v2.0)
+      summary: Get IPFix config (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update an IPFIX config.
+      description: Update a IPFix Config
       operationId: put-sdwan-v2.0-api-sites-site_id-elements-element_id-ipfix-ipfix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the element.
+      - description: Element Id
         in: path
         name: element_id
         required: true
         schema:
           description: Element Id
           type: string
-      - description: ID of the IPFIX.
+      - description: Ipfix Id
         in: path
         name: ipfix_id
         required: true
@@ -2753,15 +2628,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Config (v2.0)
+      summary: Update a IPFix Config (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/sites/{site_id}/ipfixlocalprefixes:
     get:
-      description: List all the IPFix site prefix associations.
+      description: Get all IPFix site prefix association
       operationId: get-sdwan-v2.0-api-sites-site_id-ipfixlocalprefixes
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
@@ -2782,14 +2657,14 @@ paths:
                       type: array
                   type: object
           description: Successful Operation
-      summary: Get IPFix Site Prefix Association (v2.0)
+      summary: Get all IPFix site prefix association (v2.0)
       tags:
       - IPFIX
     post:
-      description: Create an IPFix site prefix association.
+      description: Create a IPFix site prefix association
       operationId: post-sdwan-v2.0-api-sites-site_id-ipfixlocalprefixes
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
@@ -2826,22 +2701,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Create IPFix Site Prefix Association (v2.0)
+      summary: Create a IPFix site prefix association (v2.0)
       tags:
       - IPFIX
   /sdwan/v2.0/api/sites/{site_id}/ipfixlocalprefixes/{prefix_id}:
     delete:
-      description: Delete an IPFIX site prefix association.
+      description: Delete a IPFix site prefix association
       operationId: delete-sdwan-v2.0-api-sites-site_id-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the prefix.
+      - description: Prefix Id
         in: path
         name: prefix_id
         required: true
@@ -2855,21 +2730,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteIPFixPrefixAssociation'
           description: Successful Operation
-      summary: Delete IPFIX Site Prefix Association (v2.0)
+      summary: Delete a IPFix site prefix association (v2.0)
       tags:
       - IPFIX
     get:
-      description: List the IPFIX site prefix association.
+      description: Get IPFix site prefix association
       operationId: get-sdwan-v2.0-api-sites-site_id-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the prefix.
+      - description: Prefix Id
         in: path
         name: prefix_id
         required: true
@@ -2883,21 +2758,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteIPFixPrefixAssociation'
           description: Successful Operation
-      summary: Get IPFIX Site Prefix Association (v2.0)
+      summary: Get IPFix site prefix association (v2.0)
       tags:
       - IPFIX
     put:
-      description: Update the IPFIX site prefix association.
+      description: Update a IPFix site prefix association
       operationId: put-sdwan-v2.0-api-sites-site_id-ipfixlocalprefixes-prefix_id
       parameters:
-      - description: ID of the site.
+      - description: Site Id
         in: path
         name: site_id
         required: true
         schema:
           description: Site Id
           type: string
-      - description: ID of the prefix.
+      - description: Prefix Id
         in: path
         name: prefix_id
         required: true
@@ -2935,7 +2810,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Update IPFIX Site Prefix Association (v2.0)
+      summary: Update a IPFix site prefix association (v2.0)
       tags:
       - IPFIX
 servers:

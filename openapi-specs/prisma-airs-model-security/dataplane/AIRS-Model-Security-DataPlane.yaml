@@ -1,0 +1,1492 @@
+openapi: 3.1.0
+info:
+  title: Prisma AIRS AI Model Security API
+  version: 0.1.0
+  description: "Use the Model Security Data Plane API to execute scans and manage\
+    \ your model data securely. This Open API spec file was created on February 24,\
+    \ 2026. \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is a registered\
+    \ trademark of Palo Alto Networks. A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+components:
+  schemas:
+    ErrorCodes:
+      enum:
+      - UNKNOWN_ERROR
+      - SCAN_ERROR
+      - INVALID_RESPONSE
+      - ACCESS_DENIED
+      - MISSING_CREDENTIALS
+      - NO_SUCH_KEY
+      - NO_SUCH_BUCKET
+      - INVALID_BUCKET_NAME
+      - INTERNAL_ERROR
+      - SERVICE_UNAVAILABLE
+      - INVALID_OBJECT_STATE
+      - UNKNOWN_REMOTE_SERVICE_ERROR
+      - UNSUPPORTED_REMOTE_STORAGE
+      - MISSING_ARTIFACTS
+      - WORKER_ERROR
+      - POLICY_EVAL_ERROR
+      title: ErrorCodes
+      type: string
+    EvalOutcome:
+      enum:
+      - PENDING
+      - ALLOWED
+      - BLOCKED
+      - ERROR
+      title: EvalOutcome
+      type: string
+    EvalSummarySchema:
+      properties:
+        rules_failed:
+          default: 0
+          title: Rules Failed
+          type: integer
+        rules_passed:
+          default: 0
+          title: Rules Passed
+          type: integer
+        total_rules:
+          default: 0
+          title: Total Rules
+          type: integer
+      title: EvalSummarySchema
+      type: object
+    FileListSchema:
+      description: Schema for file list responses.
+      properties:
+        files:
+          items:
+            $ref: '#/components/schemas/FileResponseSchema'
+          title: Files
+          type: array
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - files
+      title: FileListSchema
+      type: object
+    FileResponseSchema:
+      description: Schema for file response details.
+      properties:
+        blob_id:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Blob Id
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        formats:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Formats
+        model_version_uuid:
+          format: uuid
+          title: Model Version Uuid
+          type: string
+        parent_path:
+          maxLength: 1024
+          title: Parent Path
+          type: string
+        path:
+          maxLength: 1024
+          title: Path
+          type: string
+        result:
+          $ref: '#/components/schemas/FileScanResult'
+        scan_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Scan Uuid
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        type:
+          $ref: '#/components/schemas/FileType'
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - path
+      - parent_path
+      - type
+      - result
+      - model_version_uuid
+      title: FileResponseSchema
+      type: object
+    FileScanDataSchema:
+      properties:
+        blob_id:
+          maxLength: 256
+          title: Blob Id
+          type: string
+        error_message:
+          anyOf:
+          - maxLength: 1024
+            type: string
+          - type: 'null'
+          title: Error Message
+        file_path:
+          maxLength: 1024
+          title: File Path
+          type: string
+        formats:
+          anyOf:
+          - items:
+              maxLength: 256
+              type: string
+            maxItems: 20
+            type: array
+          - type: 'null'
+          title: Formats
+        issues_detected:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ModelScanIssue'
+            type: array
+          - type: 'null'
+          title: Issues Detected
+        modelscan_status:
+          $ref: '#/components/schemas/ModelScanStatus'
+      required:
+      - file_path
+      - modelscan_status
+      - blob_id
+      title: FileScanDataSchema
+      type: object
+    FileScanResult:
+      description: Results of individual file scanning.
+      enum:
+      - SKIPPED
+      - SUCCESS
+      - ERROR
+      - FAILED
+      title: FileScanResult
+      type: string
+    FileType:
+      enum:
+      - DIRECTORY
+      - FILE
+      title: FileType
+      type: string
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
+          type: array
+      title: HTTPValidationError
+      type: object
+    LabelKeyListSchema:
+      properties:
+        keys:
+          items:
+            maxLength: 128
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_-]+$
+            type: string
+          title: Keys
+          type: array
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - keys
+      title: LabelKeyListSchema
+      type: object
+    LabelSchema:
+      properties:
+        key:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]+$
+          title: Key
+          type: string
+        value:
+          maxLength: 256
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]+$
+          title: Value
+          type: string
+      required:
+      - key
+      - value
+      title: LabelSchema
+      type: object
+    LabelValueListSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        values:
+          items:
+            maxLength: 256
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_-]+$
+            type: string
+          title: Values
+          type: array
+      required:
+      - pagination
+      - values
+      title: LabelValueListSchema
+      type: object
+    LabelsCreateRequestSchema:
+      additionalProperties: false
+      properties:
+        labels:
+          items:
+            $ref: '#/components/schemas/LabelSchema'
+          maxItems: 50
+          minItems: 1
+          title: Labels
+          type: array
+      required:
+      - labels
+      title: LabelsCreateRequestSchema
+      type: object
+    LabelsResponseSchema:
+      properties: {}
+      title: LabelsResponseSchema
+      type: object
+    ModelScanIssue:
+      properties:
+        description:
+          maxLength: 4096
+          title: Description
+          type: string
+        module:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Module
+        operator:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Operator
+        source:
+          maxLength: 1024
+          title: Source
+          type: string
+        threat:
+          anyOf:
+          - $ref: '#/components/schemas/ThreatCategory'
+          - type: 'null'
+      required:
+      - description
+      - source
+      title: ModelScanIssue
+      type: object
+    ModelScanStatus:
+      enum:
+      - SCANNED
+      - SKIPPED
+      - ERROR
+      title: ModelScanStatus
+      type: string
+    PaginationSchema:
+      properties:
+        total_items:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Items
+      title: PaginationSchema
+      type: object
+    RuleEvaluationListSchema:
+      properties:
+        evaluations:
+          items:
+            $ref: '#/components/schemas/RuleEvaluationResponseSchema'
+          title: Evaluations
+          type: array
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - evaluations
+      title: RuleEvaluationListSchema
+      type: object
+    RuleEvaluationResponseSchema:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        result:
+          $ref: '#/components/schemas/RuleEvaluationResult'
+        rule_description:
+          title: Rule Description
+          type: string
+        rule_instance_state:
+          $ref: '#/components/schemas/RuleState'
+        rule_instance_uuid:
+          format: uuid
+          title: Rule Instance Uuid
+          type: string
+        rule_name:
+          title: Rule Name
+          type: string
+        scan_uuid:
+          format: uuid
+          title: Scan Uuid
+          type: string
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        violation_count:
+          title: Violation Count
+          type: integer
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - result
+      - violation_count
+      - rule_instance_uuid
+      - scan_uuid
+      - rule_name
+      - rule_description
+      - rule_instance_state
+      title: RuleEvaluationResponseSchema
+      type: object
+    RuleEvaluationResult:
+      description: Results of rule evaluation.
+      enum:
+      - PASSED
+      - FAILED
+      - ERROR
+      title: RuleEvaluationResult
+      type: string
+    RuleState:
+      description: Rule evaluation states.
+      enum:
+      - DISABLED
+      - ALLOWING
+      - BLOCKING
+      title: RuleState
+      type: string
+    ScanBaseResponseSchema:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        created_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Created By
+        enabled_rule_count_snapshot:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Enabled Rule Count Snapshot
+        error_code:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorCodes'
+          - type: 'null'
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Message
+        eval_outcome:
+          $ref: '#/components/schemas/EvalOutcome'
+        eval_summary:
+          anyOf:
+          - $ref: '#/components/schemas/EvalSummarySchema'
+          - type: 'null'
+        labels:
+          items:
+            $ref: '#/components/schemas/LabelSchema'
+          title: Labels
+          type: array
+        model_formats:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Model Formats
+        model_uri:
+          title: Model Uri
+          type: string
+        model_version_uuid:
+          format: uuid
+          title: Model Version Uuid
+          type: string
+        owner:
+          maxLength: 256
+          title: Owner
+          type: string
+        scan_origin:
+          $ref: '#/components/schemas/ScanOrigin'
+        scanner_version:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Scanner Version
+        security_group_name:
+          maxLength: 256
+          title: Security Group Name
+          type: string
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+          readOnly: true
+        time_started:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: Time Started
+        total_files_scanned:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Files Scanned
+        total_files_skipped:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Files Skipped
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - model_uri
+      - owner
+      - scan_origin
+      - security_group_uuid
+      - security_group_name
+      - model_version_uuid
+      - eval_outcome
+      - source_type
+      title: ScanBaseResponseSchema
+      type: object
+    ScanCreateRequestSchema:
+      additionalProperties: false
+      properties:
+        allow_patterns:
+          anyOf:
+          - items:
+              maxLength: 256
+              type: string
+            type: array
+          - type: 'null'
+          title: Allow Patterns
+        ignore_patterns:
+          anyOf:
+          - items:
+              maxLength: 256
+              type: string
+            type: array
+          - type: 'null'
+          title: Ignore Patterns
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelSchema'
+            maxItems: 50
+            type: array
+          - type: 'null'
+          title: Labels
+        model_author:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Author
+        model_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Name
+        model_uri:
+          title: Model Uri
+          type: string
+        model_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Version
+        scan_details:
+          anyOf:
+          - $ref: '#/components/schemas/ScanDetails'
+          - type: 'null'
+        scan_origin:
+          $ref: '#/components/schemas/ScanOrigin'
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+      required:
+      - model_uri
+      - security_group_uuid
+      - scan_origin
+      title: ScanCreateRequestSchema
+      type: object
+    ScanDetails:
+      additionalProperties: false
+      properties:
+        error_code:
+          anyOf:
+          - $ref: '#/components/schemas/ErrorCodes'
+          - type: 'null'
+        error_message:
+          anyOf:
+          - maxLength: 1024
+            type: string
+          - type: 'null'
+          title: Error Message
+        files:
+          items:
+            $ref: '#/components/schemas/FileScanDataSchema'
+          maxItems: 1000
+          title: Files
+          type: array
+        model_formats:
+          items:
+            maxLength: 64
+            type: string
+          maxItems: 100
+          title: Model Formats
+          type: array
+        model_size_bytes:
+          title: Model Size Bytes
+          type: integer
+        scan_duration_ms:
+          title: Scan Duration Ms
+          type: integer
+        scanner_version:
+          maxLength: 64
+          title: Scanner Version
+          type: string
+        time_started:
+          format: date-time
+          title: Time Started
+          type: string
+        total_files_scanned:
+          title: Total Files Scanned
+          type: integer
+        total_files_skipped:
+          title: Total Files Skipped
+          type: integer
+      required:
+      - scanner_version
+      - time_started
+      - files
+      - total_files_scanned
+      - total_files_skipped
+      - model_formats
+      - model_size_bytes
+      - scan_duration_ms
+      title: ScanDetails
+      type: object
+    ScanListSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        scans:
+          items:
+            $ref: '#/components/schemas/ScanBaseResponseSchema'
+          title: Scans
+          type: array
+      required:
+      - pagination
+      - scans
+      title: ScanListSchema
+      type: object
+    ScanOrigin:
+      enum:
+      - MODEL_SECURITY_SDK
+      - HUGGING_FACE
+      title: ScanOrigin
+      type: string
+    SortByDateField:
+      enum:
+      - created_at
+      - updated_at
+      title: SortByDateField
+      type: string
+    SortByFileField:
+      enum:
+      - path
+      - type
+      title: SortByFileField
+      type: string
+    SortDirection:
+      enum:
+      - asc
+      - desc
+      title: SortDirection
+      type: string
+    SourceType:
+      enum:
+      - LOCAL
+      - HUGGING_FACE
+      - S3
+      - GCS
+      - AZURE
+      - ARTIFACTORY
+      - GITLAB
+      - ALL
+      title: SourceType
+      type: string
+    ThreatCategory:
+      description: 'Enum for threat categories with their descriptions.
+
+        Should be in sync with modelscan-pai issue codes
+
+        https://code.pan.run/airs/model-security/modelscan-pai/-/blob/1df3e4ca9f175398155ab1f249ed10211d222751/modelscan_pai/issues.py#L7'
+      enum:
+      - PAIT-ARV-100
+      - PAIT-GGUF-100
+      - PAIT-GGUF-101
+      - PAIT-KERAS-100
+      - PAIT-KERAS-101
+      - PAIT-KERAS-102
+      - PAIT-JOBLIB-100
+      - PAIT-JOBLIB-101
+      - PAIT-PKL-100
+      - PAIT-PKL-101
+      - PAIT-PYTCH-100
+      - PAIT-PYTCH-101
+      - PAIT-EXDIR-100
+      - PAIT-EXDIR-101
+      - PAIT-ONNX-200
+      - PAIT-TF-200
+      - PAIT-LMAFL-300
+      - PAIT-LITERT-300
+      - PAIT-LITERT-301
+      - PAIT-LITERT-302
+      - PAIT-KERAS-300
+      - PAIT-KERAS-301
+      - PAIT-TCHST-300
+      - PAIT-TCHST-301
+      - PAIT-TF-300
+      - PAIT-TF-301
+      - PAIT-TF-302
+      - PAIT-TMT-300
+      - PAIT-TMT-301
+      - UNAPPROVED_FORMATS
+      title: ThreatCategory
+      type: string
+    ValidationError:
+      properties:
+        ctx:
+          title: Context
+          type: object
+        input:
+          title: Input
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+    ViolationListSchema:
+      description: Schema for violation list responses.
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        violations:
+          items:
+            $ref: '#/components/schemas/ViolationResponseSchema'
+          title: Violations
+          type: array
+      required:
+      - pagination
+      - violations
+      title: ViolationListSchema
+      type: object
+    ViolationResponseSchema:
+      description: Schema for violation responses with enhanced rule details.
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        description:
+          title: Description
+          type: string
+        file:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: File
+        hash:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Hash
+        module:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Module
+        operator:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Operator
+        rule_description:
+          title: Rule Description
+          type: string
+        rule_instance_state:
+          $ref: '#/components/schemas/RuleState'
+        rule_instance_uuid:
+          format: uuid
+          title: Rule Instance Uuid
+          type: string
+        rule_name:
+          title: Rule Name
+          type: string
+        threat:
+          anyOf:
+          - $ref: '#/components/schemas/ThreatCategory'
+          - type: 'null'
+        threat_description:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Threat Description
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - description
+      - rule_instance_uuid
+      - rule_name
+      - rule_description
+      - rule_instance_state
+      title: ViolationResponseSchema
+      type: object
+servers:
+- description: Prisma AIRS Model Security data endpoint
+  url: https://api.sase.paloaltonetworks.com/aims/data
+ExternalTags: {}
+paths:
+  /v1/evaluations/{uuid}:
+    get:
+      summary: Retrieve Rule Evaluation
+      description: Retrieve a specific evaluation to view detailed rule information.
+      operationId: get_evaluation_v1_evaluations__uuid__get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleEvaluationResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      tags:
+      - Evaluations
+  /v1/scans:
+    get:
+      summary: List All Scans
+      description: Retrieve a paginated list of model security scans.
+      operationId: list_scans_v1_scans_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: sort_order
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - description: Search query for model_uri or uuid
+        in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          description: Search query for model_uri or uuid
+          title: Search Query
+      - description: Filter by security group UUID
+        in: query
+        name: security_group_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: Filter by security group UUID
+          title: Security Group Uuid
+      - description: A list of source types to filter by
+        in: query
+        name: source_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SourceType'
+            type: array
+          - type: 'null'
+          description: A list of source types to filter by
+          title: Source Types
+      - description: A list of evaluation outcomes to filter by
+        in: query
+        name: eval_outcomes
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EvalOutcome'
+            type: array
+          - type: 'null'
+          description: A list of evaluation outcomes to filter by
+          title: Eval Outcomes
+      - in: query
+        name: start_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: Start Time
+      - in: query
+        name: end_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: End Time
+      - description: Query for labels
+        in: query
+        name: labels_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 4096
+            type: string
+          - type: 'null'
+          description: Query for labels
+          title: Labels Query
+      tags:
+      - Scans
+    post:
+      summary: Create New Scan
+      description: Initiate a new model security scan.
+      operationId: create_scan_v1_scans_post
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanBaseResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters: []
+      tags:
+      - Scans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanCreateRequestSchema'
+        required: true
+  /v1/scans/label-keys:
+    get:
+      summary: Retrieve Label Keys
+      description: Retrieve a list of distinct label keys across all scans. Filter
+        the results by prefix using the search parameter.
+      operationId: list_scan_label_keys_v1_scans_label_keys_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelKeyListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: search
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 128
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_-]+$
+            type: string
+          - type: 'null'
+          title: Search
+      tags:
+      - Scan Labels
+  /v1/scans/label-keys/{key}/values:
+    get:
+      summary: Retrieve Key Values
+      description: Retrieve a list of distinct values for a specific label key across
+        all scans. Filter the results by prefix using the search parameter.
+      operationId: list_scan_label_key_values_v1_scans_label_keys__key__values_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelValueListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: key
+        required: true
+        schema:
+          maxLength: 128
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]+$
+          title: Key
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: search
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_-]+$
+            type: string
+          - type: 'null'
+          title: Search
+      tags:
+      - Scan Labels
+  /v1/scans/{scan_uuid}/evaluations:
+    get:
+      summary: Get Scan Evaluations
+      description: Retrieve rule evaluations and detailed rule information for a specific
+        scan.
+      operationId: get_scan_evaluations_v1_scans__scan_uuid__evaluations_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleEvaluationListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByDateField'
+          default: created_at
+      - in: query
+        name: sort_order
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - description: Filter by evaluation results
+        in: query
+        name: result
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/RuleEvaluationResult'
+          - type: 'null'
+          description: Filter by evaluation results
+          title: Result
+      - description: Filter by rule instance UUID
+        in: query
+        name: rule_instance_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: Filter by rule instance UUID
+          title: Rule Instance Uuid
+      tags:
+      - Scans
+  /v1/scans/{scan_uuid}/files:
+    get:
+      summary: Retrieve Scan Files
+      description: Retrieve files for a specific scan organized in a tree structure.
+      operationId: get_files_v1_scans__scan_uuid__files_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - description: UUID of the scan to get files for
+        in: path
+        name: scan_uuid
+        required: true
+        schema:
+          description: UUID of the scan to get files for
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - description: Number of items to skip
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          description: Number of items to skip
+          minimum: 0
+          title: Skip
+          type: integer
+      - description: Field to sort by
+        in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByFileField'
+          default: path
+          description: Field to sort by
+      - description: Sort direction
+        in: query
+        name: sort_dir
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: asc
+          description: Sort direction
+      - description: Optional path to filter files within the scan. Use this to navigate
+          into specific directories.
+        in: query
+        name: query_path
+        required: false
+        schema:
+          default: /
+          description: Optional path to filter files within the scan. Use this to
+            navigate into specific directories.
+          title: Query Path
+          type: string
+      tags:
+      - Scans
+  /v1/scans/{scan_uuid}/labels:
+    delete:
+      summary: Delete Scan Labels
+      description: Delete labels matching the specified keys from the scan.
+      operationId: delete_scan_labels_v1_scans__scan_uuid__labels_delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: keys
+        required: true
+        schema:
+          items:
+            maxLength: 128
+            minLength: 1
+            pattern: ^[a-zA-Z0-9_-]+$
+            type: string
+          maxItems: 50
+          minItems: 1
+          title: Keys
+          type: array
+      tags:
+      - Scan Labels
+    post:
+      summary: Add Scan Labels
+      description: Add labels to the specified scan. The Application Programming Interface
+        overwrites the existing label value if you provide a label key that already
+        exists on the scan.
+      operationId: add_scan_labels_v1_scans__scan_uuid__labels_post
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelsResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      tags:
+      - Scan Labels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelsCreateRequestSchema'
+        required: true
+    put:
+      summary: Set Scan Labels
+      description: Set the labels for a scan to match the provided input. This operation
+        completely removes and replaces any existing labels.
+      operationId: set_scan_labels_v1_scans__scan_uuid__labels_put
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelsResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      tags:
+      - Scan Labels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelsCreateRequestSchema'
+        required: true
+  /v1/scans/{scan_uuid}/rule-violations:
+    get:
+      summary: Get Scan Violations
+      description: Retrieve rule violations and view detailed rule information for
+        a specific scan.
+      operationId: get_scan_violations_v1_scans__scan_uuid__rule_violations_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      tags:
+      - Scans
+  /v1/scans/{uuid}:
+    get:
+      summary: Retrieve Specific Scan
+      description: Retrieve a specific scan by its UUID. You can optionally paginate
+        the associated violations.
+      operationId: get_scan_v1_scans__uuid__get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanBaseResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      tags:
+      - Scans
+  /v1/violations/{uuid}:
+    get:
+      summary: Retrieve Specific Violation
+      description: Retrieve a specific violation to view its detailed rule information.
+      operationId: get_violation_v1_violations__uuid__get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      tags:
+      - Violations

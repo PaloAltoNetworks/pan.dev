@@ -6,7 +6,7 @@ if [ -f "Anomalies.json" ]; then
     jq '.tags |= [{"name":"Anomalies", "description":"temporary description - will be overwritten anyway!"}] | .paths[][].tags[] = "Anomalies"' Anomalies.json > "$tmp" && mv "$tmp" Anomalies.json
 
     # TEMPORARILY change the operationId getPolicies -> get-policies-anomalies
-    sed -i "" "s/getPolicies/get-policies-anomalies/g" Anomalies.json
+    sed -i  "s/getPolicies/get-policies-anomalies/g" Anomalies.json
 fi
 
 # replace the global tags in the IAM file
@@ -26,32 +26,43 @@ if [ -f "IAMIdp.json" ]; then
 fi
 
 for file in *.json; do
-    sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions-access/\/prisma-cloud\/api\/cspm\/get-permissions-access-with-post/g" $file
-    sed -i "" "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions/\/prisma-cloud\/api\/cspm\/get-permissions-with-post/g" $file
+    sed -i  "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions-access/\/prisma-cloud\/api\/cspm\/get-permissions-access-with-post/g" $file
+    sed -i  "s/\/api\/cloud\/cspm\/iam#operation\/get-permissions/\/prisma-cloud\/api\/cspm\/get-permissions-with-post/g" $file
 
-    sed -i "" "s/\/api\/cloud\/cspm\/.*#operation\//\/prisma-cloud\/api\/cspm\//g" $file
+    sed -i  "s/\/api\/cloud\/cspm\/.*#operation\//\/prisma-cloud\/api\/cspm\//g" $file
 
     # https://prisma.pan.dev/docs/cloud/cspm -> /prisma-cloud/docs/cspm/cspm-gs/#use-curl-to-generate-jwt-tokens-in-prisma-cloud
-    sed -i "" "s/https:\/\/prisma.pan.dev\/docs\/cloud/\/prisma-cloud\/docs/g" $file
+    sed -i  "s/https:\/\/prisma.pan.dev\/docs\/cloud/\/prisma-cloud\/docs/g" $file
 
     # turn to relative links
-    sed -i "" "s/https:\/\/prisma.pan.dev/\//g" $file
+    sed -i  "s/https:\/\/prisma.pan.dev/\//g" $file
 
     # /api/cloud/cspm/
-    sed -i "" "s/\/api\/cloud\/cspm/\/prisma-cloud\/api\/cspm/g" $file
+    sed -i  "s/\/api\/cloud\/cspm/\/prisma-cloud\/api\/cspm/g" $file
 
     # /api/cloud -> /prisma-cloud/api/cspm
-    sed -i "" "s/\/api\/cloud/\/prisma-cloud\/api\/cspm/g" $file
+    sed -i  "s/\/api\/cloud/\/prisma-cloud\/api\/cspm/g" $file
 
     # add hyphen (i.e. v2 -> v-2)
-    sed -i "" "s/\/get-asset-inventory-v2-dashboard-filter-options/\/get-asset-inventory-v-2-dashboard-filter-options/g" $file
+    sed -i  "s/\/get-asset-inventory-v2-dashboard-filter-options/\/get-asset-inventory-v-2-dashboard-filter-options/g" $file
 
-    # rewrite the GLOBAL tag description
+    # rewrite the GLOBAL tag description when it is coming from the monolith file
     tmp=$(mktemp)
-    jq '.info.description as $tag_desc | .tags[]?.description |= $tag_desc' $file | \
+     jq '.info.description as $tag_desc| if($tag_desc!=null) then .tags[]?.description |= $tag_desc else . end' $file | \
+
+    # Add note for darwin-only APIs
+    #jq '.paths[][] |= if(."x-ga" and (."x-ga"|contains("darwin")) and (.description | contains("Darwin release only") | not)) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
     
+    jq '.paths[][] |= if(."x-ga" and (."x-ga" |contains("darwin")) and (.description | test("Darwin release only") | not)) then .description+="\n:::info\nThis endpoint is available on the Prisma Cloud Darwin release only.\n:::\n" else . end' | \
+
+    # remove S2S headers or parameters if any
+    jq '.paths |= del(.[][].parameters[]? | select(.description!=null ) | select (.description | contains("S2S")))' | \
+
     # delete code snippets
     jq '.paths |= del(.[][]."x-codeSamples")' | \
+
+    # delete all 5xx error from endpoints
+    jq '.paths |= del(.[][].responses | .[keys[] | select(contains("5xx","5XX","500", "501", "502","503", "504", "505", "506", "507", "508","509","510","511", "529", "530","598","599"))])' | \
 
     # add server urls
     jq '.servers |= [
@@ -71,6 +82,10 @@ for file in *.json; do
         {"url":"https://api.jp.prismacloud.io"},
         {"url":"https://api.fr.prismacloud.io"}]' | \
 
+    # Remove all x-redlock-auth from each endpoint parameters object if they exist
+    # securitySchemes requires the x-redlock-auth should only appear in the security fields 
+    jq '.paths |= del(.[][].parameters[]? | select(.name!=null ) | select (.name | contains("x-redlock-auth")))' | \
+
     # add securityScheme to every spec file
     jq '.components.securitySchemes |= { "x-redlock-auth": {
         "description": "The x-redlock-auth value is a JSON Web Token (JWT).",
@@ -80,8 +95,11 @@ for file in *.json; do
       }}' | \
 
     # add security field to every endpoint
-    jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" $file
+    jq '.paths[][].security |= [ { "x-redlock-auth": [] } ]'  > "$tmp" && mv "$tmp" $file 
+   
 done
+
+
 
 # app-login endpoint isn't supposed to be protected
 tmp=$(mktemp)

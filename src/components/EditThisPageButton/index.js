@@ -1,6 +1,6 @@
 import React from "react";
 import IconEdit from "@theme/Icon/Edit";
-import { useDoc } from "@docusaurus/theme-common/internal";
+import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import "./styles.css";
 
 export default function EditThisPageButton() {

@@ -274,6 +274,23 @@
             "format": "int64",
             "type": "integer"
           },
+          "appMetadata": {
+            "description": "Application Metadata from AppDna",
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "connectionDetails": {
+            "description": "ConnectionDetails for network_event alerts",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionDetail"
+            },
+            "type": "array"
+          },
           "dismissalDuration": {
             "description": "Dismissal Duration",
             "type": "string"
@@ -311,6 +328,16 @@
             "description": "Alert ID",
             "type": "string"
           },
+          "investigateOptions": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InvestigateOptions"
+              },
+              {
+                "description": "Investigate Options for search using RQL"
+              }
+            ]
+          },
           "lastSeen": {
             "description": "Timestamp when alert status was last updated.",
             "format": "int64",
@@ -333,7 +360,7 @@
             "type": "string"
           },
           "reason": {
-            "description": "Reason",
+            "description": "The reason for an alert's status. For more information on Alert reasons see [View and Respond to Prisma Cloud Alerts](https://docs.prismacloud.io/en/enterprise-edition/content-collections/alerts/view-respond-to-prisma-cloud-alerts) and [Prisma Cloud Alert Resolution Reasons](https://docs.prismacloud.io/en/enterprise-edition/content-collections/alerts/prisma-cloud-alert-resolution-reasons)",
             "readOnly": true,
             "type": "string"
           },
@@ -360,7 +387,8 @@
               "open",
               "dismissed",
               "snoozed",
-              "resolved"
+              "resolved",
+              "pending_resolution"
             ],
             "readOnly": true,
             "type": "string"
@@ -699,6 +727,62 @@
         },
         "type": "object"
       },
+      "BaseFilterModel": {
+        "description": "Model for Filter",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "detailed": {
+            "description": "Detailed",
+            "type": "boolean"
+          },
+          "fields": {
+            "description": "Array of specific fields to return",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "filters": {
+            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
+            "items": {
+              "$ref": "#/components/schemas/UIFilterModel"
+            },
+            "type": "array"
+          },
+          "groupBy": {
+            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 10,000. The default is 10,000.",
+            "type": "number"
+          },
+          "offset": {
+            "description": "The number of items to skip before selecting items to return. Default is zero",
+            "type": "number"
+          },
+          "pageToken": {
+            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
+            "type": "string"
+          },
+          "sortBy": {
+            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type":"string"
+          }
+        },
+        "type": "object"
+      },
       "CloudResourceModel": {
         "description": "Model for Cloud Resource",
         "properties": {
@@ -872,6 +956,76 @@
         },
         "type": "object"
       },
+      "ConnectionDetail": {
+        "properties": {
+          "accepted": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "destIp": {
+            "type": "string"
+          },
+          "destIsp": {
+            "type": "string"
+          },
+          "feedSource": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "inboundTrafficVolume": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "markedThreatTs": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "outboundTrafficVolume": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "packets": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "srcIp": {
+            "type": "string"
+          },
+          "srcIsp": {
+            "type": "string"
+          },
+          "threatDescription": {
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "trafficOverTime": {
+            "items": {
+              "additionalProperties": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "trafficVolume": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "CountModel": {
         "description": "Model used for just count",
         "properties": {
@@ -884,64 +1038,27 @@
         "type": "object"
       },
       "FilterModel": {
-        "description": "Model for Filter",
-        "properties": {
-          "detailed": {
-            "description": "Detailed",
-            "type": "boolean"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseFilterModel"
           },
-          "fields": {
-            "description": "Array of specific fields to return",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "filters": {
-            "description": "Filtering parameters. \n\nFor filter names, refer to List Filters API. \n\nFor filter values, refer to List filter suggestions. \n\nThe only exception is **resource.tagv2** filter name, provide filter value for it in the following format: \"{\"key\":\"'CustomerTagKey'\",\"value\":\"'CustomerTagValue'\"}\"",
-            "items": {
-              "$ref": "#/components/schemas/UIFilterModel"
-            },
-            "type": "array"
-          },
-          "groupBy": {
-            "description": "For asset or data inventory only. Group returned items by **cloud.type**, **cloud.service**, **cloud.region**, **cloud.account**, and/or **resource.type**",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "limit": {
-            "description": "Maximum number of items to return. When data is paginated, maximum number of items per page.The maximum cannot exceed 10,000. The default is 10,000.",
-            "type": "number"
-          },
-          "offset": {
-            "description": "The number of items to skip before selecting items to return. Default is zero",
-            "type": "number"
-          },
-          "pageToken": {
-            "description": "Setting this pagination Token to the **nextPageToken** from a response object returns the next page of data ",
-            "type": "string"
-          },
-          "sortBy": {
-            "description": "Array of sort properties. Append **:asc** or  **:desc** to the key to sort by ascending or descending order respectively. Example sort properties are **id:asc** and **timestamp:desc**",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "timeRange": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TimeRangeConfigModel"
-              },
-              {
-                "description": "Time range"
+          {
+            "description": "Model for Filter",
+            "properties": {
+              "timeRange": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TimeRangeConfigModel"
+                  },
+                  {
+                    "description": "Time range"
+                  }
+                ]
               }
-            ]
+            },
+            "type": "object"
           }
-        },
-        "type": "object"
+        ]
       },
       "FilterSuggestion": {
         "description": "Model for FilterSuggestion",
@@ -1003,6 +1120,24 @@
               "RESOLVED"
             ],
             "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "InvestigateOptions": {
+        "description": "Model for InvestigateOptions",
+        "properties": {
+          "alertId": {
+            "description": "alert id",
+            "type": "string"
+          },
+          "hasSearchExecutionSupport": {
+            "description": "The flag indicates if the policy has RQL execution support",
+            "type": "boolean"
+          },
+          "searchId": {
+            "description": "searchId for the policy RQL",
             "type": "string"
           }
         },
@@ -1281,7 +1416,20 @@
                 "ueba",
                 "permissions",
                 "network_config",
-                "identity"
+                "identity",
+                "sensitive_data_exposure",
+                "internet_exposure",
+                "injections",
+                "vulnerability_scanning",
+                "shellshock",
+                "known_bots",
+                "unknown_bots",
+                "virtual_patches",
+                "event",
+                "misconfig_and_event",
+                "misconfig",
+                "host",
+                "container_image"
               ],
               "type": "string"
             },
@@ -1300,8 +1448,10 @@
               "iam",
               "workload_vulnerability",
               "workload_incident",
-              "waas_event",
-              "attack_path"
+              "api",
+              "attack_path",
+              "malware",
+              "grayware"
             ],
             "type": "string"
           },
@@ -1480,7 +1630,20 @@
                 "ueba",
                 "permissions",
                 "network_config",
-                "identity"
+                "identity",
+                "sensitive_data_exposure",
+                "internet_exposure",
+                "injections",
+                "vulnerability_scanning",
+                "shellshock",
+                "known_bots",
+                "unknown_bots",
+                "virtual_patches",
+                "event",
+                "misconfig_and_event",
+                "misconfig",
+                "host",
+                "container_image"
               ],
               "type": "string"
             },
@@ -1499,8 +1662,10 @@
               "iam",
               "workload_vulnerability",
               "workload_incident",
-              "waas_event",
-              "attack_path"
+              "api",
+              "attack_path",
+              "malware",
+              "grayware"
             ],
             "type": "string"
           },
@@ -2214,7 +2379,7 @@
     },
     "/alert": {
       "get": {
-        "description": "Returns a list of alerts that match the constraints specified in the query parameters. Max 10k results. To get more, use **List Alerts V2 - GET**.  \r\n\r\nIn the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec        \n",
+        "description": "Returns a list of alerts that match the constraints specified in the query parameters. Max 10k results. To get more, use **List Alerts V2 - GET**.  \r\n\r\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\nWhen `detailed` flag is set to **true**, following fields will be returned within the policy response object:\n\n- `complianceMetadata`\n- `name`\n- `description`\n- `labels`\n- `deleted`\n- `recommendation`\n- `lastModifiedBy`\n- `lastModifiedOn`\n- `severity`\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec        \n",
         "operationId": "get-alerts",
         "parameters": [
           {
@@ -2297,6 +2462,13 @@
             "name": "alert.status",
             "required": false,
             "schema": {
+              "enum": [
+                "open",
+                "dismissed",
+                "snoozed",
+                "resolved",
+                "pending_resolution"
+              ],
               "type": "string"
             }
           },
@@ -2520,7 +2692,7 @@
         ]
       },
       "post": {
-        "description": "Returns a list of alerts that matches the constraints specified in the body parameters. Max 10k results. To get more, use **List Alerts V2 - POST**.  \r\n\r\nThe **fields** body parameter allows you to request specific fields from the alert payload. These fields\nare separate from the filters you specify. The following are valid **fields** items.\n\n* alert.id\n* alert.status\n* alert.time\n* cloud.account\n* cloud.accountId\n* cloud.region\n* resource.id\n* resource.name\n* policy.name\n* policy.type\n* policy.severity\n\nThe **filters** body parameter enables you to narrow your request for alerts. See \n[List Alert Filters](/prisma-cloud/api/cspm/get-alert-filter-and-options) \nfor an API request to list all the valid filters.\n\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec        \n",
+        "description": "Returns a list of alerts that matches the constraints specified in the body parameters. Max 10k results. To get more, use **List Alerts V2 - POST**.  \r\n\r\nThe **fields** body parameter allows you to request specific fields from the alert payload. These fields\nare separate from the filters you specify. The following are valid **fields** items.\n\n* alert.id\n* alert.status\n* alert.time\n* cloud.account\n* cloud.accountId\n* cloud.region\n* resource.id\n* resource.name\n* policy.name\n* policy.type\n* policy.severity\n\nThe **filters** body parameter enables you to narrow your request for alerts. See \n[List Alert Filters](/prisma-cloud/api/cspm/get-alert-filter-and-options) \nfor an API request to list all the valid filters.\n\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\nWhen `detailed` flag is set to **true**, following fields will be returned within the policy response object:\n\n- `complianceMetadata`\n- `name`\n- `description`\n- `labels`\n- `deleted`\n- `recommendation`\n- `lastModifiedBy`\n- `lastModifiedOn`\n- `severity`\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec        \n",
         "operationId": "post-alerts",
         "parameters": [
           {
@@ -2576,7 +2748,7 @@
     },
     "/v2/alert": {
       "get": {
-        "description": "Returns a paginated list of alerts from the Prisma Cloud platform.  \r\n\r\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **items[].resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec      \n",
+        "description": "Returns a paginated list of alerts from the Prisma Cloud platform.  \r\n\r\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **items[].resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\nWhen `detailed` flag is set to **true**, following fields will be returned within the policy response object:\n\n- `complianceMetadata`\n- `name`\n- `description`\n- `labels`\n- `deleted`\n- `recommendation`\n- `lastModifiedBy`\n- `lastModifiedOn`\n- `severity`\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec      \n",
         "operationId": "get-alerts-v2",
         "parameters": [
           {
@@ -2678,6 +2850,13 @@
             "name": "alert.status",
             "required": false,
             "schema": {
+              "enum": [
+                "open",
+                "dismissed",
+                "snoozed",
+                "resolved",
+                "pending_resolution"
+              ],
               "type": "string"
             }
           },
@@ -2898,7 +3077,7 @@
         ]
       },
       "post": {
-        "description": "Returns a paginated list of alerts that matches the constraints specified in the body parameters.  \r\n\r\nThe **fields** request body parameter allows you to request specific fields from the alert payload. \nThese fields are separate from the filters you specify. The following are valid **fields** items.\n\n* alert.id\n* alert.status\n* alert.time\n* cloud.account\n* cloud.accountId\n* cloud.region\n* resource.id\n* resource.name\n* policy.name\n* policy.type\n* policy.severity\n\nThe **filters** request body parameter enables you to narrow your request for alerts. See \n[List Alert Filters](/prisma-cloud/api/cspm/get-alert-filter-and-options) \nfor an API request to list all the valid filters.\n\nYou can find the valid values for the **sortBy** request body parameter in the response \nobject attribute **sortAllowedColumns**.\n\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **items[].resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec \n",
+        "description": "Returns a paginated list of alerts that matches the constraints specified in the body parameters.  \r\n\r\nThe **fields** request body parameter allows you to request specific fields from the alert payload. \nThese fields are separate from the filters you specify. The following are valid **fields** items.\n\n* alert.id\n* alert.status\n* alert.time\n* cloud.account\n* cloud.accountId\n* cloud.region\n* resource.id\n* resource.name\n* policy.name\n* policy.type\n* policy.severity\n\nThe **filters** request body parameter enables you to narrow your request for alerts. See \n[List Alert Filters](/prisma-cloud/api/cspm/get-alert-filter-and-options) \nfor an API request to list all the valid filters.\n\nYou can find the valid values for the **sortBy** request body parameter in the response \nobject attribute **sortAllowedColumns**.\n\nData in the response object does not include alert rules.\n\nAlso, in the response object:\n\n* Property **riskDetail** is deprecated.\n* Property **items[].resource.cloudServiceName** is populated only for alerts whose resources belong to a cloud service.\n\nWhen `detailed` flag is set to **true**, following fields will be returned within the policy response object:\n\n- `complianceMetadata`\n- `name`\n- `description`\n- `labels`\n- `deleted`\n- `recommendation`\n- `lastModifiedBy`\n- `lastModifiedOn`\n- `severity`\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 2/sec \n* Burst limit: 10/sec \n",
         "operationId": "post-alerts-v2",
         "parameters": [
           {
@@ -2969,6 +3148,13 @@
             "name": "alert.status",
             "required": false,
             "schema": {
+              "enum": [
+                "open",
+                "dismissed",
+                "snoozed",
+                "resolved",
+                "pending_resolution"
+              ],
               "type": "string"
             }
           },
@@ -3250,7 +3436,7 @@
     },
     "/alert/{id}": {
       "get": {
-        "description": "Returns information about an alert for the specified ID.  \r\n\r\nIn the response object, field **riskDetail** is deprecated.\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 5/sec \n* Burst limit: 10/sec        \n",
+        "description": "Returns information about an alert for the specified ID.  \r\n\r\nIn the response object, field **riskDetail** is deprecated.\n\nWhen `detailed` flag is set to **true**, following fields will be returned within the policy and response object:\n\n- `complianceMetadata`\n- `name`\n- `description`\n- `labels`\n- `deleted`\n- `recommendation`\n- `lastModifiedBy`\n- `lastModifiedOn`\n- `severity`\n\nThe `resource` response object will include `cloudAccountGroups` field when `detailed` is set to **true**\n\n#### Rate Limits ####\n\nThe following rate limits apply:\n* Request rate limit: 5/sec \n* Burst limit: 10/sec        \n",
         "operationId": "get-alert",
         "parameters": [
           {
@@ -3459,7 +3645,8 @@
                 "open",
                 "dismissed",
                 "snoozed",
-                "resolved"
+                "resolved",
+                "pending_resolution"
               ],
               "type": "string"
             }
@@ -3481,9 +3668,6 @@
           },
           "429": {
             "description": "Too Many Requests"
-          },
-          "500": {
-            "description": "internal_error"
           }
         },
         "security": [
@@ -3908,6 +4092,14 @@
             "in": "path",
             "name": "id",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "findingId",
+            "required": false,
             "schema": {
               "type": "string"
             }

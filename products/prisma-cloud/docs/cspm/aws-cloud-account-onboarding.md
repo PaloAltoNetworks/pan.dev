@@ -1,6 +1,7 @@
 ---
 id: aws-cloud-account-onboarding
 title: Automate AWS Cloud Account Onboarding
+sidebar_position: 2
 ---
 
 To successfully onboard an AWS account in Prisma Cloud, create an IAM Role in your AWS account that has a trusted relationship with Prisma Cloud AWS Account. Prisma Cloud uses IAM Role ARN to *AssumeRole* in to your AWS account and ingest various configurations and logs.

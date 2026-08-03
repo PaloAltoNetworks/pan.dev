@@ -28,14 +28,15 @@ perform aggregated monitoring queries for the following resources:
   Prisma Access tenants for license quotas, setup status, and utilization.
 - [Tenant Resources API](/sase/api/mt-monitor/tenant-resources-api/): list all Prisma Access tenants in
   the hierarchy.
+- [Application Monitoring Resource API](/sase/api/mt-monitor/): Application Monitoring support for MSP includes public APIs that seamlessly integrate with the MSP UI and are available for use by end users.
+
 
 The monitoring functionality exposed by these APIs can also be performed using the Prisma SASE Platform's
 [Multitentant Portal user interface](https://docs.paloaltonetworks.com/sase/prisma-sase-multitenant-platform/monitor-tenants).
 
 ## Authentication
 
-Use the [Prisma SASE API Quick Start](/sase/docs/getstarted) for information about the Authentication Service
-common authentication mechanism and base URL.
+See the [Prisma SASE API Get Started](/sase/docs/getstarted) for information about base URLs, authentication, and obtaining access tokens.
 
 ## API Requests
 
@@ -54,5 +55,5 @@ For example, using curl:
 Depending on the query and the [query parameter](/sase/docs/parameters), there are also [query
 filters and properties](/sase/docs/filters) that you need to use in the request body.
 
-For information about the `X-PANW-Region` header, see [About x-panw-region](/sase/docs/api-call/#about-x-panw-region).
+This API requires the x-panw-region header. See [About x-panw-region](/sase/docs/api-call/#about-x-panw-region) for usage information.
 

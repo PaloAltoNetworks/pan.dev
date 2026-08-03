@@ -4,27 +4,58 @@ on:
   pull_request_target:
     branches: [ master ]
 
+permissions: {}
+
+concurrency:
+  group: preview-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   precheck:
+    if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' }}
     name: Precheck
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
     outputs:
       is-org-member-result: ${{ steps.is-org-member.outputs.is-org-member-result }}
     steps:
-      - name: Check if actor is org member
+      - name: Check if PR head is trusted
         id: is-org-member
-        run:  echo "is-org-member-result=$(gh api -X GET orgs/PaloAltoNetworks/memberships/${{ github.actor }} | jq -r .message)" >> "$GITHUB_OUTPUT"
-    env:
-      GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          if [[ "$PR_AUTHOR" == "create-pr-on-fork-for-pan-dev[bot]" ]]; then
+            echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "$HEAD_REPO" != "$BASE_REPO" ]]; then
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/PaloAltoNetworks/members/$PR_AUTHOR")
+          if [[ "$status" == "204" ]]; then
+            echo "is-org-member-result=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is-org-member-result=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.READ_ORG_PAT }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
 
   analyze:
-    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result == 'null'
+    if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'true'
     name: Analyze
     needs: precheck
-    runs-on: pan-dev-runner
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
@@ -36,23 +67,26 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
+        allow-unsafe-pr-checkout: true
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
       with:
         languages: ${{ matrix.language }}
+        queries: security-extended
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
 
   analyze_unsafe:
-    if: github.repository_owner	== 'PaloAltoNetworks' && needs.precheck.outputs.is-org-member-result != 'null'
+    if: github.repository == 'PaloAltoNetworks/pan.dev' && needs.precheck.outputs.is-org-member-result == 'false'
     name: Analyze Unsafe
     needs: precheck
-    runs-on: pan-dev-runner
+    runs-on: ubuntu-latest
     environment: default
     permissions:
       contents: read
@@ -65,75 +99,146 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
+        allow-unsafe-pr-checkout: true
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
       with:
         languages: ${{ matrix.language }}
+        queries: security-extended
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
 
   build:
     name: Build
     needs: [analyze, analyze_unsafe]
     if: |
-      !failure() && !cancelled() && 
+      github.repository == 'PaloAltoNetworks/pan.dev' &&
+      !failure() && !cancelled() &&
       (success('analyze') || success('analyze_unsafe'))
-    runs-on: pan-dev-runner
+    runs-on: pan-dev-runner-xl
     permissions:
       contents: read
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: '22'
+
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "YARN_CACHE_DIR=$(yarn cache dir)" >> "${GITHUB_OUTPUT}"
 
       - name: Install dependencies
-        run: yarn --prefer-offline
+        run: yarn --prefer-offline --frozen-lockfile --ignore-scripts
 
       - name: Include netsec
         if: contains(github.event.pull_request.labels.*.name, 'netsec')
         run: |
           echo "Including 'netsec' in build..."
-          echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible" >> $GITHUB_ENV
-
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=cdss,threat-vault,dns-security,iot,expedition,cloudngfw,cdl,panos,terraform,ansible,splunk,aiops-ngfw-bpa,email-dlp,dlp,prisma-airs" >> $GITHUB_ENV
+          fi
+      
+      - name: Include cloud
+        if: contains(github.event.pull_request.labels.*.name, 'cloud')
+        run: |
+          echo "Including 'cloud' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,prisma-cloud,compute" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=prisma-cloud,compute" >> $GITHUB_ENV
+          fi
+      
       - name: Include sase
         if: contains(github.event.pull_request.labels.*.name, 'sase')
         run: |
           echo "Including 'sase' in build..."
-          if [ $PRODUCTS_INCLUDE != '' ]
-          then
-            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan" >> $GITHUB_ENV
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,sase,access,sdwan,scm" >> $GITHUB_ENV
           else
-            echo "PRODUCTS_INCLUDE=sase,access,sdwan" >> $GITHUB_ENV
+            echo "PRODUCTS_INCLUDE=sase,access,sdwan,scm" >> $GITHUB_ENV
           fi
-
+      
       - name: Include contributing
         if: contains(github.event.pull_request.labels.*.name, 'contributing')
         run: |
           echo "Including 'contributing' in build..."
-          if [ $PRODUCTS_INCLUDE != '' ]
-          then
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
             echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,contributing" >> $GITHUB_ENV
           else
             echo "PRODUCTS_INCLUDE=contributing" >> $GITHUB_ENV
           fi
 
-      - name: Build site
-        run: yarn build-github && zip -r build.zip build
+      - name: Include dependencies
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+        run: |
+          echo "Including 'dependencies' in build..."
+          if [[ -n "$PRODUCTS_INCLUDE" ]]; then
+            echo "PRODUCTS_INCLUDE=$PRODUCTS_INCLUDE,contributing" >> $GITHUB_ENV
+          else
+            echo "PRODUCTS_INCLUDE=contributing" >> $GITHUB_ENV
+          fi
 
-      - uses: actions/upload-artifact@v3
+      - name: Output final PRODUCTS_INCLUDE
+        run: |
+          echo "Building the following products: $PRODUCTS_INCLUDE"
+
+      # needed for fetching Hashicorp blog feed
+      - name: Cache Playwright
+        id: playwright-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
+
+      - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: |
+          yarn playwright install chromium
+          yarn playwright install-deps chromium
+
+      - name: Build site
+        run: FEED_SOFT_FAIL=1 FEED_DEBUG=1 yarn build-github
+
+      - name: Verify build did not modify critical files
+        run: |
+          git diff --exit-code -- \
+            firebase.json .firebaserc package.json yarn.lock docusaurus.config.ts \
+            'scripts/**' '.github/**' 'src/theme/**' 'plugin-sitemap-coveo/**'
+
+      - name: Zip build directory
+        run: |
+          if [ -d "build" ]; then
+            BUILD_DIR="build"
+          elif [ -d "websites/pan-dev/build" ]; then
+            BUILD_DIR="websites/pan-dev/build"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+
+          echo "Build directory found at: $BUILD_DIR"
+          rm -f build.zip
+          zip -r build.zip "$BUILD_DIR"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: build
           path: build.zip
@@ -141,34 +246,80 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    if: ${{ !failure() && !cancelled() }}
-    runs-on: pan-dev-runner
+    if: ${{ github.repository == 'PaloAltoNetworks/pan.dev' && !failure() && !cancelled() }}
+    runs-on: pan-dev-runner-lg
+    environment: preview
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+      id-token: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: '22'
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: build
 
       - name: Unzip build artifact
-        run: unzip build.zip
+        run: |
+          unzip -n build.zip 'build/*' || unzip -n build.zip 'websites/pan-dev/build/*'
+          if [ -d "build" ]; then
+            DEPLOY_DIR="."
+          elif [ -d "websites/pan-dev/build" ]; then
+            DEPLOY_DIR="websites/pan-dev"
+          else
+            echo "Error: 'build' directory not found in current directory or in websites/pan-dev/"
+            exit 1
+          fi
+          echo "Deploy directory found at: $DEPLOY_DIR"
+          echo "DEPLOY_DIR=$DEPLOY_DIR" >> $GITHUB_ENV
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          export_environment_variables: false
+
+      - name: Mask sensitive values in logs
+        env:
+          CREDS_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+          GCP_PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
+        run: |
+          echo "::add-mask::$CREDS_PATH"
+          echo "::add-mask::$GCP_PROJECT_NUMBER"
+
+      - name: Read GCP credentials
+        id: creds
+        env:
+          CREDS_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+        run: |
+          creds=$(cat "$CREDS_PATH")
+          echo "::add-mask::$creds"
+          echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Firebase
         id: deploy_preview
-        uses: FirebaseExtended/action-hosting-deploy@4d0d0023f1d92b9b7d16dda64b3d7abd2c98974b # v0.7.0
+        uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0.11.0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAN_DEV_F1B58 }}'
-          projectId: pan-dev-f1b58
-          expires: 30d
+          firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          expires: 7d
           channelId: 'pr${{ github.event.number }}'
+          totalPreviewChannelLimit: 25
+          entryPoint: ${{ env.DEPLOY_DIR }}
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

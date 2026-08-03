@@ -1,0 +1,1 @@
+Downloads SBOM file for serverless according to the given options.

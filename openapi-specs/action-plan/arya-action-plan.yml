@@ -1,0 +1,1278 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Action Plan Management APIs
+  description: Action Plan Management APIs
+  contact:
+    name: Prisma Cloud API Support
+tags:
+  - name: Action Plan Management APIs
+    description: Action Plan Management APIs
+    x-public: true
+    x-ga: 1.0.0
+servers:
+  - url: https://api.prismacloud.io
+paths:
+  /apm/api/v1/action-plan:
+    post:
+      tags:
+        - Action Plan Management APIs
+      summary: "List Action Plans"
+      description: List all Action Plans for a tenant ordered by criticality desc. Offset for pagination.You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate limit 10/sec.
+      operationId: list-action-plans
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/ActionPlanApiRequest"
+            examples:
+              GET ACTION PLANS:
+                description: Get action plans with filters status, assignee, finding.type, asset.type and id
+                value:
+                  limit: 10
+                  pageToken: token
+                  sortBy: { name: criticality, order: desc }
+                  filters:
+                    [
+                      { name: status, operator: "=", value: new },
+                      { name: assignee, operator: "=", value: me },
+                      {
+                        name: finding.type,
+                        operator: "=",
+                        value: Lateral Movement,
+                      },
+                      {
+                        name: asset.type,
+                        operator: "=",
+                        value: "EC2 Instance",
+                      },
+                      { name: id, operator: "=", value: AP-123X },
+                    ]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlanResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "405":
+          description: Method Not Allowed
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/action-plan/{action-plan-id}/status-assignee:
+    patch:
+      tags:
+        - Action Plan Management APIs
+      summary: "Update Action Plan Status or Assignee"
+      description: Update an action plan. Partial updates are supported. You must have **ActionPlanOverview_UPDATE** permission to access this endpoint. Rate limit 5/sec.
+      operationId: update-an-action-plan
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          required: true
+          description: action plan id
+          example: "action plan id"
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/ActionPlanUpdateStatusAssignee"
+            examples:
+              Update Assignee Status and Hiding an AP:
+                description: Update Assignee, status an AP
+                value:
+                  status: in-progress
+                  assignee: example@xyz.com
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlan"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action-Plan ID not found
+        "405":
+          description: Method Not Allowed
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/action-plan/{action-plan-id}/feedback:
+    patch:
+      tags:
+        - Action Plan Management APIs
+      summary: "Update Action Plan Feedback"
+      description: Update action plan feedback. You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate Limit 5/sec
+      operationId: update-an-action-plan-feedback
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          required: true
+          description: action plan id
+          example: "action plan id"
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/ActionPlanFeedbackRequest"
+            examples:
+              Update Thumbs Down:
+                description: User thumbs down an action plan
+                value:
+                  thumbsUpDown: down
+                  thumbsDownReasons: [ Wrong priority for me ]
+                  thumbsDownDescription: This is the optional user-written message
+              Update Thumbs Up:
+                description: User thumbs down an action plan
+                value:
+                  thumbsUpDown: up
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlan"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action-Plan ID not found
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/action-plan/{action-plan-id}/recommendation-summary:
+    get:
+      tags:
+        - Action Plan Management APIs
+      summary: "Recommendation Summary"
+      description: Recommendation summary based on all the recommendations associated with related policies for an action plan. You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate limit 2/sec.
+      operationId: recommendation-summary-action-plan
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          description: action plan id
+          example: "action plan id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlanRecommendationSummaryResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action-Plan ID not found
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+
+  /apm/api/v1/action-plan/{action-plan-id}/related-alerts:
+    get:
+      tags:
+        - Action Plan Management APIs
+      summary: "List Related Alerts"
+      description: The API returns paginated related alerts for a given action plan id. You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate limit 2/sec.
+      operationId: action-plan-related-alerts
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          description: action plan id
+          example: "action plan id"
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: page limit, default 100
+          example: 10
+          schema:
+            type: integer
+        - name: next_page_token
+          in: query
+          description: page token
+          example: "<next page token>"
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlanRelatedAlertsResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action-Plan ID not found
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+
+  /apm/api/v1/action-plan/{action-plan-id}/impacted-assets:
+    get:
+      tags:
+        - Action Plan Management APIs
+      summary: "List Impacted Assets"
+      description: List of impacted assets ordered by asset ID asc. Offset for pagination. You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate limit 2/sec.
+      operationId: action-plan-impacted-assets
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          description: action plan id
+          example: "action plan id"
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: page limit, default 100
+          example: 10
+          schema:
+            type: integer
+        - name: next_page_token
+          in: query
+          description: page token
+          example: "<next page token>"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ImpactedAssetsResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action Plan ID not found
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/action-plan/{action-plan-id}/notification/ondemand:
+    post:
+      tags:
+        - Action Plan Management APIs
+      summary: "Send Notification"
+      description: The API sends Jira/slack notifications for a given action plan id. You must have **ActionPlanRemediation_UPDATE** permission to access this endpoint. Rate limit 2/sec.
+      operationId: action-plan-notification-service
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: action-plan-id
+          in: path
+          description: action plan id
+          example: "action plan id"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/OnDemandNotificationConfigRequest"
+            examples:
+              Jira:
+                summary: On-demand Jira Notification Config Request
+                value:
+                  onDemandNotificationConfig:
+                    clientId: AP
+                    generatorType: REALTIME
+                    integrationType: jira
+                    templateId: Jira template Id
+                    recipients:
+                      - integration id for jira.
+                  translation:
+                    details:
+                      actionPlanRelatedIssuesCallbackUrl: >-
+                        https://app-sam105348.sam.prismacloud.io/alerts/overview?viewId%3Ddefault%26filters%3D%7B%22timeRange%22%3A%7B%22type%22%3A%22to_now%22%2C%22value%22%3A%22epoch%22%7D%2C%22timeRange.type%22%3A%22ALERT_OPENED%22%2C%22alert.status%22%3A%5B%22open%22%5D%2C%22alert.id%22%3A%5B%22A-1002%22%5D%7D%26openAlertId%3DA-363
+                      actionPlanImpactedAssetsCallbackUrl: >-
+                        https://app-sam105348.sam.prismacloud.io/alerts/overview?viewId%3Ddefault%26filters%3D%7B%22timeRange%22%3A%7B%22type%22%3A%22to_now%22%2C%22value%22%3A%22epoch%22%7D%2C%22timeRange.type%22%3A%22ALERT_OPENED%22%2C%22alert.status%22%3A%5B%22open%22%5D%2C%22alert.id%22%3A%5B%22A-1002%22%5D%7D%26openAlertId%3DA-363
+              Slack:
+                summary: On-demand Slack Notification Config Request
+                value:
+                  onDemandNotificationConfig:
+                    clientId: AP
+                    generatorType: REALTIME
+                    integrationType: slack
+                    recipients:
+                      - <slack integration id>
+                  translation:
+                    body: Free text message (optional)
+                    details:
+                      actionPlanRelatedIssuesCallbackUrl: >-
+                        https://app-sam105348.sam.prismacloud.io/alerts/overview?viewId%3Ddefault%26filters%3D%7B%22timeRange%22%3A%7B%22type%22%3A%22to_now%22%2C%22value%22%3A%22epoch%22%7D%2C%22timeRange.type%22%3A%22ALERT_OPENED%22%2C%22alert.status%22%3A%5B%22open%22%5D%2C%22alert.id%22%3A%5B%22A-1002%22%5D%7D%26openAlertId%3DA-363
+                      actionPlanImpactedAssetsCallbackUrl: >-
+                        https://app-sam105348.sam.prismacloud.io/alerts/overview?viewId%3Ddefault%26filters%3D%7B%22timeRange%22%3A%7B%22type%22%3A%22to_now%22%2C%22value%22%3A%22epoch%22%7D%2C%22timeRange.type%22%3A%22ALERT_OPENED%22%2C%22alert.status%22%3A%5B%22open%22%5D%2C%22alert.id%22%3A%5B%22A-1002%22%5D%7D%26openAlertId%3DA-363
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/NotificationResponse"
+              examples:
+                Jira:
+                  summary: On-demand Jira Notification Successful Response
+                  value:
+                    id: "action-plan-jira-notification"
+                    success: 1
+                    failed: 0
+                    successfulEvents:
+                      - recipient:
+                          generatorType: REALTIME
+                          integrationType: jira
+                          id: 151fbea7-8a64-4367-b500-735b685752bf
+                          refId: a0c0f048-153e-4b89-b667-955e09006f62
+                        customerId: 3
+                        clientId: AP
+                        metaData:
+                          jiraKey: P-1234(JIRA ID)
+                        notificationId: dd67ac26-b2e2-4775-abbf-a40a6dec6a24
+                    failedEvents: { }
+                Jira-failure:
+                  summary: On-demand Jira Notification Failed Response
+                  value:
+                    id: "action-plan-jira-notification-failure"
+                    success: 0
+                    failed: 1
+                    successfulEvents: [ ]
+                    failedEvents:
+                      recipient:
+                        generatorType: REALTIME
+                        integrationType: jira
+                        id: 151fbea7-8a64-4367-b500-735b685752bf
+                        refId: a0c0f048-153e-4b89-b667-955e09006f62
+                      customerId: 3
+                      errorMessage: "No resource found for given template id"
+                      notificationId: dd67ac26-b2e2-4775-abbf-a40a6dec6a24
+                Slack:
+                  summary: On-demand Slack Notification Response
+                  value:
+                    id: "action-plan-slack-notification"
+                    success: 1
+                    failed: 0
+                    successfulEvents:
+                      - recipient:
+                          generatorType: REALTIME
+                          integrationType: slack
+                          id: 92bf2080-dee0-4145-b4d8-19de27cf1f00
+                        customerId: 6
+                        clientId: AP
+                        notificationId: 30b98415-10b5-4ed8-a994-e8ff82cca531
+                    failedEvents: { }
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Action-Plan ID not found
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/action-plan/names:
+    get:
+      tags:
+        - Action Plan Management APIs
+      summary: "List Action Plan Names"
+      description: Get action plan names. You must have **ActionPlanOverview_READ** permission to access this endpoint. Rate limit 2/sec.
+      operationId: get-action-plan-names
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlanNamesResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/filter/action-plan/suggest:
+    post:
+      tags:
+        - Action Plan Management APIs
+      summary: "Suggest Filters"
+      description: List suggestions for UI filters. You must have **ActionPlanOverview_READ** permission to access this endpoint.
+      operationId: list-action-plans-names
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/ActionPlanSuggestRequest"
+            examples:
+              FILTER ACTION PLANS BY FINDING TYPE:
+                description: Get action plans with filterName finding.type and query = ""
+                value:
+                  filterName: finding.type
+                  query: ""
+              FILTER ACTION PLANS BY STATUS:
+                description: Get action plans with filterName status and query = ""
+                value:
+                  filterName: status
+                  query: ""
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ActionPlanSuggestResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/critical-asset:
+     post:
+      tags:
+        - Action Plan Management APIs
+      summary: "List Filtered Critical Assets"
+      description: Get business asset criticality. You must have **System Admin** permissions to access this endpoint. Rate limit 15/sec.
+      operationId: action-plan-business-criticality-assets
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/CriticalAssetApiRequest"
+            examples:
+              GET BUSINESS CRITICAL ASSETS:
+                description: Get assets with filters business criticality
+                value:
+                  limit: 10
+                  pageToken: token
+                  filters:
+                    [
+                      {
+                        name: business.criticality,
+                        operator: "=",
+                        value: critical,
+                      },
+                    ]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/CriticalAssetResponse"
+        "400":
+          description: Invalid asset criticality.
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/asset-criticality:
+    post:
+      tags:
+        - Action Plan Management APIs
+      summary: "Set Asset Criticality"
+      description: Set asset criticality. You must have **System Admin** permissions to access this endpoint. Rate limit 15/sec.
+      operationId: action-plan-set-asset-criticality
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json; charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/SetAssetCriticalityRequest"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: One or more assetIds is invalid
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+  /apm/api/v1/asset-criticality/{asset-id}:
+    get:
+      tags:
+        - Action Plan Management APIs
+      summary: "Check Asset Criticality"
+      description: Check an asset's criticality. You must have **System Admin** permissions to access this endpoint. Rate limit 15/sec
+      operationId: action-plan-check-asset-criticality
+      parameters:
+        - in: header
+          name: x-redlock-auth
+          description: Authorize using Authentication token
+          example: "jwt token"
+          schema:
+            type: string
+          required: true
+        - name: asset-id
+          in: path
+          description: asset id
+          example: "asset id"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/AssetCriticalityStatusResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: No asset found with this ID
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Too Many Requests
+      x-public: true
+      x-migrated-v3: true
+
+components:
+  schemas:
+    Filter:
+      type: object
+      properties:
+        name:
+          description: >-
+            Name of the allowed Filter types. Allowed names: [status,
+            assignee, id, finding type, asset type, name]
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/ActionPlanFilter"
+        operator:
+          description: Only allowed operator for the filter is '='
+          type: string
+        value:
+          description: Value for the applied filter
+          type: string
+    ActionPlanFilter:
+      enum:
+        - status
+        - assignee
+        - finding.type
+        - id
+        - business.criticality
+      type: string
+    FilterSuggestFieldEnum:
+      description: name of the filter It will be action_plan.name
+      enum:
+        - status
+        - finding.type
+    ActionPlanSuggestRequest:
+      type: object
+      properties:
+        filterName:
+          description: name of the filter.
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/FilterSuggestFieldEnum"
+        query:
+          description: Typed in string on UI (substring will be searched)
+          type: string
+    ActionPlanApiRequest:
+      properties:
+        limit:
+          format: int64
+          type: integer
+        nextPageToken:
+          type: string
+        filters:
+          description: List of filters that can be applied for the API
+          type: array
+          items:
+            $ref: "#/components/schemas/Filter"
+        sortBy:
+          $ref: "#/components/schemas/SortBy"
+    SortBy:
+      type: object
+      properties:
+        name:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/SortField"
+        order:
+          type: string
+          allOf:
+            - $ref: "#/components/schemas/SortDirection"
+    SortDirection:
+      enum:
+        - desc
+        - asc
+    SortField:
+      enum:
+        - criticality
+        - alertCount
+        - assetCount
+    ActionPlanSuggestResponse:
+      type: object
+      properties:
+        offset:
+          format: int64
+          type: integer
+          description: Exact offset where the query begins
+          example: 0
+        queryRemainder:
+          type: string
+          example: ""
+        translate:
+          type: boolean
+          default: false
+        needsOffsetUpdate:
+          type: boolean
+          default: false
+        completeParameters:
+          type: array
+          items:
+            type: string
+          example: [ ]
+        valid:
+          type: boolean
+          default: false
+        suggestions:
+          type: array
+          items:
+            type: string
+          example: [ "PRIVILEGE_ESCALATION", "HIGH_PRIVILEGED_ROLE" ]
+    ActionPlanResponse:
+      type: object
+      properties:
+        lastRunTs:
+          format: int64
+          type: integer
+        totalCount:
+          format: int64
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionPlan"
+        nextPageToken:
+          type: string
+    ActionPlanNamesResponse:
+      type: object
+      properties:
+        lastRunTs:
+          format: int64
+          type: integer
+        totalCount:
+          format: int64
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionPlanName"
+    ActionPlanName:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+    ActionPlan:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+        alertCount:
+          format: int64
+          type: integer
+        assetCount:
+          format: int64
+          type: integer
+        findingTypes:
+          type: array
+          items:
+            type: string
+        impactfulAssetId:
+          type: string
+        impactfulAssetType:
+          format: int64
+          type: integer
+        criticality:
+          type: string
+        primaryAssetStatus:
+          type: string
+        summary:
+          type: string
+        assignee:
+          type: string
+        thumbsUpDown:
+          type: string
+          enum: [ down, up, none ]
+        thumbsDownReasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThumbsDownReason"
+        thumbsDownDescription:
+          type: string
+        countByPolicyType:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyCountType"
+        countByPolicyCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyCountCategory"
+        createdAtTs:
+          format: int64
+          type: integer
+        feedbackLastUpdatedTs:
+          format: int64
+          type: integer
+        lastUpdatedTs:
+          format: int64
+          type: integer
+        lastUpdatedBy:
+          type: string
+
+    ThumbsDownReason:
+      type: string
+      example: Wrong priority for me
+
+    PolicyCountType:
+      type: object
+      properties:
+        policyType:
+          type: string
+        count:
+          format: int64
+          type: integer
+    PolicyCountCategory:
+      type: object
+      properties:
+        policyCategory:
+          type: string
+        count:
+          format: int64
+          type: integer
+    ActionPlanUpdateStatusAssignee:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ new, in-progress, done ]
+        assignee:
+          type: string
+    ActionPlanFeedbackRequest:
+      type: object
+      properties:
+        thumbsUpDown:
+          type: string
+          enum: [ up, down, none ]
+        thumbsDownDescription:
+          type: string
+        thumbsDownReasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThumbsDownReason"
+    ActionPlanRecommendationSummaryResponse:
+      type: object
+      properties:
+        lastRunTs:
+          format: int64
+          type: integer
+        id:
+          type: string
+        recommendationSummary:
+          type: string
+    OnDemandNotificationConfigRequest:
+      title: OnDemandNotificationConfigRequest
+      type: object
+      required:
+        - onDemandNotificationConfig
+      properties:
+        onDemandNotificationConfig:
+          $ref: "#/components/schemas/OnDemandNotificationConfig"
+        translation:
+          $ref: "#/components/schemas/Translation"
+    OnDemandNotificationConfig:
+      title: OnDemandNotificationConfig
+      type: object
+      required:
+        - integrationType
+        - recipients
+      properties:
+        clientId:
+          description: >-
+            Id to identify the category of request. For Jira, Slack, it
+            can be AP
+          type: string
+        generatorType:
+          description: For ad-hoc notification, its value should be REALTIME
+          type: string
+        integrationType:
+          description: Can be either Jira or Slack
+          type: string
+        templateId:
+          description: Jira template Id
+          type: string
+        recipients:
+          description: >-
+            List containing single Integration id for jira or list of channels for
+            slack etc.
+          type: array
+          items:
+            type: string
+            example:
+              - slack-channel-1
+              - slack-channel-2
+              - slack-channel-3
+    Translation:
+      title: Translation
+      type: object
+      properties:
+        body:
+          description: Message Body. Applicable for email and slack.
+          type: string
+        details:
+          description: Its a map of key-value pair. It contains details like Subject etc.
+          type: object
+          additionalProperties:
+            type: string
+            properties:
+              callbackUrl:
+                type: string
+              assetCallbackUrl:
+                type: string
+    NotificationResponse:
+      title: NotificationResponse
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: integer
+        failed:
+          type: integer
+        successfulEvents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuccessfulEvent"
+        failedEvents:
+          type: object
+    SuccessfulEvent:
+      title: SuccessfulEvent
+      type: object
+      properties:
+        recipient:
+          $ref: "#/components/schemas/Recipient"
+        customerId:
+          type: integer
+        clientId:
+          type: string
+        metaData:
+          type: object
+        notificationId:
+          type: string
+    Recipient:
+      title: Recipient
+      type: object
+      properties:
+        generatorType:
+          type: string
+        integrationType:
+          type: string
+        id:
+          type: string
+        refId:
+          type: string
+    ImpactedAssetsResponse:
+      type: object
+      properties:
+        lastRunTs:
+          format: int64
+          type: integer
+        id:
+          type: string
+        totalCount:
+          format: int64
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionPlanImpactedAssets"
+        nextPageToken:
+          type: string
+    ActionPlanImpactedAssets:
+      type: object
+      properties:
+        name:
+          type: string
+        unifiedAssetId:
+          type: string
+        accountId:
+          type: string
+        accountName:
+          type: string
+        externalAssetId:
+          type: string
+        regionId:
+          type: string
+        assetType:
+          type: string
+        cloudType:
+          type: string
+        resourceDetailsAvailable:
+          type: boolean
+        isAssetAccessible:
+          type: boolean
+    ActionPlanRelatedAlertsResponse:
+      type: object
+      properties:
+        lastRunTs:
+          format: int64
+          type: integer
+        id:
+          type: string
+        totalCount:
+          format: int64
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionPlanRelatedAlerts"
+        nextPageToken:
+          type: string
+    ActionPlanRelatedAlerts:
+      type: object
+      properties:
+        alertId:
+          type: string
+        alertTime:
+          format: int64
+          type: integer
+        alertStatus:
+          type: string
+        resource:
+          $ref: "#/components/schemas/Resource"
+        policy:
+          $ref: "#/components/schemas/Policy"
+        isAlertAccessible:
+          type: boolean
+    Resource:
+      type: object
+      properties:
+        accountId:
+          type: string
+        accountName:
+          type: string
+        url:
+          type: string
+        unifiedAssetId:
+          type: string
+        name:
+          type: string
+        resourceDetailsAvailable:
+          type: boolean
+    Policy:
+      type: object
+      properties:
+        policyType:
+          type: string
+        findingTypes:
+          type: array
+          items:
+            type: string
+        policyId:
+          type: string
+        policyName:
+          type: string
+        policySeverity:
+          type: string
+    TosResponse:
+      type: object
+      properties:
+        tosAccepted:
+          type: boolean
+    SetAssetCriticalityRequest:
+      type: object
+      properties:
+        assetIds:
+          type: array
+          items:
+            type: string
+        assetCriticality:
+          type: string
+          description: >-
+            Name of the allowed asset criticalities. Allowed criticalities: [critical,
+            high, medium, low, none]
+          allOf:
+            - $ref: "#/components/schemas/AssetCriticalityEnum"
+    AssetCriticalityEnum:
+      enum:
+        - critical
+        - high
+        - medium
+        - low
+        - none
+      type: string
+    AssetCriticalityStatusResponse:
+      type: object
+      properties:
+        assetCriticality:
+          type: string
+          description: >-
+            Name of the allowed asset criticalities. Allowed criticalities: [critical,
+            high, medium, low, none]
+          allOf:
+            - $ref: "#/components/schemas/AssetCriticalityEnum"
+    CriticalAssetApiRequest:
+      properties:
+        limit:
+          format: int64
+          type: integer
+        pageToken:
+          type: string
+        filters:
+          description: List of filters that can be applied for the API
+          type: array
+          items:
+            $ref: "#/components/schemas/Filter"
+    CriticalAssetResponse:
+      type: object
+      properties:
+        totalCount:
+          format: int64
+          type: integer
+        value:
+          type: array
+          items:
+            $ref: "#/components/schemas/Asset"
+        nextPageToken:
+          type: string
+    Asset:
+      type: object
+      properties:
+        name:
+          type: string
+        businessCriticality:
+          type: string
+        unifiedAssetId:
+          type: string
+        accountId:
+          type: string
+        externalAssetId:
+          type: string
+        regionId:
+          type: string
+        assetType:
+          type: string
+        cloudType:
+          type: string
+        resourceDetailsAvailable:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        target:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/Error"
+    AcceptedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+  securitySchemes:
+    x-redlock-auth:
+      description: The x-redlock-auth value is a JSON Web Token (JWT).
+      in: header
+      name: x-redlock-auth
+      type: apiKey

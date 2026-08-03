@@ -2,15 +2,19 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: Data
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
-          description: 'The field value.
-
-            '
+          description: Field
+          type: string
+        name:
+          description: Name
           type: string
         operator:
-          description: 'The operator values.
-
-            '
+          description: Operator
           enum:
           - max
           - count
@@ -18,73 +22,74 @@ components:
           - avg
           - sum
           type: string
-    BaseQuery:
+        statistic:
+          description: Statistic
+          type: string
+        unit:
+          description: Unit
+          type: string
+    AggregateData:
+      properties:
+        value:
+          description: 'Value: JsonInclude(content = ALWAYS, contentFilter = classOf[Void],
+            value = ALWAYS, valueFilter = classOf[Void]) '
+          type: number
+        view:
+          type: object
+    BaseQueryDTO:
       properties:
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of queries.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number of queried deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the queries.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "List the query by ID.    \n"
+          description: Id
           type: string
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
+          $ref: '#/components/schemas/QueryParams'
+          description: Query Params
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
           type: boolean
         sort_params:
+          properties:
+            <field_name>:
+              enum:
+              - asc
+              - desc
+              type: string
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     Error:
@@ -99,23 +104,40 @@ components:
           type: string
         message:
           type: string
+    QueryParams:
+      properties:
+        <field_name>|comparator:
+          additionalProperties:
+            properties:
+              eq:
+                type: string
+              gte:
+                type: string
+              in:
+                items:
+                  type: string
+                type: array
+              lte:
+                type: string
+              neq:
+                type: string
+            type: object
+          type: object
     SetBulkResponse:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         count:
-          description: 'The number of responses.
-
-            '
+          description: Count
           format: int32
           type: integer
         id:
-          description: 'The ID of the response.
-
-            '
+          description: Id
           type: string
         items:
-          description: 'List items in the query.
-
-            '
+          description: Items
           items:
             type: object
           type: array
@@ -123,9 +145,7 @@ components:
           description: Tenant Id
           type: string
         total_count:
-          description: 'The total number of responses.
-
-            '
+          description: Total Count
           format: int64
           type: integer
 info:
@@ -137,11 +157,10 @@ openapi: 3.0.0
 paths:
   /v2.0/api/tenants/{tenant_id}/elements/bulk_config_state/query:
     post:
-      description: Get the element configuration/state information for queried elements
-        from NB.
+      description: Get element config/state info for queried elements from NB
       operationId: post-v2.0-api-tenants-tenant_id-elements-bulk_config_state-query
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -152,7 +171,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -178,16 +197,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Element State for Queried Elements from NB (v2.0)
+      summary: Get element config/state info for queried elements from NB (v2.0)
       tags:
       - Bulk Operations
   /v2.0/api/tenants/{tenant_id}/networks/bulk_config_state/query:
     post:
-      description: Get all the configurations/states information for a given network
-        from NB.
+      description: Get all config/state info for given network from NB
       operationId: post-v2.0-api-tenants-tenant_id-networks-bulk_config_state-query
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -198,7 +216,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -217,7 +235,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Config/State for Network from NB (v2.0)
+      summary: Get all config/state info for given network from NB (v2.0)
       tags:
       - Bulk Operations
   /v2.0/api/tenants/{tenant_id}/policysets/bulk_config_state/query:
@@ -236,7 +254,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -260,11 +278,10 @@ paths:
       - Bulk Operations
   /v2.0/api/tenants/{tenant_id}/sites/bulk_config_state/query:
     post:
-      description: Get all site configuration/state information for a queried site
-        from NB.
+      description: Get site config/state info for queried site from NB
       operationId: post-v2.0-api-tenants-tenant_id-sites-bulk_config_state-query
       parameters:
-      - description: The tenant ID.
+      - description: Tenant Id
         in: path
         name: tenant_id
         required: true
@@ -275,7 +292,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -301,7 +318,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Bad Request
-      summary: Get Site Config/State for Queried Site from NB (v2.0)
+      summary: Get site config/state info for queried site from NB (v2.0)
       tags:
       - Bulk Operations
 servers:

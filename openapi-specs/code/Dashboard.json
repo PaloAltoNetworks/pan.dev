@@ -1,0 +1,916 @@
+{
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "securitySchemes": {
+      "CustomAuthorizer": {
+        "in": "header",
+        "name": "authorization",
+        "type": "apiKey",
+        "x-amazon-apigateway-authorizer": {
+          "authorizerResultTtlInSeconds": 0,
+          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-v2-authorizer-{UniqueTag}{Alias}/invocations",
+          "identitySource": "method.request.header.authorization",
+          "type": "request"
+        },
+        "x-amazon-apigateway-authtype": "custom"
+      }
+    },
+    "schemas": {
+      "CodeCategoryType": {
+        "enum": [
+          "iac",
+          "buildIntegrity",
+          "licenses",
+          "secrets",
+          "vulnerabilities"
+        ],
+        "type": "string"
+      },
+      "CommonErrorsByPolicy": {
+        "properties": {
+          "count": {
+            "description": "Number of open issues for the policy.",
+            "type": "string"
+          },
+          "createdBy": {
+            "description": "The author of the policy (Prisma Cloud System Admin for default policies, User email for custom policies).",
+            "nullable": true,
+            "type": "string"
+          },
+          "isCustom": {
+            "description": "True if the policy is a custom policy; false otherwise.",
+            "type": "boolean"
+          },
+          "remediationIds": {
+            "description": "The remediations available for the issues identified by the policy.",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "severity": { "$ref": "#/components/schemas/Severity" },
+          "title": { "description": "The policy name.", "type": "string" }
+        },
+        "required": [
+          "count",
+          "isCustom",
+          "createdBy",
+          "remediationIds",
+          "title",
+          "severity"
+        ],
+        "type": "object"
+      },
+      "CommonErrorsByPolicyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codeCategories": {
+            "description": "- IaC: Filter value to retrieve issues with Infrastructure-as-Code (IaC or iac) templates\n  and scripts that provision and manage cloud resources. Prisma Cloud detects issues such\n  as misconfigurations and security risks within the code that deploys and manages the infrastructure.\n- Vulnerability: Filter value to retrieve findings related to known security vulnerabilities\n  in open-source packages used in applications. These findings highlight potential weaknesses\n  that could be exploited by attackers.\n- BuildIntegrity: Filter value to retrieve findings related to the integrity and security\n  of the build pipeline or the software supply chain. These findings include checks for\n  unauthorized or insecure dependencies, insecure artifact storage, or other issues that\n  could compromise the integrity of the software build process.\n- Secrets: Filter value to retrieve findings related to the handling and management of\n  sensitive information, such as API keys, passwords, or cryptographic keys, within code\n  files. Address these findings to ensure that secrets are properly protected and not exposed\n  in the code or configurations.\n- Licenses: Filter value to retrieve issues related to the non-compliance with license requirements.\n  Open source packages typically include a license that is either restrictive or permissive.\n  Prisma Cloud, by default, identifies and flags instances where open-source software components\n  do not include a license, or are carrying an undesired one. For example, licenses not approved\n  by the Open Source Initiative (OSI) or not recognized by the Software Package Data\n  Exchange (SPDX) fall under this undesired category.",
+            "items": { "$ref": "#/components/schemas/CodeCategoryType" },
+            "type": "array"
+          },
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "CommonErrorsByPolicyResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/CommonErrorsByPolicy" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "ErrorsBySeverity": {
+        "properties": {
+          "count": {
+            "description": "Number of issues at each severity level.",
+            "type": "string"
+          },
+          "severity": { "$ref": "#/components/schemas/Severity" }
+        },
+        "required": ["count", "severity"],
+        "type": "object"
+      },
+      "ErrorsBySeverityRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codeCategories": {
+            "description": "- IaC: Filter value to retrieve issues with Infrastructure-as-Code (IaC or iac) templates\n  and scripts that provision and manage cloud resources. Prisma Cloud detects issues such\n  as misconfigurations and security risks within the code that deploys and manages the infrastructure.\n- Vulnerability: Filter value to retrieve findings related to known security vulnerabilities\n  in open-source packages used in applications. These findings highlight potential weaknesses\n  that could be exploited by attackers.\n- BuildIntegrity: Filter value to retrieve findings related to the integrity and security\n  of the build pipeline or the software supply chain. These findings include checks for\n  unauthorized or insecure dependencies, insecure artifact storage, or other issues that\n  could compromise the integrity of the software build process.\n- Secrets: Filter value to retrieve findings related to the handling and management of\n  sensitive information, such as API keys, passwords, or cryptographic keys, within code\n  files. Address these findings to ensure that secrets are properly protected and not exposed\n  in the code or configurations.\n- Licenses: Filter value to retrieve issues related to the non-compliance with license requirements.\n  Open source packages typically include a license that is either restrictive or permissive.\n  Prisma Cloud, by default, identifies and flags instances where open-source software components\n  do not include a license, or are carrying an undesired one. Specifically, licenses not approved\n  by the Open Source Initiative (OSI) or not recognized by the Software Package Data\n  Exchange (SPDX) fall under this undesired category.",
+            "items": { "$ref": "#/components/schemas/CodeCategoryType" },
+            "type": "array"
+          },
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "ErrorsBySeverityResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/ErrorsBySeverity" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "IaCErrorsByCategory": {
+        "properties": {
+          "category": {
+            "description": "A category, such as IAM, Logging, Monitoring, Networking, or Kubernetes.",
+            "type": "string"
+          },
+          "count": {
+            "description": "Number of issues for the IaC misconfiguration category.",
+            "type": "string"
+          }
+        },
+        "required": ["count", "category"],
+        "type": "object"
+      },
+      "IaCErrorsByCategoryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "IaCErrorsByCategoryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/IaCErrorsByCategory" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "PRIssuesOverTime": {
+        "properties": {
+          "date": {
+            "description": "A date in ISO 8601 format. The response includes data for every single day starting from the given `startDate`.",
+            "type": "string"
+          },
+          "failedCount": {
+            "description": "Number of pull requests that failed till the date.",
+            "type": "string"
+          },
+          "failedTodayCount": {
+            "description": "Number of pull requests that failed on that date.",
+            "type": "string"
+          },
+          "passedCount": {
+            "description": "Number of pull requests that passed till the date.",
+            "type": "string"
+          },
+          "resolvedCount": {
+            "description": "Number of (failed and blocking) pull request issues that were resolved till the date.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resolvedCount",
+          "passedCount",
+          "failedTodayCount",
+          "failedCount",
+          "date"
+        ],
+        "type": "object"
+      },
+      "PRIssuesOverTimeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "startDate": { "$ref": "#/components/schemas/StartDate" }
+        },
+        "required": ["startDate"],
+        "type": "object"
+      },
+      "PRIssuesOverTimeResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/PRIssuesOverTime" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "PackageLicenses": {
+        "properties": {
+          "count": {
+            "description": "Number of issues for each type of license.",
+            "format": "double",
+            "type": "number"
+          },
+          "license": {
+            "description": "The package license.",
+            "type": "string"
+          },
+          "repos": {
+            "description": "Number of repositories in which the package with the license issue was detected.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": ["count", "repos", "license"],
+        "type": "object"
+      },
+      "PackageLicensesRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "PackageLicensesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/PackageLicenses" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "Repository": { "type": "string" },
+      "RiskFactors": {
+        "description": "The following risk factors are combined to determine a vulnerability's risk.",
+        "properties": {
+          "AttackComplexity": {
+            "description": "Vulnerability is easily exploited.",
+            "type": "string"
+          },
+          "AttackVector": {
+            "description": "Vulnerability is remotely exploitable. The vulnerable component is bound to the network, and the attacker’s path is through the network.",
+            "type": "string"
+          },
+          "DoS": {
+            "description": "Component is vulnerable to denial of service attacks, such as buffer overflow attacks, and ICMP floods. The risk is categorized as high or low based on impact.",
+            "type": "boolean"
+          },
+          "HasFix": {
+            "description": "Fix is available from the vendor or package maintainer.",
+            "type": "boolean"
+          },
+          "RemoteExecution": {
+            "description": "Vulnerability can be exploited to run arbitrary code.",
+            "type": "boolean"
+          },
+          "Severity": {
+            "description": "The severity level of the vulnerability or misconfiguration. Possible values are INFO, LOW, MEDIUM, HIGH, or CRITICAL.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "AttackComplexity",
+          "AttackVector",
+          "Severity",
+          "HasFix",
+          "DoS"
+        ],
+        "type": "object"
+      },
+      "Severity": {
+        "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+        "enum": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
+        "type": "string"
+      },
+      "Size": {
+        "description": "The maximum number of results included in the response.",
+        "format": "double",
+        "type": "number"
+      },
+      "StartDate": {
+        "description": "(applicable to Code issues over time, and Pull Requests over Time):\nThe start date filter enables you to retrieve issues from a given date.\nProvide a date earlier than the current date in the ISO 8601 format.",
+        "type": "string"
+      },
+      "TopCvssVuls": {
+        "properties": {
+          "count": {
+            "description": "Number of Vulnerabilities found in the last scan.",
+            "type": "string"
+          },
+          "cveId": {
+            "description": "The CVE ID of the vulnerability.",
+            "type": "string"
+          },
+          "cvss": {
+            "description": "The Common Vulnerability Scoring System (CVSS) score of the vulnerability.",
+            "format": "double",
+            "type": "number"
+          },
+          "riskFactors": { "$ref": "#/components/schemas/RiskFactors" },
+          "severity": {
+            "description": "The severity level of the vulnerability or misconfiguration. Possible values are INFO, LOW, MEDIUM, HIGH, or CRITICAL.",
+            "type": "string"
+          }
+        },
+        "required": ["count", "severity", "riskFactors", "cvss", "cveId"],
+        "type": "object"
+      },
+      "TopCvssVulsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "TopCvssVulsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/TopCvssVuls" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "TopVulnerableRepos": {
+        "properties": {
+          "critical": {
+            "description": "Critical severity indicates a high-risk vulnerability or misconfiguration that could lead to significant security breaches or data leaks. These issues require immediate attention and remediation.",
+            "type": "string"
+          },
+          "high": {
+            "description": "High severity indicates a significant security issue that has the potential to be exploited or result in significant damage if left unaddressed. These findings should be addressed as a priority.",
+            "type": "string"
+          },
+          "owner": {
+            "description": "The repository username of the owner of the repository.",
+            "type": "string"
+          },
+          "repoId": { "description": "The repository UUID.", "type": "string" },
+          "repository": {
+            "description": "The repository name.",
+            "type": "string"
+          }
+        },
+        "required": ["high", "critical", "owner", "repository", "repoId"],
+        "type": "object"
+      },
+      "TopVulnerableReposRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codeCategories": {
+            "description": "- IaC: Filter value to retrieve issues with Infrastructure-as-Code (IaC or iac) templates\n  and scripts that provision and manage cloud resources. Prisma Cloud detects issues such\n  as misconfigurations and security risks within the code that deploys and manages the infrastructure.\n- Vulnerability: Filter value to retrieve findings related to known security vulnerabilities\n  in open-source packages used in applications. These findings highlight potential weaknesses\n  that could be exploited by attackers.\n- BuildIntegrity: Filter value to retrieve findings related to the integrity and security\n  of the build pipeline or the software supply chain. These findings include checks for\n  unauthorized or insecure dependencies, insecure artifact storage, or other issues that\n  could compromise the integrity of the software build process.\n- Secrets: Filter value to retrieve findings related to the handling and management of\n  sensitive information, such as API keys, passwords, or cryptographic keys, within code\n  files. Address these findings to ensure that secrets are properly protected and not exposed\n  in the code or configurations.\n- Licenses: Filter value to retrieve issues related to the non-compliance with license requirements.\n  Open source packages typically include a license that is either restrictive or permissive.\n  Prisma Cloud, by default, identifies and flags instances where open-source software components\n  do not include a license, or are carrying an undesired one. Specifically, licenses not approved\n  by the Open Source Initiative (OSI) or not recognized by the Software Package Data\n  Exchange (SPDX) fall under this undesired category.",
+            "items": { "$ref": "#/components/schemas/CodeCategoryType" },
+            "type": "array"
+          },
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "size": { "$ref": "#/components/schemas/Size" }
+        },
+        "type": "object"
+      },
+      "TopVulnerableReposResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/TopVulnerableRepos" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      },
+      "VCSIssuesOverTime": {
+        "properties": {
+          "date": {
+            "description": "A date in ISO 8601 format. The response includes data for every single day starting from the given `startDate`.",
+            "type": "string"
+          },
+          "fixPendingCount": {
+            "description": "Number of fix pending issues on a given date.",
+            "type": "string"
+          },
+          "fixedCount": {
+            "description": "Number of fixed issues till a given date.",
+            "type": "string"
+          },
+          "openCount": {
+            "description": "Number of open issues on a given date.",
+            "type": "string"
+          },
+          "openedTodayCount": {
+            "description": "Number of open issues added on a given date.",
+            "type": "string"
+          },
+          "suppressedCount": {
+            "description": "Number of suppressed issues on a given date.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fixedCount",
+          "fixPendingCount",
+          "suppressedCount",
+          "openedTodayCount",
+          "openCount",
+          "date"
+        ],
+        "type": "object"
+      },
+      "VCSIssuesOverTimeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "codeCategories": {
+            "description": "- IaC: Filter value to retrieve issues with Infrastructure-as-Code (IaC or iac) templates\n  and scripts that provision and manage cloud resources. Prisma Cloud detects issues such\n  as misconfigurations and security risks within the code that deploys and manages the infrastructure.\n- Vulnerability: Filter value to retrieve findings related to known security vulnerabilities\n  in open-source packages used in applications. These findings highlight potential weaknesses\n  that could be exploited by attackers.\n- BuildIntegrity: Filter value to retrieve findings related to the integrity and security\n  of the build pipeline or the software supply chain. These findings include checks for\n  unauthorized or insecure dependencies, insecure artifact storage, or other issues that\n  could compromise the integrity of the software build process.\n- Secrets: Filter value to retrieve findings related to the handling and management of\n  sensitive information, such as API keys, passwords, or cryptographic keys, within code\n  files. Address these findings to ensure that secrets are properly protected and not exposed\n  in the code or configurations.\n- Licenses: Filter value to retrieve issues related to the non-compliance with license requirements.\n  Open source packages typically include a license that is either restrictive or permissive.\n  Prisma Cloud, by default, identifies and flags instances where open-source software components\n  do not include a license, or are carrying an undesired one. Specifically, licenses not approved\n  by the Open Source Initiative (OSI) or not recognized by the Software Package Data\n  Exchange (SPDX) fall under this undesired category.",
+            "items": { "$ref": "#/components/schemas/CodeCategoryType" },
+            "type": "array"
+          },
+          "repositories": {
+            "description": "The repositories filter enables you to retrieve issues related to one or more repositories.\nYou must provide the UUIDs of the repositories that you want to include in the filter.\nTo retrieve the UUID of a repository use the [List repository list](/prisma-cloud/api/code/get-repositories) endpoint.\n(the `id` field of the response has the UUID of the repository).",
+            "items": { "$ref": "#/components/schemas/Repository" },
+            "type": "array"
+          },
+          "severities": {
+            "description": "The severity level of the vulnerability or misconfiguration.\n  - Critical: Critical severity indicates a high-risk vulnerability or\n    misconfiguration that could lead to significant security breaches or\n    data leaks. These issues require immediate attention and remediation.\n  - High: High severity indicates a significant security issue that has the\n    potential to be exploited or result in significant damage if left unaddressed.\n    These findings should be addressed as a priority.\n  - Medium: Medium severity indicates issues that pose a potential security risk that\n    are less severe than Critical and High. Remediation of these issues should be prioritized,\n    but they may not require immediate attention.\n  - Low: Low severity indicates issues that have a minimal impact on security or are relatively\n    low-risk. While they may not pose an immediate threat, it is still recommended to address\n    them to maintain a robust security posture.\n  - Info: Info severity is used for informational findings or recommendations that\n    do not pose an immediate security risk but provide helpful guidance, best practices,\n    or suggestions for optimization. These findings can be considered as part of ongoing\n    security hygiene efforts.",
+            "items": { "$ref": "#/components/schemas/Severity" },
+            "type": "array"
+          },
+          "startDate": { "$ref": "#/components/schemas/StartDate" }
+        },
+        "required": ["startDate"],
+        "type": "object"
+      },
+      "VCSIssuesOverTimeResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/VCSIssuesOverTime" },
+            "type": "array"
+          },
+          "lastScanDate": {
+            "description": "The time when the last scan was triggered.",
+            "type": "string"
+          }
+        },
+        "required": ["data", "lastScanDate"],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "The Application Security Dashboard endpoints are listed below. \n",
+    "title": "Prisma Cloud Application Security Dashboard API Overview",
+    "version": "Latest"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/code/api/v2/dashboard/common-errors-by-policy": {
+      "post": {
+        "description": "Gets the list of policies that have the highest number of errors (open issues) and their respective error counts. The response also includes policy details such as `remediationIds` and `severity`.\n\nYou can set the `repositories`, `codeCategories`, and `severities` parameters in the request body to filter the results.",
+        "operationId": "get dashboard common errors by policy data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonErrorsByPolicyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonErrorsByPolicyResponse"
+                }
+              }
+            },
+            "description": "Common Errors By Policy"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get common errors by policy" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Common Errors By Policy",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/common-errors-by-policy\"\n\npayload = {\n    \"codeCategories\": [\"iac\"],\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/common-errors-by-policy \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"codeCategories\":[\"iac\"],\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/errors-by-severity": {
+      "post": {
+        "description": "Gets a count of issues detected at each severity level.\nYou can set the `repositories`, `codeCategories`, and `severities` parameters in the request body to filter the results.",
+        "operationId": "get dashboard errors by severity data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorsBySeverityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorsBySeverityResponse"
+                }
+              }
+            },
+            "description": "Errors By Severity"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get errors by severity" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Code Issues by Severity",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/errors-by-severity\"\n\npayload = {\n    \"codeCategories\": [\"iac\"],\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/errors-by-severity \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"codeCategories\":[\"iac\"],\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/iac-errors-by-category": {
+      "post": {
+        "description": "Gets the count for each type of IaC misconfiguration issue detected.\nThe IaC misconfiguration types are:\n- IAM\n- Logging\n- Monitoring\n- Networking\n- Kubernetes\n- General\n- Serverless\n- Elasticsearch\n- Storage\n- Public\n- Compute\n- Drift\n\nYou can set the `repositories` and `severities` parameters in the request body to filter the results.<br/>",
+        "operationId": "get dashboard iac errors by category data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IaCErrorsByCategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IaCErrorsByCategoryResponse"
+                }
+              }
+            },
+            "description": "IaC Errors By Category"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get iac errors by category" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "IaC Errors by Category",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/iac-errors-by-category\"\n\npayload = {\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/iac-errors-by-category \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/package-licenses": {
+      "post": {
+        "description": "Gets the list of non-compliant package licenses that occurred most frequently in the scanned repositories. The returned list also includes the count of repositories in which each non-compliant package license was detected. \nYou can set the `repositories` and `severities` parameters in the request body to filter the results.",
+        "operationId": "get dashboard data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackageLicensesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageLicensesResponse"
+                }
+              }
+            },
+            "description": "Non compliant package licenses"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get package licenses" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Top Non-compliant Package Licenses",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/package-licenses\"\n\npayload = {\n    \"repositories\": [\"string\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/package-licenses \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/pr-issues-over-time": {
+      "post": {
+        "description": "Returns the count of the different pull request statuses\n(Failed, Resolved (Failed and was blocking issues were resolved) and Passed) per day for the last 30 days. \nYou can set the `repositories` and `startDate` parameters in the request body to filter the results.<br/>",
+        "operationId": "get pr issues over time data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PRIssuesOverTimeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PRIssuesOverTimeResponse"
+                }
+              }
+            },
+            "description": "Pull Requests Issues Over Time"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get pr issues over time data" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Pull Requests over Time",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/pr-issues-over-time\"\n\npayload = {\n    \"repositories\": [\"string\"],\n    \"startDate\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/pr-issues-over-time \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"],\"startDate\":\"string\"}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/top-cvss": {
+      "post": {
+        "description": "Returns the list of vulnerabilities that have the highest CVSS scores.\nThe results also include CVE details such as Risk Factors and Severity.\nYou can set the `repositories` and `severities` parameters in the request body to filter the results.",
+        "operationId": "get dashboard top cvss vulnerabilities data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TopCvssVulsRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TopCvssVulsResponse" }
+              }
+            },
+            "description": "Top CVSS Vulnerabilieties"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get top cvss vulnerabilities" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Top CVSS Score Vulnerabilities",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/top-cvss\"\n\npayload = {\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/top-cvss \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/top-vulnerable-repositories": {
+      "post": {
+        "description": "Gets the repositories that have the highest number of high-risk errors (High and Critical severity).\nYou can set the `repositories`, `codeCategories`, and `severities` parameters in the request body to filter the results.",
+        "operationId": "get dashboard top vulnerable repositories data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TopVulnerableReposRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopVulnerableReposResponse"
+                }
+              }
+            },
+            "description": "Top Vulnerable Repositories"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get top vulnerable repositories" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Top Repositories by Critical Error Count",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/top-vulnerable-repositories\"\n\npayload = {\n    \"codeCategories\": [\"iac\"],\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"size\": 0\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/top-vulnerable-repositories \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"codeCategories\":[\"iac\"],\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"size\":0}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v2/dashboard/vcs-scan-issues-over-time": {
+      "post": {
+        "description": "Returns the count of day-aggregated issue statuses (Opened Earlier, open today, Fix Pending, Fixed, Suppressed) for the last 30 days.\nYou can set the `repositories`, `codeCategories`, `severities`, and `startDate` parameters in the request body to filter the results.\nVulnerability data is not included in the response of this endpoint.<br/>\nUse the [Top CVSS Score Vulnerabilities](/prisma-cloud/api/code/get-dashboard-top-cvss-vulnerabilities-data) endpoint to retrieve the riskiest vulnerabilities.",
+        "operationId": "get vcs scan issues over time data",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VCSIssuesOverTimeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VCSIssuesOverTimeResponse"
+                }
+              }
+            },
+            "description": "VCS Scan Issues Over Time"
+          },
+          "401": { "description": "Customer has no permitted accounts" },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Failed to get vcs scan issues over time" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Code issues over time",
+        "tags": ["Dashboard"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v2/dashboard/vcs-scan-issues-over-time\"\n\npayload = {\n    \"codeCategories\": [\"iac\"],\n    \"repositories\": [\"string\"],\n    \"severities\": [\"INFO\"],\n    \"startDate\": \"string\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v2/dashboard/vcs-scan-issues-over-time \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"codeCategories\":[\"iac\"],\"repositories\":[\"string\"],\"severities\":[\"INFO\"],\"startDate\":\"string\"}'"
+          }
+        ]
+      }
+    }
+  },
+  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "tags": [{ "name": "Dashboard" }]
+}

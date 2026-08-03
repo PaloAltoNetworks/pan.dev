@@ -12,7 +12,7 @@
         "type": "apiKey",
         "x-amazon-apigateway-authorizer": {
           "authorizerResultTtlInSeconds": 0,
-          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-authorizer-{UniqueTag}{Alias}/invocations",
+          "authorizerUri": "arn:aws:apigateway:{Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{Region}:{AccountId}:function:bc-authorization-v2-authorizer-{UniqueTag}{Alias}/invocations",
           "identitySource": "method.request.header.authorization",
           "type": "request"
         },
@@ -42,6 +42,43 @@
         "required": ["source", "branches"],
         "type": "object"
       },
+      "CIType": {
+        "enum": ["githubActions", "circleci", "codebuild", "jenkins"],
+        "type": "string"
+      },
+      "CiInstancesHash": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/ICiInstanceInfo"
+        },
+        "properties": {},
+        "type": "object"
+      },
+      "Contributor": {
+        "properties": {
+          "contributionsCounts": {
+            "description": "Number of contributions",
+            "format": "double",
+            "type": "number"
+          },
+          "id": { "type": "string" },
+          "lastPush": { "format": "double", "type": "number" },
+          "name": { "description": "Contributor name", "type": "string" },
+          "permission": {
+            "description": "Contributor permission",
+            "type": "string"
+          }
+        },
+        "required": ["contributionsCounts", "name", "id"],
+        "type": "object"
+      },
+      "DockerImage": {
+        "properties": {
+          "imageName": { "type": "string" },
+          "repoName": { "type": "string" }
+        },
+        "required": ["repoName", "imageName"],
+        "type": "object"
+      },
       "GetRepositorySearchResponse": {
         "additionalProperties": false,
         "properties": {
@@ -54,12 +91,309 @@
         "required": ["data", "hasNext"],
         "type": "object"
       },
+      "ICiInstanceInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "ciType": {
+            "$ref": "#/components/schemas/CIType",
+            "description": "CI pipeline type"
+          },
+          "customerName": {
+            "description": "Customer Prisma ID",
+            "type": "string"
+          },
+          "id": { "type": "string" },
+          "name": { "description": "CI pipeline name", "type": "string" },
+          "pipelines": {
+            "items": { "$ref": "#/components/schemas/PipelineInfo" },
+            "type": "array"
+          }
+        },
+        "required": ["ciType", "customerName", "id", "name", "pipelines"],
+        "type": "object"
+      },
+      "IVCSRepository": {
+        "additionalProperties": false,
+        "properties": {
+          "casId": { "type": "string" },
+          "ciFiles": {
+            "description": "CI files path",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "customerName": {
+            "description": "Customer Prisma ID",
+            "type": "string"
+          },
+          "defaultBranch": {
+            "description": "Default branch",
+            "type": "string"
+          },
+          "defaultGithubActionsWorkflowPermission": {
+            "enum": ["read", "write"],
+            "type": "string"
+          },
+          "failedCustomerPRs": { "format": "double", "type": "number" },
+          "fullName": {
+            "description": "Repository full name",
+            "type": "string"
+          },
+          "hasCoderOwner": {
+            "description": "Repository contains code owner file (True/False)",
+            "type": "boolean"
+          },
+          "id": { "description": "VCS repository ID", "type": "string" },
+          "isAllGithubActionsAllowed": { "type": "boolean" },
+          "isArchived": {
+            "description": "Archived repository (True/False)",
+            "type": "boolean"
+          },
+          "isForkingAllowed": {
+            "description": "Is forking allowed in the repository",
+            "type": "boolean"
+          },
+          "isGithubActionsEnabled": {
+            "description": "Is Github Actions enabled in the repository",
+            "type": "boolean"
+          },
+          "isRequiresCommitSignatures": { "type": "boolean" },
+          "isRequiresStatusChecks": { "type": "boolean" },
+          "isRestrictsPushes": { "type": "boolean" },
+          "lastUpdated": {
+            "description": "VCS Repository last update time",
+            "type": "string"
+          },
+          "name": {
+            "description": "VCS Repository short name",
+            "type": "string"
+          },
+          "openFixPRs": { "format": "double", "type": "number" },
+          "originId": { "type": "string" },
+          "privacyLevel": {
+            "$ref": "#/components/schemas/RepositoryPrivacyLabel"
+          },
+          "provider": { "$ref": "#/components/schemas/RepositoryProvider" },
+          "repositorySize": {
+            "description": "VCS Repository size",
+            "format": "double",
+            "type": "number"
+          },
+          "sessionId": { "type": "string" },
+          "totalCommitsCount": {
+            "description": "Total commits count",
+            "format": "double",
+            "type": "number"
+          },
+          "totalContributorsCount": {
+            "description": "Total contributors count",
+            "format": "double",
+            "type": "number"
+          },
+          "totalCustomerPRs": { "format": "double", "type": "number" },
+          "type": {
+            "enum": ["VCSRepository"],
+            "nullable": false,
+            "type": "string"
+          },
+          "url": { "description": "VCS Repository URL", "type": "string" },
+          "workspaceId": {
+            "description": "VCS workspace/integration ID",
+            "type": "string"
+          },
+          "workspaceName": {
+            "description": "VCS workspace/integration name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "type",
+          "failedCustomerPRs",
+          "totalCustomerPRs",
+          "ciFiles",
+          "url",
+          "casId"
+        ],
+        "type": "object"
+      },
+      "Issues": {
+        "allOf": [
+          { "$ref": "#/components/schemas/SeverityIssues" },
+          {
+            "properties": {
+              "moduleName": { "$ref": "#/components/schemas/SecurityModule" }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ModuleIssues": {
+        "properties": {
+          "CICD": {
+            "allOf": [
+              { "$ref": "#/components/schemas/SeverityIssues" },
+              {
+                "properties": {
+                  "TOTAL": { "format": "double", "type": "number" }
+                },
+                "required": ["TOTAL"],
+                "type": "object"
+              }
+            ]
+          },
+          "IAC": {
+            "allOf": [
+              { "$ref": "#/components/schemas/SeverityIssues" },
+              {
+                "properties": {
+                  "TOTAL": { "format": "double", "type": "number" }
+                },
+                "required": ["TOTAL"],
+                "type": "object"
+              }
+            ]
+          },
+          "SCA": {
+            "allOf": [
+              { "$ref": "#/components/schemas/SeverityIssues" },
+              {
+                "properties": {
+                  "TOTAL": { "format": "double", "type": "number" }
+                },
+                "required": ["TOTAL"],
+                "type": "object"
+              }
+            ]
+          },
+          "SECRETS": {
+            "allOf": [
+              { "$ref": "#/components/schemas/SeverityIssues" },
+              {
+                "properties": {
+                  "TOTAL": { "format": "double", "type": "number" }
+                },
+                "required": ["TOTAL"],
+                "type": "object"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "OrderBy": {
+        "properties": {
+          "fieldName": { "type": "string" },
+          "isAsc": { "type": "boolean" },
+          "type": { "type": "string" }
+        },
+        "required": ["isAsc", "type", "fieldName"],
+        "type": "object"
+      },
+      "Pagination": {
+        "properties": {
+          "page": { "format": "double", "type": "number" },
+          "pageSize": { "format": "double", "type": "number" }
+        },
+        "required": ["pageSize", "page"],
+        "type": "object"
+      },
+      "PipelineInfo": {
+        "properties": {
+          "instance": { "type": "string" },
+          "pipeline": { "type": "string" },
+          "system": { "type": "string" }
+        },
+        "required": ["pipeline", "system", "instance"],
+        "type": "object"
+      },
       "QueryRepositoriesRequest": {
         "additionalProperties": false,
         "properties": {
           "repositoriesIds": { "items": { "type": "string" }, "type": "array" }
         },
         "required": ["repositoriesIds"],
+        "type": "object"
+      },
+      "RdsRepoInfo": {
+        "properties": {
+          "casId": { "type": "string" },
+          "categorizedTechnologies": {
+            "$ref": "#/components/schemas/Technologies"
+          },
+          "ciFiles": { "items": { "type": "string" }, "type": "array" },
+          "ciInstances": { "$ref": "#/components/schemas/CiInstancesHash" },
+          "contributors": {
+            "items": { "$ref": "#/components/schemas/Contributor" },
+            "type": "array"
+          },
+          "contributorsCount": { "format": "double", "type": "number" },
+          "customerName": { "type": "string" },
+          "defaultBranch": { "type": "string" },
+          "fullName": { "type": "string" },
+          "hasCoderOwner": { "type": "boolean" },
+          "id": { "type": "string" },
+          "images": { "items": { "type": "string" }, "type": "array" },
+          "integrationId": { "type": "string" },
+          "isArchived": { "type": "boolean" },
+          "issues": { "$ref": "#/components/schemas/ModuleIssues" },
+          "lastCommitTimestamp": { "format": "double", "type": "number" },
+          "lastUpdated": { "type": "string" },
+          "metadata": {
+            "properties": {
+              "runtimeImagesMetadata": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [{ "type": "string" }, { "type": "boolean" }]
+                  },
+                  "properties": {},
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "scansMetadata": {
+                "additionalProperties": {
+                  "anyOf": [{ "type": "string" }, { "type": "boolean" }]
+                },
+                "properties": {},
+                "type": "object"
+              }
+            },
+            "required": ["runtimeImagesMetadata", "scansMetadata"],
+            "type": "object"
+          },
+          "name": { "type": "string" },
+          "privacyLevel": {
+            "$ref": "#/components/schemas/RepositoryPrivacyLabel"
+          },
+          "provider": { "$ref": "#/components/schemas/RepositoryProvider" },
+          "repositorySize": { "format": "double", "type": "number" },
+          "riskFactors": { "$ref": "#/components/schemas/RiskFactors" },
+          "source": { "$ref": "#/components/schemas/SourceTypes" },
+          "totalCommitsCount": { "format": "double", "type": "number" },
+          "url": { "type": "string" },
+          "weeklyCommitOnPrs": {
+            "items": { "$ref": "#/components/schemas/WeeklyCommitOnPrs" },
+            "type": "array"
+          },
+          "workspaceId": { "type": "string" },
+          "workspaceName": { "type": "string" }
+        },
+        "required": [
+          "metadata",
+          "images",
+          "integrationId",
+          "source",
+          "customerName",
+          "url",
+          "provider",
+          "fullName",
+          "name",
+          "isArchived",
+          "defaultBranch",
+          "casId",
+          "id"
+        ],
         "type": "object"
       },
       "RepoIdToRepoName": {
@@ -69,6 +403,109 @@
           "repository": { "type": "string" }
         },
         "required": ["id", "repository"],
+        "type": "object"
+      },
+      "RepoInfo": {
+        "allOf": [
+          { "$ref": "#/components/schemas/IVCSRepository" },
+          {
+            "properties": {
+              "categorizedTechnologies": {
+                "$ref": "#/components/schemas/Technologies"
+              },
+              "ciInstances": {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/ICiInstanceInfo"
+                },
+                "properties": {},
+                "type": "object"
+              },
+              "contributors": {
+                "items": { "$ref": "#/components/schemas/Contributor" },
+                "type": "array"
+              },
+              "contributorsCount": { "format": "double", "type": "number" },
+              "dockerImages": {
+                "items": { "$ref": "#/components/schemas/DockerImage" },
+                "type": "array"
+              },
+              "issues": { "$ref": "#/components/schemas/Issues" },
+              "weeklyCommitOnPrs": {
+                "items": { "$ref": "#/components/schemas/WeeklyCommitOnPR" },
+                "type": "array"
+              }
+            },
+            "required": ["weeklyCommitOnPrs", "issues"],
+            "type": "object"
+          }
+        ]
+      },
+      "RepoRequestBody": {
+        "properties": {
+          "filters": { "$ref": "#/components/schemas/RepoRequestFilters" },
+          "orderBy": { "$ref": "#/components/schemas/OrderBy" },
+          "pageConfig": { "$ref": "#/components/schemas/Pagination" }
+        },
+        "type": "object"
+      },
+      "RepoRequestFilters": {
+        "properties": {
+          "archived": {
+            "description": "An array with length of 1 containing either ‘true’ or ‘false’, filter between archived and not archived repositories",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "casIds": { "items": { "type": "string" }, "type": "array" },
+          "ciFiles": {
+            "description": "CI files path",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "customerName": { "type": "string" },
+          "ids": {
+            "description": "VCS repository IDs",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "images": { "items": { "type": "string" }, "type": "array" },
+          "issues": {
+            "description": "Issues enum: [`IAC`, `SCA`, `SECRETS`, `CICD`, `SAST`]\nFilter repositories containing issues of the requested type",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "lastUpdated": { "format": "date-time", "type": "string" },
+          "name": {
+            "description": "Search repositories by free text",
+            "type": "string"
+          },
+          "pipelines": {
+            "description": "Get all repositories linked to the specified pipelines",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "privacyLevels": {
+            "items": { "$ref": "#/components/schemas/RepositoryPrivacyLabel" },
+            "type": "array"
+          },
+          "providers": {
+            "items": { "$ref": "#/components/schemas/RepositoryProvider" },
+            "type": "array"
+          },
+          "riskFactors": {
+            "items": { "$ref": "#/components/schemas/RiskFactorsType" },
+            "type": "array"
+          },
+          "technologies": {
+            "description": "Get repositories that make use of the specified technologies",
+            "items": { "type": "string" },
+            "type": "array"
+          },
+          "workspaceIds": {
+            "description": "Array of repository owners, filter all repositories owned by specified owners",
+            "items": { "type": "string" },
+            "type": "array"
+          }
+        },
         "type": "object"
       },
       "RepositoriesResponse": {
@@ -101,7 +538,7 @@
           "lastScanDate": { "type": "string" },
           "owner": { "type": "string" },
           "repository": { "type": "string" },
-          "selected": { "enum": [true], "nullable": false, "type": "boolean" },
+          "selected": { "type": "boolean" },
           "source": { "type": "string" },
           "url": { "type": "string" }
         },
@@ -113,6 +550,139 @@
           "owner",
           "selected"
         ],
+        "type": "object"
+      },
+      "RepositoryPrivacyLabel": {
+        "enum": ["public", "private", "internal"],
+        "nullable": true,
+        "type": "string"
+      },
+      "RepositoryProvider": { "type": "string" },
+      "RiskFactors": {
+        "properties": {
+          "isInternetExpose": { "type": "boolean" },
+          "isRepositoryDeployed": { "type": "boolean" }
+        },
+        "type": "object"
+      },
+      "RiskFactorsType": {
+        "enum": ["isInternetExpose", "isRepositoryDeployed"],
+        "type": "string"
+      },
+      "SecurityModule": {
+        "enum": ["IAC", "SCA", "SECRETS", "CICD"],
+        "type": "string"
+      },
+      "SeverityIssues": {
+        "properties": {
+          "CRITICAL": {
+            "anyOf": [
+              { "format": "double", "type": "number" },
+              { "$ref": "#/components/schemas/SecurityModule" }
+            ]
+          },
+          "HIGH": {
+            "anyOf": [
+              { "format": "double", "type": "number" },
+              { "$ref": "#/components/schemas/SecurityModule" }
+            ]
+          },
+          "INFO": {
+            "anyOf": [
+              { "format": "double", "type": "number" },
+              { "$ref": "#/components/schemas/SecurityModule" }
+            ]
+          },
+          "LOW": {
+            "anyOf": [
+              { "format": "double", "type": "number" },
+              { "$ref": "#/components/schemas/SecurityModule" }
+            ]
+          },
+          "MEDIUM": {
+            "anyOf": [
+              { "format": "double", "type": "number" },
+              { "$ref": "#/components/schemas/SecurityModule" }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "SourceTypes": {
+        "enum": [
+          "admissionController",
+          "AlibabaCloud",
+          "AWS",
+          "Azure",
+          "AzureOnPrem",
+          "AzureRepos",
+          "Bitbucket",
+          "bitbucketEnterprise",
+          "circleci",
+          "cli",
+          "codebuild",
+          "GCP",
+          "Github",
+          "githubActions",
+          "githubEnterprise",
+          "Gitlab",
+          "gitlabEnterprise",
+          "jenkins",
+          "Kubernetes",
+          "kubernetesWorkloads",
+          "terraformCloud",
+          "terraformEnterprise",
+          "tfcRunTasks",
+          "tfeRunTasks",
+          "Transporter",
+          "OnPrem"
+        ],
+        "type": "string"
+      },
+      "Technologies": {
+        "properties": {
+          "CICD": { "$ref": "#/components/schemas/Technology" },
+          "Configuration": { "$ref": "#/components/schemas/Technology" },
+          "Data": { "$ref": "#/components/schemas/Technology" },
+          "Devops": { "$ref": "#/components/schemas/Technology" },
+          "Documentation": { "$ref": "#/components/schemas/Technology" },
+          "License": { "$ref": "#/components/schemas/Technology" },
+          "Markup": { "$ref": "#/components/schemas/Technology" },
+          "PackageManager": { "$ref": "#/components/schemas/Technology" },
+          "Programming": { "$ref": "#/components/schemas/Technology" },
+          "Prose": { "$ref": "#/components/schemas/Technology" },
+          "Unknown": { "$ref": "#/components/schemas/Technology" }
+        },
+        "type": "object"
+      },
+      "Technology": {
+        "additionalProperties": {
+          "properties": {
+            "detectedDate": { "format": "date-time", "type": "string" },
+            "percentage": { "format": "double", "type": "number" }
+          },
+          "required": ["detectedDate"],
+          "type": "object"
+        },
+        "properties": {},
+        "type": "object"
+      },
+      "WeeklyCommitOnPR": {
+        "properties": {
+          "branchName": { "type": "string" },
+          "currWeeklyCommits": { "format": "double", "type": "number" },
+          "prevWeeklyCommits": { "format": "double", "type": "number" }
+        },
+        "required": ["prevWeeklyCommits", "currWeeklyCommits", "branchName"],
+        "type": "object"
+      },
+      "WeeklyCommitOnPrs": {
+        "properties": {
+          "branchName": { "type": "string" },
+          "currWeeklyCommits": { "format": "double", "type": "number" },
+          "prevWeeklyCommits": { "format": "double", "type": "number" }
+        },
+        "required": ["prevWeeklyCommits", "currWeeklyCommits", "branchName"],
         "type": "object"
       },
       "integrationResponse": {
@@ -230,16 +800,22 @@
           "500": { "description": "Could not fetch Repositories for customer" }
         },
         "security": [{ "CustomAuthorizer": [] }],
-        "summary": "List repository list",
+        "summary": "List Repository List",
         "tags": ["Repositories"],
+        "x-bc-required-permissions": [
+          "CCSProjects_READ",
+          "CCSDevelopmentPipelinesCodeReviews_READ",
+          "CCSDevelopmentPipelinesProjects_READ",
+          "CCSSupplyChain_READ"
+        ],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/repositories\"\n\nquerystring = {\"errorsCount\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/repositories\"\n\nquerystring = {\"errorsCount\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/code/api/v1/repositories?errorsCount=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/repositories?errorsCount=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
           }
         ]
       },
@@ -269,16 +845,83 @@
           "422": { "description": "Request arguments validation error" }
         },
         "security": [{ "CustomAuthorizer": [] }],
-        "summary": "Integrate multiple repositories",
+        "summary": "Integrate Multiple Repositories",
         "tags": ["Repositories"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/repositories\"\n\npayload = {\n    \"data\": [\"string\"],\n    \"id\": \"string\",\n    \"type\": \"github\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/repositories\"\n\npayload = {\n    \"data\": [\"string\"],\n    \"id\": \"string\",\n    \"type\": \"github\"\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/repositories \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"data\":[\"string\"],\"id\":\"string\",\"type\":\"github\"}'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/repositories \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"data\":[\"string\"],\"id\":\"string\",\"type\":\"github\"}'"
+          }
+        ]
+      }
+    },
+    "/code/api/v1/repositories/branches": {
+      "get": {
+        "description": "Get a list with all the repositories branches for the requesting customer\nThe returned branches are branches that has at list one CICD runs\neach branches item includes: name, creationDate, CICD status",
+        "operationId": "getBranches",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "repoOwner",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "repoName",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "branches": [
+                        {
+                          "creationDate": "2021-07-13T14:22:53.964Z",
+                          "defaultBranch": false,
+                          "name": "some_branch"
+                        },
+                        {
+                          "creationDate": null,
+                          "defaultBranch": true,
+                          "name": "master"
+                        }
+                      ],
+                      "source": "Gitlab"
+                    }
+                  }
+                },
+                "schema": { "$ref": "#/components/schemas/BranchesResponse" }
+              }
+            },
+            "description": "repository branches"
+          },
+          "400": {
+            "description": "Could not get branches, check GET query params"
+          },
+          "422": { "description": "Request arguments validation error" },
+          "500": { "description": "Could not fetch Repositories for customer" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get Repository Branches with CICD Runs",
+        "tags": ["Repositories"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/repositories/branches\"\n\nquerystring = {\"repoOwner\":\"SOME_STRING_VALUE\",\"repoName\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/repositories/branches?repoOwner=SOME_STRING_VALUE&repoName=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
           }
         ]
       }
@@ -337,83 +980,16 @@
           }
         },
         "security": [{ "CustomAuthorizer": [] }],
-        "summary": "Get a repository name to UUID mapping of the requested UUIDs",
+        "summary": "Get Repository Name to UUID Mapping of Requested UUIDs",
         "tags": ["Repositories"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/repositories/query\"\n\npayload = {\"repositoriesIds\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/repositories/query\"\n\npayload = {\"repositoriesIds\": [\"string\"]}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request POST \\\n  --url https://api.prismacloud.io/code/api/v1/repositories/query \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositoriesIds\":[\"string\"]}'"
-          }
-        ]
-      }
-    },
-    "/code/api/v1/repositories/branches": {
-      "get": {
-        "description": "Get a list with all the repositories branches for the requesting customer\nThe returned branches are branches that has at list one CICD runs\neach branches item includes: name, creationDate, CICD status",
-        "operationId": "getBranches",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "repoOwner",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "in": "query",
-            "name": "repoName",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "Example 1": {
-                    "value": {
-                      "branches": [
-                        {
-                          "creationDate": "2021-07-13T14:22:53.964Z",
-                          "defaultBranch": false,
-                          "name": "some_branch"
-                        },
-                        {
-                          "creationDate": null,
-                          "defaultBranch": true,
-                          "name": "master"
-                        }
-                      ],
-                      "source": "Gitlab"
-                    }
-                  }
-                },
-                "schema": { "$ref": "#/components/schemas/BranchesResponse" }
-              }
-            },
-            "description": "repository branches"
-          },
-          "400": {
-            "description": "Could not get branches, check GET query params"
-          },
-          "422": { "description": "Request arguments validation error" },
-          "500": { "description": "Could not fetch Repositories for customer" }
-        },
-        "security": [{ "CustomAuthorizer": [] }],
-        "summary": "Get the repository branches (that has CICD runs)",
-        "tags": ["Repositories"],
-        "x-codeSamples": [
-          {
-            "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/repositories/branches\"\n\nquerystring = {\"repoOwner\":\"SOME_STRING_VALUE\",\"repoName\":\"SOME_STRING_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
-          },
-          {
-            "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/code/api/v1/repositories/branches?repoOwner=SOME_STRING_VALUE&repoName=SOME_STRING_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/repositories/query \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"repositoriesIds\":[\"string\"]}'"
           }
         ]
       }
@@ -507,21 +1083,72 @@
           "422": { "description": "Request arguments validation error" }
         },
         "security": [{ "CustomAuthorizer": [] }],
-        "summary": "search repositories",
+        "summary": "Search Repositories",
         "tags": ["Repositories"],
         "x-codeSamples": [
           {
             "lang": "Python + Requests",
-            "source": "import requests\n\nurl = \"https://api.prismacloud.io/code/api/v1/repositories/search\"\n\nquerystring = {\"id\":\"SOME_STRING_VALUE\",\"selected\":\"SOME_BOOLEAN_VALUE\",\"source\":\"SOME_STRING_VALUE\",\"repoOwner\":\"SOME_STRING_VALUE\",\"repoName\":\"SOME_STRING_VALUE\",\"limit\":\"SOME_INTEGER_VALUE\",\"offset\":\"SOME_INTEGER_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/repositories/search\"\n\nquerystring = {\"id\":\"SOME_STRING_VALUE\",\"selected\":\"SOME_BOOLEAN_VALUE\",\"source\":\"SOME_STRING_VALUE\",\"repoOwner\":\"SOME_STRING_VALUE\",\"repoName\":\"SOME_STRING_VALUE\",\"limit\":\"SOME_INTEGER_VALUE\",\"offset\":\"SOME_INTEGER_VALUE\"}\n\nheaders = {\"authorization\": \"REPLACE_KEY_VALUE\"}\n\nresponse = requests.request(\"GET\", url, headers=headers, params=querystring)\n\nprint(response.text)"
           },
           {
             "lang": "Shell + Curl",
-            "source": "curl --request GET \\\n  --url 'https://api.prismacloud.io/code/api/v1/repositories/search?id=SOME_STRING_VALUE&selected=SOME_BOOLEAN_VALUE&source=SOME_STRING_VALUE&repoOwner=SOME_STRING_VALUE&repoName=SOME_STRING_VALUE&limit=SOME_INTEGER_VALUE&offset=SOME_INTEGER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+            "source": "curl --request GET \\\n  --url 'http://undefinedundefined/code/api/v1/repositories/search?id=SOME_STRING_VALUE&selected=SOME_BOOLEAN_VALUE&source=SOME_STRING_VALUE&repoOwner=SOME_STRING_VALUE&repoName=SOME_STRING_VALUE&limit=SOME_INTEGER_VALUE&offset=SOME_INTEGER_VALUE' \\\n  --header 'authorization: REPLACE_KEY_VALUE'"
+          }
+        ]
+      }
+    },
+    "/code/api/v1/vcs-repository/repositories": {
+      "post": {
+        "description": "Get repositories page",
+        "operationId": "getVCSRepositoryPage",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RepoRequestBody" }
+            }
+          },
+          "description": "the body includes filters page configuration.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "items": { "$ref": "#/components/schemas/RepoInfo" },
+                      "type": "array"
+                    },
+                    {
+                      "items": { "$ref": "#/components/schemas/RdsRepoInfo" },
+                      "type": "array"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "repositories"
+          },
+          "422": { "description": "Request arguments validation error" }
+        },
+        "security": [{ "CustomAuthorizer": [] }],
+        "summary": "Get Repositories Page",
+        "tags": ["Repositories"],
+        "x-codeSamples": [
+          {
+            "lang": "Python + Requests",
+            "source": "import requests\n\nurl = \"http://undefinedundefined/code/api/v1/vcs-repository/repositories\"\n\npayload = {\n    \"filters\": {\n        \"archived\": [\"string\"],\n        \"casIds\": [\"string\"],\n        \"ciFiles\": [\"string\"],\n        \"customerName\": \"string\",\n        \"ids\": [\"string\"],\n        \"images\": [\"string\"],\n        \"issues\": [\"string\"],\n        \"lastUpdated\": \"2019-08-24T14:15:22Z\",\n        \"name\": \"string\",\n        \"pipelines\": [\"string\"],\n        \"privacyLevels\": [\"public\"],\n        \"providers\": [\"string\"],\n        \"riskFactors\": [\"isInternetExpose\"],\n        \"technologies\": [\"string\"],\n        \"workspaceIds\": [\"string\"]\n    },\n    \"orderBy\": {\n        \"fieldName\": \"string\",\n        \"isAsc\": True,\n        \"type\": \"string\"\n    },\n    \"pageConfig\": {\n        \"page\": 0,\n        \"pageSize\": 0\n    }\n}\nheaders = {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"REPLACE_KEY_VALUE\"\n}\n\nresponse = requests.request(\"POST\", url, json=payload, headers=headers)\n\nprint(response.text)"
+          },
+          {
+            "lang": "Shell + Curl",
+            "source": "curl --request POST \\\n  --url http://undefinedundefined/code/api/v1/vcs-repository/repositories \\\n  --header 'authorization: REPLACE_KEY_VALUE' \\\n  --header 'content-type: application/json' \\\n  --data '{\"filters\":{\"archived\":[\"string\"],\"casIds\":[\"string\"],\"ciFiles\":[\"string\"],\"customerName\":\"string\",\"ids\":[\"string\"],\"images\":[\"string\"],\"issues\":[\"string\"],\"lastUpdated\":\"2019-08-24T14:15:22Z\",\"name\":\"string\",\"pipelines\":[\"string\"],\"privacyLevels\":[\"public\"],\"providers\":[\"string\"],\"riskFactors\":[\"isInternetExpose\"],\"technologies\":[\"string\"],\"workspaceIds\":[\"string\"]},\"orderBy\":{\"fieldName\":\"string\",\"isAsc\":true,\"type\":\"string\"},\"pageConfig\":{\"page\":0,\"pageSize\":0}}'"
           }
         ]
       }
     }
   },
-  "servers": [{ "url": "https://api.prismacloud.io" }],
+  "servers": null,
   "tags": [{ "name": "Repositories" }]
 }

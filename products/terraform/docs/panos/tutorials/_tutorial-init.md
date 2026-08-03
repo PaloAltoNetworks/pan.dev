@@ -57,7 +57,7 @@ variable "panos_password" {
 .
 ```
 
-:::caution
+:::warning
 The PAN-OS credentials are being stored within the code and on disk unencrypted. This is not a production-level solution, and other solutions for managing secrets should be considered for real-world deployments. Hashicorp (owners of Terraform) and many others have solutions for this.
 :::
 

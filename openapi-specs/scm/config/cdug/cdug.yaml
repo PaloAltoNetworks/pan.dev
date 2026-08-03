@@ -1,0 +1,1341 @@
+openapi: 3.0.2
+info:
+  title: CIE - Cloud Dynamic User Group CRUD Operations APIs Mounted on Strata Cloud
+    Manager
+  version: 1.0.0
+  description: "Cloud Dynamic User Groups (CDUG) API for managing dynamic user groups\
+    \ in the Directory Sync Service.\n\nThis API provides endpoints for creating,\
+    \ updating, retrieving, and deleting Cloud Dynamic User Groups,\nas well as fetching\
+    \ categories and user attribute values.\n\n**All endpoints require SCM JWT access\
+    \ token** and operate within the context of a tenant (TSG). This Open API spec\
+    \ file was created on April 15, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo\
+    \ Alto Networks is a registered trademark of Palo Alto Networks. A list of our\
+    \ trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+components:
+  schemas:
+    GroupCreateRequest:
+      type: object
+      required:
+      - domain
+      - value
+      - useNormalizedAttrs
+      properties:
+        domain:
+          type: string
+          description: Domain name (e.g., okta-directory, uppercasedss.onmicrosoft.com)
+          example: okta-directory
+        useNormalizedAttrs:
+          type: string
+          enum:
+          - 'true'
+          description: Must be set to "true" for external API calls (SCM integration)
+          example: 'true'
+        value:
+          type: object
+          required:
+          - category
+          - groups
+          properties:
+            category:
+              type: string
+              description: Category name obtained from GET /cloud-dug-definition/category
+                endpoint
+              example: Attribute Based
+            groups:
+              type: array
+              description: Array of groups to create (can create multiple groups in
+                a single request)
+              items:
+                type: object
+                required:
+                - Name
+                - user_attribute_constrain
+                properties:
+                  Name:
+                    type: string
+                    description: Base name for the group (system automatically appends
+                      "_cdug" suffix)
+                    example: test_123
+                  description:
+                    type: string
+                    description: Optional description for the group
+                    example: Active users with standard account control
+                  user_attribute_constrain:
+                    type: object
+                    description: 'Defines the criteria for dynamic group membership.
+
+                      Use $and when ALL conditions must match, or $or when ANY condition
+                      must match.
+
+                      Attribute names must be from the context attributes list from
+                      GET /category endpoint.
+
+                      Attribute values must match values from GET /user-attr-values
+                      endpoint.
+
+                      '
+                    properties:
+                      $and:
+                        type: array
+                        description: All conditions must be true for a user to be
+                          included in the group
+                        items:
+                          type: object
+                          additionalProperties:
+                            type: string
+                      $or:
+                        type: array
+                        description: Any condition must be true for a user to be included
+                          in the group
+                        items:
+                          type: object
+                          additionalProperties:
+                            type: string
+                    example:
+                      $and:
+                      - UserAccountControl: '512'
+    GroupUpdateRequest:
+      type: object
+      required:
+      - domain
+      - value
+      - useNormalizedAttrs
+      properties:
+        domain:
+          type: string
+          description: Domain name (same as used when creating the group)
+          example: okta-directory
+        useNormalizedAttrs:
+          type: string
+          enum:
+          - 'true'
+          description: Must be set to "true" for external API calls (SCM integration)
+          example: 'true'
+        value:
+          type: object
+          required:
+          - objectGUID
+          properties:
+            objectGUID:
+              type: string
+              description: '**Required.** Unique identifier of the group to update.
+
+                This identifies which group to update and is obtained from:
+
+                - POST /cloud-dug-definition response (when creating a group)
+
+                - GET /cloud-dug-definition/group response (when listing groups)
+
+                '
+              example: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+            user_attribute_constrain:
+              type: object
+              description: 'Optional. Updated attribute constraints defining group
+                membership.
+
+                Use $and when ALL conditions must match, or $or when ANY condition
+                must match.
+
+                If provided, this replaces the existing constraints entirely.
+
+                '
+              properties:
+                $and:
+                  type: array
+                  description: All conditions must be true for a user to be included
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: string
+                $or:
+                  type: array
+                  description: Any condition must be true for a user to be included
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: string
+              example:
+                $and:
+                - State: CA
+    GroupCreateResponse:
+      type: object
+      description: Response from creating Cloud Dynamic User Groups
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the creation was successful
+          example: true
+        result:
+          type: object
+          properties:
+            category:
+              type: string
+              description: The category name the groups were created in
+              example: Attribute Based
+            groups:
+              type: array
+              description: Array of created group objects with full details
+              items:
+                type: object
+                properties:
+                  objectGUID:
+                    type: string
+                    description: Unique identifier for the created group
+                    example: 83a1cf1a-2709-11f1-b6ac-22edd0e18ff6
+                  Name:
+                    type: string
+                    description: Group name (with _cdug suffix)
+                    example: test_123_cdug
+                  name:
+                    type: string
+                    description: Group name (lowercase field)
+                    example: test_123_cdug
+                  Common-Name:
+                    type: string
+                    description: Common name of the group
+                    example: test_123_cdug
+                  Distinguished Name:
+                    type: string
+                    description: LDAP distinguished name path
+                    example: CN=test_123_cdug,CN=Attribute Based,CN=CDUG,DC=okta-directory
+                  Object Class:
+                    type: array
+                    description: LDAP object class
+                    items:
+                      type: string
+                    example:
+                    - group
+                  description:
+                    type: string
+                    description: Group description
+                    example: ''
+                  groupTypes:
+                    type: string
+                    description: Type of group
+                    example: CloudDUG
+                  cdug_status:
+                    type: string
+                    description: Status of the CDUG operation
+                    example: created
+                  created:
+                    type: string
+                    description: Creation timestamp in LDAP format
+                    example: 20260323224204.0Z
+                  createdDateTime:
+                    type: string
+                    description: Creation timestamp
+                    example: 20260323224204.0Z
+                  WhenChanged:
+                    type: string
+                    description: Last modification timestamp
+                    example: 20260323224204.0Z
+                  ext_gtype:
+                    type: integer
+                    description: Extended group type identifier
+                    example: 20
+                  ext_type:
+                    type: integer
+                    description: Extended type identifier
+                    example: 3
+                  ext_lastmod:
+                    type: number
+                    description: Last modification timestamp (Unix epoch with decimals)
+                    example: 1774305724.180538
+                  user_attribute_constrain:
+                    type: object
+                    description: The attribute constraints used to define group membership
+                    example:
+                      $and:
+                      - UserAccountControl: '512'
+    GroupUpdateResponse:
+      type: object
+      description: 'Response from updating a Cloud Dynamic User Group.
+
+
+        **Important:** The API returns HTTP 200 even when the objectGUID is not found.
+
+        When the group is not found, the response will have `result.sync` with an
+        error message
+
+        instead of the updated group details.
+
+        '
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was processed (does not mean the update
+            succeeded)
+          example: true
+        result:
+          type: object
+          description: 'Contains either:
+
+            - Updated group details (on successful update)
+
+            - Error information with `sync` field (when objectGUID not found)
+
+            '
+          properties:
+            objectGUID:
+              type: string
+              description: Unique identifier of the updated group (present on successful
+                update)
+              example: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+            Mail:
+              type: string
+              description: Email address (if provided in update)
+              example: ''
+            WhenChanged:
+              type: string
+              description: Timestamp when the group was last modified
+              example: 20260325044739.0Z
+            cdug_status:
+              type: string
+              description: Status after the update operation
+              enum:
+              - updated
+              - deployed
+              example: updated
+            description:
+              type: string
+              description: Group description
+              example: ''
+            ext_lastmod:
+              type: number
+              description: Last modification timestamp (Unix epoch with decimals)
+              example: 1774414059.086046
+            user_attribute_constrain:
+              type: object
+              description: The updated attribute constraints
+              additionalProperties: true
+              example:
+                $and:
+                - State: CA
+            Name:
+              type: string
+              description: Updated group name (if Name was provided in request)
+              example: updated_group_name
+            Common-Name:
+              type: string
+              description: Updated common name (if provided in request)
+              example: updated_group_name
+            sync:
+              type: string
+              description: 'Error message when objectGUID is not found.
+
+                Example: "Not found cloud dug def group guid <objectGUID>"
+
+                '
+              example: Not found cloud dug def group guid 72bbc29c-2703-11f1-b839-22edd0e18ff61
+            value:
+              type: string
+              description: Empty string when objectGUID is not found
+              example: ''
+    GroupDeleteResponse:
+      type: object
+      description: 'Response from deleting Cloud Dynamic User Group(s).
+
+
+        **Important:** HTTP 200 does not guarantee the group was deleted.
+
+        Check the response fields to determine the actual outcome.
+
+        '
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was processed (does not mean deletion
+            completed)
+          example: true
+        result:
+          type: object
+          description: 'Contains deletion status information.
+
+            Check `sync` field to determine if deletion completed or is pending.
+
+            '
+          properties:
+            sync:
+              type: string
+              description: 'Deletion status indicator:
+
+                - "success" - Group was successfully deleted
+
+                - "Cloud Dynamic Group definition saved. Unable to schedule sync..."
+                - Deletion is pending due to sync in progress
+
+                '
+              enum:
+              - success
+              - Cloud Dynamic Group definition saved. Unable to schedule sync. Try
+                to sync changes manually or wait for the next automated sync
+              example: success
+            value:
+              nullable: true
+              description: Always null in delete responses
+              example: null
+            detail:
+              type: string
+              description: 'Additional error/status details. Present when deletion
+                is pending due to sync in progress.
+
+                Example: "Data sync in-progress for customer <customer_id>, Please
+                reschedule later"
+
+                '
+              example: Data sync in-progress for customer 4231344437556610560, Please
+                reschedule later
+    CategoryWithAttributes:
+      type: object
+      description: Category definition with available context attributes
+      properties:
+        category:
+          type: string
+          description: Category name
+          example: Attribute Based
+        context attributes:
+          type: array
+          description: List of user attributes that can be used to create groups in
+            this category
+          items:
+            type: string
+          example:
+          - UserAccountControl
+          - Department
+          - Location
+          - Country
+          - Title
+        description:
+          type: string
+          description: Description of what this category is used for
+          example: Grouping based on the common user attributes
+    GroupListResponse:
+      type: object
+      description: Response from GET Cloud Dynamic User Groups with pagination
+      properties:
+        count:
+          type: integer
+          description: Number of groups returned in current page
+          example: 10
+        pageNum:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSz:
+          type: integer
+          description: Page size (number of items per page)
+          example: 10
+        remains:
+          type: integer
+          description: Number of remaining pages after the current page
+          example: 2
+        value:
+          type: array
+          description: Array of Cloud Dynamic User Group objects
+          items:
+            type: object
+            properties:
+              objectGUID:
+                type: string
+                description: Unique identifier for the group (use this for update/delete
+                  operations)
+                example: d32d355e-230f-11f1-841b-5a9eb7df464d
+              defID:
+                type: string
+                description: Category identifier (use this to filter groups by category)
+                example: 116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496
+              category:
+                type: string
+                description: Category name
+                example: Attribute Based
+              Name:
+                type: string
+                description: Group name
+                example: test_cdug
+              name:
+                type: string
+                description: Group name (lowercase field)
+                example: test_cdug
+              Common-Name:
+                type: string
+                description: Common name
+                example: test_cdug
+              Distinguished Name:
+                type: string
+                description: LDAP distinguished name
+                example: CN=test_cdug,CN=Attribute Based,CN=CDUG,DC=panwssfdev-preview,DC=oktapreview,DC=com
+              Object Class:
+                type: array
+                items:
+                  type: string
+                example:
+                - group
+              description:
+                type: string
+                description: Group description
+                example: ''
+              groupTypes:
+                type: string
+                description: Type of group
+                example: CloudDUG
+              cdug_status:
+                type: string
+                description: Deployment status of the CDUG
+                enum:
+                - created
+                - deployed
+                example: deployed
+              created:
+                type: string
+                description: Creation timestamp in LDAP format
+                example: 20260318211709.0Z
+              createdDateTime:
+                type: string
+                description: Creation date and time
+                example: 20260318211709.0Z
+              WhenChanged:
+                type: string
+                description: Last modification timestamp
+                example: 20260318211709.0Z
+              ext_gtype:
+                type: integer
+                description: Extended group type identifier
+                example: 20
+              ext_type:
+                type: integer
+                description: Extended type identifier
+                example: 3
+              ext_lastmod:
+                type: number
+                description: Last modification timestamp (Unix epoch with decimals)
+                example: 1773868629.963407
+              _id:
+                type: string
+                description: Internal database identifier
+                example: 69bb1655a0708397b1188640
+              user_attribute_constrain:
+                type: object
+                description: The attribute constraints defining group membership
+                additionalProperties: true
+                example:
+                  $and:
+                  - UserAccountControl: '512'
+              Mail:
+                type: string
+                description: Email address (optional field)
+                example: ''
+              update_ts:
+                type: string
+                description: Update timestamp (optional field)
+                example: Timestamp(1773871026, 1)
+  responses:
+    400_bad_request:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+              error:
+                type: string
+              message:
+                type: string
+          examples:
+            missingUseNormalizedAttrs:
+              summary: Missing useNormalizedAttrs
+              value:
+                statusCode: 400
+                error: Bad Request
+                message: useNormalizedAttrs is required
+            invalidUseNormalizedAttrs:
+              summary: Invalid useNormalizedAttrs value
+              value:
+                statusCode: 400
+                error: Bad Request
+                message: useNormalizedAttrs should be set to true
+            missingDomainOrAggregation:
+              summary: Missing required parameters
+              value:
+                statusCode: 400
+                error: Bad Request
+                message: Either domain or aggregationId is required
+            invalidPageSize:
+              summary: Invalid page size
+              value:
+                statusCode: 400
+                error: Bad Request
+                message: pageSz must be less than or equal to 1000
+    401_unauthorized:
+      description: Unauthorized - Invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+              error:
+                type: string
+              message:
+                type: string
+          example:
+            statusCode: 401
+            error: Unauthorized
+            message: Invalid JWT token
+    500_internal_error:
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              result:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      error-message:
+                        type: string
+          example:
+            success: false
+            result:
+              error:
+                error-message: Internal Server Error
+ExternalTags: {}
+paths:
+  /directory-sync/v1/cloud-dug-definition/category:
+    get:
+      summary: Retrieve Dynamic Group Categories
+      description: 'Fetches all available categories in a domain along with their
+        context attributes.
+
+        This is the **first Application Programming Interface** customers should call
+        to understand what categories are available
+
+        and what context attributes can be used to create dynamic user groups.
+
+
+        The returned context attributes can then be used with the `/user-attr-values`
+        endpoint
+
+        to get valid values for each attribute.'
+      operationId: GetDirectory-syncV1Cloud-dug-definitionCategory
+      responses:
+        '200':
+          description: Successfully retrieved categories with their context attributes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryWithAttributes'
+              example:
+                values:
+                - category: Attribute Based
+                  context attributes:
+                  - UserAccountControl
+                  - Department
+                  - Location
+                  - Country
+                  - Title
+                  - onPremisesSecurityIdentifier
+                  - Manager
+                  - Given Name
+                  - Sur Name
+                  - CompanyName
+                  - EmployeeId
+                  - FaxNumber
+                  - IsResourceAccount
+                  - MobilePhone
+                  - OnPremisesSamAccountName
+                  - OnPremisesDistinguishedName
+                  - OnPremisesExtensionAttributes
+                  - OnPremisesImmutableId
+                  - OnPremisesProvisioningErrors
+                  - OnPremisesSyncEnabled
+                  - onPremisesUserPrincipalName
+                  - OnPremisesDomainName
+                  - PasswordProfile
+                  - PostalCode
+                  - PreferredLanguage
+                  - State
+                  - StreetAddress
+                  - UsageLocation
+                  - UserType
+                  description: Grouping based on the common user attributes
+                - category: On Demand Assignment
+                  context attributes: []
+                  description: Group members assigned manually
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '404':
+          description: No categories found
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters:
+      - name: domain
+        in: query
+        description: Domain name (similar to the Directory Name on the CIE UI e.g.,
+          uppercasedss.onmicrosoft.com, okta-directory)
+        required: true
+        schema:
+          type: string
+        example: uppercasedss.onmicrosoft.com
+      tags:
+      - Cloud Dynamic User Groups
+  /directory-sync/v1/user-attr-values:
+    get:
+      summary: Retrieve User Attribute Values
+      description: 'Fetches all unique values for a specific user attribute in a domain.
+
+
+        **This is the second Application Programming Interface** customers should
+        call after getting categories. Use the
+
+        context attributes returned from `/cloud-dug-definition/category` to query
+        this endpoint
+
+        and get the valid values for each attribute. These values can then be used
+        when creating
+
+        dynamic user groups.'
+      operationId: GetDirectory-syncV1User-attr-values
+      responses:
+        '200':
+          description: Successfully retrieved attribute values
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the request was successful
+                  result:
+                    type: object
+                    properties:
+                      values:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of unique values for the specified attribute
+              examples:
+                userAccountControlValues:
+                  summary: UserAccountControl attribute values
+                  value:
+                    success: true
+                    result:
+                      values:
+                      - '512'
+                departmentValues:
+                  summary: Department attribute values
+                  value:
+                    success: true
+                    result:
+                      values:
+                      - Engineering
+                      - Sales
+                      - Marketing
+                      - HR
+                      - Finance
+                locationValues:
+                  summary: Location attribute values
+                  value:
+                    success: true
+                    result:
+                      values:
+                      - New York
+                      - San Francisco
+                      - London
+                      - Tokyo
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters:
+      - name: domain
+        in: query
+        description: Domain name (same as used in category endpoint)
+        required: true
+        schema:
+          type: string
+        example: okta-directory
+      - name: attrName
+        in: query
+        description: Attribute name to get values for (must be one of the context
+          attributes returned from category endpoint)
+        required: true
+        schema:
+          type: string
+        example: UserAccountControl
+      - name: riskSourceId
+        in: query
+        description: Risk source ID for filtering
+        required: false
+        schema:
+          type: string
+        example: rs-123
+      tags:
+      - Cloud Dynamic User Groups
+  /directory-sync/v1/cloud-dug-definition:
+    post:
+      summary: Create Cloud Dynamic User Groups
+      description: "Creates new dynamic user groups in a domain based on user attribute\
+        \ constraints.\n\n**This is the third Application Programming Interface**\
+        \ in the workflow after getting categories and attribute values.\n\n## Workflow\
+        \ Context\n1. First, call GET `/cloud-dug-definition/category?domain=<domain>`\
+        \ to get available categories and context attributes\n2. Then, call GET `/user-attr-values?domain=<domain>&attrName=<attribute>`\
+        \ for each context attribute to get valid values\n3. Finally, use this POST\
+        \ endpoint to create groups using the category name and attribute values from\
+        \ steps 1 and 2\n\n## Request Body Details\n- **domain**: The domain name\
+        \ (same as used in previous Application Programming Interface calls)\n- **useNormalizedAttrs**:\
+        \ Must be set to `\"true\"` for external Application Programming Interface\
+        \ calls (SCM integration)\n- **value.category**: Category name obtained from\
+        \ the GET category endpoint (e.g., \"Attribute Based\", \"On Demand Assignment\"\
+        )\n- **value.groups**: Array of groups to create\n  - **Name**: The base name\
+        \ for the group (system will append \"_cdug\" suffix automatically)\n  - **description**:\
+        \ Optional description for the group\n  - **user_attribute_constrain**: Defines\
+        \ the criteria for dynamic group membership\n    - Use `$and` operator when\
+        \ ALL conditions must be met\n    - Use `$or` operator when ANY condition\
+        \ must be met\n    - Attribute names must be from the context attributes list\n\
+        \    - Attribute values must be from the values returned by `/user-attr-values`\
+        \ endpoint\n\n**Note:** The system automatically appends \"_cdug\" suffix\
+        \ to the group."
+      operationId: PostDirectory-syncV1Cloud-dug-definition
+      responses:
+        '200':
+          description: Successfully created dynamic group(s)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupCreateResponse'
+              example:
+                success: true
+                result:
+                  category: Attribute Based
+                  groups:
+                  - Common-Name: test_123_cdug
+                    Distinguished Name: CN=test_123_cdug,CN=Attribute Based,CN=CDUG,DC=okta-directory
+                    Name: test_123_cdug
+                    Object Class:
+                    - group
+                    WhenChanged: 20260323224204.0Z
+                    cdug_status: created
+                    created: 20260323224204.0Z
+                    createdDateTime: 20260323224204.0Z
+                    description: ''
+                    ext_gtype: 20
+                    ext_lastmod: 1774305724.180538
+                    ext_type: 3
+                    groupTypes: CloudDUG
+                    name: test_123_cdug
+                    objectGUID: 83a1cf1a-2709-11f1-b6ac-22edd0e18ff6
+                    user_attribute_constrain:
+                      $and:
+                      - UserAccountControl: '512'
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Cloud Dynamic User Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupCreateRequest'
+            examples:
+              createSingleGroup:
+                summary: Create a single dynamic group with UserAccountControl constraint
+                value:
+                  domain: okta-directory
+                  useNormalizedAttrs: 'true'
+                  value:
+                    category: Attribute Based
+                    groups:
+                    - Name: test_123
+                      description: ''
+                      user_attribute_constrain:
+                        $and:
+                        - UserAccountControl: '512'
+              createMultipleConstraints:
+                summary: Create group with multiple AND constraints
+                value:
+                  domain: uppercasedss.onmicrosoft.com
+                  useNormalizedAttrs: 'true'
+                  value:
+                    category: Attribute Based
+                    groups:
+                    - Name: engineering_active_users
+                      description: Active users in Engineering department
+                      user_attribute_constrain:
+                        $and:
+                        - UserAccountControl: '512'
+                        - Department: Engineering
+              createWithOrConstraints:
+                summary: Create group with OR constraints
+                value:
+                  domain: okta-directory
+                  useNormalizedAttrs: 'true'
+                  value:
+                    category: Attribute Based
+                    groups:
+                    - Name: sales_or_marketing
+                      description: Users in Sales or Marketing
+                      user_attribute_constrain:
+                        $or:
+                        - Department: Sales
+                        - Department: Marketing
+  /directory-sync/v1/cloud-dug-definition/group:
+    get:
+      summary: Retrieve Cloud Dynamic User Groups
+      description: 'Fetches dynamic user groups by domain or aggregationId with support
+        for filtering and pagination.
+
+
+        **Note:** Set `useNormalizedAttrs` to `"true"` for external Application Programming
+        Interface calls (SCM integration).
+
+
+        ## Usage Patterns
+
+
+        ### 1. List all groups in a domain (with pagination)
+
+        ```
+
+        GET /cloud-dug-definition/group?domain=okta-directory&useNormalizedAttrs=true&pageNum=1&pageSz=10
+
+        ```
+
+        This returns all CDUG groups with pagination. From this response, you can
+        extract:
+
+        - `defID` - Category identifier for filtering groups by category
+
+        - `objectGUID` - Unique group identifier for fetching/updating/deleting a
+        specific group
+
+
+        ### 2. Get a specific group by objectGUID
+
+        After creating a group via POST, you receive an `objectGUID` in the response.
+        Use it to fetch that specific group:
+
+        ```
+
+        GET /cloud-dug-definition/group?domain=okta-directory&objectGUID=83a1cf1a-2709-11f1-b6ac-22edd0e18ff6&useNormalizedAttrs=true
+
+        ```
+
+
+        ### 3. Get all groups in a specific category
+
+        First, call GET groups to see all groups and their `defID` values. Then filter
+        by category:
+
+        ```
+
+        GET /cloud-dug-definition/group?domain=okta-directory&defID=116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496&useNormalizedAttrs=true
+
+        ```
+
+        This returns only groups belonging to that category (e.g., "Attribute Based").'
+      operationId: GetDirectory-syncV1Cloud-dug-definitionGroup
+      responses:
+        '200':
+          description: Successfully retrieved dynamic groups with pagination information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupListResponse'
+              example:
+                count: 10
+                pageNum: 1
+                pageSz: 10
+                remains: 2
+                value:
+                - Common-Name: test_cdug
+                  Distinguished Name: CN=test_cdug,CN=Attribute Based,CN=CDUG,DC=panwssfdev-preview,DC=oktapreview,DC=com
+                  Name: test_cdug
+                  Object Class:
+                  - group
+                  WhenChanged: 20260318211709.0Z
+                  _id: 69bb1655a0708397b1188640
+                  category: Attribute Based
+                  cdug_status: deployed
+                  created: 20260318211709.0Z
+                  createdDateTime: 20260318211709.0Z
+                  defID: 116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496
+                  description: ''
+                  ext_gtype: 20
+                  ext_lastmod: 1773868629.963407
+                  ext_type: 3
+                  groupTypes: CloudDUG
+                  name: test_cdug
+                  objectGUID: d32d355e-230f-11f1-841b-5a9eb7df464d
+                  user_attribute_constrain:
+                    $and:
+                    - UserAccountControl: '512'
+                - Common-Name: test2_cdug
+                  Distinguished Name: CN=test2_cdug,CN=Attribute Based,CN=CDUG,DC=okta-directory
+                  Name: test2_cdug
+                  Object Class:
+                  - group
+                  WhenChanged: 20260318211754.0Z
+                  _id: 69bb1682d5598d891455090f
+                  category: Attribute Based
+                  cdug_status: deployed
+                  created: 20260318211754.0Z
+                  createdDateTime: 20260318211754.0Z
+                  defID: 116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496
+                  description: ''
+                  ext_gtype: 20
+                  ext_lastmod: 1773868674.6279
+                  ext_type: 3
+                  groupTypes: CloudDUG
+                  name: test2_cdug
+                  objectGUID: edcc7924-230f-11f1-a969-0ae740b4098b
+                  user_attribute_constrain:
+                    $and:
+                    - Department:
+                        $options: i
+                        $regex: ^a
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '404':
+          description: No groups found
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters:
+      - name: domain
+        in: query
+        description: Domain name (required if aggregationId not provided)
+        required: false
+        schema:
+          type: string
+        example: okta-directory
+      - name: aggregationId
+        in: query
+        description: Aggregation ID to fetch groups across risk sources (required
+          if domain not provided)
+        required: false
+        schema:
+          type: string
+        example: agg-123
+      - name: objectGUID
+        in: query
+        description: 'Group unique identifier to fetch a specific group.
+
+          You receive this in the response when creating a group via POST /cloud-dug-definition.
+
+          Use this to retrieve, update, or delete a specific group.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: 83a1cf1a-2709-11f1-b6ac-22edd0e18ff6
+      - name: defID
+        in: query
+        description: 'Category identifier to fetch all groups in a specific category.
+
+          To get the defID, first call this GET endpoint without filters to see all
+          groups and their defID values.
+
+          Then use the defID to filter groups by category (e.g., all "Attribute Based"
+          groups).
+
+          '
+        required: false
+        schema:
+          type: string
+        example: 116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496
+      - name: useNormalizedAttrs
+        in: query
+        description: Must be set to "true" for external API calls (SCM integration)
+        required: true
+        schema:
+          type: string
+          enum:
+          - 'true'
+        example: 'true'
+      - name: pageNum
+        in: query
+        description: Page number (starts at 1). Use with pageSz for pagination.
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+      - name: pageSz
+        in: query
+        description: Number of items per page (max 1000)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        example: 10
+      tags:
+      - Cloud Dynamic User Groups
+    put:
+      summary: Update Cloud Dynamic User Groups
+      description: "Updates an existing Cloud Dynamic User Group. Use this endpoint\
+        \ to modify group attributes\nand constraints for an already created group.\n\
+        \n**This is used to edit an existing/created group.**\n\n## How it Works\n\
+        - The `objectGUID` in the request body identifies which group to update\n\
+        - The `objectGUID` is obtained from:\n  - POST `/cloud-dug-definition` response\
+        \ when creating a group\n  - GET `/cloud-dug-definition/group` response when\
+        \ listing groups\n- Only the fields you want to update need to be included\
+        \ in the request\n- Primary use case: updating `user_attribute_constrain`\
+        \ to modify group membership criteria\n\n## Important Behavior\n**The Application\
+        \ Programming Interface returns HTTP 200 even when the objectGUID is not found.**\n\
+        When the provided objectGUID doesn't exist, the response will be:\n```json\n\
+        {\n  \"success\": true,\n  \"result\": {\n    \"sync\": \"Not found cloud\
+        \ dug def group guid <objectGUID>\",\n    \"value\": \"\"\n  }\n}\n```\nAlways\
+        \ check the `result.sync` field for error messages when processing the response.\n\
+        \n**Note:** Set `useNormalizedAttrs` to `\"true\"` for external Application\
+        \ Programming Interface calls (SCM integration). Also, we do not allow the\
+        \ update of name related attributes (Name, Common-Name, Distinguished Name).\
+        \ This is also to match behavior of UI."
+      operationId: PutDirectory-syncV1Cloud-dug-definitionGroup
+      responses:
+        '200':
+          description: 'Response from update operation.
+
+
+            **Note:** The API returns HTTP 200 even when the objectGUID is not found.
+
+            Check the `result.sync` field for error messages like "Not found cloud
+            dug def group guid".
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupUpdateResponse'
+              examples:
+                successfulUpdate:
+                  summary: Successfully updated group
+                  value:
+                    success: true
+                    result:
+                      objectGUID: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+                      Mail: ''
+                      WhenChanged: 20260325044739.0Z
+                      cdug_status: updated
+                      description: ''
+                      ext_lastmod: 1774414059.086046
+                      user_attribute_constrain:
+                        $and:
+                        - State: CA
+                groupNotFound:
+                  summary: ObjectGUID not found (still returns 200)
+                  value:
+                    success: true
+                    result:
+                      sync: Not found cloud dug def group guid 72bbc29c-2703-11f1-b839-22edd0e18ff61
+                      value: ''
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters: []
+      tags:
+      - Cloud Dynamic User Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdateRequest'
+            examples:
+              updateConstraints:
+                summary: Update group attribute constraints
+                value:
+                  domain: okta-directory
+                  useNormalizedAttrs: 'true'
+                  value:
+                    objectGUID: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+                    description: ''
+                    user_attribute_constrain:
+                      $and:
+                      - State: CA
+              updateWithMail:
+                summary: Update group with additional fields
+                value:
+                  domain: okta-directory
+                  useNormalizedAttrs: 'true'
+                  value:
+                    objectGUID: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+                    Name: updated_group_name
+                    Mail: ''
+                    description: Updated description for the group
+                    user_attribute_constrain:
+                      $and:
+                      - UserAccountControl: '512'
+                      - Department: Engineering
+              updateMultipleConstraints:
+                summary: Update with multiple OR constraints
+                value:
+                  domain: uppercasedss.onmicrosoft.com
+                  useNormalizedAttrs: 'true'
+                  value:
+                    objectGUID: d32d355e-230f-11f1-841b-5a9eb7df464d
+                    description: Sales or Marketing users
+                    user_attribute_constrain:
+                      $or:
+                      - Department: Sales
+                      - Department: Marketing
+    delete:
+      summary: Delete Cloud Dynamic User Groups
+      description: 'Deletes a specific Cloud Dynamic User Group by objectGUID or all
+        groups in a category by defID.
+
+
+        ## How it Works
+
+        - Use `objectGUID` to delete a specific group (obtained from POST create or
+        GET list responses)
+
+        - Use `defID` to delete all groups in a category (obtained from GET list response)
+
+        - Provide either `objectGUID` or `defID`, but not both
+
+
+        ## Important Behavior
+
+        **The Application Programming Interface returns HTTP 200 even when deletion
+        fails or is delayed.**
+
+
+        ### Possible scenarios:
+
+        1. **Sync in progress**: If a data sync is currently running for the tenant,
+        the deletion request is saved but not immediately executed. You''ll need to
+        retry later or wait for the next sync.
+
+        2. **Successful deletion**: The group is deleted immediately and sync is scheduled.
+
+
+        Always check the `result.sync` and `result.detail` fields to determine the
+        actual outcome:
+
+        - `"sync": "success"` - Deletion completed
+
+        - `"sync": "Cloud Dynamic Group definition saved..."` + `"detail": "Data sync
+        in-progress..."` - Deletion pending, retry later.'
+      operationId: DeleteDirectory-syncV1Cloud-dug-definitionGroup
+      responses:
+        '200':
+          description: 'Delete request processed (does not guarantee immediate deletion).
+
+
+            **Important:** HTTP 200 does not mean the group was deleted. Check the
+            response body:
+
+            - If `result.sync` = "success", deletion completed
+
+            - If `result.detail` contains "Data sync in-progress", deletion is pending
+            and group was NOT deleted yet
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDeleteResponse'
+              examples:
+                successfulDeletion:
+                  summary: Group successfully deleted
+                  value:
+                    success: true
+                    result:
+                      sync: success
+                      value: null
+                syncInProgress:
+                  summary: Sync in progress - deletion pending (group NOT deleted
+                    yet)
+                  value:
+                    success: true
+                    result:
+                      detail: Data sync in-progress for customer 4231344437556610560,
+                        Please reschedule later
+                      sync: Cloud Dynamic Group definition saved. Unable to schedule
+                        sync. Try to sync changes manually or wait for the next automated
+                        sync
+                      value: null
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '500':
+          $ref: '#/components/responses/500_internal_error'
+      parameters:
+      - name: domain
+        in: query
+        description: Domain name (same as used when creating the group)
+        required: true
+        schema:
+          type: string
+        example: okta-directory
+      - name: objectGUID
+        in: query
+        description: 'Unique group identifier to delete a specific group.
+
+          Obtained from POST /cloud-dug-definition response or GET /cloud-dug-definition/group
+          response.
+
+          Provide either objectGUID or defID, but not both.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: 72bbc29c-2703-11f1-b839-22edd0e18ff6
+      - name: defID
+        in: query
+        description: 'Category identifier to delete all groups in a specific category.
+
+          Obtained from GET /cloud-dug-definition/group response.
+
+          Provide either objectGUID or defID, but not both.
+
+          '
+        required: false
+        schema:
+          type: string
+        example: 116c2d28-0cfb-11f1-a8d8-d2bbfe9d4496
+      tags:
+      - Cloud Dynamic User Groups

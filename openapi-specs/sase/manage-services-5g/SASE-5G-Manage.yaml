@@ -1,0 +1,1003 @@
+openapi: 3.0.2
+info:
+  title: SASE 5G Manage Service API
+  version: '1.0'
+  description: "The SASE 5G Management Service provides the administrative framework\
+    \ required to provision, \nconfigure, and oversee 5G security infrastructure within\
+    \ the Strata Cloud Manager (SCM) ecosystem. \nArchitects and administrators utilize\
+    \ these APIs during the activation and lifecycle management \nphases to bridge\
+    \ enterprise 5G networks with Prisma Access security.\n\nBy leveraging these endpoints,\
+    \ organizations implement robust hardware-to-tenant mapping using \nIMSI and IMEI\
+    \ identifiers, ensuring precise traffic attribution and policy enforcement. \n\
+    The service manages critical control plane components\u2014including certificate\
+    \ handling and \nRadius server integration\u2014directly through the SCM management\
+    \ plane. This centralized \napproach allows technical teams to scale 5G connectivity\
+    \ across global compute regions \nwhile maintaining granular visibility into subscriber\
+    \ groups and regional interconnect health. This spec was created on February 11,\
+    \ 2026. \xA9 2026 Palo Alto Networks, Inc."
+paths:
+  /mt/manage/5g/cie/token:
+    post:
+      tags:
+      - Cie Token Resource API
+      summary: Store Tenant Token
+      description: "Saves the Cloud Identity Engine (CIE) token to the management\
+        \ plane for leaf tenants. \nAdministrators perform this during initial setup\
+        \ to authorize secure identity \nsynchronization between tenant directories\
+        \ and Strata Cloud Manager. This process \nestablishes the trust relationship\
+        \ required for identity-based security policies."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CieTokenRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gCieToken
+  /mt/manage/5g/cie/token/details:
+    post:
+      tags:
+      - Cie Token Resource API
+      summary: Fetch Token Metadata
+      description: "Displays configuration metadata and validity status for an existing\
+        \ leaf tenant CIE token. \nEngineers use this during connection health audits\
+        \ to verify that identity integrations \nremain active within the management\
+        \ plane. It utilizes the tenant's TSG ID to locate \nspecific metadata records\
+        \ for verification."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonObject'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gCieTokenDetails
+  /mt/manage/5g/interconnect:
+    get:
+      tags:
+      - Interconnect API
+      summary: List Regional Interconnects
+      description: "Returns regional 5G interconnect resource details, including bandwidth\
+        \ capacity and \nVLAN attachment health. Network architects utilize this global\
+        \ view to identify \navailable compute regions and track infrastructure deployment\
+        \ readiness. The response \nmaps regional availability directly to real-time\
+        \ status metrics."
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get Interconnect Details by region:
+                  value:
+                    data:
+                    - bandwidth: 500000000
+                      computeRegion: us-west2
+                      status: Supported
+                      vlanAttachmentCount: 2
+                      vlanAttachmentStatusEntry:
+                        down: 1
+                        up: 1
+                    header:
+                      createdAt: '2024-08-28T16:05:27Z'
+                      dataCount: 4
+                      status:
+                        subCode: 200
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gInterconnect
+  /mt/manage/5g/control/cert/download:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: Download Security Certificate
+      description: "Exports the security certificate required to enable 5G connectivity\
+        \ for a specific region. \nAdministrators download this file to the local\
+        \ control plane during the activation phase \nto authenticate regional 5G\
+        \ nodes securely. This step is mandatory before regional \ntraffic paths can\
+        \ be established."
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlCertDownload
+  /mt/manage/5g/control/proxycert:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: Verify Certificate Status
+      description: "Validates whether a proxy certificate exists within the root TSG\
+        \ configuration. \nEngineers perform this check during pre-activation to ensure\
+        \ the control plane \nis prepared for encrypted signaling before establishing\
+        \ child tenant connectivity. \nThis prevents signaling failures during regional\
+        \ onboarding."
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlProxycert
+  /mt/manage/5g/control/proxycert/upload:
+    post:
+      tags:
+      - Control Plane Resource API
+      summary: Upload Proxy Certificate
+      description: "Injects a proxy certificate into the root TSG via multipart form-data\
+        \ to facilitate \nsecure 5G control plane communications. Users execute this\
+        \ during gateway configuration \nto establish encrypted regional signaling\
+        \ paths. The management plane validates the \nfile format before committing\
+        \ the record."
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  format: binary
+                  type: string
+                filename:
+                  type: string
+                tsgId:
+                  type: string
+                rootTsgId:
+                  type: string
+            encoding:
+              file:
+                contentType: application/octet-stream
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gControlProxycertUpload
+  /mt/manage/5g/control/radiusProxy:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: Fetch Proxy Secret
+      description: "Retrieves the Radius server shared secret associated with the\
+        \ root TSG. Administrators \ncall this during system audits to verify authentication\
+        \ credentials between the 5G \ncontrol plane and Radius infrastructure. The\
+        \ response ensures that the management \nplane retains the correct shared\
+        \ keys for secure access."
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlRadiusproxy
+    post:
+      tags:
+      - Control Plane Resource API
+      summary: Configure Radius Proxy
+      description: "Assigns a Radius server shared secret to the root TSG to manage\
+        \ authentication traffic. \nSecurity teams perform this during integration\
+        \ to bridge 5G access requests with \nexisting Radius authentication services.\
+        \ Configuration involves mapping the server \nname to its specific IP Address\
+        \ address within the management plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadiusProxyRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gControlRadiusproxy
+  /mt/manage/5g/control/radiusSecret:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: View Radius Secret
+      description: "Displays the active Radius server shared secret for the root TSG.\
+        \ Technical leads \nuse this when troubleshooting authentication failures\
+        \ to ensure secrets match the \non-premise Radius server configuration. This\
+        \ visibility is restricted to authorized \nmanagement plane users."
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlRadiussecret
+    post:
+      tags:
+      - Control Plane Resource API
+      summary: Set Radius Secret
+      description: "Updates the Radius server shared secret for the root TSG. Administrators\
+        \ use this \nduring credential rotation or initial onboarding to secure communication\
+        \ between \nSASE components and external authentication servers. Changes are\
+        \ applied \nimmediately across the regional control plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadiusServerSecretRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gControlRadiussecret
+  /mt/manage/5g/control/radiusServers:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: List Radius Servers
+      description: "Lists Radius server details currently configured for 5G connectivity\
+        \ in a specific \nregion. Infrastructure teams audit this information to verify\
+        \ which authentication \nnodes are active within the service environment and\
+        \ ensure regional redundancy."
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlRadiusservers
+  /mt/manage/5g/control/supported/interfaces:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: List Supported Interfaces
+      description: "Displays available network interfaces compatible with 5G control\
+        \ plane integration. \nNetwork engineers reference this list during planning\
+        \ to determine the correct \nconnection types for specific 5G deployments\
+        \ within the SASE fabric."
+      responses:
+        '200':
+          description: Successful response
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlSupportedInterfaces
+  /mt/manage/5g/control/interface:
+    get:
+      tags:
+      - Control Plane Resource API
+      summary: Show Selected Interface
+      description: "Retrieves the specific network interface currently assigned to\
+        \ 5G operations. \nAdministrators use this to verify active configuration\
+        \ settings after committing \ninterface changes to ensure signal traffic routing\
+        \ matches the intended design."
+      responses:
+        '200':
+          description: Successful response
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gControlInterface
+    post:
+      tags:
+      - Control Plane Resource API
+      summary: Assign Network Interface
+      description: "Defines the interface type (e.g., RADIUS) and reporting intervals\
+        \ used for 5G control \nplane traffic. Users configure these settings during\
+        \ initial setup to customize how \nauthentication data flows between regional\
+        \ nodes and the management plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetInterface'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gControlInterface
+  /mt/manage/5g/control/interimMsg:
+    put:
+      tags:
+      - Control Plane Resource API
+      summary: Update Message Intervals
+      description: "Modifies the interim message configuration for the active 5G control\
+        \ plane. \nAdministrators adjust these reporting frequencies to balance management\
+        \ plane \ntraffic with real-time session visibility for active subscriber\
+        \ devices."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInterimMsg'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PutMtManage5gControlInterimmsg
+  /mt/manage/5g/ipcidr/{compute_region}:
+    get:
+      tags:
+      - Enable 5 GAPI
+      summary: Show Regional CIDRs
+      description: "Returns the IPv4 and IPv6 CIDR blocks assigned to a specific compute\
+        \ region. \nNetwork engineers query these ranges when verifying IP Address\
+        \ allocation to prevent \naddress overlaps across the management plane and\
+        \ ensure routing integrity."
+      parameters:
+      - name: compute_region
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gIpcidrBy_compute_region
+  /mt/manage/5g/setup:
+    post:
+      tags:
+      - Enable 5 GAPI
+      summary: Initialize Regional Connectivity
+      description: "Activates 5G connectivity for a designated compute region using\
+        \ specific IP Address address \nblocks. Infrastructure leads trigger this\
+        \ during site onboarding to provision the \nunderlying 5G network layer and\
+        \ establish the regional security perimeter."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enable5GRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gSetup
+  /mt/manage/5g/tenantUEInfo:
+    post:
+      tags:
+      - UE Info Resource API
+      summary: Map Tenant Identity
+      description: "Registers a unique mapping between a Tenant, IMSI, IMEI, and APN.\
+        \ Developers use \nthis to onboard User Equipment (UE) by associating hardware\
+        \ identifiers with \nspecific tenant accounts for precise traffic attribution\
+        \ and policy enforcement."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUEInfoRequest'
+            examples:
+              Add Tenant UE Info:
+                value:
+                  root_tsg_id: '123456891'
+                  tsg_id: '123456890'
+                  imei: '111111789012345'
+                  imsi: '123456789012345'
+                  apn: apn@panw.com
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Add Tenant UE Info:
+                  value:
+                    data:
+                      id: 45a4ca95-9e8b-4a63-a482-70b7d3aa4fd8
+                      root_tsg_id: '1204544558'
+                      tsg_id: '1886576124'
+                      imei: '123456789012340'
+                      imsi: '123456789012345'
+                      apn: apn@panw.com
+                      create_time: 1738446903587
+                      update_time: 1738446903587
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gTenantueinfo
+  /mt/manage/5g/tenantUEInfo/delete:
+    post:
+      tags:
+      - UE Info Resource API
+      summary: Bulk Delete Identities
+      description: "Removes multiple Tenant-UE mappings from the management plane\
+        \ simultaneously. \nAdministrators execute this during hardware decommissioning\
+        \ or tenant offboarding \nto clear subscriber data efficiently using a batch\
+        \ of unique identity IDs."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUeInfoBulkDeleteRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gTenantueinfoDelete
+  /mt/manage/5g/tenantUEInfo/list:
+    post:
+      tags:
+      - UE Info Resource API
+      summary: Search Tenant Identities
+      description: "Returns a paginated list of Tenant-UE mappings. Developers query\
+        \ this to audit \nsubscriber mappings or populate dashboards with IMSI and\
+        \ IMEI data associated with \na specific Tenant Service Group (TSG). Results\
+        \ support filtering and custom sorting."
+      parameters:
+      - name: filter
+        in: query
+        schema:
+          pattern: ^[a-z]+:\w+(?:,[a-z]+:\w+)*$
+          type: string
+      - name: order
+        in: query
+        schema:
+          pattern: ^[a-z]+:(asc|desc)*$
+          type: string
+      - name: page
+        in: query
+        schema:
+          format: int32
+          default: 0
+          type: integer
+      - name: size
+        in: query
+        schema:
+          format: int32
+          default: 50
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUEInfoListInput'
+            examples:
+              List Tenant UE Info:
+                value:
+                  tsg_id: '1886576124'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                List Tenant UE Info:
+                  value:
+                    totalItems: 2
+                    data:
+                    - identity_id: a5831ca0-5cf4-46a9-9409-6d55ea5e210a
+                      tsg_id: '1886576124'
+                      imei: '100411547312190'
+                      imsi: '264467605337818'
+                      apn: apn@panw.com
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gTenantueinfoList
+  /mt/manage/5g/tenantUEInfo/upload:
+    post:
+      tags:
+      - UE Info Resource API
+      summary: Bulk Upload Identities
+      description: "Ingests a file containing multiple User Equipment (UE) mappings\
+        \ via multipart \nform-data. Administrators use this during large-scale device\
+        \ rollouts to enable \n5G features for thousands of hardware identifiers at\
+        \ once across the management plane."
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  format: binary
+                  type: string
+                filename:
+                  type: string
+                tsgId:
+                  type: string
+                rootTsgId:
+                  type: string
+            encoding:
+              file:
+                contentType: application/octet-stream
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gTenantueinfoUpload
+  /mt/manage/5g/tenantUEInfo/{identity_id}:
+    put:
+      tags:
+      - UE Info Resource API
+      summary: Update Identity Mapping
+      description: "Modifies an existing Tenant-UE mapping record. Administrators\
+        \ perform these \nupdates to correct IMSI/IMEI typos or adjust APN associations\
+        \ for registered \nsubscriber identities, ensuring traffic continues to route\
+        \ to the correct tenant."
+      parameters:
+      - name: identity_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUEInfoRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PutMtManage5gTenantueinfoBy_identity_id
+    delete:
+      tags:
+      - UE Info Resource API
+      summary: Remove Identity Mapping
+      description: "Deletes a specific Tenant-UE mapping record. Users call this when\
+        \ decommissioning \na single device or rotating hardware to maintain accurate\
+        \ subscriber records \nwithin the 5G management plane."
+      parameters:
+      - name: identity_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: DeleteMtManage5gTenantueinfoBy_identity_id
+  /mt/manage/5g/tenantUEInfo/{ueInfoId}:
+    get:
+      tags:
+      - UE Info Resource API
+      summary: Fetch Specific Identity
+      description: "Retrieves the complete identity record for a single subscriber\
+        \ based on its unique \nID. Support teams use this data within the management\
+        \ plane to troubleshoot \nconnectivity issues for specific User Equipment\
+        \ devices."
+      parameters:
+      - name: ueInfoId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: unknownUes
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gTenantueinfoBy_ueinfoid
+  /mt/manage/5g/userGroup:
+    post:
+      tags:
+      - Group Resource API
+      summary: Create Subscriber Group
+      description: "Establishes a named group of Tenant UE identities for bulk security\
+        \ policy \napplication. Security leads define these groups to manage sets\
+        \ of subscribers \nas single entities within the 5G management plane for simplified\
+        \ administration."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantGroupInfo'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gUsergroup
+  /mt/manage/5g/userGroup/list:
+    post:
+      tags:
+      - Group Resource API
+      summary: Retrieve Tenant Groups
+      description: "Lists all named user groups associated with a specific tenant.\
+        \ Administrators \ncall this during policy enforcement to verify existing\
+        \ groups and ensure \nsecurity assignments apply to the correct sets of 5G\
+        \ subscribers."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantGroupInfoListInput'
+      responses:
+        '200':
+          description: Success
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PostMtManage5gUsergroupList
+  /mt/manage/5g/userGroup/{groupId}:
+    get:
+      tags:
+      - Group Resource API
+      summary: Fetch Group Members
+      description: "Returns the specific identity IDs belonging to a designated subscriber\
+        \ group. \nPolicy auditors verify these memberships to ensure individual devices\
+        \ are subject \nto the correct group security rules within the management\
+        \ plane."
+      parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: GetMtManage5gUsergroupBy_groupid
+  /mt/manage/5g/userGroup/{group_id}:
+    put:
+      tags:
+      - Group Resource API
+      summary: Modify Group Membership
+      description: "Updates the name or identity list for an existing user group.\
+        \ Administrators \nuse this to adjust group memberships dynamically as subscribers\
+        \ are added or \nremoved from service tiers or organizational units."
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantGroupInfo'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: PutMtManage5gUsergroupBy_group_id
+  /mt/manage/5g/userGroup/{identity_id}:
+    delete:
+      tags:
+      - Group Resource API
+      summary: Remove User Group
+      description: "Permanently deletes a user group definition. This action is typically\
+        \ taken \nwhen a specific service level or grouping strategy is no longer\
+        \ required for \nthe tenant, ensuring the management plane remains clean and\
+        \ accurate."
+      parameters:
+      - name: identity_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Data Not Found
+        '500':
+          description: Server Error
+      operationId: DeleteMtManage5gUsergroupBy_identity_id
+  /mt/manage/5g/register/ue:
+    post:
+      tags:
+      - UE Enrichment
+      summary: Register Subscriber Session
+      description: "Initiates registration for User Equipment (UE) devices with real-time\
+        \ session \nparameters. The 5G core triggers this using IMSI and event time\
+        \ to enrich \nsubscriber telemetry and profile data within Strata Cloud Manager."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUE'
+      responses:
+        '202':
+          description: Accepted
+        '207':
+          description: Partial Success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      operationId: PostMtManage5gRegisterUe
+  /mt/manage/5g/deregister/ue:
+    post:
+      tags:
+      - UE Enrichment
+      summary: Terminate Subscriber Session
+      description: "Signals the termination of a User Equipment session. The 5G gateway\
+        \ executes \nthis deregistration when a device disconnects to ensure monitoring\
+        \ metrics \nand security states are accurately reflected in the management\
+        \ plane."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUE'
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          description: Unauthorized
+      operationId: PostMtManage5gDeregisterUe
+servers:
+- url: https://stratacloudmanager.paloaltonetworks.com
+security:
+- JWT: []
+components:
+  schemas:
+    CieTokenRequest:
+      type: object
+      properties:
+        tsg_id:
+          type: string
+        access_token:
+          type: string
+        created_by:
+          type: string
+        created_at:
+          type: string
+        cie_directory:
+          type: string
+    Enable5GRequest:
+      type: object
+      properties:
+        compute_region:
+          type: string
+        action:
+          type: string
+        ipv4_cidr:
+          type: string
+        ipv6_cidr:
+          type: string
+    JsonObject:
+      type: array
+      items:
+        type: string
+    RadiusProxyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        ipaddress:
+          type: string
+    RadiusServerSecretRequest:
+      type: object
+      properties:
+        secret:
+          type: string
+        created_by:
+          type: string
+    RegisterUE:
+      type: array
+      description: A list of one or more UEs
+      items:
+        type: object
+        properties:
+          apn:
+            description: APN (Access Point Name) for the Tenant UE
+            example: apn@panw.com
+            type: string
+          imei:
+            description: 15 digit IMEI number.
+            example: '123456789012345'
+            type: string
+          imsi:
+            description: 15 digit IMSI number.
+            example: '123456789012345'
+            type: string
+          ipType:
+            description: it tells whether it is ipv4, ipv6 or dual stack. Valid values
+              are IPv4, IPv6, IPv4v6
+            example: IPV4
+            type: string
+          ipv4Addr:
+            type: string
+          ipv6Addr:
+            type: string
+          eventTime:
+            description: epoc time in ms
+            type: integer
+          expiryTime:
+            description: epoc time in ms
+            type: integer
+          sliceId:
+            type: string
+          msisdn:
+            type: string
+          ratType:
+            type: string
+          cellId:
+            type: string
+          supi:
+            type: string
+        required:
+        - eventTime
+        - ipType
+        - imsi
+        - imei
+        - apn
+    SetInterface:
+      type: object
+      properties:
+        interfaceType:
+          type: string
+          example: RADIUS
+        processInterimMsg:
+          type: boolean
+          default: false
+        interimMsgInterval:
+          type: integer
+          description: How often interim messages will come(in minutes)
+      required:
+      - interfaceType
+    TenantGroupInfo:
+      type: object
+      properties:
+        tsg_id:
+          type: string
+        identity_id:
+          type: array
+          items:
+            type: string
+        group_name:
+          type: string
+    TenantGroupInfoListInput:
+      type: object
+      properties:
+        tsg_id:
+          type: string
+        group_id:
+          type: string
+    TenantUEInfoListInput:
+      type: object
+      properties:
+        tsg_id:
+          type: string
+    TenantUEInfoRequest:
+      type: object
+      properties:
+        tsg_id:
+          type: string
+        imei:
+          type: string
+        imsi:
+          type: string
+        apn:
+          type: string
+        root_tsg_id:
+          type: string
+    TenantUeInfoBulkDeleteRequest:
+      type: object
+      properties:
+        identityIds:
+          type: array
+          items:
+            type: string
+    UpdateInterimMsg:
+      type: object
+      properties:
+        processMsg:
+          type: boolean
+          default: false
+        interval:
+          type: integer
+          description: How often interim messages will come(in minutes)
+ExternalTags: {}

@@ -1,0 +1,1 @@
+List and filter data assets to build out your data asset inventory. This call returns a list of assets that match the provided filters, with basic asset details. To get full asset details, use ‘/v1/assets/id’

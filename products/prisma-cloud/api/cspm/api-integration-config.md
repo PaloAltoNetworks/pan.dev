@@ -1,6 +1,6 @@
 ---
 id: api-integration-config
-title: Prisma Cloud Integration API Configurations
+title: Integration Configurations
 sidebar_label: Integration Configurations
 ---
 
@@ -8,7 +8,135 @@ The Prisma Cloud integration API endpoints enable you to receive Prisma Cloud al
 
 The request body for some of the endpoints includes an `integrationConfig` parameter that is a map of key/value pairs. The type of integration defines the content of these key/value pairs. The information below provides the details for this `integrationConfig` parameter for each listed technology.
 
-Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. See [Prisma Cloud Integrations](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations.html) for details.
+Note that most external systems require some configuration before you can use the Prisma Cloud API endpoints to add an integration to that system. For more details, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations). If you are upgraded to the Darwin release, see [Prisma Cloud Integrations](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/prisma-cloud-integrations).
+
+
+### AWS Security Hub
+
+Prisma Cloud integrates with AWS Security Hub for centralized visibility into security and compliance risks associated with your cloud assets on the AWS Security Hub console.
+
+As a part of the integration, Prisma Cloud monitors your AWS cloud assets. It sends alerts about resource misconfigurations, compliance violations, network security risks, and anomalous user activities directly to the AWS Security Hub console providing a centralized and comprehensive view of the cloud assets deployed on your AWS accounts.
+
+
+Note: Prisma Cloud integration with AWS Security Hub is not supported for `US Gov Cloud` regions.
+
+
+#### Add, Update, or Test an AWS Security Hub Integration
+
+
+To add an AWS Security Hub integration, make your request as described in
+[Add Integration](/prisma-cloud/api/cspm/create-integration-v-1). As part of the request body, the `integrationType` parameter is `aws_security_hub`, and the `integrationConfig` parameter contains the following key/value pairs.
+
+
+| Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| region         | List of Regions where Prisma Cloud on AWS Security Hub is enabled for your cloud account | List of Objects<br/>{<br/>String name; (Required)<br/>String apiIdentifier; (Required)<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required               |
+| defaultRegion        | The region where you will receive alert notifications for global resources |  Object<br/>{<br/>String name (Required);<br/>String apiIdentifier (Required);<br/>String cloudType;<br/>String sdkId;<br/>Boolean enabled;<br/>}    | Required if the user wants to receive global alerts               |
+| accountId     | The Account ID of the AWS account that you have onboarded on Prisma Cloud | string     | Required                |
+
+
+To update an AWS Security Hub integration, make your request as described in
+[Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
+
+
+To test an AWS Security Hub, make your request as described in
+[Test Integration](/prisma-cloud/api/cspm/test-integration).
+
+
+##### Example Request Body to Add an Amazon Security Hub Integration
+
+
+```json
+{
+   "description": "string",
+   "enabled": true,
+   "integrationConfig": {
+       "regions": [
+           {
+               "name": "AWS Virginia",
+               "apiIdentifier": "us-east-1",
+               "cloudType": "aws",
+               "sdkId": "",
+               "enabled": true
+           },
+           {
+               "name": "string",
+               "apiIdentifier": "string",
+               "cloudType": "aws",
+               "sdkId": "string",
+               "enabled": true
+           }
+       ],
+       "defaultRegion": {
+           "name": "string",
+           "apiIdentifier": "string",
+           "cloudType": "aws",
+           "sdkId": "string",
+           "enabled": true
+       },
+       "accountId": "string"
+   },
+   "integrationType": "aws_security_hub",
+   "name": "string",
+   "id": "string"
+}
+```
+
+### Amazon Security Lake
+
+Prisma Cloud integrates with Amazon Security Lake to ingest Prisma Cloud Open Cybersecurity Schema Framework (OCSF) compliant vulnerability security data into Amazon Security Lake.
+
+Note that you can configure only one Amazon Security Lake per customer.
+
+#### Add, Update, or Test an Amazon Security Lake Integration
+
+To add an Amazon Security Lake integration, make your request as described in
+[Add Integration](/prisma-cloud/api/cspm/create-integration-v-1). As part of the request body, the `integrationType` parameter is `aws_sdl`, and the `integrationConfig` parameter contains the following key/value pairs.
+
+| Key            | Value Description                                                                                                 | Value Type | Default Value or Required |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
+| s3Uri          | Amazon S3 bucket URI. Format: `s3://bucketname/ or s3://bucketname/foldername/`                                                                                              | string     | _required_                |
+| region         | AWS region where the S3 bucket resides                                                                            | string     | _required_                |
+| roleArn        | Role ARN associated with the IAM role on Prisma Cloud                                                             | string     | _required_                |
+| externalId     | External ID associated with the IAM role on Prisma Cloud. Any new or updated value must be a unique 128-bit UUID. | string     | _required_                |
+
+To update an Amazon Security Lake integration, make your request as described in
+[Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
+
+To test an Amazon Security Lake integration, make your request as described in
+[Test Integration](/prisma-cloud/api/cspm/test-integration).
+
+##### Example Request Body to Add an Amazon Security Lake Integration
+
+```json
+{
+  "integrationType": "aws_sdl",
+  "name": "",
+  "description": "",
+  "enabled": true,
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": ""
+  }
+}
+```
+
+##### Example Request Body to Test an Amazon Security Lake Integration
+
+```json
+{
+  "integrationType": "aws_sdl",
+  "name": "",
+  "integrationConfig": {
+    "s3Uri": "",
+    "region": "",
+    "roleArn": "",
+    "externalId": ""
+  }
+}
+```
 
 ### Amazon S3
 
@@ -71,7 +199,7 @@ To test an Amazon S3 integration, make your request as described in
 
 ### Amazon SQS
 
-Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service. Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs.html), you can use an API request to add the Amazon SQS integration to Prisma Cloud.
+Prisma Cloud can send alerts to Amazon Simple Queue Service (SQS). Customers can consume these alerts through a Splunk add-on or through the AWS CloudFormation service. Once you [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs), you can use an API request to add the Amazon SQS integration to Prisma Cloud. If you are upgraded to Darwin, see [configure Amazon SQS to receive Prisma Cloud alerts](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-amazon-sqs).
 
 #### Add, Update, or Test an Amazon SQS Integration
 
@@ -135,7 +263,7 @@ To test an Amazon SQS integration, make the request with the corresponding reque
 
 ### Azure Service Bus Queue
 
-Prisma Cloud can send alerts to an Azure Service Bus messaging service. To authorize access, you can either (1) use a shared access signature to limit access permissions to the Service Bus namespace or queue or (2) use the service principal credentials associated with the Azure Cloud account you've on-boarded to Prisma Cloud. If you plan to use the service principal that uses Azure Active Directory to authorize requests, you must include the additional role _Azure Service Bus Data Sender_ and enable _send_ access to the Service Bus namespace and queues. See [Integrate Prisma Cloud with Azure Service Bus](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue.html) for details about these prerequisites.
+Prisma Cloud can send alerts to an Azure Service Bus messaging service. To authorize access, you can either (1) use a shared access signature to limit access permissions to the Service Bus namespace or queue or (2) use the service principal credentials associated with the Azure Cloud account you've on-boarded to Prisma Cloud. If you plan to use the service principal that uses Azure Active Directory to authorize requests, you must include the additional role _Azure Service Bus Data Sender_ and enable _send_ access to the Service Bus namespace and queues. For details about these prerequisites, see [Integrate Prisma Cloud with Azure Service Bus](https://docs.prismacloud.io/en/classic/cspm-admin-guide/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue). If you are upgraded to the Darwin release, see [Integrate Prisma Cloud with Azure Service Bus](https://docs.prismacloud.io/en/enterprise-edition/content-collections/administration/configure-external-integrations-on-prisma-cloud/integrate-prisma-cloud-with-azure-service-bus-queue).
 
 #### Add, Update, or Test an Azure Service Bus Queue Integration
 
@@ -202,6 +330,9 @@ To add a Cortex XSOAR integration, make your request as described in
 | ------- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------- |
 | hostUrl | The Cortex XSOAR instance FQDN/IP&mdash;either the name or the IP address of the instance                              | string     | _required_                |
 | apiKey  | The consumer key you configured when you created the Prisma Cloud application access in your Cortex XSOAR environment. | string     | _required_                |
+| demistoVersion  | The Cortex XSOAR version. Possible values: 6.0 and 8.0.  | string     | _required_                |
+| apiKeyID  | The key ID linked to the consumer key (apiKey). This parameter is required only for Cortex XSOAR 8.0. | string     | null                |
+
 
 To update a Cortex XSOAR integration, make your request as described in
 [Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.
@@ -214,6 +345,7 @@ To update a Cortex XSOAR integration, make your request as described in
   "enabled": true,
   "integrationConfig": {
     "apiKey": "",
+    "demistoVersion":"6.0",
     "hostUrl": ""
   },
   "integrationType": "demisto",
@@ -650,6 +782,8 @@ To add a webhook integration, make your request as described in
 | --------- | ------------------------------------------------ | ---------- | ------------------------- |
 | url       | Webhook URL                                      | string     | _required_                |
 | authToken | The authentication token for the event collector | string     | _required_                |
+| isCustomPayloadEnabled | Set to true to accept custom alert payload. | boolean     | Default is **false**.                |
+| customPayloads | Contains detailed information about an alert, such as the cloud account, resource, compliance standard, and policy.<br/>Currently, it is supported only for Config Scanner(CS) policy type. Therefore, specify the value for customPayloads in the following format and the value for CS must be a string:<br/> _"customPayloads": { "CS": "[{custom payload }]" }_ <br/>**Example:** _"customPayloads": { "CS": "[{\"resourceId\":\"${ResourceId}\"}]"}_ | JSON array     | Required if **isCustomPayloadEnabled** is set to **true**.                |
 
 To update a webhook integration, make your request as described in
 [Update Integration](/prisma-cloud/api/cspm/update-integration-v-1). Parameter `integrationConfig` is mutable.

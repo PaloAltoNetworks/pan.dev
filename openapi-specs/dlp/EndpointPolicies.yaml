@@ -1,0 +1,608 @@
+components:
+  schemas:
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    ClassifiersDTO:
+      description: Classifiers that define what content this policy matches
+      properties:
+        data_profile_id:
+          format: int32
+          type: integer
+        file_types:
+          $ref: '#/components/schemas/FileTypesDTO'
+      type: object
+    EndpointPolicyPatchRequest:
+      description: Request payload for partially updating an endpoint policy (JSON
+        Merge Patch)
+      properties:
+        classifiers:
+          $ref: '#/components/schemas/JsonNullableClassifiersDTO'
+        description:
+          $ref: '#/components/schemas/JsonNullableString'
+        enabled:
+          $ref: '#/components/schemas/JsonNullableBoolean'
+        name:
+          $ref: '#/components/schemas/JsonNullableString'
+        priority:
+          $ref: '#/components/schemas/JsonNullableInteger'
+        response:
+          $ref: '#/components/schemas/JsonNullableResponseDTO'
+        scope:
+          $ref: '#/components/schemas/JsonNullableScopeDTO'
+        severity:
+          $ref: '#/components/schemas/JsonNullableSeverity'
+        type:
+          $ref: '#/components/schemas/JsonNullablePolicyType'
+      required:
+      - enabled
+      - name
+      - response
+      - scope
+      - severity
+      - type
+      type: object
+    EndpointPolicyRequest:
+      description: Request payload for creating or updating an endpoint policy
+      properties:
+        classifiers:
+          $ref: '#/components/schemas/ClassifiersDTO'
+        description:
+          description: Optional human-readable description
+          type: string
+        enabled:
+          description: Whether the policy is active
+          type: boolean
+        name:
+          description: Display name of the policy
+          maxLength: 64
+          minLength: 1
+          type: string
+        priority:
+          description: Evaluation priority order (lower number = higher priority)
+          format: int32
+          type: integer
+        response:
+          $ref: '#/components/schemas/ResponseDTO'
+        scope:
+          $ref: '#/components/schemas/ScopeDTO'
+        severity:
+          description: Severity level of policy violations
+          enum:
+          - informational
+          - low
+          - medium
+          - high
+          - critical
+          type: string
+        type:
+          description: Policy type
+          enum:
+          - endpoint_peripheral_control
+          - endpoint_data_in_motion
+          - network
+          type: string
+      required:
+      - enabled
+      - name
+      - response
+      - scope
+      - severity
+      - type
+      type: object
+    EndpointPolicyResponse:
+      description: Endpoint policy resource returned by the API
+      properties:
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        classifiers:
+          $ref: '#/components/schemas/ClassifiersDTO'
+        description:
+          description: Optional human-readable description
+          type: string
+        enabled:
+          description: Whether the policy is active
+          type: boolean
+        id:
+          description: Unique identifier of the endpoint policy
+          type: string
+        name:
+          description: Display name of the policy
+          type: string
+        priority:
+          description: Evaluation priority order (lower number = higher priority)
+          format: int32
+          type: integer
+        response:
+          $ref: '#/components/schemas/ResponseDTO'
+        scope:
+          $ref: '#/components/schemas/ScopeDTO'
+        severity:
+          description: Severity level of policy violations
+          enum:
+          - informational
+          - low
+          - medium
+          - high
+          - critical
+          type: string
+        type:
+          description: Policy type
+          enum:
+          - endpoint_peripheral_control
+          - endpoint_data_in_motion
+          - network
+          type: string
+      type: object
+    FileTypesDTO:
+      properties:
+        any:
+          type: boolean
+        in:
+          items:
+            type: string
+          type: array
+      type: object
+    IncludedUsersDTO:
+      properties:
+        groups:
+          items:
+            $ref: '#/components/schemas/UserGroupDTO'
+          type: array
+        ids:
+          items:
+            $ref: '#/components/schemas/UserInfoDTO'
+          type: array
+      type: object
+    JsonNullableBoolean:
+      description: New enabled state
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableClassifiersDTO:
+      description: New classifiers
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableInteger:
+      description: New priority order
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullablePolicyType:
+      description: New policy type
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableResponseDTO:
+      description: New response action
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableScopeDTO:
+      description: New scope
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableSeverity:
+      description: New severity level
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    JsonNullableString:
+      description: New description (set to null to clear)
+      properties:
+        present:
+          type: boolean
+        undefined:
+          type: boolean
+      type: object
+    NotIncludedUsersDTO:
+      properties:
+        groups:
+          items:
+            $ref: '#/components/schemas/UserGroupDTO'
+          type: array
+        ids:
+          items:
+            $ref: '#/components/schemas/UserInfoDTO'
+          type: array
+      type: object
+    PageEndpointPolicyResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/EndpointPolicyResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    PeripheralDetailsDTO:
+      properties:
+        any:
+          type: boolean
+        in:
+          $ref: '#/components/schemas/PolicyPeripheralGroupDTO'
+        nin:
+          $ref: '#/components/schemas/PolicyPeripheralGroupDTO'
+        none:
+          type: boolean
+      type: object
+    PolicyPeripheralGroupDTO:
+      properties:
+        groups:
+          items:
+            type: string
+          type: array
+      type: object
+    PolicyPeripheralsDTO:
+      properties:
+        network_shares:
+          $ref: '#/components/schemas/PeripheralDetailsDTO'
+        printers:
+          $ref: '#/components/schemas/PeripheralDetailsDTO'
+        usbs:
+          $ref: '#/components/schemas/PeripheralDetailsDTO'
+      type: object
+    ResponseDTO:
+      description: Response action taken when the policy triggers
+      properties:
+        action:
+          type: string
+        euc_template_id:
+          type: string
+        incident_assignee:
+          type: string
+        is_end_user_coaching_enabled:
+          type: boolean
+        notification:
+          items:
+            type: string
+          type: array
+      type: object
+    ScopeDTO:
+      description: Scope defining which users/devices/apps this policy applies to
+      properties:
+        peripherals:
+          $ref: '#/components/schemas/PolicyPeripheralsDTO'
+        users:
+          $ref: '#/components/schemas/UsersDTO'
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+    UserGroupDTO:
+      properties:
+        distinguished_name:
+          type: string
+        domain:
+          type: string
+        group_name:
+          type: string
+        unique_id:
+          type: string
+      type: object
+    UserInfoDTO:
+      properties:
+        common_name:
+          type: string
+        domain:
+          type: string
+        principal_name:
+          type: string
+        unique_id:
+          type: string
+      type: object
+    UsersDTO:
+      properties:
+        any:
+          type: boolean
+        in:
+          $ref: '#/components/schemas/IncludedUsersDTO'
+        nin:
+          $ref: '#/components/schemas/NotIncludedUsersDTO'
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Manage endpoint DLP policies for controlling data loss prevention\
+    \ on endpoint devices. Create, update, \nretrieve, and delete policies that define\
+    \ DLP rules and actions for endpoint protection.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Endpoint Policies API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/endpoint-policies:
+    get:
+      description: Returns a paginated list of endpoint policies for the authenticated
+        tenant.
+      operationId: get-v2-api-endpoint-policies
+      parameters:
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default
+          sort order is ascending. Multiple sort criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+      - description: Filter by enabled state
+        in: query
+        name: enabled
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEndpointPolicyResponse'
+          description: Paginated list of endpoint policies
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List Endpoint Policies
+      tags:
+      - Endpoint Policies
+    post:
+      description: Creates a new endpoint policy for the authenticated tenant.
+      operationId: post-v2-api-endpoint-policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointPolicyRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointPolicyResponse'
+          description: Endpoint policy created
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: Create Endpoint Policy
+      tags:
+      - Endpoint Policies
+  /v2/api/endpoint-policies/{resourceId}:
+    delete:
+      description: Deletes an endpoint policy by its ID.
+      operationId: delete-v2-api-endpoint-policies-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Endpoint policy deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Endpoint policy not found
+      security:
+      - Bearer: []
+      summary: Delete Endpoint Policy
+      tags:
+      - Endpoint Policies
+    get:
+      description: Retrieves a single endpoint policy by its ID.
+      operationId: get-v2-api-endpoint-policies-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointPolicyResponse'
+          description: Endpoint policy found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Endpoint policy not found
+      security:
+      - Bearer: []
+      summary: Get Endpoint Policy
+      tags:
+      - Endpoint Policies
+    patch:
+      description: Partially updates an existing endpoint policy using JSON Merge
+        Patch semantics.
+      operationId: patch-v2-api-endpoint-policies-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/EndpointPolicyPatchRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointPolicyResponse'
+          description: Endpoint policy updated
+        '400':
+          description: Invalid patch payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Endpoint policy not found
+      security:
+      - Bearer: []
+      summary: Patch Endpoint Policy
+      tags:
+      - Endpoint Policies
+    put:
+      description: Fully replaces an existing endpoint policy with the provided payload.
+      operationId: put-v2-api-endpoint-policies-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointPolicyRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointPolicyResponse'
+          description: Endpoint policy updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Endpoint policy not found
+      security:
+      - Bearer: []
+      summary: Update Endpoint Policy
+      tags:
+      - Endpoint Policies
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: Endpoint Policies

@@ -1,0 +1,2 @@
+Lists and filters DSPM Risk Findings to analyze and prioritize data security risks in the environment.
+This API returns a list of Risk Findings with detailed information to help prioritize each security Risk Finding. To retrieve detailed information on each Risk Finding, see the /v1/risk-findings/id/{id}[Get a Risk finding by Id] API.

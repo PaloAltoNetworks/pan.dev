@@ -3,12 +3,20 @@ name: "CodeQL"
 on:
   push:
     branches: [ master ]
+  schedule:
+    - cron: "0 6 * * 1"  # weekly Monday 6am UTC
+
+permissions: {}
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   analyze:
-    if: github.repository_owner	 == 'PaloAltoNetworks'
+    if: github.repository_owner == 'PaloAltoNetworks'
     name: Analyze
-    runs-on: pan-dev-runner
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
@@ -20,12 +28,15 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
       with:
         languages: ${{ matrix.language }}
+        queries: security-extended
         
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3

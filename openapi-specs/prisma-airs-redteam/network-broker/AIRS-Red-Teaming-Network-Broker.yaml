@@ -1,0 +1,366 @@
+openapi: 3.0.3
+info:
+  title: Prisma AIRS Red Teaming - Network Channel API
+  version: 1.0.0
+  description: "OpenAPI spec for AIRT Network Channels \xA9 2025 Palo Alto Networks,\
+    \ Inc This Open API spec file was created on April 14, 2026. \xA9 2026 Palo Alto\
+    \ Networks, Inc. Palo Alto Networks is a registered trademark of Palo Alto Networks.\
+    \ A list of our trademarks can be found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.sase.paloaltonetworks.com/ai-red-teaming/data-plane/network-broker
+security:
+- bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ChannelStatus:
+      type: string
+      enum:
+      - ONLINE
+      - OFFLINE
+      - DRAFT
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: resource_not_found
+        message:
+          type: string
+          description: Human-readable error message
+          example: Channel not found
+      required:
+      - code
+      - message
+    CreateChannelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+          example: first
+        description:
+          type: string
+          example: First One!!
+      required:
+      - name
+    UpdateChannelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+          example: updated-name
+        description:
+          type: string
+          example: Updated description
+    Channel:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 3f838d08-dcd9-11ef-bcba-3a6d5ddfc830
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-27T18:05:10.670578Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-01-27T18:05:10.670578Z'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+          example: first
+        description:
+          type: string
+          example: First One!!
+        added_by:
+          type: string
+          format: uuid
+          example: 3f838d08-dcd9-11ef-bcba-3a6d5ddfc830
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ChannelStatus'
+          example: OFFLINE
+        last_online_at:
+          type: string
+          format: date-time
+          example: '2025-01-27T18:09:08.311825Z'
+    ChannelStats:
+      type: object
+      properties:
+        network_channels_server_domain:
+          type: string
+          example: localhost:8010/tunnels
+        docker_registry:
+          type: string
+          format: domain
+          example: registry-proxy.prod.ai-red-teaming.paloaltonetworks.com
+        helm_chart:
+          type: string
+          format: domain
+          example: charts/network-channels-client
+        docker_image:
+          type: string
+          format: domain
+          example: images/network-channels-client
+        online_channels:
+          type: integer
+          minimum: 0
+          example: 0
+        total_channels:
+          type: integer
+          minimum: 0
+          example: 1
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+ExternalTags:
+  Channels:
+    title: Channels
+    description: Operations for managing network channels (create, update, list, and
+      retrieve statistics).
+    tags:
+    - Channels
+paths:
+  /v1/channels:
+    get:
+      summary: List Channels
+      description: Retrieve the channels details through this Application Programming
+        Interface endpoint.
+      operationId: listChannels
+      responses:
+        '200':
+          description: Successfully retrieved list of channels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    type: object
+                    properties:
+                      total_items:
+                        type: integer
+                        example: 10
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Channel'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      parameters:
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelStatus'
+        style: form
+        explode: true
+        description: Filter channels by status
+      - in: query
+        name: search
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: include_all_if_empty
+        required: false
+        schema:
+          type: boolean
+        description: If there are no filtered channels, return all channels
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 100
+        description: Number of items to return
+      - in: query
+        name: skip
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: Number of items to skip
+      tags:
+      - Channels
+      security:
+      - bearerAuth: []
+    post:
+      summary: Create Channel
+      description: Create the channels details through this Application Programming
+        Interface endpoint.
+      operationId: createChannel
+      responses:
+        '200':
+          description: Channel created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      parameters: []
+      tags:
+      - Channels
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChannelRequest'
+  /v1/channels/stats:
+    get:
+      summary: Get Channel Stats
+      description: Retrieve the stats details through this Application Programming
+        Interface endpoint.
+      operationId: getChannelStats
+      responses:
+        '200':
+          description: Successfully retrieved channel statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelStats'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      parameters: []
+      tags:
+      - Channels
+      security:
+      - bearerAuth: []
+  /v1/channels/{channelId}:
+    get:
+      summary: Get Channel
+      description: Retrieve the {channelId} details through this Application Programming
+        Interface endpoint.
+      operationId: getChannel
+      responses:
+        '200':
+          description: Successfully retrieved channel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      parameters:
+      - in: path
+        name: channelId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 6dd68894-d8e8-11ef-9690-3a6d5ddfc830
+      tags:
+      - Channels
+      security:
+      - bearerAuth: []
+    patch:
+      summary: Update Channel
+      description: Patch the {channelId} details through this Application Programming
+        Interface endpoint.
+      operationId: updateChannel
+      responses:
+        '200':
+          description: Channel updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      parameters:
+      - in: path
+        name: channelId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 6dd68894-d8e8-11ef-9690-3a6d5ddfc830
+      tags:
+      - Channels
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChannelRequest'

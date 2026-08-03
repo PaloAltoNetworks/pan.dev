@@ -1,0 +1,324 @@
+---
+id: eda-decryption-remediation
+title: Use Event-Driven Ansible for Decryption Remediation
+sidebar_label: EDA for Decryption Remediation
+hide_title: true
+description: EDA for Decryption Remediation
+keywords:
+  - pan-os
+  - panos
+  - xml
+  - api
+  - firewall
+  - configuration
+  - ansible
+  - eda
+---
+
+import Assumptions from "../_assumptions.md";
+import LabGuidance from "/products/shared/_lab-guidance.md";
+
+# Use Event-Driven Ansible for Decryption Remediation
+
+In this guide, you will configure PAN-OS and Event-Driven Ansible (EDA) to perform remediation for issues arising when a forward proxy decryption policy is implemented.
+
+When forward proxy decryption is implemented on PAN-OS, there are potential challenges faced due to traffic which can't be decrypted, or which when decrypted causes errors or warnings. A common occurrence is websites which incorrectly do not present the certificate of the intermediate CA which signed the website's own certificate; when forward proxy decryption is performed for these websites, the user is presented with a browser warning due to an untrusted certificate. The use case for EDA in this guide is to detect when this happens, and remediate the situation automatically.
+
+<Assumptions />
+
+- a working EDA controller, either as part of an Ansible Automation Platform deployment, or as a standalone server. Please consult [the Red Hat documentation](https://www.redhat.com/en/technologies/management/ansible/event-driven-ansible) for more details on deploying EDA.<br/><br/>
+
+<LabGuidance />
+
+## Configure PAN-OS to send decryption failure logs to EDA
+
+The EDA plugin in the PAN-OS Ansible Collection is capable of receiving events as JSON structured log messages, which are sent by PAN-OS (firewall or Panorama). A HTTP Server Profile is required to define the structure of the log messages, with a payload definition like this:
+
+```json
+{
+    "category": "network",
+    "details": {
+        "action": "$action",
+        "app": "$app",
+        "cn": "$cn",
+        "dst": "$dst",
+        "device_name": "$device_name",
+        "error": "$error",
+        "issuer_cn": "$issuer_cn",
+        "root_cn": "$root_cn",
+        "root_status": "$root_status",
+        "sni": "$sni",
+        "src": "$src",
+        "srcuser": "$srcuser"
+    },
+    "receive_time": "$receive_time",
+    "rule": "$rule",
+    "rule_uuid": "$rule_uuid",
+    "serial": "$serial",
+    "sessionid": "$sessionid",
+    "severity": "informational",
+    "type": "decryption"
+}
+```
+
+Rather than configure this manually, the HTTP Server Profile could be configured in its entirety using the following tasks in an Ansible playbook, using the `server_profile_name_decrypt` variable for the name of the profile:
+
+```yaml
+    - name: Create a HTTP Server Profile for Decryption Logs
+      paloaltonetworks.panos.panos_http_profile:
+        provider: '{{ device }}'
+        name: '{{ server_profile_name_decrypt }}'
+        decryption_name: 'decryption-logs-to-eda'
+        decryption_uri_format: 'https://test'
+        decryption_payload: >
+          {
+              "category": "network",
+              "details": {
+                  "action": "$action",
+                  "app": "$app",
+                  "cn": "$cn",
+                  "dst": "$dst",
+                  "device_name": "$device_name",
+                  "error": "$error",
+                  "issuer_cn": "$issuer_cn",
+                  "root_cn": "$root_cn",
+                  "root_status": "$root_status",
+                  "sni": "$sni",
+                  "src": "$src",
+                  "srcuser": "$srcuser"
+              },
+              "receive_time": "$receive_time",
+              "rule": "$rule",
+              "rule_uuid": "$rule_uuid",
+              "serial": "$serial",
+              "sessionid": "$sessionid",
+              "severity": "informational",
+              "type": "decryption"
+          }
+
+    - name: Create HTTP server
+      paloaltonetworks.panos.panos_http_server:
+        provider: '{{ device }}'
+        http_profile: '{{ server_profile_name_decrypt }}'
+        name: 'my-EDA-server'
+        address: '192.168.1.5'
+        http_method: 'GET'
+        http_port: 5000
+
+    - name: Add a HTTP header to HTTP Server Profile
+      paloaltonetworks.panos.panos_http_profile_header:
+        provider: '{{ device }}'
+        http_profile: '{{ server_profile_name_decrypt }}'
+        log_type: 'decryption'
+        header: 'Content-Type'
+        value: 'application/json'
+
+    - name: Add a param to the config log type
+      paloaltonetworks.panos.panos_http_profile_param:
+        provider: '{{ device }}'
+        http_profile: '{{ server_profile_name_decrypt }}'
+        log_type: 'decryption'
+        param: 'serial'
+        value: '$serial'
+```
+
+Once configured, the HTTP Server Profile would be used in a Log Forwarding Profile, with a filter for only forwarding Decryption Logs when there has been an issue with decryption. Here are example Ansible tasks to create a Log Forwarding Profile:
+
+```yaml
+    - name: Create log forwarding profile
+      paloaltonetworks.panos.panos_log_forwarding_profile:
+        provider: '{{ provider }}'
+        name: 'EDA_LFP'
+        enhanced_logging: true
+
+    - name: Create log forwarding profile match list
+      paloaltonetworks.panos.panos_log_forwarding_profile_match_list:
+        provider: '{{ provider }}'
+        log_forwarding_profile: 'EDA_LFP'
+        name: 'eda-decryption-forwarding'
+        log_type: 'decryption'
+        filter: '( err_index neq None ) and ( proxy_type eq Forward )'
+        http_profiles: ['{{ server_profile_name_decrypt }}']
+```
+
+Ensure any configuration changes to PAN-OS are committed before proceeding.
+
+PAN-OS will now forward logs to EDA as events, whenever there are decryption failures recorded in the Decryption Logs.
+
+## Implement an EDA Rulebook to Receive Events from PAN-OS
+
+Rulebooks are YAML files which describe events of interest, and how EDA should respond to them based on conditions. Please consult [the Red Hat documentation](https://www.redhat.com/en/technologies/management/ansible/event-driven-ansible) for more details on how to deploy rulebooks in EDA.
+
+Deploying the rulebook below configures EDA to be able to receive the decryption logs (configured in the previous steps) from PAN-OS on TCP port 5000, and execute a remediation playbook:
+
+```yaml
+
+    ---
+    - name: "Receive logs sourced from HTTP Server Profile in PAN-OS"
+      hosts: "localhost"
+
+      ## Define how our plugin should listen for logs from PAN-OS
+      sources:
+        - paloaltonetworks.panos.logs:
+            host: 0.0.0.0
+            port: 5000
+            type: decryption
+
+      ## Define the conditions we are looking for. There are many types of logs
+      ## in PAN-OS; we are looking just for decryption logs
+      rules:
+        - name: "Troubleshoot Decryption Failure"
+          condition: event.meta.log_type == "decryption"
+
+          ## Define the action we should take should the condition be met,
+          ## when we find a decryption log, which is to execute the 
+          ## remediation playbook
+          action:
+            run_playbook:
+              name: "playbooks/decryption_remediation.yml"
+```
+
+## Define a Playbook to Remediate Decryption Issues
+
+Having configured PAN-OS to send events to EDA to initiate the event-driven workflow, and having implemented a rulebook to process the events and trigger a remediation playbook, the final step is to define the playbook used for remediation tasks.
+
+Two options are defined here, and other options for remediation could be considered also:
+- Add the problematic URL to a category used to bypass decryption, removing decryption for the URL in question, but also losing full visibility of traffic to that URL
+- Add the missing intermediate certificate to the PAN-OS certificate, which recovers the root cause of the problem when the website in question is misconfigured to not present the intermediate certificate
+
+### Decryption Bypass
+
+This playbook can be used for the option to bypass decryption for the problematic website:
+
+```yaml
+---
+- name: Decryption Remediation Playbook
+  hosts: 'all'
+  gather_facts: false
+  connection: local
+
+  vars:
+    device:
+      ip_address: "192.168.1.1"
+      username: "admin"
+      password: "redacted"
+
+    bypass_category_name: 'decryption-bypass'
+
+  ## When EDA calls this playbook for execution, it takes the SNI (Server Name Indication)
+  ## from the decryption logs where a site failed to be decrypted properly, and adds the
+  ## SNI to the list of domains in a URL category. This URL category is used as match
+  ## criteria, therefore domains in this URL category will no longer be decrypted by the
+  ## decryption policy rule.
+
+  tasks:
+    ## Gather up the list of domains currently in the URL category
+    - name: Get current decryption bypass domains
+      paloaltonetworks.panos.panos_custom_url_category:
+        provider: "{{ device }}"
+        state: "gathered"
+        gathered_filter: "name == '{{ bypass_category_name }}'"
+      register: bypass_category
+
+    ## If the URL category already has some domains, add this SNI to the list ('url_value')
+    - name: Update decryption bypass category with new domain, if category is currently not empty
+      paloaltonetworks.panos.panos_custom_url_category:
+        provider: '{{ device }}'
+        name: '{{ bypass_category_name }}'
+        url_value: '{{ bypass_category.gathered[0].url_value + [ansible_eda.event.payload.details.sni] }}'
+      when:
+        - bypass_category.gathered[0].url_value != None
+        - ansible_eda.event.payload.details.sni not in bypass_category.gathered[0].url_value
+
+    ## If the URL category is empty, create the list ('url_value') with this SNI
+    - name: Create decryption bypass category with new domain, if category is currently empty
+      paloaltonetworks.panos.panos_custom_url_category:
+        provider: '{{ device }}'
+        name: '{{ bypass_category_name }}'
+        url_value: '{{ [ansible_eda.event.payload.details.sni] }}'
+      when:
+        - bypass_category.gathered[0].url_value == None
+
+    ## Having added the site's SNI to the URL category, make this change live by performing a 'commit'
+    - name: Commit configuration
+      paloaltonetworks.panos.panos_commit_firewall:
+        provider: "{{ device }}"
+      register: results
+
+    ## Output results of the commit
+    - name: Output commit results
+      ansible.builtin.debug:
+        msg: "Commit with Job ID: {{ results.jobid }} had output: {{ results }}"
+```
+
+### Install Missing Intermediate Certificate
+
+This playbook can be used for the option to install the missing intermediate certificate for the problematic website:
+
+```yaml
+---
+- name: Decryption Remediation Playbook
+  hosts: 'all'
+  gather_facts: false
+  connection: local
+
+  vars:
+    device:
+      ip_address: "192.168.1.1"
+      username: "admin"
+      password: "redacted"
+
+  ## When EDA calls this playbook for execution, it takes the AIA (Authority Information Access)
+  ## from the decryption logs where a site failed to be decrypted properly, and attempts to
+  ## download the missing intermediate certificate which was not presented by the website the
+  ## user tried to access, then install the certificate into the PAN-OS certificate store.
+
+  tasks:
+    # Using the AIA in the Decryption Logs, get the URL for the location of the intermediate certificate
+    - name: Get intermediate certificate URL
+      ansible.builtin.set_fact:
+        intermediate_cert_url: "{{ ansible_eda.event.payload.details.error | regex_search(regex_query, ignorecase=True) }}"
+      vars:
+        regex_query: '(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)'
+
+    # Parse out just the name of certificate, to be used as the certificate name in the PAN-OS certificate store
+    - name: Get intermediate certificate filename
+      ansible.builtin.set_fact:
+        intermediate_cert_name: "{{ intermediate_cert_url | regex_search(regex_query, ignorecase=True) }}"
+      vars:
+        regex_query: '[^\/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))'
+
+    # Download the intermediate certificate
+    - name: Download intermediate certificate
+      ansible.builtin.get_url:
+        url: '{{ intermediate_cert_url }}'
+        dest: './{{ intermediate_cert_name }}'
+
+    # Convert the certificate into PEM format for PAN-OS
+    - name: Convert intermediate certificate from DER format to PEM format
+      ansible.builtin.command: "openssl x509 -inform DER -outform PEM -in {{ intermediate_cert_name }} -out ./{{ intermediate_cert_name }}.pem"
+      register: output
+      changed_when: output.rc != 0
+
+    # Upload the certificate to PAN-OS
+    - name: Import intermediate certificate to NGFW
+      paloaltonetworks.panos.panos_import:
+        provider: '{{ device }}'
+        category: 'certificate'
+        certificate_name: '{{ intermediate_cert_name }}'
+        format: 'pem'
+        filename: './{{ intermediate_cert_name }}.pem'
+
+    ## Having added the certificate to the store, make this change live by performing a 'commit'
+    - name: Commit configuration
+      paloaltonetworks.panos.panos_commit_firewall:
+        provider: "{{ device }}"
+      register: results
+
+    ## Output results of the commit
+    - name: Output commit results
+      ansible.builtin.debug:
+        msg: "Commit with Job ID: {{ results.jobid }} had output: {{ results }}"
+```
+
+After either remediation playbook is executed successfully, the user should be able to browse to the website without receiving the browser warning, and the entire process was automated.

@@ -1,0 +1,347 @@
+components:
+  responses:
+    custom_roles_list:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/_pagination'
+            - properties:
+                items:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/custom_role'
+                  type: array
+              type: object
+      description: Successful response.
+  schemas:
+    _id:
+      description: A unique identifier.
+      example: 1739683760
+      maxLength: 10
+      minLength: 10
+      pattern: ^^1[0-9]*$
+      readOnly: true
+      type: string
+    _pagination:
+      properties:
+        count:
+          default: 1
+          description: Total count of the items
+          type: integer
+      required:
+      - count
+      - items
+      type: object
+    custom_role:
+      example:
+        aggregated_permissions:
+        - prisma_access.config.get
+        - iam.service_account.create
+        - iam.access_policy.create
+        description: Access to Log Viewer endpoints
+        id: log_viewer:1234567890
+        label: Log Viewer
+        name: log_viewer
+        permission_sets:
+        - access_types:
+          - read
+          id: prisma_access.config
+        permissions:
+        - iam.service_account.create
+        - iam.access_policy.create
+        tsg_id: '1234567890'
+      properties:
+        aggregated_permissions:
+          description: 'Identifies all permissions available to this TSG. This is
+            a union of the permissions available to the
+
+            TSG, as well as the permissions available to all its child TSGs.
+
+            '
+          items:
+            type: string
+          type: array
+        description:
+          description: ''
+          type: string
+        label:
+          type: string
+        name:
+          description: 'The custom role''s name. It is used as a path parameter
+
+            for some custom role APIs.
+
+            '
+          type: string
+        permission_sets:
+          description: ''
+          items:
+            $ref: '#/components/schemas/permission_set_access'
+          type: array
+        permissions:
+          description: 'The [permissions](/scm/api/iam/permissions/) granted to this
+            custom role.
+
+            '
+          items:
+            type: string
+          type: array
+        tsg_id:
+          description: The tenant service group for which this role was created.
+          type: string
+      title: Root Type for custom_role
+      type: object
+    custom_role_create:
+      example:
+        description: Access to Log Viewer endpoints
+        label: Log Viewer
+        name: log_viewer
+        permission_sets:
+        - access_types:
+          - read
+          id: prisma_access.config
+        permissions:
+        - iam.service_account.create
+        - iam.access_policy.create
+      properties:
+        description:
+          description: ''
+          type: string
+        name:
+          description: 'Custom role''s name. This name must be URL-safe and must be
+            unique within
+
+            the TSG''s ancestor and descendent hierarchy.
+
+            '
+          type: string
+        permission_sets:
+          description: ''
+          items:
+            $ref: '#/components/schemas/permission_set_access'
+          type: array
+        permissions:
+          description: "A [permission](/scm/api/iam/permissions/) \nthat you want\
+            \ to assign to this custom role. Use permissions if you are granting access\n\
+            to a program or script.\n"
+          items:
+            type: string
+          type: array
+      required:
+      - name
+      - description
+      title: Root Type for custom_role
+      type: object
+    custom_role_update:
+      example:
+        description: Access to Log Viewer endpoints
+        label: Log Viewer
+        permission_sets:
+        - access_types:
+          - read
+          id: prisma_access.config
+        permissions:
+        - iam.service_account.create
+        - iam.access_policy.create
+      properties:
+        description:
+          description: ''
+          type: string
+        label:
+          description: Display Name for the custom Role
+          type: string
+        permission_sets:
+          description: ''
+          items:
+            $ref: '#/components/schemas/permission_set_access'
+          type: array
+        permissions:
+          items:
+            type: string
+          type: array
+      required:
+      - description
+      title: Root Type for custom_role
+      type: object
+    permission_set_access:
+      description: A permission set that you want to grant to this custom role. Permission
+        sets are maintained by Palo Alto Networks. Use permission sets for a custom
+        role if you are using it to grant a user access who uses the UI.
+      example:
+        access_types:
+        - read
+        id: iam.management
+      properties:
+        access_types:
+          description: 'The type of access (`read` and/or `write`) granted for this
+            permission set.
+
+            '
+          items:
+            type: string
+          type: array
+        id:
+          description: "The ID of a permission set included in this custom role. \n"
+          type: string
+      title: Root Type for permission_set_access
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Manage [custom roles](https://docs.paloaltonetworks.com/common-services/identity-and-access-access-management/manage-identity-and-access/add-custom-roles).\
+    \ \nWhen you create a custom role, you can use permissions or permission sets.\
+    \ To retrieve a list of all permissions currently available to you, use\n[GET\
+    \ /iam/v1/permissions](/scm/api/iam/get-iam-v-1-permissions/). To retrieve a\
+    \ list of all available permission sets, \nuse [GET /iam/v1/permission_sets](/scm/api/iam/get-iam-v-1-permission-sets/).\n\
+    \nYou should use permission sets if you are managing access for a user who is\
+    \ using the UI. Permission sets are maintained by Palo Alto Networks, and they\
+    \ \nare updated as pages are added to and removed from the UI. By using a permission\
+    \ set, you can avoid the overhead of maintaining permissions for\nusers as the\
+    \ UI evolves.\n\nUse permissions if you are granting access to an application\
+    \ or a script that needs specific access to a service.\n"
+  title: Custom Roles
+  version: '1.0'
+openapi: 3.0.2
+paths:
+  /iam/v1/custom_roles:
+    get:
+      description: "Retrieve all custom roles currently available to the tenant service\
+        \ group identified by the\naccess token used to authorize this request. \n"
+      operationId: get-iam-v1-custom_roles
+      responses:
+        '200':
+          $ref: '#/components/responses/custom_roles_list'
+      security:
+      - Bearer: []
+      summary: List custom roles
+      tags:
+      - CustomRoles
+    post:
+      description: 'Create a new custom role. When you create a custom role, you must
+        specify a name. This
+
+        name must be unique within the tenant service group''s (TSG) immediate hierarchy.
+        That
+
+        is, it cannot be duplicated by custom role names defined for ancestor or descendent
+
+        TSGs, but it can be duplicated across sibling TSGs. For best results, ensure
+        that this
+
+        name is unique within your entire hierarchy by specifying the TSG''s ID as
+        a part of
+
+        the role name.
+
+
+        The custom role name must be URL-safe. It is used as a path parameter for
+        some custom role APIs.
+
+        '
+      operationId: post-iam-v1-custom_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom_role_create'
+        description: A new `custom_role` to be created.
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom_role'
+          description: Successful response.
+      security:
+      - Bearer: []
+      summary: Create a custom role
+      tags:
+      - CustomRoles
+  /iam/v1/custom_roles/{name}:
+    delete:
+      description: 'Delete a custom role. It is an error to delete a custom role if
+        that role is currently
+
+        assigned to a user or service account.
+
+        '
+      operationId: delete-iam-v1-custom_roles-name
+      parameters:
+      - description: Name of the custom role you want to delete.
+        in: path
+        name: name
+        required: true
+        schema:
+          $ref: '#/components/schemas/_id'
+      responses:
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom_role'
+          description: Successful response.
+      security:
+      - Bearer: []
+      summary: Delete a custom role
+      tags:
+      - CustomRoles
+    get:
+      description: Gets the details of a single instance of a `custom_role`.
+      operationId: get-iam-v1-custom_roles-name
+      parameters:
+      - description: A unique identifier for a custom_role.
+        in: path
+        name: name
+        required: true
+        schema:
+          $ref: '#/components/schemas/_id'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom_role'
+          description: Successful response - returns a single `custom_role`.
+      security:
+      - Bearer: []
+      summary: Get a Custom Role
+      tags:
+      - CustomRoles
+    put:
+      description: Updates an existing `custom_role`.
+      operationId: put-iam-v1-custom_roles-name
+      parameters:
+      - description: A unique identifier for a custom_role.
+        in: path
+        name: name
+        required: true
+        schema:
+          $ref: '#/components/schemas/_id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom_role_update'
+        description: Updated `custom_role` information.
+        required: true
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom_role'
+          description: Successful response.
+      security:
+      - Bearer: []
+      summary: Update a Custom Role
+      tags:
+      - CustomRoles
+servers:
+- url: https://api.sase.paloaltonetworks.com
+tags:
+- name: CustomRoles

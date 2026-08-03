@@ -30,8 +30,7 @@ To report bugs, requests for new features or personal contact, please reach us v
 | Role                                              | Members                           | e-mail                                             |
 | ------------------------------------------------- | --------------------------------- | -------------------------------------------------- |
 | <small>Senior Manager Solutions Architect</small> | <small>David Puigdomenech</small> | <small><dpuigdomenec@paloaltonetworks.com></small> |
-| <small>Architecture and Analytics </small>        | <small>Didac Gil</small>          | <small><dgildelaig@paloaltonetworks.com></small>   |
 | <small>API development </small>                   | <small>Anna Carreras</small>      | <small><abarbany@paloaltonetworks.com></small>     |
-| <small>Solution Architect </small>                | <small>Sathesh Anandh </small>    | <small><sanandh@paloaltonetworks.com> </small>     |
 | <small>Front-End development </small>             | <small>Janosch Zbick</small>      | <small><jzbick@paloaltonetworks.com></small>       |
+| <small>Solution Engineer </small>      | <small>Carles Costas</small>        | <small><ccostas@paloaltonetworks.com></small>     |
 | <small>Technical Solution Architect </small>      | <small>Lynn Chiang</small>        | <small><lychiang@paloaltonetworks.com></small>     |

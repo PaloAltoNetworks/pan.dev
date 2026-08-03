@@ -18,7 +18,11 @@ image: /expedition/img/expedition.png
 ---
 
 :::note
-Expedition 1.x is the only supported version at time. Learn more about the release at our [Live Community](https://live.paloaltonetworks.com/t5/expedition/ct-p/migration_tool) site.
+**End of Life Announcement for Palo Alto Networks Expedition**
+
+We are excited to share some great news with you, as a valued user of Expedition functionalities. We are currently in the process of transferring the core functionalities of the tool into new products. This strategic move aligns with our commitment to meet the evolving needs of our customers and enhance our range of product offerings.  
+
+Starting from January 2025, Palo Alto Networks will no longer support the Expedition tool, including all versions of both Expedition1 and Expedition2 branches. We believe this transition will bring even more value and improved capabilities to our users. For more details, please refer to [Live Community](https://live.paloaltonetworks.com/t5/expedition-articles/important-update-end-of-life-announcement-for-palo-alto-networks/ta-p/589642) site.
 :::
 
 ## What is Expedition?

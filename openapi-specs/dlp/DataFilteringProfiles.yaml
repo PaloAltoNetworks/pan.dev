@@ -1,0 +1,506 @@
+components:
+  schemas:
+    AppExclusion:
+      properties:
+        app_id:
+          type: string
+        app_name:
+          type: string
+        type:
+          type: string
+      type: object
+    AuditResponse:
+      description: Audit metadata tracking creation and last-update information
+      properties:
+        created_at:
+          description: Timestamp when the resource was created
+          format: date-time
+          type: string
+        created_by:
+          description: Username or service that created the resource
+          type: string
+        updated_at:
+          description: Timestamp when the resource was last updated
+          format: date-time
+          type: string
+        updated_by:
+          description: Username or service that last updated the resource
+          type: string
+      type: object
+    DataFilteringDetails:
+      description: Granular criteria details
+      properties:
+        action:
+          type: string
+        dataProfileId:
+          format: int64
+          type: integer
+        direction:
+          type: string
+        euc_template_id:
+          type: string
+        fileBased:
+          type: string
+        fileTypes:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        is_end_user_coaching_enabled:
+          type: boolean
+        logSeverity:
+          type: string
+        nonFileBased:
+          type: string
+        scanType:
+          type: string
+      type: object
+    DataFilteringProfileRequest:
+      description: Request payload for updating a data filtering profile
+      properties:
+        criteria_details:
+          description: Granular criteria details for filtering
+          items:
+            $ref: '#/components/schemas/DataFilteringDetails'
+          type: array
+        data_profile_id:
+          description: ID of the linked data profile
+          format: int64
+          type: integer
+        description:
+          description: Optional human-readable description
+          type: string
+        direction:
+          description: 'Traffic direction: both, c2s, or s2c'
+          enum:
+          - BOTH
+          - UPLOAD
+          - DOWNLOAD
+          type: string
+        euc_template_id:
+          description: ID of the end-user coaching template to use
+          type: string
+        exception_rules:
+          description: Exception rules that bypass filtering
+          items:
+            $ref: '#/components/schemas/ExceptionRuleDTO'
+          type: array
+        exclusions:
+          $ref: '#/components/schemas/Exclusions'
+        file_based:
+          description: Whether file-based scanning is enabled
+          type: boolean
+        file_type:
+          description: List of file types to include in scanning
+          items:
+            description: List of file types to include in scanning
+            type: string
+          type: array
+        is_end_user_coaching_enabled:
+          description: Whether end-user coaching is enabled for this profile
+          type: boolean
+        is_granular_profile:
+          description: Whether this is a granular filtering profile
+          type: boolean
+        log_severity:
+          description: Log severity level
+          enum:
+          - CRITICAL
+          - HIGH
+          - MEDIUM
+          - LOW
+          - INFORMATIONAL
+          type: string
+        non_file_based:
+          description: Whether non-file-based scanning is enabled
+          type: boolean
+        rule1:
+          $ref: '#/components/schemas/DataFilteringRuleDTO'
+        rule2:
+          $ref: '#/components/schemas/DataFilteringRuleDTO'
+        scan_type:
+          description: Scan type (e.g. DLP, ATP)
+          enum:
+          - include
+          - exclude
+          type: string
+      required:
+      - file_based
+      - non_file_based
+      type: object
+    DataFilteringProfileResponse:
+      description: Data filtering profile resource returned by the API
+      properties:
+        audit_metadata:
+          $ref: '#/components/schemas/AuditResponse'
+        criteria_details:
+          description: Granular criteria details
+          items:
+            $ref: '#/components/schemas/DataFilteringDetails'
+          type: array
+        data_profile_id:
+          description: ID of the linked data profile
+          format: int64
+          type: integer
+        description:
+          description: Optional human-readable description
+          type: string
+        direction:
+          description: 'Traffic direction: both, c2s, or s2c'
+          type: string
+        euc_template_id:
+          description: ID of the end-user coaching template
+          type: string
+        exception_rules:
+          description: Exception rules
+          items:
+            $ref: '#/components/schemas/ExceptionRuleDTO'
+          type: array
+        exclusions:
+          $ref: '#/components/schemas/Exclusions'
+        file_based:
+          description: Whether file-based scanning is enabled
+          type: boolean
+        file_type:
+          description: List of file types included in scanning
+          items:
+            description: List of file types included in scanning
+            type: string
+          type: array
+        id:
+          description: Unique identifier of the filtering profile
+          type: string
+        is_end_user_coaching_enabled:
+          description: Whether end-user coaching is enabled
+          type: boolean
+        is_granular_profile:
+          description: Whether this is a granular profile
+          type: boolean
+        is_parent_managed:
+          description: Whether the profile is managed by a parent tenant
+          type: boolean
+        log_severity:
+          description: Log severity level
+          type: string
+        name:
+          description: Display name of the filtering profile
+          type: string
+        non_file_based:
+          description: Whether non-file-based scanning is enabled
+          type: boolean
+        rule1:
+          $ref: '#/components/schemas/DataFilteringRuleDTO'
+        rule2:
+          $ref: '#/components/schemas/DataFilteringRuleDTO'
+        scan_type:
+          description: Scan type
+          enum:
+          - include
+          - exclude
+          type: string
+        tenant_id:
+          description: Tenant identifier that owns this profile
+          type: string
+        type:
+          description: Profile type classification
+          type: string
+        version:
+          description: Version number, incremented on each update
+          format: int32
+          type: integer
+      type: object
+    DataFilteringRuleDTO:
+      description: Secondary filtering rule
+      properties:
+        action:
+          type: string
+        response_page:
+          type: string
+        show_rsp_page:
+          type: string
+      type: object
+    DestinationAttributes:
+      properties:
+        app_ids:
+          items:
+            type: string
+          type: array
+        match_any:
+          type: boolean
+        url_patterns:
+          items:
+            type: string
+          type: array
+      type: object
+    ExceptionRuleDTO:
+      description: Exception rules
+      properties:
+        action:
+          enum:
+          - ALLOW
+          - ALERT
+          - BLOCK
+          type: string
+        data_profile_ids:
+          items:
+            format: int64
+            type: integer
+          type: array
+        destination_attributes:
+          $ref: '#/components/schemas/DestinationAttributes'
+        id:
+          type: string
+        log_severity:
+          enum:
+          - INFORMATIONAL
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+          type: string
+        source_attributes:
+          $ref: '#/components/schemas/SourceAttributes'
+      type: object
+    Exclusions:
+      description: Exclusion rules
+      properties:
+        app_exclusion_list:
+          items:
+            $ref: '#/components/schemas/AppExclusion'
+          type: array
+        exclusion_list:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        url_exclusion_list:
+          items:
+            $ref: '#/components/schemas/URLExclusion'
+          type: array
+      type: object
+    PageDataFilteringProfileResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DataFilteringProfileResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    PageableObject:
+      properties:
+        offset:
+          format: int64
+          type: integer
+        pageNumber:
+          format: int32
+          type: integer
+        pageSize:
+          format: int32
+          type: integer
+        paged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        unpaged:
+          type: boolean
+      type: object
+    SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      type: object
+    SourceAttributes:
+      properties:
+        match_any:
+          type: boolean
+        user_group_ids:
+          items:
+            type: string
+          type: array
+        user_ids:
+          items:
+            type: string
+          type: array
+      type: object
+    URLExclusion:
+      properties:
+        type:
+          type: string
+        url_id:
+          type: string
+        url_name:
+          type: string
+      type: object
+  securitySchemes:
+    Bearer:
+      scheme: bearer
+      type: http
+info:
+  contact: {}
+  description: "Create and manage data filtering profiles for categorizing and protecting\
+    \ sensitive data. Define custom \nfiltering rules to identify and classify sensitive\
+    \ information based on organizational requirements.\n"
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: Data Filtering Profiles API v2
+  version: 1.0.0
+openapi: 3.0.2
+paths:
+  /v2/api/data-filtering-profiles:
+    get:
+      description: Returns a paginated list of data filtering profiles for the authenticated
+        tenant.
+      operationId: get-v2-api-data-filtering-profiles
+      parameters:
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default
+          sort order is ascending. Multiple sort criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+      - description: Filter by profile status
+        in: query
+        name: status
+        schema:
+          enum:
+          - enabled
+          - disabled
+          type: string
+      - description: Filter by profile name (partial match)
+        in: query
+        name: name
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDataFilteringProfileResponse'
+          description: Paginated list of data filtering profiles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+      security:
+      - Bearer: []
+      summary: List Data Filtering Profiles
+      tags:
+      - Data Filtering Profiles
+  /v2/api/data-filtering-profiles/{resourceId}:
+    get:
+      description: Retrieves a single data filtering profile by its Id
+      operationId: get-v2-api-data-filtering-profiles-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataFilteringProfileResponse'
+          description: Data filtering profile found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data filtering profile not found
+      security:
+      - Bearer: []
+      summary: Get Data Filtering Profile
+      tags:
+      - Data Filtering Profiles
+    put:
+      description: Fully replaces an existing data filtering profile with the provided
+        payload.
+      operationId: put-v2-api-data-filtering-profiles-resourceid
+      parameters:
+      - in: path
+        name: resourceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataFilteringProfileRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataFilteringProfileResponse'
+          description: Data filtering profile updated
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - insufficient privileges
+        '404':
+          description: Data filtering profile not found
+      security:
+      - Bearer: []
+      summary: Update Data Filtering Profile
+      tags:
+      - Data Filtering Profiles
+servers:
+- url: https://api.dlp.paloaltonetworks.com
+tags:
+- name: Data Filtering Profiles

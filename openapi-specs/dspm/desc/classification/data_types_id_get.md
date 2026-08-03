@@ -1,0 +1,1 @@
+List through all data types discovered in the environment. This call returns a list of all data types found in the environment, allowing for input validation for investigation concerning a specific data type.

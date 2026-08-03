@@ -1,0 +1,1341 @@
+openapi: 3.0.3
+info:
+  title: SSPM Management API
+  version: 1.0.0
+  description: "\xA9 2025 Palo Alto Networks, Inc This Open API spec file was created\
+    \ on March 02, 2026. \xA9 2026 Palo Alto Networks, Inc. Palo Alto Networks is\
+    \ a registered trademark of Palo Alto Networks. A list of our trademarks can be\
+    \ found at [https://www.paloaltonetworks.com/company/trademarks.html](https://www.paloaltonetworks.com/company/trademarks.html).\
+    \ All other marks mentioned herein may be trademarks of their respective companies."
+servers:
+- url: https://api.sase.paloaltonetworks.com
+- url: https://api.strata.paloaltonetworks.com
+components:
+  schemas:
+    Application:
+      properties:
+        app_id:
+          type: string
+        app_settings:
+          additionalProperties:
+            type: string
+          type: object
+        changed_at:
+          format: date-time
+          type: string
+        changed_by:
+          type: string
+        configs:
+          additionalProperties:
+            type: string
+          type: object
+        created_at:
+          format: date-time
+          type: string
+        created_by:
+          type: string
+        fawkes_url:
+          type: string
+        features_metadata:
+          additionalProperties:
+            additionalProperties:
+              type: string
+            type: object
+          type: object
+        features_state:
+          additionalProperties:
+            $ref: '#/components/schemas/FeatureState'
+          type: object
+        health_status:
+          enum:
+          - Up
+          - Unhealthy
+          - Down
+          - Unknown
+          - Scanning
+          type: string
+        instance_label:
+          enum:
+          - Default
+          - Production
+          - Sandbox
+          - Internal
+          - QA
+          - Dev
+          type: string
+        last_scanned_at:
+          format: date-time
+          type: string
+        last_validated_at:
+          format: date-time
+          type: string
+        missing_configs:
+          items:
+            type: string
+          type: array
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+        remediation_enabled:
+          type: boolean
+        scan_interval_minutes:
+          format: int32
+          type: integer
+        status:
+          enum:
+          - Registered
+          - Active
+          - Disabled
+          type: string
+        tenant:
+          type: string
+        tsg_id:
+          type: string
+        type:
+          type: string
+      type: object
+    ApplicationAuthInfo:
+      properties:
+        fields:
+          items:
+            $ref: '#/components/schemas/AuthFormElement'
+          type: array
+        sso_fields:
+          items:
+            $ref: '#/components/schemas/SsoFields'
+          type: array
+        strategy:
+          enum:
+          - REDIRECT_URL
+          - PROVIDED_CREDENTIALS
+          type: string
+      type: object
+    ApplicationPage:
+      properties:
+        items:
+          items:
+            type: object
+          type: array
+        limit:
+          format: int32
+          type: integer
+        next_path:
+          type: string
+        prev_path:
+          type: string
+        total:
+          format: int64
+          type: integer
+      type: object
+    AuthFormElement:
+      discriminator:
+        propertyName: kind
+      properties:
+        kind:
+          enum:
+          - FIELD
+          - DOC
+          type: string
+      type: object
+    CatalogApplication:
+      properties:
+        display_name:
+          type: string
+        enabled:
+          type: boolean
+        features:
+          items:
+            enum:
+            - SCAN
+            - REMEDIATE
+            - RISKY_ACCOUNTS
+            - THIRD_PARTY_APPS
+            - THIRD_PARTY_APPS_USER_REVOKE
+            - IDENTITY
+            type: string
+          type: array
+          uniqueItems: true
+        features_metadata:
+          additionalProperties:
+            additionalProperties:
+              type: string
+            type: object
+          type: object
+        lambda:
+          type: boolean
+        name:
+          type: string
+      type: object
+    CatalogConfig:
+      properties:
+        __metadata:
+          additionalProperties:
+            type: object
+          properties:
+            empty:
+              type: boolean
+          type: object
+        category:
+          type: string
+        common_control:
+          type: string
+        console_url:
+          type: string
+        description:
+          type: string
+        description_url:
+          type: string
+        enabled:
+          type: boolean
+        id:
+          type: string
+        name:
+          type: string
+        native_category:
+          type: string
+        native_name:
+          type: string
+        operator:
+          $ref: '#/components/schemas/CatalogConfigOperator'
+        optional:
+          type: boolean
+        remediation:
+          $ref: '#/components/schemas/RemediationConfig'
+        remediation_steps:
+          type: string
+        severity:
+          type: string
+        value:
+          $ref: '#/components/schemas/ConfigValue'
+      type: object
+    CatalogConfigOperator:
+      discriminator:
+        propertyName: operator
+      properties:
+        displayValue:
+          type: string
+        operator:
+          enum:
+          - equal
+          - not_equal
+          - substring
+          - not_substring
+          - greater
+          - greater_or_equal
+          - less
+          - less_or_equal
+          - one_of
+          - not_one_of
+          - in_range
+          - not_in_range
+          type: string
+        valueType:
+          enum:
+          - int
+          - double
+          - string
+          - bool
+          type: string
+      type: object
+    CommonControlProfiles:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        profiles:
+          items:
+            $ref: '#/components/schemas/ComplianceProfile'
+          type: array
+      type: object
+    ComplianceCategory:
+      properties:
+        controls:
+          items:
+            $ref: '#/components/schemas/ComplianceControl'
+          type: array
+        name:
+          type: string
+      type: object
+    ComplianceControl:
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+      type: object
+    ComplianceProfile:
+      properties:
+        categories:
+          items:
+            $ref: '#/components/schemas/ComplianceCategory'
+          type: array
+        id:
+          type: string
+        name:
+          type: string
+      type: object
+    Config:
+      properties:
+        app_id:
+          type: string
+        category:
+          type: string
+        common_control_id:
+          type: string
+        config_id:
+          type: string
+        console_url:
+          type: string
+        current_value:
+          type: string
+        description:
+          type: string
+        descriptionUrl:
+          type: string
+        id:
+          type: string
+        locked:
+          type: boolean
+        locked_value:
+          type: string
+        monitored:
+          type: boolean
+        monitored_attestation:
+          type: string
+        name:
+          type: string
+        operator:
+          type: string
+        operator_display_value:
+          type: string
+        overridden:
+          type: boolean
+        overridden_value:
+          type: string
+        recommended_value:
+          type: string
+        remediation_enabled:
+          type: boolean
+        remediation_steps:
+          type: string
+        status:
+          type: string
+        subcategory:
+          type: string
+        tenant:
+          type: string
+        tickets:
+          items:
+            $ref: '#/components/schemas/Ticket'
+          type: array
+      type: object
+    ConfigValue:
+      properties:
+        choices:
+          type: string
+        default_value:
+          type: string
+        type:
+          type: string
+      type: object
+    FeatureState:
+      properties:
+        last_scanned_at:
+          format: date-time
+          type: string
+        status:
+          enum:
+          - UNKNOWN
+          - OK
+          - UNHEALTHY
+          - AUTH_REQUIRED
+          - SCANNING
+          type: string
+        status_details:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    JiraIdentity:
+      properties:
+        accountId:
+          type: string
+        displayName:
+          type: string
+      type: object
+    JiraIssueFields:
+      properties:
+        assignee:
+          $ref: '#/components/schemas/JiraIdentity'
+        reporter:
+          $ref: '#/components/schemas/JiraIdentity'
+        status:
+          $ref: '#/components/schemas/Status'
+      type: object
+    JiraIssueResponse:
+      properties:
+        fields:
+          $ref: '#/components/schemas/JiraIssueFields'
+      type: object
+    JiraIssueType:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      type: object
+    JiraProjectDetailResponse:
+      properties:
+        issueTypes:
+          items:
+            $ref: '#/components/schemas/JiraIssueType'
+          type: array
+      type: object
+    RemediationConfig:
+      properties:
+        auto_fix:
+          type: boolean
+        guide_footer:
+          type: string
+        guide_header:
+          type: string
+        guide_steps:
+          items:
+            type: string
+          type: array
+        remediation_value:
+          type: string
+      type: object
+    ScopeConfig:
+      properties:
+        description:
+          type: string
+        enabled:
+          type: boolean
+        id:
+          type: string
+        name:
+          type: string
+        native_name:
+          type: string
+        severity:
+          type: string
+      type: object
+    SsoFields:
+      properties:
+        fields:
+          items:
+            $ref: '#/components/schemas/AuthFormElement'
+          type: array
+        sso_provider:
+          enum:
+          - NONE
+          - OKTA
+          - AZURE
+          - GOOGLE
+          type: string
+      required:
+      - fields
+      - sso_provider
+      type: object
+    Status:
+      properties:
+        name:
+          type: string
+      type: object
+    Ticket:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        integrationId:
+          type: string
+        summary:
+          type: string
+        tenant:
+          type: string
+        ticketKey:
+          type: string
+        ticketUrl:
+          type: string
+        type:
+          enum:
+          - JIRA_TICKETING
+          - SNOW_TICKETING
+          type: string
+      type: object
+    User:
+      properties:
+        email:
+          type: string
+        full_name:
+          type: string
+        user_id:
+          type: string
+      required:
+      - email
+      - full_name
+      - user_id
+      type: object
+    ClassificationStatusAggregation:
+      properties:
+        sanctioned_third_party_apps:
+          format: int32
+          type: integer
+        total_third_party_apps:
+          format: int32
+          type: integer
+        users_using_unsanctioned_apps:
+          format: int32
+          type: integer
+      type: object
+    Plugin:
+      properties:
+        app_id:
+          type: string
+        app_name:
+          type: string
+        app_type:
+          type: string
+        base_app_id:
+          type: string
+        classification:
+          type: string
+        has_policies:
+          type: boolean
+        high_scopes:
+          items:
+            $ref: '#/components/schemas/ThirdPartyAppScope'
+          type: array
+        id:
+          type: string
+        is_public:
+          type: boolean
+        level:
+          enum:
+          - PRODUCT
+          - ORGANIZATION
+          - WORKSPACE
+          - USER
+          type: string
+        low_scopes:
+          items:
+            $ref: '#/components/schemas/ThirdPartyAppScope'
+          type: array
+        marketplace:
+          type: string
+        marketplace_app_id:
+          type: string
+        medium_scopes:
+          items:
+            $ref: '#/components/schemas/ThirdPartyAppScope'
+          type: array
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        severity:
+          type: string
+        status:
+          type: string
+        tenant:
+          type: string
+        third_party_app_id:
+          type: string
+        third_party_app_name:
+          type: string
+        user_count:
+          format: int32
+          type: integer
+        user_counts:
+          additionalProperties:
+            format: int32
+            type: integer
+          type: object
+      type: object
+    PluginPage:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/Plugin'
+          type: array
+        limit:
+          format: int32
+          type: integer
+        next_path:
+          type: string
+        prev_path:
+          type: string
+        total:
+          format: int64
+          type: integer
+      type: object
+    PluginUser:
+      properties:
+        email:
+          type: string
+        full_names:
+          items:
+            type: string
+          type: array
+        id:
+          type: string
+        marketplaces:
+          items:
+            type: string
+          type: array
+        tenant:
+          type: string
+        user_level_plugins_count:
+          format: int32
+          type: integer
+      type: object
+    PluginUserPage:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PluginUser'
+          type: array
+        limit:
+          format: int32
+          type: integer
+        next_path:
+          type: string
+        prev_path:
+          type: string
+        total:
+          format: int64
+          type: integer
+      type: object
+    UserToPlugin:
+      properties:
+        app_id:
+          type: string
+        app_name:
+          type: string
+        full_name:
+          type: string
+        level:
+          enum:
+          - PRODUCT
+          - ORGANIZATION
+          - WORKSPACE
+          - USER
+          type: string
+        marketplace:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        tenant:
+          type: string
+        third_party_app_id:
+          type: string
+        third_party_app_name:
+          type: string
+        user_id:
+          type: string
+      type: object
+    UserToPluginPage:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserToPlugin'
+          type: array
+        limit:
+          format: int32
+          type: integer
+        next_path:
+          type: string
+        prev_path:
+          type: string
+        total:
+          format: int64
+          type: integer
+      type: object
+    ThirdPartyAppScope:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        risk:
+          type: string
+      required:
+      - id
+      - name
+      - risk
+      type: object
+    Metadata:
+      properties:
+        badge:
+          items:
+            type: string
+          type: array
+        compatible_products:
+          items:
+            type: string
+          type: array
+        data_used_in_models:
+          type: string
+        description:
+          type: string
+        download_count:
+          format: int32
+          type: integer
+        icon:
+          type: string
+        is_bot:
+          type: boolean
+        is_copilot:
+          type: boolean
+        is_gen_ai:
+          type: boolean
+        plugin_name:
+          type: string
+        publisher_name:
+          type: string
+        review_count:
+          format: int32
+          type: integer
+        risk:
+          format: int32
+          type: integer
+        use_cases:
+          items:
+            type: string
+          type: array
+      type: object
+ExternalTags:
+  Registered Application:
+    title: Registered Application
+    description: Application related API
+    tags:
+    - Registered Application
+  Catalog Information:
+    title: Catalog Information
+    description: Catalog related API
+    tags:
+    - Catalog Information
+  JIRA:
+    title: JIRA
+    description: JIRA related API
+    tags:
+    - JIRA
+  plugin:
+    title: plugin
+    description: plugin related API
+    tags:
+    - plugin
+paths:
+  /sspm/api/v1/apps:
+    get:
+      summary: Registered Application
+      description: Retrieve the list of onboarded SaaS applications.
+      operationId: getRegisteredApplications
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPage'
+          description: successful operation
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: List of filters
+        example: filter=type:office365
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: 'defines sorting of the result.Format: FIELD_NAME:DIRECTION|FIELD_NAME:DIRECTION|...
+          .'
+        example: order_by=name:asc|type:desc
+        in: query
+        name: order_by
+        schema:
+          type: string
+      - description: applies page_token to get requested page of items
+        example: page_token=MSM2Iw==
+        in: query
+        name: page_token
+        schema:
+          type: string
+      tags:
+      - Apps
+  /sspm/api/v1/apps/{app_id}:
+    get:
+      summary: Application Details
+      description: Retrieve the basic details of the application by providing app
+        ID and tenant name.
+      operationId: getRegisteredApplication
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+          description: successful operation
+        '404':
+          description: not registered application
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application id
+        example: f1700e7b-e60f-4d5e-bfce-aba3543adf8e
+        in: path
+        name: app_id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Apps
+  /sspm/api/v1/apps/{app_id}/configs:
+    get:
+      summary: Application Configuration Details
+      description: Retrieve details on the application configuration by providing
+        app ID and tenant name.
+      operationId: getApplicationConfigs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Config'
+                type: array
+          description: successful operation
+        '404':
+          description: not registered application
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application id
+        example: f1700e7b-e60f-4d5e-bfce-aba3543adf8e
+        in: path
+        name: app_id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Apps
+  /sspm/api/v1/apps/{app_id}/settings:
+    get:
+      summary: Application Settings Details
+      description: Retrieve details on the settings of the SaaS application by providing
+        app ID and tenant name.
+      operationId: getApplicationSettings
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Config'
+                type: array
+          description: successful operation
+        '404':
+          description: not registered application
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application id
+        example: f1700e7b-e60f-4d5e-bfce-aba3543adf8e
+        in: path
+        name: app_id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Apps
+  /sspm/api/v1/auth/{app}/info:
+    get:
+      summary: Authorization Information
+      description: Retrieve details on the application authorization in the catalog.
+      operationId: getAuthInfo
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationAuthInfo'
+          description: successful operation
+        '404':
+          description: not registered application
+      parameters:
+      - description: application type
+        example: office365
+        in: path
+        name: app
+        required: true
+        schema:
+          type: string
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      tags:
+      - Authorization
+  /sspm/api/v1/catalog/apps:
+    get:
+      summary: Supported Security Service Posture Management Applications
+      description: Retrieve details on all the supported Security Service Posture
+        Management applications.
+      operationId: getCatalogApplications
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CatalogApplication'
+                type: array
+          description: successful operation
+      parameters: []
+      tags:
+      - Catalog
+  /sspm/api/v1/catalog/apps/{app}:
+    get:
+      summary: Catalog Setting Details
+      description: Retrieve details on the catalog settings for the application by
+        providing application type.
+      operationId: getCatalogApplication
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogApplication'
+          description: successful operation
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application name
+        example: servicenow
+        in: path
+        name: app
+        required: true
+        schema:
+          type: string
+      tags:
+      - Catalog
+  /sspm/api/v1/catalog/apps/{app}/configs:
+    get:
+      summary: Catalog Configuration Setting Details
+      description: Retrieve details on the catalog configuration settings by providing
+        application type.
+      operationId: getApplicationConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CatalogConfig'
+                type: array
+          description: successful operation
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application name
+        example: servicenow
+        in: path
+        name: app
+        required: true
+        schema:
+          type: string
+      tags:
+      - Catalog
+  /sspm/api/v1/catalog/apps/{app}/scopes:
+    get:
+      summary: Plugin Scope Catalog
+      description: Retrieve plugin scope catalog for the application using application
+        type.
+      operationId: getApplicationScopes
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ScopeConfig'
+                type: array
+          description: successful operation
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: application name
+        example: servicenow
+        in: path
+        name: app
+        required: true
+        schema:
+          type: string
+      tags:
+      - Catalog
+  /sspm/api/v1/catalog/controls/{common_control_id}:
+    get:
+      summary: Compliance Profile Mapping
+      description: Retrieve a compliance profile mappings for common control ID.
+      operationId: getCommonControlComplianceProfiles
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommonControlProfiles'
+          description: successful operation
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: common control id
+        example: PAN-00000001
+        in: path
+        name: common_control_id
+        required: true
+        schema:
+          type: string
+      tags:
+      - Catalog
+  /sspm/api/v1/integration/integrations/{integration_id}/{integration_type}/issue/{key}:
+    get:
+      summary: JIRA Ticket Issue Details
+      description: Retrieve onboarded JIRA ticketing issue details by key.
+      operationId: getJiraIssue
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JiraIssueResponse'
+          description: successful operation
+        '404':
+          description: not registered jira-ticketing integration
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: integration id
+        example: 65dcec42a2f1d37173e6294c
+        in: path
+        name: integration_id
+        required: true
+        schema:
+          type: string
+      - description: integration type
+        example: JIRA_TICKETING
+        in: path
+        name: integration_type
+        required: true
+        schema:
+          type: string
+      - description: issue key
+        example: '10001'
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      tags:
+      - JIRA
+  /sspm/api/v1/integration/integrations/{integration_id}/{integration_type}/project/{key}:
+    get:
+      summary: JIRA Ticket Project Details
+      description: Retrieve onboarded JIRA ticketing project details by key.
+      operationId: getJiraProjectDetail
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JiraProjectDetailResponse'
+          description: successful operation
+        '404':
+          description: not registered jira-ticketing integration
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: integration id
+        example: 65dcec42a2f1d37173e6294c
+        in: path
+        name: integration_id
+        required: true
+        schema:
+          type: string
+      - description: integration type
+        example: JIRA_TICKETING
+        in: path
+        name: integration_type
+        required: true
+        schema:
+          type: string
+      - description: project key
+        example: TestProject
+        in: path
+        name: key
+        required: true
+        schema:
+          type: string
+      tags:
+      - JIRA
+  /sspm/api/v1/integration/integrations/{integration_id}/{integration_type}/projects:
+    get:
+      summary: JIRA Ticket Project List
+      description: Retrieve the onboarded JIRA ticketing project list.
+      operationId: getJiraProjects
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: successful operation
+        '404':
+          description: not registered jira-ticketing integration
+      parameters:
+      - description: region
+        in: header
+        name: x-panw-region
+        required: false
+        schema:
+          type: string
+      - description: integration id
+        example: 65dcec42a2f1d37173e6294c
+        in: path
+        name: integration_id
+        required: true
+        schema:
+          type: string
+      - description: integration type
+        example: JIRA_TICKETING
+        in: path
+        name: integration_type
+        required: true
+        schema:
+          type: string
+      tags:
+      - JIRA
+  /sspm/api/v1/plugin-users:
+    get:
+      summary: Third-Party Plugin Users
+      description: Fetch list of third-party plugin users.
+      operationId: getPluginUsersByFilter
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginUserPage'
+          description: successful operation
+        '404':
+          description: Not Found
+      parameters:
+      - description: tenant
+        in: header
+        name: x-ps-tenant
+        required: true
+        schema:
+          type: string
+      - description: 'List of filters. Format: FIELD_NAME:VALUE1|VALUE2,...'
+        example: filter=email:xyz
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: 'List of sort fields.Format: FIELD_NAME:DIRECTION,... .'
+        example: order_by=full_name:asc
+        in: query
+        name: order_by
+        schema:
+          type: string
+      - description: applies page_token to get requested page of items
+        in: query
+        name: page_token
+        schema:
+          type: string
+      - description: Int limit of the integrations requested
+        in: query
+        name: limit
+        schema:
+          type: string
+      tags:
+      - plugin
+  /sspm/api/v1/plugin-users/{id}/plugins:
+    get:
+      summary: Third-Party Plugin User By ID
+      description: Get list of third-party plugins user by ID.
+      operationId: getPluginsForUser
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToPluginPage'
+          description: successful operation
+        '404':
+          description: Not Found
+      parameters:
+      - description: tenant
+        in: header
+        name: x-ps-tenant
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: applies page_token to get requested page of items
+        in: query
+        name: page_token
+        schema:
+          type: string
+      - description: Int limit of the integrations requested
+        in: query
+        name: limit
+        schema:
+          type: string
+      tags:
+      - plugin
+  /sspm/api/v1/plugins:
+    get:
+      summary: Third-party Plugins
+      description: Fetch list of third-party plugins.
+      operationId: getPluginsByFilter
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginPage'
+          description: successful operation
+        '404':
+          description: Not Found
+      parameters:
+      - description: tenant
+        in: header
+        name: x-ps-tenant
+        required: true
+        schema:
+          type: string
+      - description: 'List of filters. Format: FIELD_NAME:VALUE1|VALUE2,...'
+        example: filter=marketplace_plugin_id:123,use_cases:analytics|visibility
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: 'List of sort fields.Format: FIELD_NAME:DIRECTION,... .'
+        example: order_by=publisher_name:asc|marketplace:desc
+        in: query
+        name: order_by
+        schema:
+          type: string
+      - description: applies page_token to get requested page of items
+        in: query
+        name: page_token
+        schema:
+          type: string
+      - description: Int limit of the integrations requested
+        in: query
+        name: limit
+        schema:
+          type: string
+      tags:
+      - plugin
+  /sspm/api/v1/plugins/{id}:
+    get:
+      summary: Plugin Details
+      description: Get details on the plugin.
+      operationId: getPlugin
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plugin'
+          description: successful operation
+        '404':
+          description: Not Found
+      parameters:
+      - description: tenant
+        in: header
+        name: x-ps-tenant
+        required: true
+        schema:
+          type: string
+      - description: plugin id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      tags:
+      - plugin
+  /sspm/api/v1/plugins/classification-aggregates:
+    get:
+      summary: Aggregate Plugin Information
+      description: Aggregate plugin related information.
+      operationId: getClassificationStatusAggregates
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationStatusAggregation'
+          description: successful operation
+        '404':
+          description: Not Found
+      parameters:
+      - description: tenant
+        in: header
+        name: x-ps-tenant
+        required: true
+        schema:
+          type: string
+      tags:
+      - plugin

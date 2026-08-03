@@ -2,15 +2,19 @@ components:
   schemas:
     Aggregate:
       properties:
+        data:
+          description: Data
+          items:
+            $ref: '#/components/schemas/AggregateData'
+          type: array
         field:
-          description: 'The field value.
-
-            '
+          description: Field
+          type: string
+        name:
+          description: Name
           type: string
         operator:
-          description: 'The operator values.
-
-            '
+          description: Operator
           enum:
           - max
           - count
@@ -18,73 +22,74 @@ components:
           - avg
           - sum
           type: string
-    BaseQuery:
+        statistic:
+          description: Statistic
+          type: string
+        unit:
+          description: Unit
+          type: string
+    AggregateData:
+      properties:
+        value:
+          description: 'Value: JsonInclude(content = ALWAYS, contentFilter = classOf[Void],
+            value = ALWAYS, valueFilter = classOf[Void]) '
+          type: number
+        view:
+          type: object
+    BaseQueryDTO:
       properties:
         aggregate:
           $ref: '#/components/schemas/Aggregate'
-          description: 'The aggregate number of queries.
-
-            '
+          description: Aggregate
         dest_page:
-          description: 'The destination page.
-
-            '
+          description: Dest Page
           format: int32
           type: integer
         getDeleted:
-          description: 'The number of queries deleted for a time frame.
-
-            '
+          description: GetDeleted
           type: boolean
         group_by:
-          description: 'Group the queries.
-
-            '
+          description: Group By
           items:
             description: Group By
             type: string
           type: array
         id:
-          description: "List the queries by ID.    \n"
+          description: Id
           type: string
         last_query_ts:
-          description: 'Return the ID of a specified query in the current session.
-
-            '
+          description: Last Query Ts
           format: int64
           type: integer
         limit:
-          description: 'The query limit.
-
-            '
+          description: Limit
           format: int32
           type: integer
         next_query:
-          description: 'The  limit.
-
-            '
           type: object
         query_params:
+          $ref: '#/components/schemas/QueryParams'
+          description: Query Params
           type: object
         retrieved_fields:
-          description: 'Retrieve information from a field.
-
-            '
+          description: Retrieved Fields
           items:
             description: Retrieved Fields
             type: string
           type: array
         retrieved_fields_mask:
-          description: 'List the fields to query.
-
-            '
+          description: Retrieved Fields Mask
           type: boolean
         sort_params:
+          properties:
+            <field_name>:
+              enum:
+              - asc
+              - desc
+              type: string
           type: object
         total_count:
-          description: 'The total number of query parameters.
-
-            '
+          description: Total Count
           format: int64
           type: integer
     Error:
@@ -99,16 +104,39 @@ components:
           type: string
         message:
           type: string
+    QueryParams:
+      properties:
+        <field_name>|comparator:
+          additionalProperties:
+            properties:
+              eq:
+                type: string
+              gte:
+                type: string
+              in:
+                items:
+                  type: string
+                type: array
+              lte:
+                type: string
+              neq:
+                type: string
+            type: object
+          type: object
     SetBulkResponse:
       properties:
+        _etag:
+          description: Object version. Required for PUT requests, ignored for POST.
+          format: int64
+          type: integer
         count:
-          description: 'The number of responses.
+          description: 'The actual count.
 
             '
           format: int32
           type: integer
         id:
-          description: 'The ID of the response.
+          description: 'The ID.
 
             '
           type: string
@@ -120,7 +148,7 @@ components:
             type: object
           type: array
         total_count:
-          description: 'The total number of responses.
+          description: 'Total number.
 
             '
           format: int64
@@ -141,7 +169,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -179,7 +207,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -210,7 +238,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
@@ -241,7 +269,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseQuery'
+              $ref: '#/components/schemas/BaseQueryDTO'
         description: Query Details
       responses:
         '200':
