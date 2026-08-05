@@ -356,7 +356,20 @@ module.exports = {
           require("./api/config/posture-management/compliance-framework/sidebar"),
           ],
         },
-      ],
+      
+        {
+          type: "category",
+          label: "Policy Optimizer",
+          collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/posture-management/policy-optimizer/introduction",
+            },
+            require("./api/config/posture-management/policy-optimizer/sidebar"),
+          ],
+        },
+],
     },
     {
       type: "category",
