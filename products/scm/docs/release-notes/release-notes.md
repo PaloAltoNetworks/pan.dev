@@ -16,6 +16,56 @@ documentation, some of which have occurred in between API product releases.
 
 * [November 2024](/scm/docs/release-notes/november2024/)
 
+## August 5th, 2026
+
+Subscription Service API: 2 new endpoints available.
+
+### New
+
+- **Fetch entitlement group details.** New `GET /asset/api/v1/entitlement-groups` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  GET api.strata.paloaltonetworks.com/asset/api/v1/entitlement-groups
+  ```
+
+- **Get instance status.** New `GET /asset/api/v1/instances` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  GET api.strata.paloaltonetworks.com/asset/api/v1/instances
+  ```
+
+---
+## August 5th, 2026
+
+Subscription Service API: 4 new endpoints available.
+
+### New
+
+- **Activate or amend license.** New `POST /activation/api/v1/activate` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  POST api.strata.paloaltonetworks.com/activation/api/v1/activate
+  ```
+
+- **Offboard a product instance.** New `POST /activation/api/v1/offboard` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  POST api.strata.paloaltonetworks.com/activation/api/v1/offboard
+  ```
+
+- **Validate offboard readiness.** New `GET /activation/api/v1/offboard/validation` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  GET api.strata.paloaltonetworks.com/activation/api/v1/offboard/validation
+  ```
+
+- **Share an instance with target TSGs.** New `POST /activation/api/v1/shared-instances` endpoint now available.
+  [Subscription Service API reference →](/scm/api/subscription-service)
+  ```
+  POST api.strata.paloaltonetworks.com/activation/api/v1/shared-instances
+  ```
+
+---
 ## July 31st, 2026
 
 Posture Management API: 26 new, 10 removed endpoints. Updated from v1.0 to v1.1.0.
