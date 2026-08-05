@@ -16,6 +16,73 @@ documentation, some of which have occurred in between API product releases.
 
 * [November 2024](/scm/docs/release-notes/november2024/)
 
+## August 5th, 2026
+
+Checks API: 10 new endpoints available.
+
+### New
+
+- **List Posture Checks.** New `GET /posture/checks/v1/all-checks` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  GET api.strata.paloaltonetworks.com/posture/checks/v1/all-checks
+  ```
+
+- **Create Posture Check.** New `POST /posture/checks/v1/all-checks` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  POST api.strata.paloaltonetworks.com/posture/checks/v1/all-checks
+  ```
+
+- **Batch Delete Posture Checks.** New `POST /posture/checks/v1/all-checks/batch-delete` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  POST api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/batch-delete
+  ```
+
+- **Batch Upsert Posture Checks.** New `POST /posture/checks/v1/all-checks/batch-upsert` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  POST api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/batch-upsert
+  ```
+
+- **Delete Posture Check.** New `DELETE /posture/checks/v1/all-checks/{id}` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  DELETE api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/{id}
+  ```
+
+- **Get Posture Check.** New `GET /posture/checks/v1/all-checks/{id}` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  GET api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/{id}
+  ```
+
+- **Update Posture Check.** New `PUT /posture/checks/v1/all-checks/{id}` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  PUT api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/{id}
+  ```
+
+- **Clone Posture Check.** New `POST /posture/checks/v1/all-checks/{id}:clone` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  POST api.strata.paloaltonetworks.com/posture/checks/v1/all-checks/{id}:clone
+  ```
+
+- **Initiate a Config Upload.** New `POST /posture/checks/v1/reports/config-file-upload` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  POST api.strata.paloaltonetworks.com/posture/checks/v1/reports/config-file-upload
+  ```
+
+- **Get BPA Processing Status.** New `GET /posture/checks/v1/reports/{id}/bpa-result` endpoint now available.
+  [Checks API reference →](/scm/api/checks)
+  ```
+  GET api.strata.paloaltonetworks.com/posture/checks/v1/reports/{id}/bpa-result
+  ```
+
+---
 ## July 31st, 2026
 
 Posture Management API: 26 new, 10 removed endpoints. Updated from v1.0 to v1.1.0.
