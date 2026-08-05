@@ -16,6 +16,55 @@ documentation, some of which have occurred in between API product releases.
 
 * [November 2024](/scm/docs/release-notes/november2024/)
 
+## August 5th, 2026
+
+Identity API: 7 new endpoints available.
+
+### New
+
+- **Delete a redistribution segment by name.** New `DELETE /redistribution-segments` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  DELETE api.strata.paloaltonetworks.com/redistribution-segments
+  ```
+
+- **List redistribution segments.** New `GET /redistribution-segments` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  GET api.strata.paloaltonetworks.com/redistribution-segments
+  ```
+
+- **Create a redistribution segment.** New `POST /redistribution-segments` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  POST api.strata.paloaltonetworks.com/redistribution-segments
+  ```
+
+- **Update a redistribution segment by name.** New `PUT /redistribution-segments` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  PUT api.strata.paloaltonetworks.com/redistribution-segments
+  ```
+
+- **Delete a redistribution segment.** New `DELETE /redistribution-segments/{id}` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  DELETE api.strata.paloaltonetworks.com/redistribution-segments/{id}
+  ```
+
+- **Get a redistribution segment.** New `GET /redistribution-segments/{id}` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  GET api.strata.paloaltonetworks.com/redistribution-segments/{id}
+  ```
+
+- **Update a redistribution segment.** New `PUT /redistribution-segments/{id}` endpoint now available.
+  [Identity API reference →](/scm/api/identity)
+  ```
+  PUT api.strata.paloaltonetworks.com/redistribution-segments/{id}
+  ```
+
+---
 ## July 31st, 2026
 
 Posture Management API: 26 new, 10 removed endpoints. Updated from v1.0 to v1.1.0.
