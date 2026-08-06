@@ -1,0 +1,496 @@
+openapi: 3.0.2
+info:
+  title: Activation Service
+  version: 1.0.0
+  description: APIs for IBM MSP (Managed Service Provider) model tenant activation of Prisma Access. Covers CIE instance sharing, PA license activation and amendment, and instance offboarding.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  contact:
+    name: API Support
+    url: https://www.paloaltonetworks.com/company/contact-us
+    email: apisupport@paloaltonetworks.com
+servers:
+  - url: "https://api.sase.paloaltonetworks.com"
+tags:
+  - name: Shared Instances
+    description: Share CIE instance from Parent TSG to Child TSGs
+  - name: Activation
+    description: Activate and amend Prisma Access licenses
+  - name: Offboard
+    description: Offboard and deprovision product instances
+paths:
+  /activation/api/v1/shared-instances:
+    post:
+      summary: Share CIE instance with Child TSGs
+      description: Shares the Parent TSG's CIE (Cloud Identity Engine) instance with one or more Child TSGs. The caller must be operating under the Parent TSG that owns the instance. All target TSG IDs must be direct descendants of the caller's TSG; lateral or cross-hierarchy sharing is prohibited.
+      operationId: shareInstance
+      tags:
+        - Shared Instances
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedInstancesRequest"
+            example:
+              app_id: directory_sync
+              attached_tsg_ids:
+                - "1234567890"
+              attached_tsg_action: ADD
+              support_account_id: SUPPORT_ACCOUNT_ID
+              region: americas
+              is_eula_accepted: true
+      responses:
+        "200":
+          description: Share instance workflow started successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedInstancesResponse"
+              example:
+                message:
+                  - "Shared instances workflow execution started for instance 79411253694815621487 (WorkflowID: add_shared_instances_workflow:a315dc88-53f6-45c5-a72d-c330cbe14d1e)"
+                correlation_id: 000b343859c279d2cdc277b483c2d4f5
+                metadata:
+                  - runID: 019dc133-821a-70d4-8de8-afa5f14ab54d
+                    workflowID: "add_shared_instances_workflow:a315dc88-53f6-45c5-a72d-c330cbe14d1e"
+        "400":
+          description: Bad Request — missing fields or validation failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden — TSG hierarchy violation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Service unavailable — tenancy service unreachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - OAuth2:
+            - activation_service.shared_instances.create
+
+  /activation/api/v1/activate:
+    post:
+      summary: Activate or amend PA license
+      description: "Activates Prisma Access licenses for a Child TSG (initial activation), or updates allocated quantities for existing licenses (amendment). The entitlement_group_id and entitlement_id must be retrieved from the asset-apis entitlement-groups endpoint first.\n\nConstraints:\n- Duplicate entitlement_id entries in the payload are prohibited.\n- Requested quantities must not exceed net available license capacity (Total − Allocated).\n- Requested quantities must satisfy SKU minimum thresholds.\n- At least one base SKU with a non-zero quantity must be included.\n- management_mode and pba are immutable after initial activation; subsequent modification attempts are rejected."
+      operationId: activateOrAmendLicense
+      tags:
+        - Activation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActivationRequest"
+            examples:
+              activate:
+                summary: Initial PA MU + SLS activation
+                value:
+                  entitlement_group_id: EG550016
+                  region: americas
+                  entitlements:
+                    - entitlement_id: ENT550016
+                      entitlement_version: 1
+                      quantity: 2000
+                    - entitlement_id: ENT5500161
+                      entitlement_version: 1
+                      quantity: 2000
+                  extra:
+                    management_mode: cloud_managed
+                    pba: false
+              amend:
+                summary: Amend PA MU + SLS quantities
+                value:
+                  entitlement_group_id: EG550016
+                  region: americas
+                  entitlements:
+                    - entitlement_id: ENT550016
+                      entitlement_version: 1
+                      quantity: 500
+                    - entitlement_id: ENT5500161
+                      entitlement_version: 1
+                      quantity: 500
+                  extra:
+                    management_mode: cloud_managed
+                    pba: false
+      responses:
+        "200":
+          description: Activation workflow started successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivationResponse"
+              example:
+                message: "Activation workflow execution started for TSG 1475718813 (WorkflowID: activation_workflow:2f15526f-1183-4841-a566-6e9fc07f414a)"
+                correlation_id: 82d3409967610dc191dc22f030a433ec
+                metadata:
+                  workflowID: "activation_workflow:2f15526f-1183-4841-a566-6e9fc07f414a"
+                  runID: 019dc14d-1c2f-7bc4-be14-656ea7e1aacd
+        "400":
+          description: Bad Request — validation failure (duplicate entitlements, capacity exceeded, missing base SKU, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - OAuth2:
+            - activation_service.activate.create
+
+  /activation/api/v1/offboard/validation:
+    get:
+      summary: Validate offboard readiness
+      description: "Validates whether the instance associated with the authenticated TSG is eligible for offboarding. A 200 OK response is required before submitting the offboard POST request.\n\nValidation checks include:\n- Mandatory headers (x-jwt-sub, x-tsg-id) are present.\n- Instance exists and is in ACTIVE or ERROR state.\n- No existing offboard requests are in progress.\n- No active device associations remain.\n- No V1/V2 license conflicts exist.\n- Instance is not a Panorama TSG or Root CIE instance."
+      operationId: validateOffboard
+      tags:
+        - Offboard
+      parameters:
+        - name: x-tsg-id
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Authenticated TSG (Tenant Security Group) identifier
+        - name: x-jwt-sub
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Authenticated user subject identifier
+      responses:
+        "200":
+          description: Validation successful — safe to proceed with offboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OffboardResponse"
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "SVC_1183: Cannot offboard instance with active device associations, please delete devices first"
+      security:
+        - OAuth2:
+            - activation_service.offboard.validate
+
+  /activation/api/v1/offboard:
+    post:
+      summary: Offboard a product instance
+      description: Initiates the offboarding workflow for a specific product instance within the authenticated TSG. Must be preceded by a successful call to the offboard validation endpoint. Deprovisioning of a root CIE instance is prohibited.
+      operationId: offboardInstance
+      tags:
+        - Offboard
+      parameters:
+        - name: x-tsg-id
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Authenticated TSG (Tenant Security Group) identifier
+        - name: x-jwt-sub
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Authenticated user subject identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OffboardProcessRequest"
+            example:
+              reason: Decommissioning instance due to contract expiration
+      responses:
+        "200":
+          description: Offboard workflow started successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OffboardResponse"
+              example:
+                message: Offboard workflow execution started
+                workflow_id: 81cc8bd2-5849-4d3f-94a1-bfe608c4cbfc
+                scheduled_at: "2026-02-20T04:13:05Z"
+        "400":
+          description: Bad Request — validation not passed or instance not eligible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - OAuth2:
+            - activation_service.offboard.create
+
+components:
+  schemas:
+    SharedInstancesRequest:
+      type: object
+      required:
+        - app_id
+        - support_account_id
+        - region
+        - is_eula_accepted
+        - attached_tsg_ids
+        - attached_tsg_action
+      properties:
+        app_id:
+          type: string
+          minLength: 1
+          description: Application identifier to share
+          example: directory_sync
+        support_account_id:
+          type: string
+          minLength: 1
+          description: Support account identifier
+          example: SUPPORT_ACCOUNT_ID
+        region:
+          type: string
+          minLength: 1
+          description: Data region for the shared instance
+          example: americas
+        is_eula_accepted:
+          type: boolean
+          description: Whether the EULA has been accepted
+          example: true
+        attached_tsg_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+          description: List of Child TSG IDs to share the instance with. All IDs must be direct descendants of the caller's TSG.
+          example:
+            - "1234567890"
+        attached_tsg_action:
+          type: string
+          enum:
+            - ADD
+          description: Action to perform on the attached TSG list
+          example: ADD
+        correlation_id:
+          type: string
+          description: Correlation ID for tracking
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    SharedInstancesResponse:
+      type: object
+      properties:
+        message:
+          type: array
+          items:
+            type: string
+          description: Result messages
+        correlation_id:
+          type: string
+          description: Correlation ID echoed from the request
+        metadata:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+          description: Additional metadata about the operation
+
+    ActivationRequest:
+      type: object
+      required:
+        - entitlement_group_id
+      properties:
+        entitlement_group_id:
+          type: string
+          minLength: 1
+          description: Entitlement Group ID retrieved from the entitlement-groups endpoint
+          example: EG550016
+        region:
+          type: string
+          description: Deployment region
+          example: americas
+        entitlements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entitlement"
+          description: List of entitlements to activate. Each license type (e.g., MU, RN, SLS) must be specified with its own entitlement_id and quantity.
+        description:
+          type: string
+          maxLength: 1000
+          description: Optional description for the activation
+          example: "Production activation for Q1"
+        extra:
+          type: object
+          additionalProperties: true
+          description: Additional key-value pairs for activation (e.g., management_mode, pba)
+          example:
+            management_mode: cloud_managed
+            pba: false
+        __additional_attributes:
+          type: object
+          additionalProperties: true
+          description: Additional attributes to pass downstream (open-ended JSON)
+        replaces_entitlement_group_id:
+          type: string
+          description: Entitlement Group ID that this activation replaces
+          example: "eg_old_001"
+
+    Entitlement:
+      type: object
+      properties:
+        entitlement_id:
+          type: string
+          description: Entitlement ID from the entitlement-groups response
+          example: ENT550016
+        entitlement_version:
+          type: integer
+          description: Version of the entitlement
+          example: 1
+        quantity:
+          type: integer
+          minimum: 0
+          description: Quantity to allocate to this Child TSG
+          example: 2000
+
+    ActivationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Result message
+          example: "Activation successful"
+        correlation_id:
+          type: string
+          description: Correlation ID for tracking
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional metadata including workflowID and runID
+          example:
+            workflowID: "activation_workflow:2f15526f-1183-4841-a566-6e9fc07f414a"
+            runID: "019dc14d-1c2f-7bc4-be14-656ea7e1aacd"
+
+    OffboardProcessRequest:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          description: Reason for offboarding the instance
+          example: Decommissioning instance due to contract expiration
+        source_version:
+          type: string
+          description: Source version for idempotency
+          example: "v2"
+
+    OffboardResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Result message
+          example: Offboarding scheduled successfully
+        workflow_id:
+          type: string
+          description: Temporal workflow ID tracking the offboard process
+          example: 81cc8bd2-5849-4d3f-94a1-bfe608c4cbfc
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Timestamp when offboarding is scheduled
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message describing the failure
+          example: "invalid request body"
+
+  responses:
+    jwt_expired:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+              error:
+                type: string
+              message:
+                type: string
+          examples:
+            JWT Expired:
+              value:
+                statusCode: 401
+                error: Invalid JWT / Expired JWT
+                message: JWT token is invalid or has expired.
+      description: JWT Expired
+    internal_error:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+              error:
+                type: string
+              message:
+                type: string
+          examples:
+            Internal Error:
+              value:
+                statusCode: 500
+                error: Internal Server Error
+                message: An internal server error occurred
+      description: Internal Error
+    forbidden:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+              error:
+                type: string
+              message:
+                type: string
+          examples:
+            Forbidden:
+              value:
+                statusCode: 403
+                error: Forbidden
+                message: Forbidden
+      description: Forbidden
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://iam.apps.paloaltonetworks.com/oauth2/access_token
+          scopes:
+            activation_service.shared_instances.create: ""
+            activation_service.activate.create: ""
+            activation_service.offboard.validate: ""
+            activation_service.offboard.create: ""

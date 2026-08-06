@@ -1,0 +1,409 @@
+openapi: 3.0.2
+info:
+  title: Asset Service
+  version: 1.0.0
+  description: APIs for retrieving entitlement group details and monitoring product instance status for Prisma Access tenant activation.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  contact:
+    name: API Support
+    url: https://www.paloaltonetworks.com/company/contact-us
+    email: apisupport@paloaltonetworks.com
+servers:
+  - url: "https://api.sase.paloaltonetworks.com"
+tags:
+  - name: Entitlement Groups
+    description: Retrieve entitlement group and entitlement details
+  - name: Instances
+    description: Monitor product instance status
+paths:
+  /asset/api/v1/entitlement-groups:
+    get:
+      summary: Fetch entitlement group details
+      description: Retrieves entitlement groups for the specified TSG. The entitlement_group_id and entitlement_id values from this response are mandatory inputs for the Activate PA License operation. Requires a Default TSG token.
+      operationId: getEntitlementGroups
+      tags:
+        - Entitlement Groups
+      parameters:
+        - name: x-tsg-id
+          in: header
+          required: true
+          schema:
+            type: string
+          description: The Tenant Security Group ID
+      responses:
+        "200":
+          description: List of entitlement groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEntitlementGroupResponse"
+              example:
+                data:
+                  - entitlement_group_id: EG550016
+                    base_product:
+                      product_id: prisma_access
+                      product_name: Prisma Access
+                      activation_status: ready
+                    entitlements:
+                      - entitlement_id: ENT5500161
+                        entitlement_version: 1
+                        entitlement_group_id: EG550016
+                        tsg_id: "1216154794"
+                        sku_name: PAN-PRISMA-ACCESS-MU-SLS
+                        purchased_quantity: 2000
+                        allocated_quantity: 0
+                        start_date: "2026-04-29T17:41:30Z"
+                        end_date: "2028-04-27T17:41:30Z"
+                        short_description: Strata Logging Service for MU
+                        sku_units: User
+                        activation_status: ready
+                        allocations: []
+                        is_trial: false
+                        is_base: false
+                        is_free: false
+                        source_id: SR1BD303
+                      - entitlement_id: ENT550016
+                        entitlement_version: 1
+                        entitlement_group_id: EG550016
+                        tsg_id: "1216154794"
+                        sku_name: PAN-PRISMA-ACCESS-MU-ENTERPRISE
+                        purchased_quantity: 2000
+                        allocated_quantity: 0
+                        start_date: "2026-04-29T17:41:30Z"
+                        end_date: "2028-04-27T17:41:30Z"
+                        short_description: Prisma Access Enterprise Mobile User
+                        sku_units: User
+                        activation_status: ready
+                        allocations: []
+                        is_trial: false
+                        is_base: true
+                        is_free: false
+                        source_id: SR1BD303
+                is_default_tsg: true
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          $ref: "#/components/responses/jwt_expired"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/internal_error"
+      security:
+        - OAuth2:
+            - asset_service.entitlement_groups.get
+
+  /asset/api/v1/instances:
+    get:
+      summary: Get instance status
+      description: "Returns a list of product instances for the specified TSG. Use this endpoint to poll activation completion: check the status of the entry with product_id \"prisma_access\" and proceed with configuration only once it reaches active.\n\nStatus values:\n- provisioning: The product instance is currently being created.\n- active: The product instance creation is complete, and the instance is now in a healthy state.\n- error: The product instance is not in a healthy state.\n- deprovisioning: The product instance is undergoing the deprovisioning process.\n- deprovisioned: The product instance has been deprovisioned."
+      operationId: getInstanceStatus
+      tags:
+        - Instances
+      parameters:
+        - name: x-tsg-id
+          in: header
+          required: true
+          schema:
+            type: string
+          description: The Tenant Security Group ID
+        - name: eg_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The Entitlement Group ID for filtering (optional)
+      responses:
+        "200":
+          description: List of product instances
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetInstancesResponse"
+              example:
+                data:
+                  - instance_id: abc-123
+                    tsg_id: "1475718813"
+                    product_id: prisma_access
+                    compute_region: us-west
+                    data_region: americas
+                    status: provisioning
+                    created_at: "2026-04-29T13:07:12.438Z"
+                    updated_at: "2026-04-29T13:07:12.438Z"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          $ref: "#/components/responses/jwt_expired"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/internal_error"
+      security:
+        - OAuth2:
+            - asset_service.instances.get
+
+components:
+  schemas:
+    GetEntitlementGroupResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/EntitlementGroup"
+        is_default_tsg:
+          type: boolean
+          description: Whether the TSG in the request is the default TSG
+
+    EntitlementGroup:
+      type: object
+      properties:
+        entitlement_group_id:
+          type: string
+          description: The entitlement group ID
+          example: EG550016
+        base_product:
+          $ref: "#/components/schemas/BaseProduct"
+        entitlements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entitlement"
+
+    BaseProduct:
+      type: object
+      properties:
+        product_id:
+          type: string
+          description: The base product ID
+          example: prisma_access
+        product_name:
+          type: string
+          description: The base product display name
+          example: Prisma Access
+        activation_status:
+          $ref: "#/components/schemas/ActivationStatus"
+
+    ActivationStatus:
+      type: string
+      enum:
+        - ready
+        - provisioning
+        - active
+        - deprovisioning
+        - deprovisioned
+        - future
+        - error
+      description: Activation status of the product or entitlement
+
+    Entitlement:
+      type: object
+      properties:
+        entitlement_id:
+          type: string
+          description: Unique identifier for the entitlement
+          example: ENT550016
+        entitlement_version:
+          type: integer
+          format: int64
+          description: Version of the entitlement
+          example: 1
+        tsg_id:
+          type: string
+          description: Tenant Security Group ID
+          example: "1216154794"
+        entitlement_group_id:
+          type: string
+          description: Group ID for the entitlement
+          example: EG550016
+        sku_name:
+          type: string
+          description: Stock Keeping Unit name
+          example: PAN-PRISMA-ACCESS-MU-ENTERPRISE
+        purchased_quantity:
+          type: integer
+          format: int64
+          description: Purchased quantity of the entitlement
+          example: 2000
+        allocated_quantity:
+          type: integer
+          format: int64
+          description: Currently allocated quantity across all allocations
+          example: 0
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the entitlement
+        end_date:
+          type: string
+          format: date-time
+          description: End date of the entitlement
+        short_description:
+          type: string
+          description: Brief description of the entitlement
+          example: Prisma Access Enterprise Mobile User
+        sku_units:
+          type: string
+          description: Units for the SKU (e.g., User, Instance)
+          example: User
+        activation_status:
+          type: string
+          description: Current activation status of the entitlement
+          example: ready
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allocation"
+          description: Allocations associated with this entitlement
+        is_trial:
+          type: boolean
+          description: Whether this is a trial entitlement
+        is_base:
+          type: boolean
+          description: Whether this is a base entitlement
+        is_free:
+          type: boolean
+          description: Whether this is a free entitlement
+        source_id:
+          type: string
+          description: Entitlement source ID (Order ID)
+          example: SR1BD303
+
+    Allocation:
+      type: object
+      properties:
+        entitlement_group_id:
+          type: string
+          description: Group ID for the entitlement
+        entitlement_id:
+          type: string
+          description: ID of the entitlement this allocation belongs to
+        entitlement_version:
+          type: integer
+          format: int64
+          description: Version of the entitlement
+        tsg_id:
+          type: string
+          description: Tenant Security Group ID
+        quantity:
+          type: integer
+          format: int64
+          description: Allocated quantity
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    GetInstancesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Instance"
+
+    Instance:
+      type: object
+      required:
+        - instance_id
+        - tsg_id
+      properties:
+        instance_id:
+          type: string
+          description: Unique identifier for the product instance
+        tsg_id:
+          type: string
+          description: Tenant Security Group ID
+        product_id:
+          type: string
+          description: Product identifier (e.g., prisma_access)
+          example: prisma_access
+        compute_region:
+          type: string
+          description: Compute region for the instance
+        data_region:
+          type: string
+          description: Data region for the instance
+        status:
+          type: string
+          enum:
+            - provisioning
+            - active
+            - deprovisioning
+            - deprovisioned
+            - error
+          default: provisioning
+          description: Current status of the product instance. Poll until active before proceeding with configuration.
+        created_at:
+          type: string
+          format: date-time
+          description: Instance creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+          example: INVALID_INPUT
+        message:
+          type: string
+          description: Error message
+          example: The provided input is invalid
+
+  responses:
+    jwt_expired:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            JWT Expired:
+              value:
+                code: UNAUTHORIZED
+                message: JWT token is invalid or has expired.
+    internal_error:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            Internal Error:
+              value:
+                code: INTERNAL_SERVER_ERROR
+                message: An internal server error occurred
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://iam.apps.paloaltonetworks.com/oauth2/access_token
+          scopes:
+            asset_service.entitlement_groups.get: ""
+            asset_service.instances.get: ""
