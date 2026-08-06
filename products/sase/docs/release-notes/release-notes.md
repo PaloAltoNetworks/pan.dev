@@ -20,6 +20,22 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## August 6, 2026
+
+### Prisma SASE
+
+**New API: Open_Api_Legacy**
+These APIs are used for managing Prisma SD-WAN configuration
+
+→ [View API Reference](/sdwan/api/legacy/open_api_legacy/)
+
+**New API: Open_Api_Unified**
+These APIs are used for managing Prisma SD-WAN configuration
+
+→ [View API Reference](/sdwan/api/unified/open_api_unified/)
+
+---
+
 ## August 5th, 2026
 
 Unified API: 1550 new endpoints available.
