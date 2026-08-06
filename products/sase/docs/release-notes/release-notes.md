@@ -20,6 +20,21 @@ see the following for information about non-API feature enhancements and known i
 See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## July 2026
+
+**Product:** Prisma SD-WAN — SD-WAN 6.8.1
+
+Updated the [Prisma SD-WAN Unified APIs](/sdwan/api/) and [Legacy APIs](/sdwan/api/legacy/) with SD-WAN 6.8.1 Controller APIs. This release includes 61 new endpoints across multiple categories:
+
+- **OSPF** — New routing configuration endpoints for OSPF protocol management
+- **Performance Management** — New endpoints for monitoring and managing SD-WAN performance metrics
+- **Prisma Access Configs** — New endpoints for Prisma Access integration configurations
+- **Topology** — New endpoints for network topology management
+- **System Administration** — New endpoints for system-level administrative operations
+- **Security Policy** — New and updated endpoints for security policy management
+- **Site Configuration** — New endpoints for SD-WAN site configuration and management
+- **Network Constructs** — New endpoints for network construct definitions
+
 ## April 2026
 
 **Product:** Prisma SASE — 5G Monitoring

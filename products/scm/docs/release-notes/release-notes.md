@@ -21,6 +21,30 @@ documentation, some of which have occurred in between API product releases.
 
 Added [Compliance Framework APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) to the Posture API. These APIs enable programmatic access to compliance framework configurations and assessment results.
 
+---
+
+**Product:** Strata Cloud Manager — Advanced DNS Security Resolver
+
+Updated the [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) with schema improvements including new validation constraints, required fields for EDL definitions, and SafeSearch/YouTube restricted mode filtering options.
+
+---
+
+**Product:** Strata Cloud Manager — Prisma AIRS AI Red Teaming
+
+Added 7 new adapter endpoints to the [Prisma AIRS AI Red Teaming APIs](/prisma-airs-redteam/api/ai-integration/introduction). The new adapter endpoints enable managing custom adapters for AI Red Teaming targets, including create, list, get, update, delete, validate, and retrieve configuration defaults.
+
+---
+
+**Product:** Strata Cloud Manager — Network Configuration
+
+Added the Generate PPK Key endpoint (`POST /ike-gateways:generate-ppk`) to the [Network Services APIs](/scm/api/config/ngfw/network/network-api). This endpoint generates a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784) for use in IKE gateway PPK configuration.
+
+---
+
+**Product:** Strata Cloud Manager — Identity and Security Services
+
+Updated the [Identity Services APIs](/scm/api/config/sase/identity/identity-api) and Security Services APIs with spec file consolidation and schema improvements across SASE, NGFW, and Cloud NGFW platforms.
+
 ## June 2026
 
 **Product:** Strata Cloud Manager — NGFW Device Onboarding
@@ -97,7 +121,7 @@ Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/). 
 
 **Product:** Strata Cloud Manager — Incidents
 
-Added [Incidents APIs](/scm/api/config/incidents/incidents-scm/). Use these APIs to programmatically query, manage, and respond to security incidents.
+Added [Incidents APIs](/scm/api/config/incidents/incident-scm). Use these APIs to programmatically query, manage, and respond to security incidents.
 
 ## January 2026
 
