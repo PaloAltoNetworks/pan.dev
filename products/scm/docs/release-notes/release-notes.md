@@ -1,246 +1,295 @@
 ---
 id: release-notes
 title: Release Notes
-description: Release Notes
+description: Strata Cloud Manager API Release Notes
 hide_title: true
 hide_table_of_contents: false
 keywords:
   - sase
+  - scm
 ---
 
-# Release Notes
+# Strata Cloud Manager API Release Notes
 
 These release notes identify API changes made for the various Strata Cloud Manager services. See
 also the [change log](/scm/docs/release-notes/changelog) for information on all changes to this API
 documentation, some of which have occurred in between API product releases.
 
-* [November 2024](/scm/docs/release-notes/november2024/)
+## July 2026
 
-## July 31st, 2026
+**Product:** Strata Cloud Manager — Posture Management
 
-Posture Management API: 26 new, 10 removed endpoints. Updated from v1.0 to v1.1.0.
-
-### New
-
-- **List Checks.** New `GET /checks/v1` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/checks/v1
-  ```
-
-- **Create Posture Check.** New `POST /checks/v1` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/checks/v1
-  ```
-
-- **Batch Delete Checks.** New `POST /checks/v1/batch-delete` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/checks/v1/batch-delete
-  ```
-
-- **Batch Upsert Checks.** New `POST /checks/v1/batch-upsert` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/checks/v1/batch-upsert
-  ```
-
-- **Initiate a Config Upload.** New `POST /checks/v1/reports/config-file-upload` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/checks/v1/reports/config-file-upload
-  ```
-
-- **Get BPA Processing Status.** New `GET /checks/v1/reports/{id}/bpa-result` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/checks/v1/reports/{id}/bpa-result
-  ```
-
-- **Delete Posture Check.** New `DELETE /checks/v1/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  DELETE api.strata.paloaltonetworks.com/checks/v1/{id}
-  ```
-
-- **Get Posture Check.** New `GET /checks/v1/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/checks/v1/{id}
-  ```
-
-- **Update Posture Check.** New `PUT /checks/v1/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  PUT api.strata.paloaltonetworks.com/checks/v1/{id}
-  ```
-
-- **Clone Posture Check.** New `POST /checks/v1/{id}:clone` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/checks/v1/{id}:clone
-  ```
-
-- **Get Benchmark Monitoring Data.** New `POST /compliance-frameworks/v1/benchmark-monitoring` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/benchmark-monitoring
-  ```
-
-- **Download Benchmark Data.** New `POST /compliance-frameworks/v1/benchmark-monitoring/download` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/benchmark-monitoring/download
-  ```
-
-- **Get Compliance Controls.** New `GET /compliance-frameworks/v1/compliance-controls/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/compliance-controls/{id}
-  ```
-
-- **Get Assessed Configurations.** New `GET /compliance-frameworks/v1/configurations-assessed/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/configurations-assessed/{id}
-  ```
-
-- **List Compliance Frameworks.** New `GET /compliance-frameworks/v1/definitions` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions
-  ```
-
-- **Create Compliance Framework.** New `POST /compliance-frameworks/v1/definitions` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions
-  ```
-
-- **Delete Compliance Framework.** New `DELETE /compliance-frameworks/v1/definitions/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  DELETE api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}
-  ```
-
-- **Get Framework Revision.** New `GET /compliance-frameworks/v1/definitions/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}
-  ```
-
-- **Update Compliance Framework.** New `PUT /compliance-frameworks/v1/definitions/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  PUT api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}
-  ```
-
-- **Benchmark Compliance Framework.** New `POST /compliance-frameworks/v1/definitions/{id}:benchmark` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}:benchmark
-  ```
-
-- **Clone Compliance Framework.** New `POST /compliance-frameworks/v1/definitions/{id}:clone` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}:clone
-  ```
-
-- **Remove Framework Benchmark.** New `POST /compliance-frameworks/v1/definitions/{id}:un-benchmark` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  POST api.strata.paloaltonetworks.com/compliance-frameworks/v1/definitions/{id}:un-benchmark
-  ```
-
-- **Get Compliance Timeline.** New `GET /compliance-frameworks/v1/overall-compliance-timeline/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/overall-compliance-timeline/{id}
-  ```
-
-- **Get Framework Compliance Scores.** New `GET /compliance-frameworks/v1/overall-compliance/{id}` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/overall-compliance/{id}
-  ```
-
-- **List Framework Summaries.** New `GET /compliance-frameworks/v1/summaries` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/compliance-frameworks/v1/summaries
-  ```
-
-- **Get Zero-Hit Security Rules.** New `GET /config-cleanup/v1/zerohit-rules` endpoint now available.
-  [Posture Management API reference →](/scm/api/posture-management)
-  ```
-  GET api.strata.paloaltonetworks.com/config-cleanup/v1/zerohit-rules
-  ```
-
-### Removed
-
-- **List Posture Checks.** The `GET /posture/checks/v1` endpoint has been removed.
-  ```
-  GET api.strata.paloaltonetworks.com/posture/checks/v1
-  ```
-
-- **Create Posture Check.** The `POST /posture/checks/v1` endpoint has been removed.
-  ```
-  POST api.strata.paloaltonetworks.com/posture/checks/v1
-  ```
-
-- **Batch Delete Posture Checks.** The `POST /posture/checks/v1/batch-delete` endpoint has been removed.
-  ```
-  POST api.strata.paloaltonetworks.com/posture/checks/v1/batch-delete
-  ```
-
-- **Batch Upsert Posture Checks.** The `POST /posture/checks/v1/batch-upsert` endpoint has been removed.
-  ```
-  POST api.strata.paloaltonetworks.com/posture/checks/v1/batch-upsert
-  ```
-
-- **Initiate a Configuration Upload.** The `POST /posture/checks/v1/reports/config-file-upload` endpoint has been removed.
-  ```
-  POST api.strata.paloaltonetworks.com/posture/checks/v1/reports/config-file-upload
-  ```
-
-- **Get BPA Processing Status.** The `GET /posture/checks/v1/reports/{id}/bpa-result` endpoint has been removed.
-  ```
-  GET api.strata.paloaltonetworks.com/posture/checks/v1/reports/{id}/bpa-result
-  ```
-
-- **Delete Posture Check.** The `DELETE /posture/checks/v1/{id}` endpoint has been removed.
-  ```
-  DELETE api.strata.paloaltonetworks.com/posture/checks/v1/{id}
-  ```
-
-- **Get Posture Check.** The `GET /posture/checks/v1/{id}` endpoint has been removed.
-  ```
-  GET api.strata.paloaltonetworks.com/posture/checks/v1/{id}
-  ```
-
-- **Update Posture Check.** The `PUT /posture/checks/v1/{id}` endpoint has been removed.
-  ```
-  PUT api.strata.paloaltonetworks.com/posture/checks/v1/{id}
-  ```
-
-- **Clone Posture Check.** The `POST /posture/checks/v1/{id}:clone` endpoint has been removed.
-  ```
-  POST api.strata.paloaltonetworks.com/posture/checks/v1/{id}:clone
-  ```
+Added [Compliance Framework APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) to the Posture API. These APIs enable programmatic access to compliance framework configurations and assessment results.
 
 ---
-## July 24th, 2026
 
-Network API: 1 new endpoint available.
+**Product:** Strata Cloud Manager — Advanced DNS Security Resolver
 
-### New
-
-- **Generate PPK Key.** New `POST /ike-gateways:generate-ppk` endpoint now available.
-  [Network API reference →](/scm/api/network)
-  ```
-  POST api.strata.paloaltonetworks.com/ike-gateways:generate-ppk
-  ```
+Updated the [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) with schema improvements including new validation constraints, required fields for EDL definitions, and SafeSearch/YouTube restricted mode filtering options.
 
 ---
+
+**Product:** Strata Cloud Manager — Prisma AIRS AI Red Teaming
+
+Added 7 new adapter endpoints to the [Prisma AIRS AI Red Teaming APIs](/prisma-airs-redteam/api/ai-integration/introduction). The new adapter endpoints enable managing custom adapters for AI Red Teaming targets, including create, list, get, update, delete, validate, and retrieve configuration defaults.
+
+---
+
+**Product:** Strata Cloud Manager — Network Configuration
+
+Added the Generate PPK Key endpoint (`POST /ike-gateways:generate-ppk`) to the [Network Services APIs](/scm/api/config/ngfw/network/network-api). This endpoint generates a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784) for use in IKE gateway PPK configuration.
+
+---
+
+**Product:** Strata Cloud Manager — Identity and Security Services
+
+Updated the [Identity Services APIs](/scm/api/config/sase/identity/identity-api) and Security Services APIs with spec file consolidation and schema improvements across SASE, NGFW, and Cloud NGFW platforms.
+
+## June 2026
+
+**Product:** Strata Cloud Manager — NGFW Device Onboarding
+
+Added [Site Management APIs](/scm/api/config/ngfw/setup/device-onboarding/site-management/) to Device Onboarding. These APIs provide endpoints for managing site configurations as part of the NGFW device onboarding workflow.
+
+---
+
+**Product:** Strata Cloud Manager — SASE Deployment
+
+Updated [Network Deployment APIs](/scm/api/config/sase/deployment/deployment-api/) with new endpoints. The additions expand deployment automation capabilities for SASE network configurations.
+
+---
+
+**Product:** Strata Cloud Manager — Objects Configuration
+
+Updated [Objects APIs](/scm/api/config/sase/objects/objects-api/) with new object schemas for SASE, NGFW, and Cloud NGFW configurations. The new schemas enhance configuration management across all platform types.
+
+---
+
+**Product:** Strata Cloud Manager — NGTS
+
+Added [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) to SCM. These APIs enable management of TLS certificate lifecycles and protection policies.
+
+## May 2026
+
+**Product:** Strata Cloud Manager — Terraform Provider
+
+Added [SCM Terraform Provider](/terraform/docs/scm/getting-started/introduction/) documentation. The Terraform provider enables infrastructure-as-code management of Strata Cloud Manager configurations.
+
+---
+
+**Product:** Strata Cloud Manager — Advanced DNS Security Resolver
+
+Added [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr). These APIs provide configuration and management of advanced DNS security resolver settings.
+
+---
+
+**Product:** Strata Cloud Manager — NGFW Operations
+
+Added [NGFW Operations APIs](/scm/api/config/ngfw-operations/introduction/). These APIs enable operational management of NGFW devices through Strata Cloud Manager.
+
+---
+
+**Product:** Strata Cloud Manager — Security Services, Network Services, NGFW Operations
+
+Updated [Security Services](/scm/api/config/sase/security/security-api/), [Network Services](/scm/api/config/ngfw/network/network-api/), and [NGFW Operations](/scm/api/config/ngfw-operations/introduction/) APIs with additional endpoints and schema updates.
+
+## April 2026
+
+**Product:** Strata Cloud Manager — Cloud Dynamic User Groups (CDUG)
+
+Added [Cloud Dynamic User Groups (CDUG) APIs](/scm/api/config/ciedss/cdug/cdug-introduction/) to SCM. CDUG APIs enable dynamic grouping of users based on cloud identity attributes for policy enforcement.
+
+---
+
+**Product:** Strata Cloud Manager — NGFW Device Settings
+
+Added HA Configurations to [Device Settings APIs](/scm/api/config/ngfw/device/device-api/). These additions support High Availability configuration management for NGFW devices.
+
+## March 2026
+
+**Product:** Strata Cloud Manager — Configuration Operations, Security Services
+
+Updated [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) and Security Services APIs with additional endpoints and improvements.
+
+---
+
+**Product:** Strata Cloud Manager — Posture Management
+
+Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/). These APIs enable programmatic management of security posture assessments and policies.
+
+---
+
+**Product:** Strata Cloud Manager — Incidents
+
+Added [Incidents APIs](/scm/api/config/incidents/incident-scm). Use these APIs to programmatically query, manage, and respond to security incidents.
+
+## January 2026
+
+**Product:** Strata Cloud Manager — Best Practices
+
+Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/). This guide provides recommended patterns for API integration, error handling, and configuration management.
+
+## October 2025
+
+**Product:** Strata Cloud Manager — CIE Directory Sync Service
+
+Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/). These APIs provide directory synchronization capabilities between Cloud Identity Engine and external identity sources.
+
+## June 2025
+
+**Product:** Strata Cloud Manager — Setup
+
+Added [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/). Snippet sharing enables reusable configuration templates that can be shared across folders and devices.
+
+## May 2025
+
+**Product:** Strata Cloud Manager — Security Services
+
+Introduced two policies Security and Internet for Security Rules under [Security Services APIs](/scm/api/config/sase/security/security-api/). This supports the unified rulebase experience where traditional security rules and Web Security rules are managed through a common endpoint.
+
+## February 2025
+
+**Product:** Prisma Access — Configuration Orchestration
+
+Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/). These APIs enable orchestrated, workflow-based configuration management for Prisma Access deployments.
+
+## January 2025
+
+**Product:** Prisma SASE — SaaS Security Posture Management
+
+Added [SaaS Security Posture Management APIs](/sase/api/sspm/). Use these APIs to manage SaaS application security posture policies, run assessments, and automate remediation workflows.
+
+## November 2024
+
+**Product:** Strata Cloud Manager
+
+Added Strata Cloud Manager configuration APIs, along with a [Strata Cloud Manager landing page](/strata-cloud-manager/). See the [detailed November 2024 release notes](/scm/docs/release-notes/november2024) for more information.
+
+### Highlights
+
+- **New API platform FQDN:** Updated to `api.strata.paloaltonetworks.com` (original `api.sase.paloaltonetworks.com` continues to work).
+- **Restructured configuration API base paths:** APIs reorganized along functional lines (`/config/setup/v1`, `/config/deployment/v1`, `/config/security/v1`, `/config/objects/v1`, `/config/network/v1`, `/config/identity/v1`, `/config/device/v1`, `/config/operations/v1`).
+- **Removal of query params for POST, PUT, DELETE:** Resource location now specified in request body via `folder`, `snippet`, or `device` attributes.
+- **Introduction of security rule types:** Added `type` attribute (`security` and `internet`) to support unified rulebase.
+- **New SCM Setup APIs:** Folders, Snippets, Devices, Labels, Variables.
+- **NGFW Network Configuration APIs:** Comprehensive network management endpoints.
+- **NGFW Device Configuration APIs:** Device settings, HA, service routes, and more.
+- **Log Forwarding Configuration APIs:** Custom log forwarding profiles, HTTP/syslog server profiles.
+- **DoS Protection Configuration APIs:** DoS protection profiles and rules.
+
+## October 2024
+
+**Product:** Prisma Access Browser
+
+Added [Prisma Access Browser APIs](/access/api/browser-mgmt/). These APIs enable management of Prisma Access Browser configurations and policies.
+
+---
+
+**Product:** Prisma SASE — Aggregate Monitoring
+
+Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/). New endpoints expand monitoring capabilities for tenant resources.
+
+## July 2024
+
+**Product:** Prisma SASE — Multitenant Interconnect
+
+Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/). These APIs provide management of interconnect configurations across multiple tenants.
+
+## April 2024
+
+**Product:** Prisma SASE — Multitenant Notifications
+
+Added [Multitenant Notification APIs](/sase/api/mt-notifications/). Use these APIs to configure and manage notification policies for multitenant SASE deployments.
+
+## September 2023
+
+**Product:** Prisma Access — Autonomous DEM
+
+Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/). Use the ADEM APIs to access digital experience management data including application and agent scores.
+
+## May 2023
+
+**Product:** Prisma SASE — Identity and Access Management
+
+Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.
+
+## April 2023
+
+**Product:** Prisma Access — ZTNA Connector
+
+Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellaneous other changes.
+
+## March 2023
+
+**Product:** Prisma Access — Configuration
+
+New endpoints for the [Prisma Access Configuration APIs](/sase/docs/release-notes/release-notes/#march-2023).
+
+## December 2022
+
+**Product:** Prisma SASE — Subscription Service
+
+Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.
+
+## November 2022
+
+**Product:** Prisma Access — Configuration
+
+Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints including Mobile Agent (Global Protect) endpoints.
+
+---
+
+**Product:** Prisma Access — Insights
+
+Published [Prisma Access Insights examples](/access/docs/insights/examples/).
+
+## October 2022
+
+**Product:** Prisma SASE — Aggregate Monitoring
+
+New endpoints and query filters for the [aggregate monitoring APIs](/sase/docs/release-notes/release-notes/#late-august-2022).
+
+---
+
+**Product:** Cortex Data Lake — Log Forwarding
+
+The Cortex Data Lake [Log Forwarding APIs](/cdl/docs/log-forwarding/) now use the same common authentication mechanism as is used by most SASE APIs.
+
+## August 2022
+
+**Product:** Prisma Access — Configuration, Prisma SASE — Aggregate Monitoring
+
+- New endpoints for the Prisma Access Config APIs. See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.
+- Updated the [Aggregate Monitoring APIs](/sase/api/mt-monitor). See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.
+
+## July 2022
+
+**Product:** Prisma SD-WAN, Prisma Access — Configuration, Prisma Access — Insights
+
+Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [SASE Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details.
+
+## June 2022
+
+**Product:** Prisma SASE — IAM
+
+Published additional information about [IAM user accounts](/sase/docs/user-accounts).
+
+## May 2022
+
+**Product:** Prisma SASE — IAM
+
+Published [User Account APIs](/sase/api/iam/user-accounts) for the IAM service.
+
+---
+
+**Product:** Prisma Access — Configuration
+
+Prisma Access Configuration API monthly release, which includes [breaking changes](/sase/docs/release-notes/release-notes#april-2022) to the APIs.
+
+## April 2022
+
+**Product:** Prisma Access — Insights, Prisma SASE
+
+- Added Prisma Access Insights v1.0 and v2.0 APIs.
+- Corrected base URLs in the API reference. Fixed bugs and typos in the breadcrumbs. Added release notes to the developer documentation. Miscellaneous editorial corrections.
+- First public release of the Prisma SASE API in support of MSSPs.

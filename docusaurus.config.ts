@@ -419,11 +419,6 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      to: "scm/docs/release-notes/changelog",
-                      label: "Changelog",
-                      icon: "doc",
-                    },
-                    {
                       to: "scm/docs/api-best-practices",
                       label: "Strata Cloud Manager API Best Practices",
                       icon: "doc",
@@ -447,11 +442,6 @@ const config = {
                     {
                       to: "sase/docs",
                       label: "Prisma SASE Developer's Guide",
-                      icon: "doc",
-                    },
-                    {
-                      to: "/sase/docs/release-notes/changelog",
-                      label: "Prisma SASE Changelog",
                       icon: "doc",
                     },
                     {
