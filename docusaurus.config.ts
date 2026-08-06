@@ -450,8 +450,8 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      to: "/sase/docs/release-notes/changelog",
-                      label: "Prisma SASE Changelog",
+                      to: "/sase/docs/release-notes/release-notes",
+                      label: "Prisma SASE Release Notes",
                       icon: "doc",
                     },
                     {

@@ -17,9 +17,6 @@ see the following for information about non-API feature enhancements and known i
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
 
-See also the [change log](/sase/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
-occurred in between API product releases.
-
 ## July 2026
 
 **Product:** Prisma SD-WAN — SD-WAN 6.8.1
