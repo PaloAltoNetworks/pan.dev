@@ -74,10 +74,7 @@ module.exports = {
       label: "Release Information",
       collapsed: true,
       items: [
-        {
-          type: "doc",
-          id: "scm/docs/release-notes/changelog",
-        },
+
         {
           type: "category",
           label: "Release Notes",
@@ -86,10 +83,6 @@ module.exports = {
             {
               type: "doc",
               id: "scm/docs/release-notes/release-notes",
-            },
-            {
-              type: "doc",
-              id: "scm/docs/release-notes/november2024",
             },
           ],
         },
