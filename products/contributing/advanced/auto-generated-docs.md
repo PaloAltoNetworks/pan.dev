@@ -14,8 +14,8 @@ Some content in pan.dev is generated elsewhere, not in the pan.dev repository di
 The pages linked from the [Orchestration Hub](https://pan.dev/swfw) which describe References Architectures, Examples and Modules for Terraform are automatically copied from their source repository, using a sync system. These pages are viewable on pan.dev at `https://pan.dev/terraform/docs/swfw/{{cloud-id}}}}/vmseries/{{type}}/`, where `cloud-id` is currently `aws`, `azure` or `gcp`, and `type` is currently `reference-architectures`, `examples` or `modules`.
 
 Changes required to these pages should be made in the source repositories. These are currently:
-- AWS: https://github.com/PaloAltoNetworks/terraform-aws-vmseries-modules
-- Azure: https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules
-- GCP: https://github.com/PaloAltoNetworks/terraform-google-vmseries-modules
+- AWS: https://github.com/PaloAltoNetworks/terraform-aws-swfw-modules
+- Azure: https://github.com/PaloAltoNetworks/terraform-azurerm-swfw-modules
+- GCP: https://github.com/PaloAltoNetworks/terraform-google-swfw-modules
 
 Any changes made to the README.md files in the `examples` or `modules` directories of the repositories above will be copied to the pan.dev repository in a cloud-specific PR and branch, when a release is performed in the source repository. The changes can then be reviewed and merged using the usual process for pan.dev content.
