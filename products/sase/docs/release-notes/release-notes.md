@@ -17,6 +17,18 @@ see the following for information about non-API feature enhancements and known i
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
 
+## August 2026
+
+**Product:** Prisma SASE — SD-WAN Legacy
+
+Added [SD-WAN Legacy APIs](/sdwan/api/legacy/open_api_legacy/) to the Legacy API. These APIs are used for managing Prisma SD-WAN configuration.
+
+---
+
+**Product:** Prisma SASE — SD-WAN Unified
+
+Added [SD-WAN Unified APIs](/sdwan/api/unified/open_api_unified/) to the Unified API. These APIs are used for managing Prisma SD-WAN configuration.
+
 ## July 2026
 
 **Product:** Prisma SD-WAN — SD-WAN 6.8.1
