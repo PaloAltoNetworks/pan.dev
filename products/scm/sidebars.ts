@@ -457,6 +457,10 @@ module.exports = {
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
   ],
+  scmactivation: [
+    "scm/api/activation/introduction",
+    require("./api/activation/sidebar"),
+  ],
   scmciedss: [
     "scm/api/config/ciedss/ciedss",
     "scm/api/config/ciedss/usecases",
