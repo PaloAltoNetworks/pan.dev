@@ -17,7 +17,7 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 **Product:** Strata Cloud Manager — Activation Service
 
-Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of the full Prisma Access tenant activation lifecycle within the IBM MSP model.
+Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
 
 New endpoints:
 
