@@ -2,7 +2,7 @@ openapi: 3.0.2
 info:
   title: Activation Service
   version: 1.0.0
-  description: APIs for IBM MSP (Managed Service Provider) model tenant activation of Prisma Access. Covers CIE instance sharing, PA license activation and amendment, and instance offboarding.
+  description: APIs for managing activation. Covers instance sharing, license activation and amendment, and instance offboarding.
   license:
     name: MIT
     url: https://opensource.org/license/mit
@@ -14,16 +14,16 @@ servers:
   - url: "https://api.sase.paloaltonetworks.com"
 tags:
   - name: Shared Instances
-    description: Share CIE instance from Parent TSG to Child TSGs
+    description: Share an instance with target TSGs
   - name: Activation
-    description: Activate and amend Prisma Access licenses
+    description: Activate and amend licenses
   - name: Offboard
     description: Offboard and deprovision product instances
 paths:
   /activation/api/v1/shared-instances:
     post:
-      summary: Share CIE instance with Child TSGs
-      description: Shares the Parent TSG's CIE (Cloud Identity Engine) instance with one or more Child TSGs. The caller must be operating under the Parent TSG that owns the instance. All target TSG IDs must be direct descendants of the caller's TSG; lateral or cross-hierarchy sharing is prohibited.
+      summary: Share an instance with target TSGs
+      description: Shares the caller's instance with one or more target TSGs. The system automatically uses the authenticated TSG to determine the source of the share. All target TSG IDs must be direct descendants of the caller's TSG; lateral or cross-hierarchy sharing is prohibited.
       operationId: shareInstance
       tags:
         - Shared Instances
@@ -79,8 +79,8 @@ paths:
 
   /activation/api/v1/activate:
     post:
-      summary: Activate or amend PA license
-      description: "Activates Prisma Access licenses for a Child TSG (initial activation), or updates allocated quantities for existing licenses (amendment). The entitlement_group_id and entitlement_id must be retrieved from the asset-apis entitlement-groups endpoint first.\n\nConstraints:\n- Duplicate entitlement_id entries in the payload are prohibited.\n- Requested quantities must not exceed net available license capacity (Total − Allocated).\n- Requested quantities must satisfy SKU minimum thresholds.\n- At least one base SKU with a non-zero quantity must be included.\n- management_mode and pba are immutable after initial activation; subsequent modification attempts are rejected."
+      summary: Activate or amend license
+      description: "Activates licenses for the target TSG (initial activation), or updates allocated quantities for existing licenses (amendment). The entitlement_group_id and entitlement_id must be retrieved from the entitlement-groups endpoint first.\n\nConstraints:\n- Duplicate entitlement_id entries in the payload are prohibited.\n- Requested quantities must not exceed net available license capacity (Total − Allocated).\n- Requested quantities must satisfy SKU minimum thresholds.\n- At least one base SKU with a non-zero quantity must be included.\n- management_mode and pba are immutable after initial activation; subsequent modification attempts are rejected."
       operationId: activateOrAmendLicense
       tags:
         - Activation
@@ -92,7 +92,7 @@ paths:
               $ref: "#/components/schemas/ActivationRequest"
             examples:
               activate:
-                summary: Initial PA MU + SLS activation
+                summary: Initial license activation
                 value:
                   entitlement_group_id: EG550016
                   region: americas
@@ -107,7 +107,7 @@ paths:
                     management_mode: cloud_managed
                     pba: false
               amend:
-                summary: Amend PA MU + SLS quantities
+                summary: Amend license quantities
                 value:
                   entitlement_group_id: EG550016
                   region: americas
@@ -326,7 +326,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Entitlement"
-          description: List of entitlements to activate. Each license type (e.g., MU, RN, SLS) must be specified with its own entitlement_id and quantity.
+          description: List of entitlements to activate. Each license must be specified with its own entitlement_id and quantity.
         description:
           type: string
           maxLength: 1000
