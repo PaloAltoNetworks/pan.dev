@@ -14,7 +14,7 @@ This API is designed for MSP administrators and automation teams managing multi-
 
 ## Authentication
 
-The Activation Service API uses OAuth 2.0 client credentials flow. Obtain an access token from:
+The Activation Service API uses OAuth 2.0 client credentials flow. Obtain an [access token](https://pan.dev/scm/docs/access-tokens/) from:
 
 ```
 https://iam.apps.paloaltonetworks.com/oauth2/access_token
