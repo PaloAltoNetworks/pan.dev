@@ -15,6 +15,12 @@ These release notes identify API changes made for the various Strata Cloud Manag
 also the [change log](/scm/docs/release-notes/changelog) for information on all changes to this API
 documentation, some of which have occurred in between API product releases.
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Settings
+
+Updated [Settings APIs](/scm/api/config/ngfw/device/device-settings/) with 3 new endpoints.
+
 ## July 2026
 
 **Product:** Strata Cloud Manager — Posture Management
