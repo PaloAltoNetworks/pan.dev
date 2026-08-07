@@ -11,9 +11,24 @@ keywords:
 
 # Strata Cloud Manager API Release Notes
 
-These release notes identify API changes made for the various Strata Cloud Manager services. See
-also the [change log](/scm/docs/release-notes/changelog) for information on all changes to this API
-documentation, some of which have occurred in between API product releases.
+These release notes identify API changes made for the various Strata Cloud Manager services.
+
+## August 2026
+
+**Product:** Strata Cloud Manager — Activation Service
+
+Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of the full Prisma Access tenant activation lifecycle within the IBM MSP model.
+
+New endpoints:
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
+| `POST /activation/api/v1/activate` | Activate or amend Prisma Access licenses |
+| `GET /activation/api/v1/offboard/validation` | Validate offboard readiness |
+| `POST /activation/api/v1/offboard` | Offboard a product instance |
+| `GET /asset/api/v1/entitlement-groups` | Fetch entitlement group details |
+| `GET /asset/api/v1/instances` | Get product instance status |
 
 ## July 2026
 
