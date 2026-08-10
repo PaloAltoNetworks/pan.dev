@@ -6,11 +6,13 @@ keywords:
   - Common Services
   - Reference
   - API
+  - Activation Services
+  - SCM
 ---
 
 The Activation Service API enables you to manage the full lifecycle of tenant activation. You can use these APIs to share instances across tenant service groups, activate and amend licenses, and offboard product instances when they are no longer needed.
 
-These APIs are designed for system administrators and automation teams managing multi-tenant deployments. They support programmatic onboarding of child tenants, license capacity management, and controlled decommissioning.
+These APIs are designed for system administrators and automation teams managing multi-tenant deployments. They support programmatic onboarding of child tenants, license capacity management, and controlled decommissioning. 
 
 ## Authentication
 
