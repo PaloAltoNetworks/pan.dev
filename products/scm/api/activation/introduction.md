@@ -8,9 +8,9 @@ keywords:
   - API
 ---
 
-The Activation Service API enables you to manage the full lifecycle of tenant activation within the MSP (Managed Service Provider) model. You can use this API to share instances across tenant service groups, activate and amend licenses, and offboard product instances when they are no longer needed.
+The Activation Service API enables you to manage the full lifecycle of tenant activation. You can use these APIs to share instances across tenant service groups, activate and amend licenses, and offboard product instances when they are no longer needed.
 
-This API is designed for MSP administrators and automation teams managing multi-tenant deployments. It supports programmatic onboarding of child tenants, license capacity management, and controlled decommissioning — all scoped to the TSG hierarchy enforced by the platform.
+These APIs are designed for system administrators and automation teams managing multi-tenant deployments. They support programmatic onboarding of child tenants, license capacity management, and controlled decommissioning.
 
 ## Authentication
 
