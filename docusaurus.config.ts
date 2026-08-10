@@ -541,11 +541,6 @@ const config = {
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
                     },
-                    {
-                      to: "scm/api/config/prisma-access-agent/introduction",
-                      label: "Prisma Access Agent",
-                      icon: "api-doc",
-                    },
                   ],
                 },
                 {
@@ -1087,6 +1082,11 @@ const config = {
           ngts: {
             specPath: "openapi-specs/scm/config/ngts/tlsprotect-cloud.json",
             outputDir: "products/scm/api/config/ngts",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          accessagent: {
+            specPath: "openapi-specs/scm/config/prisma-access-agent",
+            outputDir: "products/scm/api/config/prisma-access-agent",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ciedss: {
