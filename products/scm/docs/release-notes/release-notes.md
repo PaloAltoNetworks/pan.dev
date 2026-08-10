@@ -15,6 +15,12 @@ These release notes identify API changes made for the various Strata Cloud Manag
 also the [change log](/scm/docs/release-notes/changelog) for information on all changes to this API
 documentation, some of which have occurred in between API product releases.
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Prisma Access Agent
+
+Added [Prisma Access Agent APIs](/scm/api/config/prisma-access-agent/endpoint-inventory/) to the Prisma Access Agent API. These APIs enable aPIs for managing and monitoring Prisma Access Agent endpoints including inventory search, statistics, actions, and staged rollout operations.
+
 ## July 2026
 
 **Product:** Strata Cloud Manager — Posture Management
