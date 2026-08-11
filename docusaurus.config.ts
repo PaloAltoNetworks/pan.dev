@@ -541,6 +541,11 @@ const config = {
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
                     },
+                    {
+                      to: "scm/api/config/prisma-access-agent/introduction",
+                      label: "Prisma Access Agent",
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -796,6 +801,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          prismaaccessagent: {
+            specPath: "openapi-specs/scm/config/prisma-access-agent",
+            outputDir: "products/scm/api/config/prisma-access-agent",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
