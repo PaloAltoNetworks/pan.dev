@@ -11,8 +11,7 @@ keywords:
 
 # Prisma SASE API Release Notes
 
-These release notes identify API changes made for the various SASE services. In addition, you can
-see the following for information about non-API feature enhancements and known issues for SASE products:
+These release notes identify API changes made for the various SASE services.
 
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
