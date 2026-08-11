@@ -3,6 +3,7 @@ id: introduction
 title: Prisma Access Agent
 sidebar_label: Overview
 keywords:
+  - Strata Cloud Manager
   - API
   - Reference
 ---
