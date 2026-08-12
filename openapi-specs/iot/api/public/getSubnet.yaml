@@ -6,13 +6,14 @@ parameters:
     schema:
       type: string
       format: date-time
-  - description: Number of results to return per page
+  - description: "Number of results to return per page. Maximum 1,000; a larger value returns HTTP 400. Use `offset` to page through more results (for example, with `flat=true`)."
     in: query
     name: pagelength
     required: false
     schema:
       type: integer
       minimum: 1
+      maximum: 1000
   - description: Offset for pagination
     in: query
     name: offset
@@ -20,15 +21,49 @@ parameters:
     schema:
       type: integer
       minimum: 0
-  - description: Parent ip prefix (e.g. 10.0.0.0/8)
+  - description: Parent ip prefix (e.g. 10.0.0.0/8). Hierarchy filter — returns direct children of this CIDR block. Mutually exclusive with `prefix`.
     in: query
     name: parent
     required: false
     schema:
       type: string
+  - description: Exact match on the subnet name (case-sensitive; no wildcards). Searches across all hierarchy levels.
+    in: query
+    name: name
+    required: false
+    schema:
+      type: string
+  - description: Exact match on the site's internal ID (`siteid`) — distinct from the tenant's external ID and from the site's Name (`external_id`). Returns matching subnets at any hierarchy level.
+    in: query
+    name: siteid
+    required: false
+    schema:
+      type: string
+  - description: Exact text match on the subnet description (case-sensitive; no wildcards). Searches across all hierarchy levels.
+    in: query
+    name: description
+    required: false
+    schema:
+      type: string
+  - description: Direct prefix lookup in CIDR notation (e.g. 10.105.10.0/24). Mutually exclusive with `parent`.
+    in: query
+    name: prefix
+    required: false
+    schema:
+      type: string
+  - description: "When true, returns subnets at every nesting level in one (paginated) call; the `parent` field is preserved on each object. Page through large result sets with `pagelength` (max 1,000) and `offset`."
+    in: query
+    name: flat
+    required: false
+    schema:
+      type: boolean
 responses:
   '200':
-    description: Subnets Successfully Retrieved
+    description: >-
+      Subnets Successfully Retrieved. A valid request that matches no subnets
+      returns HTTP 200 with an empty `subnets` array and `total: 0` (never 404).
+      Every documented field is always present on each subnet object (`null`/`""`
+      when it has no value).
     content:
       application/json:
         schema:
