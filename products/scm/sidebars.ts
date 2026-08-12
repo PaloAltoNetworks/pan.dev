@@ -473,6 +473,8 @@ module.exports = {
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
   ],
+  scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
+  scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
   scmsubscription: [
     "scm/api/subscription/subscription-api",
     require("./api/subscription/sidebar"),
