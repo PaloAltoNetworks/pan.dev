@@ -220,7 +220,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-                "Other Configuration": [
+        "Other Configuration": [
           {
             to: "scm/api/config/prisma-access-agent/introduction",
             label: "Prisma Access Agent",
