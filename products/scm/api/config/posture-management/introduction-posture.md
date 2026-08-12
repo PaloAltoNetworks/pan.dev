@@ -1,36 +1,46 @@
 ---
 id: introduction-posture
-title: Posture 
-sidebar_label: Posture 
+title: Overview
+sidebar_label: Overview
 keywords:
   - Strata Cloud Manager
-  - Configuration
-  - Device
-  - Reference
+  - Posture
+  - Best Practice Assessment
+  - Policy Optimizer
+  - Compliance
   - API
 ---
-# Introduction
 
- Welcome to the Posture API documentation. In an increasingly complex security landscape, maintaining a hardened and compliant environment shouldn't feel like a guessing game. The Posture suite is designed to give you programmatic control over your security health, offering deep visibility into your configurations and providing actionable intelligence to reduce your attack surface.
+# Posture Management APIs
 
-## Feature Overview
-While our roadmap includes a comprehensive set of tools to automate your security lifecycle, in the near term, we are building this ecosystem to include:
+The Posture Management APIs provide programmatic access to tools that help you audit, manage, and enforce your security posture across Palo Alto Networks environments. Use these APIs to automate security assessments, manage customized posture checks, enforce compliance alignment, and optimize security policies at scale.
 
-- **Best Practices**: Audit your configurations against industry-standard security benchmarks.
-- **Custom Posture Checks:** Audit your configurations against internal InfoSec standards.
-- **Compliance:** Map your environment to regulatory frameworks (like CIS, NIST, or SOC2).
-- **Policy Optimizer:** Receive and deploy intelligent recommendations to sharpen existing rules.
-- **Policy Analyzer:** Predict the impact of policy changes before they go live and identify existing shadowed and redundant policy rules.
-- **Config Cleanup:** Identify and remove unused objects or zero hit objects and rules to keep your environment lean.
+## Available APIs
 
+| API | Description |
+|-----|-------------|
+| **Best Practice Assessment (Config Upload)** | Upload Panorama or NGFW configuration files and receive a comprehensive security assessment based on Palo Alto Networks best practices. Results are returned as structured JSON for integration into dashboards, SIEMs, or ticketing systems. |
+| **Custom Posture Checks** | Define, manage, and report on user-defined posture checks tailored to your organization's specific security policies. Supports full CRUD lifecycle, cloning, and batch operations. |
+| **Config Cleanup** | Identify unused or redundant configuration objects (zero-hit rules, orphaned objects) to keep your environment lean and reduce attack surface. |
+| **Policy Optimizer** | Retrieve security rules with optimization recommendations. The engine analyzes traffic patterns and suggests narrowed, application-specific replacement rules to enforce least-privilege access. |
+| **Compliance Frameworks** | Create, manage, and release compliance framework definitions. Map your security configurations against regulatory standards (CIS, NIST, SOC2) and organizational benchmarks. |
+| **Compliance Analytics** | Retrieve compliance scores, summaries, and historical timelines to track your posture improvement over time. |
+| **Benchmark Monitoring** | Monitor benchmarked compliance frameworks with Best Practice Check (BPC) verdict tracking and reporting. |
 
-## Current Availability
+## Authentication
 
-We are currently in a phased rollout of these capabilities. At this time, the “on-demand” Best Practice report API is the first available module.
+All Posture Management API endpoints require a Bearer JWT token obtained through the SCM OAuth2 flow:
 
-The Best Practice report API allows you to automate the configuration audit process by:
-1. Uploading your Next Generation Firewall, or Panorama configuration files directly to our analysis engine.
-2. Generating comprehensive security reports based on Palo Alto Networks best practices.
-3. Downloading the results in a machine-readable format (JSON) for integration into your internal dashboards or ticketing systems.
+```
+Authorization: Bearer <access_token>
+```
 
-**Note:** APIs for Compliance, Policy Optimizer, Policy Analyzer and Config Cleanup are currently in development and will be released in the coming months. Stay tuned for updates.
+## Base URL
+
+| Environment | Base URL |
+|-------------|----------|
+| Current | `https://api.strata.paloaltonetworks.com/posture` |
+
+## Coming Soon
+
+- **Policy Analyzer** — Predict the impact of policy changes before they go live and identify shadowed or redundant rules.
