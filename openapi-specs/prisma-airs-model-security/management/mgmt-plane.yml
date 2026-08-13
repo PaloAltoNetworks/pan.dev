@@ -1,0 +1,2188 @@
+components:
+  schemas:
+    BatchAssignCustomRuleRequestSchema:
+      additionalProperties: false
+      properties:
+        assignments:
+          items:
+            $ref: '#/components/schemas/CustomRuleAssignmentSchema'
+          maxItems: 50
+          minItems: 1
+          title: Assignments
+          type: array
+      required:
+      - assignments
+      title: BatchAssignCustomRuleRequestSchema
+      type: object
+    BatchAssignCustomRuleResponseSchema:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/CustomRuleAssignmentResultSchema'
+          title: Results
+          type: array
+      required:
+      - results
+      title: BatchAssignCustomRuleResponseSchema
+      type: object
+    ConditionGroup-Input:
+      additionalProperties: false
+      properties:
+        conditions:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LabelCondition'
+            - $ref: '#/components/schemas/RuleResultCondition'
+            - $ref: '#/components/schemas/ConditionGroup-Input'
+          minItems: 2
+          title: Conditions
+          type: array
+        operator:
+          enum:
+          - and
+          - or
+          title: Operator
+          type: string
+      required:
+      - operator
+      - conditions
+      title: ConditionGroup
+      type: object
+    ConditionGroup-Output:
+      additionalProperties: false
+      properties:
+        conditions:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LabelCondition'
+            - $ref: '#/components/schemas/RuleResultCondition'
+            - $ref: '#/components/schemas/ConditionGroup-Output'
+          minItems: 2
+          title: Conditions
+          type: array
+        operator:
+          enum:
+          - and
+          - or
+          title: Operator
+          type: string
+      required:
+      - operator
+      - conditions
+      title: ConditionGroup
+      type: object
+    CursorPaginationSchema:
+      properties:
+        next_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Token
+      title: CursorPaginationSchema
+      type: object
+    CustomRuleAssignmentResultSchema:
+      properties:
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+        rule_instance_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Rule Instance Uuid
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        status:
+          title: Status
+          type: string
+      required:
+      - security_group_uuid
+      - status
+      title: CustomRuleAssignmentResultSchema
+      type: object
+    CustomRuleAssignmentSchema:
+      additionalProperties: false
+      properties:
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        state:
+          $ref: '#/components/schemas/RuleState'
+      required:
+      - security_group_uuid
+      - state
+      title: CustomRuleAssignmentSchema
+      type: object
+    CustomRuleCreateRequestSchema:
+      additionalProperties: false
+      properties:
+        compatible_sources:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          minItems: 1
+          title: Compatible Sources
+          type: array
+        condition:
+          oneOf:
+          - $ref: '#/components/schemas/LabelCondition'
+          - $ref: '#/components/schemas/RuleResultCondition'
+          - $ref: '#/components/schemas/ConditionGroup-Input'
+          title: Condition
+        description:
+          default: ''
+          maxLength: 1000
+          title: Description
+          type: string
+        name:
+          maxLength: 255
+          minLength: 1
+          title: Name
+          type: string
+        remediation_message:
+          anyOf:
+          - maxLength: 4096
+            type: string
+          - type: 'null'
+          title: Remediation Message
+        rule_action:
+          default: FAIL
+          enum:
+          - FAIL
+          - PASS
+          title: Rule Action
+          type: string
+        violation_message:
+          maxLength: 4096
+          minLength: 1
+          title: Violation Message
+          type: string
+      required:
+      - name
+      - compatible_sources
+      - condition
+      - violation_message
+      title: CustomRuleCreateRequestSchema
+      type: object
+    CustomRuleInstanceSummarySchema:
+      description: Lightweight custom rule info nested in rule instance responses
+      properties:
+        description:
+          title: Description
+          type: string
+        name:
+          title: Name
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - name
+      - description
+      title: CustomRuleInstanceSummarySchema
+      type: object
+    CustomRuleListItemSchema:
+      properties:
+        compatible_sources:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          title: Compatible Sources
+          type: array
+        condition:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/LabelCondition'
+            - $ref: '#/components/schemas/RuleResultCondition'
+            - $ref: '#/components/schemas/ConditionGroup-Output'
+          - type: 'null'
+          description: 'The rule''s condition tree. Null when reading a historical
+            snapshot (via ?generation=N): the snapshot stores only the compiled policy,
+            not the source condition.'
+          title: Condition
+        created_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule was created. Null when reading a historical snapshot
+            (via ?generation=N), which does not capture this timestamp.
+          title: Created At
+        created_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Created By
+        description:
+          title: Description
+          type: string
+        enabled_security_group_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          default: 0
+          description: Number of security groups that currently have this rule enabled.
+            Null when reading a historical snapshot (via ?generation=N), since the
+            count is a live value not captured in the snapshot.
+          title: Enabled Security Group Count
+        is_archived:
+          title: Is Archived
+          type: boolean
+        name:
+          title: Name
+          type: string
+        remediation_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remediation Message
+        rule_action:
+          anyOf:
+          - enum:
+            - FAIL
+            - PASS
+            type: string
+          - type: 'null'
+          description: 'The rule''s action. Null when reading a historical snapshot
+            (via ?generation=N): it is compiled into the policy and not carried in
+            the snapshot.'
+          title: Rule Action
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule was last updated. Null when reading a historical
+            snapshot (via ?generation=N), which does not capture this timestamp.
+          title: Updated At
+        updated_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Updated By
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        violation_message:
+          title: Violation Message
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - name
+      - description
+      - compatible_sources
+      - violation_message
+      - remediation_message
+      - is_archived
+      - created_by
+      - updated_by
+      title: CustomRuleListItemSchema
+      type: object
+    CustomRuleResponseSchema:
+      properties:
+        compatible_sources:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          title: Compatible Sources
+          type: array
+        condition:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/LabelCondition'
+            - $ref: '#/components/schemas/RuleResultCondition'
+            - $ref: '#/components/schemas/ConditionGroup-Output'
+          - type: 'null'
+          description: 'The rule''s condition tree. Null when reading a historical
+            snapshot (via ?generation=N): the snapshot stores only the compiled policy,
+            not the source condition.'
+          title: Condition
+        created_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule was created. Null when reading a historical snapshot
+            (via ?generation=N), which does not capture this timestamp.
+          title: Created At
+        created_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Created By
+        description:
+          title: Description
+          type: string
+        is_archived:
+          title: Is Archived
+          type: boolean
+        name:
+          title: Name
+          type: string
+        remediation_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remediation Message
+        rule_action:
+          anyOf:
+          - enum:
+            - FAIL
+            - PASS
+            type: string
+          - type: 'null'
+          description: 'The rule''s action. Null when reading a historical snapshot
+            (via ?generation=N): it is compiled into the policy and not carried in
+            the snapshot.'
+          title: Rule Action
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule was last updated. Null when reading a historical
+            snapshot (via ?generation=N), which does not capture this timestamp.
+          title: Updated At
+        updated_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Updated By
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        violation_message:
+          title: Violation Message
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - name
+      - description
+      - compatible_sources
+      - violation_message
+      - remediation_message
+      - is_archived
+      - created_by
+      - updated_by
+      title: CustomRuleResponseSchema
+      type: object
+    CustomRuleSecurityGroupSchema:
+      properties:
+        name:
+          title: Name
+          type: string
+        rule_state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: string
+          title: Rule State
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - name
+      - source_type
+      - rule_state
+      title: CustomRuleSecurityGroupSchema
+      type: object
+    CustomRuleUpdateRequestSchema:
+      additionalProperties: false
+      properties:
+        condition:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/LabelCondition'
+            - $ref: '#/components/schemas/RuleResultCondition'
+            - $ref: '#/components/schemas/ConditionGroup-Input'
+          - type: 'null'
+          title: Condition
+        description:
+          anyOf:
+          - maxLength: 1000
+            type: string
+          - type: 'null'
+          title: Description
+        name:
+          anyOf:
+          - maxLength: 255
+            minLength: 1
+            type: string
+          - type: 'null'
+          title: Name
+        remediation_message:
+          anyOf:
+          - maxLength: 4096
+            type: string
+          - type: 'null'
+          title: Remediation Message
+        rule_action:
+          anyOf:
+          - enum:
+            - FAIL
+            - PASS
+            type: string
+          - type: 'null'
+          title: Rule Action
+        violation_message:
+          anyOf:
+          - maxLength: 4096
+            minLength: 1
+            type: string
+          - type: 'null'
+          title: Violation Message
+      title: CustomRuleUpdateRequestSchema
+      type: object
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
+          type: array
+      title: HTTPValidationError
+      type: object
+    LabelCondition:
+      additionalProperties: false
+      properties:
+        key:
+          maxLength: 255
+          minLength: 1
+          title: Key
+          type: string
+        operator:
+          enum:
+          - equals
+          - not_equals
+          - exists
+          - not_exists
+          title: Operator
+          type: string
+        type:
+          const: label
+          title: Type
+          type: string
+        value:
+          anyOf:
+          - maxLength: 1024
+            type: string
+          - type: 'null'
+          title: Value
+      required:
+      - type
+      - key
+      - operator
+      title: LabelCondition
+      type: object
+    ListCustomRuleSecurityGroupsResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        security_groups:
+          items:
+            $ref: '#/components/schemas/CustomRuleSecurityGroupSchema'
+          title: Security Groups
+          type: array
+      required:
+      - pagination
+      - security_groups
+      title: ListCustomRuleSecurityGroupsResponseSchema
+      type: object
+    ListCustomRulesResponseSchema:
+      properties:
+        custom_rules:
+          items:
+            $ref: '#/components/schemas/CustomRuleListItemSchema'
+          title: Custom Rules
+          type: array
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - custom_rules
+      title: ListCustomRulesResponseSchema
+      type: object
+    ListModelSecurityGroupsResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        security_groups:
+          items:
+            $ref: '#/components/schemas/ModelSecurityGroupListItemSchema'
+          title: Security Groups
+          type: array
+      required:
+      - pagination
+      - security_groups
+      title: ListModelSecurityGroupsResponseSchema
+      type: object
+    ListModelSecurityRuleInstancesResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        rule_instances:
+          items:
+            $ref: '#/components/schemas/ModelSecurityRuleInstanceResponseSchema'
+          title: Rule Instances
+          type: array
+      required:
+      - pagination
+      - rule_instances
+      title: ListModelSecurityRuleInstancesResponseSchema
+      type: object
+    ListModelSecurityRulesResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        rules:
+          items:
+            $ref: '#/components/schemas/ModelSecurityRuleListItemSchema'
+          title: Rules
+          type: array
+      required:
+      - pagination
+      - rules
+      title: ListModelSecurityRulesResponseSchema
+      type: object
+    ModelSecurityGroupCreateRequestSchema:
+      additionalProperties: false
+      properties:
+        description:
+          default: ''
+          maxLength: 1000
+          title: Description
+          type: string
+        name:
+          maxLength: 255
+          minLength: 1
+          title: Name
+          type: string
+        rule_configurations:
+          additionalProperties:
+            $ref: '#/components/schemas/RuleConfigurationSchema'
+          description: Keys in this dictionary should be rule UUIDs to customize upon
+            creation of the model security group.
+          propertyNames:
+            maxLength: 64
+          title: Rule Configurations
+          type: object
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+      required:
+      - name
+      - source_type
+      title: ModelSecurityGroupCreateRequestSchema
+      type: object
+    ModelSecurityGroupListItemSchema:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        description:
+          title: Description
+          type: string
+        enabled_rule_count:
+          default: 0
+          title: Enabled Rule Count
+          type: integer
+        is_tombstone:
+          description: Indicates whether this security group is deleted
+          title: Is Tombstone
+          type: boolean
+        name:
+          title: Name
+          type: string
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityGroupState'
+          - type: string
+          title: State
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      - description
+      - source_type
+      - state
+      - is_tombstone
+      title: ModelSecurityGroupListItemSchema
+      type: object
+    ModelSecurityGroupResponseSchema:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        description:
+          title: Description
+          type: string
+        is_tombstone:
+          description: Indicates whether this security group is deleted
+          title: Is Tombstone
+          type: boolean
+        name:
+          title: Name
+          type: string
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityGroupState'
+          - type: string
+          title: State
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      - description
+      - source_type
+      - state
+      - is_tombstone
+      title: ModelSecurityGroupResponseSchema
+      type: object
+    ModelSecurityGroupState:
+      description: Security group states.
+      enum:
+      - PENDING
+      - ACTIVE
+      title: ModelSecurityGroupState
+      type: string
+    ModelSecurityGroupUpdateRequestSchema:
+      additionalProperties: false
+      properties:
+        description:
+          anyOf:
+          - maxLength: 1000
+            type: string
+          - type: 'null'
+          title: Description
+        name:
+          anyOf:
+          - maxLength: 255
+            minLength: 1
+            type: string
+          - type: 'null'
+          title: Name
+      title: ModelSecurityGroupUpdateRequestSchema
+      type: object
+    ModelSecurityRuleInstanceResponseSchema:
+      description: Instantiated rule schema - actual rules that get evaluated
+      properties:
+        created_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule instance was created. Null when reading a historical
+            snapshot (via ?generation=N), which does not capture this timestamp.
+          title: Created At
+        created_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Created By
+        custom_rule:
+          anyOf:
+          - $ref: '#/components/schemas/CustomRuleInstanceSummarySchema'
+          - type: 'null'
+        custom_rule_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Custom Rule Uuid
+        field_values:
+          additionalProperties: true
+          description: Dictionary for configuring policies custom settings to applicable
+            policies. Allowed keys are approved_formats, approved_locations, approved_licenses,
+            deny_orgs, and denied_org_models. Values should be a list of strings.
+          propertyNames:
+            $ref: '#/components/schemas/RuleFieldValueKey'
+          title: Field Values
+          type: object
+        rule:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityRuleResponseSchema'
+          - type: 'null'
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        security_rule_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Security Rule Uuid
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: string
+          title: State
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          description: When the rule instance was last updated. Null when reading
+            a historical snapshot (via ?generation=N), which does not capture this
+            timestamp.
+          title: Updated At
+        updated_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Updated By
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - security_group_uuid
+      - state
+      title: ModelSecurityRuleInstanceResponseSchema
+      type: object
+    ModelSecurityRuleInstanceUpdateRequestSchema:
+      additionalProperties: false
+      description: Update rule instance
+      properties:
+        field_values:
+          anyOf:
+          - additionalProperties: true
+            description: Dictionary for configuring policies custom settings to applicable
+              policies. Allowed keys are approved_formats, approved_locations, approved_licenses,
+              deny_orgs, and denied_org_models. Values should be a list of strings.
+            propertyNames:
+              $ref: '#/components/schemas/RuleFieldValueKey'
+            type: object
+          - type: 'null'
+          title: Field Values
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: 'null'
+      required:
+      - security_group_uuid
+      title: ModelSecurityRuleInstanceUpdateRequestSchema
+      type: object
+    ModelSecurityRuleListItemSchema:
+      properties:
+        compatible_sources:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          title: Compatible Sources
+          type: array
+        constant_values:
+          additionalProperties: true
+          propertyNames:
+            maxLength: 256
+          title: Constant Values
+          type: object
+        default_state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: string
+          title: Default State
+        default_values:
+          additionalProperties: true
+          propertyNames:
+            $ref: '#/components/schemas/RuleFieldValueKey'
+          title: Default Values
+          type: object
+        description:
+          title: Description
+          type: string
+        editable_fields:
+          items:
+            $ref: '#/components/schemas/RuleEditableFieldSchema'
+          title: Editable Fields
+          type: array
+        enabled_security_group_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          default: 0
+          description: Number of security groups that currently have this rule enabled.
+            Null when reading a historical snapshot (via ?generation=N), since the
+            count is a live value not captured in the snapshot.
+          title: Enabled Security Group Count
+        name:
+          title: Name
+          type: string
+        remediation:
+          $ref: '#/components/schemas/RuleRemediationSchema'
+        rule_type:
+          $ref: '#/components/schemas/RuleType'
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - name
+      - description
+      - rule_type
+      - compatible_sources
+      - default_state
+      - remediation
+      - editable_fields
+      - constant_values
+      - default_values
+      title: ModelSecurityRuleListItemSchema
+      type: object
+    ModelSecurityRuleResponseSchema:
+      description: Response schema for model security rules - excludes internal fields
+        like opa_path
+      properties:
+        compatible_sources:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          title: Compatible Sources
+          type: array
+        constant_values:
+          additionalProperties: true
+          propertyNames:
+            maxLength: 256
+          title: Constant Values
+          type: object
+        default_state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: string
+          title: Default State
+        default_values:
+          additionalProperties: true
+          propertyNames:
+            $ref: '#/components/schemas/RuleFieldValueKey'
+          title: Default Values
+          type: object
+        description:
+          title: Description
+          type: string
+        editable_fields:
+          items:
+            $ref: '#/components/schemas/RuleEditableFieldSchema'
+          title: Editable Fields
+          type: array
+        name:
+          title: Name
+          type: string
+        remediation:
+          $ref: '#/components/schemas/RuleRemediationSchema'
+        rule_type:
+          $ref: '#/components/schemas/RuleType'
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - name
+      - description
+      - rule_type
+      - compatible_sources
+      - default_state
+      - remediation
+      - editable_fields
+      - constant_values
+      - default_values
+      title: ModelSecurityRuleResponseSchema
+      type: object
+    PaginationSchema:
+      properties:
+        total_items:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Items
+      title: PaginationSchema
+      type: object
+    PyPIAuthResponseSchema:
+      description: Schema for PyPI authentication response.
+      properties:
+        expires_at:
+          description: Token expiration timestamp in UTC
+          format: date-time
+          title: Expires At
+          type: string
+        url:
+          description: Authenticated Google Artifact Registry URL with embedded token
+          title: Url
+          type: string
+      required:
+      - url
+      - expires_at
+      title: PyPIAuthResponseSchema
+      type: object
+    RuleConfigurationSchema:
+      description: Configuration for customizing a rule during security group creation.
+      properties:
+        field_values:
+          additionalProperties: true
+          description: Dictionary for configuring policies custom settings to applicable
+            policies. Allowed keys are approved_formats, approved_locations, approved_licenses,
+            deny_orgs, and denied_org_models. Values should be a list of strings.
+          propertyNames:
+            $ref: '#/components/schemas/RuleFieldValueKey'
+          title: Field Values
+          type: object
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: 'null'
+      title: RuleConfigurationSchema
+      type: object
+    RuleEditableFieldDropdownSchema:
+      properties:
+        label:
+          maxLength: 256
+          title: Label
+          type: string
+        value:
+          maxLength: 256
+          title: Value
+          type: string
+      required:
+      - value
+      - label
+      title: RuleEditableFieldDropdownSchema
+      type: object
+    RuleEditableFieldSchema:
+      properties:
+        attribute_name:
+          maxLength: 256
+          title: Attribute Name
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        display_name:
+          maxLength: 256
+          title: Display Name
+          type: string
+        display_type:
+          $ref: '#/components/schemas/RuleEditableFieldType'
+        dropdown_values:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/RuleEditableFieldDropdownSchema'
+            type: array
+          - type: 'null'
+          title: Dropdown Values
+        type:
+          maxLength: 256
+          title: Type
+          type: string
+      required:
+      - attribute_name
+      - type
+      - display_name
+      - display_type
+      title: RuleEditableFieldSchema
+      type: object
+    RuleEditableFieldType:
+      description: Editable field types are used by rule structure for UI rendering
+      enum:
+      - SELECT
+      - LIST
+      title: RuleEditableFieldType
+      type: string
+    RuleFieldValueKey:
+      enum:
+      - approved_formats
+      - approved_locations
+      - approved_licenses
+      - deny_orgs
+      - denied_org_models
+      - approved_org_models
+      title: RuleFieldValueKey
+      type: string
+    RuleRemediationSchema:
+      description: Remediation steps for each rule
+      properties:
+        description:
+          maxLength: 256
+          title: Description
+          type: string
+        steps:
+          items:
+            maxLength: 1024
+            type: string
+          title: Steps
+          type: array
+        url:
+          maxLength: 256
+          title: Url
+          type: string
+      required:
+      - description
+      - steps
+      - url
+      title: RuleRemediationSchema
+      type: object
+    RuleResultCondition:
+      additionalProperties: false
+      properties:
+        operator:
+          const: equals
+          title: Operator
+          type: string
+        rule_uuid:
+          format: uuid
+          title: Rule Uuid
+          type: string
+        type:
+          const: rule_result
+          title: Type
+          type: string
+        value:
+          enum:
+          - PASSED
+          - FAILED
+          title: Value
+          type: string
+      required:
+      - type
+      - rule_uuid
+      - operator
+      - value
+      title: RuleResultCondition
+      type: object
+    RuleState:
+      description: Rule evaluation states.
+      enum:
+      - DISABLED
+      - ALLOWING
+      - BLOCKING
+      title: RuleState
+      type: string
+    RuleType:
+      description: Rule types for different scanning approaches.
+      enum:
+      - METADATA
+      - ARTIFACT
+      title: RuleType
+      type: string
+    SnapshotVersionListResponseSchema:
+      description: 'A page of snapshot version history, newest first.
+
+
+        Pagination is cursor-based over GCS object generations: pass ``pagination.next_token``
+
+        back as the ``next_token`` query param to fetch the next page. ``None`` when
+        there are
+
+        no more pages.'
+      properties:
+        pagination:
+          $ref: '#/components/schemas/CursorPaginationSchema'
+        versions:
+          items:
+            $ref: '#/components/schemas/SnapshotVersionSchema'
+          title: Versions
+          type: array
+      required:
+      - versions
+      - pagination
+      title: SnapshotVersionListResponseSchema
+      type: object
+    SnapshotVersionSchema:
+      description: One historical version of a GCS-backed snapshot, identified by
+        its generation.
+      properties:
+        generation:
+          title: Generation
+          type: integer
+        timestamp:
+          format: date-time
+          title: Timestamp
+          type: string
+      required:
+      - generation
+      - timestamp
+      title: SnapshotVersionSchema
+      type: object
+    SortByDateField:
+      enum:
+      - created_at
+      - updated_at
+      title: SortByDateField
+      type: string
+    SortDirection:
+      enum:
+      - asc
+      - desc
+      title: SortDirection
+      type: string
+    SourceType:
+      enum:
+      - LOCAL
+      - HUGGING_FACE
+      - S3
+      - GCS
+      - AZURE
+      - ARTIFACTORY
+      - GITLAB
+      - ALL
+      title: SourceType
+      type: string
+    ValidationError:
+      properties:
+        ctx:
+          title: Context
+          type: object
+        input:
+          title: Input
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+info:
+  description: Model Security Management API - Configure and manage security groups
+    and rules for AI/ML model scanning
+  title: Model Security Management API
+  version: 0.1.0
+openapi: 3.1.0
+paths:
+  /v1/custom-rules:
+    get:
+      description: List custom rules for the tenant, or fetch a specific custom rules
+        snapshot version when generation is provided
+      operationId: list_custom_rules_v1_custom_rules_get
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByDateField'
+          default: created_at
+      - in: query
+        name: sort_dir
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - in: query
+        name: is_archived
+        required: false
+        schema:
+          default: false
+          title: Is Archived
+          type: boolean
+      - in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 255
+            type: string
+          - type: 'null'
+          title: Search Query
+      - in: query
+        name: source_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SourceType'
+            type: array
+          - type: 'null'
+          title: Source Types
+      - description: GCS object generation of the custom rules snapshot to fetch.
+          When set, returns that historical snapshot version instead of the current
+          custom rule list. Other filters are ignored on a historical read.
+        in: query
+        name: generation
+        required: false
+        schema:
+          anyOf:
+          - minimum: 0
+            type: integer
+          - type: 'null'
+          description: GCS object generation of the custom rules snapshot to fetch.
+            When set, returns that historical snapshot version instead of the current
+            custom rule list. Other filters are ignored on a historical read.
+          title: Generation
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomRulesResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Custom Rules
+      tags:
+      - Custom Rules
+    post:
+      description: Create a custom rule
+      operationId: create_custom_rule_v1_custom_rules_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomRuleCreateRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomRuleResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create Custom Rule
+      tags:
+      - Custom Rules
+  /v1/custom-rules/versions:
+    get:
+      description: List custom rules snapshot versions (generations), newest first
+      operationId: list_custom_rules_versions_v1_custom_rules_versions_get
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: next_token
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Token
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotVersionListResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Custom Rules Versions
+      tags:
+      - Custom Rules
+  /v1/custom-rules/{custom_rule_uuid}:
+    get:
+      description: Get a custom rule by UUID
+      operationId: get_custom_rule_v1_custom_rules__custom_rule_uuid__get
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomRuleResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Custom Rule
+      tags:
+      - Custom Rules
+    put:
+      description: Update a custom rule
+      operationId: update_custom_rule_v1_custom_rules__custom_rule_uuid__put
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomRuleUpdateRequestSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomRuleResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Custom Rule
+      tags:
+      - Custom Rules
+  /v1/custom-rules/{custom_rule_uuid}/archive:
+    post:
+      description: Archive a custom rule
+      operationId: archive_custom_rule_v1_custom_rules__custom_rule_uuid__archive_post
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Archive Custom Rule
+      tags:
+      - Custom Rules
+  /v1/custom-rules/{custom_rule_uuid}/security-groups:
+    get:
+      description: List security groups assigned to a custom rule
+      operationId: list_custom_rule_security_groups_v1_custom_rules__custom_rule_uuid__security_groups_get
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomRuleSecurityGroupsResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Custom Rule Security Groups
+      tags:
+      - Custom Rules
+    post:
+      description: Batch assign a custom rule to security groups
+      operationId: batch_assign_custom_rule_v1_custom_rules__custom_rule_uuid__security_groups_post
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchAssignCustomRuleRequestSchema'
+        required: true
+      responses:
+        '207':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchAssignCustomRuleResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Batch Assign Custom Rule
+      tags:
+      - Custom Rules
+  /v1/custom-rules/{custom_rule_uuid}/security-groups/{sg_uuid}:
+    delete:
+      description: Remove a custom rule assignment from a security group
+      operationId: remove_custom_rule_assignment_v1_custom_rules__custom_rule_uuid__security_groups__sg_uuid__delete
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      - in: path
+        name: sg_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Sg Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Remove Custom Rule Assignment
+      tags:
+      - Custom Rules
+  /v1/custom-rules/{custom_rule_uuid}/unarchive:
+    post:
+      description: Restore an archived custom rule
+      operationId: unarchive_custom_rule_v1_custom_rules__custom_rule_uuid__unarchive_post
+      parameters:
+      - in: path
+        name: custom_rule_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Custom Rule Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Unarchive Custom Rule
+      tags:
+      - Custom Rules
+  /v1/pypi/authenticate:
+    get:
+      description: Get Google Artifact Registry URL for PyPI access
+      operationId: get_pypi_url_v1_pypi_authenticate_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PyPIAuthResponseSchema'
+          description: Successful Response
+      summary: Get Pypi Url
+      tags:
+      - PyPI Authentication
+  /v1/security-groups:
+    get:
+      description: List security groups
+      operationId: list_security_groups_v1_security_groups_get
+      parameters:
+      - description: Number of items to skip
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          description: Number of items to skip
+          minimum: 0
+          title: Skip
+          type: integer
+      - description: Number of items to return
+        in: query
+        name: limit
+        required: false
+        schema:
+          anyOf:
+          - maximum: 100
+            minimum: 1
+            type: integer
+          - type: 'null'
+          default: 50
+          description: Number of items to return
+          title: Limit
+      - description: Field to sort by
+        in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByDateField'
+          default: created_at
+          description: Field to sort by
+      - description: Sort direction
+        in: query
+        name: sort_dir
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+          description: Sort direction
+      - description: Filter by source types
+        in: query
+        name: source_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SourceType'
+            type: array
+          - type: 'null'
+          description: Filter by source types
+          title: Source Types
+      - description: Search term (matches UUID or Name)
+        in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 1000
+            minLength: 3
+            type: string
+          - type: 'null'
+          description: Search term (matches UUID or Name)
+          title: Search Query
+      - description: A list of rule UUIDs to filter by. Only security groups with
+          one of these rules set to ALLOWING or BLOCKING will be returned.
+        in: query
+        name: enabled_rules
+        required: false
+        schema:
+          anyOf:
+          - items:
+              format: uuid
+              type: string
+            type: array
+          - type: 'null'
+          description: A list of rule UUIDs to filter by. Only security groups with
+            one of these rules set to ALLOWING or BLOCKING will be returned.
+          title: Enabled Rules
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListModelSecurityGroupsResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Security Groups
+      tags:
+      - Model Security Groups
+    post:
+      description: Create a new Model Security Group
+      operationId: create_security_group_v1_security_groups_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelSecurityGroupCreateRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create Security Group
+      tags:
+      - Model Security Groups
+  /v1/security-groups/{security_group_uuid}/rule-instances:
+    get:
+      description: List rule instances for a security group, or fetch the rule instances
+        from a specific security-group snapshot version when generation is provided
+      operationId: list_rule_instances_v1_security_groups__security_group_uuid__rule_instances_get
+      parameters:
+      - description: Security group UUID
+        in: path
+        name: security_group_uuid
+        required: true
+        schema:
+          description: Security group UUID
+          format: uuid
+          title: Security Group Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: security_rule_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Security Rule Uuid
+      - in: query
+        name: state
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: 'null'
+          title: State
+      - in: query
+        name: is_custom
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Custom
+      - description: GCS object generation of the security-group snapshot to fetch.
+          When set, returns the rule instances as they were in that historical snapshot
+          instead of the current ones. Other filters are ignored on a historical read.
+        in: query
+        name: generation
+        required: false
+        schema:
+          anyOf:
+          - minimum: 0
+            type: integer
+          - type: 'null'
+          description: GCS object generation of the security-group snapshot to fetch.
+            When set, returns the rule instances as they were in that historical snapshot
+            instead of the current ones. Other filters are ignored on a historical
+            read.
+          title: Generation
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListModelSecurityRuleInstancesResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Rule Instances
+      tags:
+      - Model Security Groups
+      - Model Security Rule Instances
+  /v1/security-groups/{security_group_uuid}/rule-instances/versions:
+    get:
+      description: List security-group snapshot versions (generations) for this group's
+        rule instances, newest first
+      operationId: list_rule_instances_versions_v1_security_groups__security_group_uuid__rule_instances_versions_get
+      parameters:
+      - description: Security group UUID
+        in: path
+        name: security_group_uuid
+        required: true
+        schema:
+          description: Security group UUID
+          format: uuid
+          title: Security Group Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: next_token
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Token
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotVersionListResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Rule Instances Versions
+      tags:
+      - Model Security Groups
+      - Model Security Rule Instances
+  /v1/security-groups/{security_group_uuid}/rule-instances/{rule_instance_uuid}:
+    get:
+      description: Get a rule instance by UUID
+      operationId: get_rule_instance_v1_security_groups__security_group_uuid__rule_instances__rule_instance_uuid__get
+      parameters:
+      - description: Security group UUID
+        in: path
+        name: security_group_uuid
+        required: true
+        schema:
+          description: Security group UUID
+          format: uuid
+          title: Security Group Uuid
+          type: string
+      - description: Rule instance UUID
+        in: path
+        name: rule_instance_uuid
+        required: true
+        schema:
+          description: Rule instance UUID
+          format: uuid
+          title: Rule Instance Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityRuleInstanceResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Rule Instance
+      tags:
+      - Model Security Groups
+      - Model Security Rule Instances
+    put:
+      description: Update a rule instance
+      operationId: update_rule_instance_v1_security_groups__security_group_uuid__rule_instances__rule_instance_uuid__put
+      parameters:
+      - description: Security group UUID
+        in: path
+        name: security_group_uuid
+        required: true
+        schema:
+          description: Security group UUID
+          format: uuid
+          title: Security Group Uuid
+          type: string
+      - description: Rule instance UUID
+        in: path
+        name: rule_instance_uuid
+        required: true
+        schema:
+          description: Rule instance UUID
+          format: uuid
+          title: Rule Instance Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelSecurityRuleInstanceUpdateRequestSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityRuleInstanceResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Rule Instance
+      tags:
+      - Model Security Groups
+      - Model Security Rule Instances
+  /v1/security-groups/{uuid}:
+    delete:
+      description: Soft-delete a security group by id. The security group and its
+        rule instances will no longer appear in list calls, but will be rerievable
+        by UUID.
+      operationId: delete_security_group_v1_security_groups__uuid__delete
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Security Group
+      tags:
+      - Model Security Groups
+    get:
+      description: Get a security group by id
+      operationId: get_security_group_v1_security_groups__uuid__get
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Security Group
+      tags:
+      - Model Security Groups
+    put:
+      description: Update a security group
+      operationId: update_security_group_v1_security_groups__uuid__put
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelSecurityGroupUpdateRequestSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Update Security Group
+      tags:
+      - Model Security Groups
+  /v1/security-rules:
+    get:
+      description: List security rules, or fetch a specific PANW rules snapshot version
+        when generation is provided
+      operationId: list_security_rules_v1_security_rules_get
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: source_type
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/SourceType'
+          - type: 'null'
+          title: Source Type
+      - description: Search term (matches UUID or Name)
+        in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 1000
+            minLength: 3
+            type: string
+          - type: 'null'
+          description: Search term (matches UUID or Name)
+          title: Search Query
+      - description: GCS object generation of the PANW rules snapshot to fetch. When
+          set, returns that historical snapshot version instead of the current rule
+          list.
+        in: query
+        name: generation
+        required: false
+        schema:
+          anyOf:
+          - minimum: 0
+            type: integer
+          - type: 'null'
+          description: GCS object generation of the PANW rules snapshot to fetch.
+            When set, returns that historical snapshot version instead of the current
+            rule list.
+          title: Generation
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListModelSecurityRulesResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Security Rules
+      tags:
+      - Model Security Rules
+  /v1/security-rules/versions:
+    get:
+      description: List PANW rules snapshot versions (generations), newest first
+      operationId: list_security_rules_versions_v1_security_rules_versions_get
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 100
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: next_token
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Token
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotVersionListResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Security Rules Versions
+      tags:
+      - Model Security Rules
+  /v1/security-rules/{uuid}:
+    get:
+      description: Get a security rule by UUID
+      operationId: get_security_rule_v1_security_rules__uuid__get
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSecurityRuleResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Security Rule
+      tags:
+      - Model Security Rules
+servers:
+- description: Prisma AIRS Model Security management endpoint
+  url: https://api.sase.paloaltonetworks.com/aims/mgmt
