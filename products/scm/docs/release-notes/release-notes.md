@@ -17,279 +17,395 @@ documentation, some of which have occurred in between API product releases.
 
 ## July 2026
 
-**Product:** Strata Cloud Manager — Posture Management
+### Posture Management — Compliance Framework APIs (New)
 
-Added [Compliance Framework APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) to the Posture API. These APIs enable programmatic access to compliance framework configurations and assessment results.
+Programmatic access to compliance framework configurations and assessment results.
 
----
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/posture/v1/compliance-frameworks` | List compliance frameworks |
+| GET | `/posture/v1/compliance-frameworks/{id}` | Get compliance framework details |
+| GET | `/posture/v1/compliance-assessments` | List compliance assessment results |
 
-**Product:** Strata Cloud Manager — Advanced DNS Security Resolver
-
-Updated the [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) with schema improvements including new validation constraints, required fields for EDL definitions, and SafeSearch/YouTube restricted mode filtering options.
-
----
-
-**Product:** Strata Cloud Manager — Prisma AIRS AI Red Teaming
-
-Added 7 new adapter endpoints to the [Prisma AIRS AI Red Teaming APIs](/prisma-airs-redteam/api/ai-integration/introduction). The new adapter endpoints enable managing custom adapters for AI Red Teaming targets, including create, list, get, update, delete, validate, and retrieve configuration defaults.
+See [Compliance Framework APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — Network Configuration
+### Advanced DNS Security Resolver — Schema Improvements (Updated)
 
-Added the Generate PPK Key endpoint (`POST /ike-gateways:generate-ppk`) to the [Network Services APIs](/scm/api/config/ngfw/network/network-api). This endpoint generates a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784) for use in IKE gateway PPK configuration.
+Improved validation constraints, required fields for EDL definitions, and SafeSearch/YouTube restricted mode filtering options.
+
+See [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — Identity and Security Services
+### Prisma AIRS AI Red Teaming — Adapter Endpoints (New)
 
-Updated the [Identity Services APIs](/scm/api/config/sase/identity/identity-api) and Security Services APIs with spec file consolidation and schema improvements across SASE, NGFW, and Cloud NGFW platforms.
+Manage custom adapters for AI Red Teaming targets including create, list, get, update, delete, validate, and retrieve configuration defaults.
+
+<details><summary>View endpoints (7)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/airs/redteam/v1/adapters` | Create a custom adapter |
+| GET | `/airs/redteam/v1/adapters` | List all adapters |
+| GET | `/airs/redteam/v1/adapters/{id}` | Get adapter by ID |
+| PUT | `/airs/redteam/v1/adapters/{id}` | Update an adapter |
+| DELETE | `/airs/redteam/v1/adapters/{id}` | Delete an adapter |
+| POST | `/airs/redteam/v1/adapters:validate` | Validate adapter configuration |
+| GET | `/airs/redteam/v1/adapters/defaults` | Retrieve configuration defaults |
+
+</details>
+
+See [Prisma AIRS AI Red Teaming APIs](/prisma-airs-redteam/api/ai-integration/introduction) for full details.
+
+---
+
+### Network Configuration — Generate PPK Key (New)
+
+Generate a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784) for use in IKE gateway PPK configuration.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/config/network/v1/ike-gateways:generate-ppk` | Generate a PPK key for IKE gateways |
+
+See [Network Services APIs](/scm/api/config/ngfw/network/network-api) for full details.
+
+---
+
+### Identity and Security Services — Spec Consolidation (Updated)
+
+Consolidated spec files and improved schemas across SASE, NGFW, and Cloud NGFW platforms for Identity Services and Security Services.
+
+See [Identity Services APIs](/scm/api/config/sase/identity/identity-api) for full details.
 
 ## June 2026
 
-**Product:** Strata Cloud Manager — NGFW Device Onboarding
+### NGFW Device Onboarding — Site Management APIs (New)
 
-Added [Site Management APIs](/scm/api/config/ngfw/setup/device-onboarding/site-management/) to Device Onboarding. These APIs provide endpoints for managing site configurations as part of the NGFW device onboarding workflow.
+Manage site configurations as part of the NGFW device onboarding workflow.
 
----
-
-**Product:** Strata Cloud Manager — SASE Deployment
-
-Updated [Network Deployment APIs](/scm/api/config/sase/deployment/deployment-api/) with new endpoints. The additions expand deployment automation capabilities for SASE network configurations.
+See [Site Management APIs](/scm/api/config/ngfw/setup/device-onboarding/site-management/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — Objects Configuration
+### SASE Deployment — Network Deployment Endpoints (Updated)
 
-Updated [Objects APIs](/scm/api/config/sase/objects/objects-api/) with new object schemas for SASE, NGFW, and Cloud NGFW configurations. The new schemas enhance configuration management across all platform types.
+Expanded deployment automation capabilities for SASE network configurations with new endpoints.
+
+See [Network Deployment APIs](/scm/api/config/sase/deployment/deployment-api/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — NGTS
+### Objects Configuration — New Object Schemas (Updated)
 
-Added [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) to SCM. These APIs enable management of TLS certificate lifecycles and protection policies.
+New object schemas for SASE, NGFW, and Cloud NGFW configurations that enhance configuration management across all platform types.
+
+See [Objects APIs](/scm/api/config/sase/objects/objects-api/) for full details.
+
+---
+
+### NGTS — TLS Protect Cloud APIs (New)
+
+Manage TLS certificate lifecycles and protection policies through Strata Cloud Manager.
+
+See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full details.
 
 ## May 2026
 
-**Product:** Strata Cloud Manager — Terraform Provider
+### Terraform Provider — SCM Provider Documentation (New)
 
-Added [SCM Terraform Provider](/terraform/docs/scm/getting-started/introduction/) documentation. The Terraform provider enables infrastructure-as-code management of Strata Cloud Manager configurations.
+Infrastructure-as-code management of Strata Cloud Manager configurations using Terraform.
 
----
-
-**Product:** Strata Cloud Manager — Advanced DNS Security Resolver
-
-Added [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr). These APIs provide configuration and management of advanced DNS security resolver settings.
+See [SCM Terraform Provider](/terraform/docs/scm/getting-started/introduction/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — NGFW Operations
+### Advanced DNS Security Resolver — Initial Release (New)
 
-Added [NGFW Operations APIs](/scm/api/config/ngfw-operations/introduction/). These APIs enable operational management of NGFW devices through Strata Cloud Manager.
+Configuration and management of advanced DNS security resolver settings.
+
+See [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adnsr) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — Security Services, Network Services, NGFW Operations
+### NGFW Operations — Operations APIs (New)
 
-Updated [Security Services](/scm/api/config/sase/security/security-api/), [Network Services](/scm/api/config/ngfw/network/network-api/), and [NGFW Operations](/scm/api/config/ngfw-operations/introduction/) APIs with additional endpoints and schema updates.
+Operational management of NGFW devices through Strata Cloud Manager.
+
+See [NGFW Operations APIs](/scm/api/config/ngfw-operations/introduction/) for full details.
+
+---
+
+### Security Services, Network Services, NGFW Operations — Additional Endpoints (Updated)
+
+Additional endpoints and schema updates across Security Services, Network Services, and NGFW Operations APIs.
+
+See [Security Services](/scm/api/config/sase/security/security-api/), [Network Services](/scm/api/config/ngfw/network/network-api/), and [NGFW Operations](/scm/api/config/ngfw-operations/introduction/) for full details.
 
 ## April 2026
 
-**Product:** Strata Cloud Manager — Cloud Dynamic User Groups (CDUG)
+### Cloud Dynamic User Groups (CDUG) — CDUG APIs (New)
 
-Added [Cloud Dynamic User Groups (CDUG) APIs](/scm/api/config/ciedss/cdug/cdug-introduction/) to SCM. CDUG APIs enable dynamic grouping of users based on cloud identity attributes for policy enforcement.
+Dynamic grouping of users based on cloud identity attributes for policy enforcement.
+
+See [Cloud Dynamic User Groups (CDUG) APIs](/scm/api/config/ciedss/cdug/cdug-introduction/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — NGFW Device Settings
+### NGFW Device Settings — HA Configurations (New)
 
-Added HA Configurations to [Device Settings APIs](/scm/api/config/ngfw/device/device-api/). These additions support High Availability configuration management for NGFW devices.
+High Availability configuration management for NGFW devices via Device Settings APIs.
+
+See [Device Settings APIs](/scm/api/config/ngfw/device/device-api/) for full details.
 
 ## March 2026
 
-**Product:** Strata Cloud Manager — Configuration Operations, Security Services
+### Configuration Operations, Security Services — Additional Endpoints (Updated)
 
-Updated [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) and Security Services APIs with additional endpoints and improvements.
+Additional endpoints and improvements for Configuration Operations and Security Services APIs.
 
----
-
-**Product:** Strata Cloud Manager — Posture Management
-
-Added [Posture APIs](/scm/api/config/posture-management/introduction-posture/). These APIs enable programmatic management of security posture assessments and policies.
+See [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) for full details.
 
 ---
 
-**Product:** Strata Cloud Manager — Incidents
+### Posture Management — Posture APIs (New)
 
-Added [Incidents APIs](/scm/api/config/incidents/incident-scm). Use these APIs to programmatically query, manage, and respond to security incidents.
+Programmatic management of security posture assessments and policies.
+
+See [Posture APIs](/scm/api/config/posture-management/introduction-posture/) for full details.
+
+---
+
+### Incidents — Incidents APIs (New)
+
+Programmatically query, manage, and respond to security incidents.
+
+See [Incidents APIs](/scm/api/config/incidents/incident-scm) for full details.
 
 ## January 2026
 
-**Product:** Strata Cloud Manager — Best Practices
+### Best Practices — API Best Practices Guide (New)
 
-Added [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/). This guide provides recommended patterns for API integration, error handling, and configuration management.
+Recommended patterns for API integration, error handling, and configuration management.
+
+See [Strata Cloud Manager Best Practices](/scm/docs/api-best-practices/) for full details.
 
 ## October 2025
 
-**Product:** Strata Cloud Manager — CIE Directory Sync Service
+### CIE Directory Sync Service — Directory Sync APIs (New)
 
-Added [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/). These APIs provide directory synchronization capabilities between Cloud Identity Engine and external identity sources.
+Directory synchronization capabilities between Cloud Identity Engine and external identity sources.
+
+See [CIE Directory Sync Service APIs](/scm/api/config/ciedss/ciedss/) for full details.
 
 ## June 2025
 
-**Product:** Strata Cloud Manager — Setup
+### Setup — Snippet Sharing APIs (New)
 
-Added [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/). Snippet sharing enables reusable configuration templates that can be shared across folders and devices.
+Reusable configuration templates that can be shared across folders and devices.
+
+See [Snippet Sharing APIs](/scm/api/config/sase/setup/snippet-sharing/) for full details.
 
 ## May 2025
 
-**Product:** Strata Cloud Manager — Security Services
+### Security Services — Unified Rulebase Policies (New)
 
-Introduced two policies Security and Internet for Security Rules under [Security Services APIs](/scm/api/config/sase/security/security-api/). This supports the unified rulebase experience where traditional security rules and Web Security rules are managed through a common endpoint.
+Introduced Security and Internet policy types for Security Rules, supporting the unified rulebase experience where traditional security rules and Web Security rules are managed through a common endpoint.
+
+See [Security Services APIs](/scm/api/config/sase/security/security-api/) for full details.
 
 ## February 2025
 
-**Product:** Prisma Access — Configuration Orchestration
+### Prisma Access — Configuration Orchestration APIs (New)
 
-Added [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/). These APIs enable orchestrated, workflow-based configuration management for Prisma Access deployments.
+Orchestrated, workflow-based configuration management for Prisma Access deployments.
+
+See [Prisma Access Configuration Orchestration APIs](/sase/api/introduction/) for full details.
 
 ## January 2025
 
-**Product:** Prisma SASE — SaaS Security Posture Management
+### SaaS Security Posture Management — SSPM APIs (New)
 
-Added [SaaS Security Posture Management APIs](/sase/api/sspm/). Use these APIs to manage SaaS application security posture policies, run assessments, and automate remediation workflows.
+Manage SaaS application security posture policies, run assessments, and automate remediation workflows.
+
+See [SaaS Security Posture Management APIs](/sase/api/sspm/) for full details.
 
 ## November 2024
 
-**Product:** Strata Cloud Manager
+### Strata Cloud Manager — Configuration APIs (New)
 
-Added Strata Cloud Manager configuration APIs, along with a [Strata Cloud Manager landing page](/strata-cloud-manager/). See the [detailed November 2024 release notes](/scm/docs/release-notes/november2024) for more information.
+Major platform release introducing the Strata Cloud Manager configuration APIs and [landing page](/strata-cloud-manager/). See the [detailed November 2024 release notes](/scm/docs/release-notes/november2024) for more information.
 
-### Highlights
+<details><summary>View highlights (9)</summary>
 
-- **New API platform FQDN:** Updated to `api.strata.paloaltonetworks.com` (original `api.sase.paloaltonetworks.com` continues to work).
-- **Restructured configuration API base paths:** APIs reorganized along functional lines (`/config/setup/v1`, `/config/deployment/v1`, `/config/security/v1`, `/config/objects/v1`, `/config/network/v1`, `/config/identity/v1`, `/config/device/v1`, `/config/operations/v1`).
-- **Removal of query params for POST, PUT, DELETE:** Resource location now specified in request body via `folder`, `snippet`, or `device` attributes.
-- **Introduction of security rule types:** Added `type` attribute (`security` and `internet`) to support unified rulebase.
-- **New SCM Setup APIs:** Folders, Snippets, Devices, Labels, Variables.
-- **NGFW Network Configuration APIs:** Comprehensive network management endpoints.
-- **NGFW Device Configuration APIs:** Device settings, HA, service routes, and more.
-- **Log Forwarding Configuration APIs:** Custom log forwarding profiles, HTTP/syslog server profiles.
-- **DoS Protection Configuration APIs:** DoS protection profiles and rules.
+| Area | Change |
+| ---- | ------ |
+| API Platform FQDN | Updated to `api.strata.paloaltonetworks.com` (original `api.sase.paloaltonetworks.com` continues to work) |
+| Configuration API Base Paths | Reorganized along functional lines (`/config/setup/v1`, `/config/deployment/v1`, `/config/security/v1`, `/config/objects/v1`, `/config/network/v1`, `/config/identity/v1`, `/config/device/v1`, `/config/operations/v1`) |
+| POST/PUT/DELETE Query Params | Removed — resource location now specified in request body via `folder`, `snippet`, or `device` attributes |
+| Security Rule Types | Added `type` attribute (`security` and `internet`) for unified rulebase |
+| SCM Setup APIs | New: Folders, Snippets, Devices, Labels, Variables |
+| NGFW Network Configuration | Comprehensive network management endpoints |
+| NGFW Device Configuration | Device settings, HA, service routes, and more |
+| Log Forwarding Configuration | Custom log forwarding profiles, HTTP/syslog server profiles |
+| DoS Protection Configuration | DoS protection profiles and rules |
+
+</details>
 
 ## October 2024
 
-**Product:** Prisma Access Browser
+### Prisma Access Browser — Browser Management APIs (New)
 
-Added [Prisma Access Browser APIs](/access/api/browser-mgmt/). These APIs enable management of Prisma Access Browser configurations and policies.
+Management of Prisma Access Browser configurations and policies.
+
+See [Prisma Access Browser APIs](/access/api/browser-mgmt/) for full details.
 
 ---
 
-**Product:** Prisma SASE — Aggregate Monitoring
+### Aggregate Monitoring — Additional Endpoints (Updated)
 
-Added additional [Aggregate Monitoring APIs](/sase/api/mt-monitor/). New endpoints expand monitoring capabilities for tenant resources.
+Expanded monitoring capabilities for tenant resources.
+
+See [Aggregate Monitoring APIs](/sase/api/mt-monitor/) for full details.
 
 ## July 2024
 
-**Product:** Prisma SASE — Multitenant Interconnect
+### Multitenant Interconnect — Interconnect APIs (New)
 
-Added [Multitenant Interconnect APIs](/sase/api/mt-interconnect/). These APIs provide management of interconnect configurations across multiple tenants.
+Management of interconnect configurations across multiple tenants.
+
+See [Multitenant Interconnect APIs](/sase/api/mt-interconnect/) for full details.
 
 ## April 2024
 
-**Product:** Prisma SASE — Multitenant Notifications
+### Multitenant Notifications — Notification APIs (New)
 
-Added [Multitenant Notification APIs](/sase/api/mt-notifications/). Use these APIs to configure and manage notification policies for multitenant SASE deployments.
+Configure and manage notification policies for multitenant SASE deployments.
+
+See [Multitenant Notification APIs](/sase/api/mt-notifications/) for full details.
 
 ## September 2023
 
-**Product:** Prisma Access — Autonomous DEM
+### Prisma Access — Autonomous DEM APIs (New)
 
-Added [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/). Use the ADEM APIs to access digital experience management data including application and agent scores.
+Access digital experience management data including application and agent scores.
+
+See [Autonomous DEM APIs](/access/docs/adem) and [ADEM API Examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/) for full details.
 
 ## May 2023
 
-**Product:** Prisma SASE — Identity and Access Management
+### Identity and Access Management — Custom Roles and Permission Sets (New)
 
-Added [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) to the Identity and Access Management APIs.
+Fine-grained access control with custom roles and permission sets.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET/POST | `/iam/v1/custom-roles` | Manage custom roles |
+| GET/POST | `/iam/v1/permission-sets` | Manage permission sets |
+
+See [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/iam/permission-sets/) for full details.
 
 ## April 2023
 
-**Product:** Prisma Access — ZTNA Connector
+### Prisma Access — ZTNA Connector APIs (New)
 
-Added [ZTNA Connector APIs](/sase/docs/release-notes/release-notes/#april-2023) and miscellaneous other changes.
+ZTNA Connector APIs for Zero Trust Network Access management.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes/#april-2023) for full details.
 
 ## March 2023
 
-**Product:** Prisma Access — Configuration
+### Prisma Access — Configuration Endpoints (Updated)
 
-New endpoints for the [Prisma Access Configuration APIs](/sase/docs/release-notes/release-notes/#march-2023).
+New endpoints for Prisma Access Configuration APIs.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes/#march-2023) for full details.
 
 ## December 2022
 
-**Product:** Prisma SASE — Subscription Service
+### Subscription Service — License Allocation Endpoints (New)
 
-Published new [Subscription Service](/sase/api/subscription/) endpoints that allow you to allocate licenses to your tenant service groups.
+Allocate licenses to tenant service groups.
+
+See [Subscription Service](/sase/api/subscription/) for full details.
 
 ## November 2022
 
-**Product:** Prisma Access — Configuration
+### Prisma Access — Mobile Agent Endpoints (New)
 
-Published new [Prisma Access configuration](/sase/docs/release-notes/release-notes/#november-2022) endpoints including Mobile Agent (Global Protect) endpoints.
+Mobile Agent (GlobalProtect) endpoints added to Prisma Access configuration.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes/#november-2022) for full details.
 
 ---
 
-**Product:** Prisma Access — Insights
+### Prisma Access — Insights Examples (New)
 
-Published [Prisma Access Insights examples](/access/docs/insights/examples/).
+Published examples for Prisma Access Insights API usage.
+
+See [Prisma Access Insights examples](/access/docs/insights/examples/) for full details.
 
 ## October 2022
 
-**Product:** Prisma SASE — Aggregate Monitoring
+### Aggregate Monitoring — New Endpoints and Query Filters (Updated)
 
-New endpoints and query filters for the [aggregate monitoring APIs](/sase/docs/release-notes/release-notes/#late-august-2022).
+Additional endpoints and query filters for aggregate monitoring.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes/#late-august-2022) for full details.
 
 ---
 
-**Product:** Cortex Data Lake — Log Forwarding
+### Cortex Data Lake — Log Forwarding Authentication Update (Updated)
 
-The Cortex Data Lake [Log Forwarding APIs](/cdl/docs/log-forwarding/) now use the same common authentication mechanism as is used by most SASE APIs.
+Log Forwarding APIs now use the common SASE authentication mechanism.
+
+See [Log Forwarding APIs](/cdl/docs/log-forwarding/) for full details.
 
 ## August 2022
 
-**Product:** Prisma Access — Configuration, Prisma SASE — Aggregate Monitoring
+### Prisma Access Configuration, Aggregate Monitoring — Updates (Updated)
 
-- New endpoints for the Prisma Access Config APIs. See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.
-- Updated the [Aggregate Monitoring APIs](/sase/api/mt-monitor). See the [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for details.
+New endpoints for Prisma Access Config APIs and updated Aggregate Monitoring APIs.
+
+See [August 2022 release notes](/sase/docs/release-notes/release-notes#august-2022) for full details.
 
 ## July 2022
 
-**Product:** Prisma SD-WAN, Prisma Access — Configuration, Prisma Access — Insights
+### Prisma SD-WAN, Prisma Access — Multi-Product Update (New)
 
-Added Prisma SD-WAN, and updates to Prisma Access Configuration and Prisma Access Insights. See the [SASE Release Notes](/sase/docs/release-notes/release-notes#july-2022) for details.
+Added Prisma SD-WAN documentation, and updates to Prisma Access Configuration and Insights APIs.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes#july-2022) for full details.
 
 ## June 2022
 
-**Product:** Prisma SASE — IAM
+### IAM — User Account Documentation (Updated)
 
-Published additional information about [IAM user accounts](/sase/docs/user-accounts).
+Published additional information about IAM user accounts.
+
+See [IAM user accounts](/sase/docs/user-accounts) for full details.
 
 ## May 2022
 
-**Product:** Prisma SASE — IAM
+### IAM — User Account APIs (New)
 
-Published [User Account APIs](/sase/api/iam/user-accounts) for the IAM service.
+User Account API endpoints for the IAM service.
+
+See [User Account APIs](/sase/api/iam/user-accounts) for full details.
 
 ---
 
-**Product:** Prisma Access — Configuration
+### Prisma Access — Configuration Monthly Release (Updated)
 
-Prisma Access Configuration API monthly release, which includes [breaking changes](/sase/docs/release-notes/release-notes#april-2022) to the APIs.
+Monthly release with breaking changes to Prisma Access Configuration APIs.
+
+See [breaking changes](/sase/docs/release-notes/release-notes#april-2022) for full details.
 
 ## April 2022
 
-**Product:** Prisma Access — Insights, Prisma SASE
+### Prisma Access Insights, Prisma SASE — Initial Platform Release (New)
 
-- Added Prisma Access Insights v1.0 and v2.0 APIs.
-- Corrected base URLs in the API reference. Fixed bugs and typos in the breadcrumbs. Added release notes to the developer documentation. Miscellaneous editorial corrections.
-- First public release of the Prisma SASE API in support of MSSPs.
+First public release of Prisma SASE APIs for MSSPs, including Prisma Access Insights v1.0 and v2.0 APIs. Corrected base URLs, fixed bugs, and added release notes.
+
+See [SASE Release Notes](/sase/docs/release-notes/release-notes) for full details.

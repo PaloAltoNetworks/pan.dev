@@ -40,7 +40,3 @@ Authorization: Bearer <access_token>
 | Environment | Base URL |
 |-------------|----------|
 | Current | `https://api.strata.paloaltonetworks.com/posture` |
-
-## Coming Soon
-
-- **Policy Analyzer** — Predict the impact of policy changes before they go live and identify shadowed or redundant rules.

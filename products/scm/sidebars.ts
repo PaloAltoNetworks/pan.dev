@@ -329,7 +329,14 @@ module.exports = {
           type: "doc",
           id: "scm/api/config/posture-management/introduction-posture",
         },
-        ...require("./api/config/posture-management/sidebar"),
+        {
+          type: "category",
+          label: "Compliance",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/sidebar"),
+          ],
+        },
       ],
     },
     {
