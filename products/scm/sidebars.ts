@@ -335,8 +335,10 @@ module.exports = {
           collapsed: true,
           items: [
             ...require("./api/config/posture-management/sidebar"),
+            ...require("./api/config/posture-management/checks/sidebar"),
           ],
         },
+        ...require("./api/config/posture-management/policy-optimizer/sidebar"),
       ],
     },
     {
