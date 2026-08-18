@@ -331,14 +331,36 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Compliance",
+          label: "Posture Check Upload Initiation API",
           collapsed: true,
           items: [
-            ...require("./api/config/posture-management/sidebar"),
             ...require("./api/config/posture-management/checks/sidebar"),
           ],
         },
-        ...require("./api/config/posture-management/policy-optimizer/sidebar"),
+        {
+          type: "category",
+          label: "Compliance Center API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/compliance-framework/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Policy Optimizer API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/policy-optimizer/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Config Cleanup API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/config-cleanup/sidebar"),
+          ],
+        },
       ],
     },
     {
