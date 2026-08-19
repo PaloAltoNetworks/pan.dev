@@ -331,7 +331,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Posture Check Upload Initiation API",
+          label: "Posture Check APIs",
           collapsed: true,
           items: [
             ...require("./api/config/posture-management/checks/sidebar"),
