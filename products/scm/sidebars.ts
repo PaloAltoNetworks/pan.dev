@@ -334,7 +334,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Posture API",
+      label: "Posture",
       collapsed: true,
       items: [
         {
@@ -343,22 +343,34 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Checks",
+          label: "Posture Check APIs",
           collapsed: true,
           items: [
-            ...require("./api/config/posture-management/sidebar")
+            ...require("./api/config/posture-management/checks/sidebar"),
           ],
         },
         {
           type: "category",
-          label: "Compliance Frameworks",
+          label: "Compliance Center API",
           collapsed: true,
-          link: {
-            type: 'generated-index',
-            title: 'Compliance Framework',
-          },
           items: [
-          require("./api/config/posture-management/compliance-framework/sidebar"),
+            ...require("./api/config/posture-management/compliance-framework/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Policy Optimizer API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/policy-optimizer/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Config Cleanup API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/config-cleanup/sidebar"),
           ],
         },
       ],
