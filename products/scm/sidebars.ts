@@ -174,6 +174,18 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Prisma Access Agent",
+          collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/sase/prisma-access-agent/introduction",
+            },
+            require("./api/config/sase/prisma-access-agent/sidebar"),
+          ],
+        },
+        {
+          type: "category",
           label: "Objects",
           items: [
             {
@@ -450,18 +462,18 @@ module.exports = {
         },
       ],
     },
-    {
-      type: "category",
-      label: "Prisma Access Agent",
-      collapsed: true,
-      items: [
-        {
-          type: "doc",
-          id: "scm/api/config/prisma-access-agent/introduction",
-        },
-        require("./api/config/prisma-access-agent/sidebar"),
-      ],
-    },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
   ],
   scmcdug: [

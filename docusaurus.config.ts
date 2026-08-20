@@ -541,11 +541,6 @@ const config = {
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
                     },
-                    {
-                      to: "scm/api/config/prisma-access-agent/introduction",
-                      label: "Prisma Access Agent",
-                      icon: "api-doc",
-                    },
                   ],
                 },
                 {
@@ -802,8 +797,9 @@ const config = {
         docsPluginId: "default",
         config: {
           prismaaccessagent: {
-            specPath: "openapi-specs/scm/config/prisma-access-agent",
-            outputDir: "products/scm/api/config/prisma-access-agent",
+            specPath: "openapi-specs/scm/config/sase/prisma-access-agent",
+            outputDir: "products/scm/api/config/sase/prisma-access-agent",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           auth: {

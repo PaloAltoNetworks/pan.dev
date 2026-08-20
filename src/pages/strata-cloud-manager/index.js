@@ -120,6 +120,11 @@ export default function SCMLandingPage() {
             label: "Security Services",
             icon: "api-doc",
           },
+          {
+            to: "scm/api/config/sase/prisma-access-agent/introduction",
+            label: "Prisma Access Agent",
+            icon: "api-doc",
+          },
         ],
         "NGFW Configuration": [
           {
@@ -221,11 +226,6 @@ export default function SCMLandingPage() {
           },
         ],
         "Other Configuration": [
-          {
-            to: "scm/api/config/prisma-access-agent/introduction",
-            label: "Prisma Access Agent",
-            icon: "api-doc",
-          },
           {
             to: "/access/api/browser-mgmt/browser-mgmt-api",
             label: "Prisma Access Browser",
