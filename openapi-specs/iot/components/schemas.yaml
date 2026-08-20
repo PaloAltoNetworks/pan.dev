@@ -1619,7 +1619,14 @@ schemas:
         description:
           type: string
           description: Detailed description of the site
-    
+        group:
+          type: string
+          nullable: true
+          description: >-
+            Set the group the new site belongs to, by group name. `null` or
+            omitted leaves the site ungrouped. The group must already exist; it
+            is never auto-created. An unknown group name returns HTTP 400.
+
   CreateSiteResponse:
     type: object
     properties:
@@ -1718,11 +1725,14 @@ schemas:
         group:
           type: string
           nullable: true
+          # BAN-31903: per review (Christina), dropped the parenthetical below
+          # from the description — kept here (commented) rather than deleted:
+          # "(the parent group — e.g. a region, country, or business unit; not a
+          # parent site)"
           description: >-
-            Set the group the site belongs to, by group name (the parent group —
-            e.g. a region, country, or business unit; not a parent site). `null`
-            removes the site from its group. The group must already exist; it is
-            never auto-created. An unknown group name returns HTTP 400.
+            Set the group the site belongs to, by group name. `null` removes the
+            site from its group. The group must already exist; it is never
+            auto-created. An unknown group name returns HTTP 400.
         subnetsList:
           type: array
           description: List of subnets associated with this site
@@ -1901,7 +1911,14 @@ schemas:
         siteid:
           type: string
           description: 'ID of the site this network segment belongs to'
-  
+        site:
+          type: string
+          description: >-
+            Friendly site name (the site's Name / `external_id`); resolved to
+            `siteid` server-side. Mutually exclusive with `siteid` — providing
+            both, an unknown site name, or a non-existent `siteid` returns HTTP
+            400.
+
   UpdateNetworkSegmentResponse:
     type: object
     properties:
@@ -2045,6 +2062,14 @@ schemas:
             siteid:
               type: string
               description: ID of the site this subnet belongs to
+            segmentId:
+              type: string
+              nullable: true
+              description: >-
+                ID of the network segment this subnet entry belongs to. A shared
+                block can be shared into multiple segments, in which case it
+                appears once per segment — each occurrence carries a distinct
+                segmentId. `null` for subnets not tied to a specific segment.
 
   UpdateSubnetPayloadSchema:
     type: array
