@@ -65,6 +65,12 @@ See [Config Cleanup API](/scm/api/config/posture-management/config-cleanup/confi
 
 ---
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Prisma Access Agent
+
+Added [Prisma Access Agent APIs](/scm/api/config/prisma-access-agent/introduction/) to the Prisma Access Agent API. These APIs enable aPIs for managing and monitoring Prisma Access Agent endpoints including inventory search, statistics, actions, and staged rollout operations.
+
 ## July 2026
 
 ### Posture Management — Compliance Framework APIs (New)

@@ -796,6 +796,12 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          prismaaccessagent: {
+            specPath: "openapi-specs/scm/config/sase/prisma-access-agent",
+            outputDir: "products/scm/api/config/sase/prisma-access-agent",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
