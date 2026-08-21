@@ -20,7 +20,10 @@ These release notes identify API changes made for the various SASE services.
 
 ### System Metrics API v3.0 (New)
 
-System Metrics API v3.0 provides core device health metrics such as CPU, memory, and disk usage. Refer to the [API documentation](/sdwan/api/) for the complete list of supported metrics.
+System Metrics API v3.0 provides core device health metrics such as CPU, memory, and disk usage. Refer to the following API documentations for the complete list of supported metrics.
+
+[Unified API](/sdwan/api/are-sysmetricv-3-n-0-querysysmetrics-v-3-0/) `POST /sdwan/monitor/v3.0/api/monitor/sys_metrics` <br/>
+[Legacy API](/sdwan/api/legacy/are-sysmetricv-3-n-0-querysysmetrics-v-3-0/) `POST /v3.0/api/tenants/:tenant_id/monitor/sys_metrics`
 
 Key behavior updates in v3.0:
 
@@ -28,7 +31,7 @@ Key behavior updates in v3.0:
 - **MemoryUsage:** Percentage of used memory.
 - **CPUUsage:** Minimum and maximum usage.
 
-See [Unified API](/sdwan/api/) `POST /sdwan/monitor/v3.0/api/monitor/sys_metrics` and [Legacy API](/sdwan/api/legacy/) `POST /v3.0/api/tenants/{tenant_id}/monitor/sys_metrics` for full details.
+See [Unified API](/sdwan/api/) and [Legacy API](/sdwan/api/legacy/) for all supported APIs.
 
 ---
 
