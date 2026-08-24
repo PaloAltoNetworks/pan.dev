@@ -1073,6 +1073,7 @@ const config = {
           scmactivation: {
             specPath: "openapi-specs/scm/activation",
             outputDir: "products/scm/api/activation",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           tenancy: {
