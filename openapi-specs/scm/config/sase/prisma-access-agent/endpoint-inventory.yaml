@@ -14,7 +14,9 @@ info:
     url: https://opensource.org/license/mit
 servers:
   - url: 'https://api.sase.paloaltonetworks.com/sse/epm/v1'
-    description: Production
+    description: Production (external/customer-facing)
+  - url: 'https://api.apps.paloaltonetworks.com/sse/epm/v1'
+    description: Production (first-party apps)
 tags:
   - name: Agent Actions
     description: Initiate and track actions on agents
@@ -37,6 +39,8 @@ paths:
       description: |
         Search and filter agents with pagination and sorting.
       operationId: SearchAgents
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -65,6 +69,7 @@ paths:
         Retrieve available values for a specified filter type.
       operationId: GetAgentFilters
       parameters:
+        - $ref: '#/components/parameters/x-panw-region'
         - $ref: '#/components/parameters/filter-type'
         - $ref: '#/components/parameters/filter-limit'
         - $ref: '#/components/parameters/from'
@@ -92,6 +97,7 @@ paths:
         Retrieve aggregate agent counts grouped by connection status.
       operationId: GetAgentsStatistics
       parameters:
+        - $ref: '#/components/parameters/x-panw-region'
         - $ref: '#/components/parameters/from'
         - $ref: '#/components/parameters/to'
       responses:
@@ -113,6 +119,8 @@ paths:
       description: |
         Retrieve staged rollout ring progress and status.
       operationId: GetAgentsRingStatus
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       responses:
         '200':
           description: OK
@@ -133,6 +141,7 @@ paths:
         Retrieve detailed information for a specific agent.
       operationId: GetAgentById
       parameters:
+        - $ref: '#/components/parameters/x-panw-region'
         - $ref: '#/components/parameters/agent-id'
       responses:
         '200':
@@ -155,6 +164,8 @@ paths:
       description: |
         Retrieve available agent binary versions and metadata.
       operationId: GetAgentBinaries
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       responses:
         '200':
           description: OK
@@ -174,6 +185,8 @@ paths:
       description: |
         Retrieve actions initiated by the current user.
       operationId: ListActions
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       responses:
         '200':
           description: OK
@@ -196,6 +209,7 @@ paths:
         Retrieve status and details of a specific action.
       operationId: GetActionById
       parameters:
+        - $ref: '#/components/parameters/x-panw-region'
         - $ref: '#/components/parameters/action-id'
       responses:
         '200':
@@ -219,6 +233,7 @@ paths:
         Retrieve action history for a specific agent.
       operationId: GetAgentActions
       parameters:
+        - $ref: '#/components/parameters/x-panw-region'
         - $ref: '#/components/parameters/agent-id'
       responses:
         '200':
@@ -243,6 +258,8 @@ paths:
       description: |
         Initiate an upgrade action for one or more agents.
       operationId: RequestUpgrade
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -270,6 +287,8 @@ paths:
       description: |
         Initiate a downgrade action for one or more agents.
       operationId: RequestDowngrade
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -297,6 +316,8 @@ paths:
       description: |
         Initiate an uninstall action for one or more agents.
       operationId: RequestUninstall
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -324,6 +345,8 @@ paths:
       description: |
         Initiate a log collection action for one or more agents.
       operationId: RequestLogs
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -351,6 +374,8 @@ paths:
       description: |
         Initiate a HIP report collection for one or more agents.
       operationId: RequestRecentHip
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -378,6 +403,8 @@ paths:
       description: |
         Initiate a diagnostics collection for one or more agents.
       operationId: RequestDiagnostics
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       requestBody:
         required: true
         content:
@@ -406,6 +433,8 @@ paths:
         Initiate a staged rollout for agent upgrades.
       operationId: StartStageRollout
       x-action: true
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       responses:
         '200':
           description: OK
@@ -425,6 +454,8 @@ paths:
         Stop an in-progress staged rollout with a reason.
       operationId: StopStageRollout
       x-singleton: true
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
       responses:
         '204':
           description: No Content
@@ -443,6 +474,18 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
+    x-panw-region:
+      name: x-panw-region
+      in: header
+      required: true
+      description: |
+        The tenant's deployment region. Used by the API Gateway to route requests to the correct regional backend.
+        Without this header, requests return empty results. Obtain the value from the SCM platform
+        (api_gateway.get_X_PANW_Region_Header() or sparky.getState().auth.instances.platform_region).
+        Known values: americas, europe, gov. Additional regions (e.g., asia, india, japan) may exist
+        for APAC-provisioned tenants.
+      schema:
+        type: string
     agent-id:
       name: agent-id
       in: path
